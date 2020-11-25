@@ -8,7 +8,7 @@ import (
 
 const defaultURL = "https://api.opslevel.com/graphql"
 
-func NewClient(authToken string, options ...Option) *Client {
+func NewClient(authToken string, options ...option) *Client {
 	client := &Client{
 		url:         defaultURL,
 		bearerToken: fmt.Sprintf("Bearer %s", authToken),
@@ -21,9 +21,9 @@ func NewClient(authToken string, options ...Option) *Client {
 	return client
 }
 
-type Option func(*Client)
+type option func(*Client)
 
-func SetURL(url string) Option {
+func SetURL(url string) option {
 	return func(c *Client) {
 		c.url = url
 	}
