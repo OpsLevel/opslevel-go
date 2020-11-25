@@ -6,6 +6,11 @@ To use this you will need to have an OpsLevel account and create an API token th
 Currently, this library is a work in a progress and only covers a small section of the API, but can be extended to support
 various interactions with OpsLevel's API.
 
+- teams.go provides an example query
+- tags.go provides an example mutation
+
+More information about using the GraphQL API can be found [here](https://www.opslevel.com/docs/api/graphql/).
+
 # Example Usage
 ```go
 import (
@@ -16,8 +21,8 @@ import (
 	"os"
 )
 
-const teamAlias = "eric_s_team"
-const serviceAlias = "brand_new_servcie"
+const teamAlias = "dev_team"
+const serviceAlias = "coffee_service"
 const defaultUrl = "https://api.opslevel.com/graphql"
 
 func main() {
