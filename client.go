@@ -6,11 +6,26 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-func NewClient(url, authToken string) Client {
-	return Client{
-		url:           url,
-		bearerToken:   fmt.Sprintf("Bearer %s", authToken),
-		graphqlClient: graphql.NewClient(url),
+const defaultURL = "https://api.opslevel.com/graphql"
+
+func NewClient(authToken string, options ...Option) *Client {
+	client := &Client{
+		url:         defaultURL,
+		bearerToken: fmt.Sprintf("Bearer %s", authToken),
+	}
+	for _, opt := range options {
+		opt(client)
+	}
+
+	client.graphqlClient = graphql.NewClient(client.url)
+	return client
+}
+
+type Option func(*Client)
+
+func SetURL(url string) Option {
+	return func(c *Client) {
+		c.url = url
 	}
 }
 

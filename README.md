@@ -14,7 +14,7 @@ More information about using the GraphQL API can be found [here](https://www.ops
 # Example Usage
 ```go
 import (
-	"github.com/opslevel/opslevel-go/opslevel"
+	"github.com/opslevel/opslevel-go/"
 	"context"
 	"fmt"
 	"log"
