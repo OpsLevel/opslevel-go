@@ -3,8 +3,7 @@ An example program that demonstrates interacting with the OpsLevel GraphQL API w
 
 To use this you will need to have an OpsLevel account and create an API token through the UI.
 
-Currently, this library is a work in a progress and only covers a small section of the API, but can be extended to support
-various interactions with OpsLevel's API.
+Currently, this library is a work in a progress and only covers a small section of the API, but can be extended.
 
 - teams.go provides an example query
 - tags.go provides an example mutation
@@ -14,9 +13,9 @@ More information about using the GraphQL API can be found [here](https://www.ops
 # Example Usage
 ```go
 import (
-	"github.com/opslevel/opslevel-go/"
 	"context"
 	"fmt"
+	opslevel "github.com/opslevel/opslevel-go"
 	"log"
 	"os"
 )
@@ -27,11 +26,7 @@ const defaultUrl = "https://api.opslevel.com/graphql"
 
 func main() {
 	var authToken = os.Getenv("OPSLEVEL_TOKEN")
-	var url = os.Getenv("OPSLEVEL_GRAPHQL_URL")
-	if url == "" {
-		url = defaultUrl
-	}
-	client := opslevel.NewClient(url, authToken)
+	client := opslevel.NewClient(authToken)
 
 	team, err := client.GetTeam(context.TODO(), teamAlias)
 	if err != nil {
