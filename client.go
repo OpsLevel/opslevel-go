@@ -3,59 +3,95 @@ package opslevel
 import (
 	"context"
 	"fmt"
-	"github.com/machinebox/graphql"
+	"net/http"
+
+	"github.com/shurcooL/graphql"
+	"golang.org/x/oauth2"
 )
 
 const defaultURL = "https://api.opslevel.com/graphql"
 
-func NewClient(authToken string, options ...option) *Client {
-	client := &Client{
-		url:         defaultURL,
-		bearerToken: fmt.Sprintf("Bearer %s", authToken),
-	}
-	for _, opt := range options {
-		opt(client)
-	}
-
-	client.graphqlClient = graphql.NewClient(client.url)
-	return client
+type ClientSettings struct {
+	url        string
+	ctx        context.Context
+	httpClient *http.Client
 }
 
-type option func(*Client)
+type Client struct {
+	url    string
+	ctx    context.Context // Should this be here?
+	client *graphql.Client
+}
+
+type option func(*ClientSettings)
 
 func SetURL(url string) option {
-	return func(c *Client) {
+	return func(c *ClientSettings) {
 		c.url = url
 	}
 }
 
-type Client struct {
-	url           string
-	bearerToken   string
-	graphqlClient *graphql.Client
+func SetContext(ctx context.Context) option {
+	return func(c *ClientSettings) {
+		c.ctx = ctx
+	}
 }
 
-func (c *Client) Do(ctx context.Context, query string, params map[string]interface{}, res interface{}) error {
-	req := graphql.NewRequest(query)
-	req.Header.Set("Authorization", c.bearerToken)
-	for key, value := range params {
-		req.Var(key, value)
+func SetHttpClient(client *http.Client) option {
+	return func(c *ClientSettings) {
+		c.httpClient = client
 	}
-	return c.graphqlClient.Run(ctx, req, res)
 }
 
-func handleGraphqlErrs(errs []graphqlError) error {
-	if len(errs) == 0 {
-		return nil
-	}
-	var errMsg string
-	for _, err := range errs {
-		errMsg += fmt.Sprintf("%s path: %s", err.Message, err.Path)
-	}
-	return fmt.Errorf("could not create tag: %s", errMsg)
+type customTransport struct{}
+
+func (t *customTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	req.Header.Set("GraphQL-Visibility", "internal")
+	return http.DefaultTransport.RoundTrip(req)
 }
 
-type graphqlError struct {
-	Path    []string
-	Message string
+func NewClient(apiToken string, options ...option) *Client {
+	httpToken := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: apiToken, TokenType: "Bearer"},
+	)
+	settings := &ClientSettings{
+		url: defaultURL,
+		ctx: context.Background(),
+		httpClient: &http.Client{
+			Transport: &oauth2.Transport{
+				Source: httpToken,
+				Base:   &customTransport{},
+			},
+		},
+	}
+	for _, opt := range options {
+		opt(settings)
+	}
+	return &Client{
+		url:    settings.url,
+		ctx:    settings.ctx,
+		client: graphql.NewClient(settings.url, settings.httpClient),
+	}
+}
+
+// Should we create a context for every query/mutate ?
+func (c *Client) Query(q interface{}, variables map[string]interface{}) error {
+	return c.client.Query(c.ctx, q, variables)
+}
+
+func (c *Client) Mutate(m interface{}, variables map[string]interface{}) error {
+	return c.client.Mutate(c.ctx, m, variables)
+}
+
+func (c *Client) Validate() error {
+	var q struct {
+		Account struct {
+			Id graphql.ID
+		}
+	}
+	err := c.Query(&q, nil)
+	if err != nil {
+		return fmt.Errorf("Unable to Validate connection to OpsLevel API: %s", err.Error())
+	}
+	return nil
 }
