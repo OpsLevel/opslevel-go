@@ -15,7 +15,7 @@ go get -u github.com/opslevel/opslevel-go
 
 # Usage
 
-Construct a client, specifying the API token. Then, you can use it to make GraphQL queries and mutations.
+Construct a client, specifying the [API token](https://app.opslevel.com/api_tokens). Then, you can use it to make GraphQL queries and mutations.
 
 ```Go
 client := opslevel.NewClient("XXX_API_TOKEN_XXX")
