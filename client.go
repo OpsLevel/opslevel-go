@@ -12,9 +12,9 @@ import (
 const defaultURL = "https://api.opslevel.com/graphql"
 
 type ClientSettings struct {
-	url        string
-	ctx        context.Context
-	httpClient *http.Client
+	url           string
+	apiVisibility string
+	ctx           context.Context
 }
 
 type Client struct {
@@ -37,16 +37,18 @@ func SetContext(ctx context.Context) option {
 	}
 }
 
-func SetHttpClient(client *http.Client) option {
+func SetAPIVisibility(visibility string) option {
 	return func(c *ClientSettings) {
-		c.httpClient = client
+		c.apiVisibility = visibility
 	}
 }
 
-type customTransport struct{}
+type customTransport struct {
+	apiVisibility string
+}
 
 func (t *customTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Set("GraphQL-Visibility", "internal")
+	req.Header.Set("GraphQL-Visibility", t.apiVisibility)
 	return http.DefaultTransport.RoundTrip(req)
 }
 
@@ -55,22 +57,24 @@ func NewClient(apiToken string, options ...option) *Client {
 		&oauth2.Token{AccessToken: apiToken, TokenType: "Bearer"},
 	)
 	settings := &ClientSettings{
-		url: defaultURL,
-		ctx: context.Background(),
-		httpClient: &http.Client{
-			Transport: &oauth2.Transport{
-				Source: httpToken,
-				Base:   &customTransport{},
-			},
-		},
+		url:           defaultURL,
+		ctx:           context.Background(),
+		apiVisibility: "public",
 	}
 	for _, opt := range options {
 		opt(settings)
 	}
 	return &Client{
-		url:    settings.url,
-		ctx:    settings.ctx,
-		client: graphql.NewClient(settings.url, settings.httpClient),
+		url: settings.url,
+		ctx: settings.ctx,
+		client: graphql.NewClient(settings.url, &http.Client{
+			Transport: &oauth2.Transport{
+				Source: httpToken,
+				Base: &customTransport{
+					apiVisibility: settings.apiVisibility,
+				},
+			},
+		}),
 	}
 }
 
