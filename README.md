@@ -1,9 +1,14 @@
+<img align="right" src="https://user-images.githubusercontent.com/735015/118144171-c2a40d00-b3d1-11eb-9b8c-a1cdd687cb36.png" width="320" height="160">
+
+
 opslevel-go
 ===========
+
 
 Package `opslevel` provides an OpsLevel API client implementation.
 
 *NOTE: this library is still a WIP and does not match the API 100% yet*
+
 
 # Installation
 
@@ -37,7 +42,8 @@ Find a service given an alias and print the owning team name:
 
 ```go
 foundService, foundServiceErr := client.GetServiceWithAlias("MyCoolService")
-if foundServiceErr != nil {
+if foundServiceErr != nil {![OpsLevel Golang Gopher NoBG](https://user-images.githubusercontent.com/735015/118144162-c041b300-b3d1-11eb-8eb2-03d01e7a3fc7.png)
+
 	panic(foundServiceErr)
 }
 fmt.Println(foundService.Owner.Name)
