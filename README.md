@@ -77,7 +77,7 @@ for _, tag := range tags {
 }
 // OR
 service, serviceErr := client.GetServiceWithAlias("MyCoolService")
-tags, tagsErr := client.GetTagsForServiceWithId(service.Id.(string))
+tags, tagsErr := client.GetTagsForServiceWithId(service.Id)
 for _, tag := range tags {
 	fmt.Printf("Tag '{%s : %s}'\n", tag.Key, tag.Value)
 }

@@ -215,10 +215,10 @@ func (q *TagsForServiceWithAlias) Query(client *Client, variables map[string]int
 	return nil
 }
 
-func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
+func (client *Client) GetTagsForServiceWithAlias(service string) ([]Tag, error) {
 	var q TagsForServiceWithAlias
 	v := PayloadVariables{
-		"service": graphql.String(alias),
+		"service": graphql.String(service),
 		"after":   graphql.String(""),
 		"first":   graphql.Int(100),
 	}
@@ -258,10 +258,10 @@ func (q *TagsForServiceWithId) Query(client *Client, variables map[string]interf
 	return nil
 }
 
-func (client *Client) GetTagsForServiceWithId(id string) ([]Tag, error) {
+func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error) {
 	var q TagsForServiceWithId
 	v := PayloadVariables{
-		"service": graphql.ID(id),
+		"service": service,
 		"after":   graphql.String(""),
 		"first":   graphql.Int(100),
 	}

@@ -84,14 +84,14 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	return &q.Account.Service, nil
 }
 
-func (client *Client) GetServiceWithId(id string) (*Service, error) {
+func (client *Client) GetServiceWithId(id graphql.ID) (*Service, error) {
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`
 		}
 	}
 	v := PayloadVariables{
-		"service": graphql.ID(id),
+		"service": id,
 	}
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
