@@ -30,13 +30,13 @@ type Tool struct {
 	DisplayName   graphql.String
 	Environment   graphql.String `json:",omitempty"`
 	Id            graphql.ID     `json:",omitempty"`
-	Service       Service        `json:",omitempty"`
 	Url           graphql.String
+}
 
-	// TODO: Not sure why these fields don't work during ToolCreateInput
-	//DisplayCategory graphql.String `json:",omitempty"`
-	//Locked          graphql.Boolean `json:",omitempty"`
-	//PlainId graphql.Int `json:",omitempty"`
+type ToolConnection struct {
+	Nodes []Tool
+	PageInfo PageInfo
+	TotalCount: int
 }
 
 type ToolCreateInput struct {

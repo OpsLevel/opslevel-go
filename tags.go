@@ -25,6 +25,12 @@ type Tag struct {
 	Value graphql.String `json:"value"`
 }
 
+type TagConnection struct {
+	Nodes      []Tag
+	PageInfo   PageInfo
+	TotalCount int
+}
+
 type TagInput struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`

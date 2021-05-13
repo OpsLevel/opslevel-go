@@ -17,6 +17,12 @@ type Service struct {
 	Tier        Tier             `json:"tier"`
 }
 
+type ServiceConnection struct {
+	Nodes      []Service
+	PageInfo   PageInfo
+	TotalCount int
+}
+
 type ServiceCreateInput struct {
 	Name        string `json:"name"`
 	Product     string `json:"product,omitempty"`
