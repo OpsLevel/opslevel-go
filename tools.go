@@ -33,12 +33,6 @@ type Tool struct {
 	Url           graphql.String
 }
 
-type ToolConnection struct {
-	Nodes []Tool
-	PageInfo PageInfo
-	TotalCount: int
-}
-
 type ToolCreateInput struct {
 	Category     ToolCategory `json:"category"`
 	DisplayName  string       `json:"displayName"`
@@ -71,41 +65,74 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 //#region Retrieve
 
-type ListToolQuery struct {
-	Account struct {
-		Tools struct {
-			Nodes      []Tool
-			PageInfo   PageInfo
-			TotalCount graphql.Int
-		} `graphql:"tools(after: $after, first: $first, service: $service)"`
+func (client *Client) GetToolsForServiceWithAlias(service string) ([]Tool, error) {
+	var output []Tool
+	var q struct {
+		Account struct {
+			Service struct {
+				Tools struct {
+					Nodes    []Tool
+					PageInfo PageInfo
+				} `graphql:"tools(after: $after, first: $first)"`
+			} `graphql:"service(alias: $service)"`
+		}
 	}
-}
-
-func (q *ListToolQuery) Query(client *Client, service graphql.ID) error {
-	var subQ ListToolQuery
 	v := PayloadVariables{
-		"after":   q.Account.Tools.PageInfo.End,
-		"first":   graphql.Int(100),
-		"service": service,
+		"service": graphql.String(service),
+		"after":   graphql.String(""),
+		"first":   client.pageSize,
 	}
-	if err := client.Query(&subQ, v); err != nil {
-		return err
+	if err := client.Query(&q, v); err != nil {
+		return output, err
 	}
-	if subQ.Account.Tools.PageInfo.HasNextPage {
-		subQ.Query(client, service)
+	for _, item := range q.Account.Service.Tools.Nodes {
+		output = append(output, item)
 	}
-	for _, tool := range subQ.Account.Tools.Nodes {
-		q.Account.Tools.Nodes = append(q.Account.Tools.Nodes, tool)
+	for q.Account.Service.Tools.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tools.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Service.Tools.Nodes {
+			output = append(output, item)
+		}
 	}
-	return nil
+	return output, nil
 }
 
-func (client *Client) ListTools(service graphql.ID) ([]Tool, error) {
-	q := ListToolQuery{}
-	if err := q.Query(client, service); err != nil {
-		return []Tool{}, err
+func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, error) {
+	var output []Tool
+	var q struct {
+		Account struct {
+			Service struct {
+				Tools struct {
+					Nodes    []Tool
+					PageInfo PageInfo
+				} `graphql:"tools(after: $after, first: $first)"`
+			} `graphql:"service(alias: $service)"`
+		}
 	}
-	return q.Account.Tools.Nodes, nil
+	v := PayloadVariables{
+		"service": service,
+		"after":   graphql.String(""),
+		"first":   client.pageSize,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return output, err
+	}
+	for _, item := range q.Account.Service.Tools.Nodes {
+		output = append(output, item)
+	}
+	for q.Account.Service.Tools.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tools.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Service.Tools.Nodes {
+			output = append(output, item)
+		}
+	}
+	return output, nil
 }
 
 func (client *Client) GetToolCount(service graphql.ID) (int, error) {

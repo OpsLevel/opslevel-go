@@ -105,7 +105,7 @@ func (client *Client) GetTeamCount() (int, error) {
 	var q struct {
 		Account struct {
 			Teams struct {
-				TotalCount graphql.Int
+				TotalCount int
 			}
 		}
 	}
@@ -115,39 +115,36 @@ func (client *Client) GetTeamCount() (int, error) {
 	return int(q.Account.Teams.TotalCount), nil
 }
 
-type ListTeamsQuery struct {
-	Account struct {
-		Teams struct {
-			Nodes    []Team
-			PageInfo PageInfo
-		} `graphql:"teams(after: $after, first: $first)"`
-	}
-}
-
-func (q *ListTeamsQuery) Query(client *Client) error {
-	var subQ ListTeamsQuery
-	v := PayloadVariables{
-		"after": q.Account.Teams.PageInfo.End,
-		"first": graphql.Int(100),
-	}
-	if err := client.Query(&subQ, v); err != nil {
-		return err
-	}
-	if subQ.Account.Teams.PageInfo.HasNextPage {
-		subQ.Query(client)
-	}
-	for _, team := range subQ.Account.Teams.Nodes {
-		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, team)
-	}
-	return nil
-}
-
 func (client *Client) ListTeams() ([]Team, error) {
-	q := ListTeamsQuery{}
-	if err := q.Query(client); err != nil {
-		return []Team{}, err
+	var output []Team
+	var q struct {
+		Account struct {
+			Teams struct {
+				Nodes    []Team
+				PageInfo PageInfo
+			} `graphql:"teams(after: $after, first: $first)"`
+		}
 	}
-	return q.Account.Teams.Nodes, nil
+	v := PayloadVariables{
+		"after": "",
+		"first": client.pageSize,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return output, err
+	}
+	for _, item := range q.Account.Teams.Nodes {
+		output = append(output, item)
+	}
+	for q.Account.Teams.PageInfo.HasNextPage {
+		v["after"] = q.Account.Teams.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Teams.Nodes {
+			output = append(output, item)
+		}
+	}
+	return output, nil
 }
 
 //#endregion

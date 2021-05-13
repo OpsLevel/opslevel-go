@@ -25,12 +25,6 @@ type Tag struct {
 	Value graphql.String `json:"value"`
 }
 
-type TagConnection struct {
-	Nodes      []Tag
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 type TagInput struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
@@ -191,90 +185,74 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 
 //#region Retrieve
 
-type TagsForServiceWithAlias struct {
-	Account struct {
-		Service struct {
-			Tags struct {
-				Nodes    []Tag
-				PageInfo PageInfo
-			} `graphql:"tags(after: $after, first: $first)"`
-		} `graphql:"service(alias: $service)"`
-	}
-}
-
-func (q *TagsForServiceWithAlias) Query(client *Client, variables map[string]interface{}) error {
-	if err := client.Query(&q, variables); err != nil {
-		return err
-	}
-	if q.Account.Service.Tags.PageInfo.HasNextPage {
-		var subQ TagsForServiceWithAlias
-		v := PayloadVariables{
-			"service": variables["service"],
-			"after":   q.Account.Service.Tags.PageInfo.End,
-			"first":   graphql.Int(100),
-		}
-		subQ.Query(client, v)
-		for _, item := range subQ.Account.Service.Tags.Nodes {
-			q.Account.Service.Tags.Nodes = append(q.Account.Service.Tags.Nodes, item)
-		}
-	}
-	return nil
-}
-
 func (client *Client) GetTagsForServiceWithAlias(service string) ([]Tag, error) {
-	var q TagsForServiceWithAlias
+	var output []Tag
+	var q struct {
+		Account struct {
+			Service struct {
+				Tags struct {
+					Nodes    []Tag
+					PageInfo PageInfo
+				} `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"service(alias: $service)"`
+		}
+	}
 	v := PayloadVariables{
 		"service": graphql.String(service),
 		"after":   graphql.String(""),
-		"first":   graphql.Int(100),
+		"first":   client.pageSize,
 	}
-	if err := q.Query(client, v); err != nil {
-		return []Tag{}, err
+	if err := client.Query(&q, v); err != nil {
+		return output, err
 	}
-	return q.Account.Service.Tags.Nodes, nil
-}
-
-type TagsForServiceWithId struct {
-	Account struct {
-		Service struct {
-			Tags struct {
-				Nodes    []Tag
-				PageInfo PageInfo
-			} `graphql:"tags(after: $after, first: $first)"`
-		} `graphql:"service(id: $service)"`
+	for _, item := range q.Account.Service.Tags.Nodes {
+		output = append(output, item)
 	}
-}
-
-func (q *TagsForServiceWithId) Query(client *Client, variables map[string]interface{}) error {
-	if err := client.Query(&q, variables); err != nil {
-		return err
-	}
-	if q.Account.Service.Tags.PageInfo.HasNextPage {
-		var subQ TagsForServiceWithId
-		v := PayloadVariables{
-			"service": variables["service"],
-			"after":   q.Account.Service.Tags.PageInfo.End,
-			"first":   graphql.Int(100),
+	for q.Account.Service.Tags.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tags.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
 		}
-		subQ.Query(client, v)
-		for _, item := range subQ.Account.Service.Tags.Nodes {
-			q.Account.Service.Tags.Nodes = append(q.Account.Service.Tags.Nodes, item)
+		for _, item := range q.Account.Service.Tags.Nodes {
+			output = append(output, item)
 		}
 	}
-	return nil
+	return output, nil
 }
 
 func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error) {
-	var q TagsForServiceWithId
+	var output []Tag
+	var q struct {
+		Account struct {
+			Service struct {
+				Tags struct {
+					Nodes    []Tag
+					PageInfo PageInfo
+				} `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
 	v := PayloadVariables{
 		"service": service,
 		"after":   graphql.String(""),
-		"first":   graphql.Int(100),
+		"first":   client.pageSize,
 	}
-	if err := q.Query(client, v); err != nil {
-		return []Tag{}, err
+	if err := client.Query(&q, v); err != nil {
+		return output, err
 	}
-	return q.Account.Service.Tags.Nodes, nil
+	for _, item := range q.Account.Service.Tags.Nodes {
+		output = append(output, item)
+	}
+	for q.Account.Service.Tags.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tags.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Service.Tags.Nodes {
+			output = append(output, item)
+		}
+	}
+	return output, nil
 }
 
 //#endregion

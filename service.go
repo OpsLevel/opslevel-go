@@ -17,12 +17,6 @@ type Service struct {
 	Tier        Tier             `json:"tier"`
 }
 
-type ServiceConnection struct {
-	Nodes      []Service
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 type ServiceCreateInput struct {
 	Name        string `json:"name"`
 	Product     string `json:"product,omitempty"`
@@ -120,40 +114,36 @@ func (client *Client) GetServiceCount() (int, error) {
 	return int(q.Account.Services.TotalCount), nil
 }
 
-type ListServicesQuery struct {
-	Account struct {
-		Services struct {
-			Nodes    []Service
-			PageInfo PageInfo
-		} `graphql:"services(after: $after, first: $first)"`
-	}
-}
-
-func (q *ListServicesQuery) Query(client *Client) error {
-	var subQ ListServicesQuery
-	v := PayloadVariables{
-		"after": q.Account.Services.PageInfo.End,
-		"first": graphql.Int(100),
-	}
-	if err := client.Query(&subQ, v); err != nil {
-		return err
-	}
-	if subQ.Account.Services.PageInfo.HasNextPage {
-		subQ.Query(client)
-	}
-	for _, service := range subQ.Account.Services.Nodes {
-		// TODO: if service.Tags.PageInfo.HasNextPage - Do Further Paginate Query?!
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, service)
-	}
-	return nil
-}
-
 func (client *Client) ListServices() ([]Service, error) {
-	q := ListServicesQuery{}
-	if err := q.Query(client); err != nil {
-		return []Service{}, err
+	var output []Service
+	var q struct {
+		Account struct {
+			Services struct {
+				Nodes    []Service
+				PageInfo PageInfo
+			} `graphql:"services(after: $after, first: $first)"`
+		}
 	}
-	return q.Account.Services.Nodes, nil
+	v := PayloadVariables{
+		"after": "",
+		"first": client.pageSize,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return output, err
+	}
+	for _, item := range q.Account.Services.Nodes {
+		output = append(output, item)
+	}
+	for q.Account.Services.PageInfo.HasNextPage {
+		v["after"] = q.Account.Services.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Services.Nodes {
+			output = append(output, item)
+		}
+	}
+	return output, nil
 }
 
 //#endregion
