@@ -68,6 +68,21 @@ for tagKey, tagValue := range allTagsOnThisService {
 }
 ```
 
+List all the tags for a service:
+
+```go
+tags, tagsErr := client.GetTagsForServiceWithAlias("MyCoolService")
+for _, tag := range tags {
+	fmt.Printf("Tag '{%s : %s}'\n", tag.Key, tag.Value)
+}
+// OR
+service, serviceErr := client.GetServiceWithAlias("MyCoolService")
+tags, tagsErr := client.GetTagsForServiceWithId(service.Id.(string))
+for _, tag := range tags {
+	fmt.Printf("Tag '{%s : %s}'\n", tag.Key, tag.Value)
+}
+```
+
 Build a lookup table of teams:
 
 ```go
