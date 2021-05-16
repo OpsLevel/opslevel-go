@@ -31,7 +31,7 @@ type Tool struct {
 	Environment   graphql.String `json:",omitempty"`
 	Id            graphql.ID     `json:",omitempty"`
 	Url           graphql.String
-	Service       Service
+	Service       ServiceId
 }
 
 type ToolConnection struct {

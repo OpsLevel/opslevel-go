@@ -4,17 +4,23 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+type ServiceId struct {
+	Id graphql.ID `json:"id"`
+}
+
 type Service struct {
 	Aliases     []graphql.String `json:"aliases"`
 	Description graphql.String   `json:"description"`
 	Framework   graphql.String   `json:"framework"`
-	Id          graphql.ID       `json:"id"`
 	Language    graphql.String   `json:"language"`
 	Lifecycle   Lifecycle        `json:"lifecycle"`
 	Name        graphql.String   `json:"name"`
 	Owner       Team             `json:"owner"`
 	Product     graphql.String   `json:"product"`
 	Tier        Tier             `json:"tier"`
+	Tags        TagConnection
+	Tools       ToolConnection
+	ServiceId
 }
 
 type ServiceConnection struct {
