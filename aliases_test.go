@@ -14,5 +14,5 @@ func TestCreateAliases(t *testing.T) {
 	result := client.CreateAliases("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", []string{"MyAwesomeService"})
 	// Assert
 	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, []byte("MyAwesomeService"), []byte(result[1]))
+	autopilot.Equals(t, "MyAwesomeService", result[1])
 }

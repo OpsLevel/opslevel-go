@@ -26,18 +26,18 @@ const (
 
 type Tool struct {
 	Category      ToolCategory
-	CategoryAlias graphql.String `json:",omitempty"`
-	DisplayName   graphql.String
-	Environment   graphql.String `json:",omitempty"`
-	Id            graphql.ID     `json:",omitempty"`
-	Url           graphql.String
+	CategoryAlias string `json:",omitempty"`
+	DisplayName   string
+	Environment   string     `json:",omitempty"`
+	Id            graphql.ID `json:",omitempty"`
+	Url           string
 	Service       ServiceId
 }
 
 type ToolConnection struct {
 	Nodes      []Tool
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type ToolCreateInput struct {

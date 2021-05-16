@@ -21,7 +21,7 @@ func TestCreateTool(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, graphql.ID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"), result.Service.Id)
-	autopilot.Equals(t, []byte("https://example.com"), []byte(result.Url))
+	autopilot.Equals(t, "https://example.com", result.Url)
 }
 
 func TestGetToolsForService(t *testing.T) {

@@ -19,16 +19,16 @@ const (
 )
 
 type Tag struct {
-	Id    graphql.ID     `json:"id"`
-	Owner TagOwner       `json:"owner"`
-	Key   graphql.String `json:"key"`
-	Value graphql.String `json:"value"`
+	Id    graphql.ID `json:"id"`
+	Owner TagOwner   `json:"owner"`
+	Key   string     `json:"key"`
+	Value string     `json:"value"`
 }
 
 type TagConnection struct {
 	Nodes      []Tag
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type TagInput struct {
