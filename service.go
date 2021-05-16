@@ -90,7 +90,12 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	return &q.Account.Service, nil
 }
 
+// Deprecated: Use GetService instead
 func (client *Client) GetServiceWithId(id graphql.ID) (*Service, error) {
+	return client.GetService(id)
+}
+
+func (client *Client) GetService(id graphql.ID) (*Service, error) {
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`

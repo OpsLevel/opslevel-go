@@ -223,7 +223,12 @@ func (client *Client) GetTagsForServiceWithAlias(service string) ([]Tag, error) 
 	return output, nil
 }
 
+// Deprecated: use GetTagsForService instead
 func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error) {
+	return client.GetTagsForService(service)
+}
+
+func (client *Client) GetTagsForService(service graphql.ID) ([]Tag, error) {
 	var output []Tag
 	var q struct {
 		Account struct {

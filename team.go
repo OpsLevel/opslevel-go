@@ -86,7 +86,12 @@ func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 	return &q.Account.Team, nil
 }
 
+// Deprecated: use GetTeam instead
 func (client *Client) GetTeamWithId(id graphql.ID) (*Team, error) {
+	return client.GetTeam(id)
+}
+
+func (client *Client) GetTeam(id graphql.ID) (*Team, error) {
 	var q struct {
 		Account struct {
 			Team Team `graphql:"team(id: $team)"`
@@ -190,7 +195,12 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 	return FormatErrors(m.Payload.Errors)
 }
 
+// Deprecated: use DeleteTeam instead
 func (client *Client) DeleteTeamWithId(id graphql.ID) error {
+	return client.DeleteTeam(id)
+}
+
+func (client *Client) DeleteTeam(id graphql.ID) error {
 	var m struct {
 		Payload struct {
 			Id     graphql.ID       `graphql:"deletedTeamId"`

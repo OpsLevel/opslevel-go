@@ -28,7 +28,7 @@ func TestGetToolsForService(t *testing.T) {
 	url := autopilot.RegisterEndpoint("/query_tools", "query_tools.json")
 	client := NewClient("X", SetURL(url))
 	// Act
-	result, err := client.GetToolsForServiceWithId(graphql.ID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"))
+	result, err := client.GetToolsForService(graphql.ID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result))
