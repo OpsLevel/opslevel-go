@@ -23,15 +23,15 @@ func TestCreateTool(t *testing.T) {
 	autopilot.Equals(t, graphql.ID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"), result.Service.Id)
 }
 
-func TestListTools(t *testing.T) {
+func TestGetToolsForService(t *testing.T) {
 	// Arrange
 	url := autopilot.RegisterEndpoint("/query_tools", "query_tools.json")
 	client := NewClient("X", SetURL(url))
 	// Act
-	result, err := client.ListTools("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2")
+	result, err := client.GetToolsForServiceWithId(graphql.ID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"))
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 0, len(result))
+	autopilot.Equals(t, 1, len(result))
 }
 
 func TestGetToolsCount(t *testing.T) {
@@ -42,5 +42,5 @@ func TestGetToolsCount(t *testing.T) {
 	result, err := client.GetToolCount("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 0, result)
+	autopilot.Equals(t, 1, result)
 }

@@ -26,8 +26,9 @@ type Tag struct {
 }
 
 type TagConnection struct {
-	Nodes    []Tag
-	PageInfo PageInfo
+	Nodes      []Tag
+	PageInfo   PageInfo
+	TotalCount graphql.Int
 }
 
 type TagInput struct {

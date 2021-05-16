@@ -31,11 +31,13 @@ type Tool struct {
 	Environment   graphql.String `json:",omitempty"`
 	Id            graphql.ID     `json:",omitempty"`
 	Url           graphql.String
+	Service       Service
 }
 
 type ToolConnection struct {
-	Nodes    []Tool
-	PageInfo PageInfo
+	Nodes      []Tool
+	PageInfo   PageInfo
+	TotalCount graphql.Int
 }
 
 type ToolCreateInput struct {
@@ -70,39 +72,20 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 //#region Retrieve
 
-func (client *Client) GetToolsForServiceWithAlias(service string) ([]Tool, error) {
-	var output []Tool
-	var q struct {
-		Account struct {
-			Service struct {
-				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
-			} `graphql:"service(alias: $service)"`
-		}
+func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) {
+	service, serviceErr := client.GetServiceWithAlias(alias)
+	if serviceErr != nil {
+		return nil, serviceErr
 	}
-	v := PayloadVariables{
-		"service": graphql.String(service),
-		"after":   graphql.String(""),
-		"first":   client.pageSize,
-	}
-	if err := client.Query(&q, v); err != nil {
-		return output, err
-	}
-	for _, item := range q.Account.Service.Tools.Nodes {
-		output = append(output, item)
-	}
-	for q.Account.Service.Tools.PageInfo.HasNextPage {
-		v["after"] = q.Account.Service.Tools.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return output, err
-		}
-		for _, item := range q.Account.Service.Tools.Nodes {
-			output = append(output, item)
-		}
-	}
-	return output, nil
+	return client.GetToolsForService(service.Id)
 }
 
+// Deprecated: Use GetToolsForService instead
 func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, error) {
+	return client.GetToolsForService(service)
+}
+
+func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
 	var output []Tool
 	var q struct {
 		Account struct {
@@ -138,9 +121,7 @@ func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 	var q struct {
 		Account struct {
 			Service struct {
-				Tools struct {
-					TotalCount graphql.Int
-				}
+				Tools ToolConnection
 			} `graphql:"service(alias: $service)"`
 		}
 	}

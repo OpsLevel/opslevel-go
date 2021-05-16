@@ -18,8 +18,9 @@ type Service struct {
 }
 
 type ServiceConnection struct {
-	Nodes    []Service
-	PageInfo PageInfo
+	Nodes      []Service
+	PageInfo   PageInfo
+	TotalCount graphql.Int
 }
 
 type ServiceCreateInput struct {
