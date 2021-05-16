@@ -9,15 +9,15 @@ type ServiceId struct {
 }
 
 type Service struct {
-	Aliases     []graphql.String `json:"aliases"`
-	Description graphql.String   `json:"description"`
-	Framework   graphql.String   `json:"framework"`
-	Language    graphql.String   `json:"language"`
-	Lifecycle   Lifecycle        `json:"lifecycle"`
-	Name        graphql.String   `json:"name"`
-	Owner       Team             `json:"owner"`
-	Product     graphql.String   `json:"product"`
-	Tier        Tier             `json:"tier"`
+	Aliases     []string  `json:"aliases"`
+	Description string    `json:"description"`
+	Framework   string    `json:"framework"`
+	Language    string    `json:"language"`
+	Lifecycle   Lifecycle `json:"lifecycle"`
+	Name        string    `json:"name"`
+	Owner       Team      `json:"owner"`
+	Product     string    `json:"product"`
+	Tier        Tier      `json:"tier"`
 	Tags        TagConnection
 	Tools       ToolConnection
 	ServiceId
@@ -58,6 +58,24 @@ type ServiceDeleteInput struct {
 	Alias string     `json:"alias,omitempty"`
 }
 
+func (s *Service) HasAlias(alias string) bool {
+	for _, a := range s.Aliases {
+		if a == alias {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Service) HasTag(key string, value string) bool {
+	for _, tag := range s.Tags.Nodes {
+		if tag.Key == key && tag.Value == value {
+			return true
+		}
+	}
+	return false
+}
+
 //#region Create
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
@@ -79,6 +97,22 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 //#endregion
 
 //#region Retrieve
+
+// This is a lightweight api call to lookup a service id by and alias - it does not return a full Service object
+func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
+	var q struct {
+		Account struct {
+			Service ServiceId `graphql:"service(alias: $service)"`
+		}
+	}
+	v := PayloadVariables{
+		"service": graphql.String(alias),
+	}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	return &q.Account.Service, nil
+}
 
 func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	var q struct {

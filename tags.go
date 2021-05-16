@@ -191,36 +191,12 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 
 //#region Retrieve
 
-func (client *Client) GetTagsForServiceWithAlias(service string) ([]Tag, error) {
-	var output []Tag
-	var q struct {
-		Account struct {
-			Service struct {
-				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
-			} `graphql:"service(alias: $service)"`
-		}
+func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
+	service, serviceErr := client.GetServiceIdWithAlias(alias)
+	if serviceErr != nil {
+		return nil, serviceErr
 	}
-	v := PayloadVariables{
-		"service": graphql.String(service),
-		"after":   graphql.String(""),
-		"first":   client.pageSize,
-	}
-	if err := client.Query(&q, v); err != nil {
-		return output, err
-	}
-	for _, item := range q.Account.Service.Tags.Nodes {
-		output = append(output, item)
-	}
-	for q.Account.Service.Tags.PageInfo.HasNextPage {
-		v["after"] = q.Account.Service.Tags.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return output, err
-		}
-		for _, item := range q.Account.Service.Tags.Nodes {
-			output = append(output, item)
-		}
-	}
-	return output, nil
+	return client.GetTagsForService(service.Id)
 }
 
 // Deprecated: use GetTagsForService instead
@@ -265,9 +241,9 @@ func (client *Client) GetTagCount(service graphql.ID) (int, error) {
 		Account struct {
 			Service struct {
 				Tags struct {
-					TotalCount graphql.Int
+					TotalCount int
 				}
-			} `graphql:"service(alias: $service)"`
+			} `graphql:"service(id: $service)"`
 		}
 	}
 	v := PayloadVariables{

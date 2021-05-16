@@ -6,13 +6,21 @@
           "nodes": [
             {
               "category": "code",
+              "categoryAlias": null,
               "displayName": "GitHub",
-              "url": "https://github.com/opslevel/coredns"
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNA",
+              "url": "https://github.com/opslevel/coredns",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
             }
           ],
           "pageInfo": {
-            "endCursor": "MQ",
-            "hasNextPage": false
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "MQ"
           },
           "totalCount": 1
         }

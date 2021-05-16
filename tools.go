@@ -73,7 +73,7 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 //#region Retrieve
 
 func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) {
-	service, serviceErr := client.GetServiceWithAlias(alias)
+	service, serviceErr := client.GetServiceIdWithAlias(alias)
 	if serviceErr != nil {
 		return nil, serviceErr
 	}
@@ -91,7 +91,7 @@ func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
 		Account struct {
 			Service struct {
 				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
-			} `graphql:"service(alias: $service)"`
+			} `graphql:"service(id: $service)"`
 		}
 	}
 	v := PayloadVariables{
@@ -121,8 +121,10 @@ func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 	var q struct {
 		Account struct {
 			Service struct {
-				Tools ToolConnection
-			} `graphql:"service(alias: $service)"`
+				Tools struct {
+					TotalCount int
+				}
+			} `graphql:"service(id: $service)"`
 		}
 	}
 	v := PayloadVariables{
