@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.1"></a>
+## [v0.1.1] - 2021-05-16
 ### Bugfix
 - dedupe the aliases in the response of CreateAliases method
 
@@ -24,4 +27,5 @@
 - client configuration to allow for settings api visibility header
 
 
-[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.1...HEAD
+[v0.1.1]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.0...v0.1.1
