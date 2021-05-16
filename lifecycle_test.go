@@ -8,7 +8,7 @@ import (
 
 func TestListLifecycles(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/query_lifecycles", "query_lifecycles.json")
+	url := autopilot.RegisterEndpoint("/query_lifecycles", autopilot.FixtureResponse("lifecycles_response.json"), autopilot.SkipRequestValidation())
 	client := NewClient("X", SetURL(url))
 	// Act
 	result, err := client.ListLifecycles()

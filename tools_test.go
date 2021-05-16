@@ -9,7 +9,7 @@ import (
 
 func TestCreateTool(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/mutate_toolCreate", "mutate_toolCreate.json")
+	url := autopilot.RegisterEndpoint("/toolCreate", autopilot.FixtureResponse("toolCreate_response.json"), autopilot.SkipRequestValidation())
 	client := NewClient("X", SetURL(url))
 	// Act
 	result, err := client.CreateTool(ToolCreateInput{
@@ -26,7 +26,7 @@ func TestCreateTool(t *testing.T) {
 
 func TestGetToolsForService(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/query_tools", "query_tools.json")
+	url := autopilot.RegisterEndpoint("/tools", autopilot.FixtureResponse("tools_response.json"), autopilot.SkipRequestValidation())
 	client := NewClient("X", SetURL(url))
 	// Act
 	result, err := client.GetToolsForService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2")
@@ -37,7 +37,7 @@ func TestGetToolsForService(t *testing.T) {
 
 func TestGetToolsCount(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/query_tools_count", "query_tools.json")
+	url := autopilot.RegisterEndpoint("/tools_count", autopilot.FixtureResponse("tools_response.json"), autopilot.SkipRequestValidation())
 	client := NewClient("X", SetURL(url))
 	// Act
 	result, err := client.GetToolCount("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2")

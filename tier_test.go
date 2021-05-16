@@ -8,7 +8,7 @@ import (
 
 func TestListTiers(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/query_tiers", "query_tiers.json")
+	url := autopilot.RegisterEndpoint("/tiers", autopilot.FixtureResponse("tiers_response.json"), autopilot.SkipRequestValidation())
 	client := NewClient("X", SetURL(url))
 	// Act
 	result, err := client.ListTiers()
