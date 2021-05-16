@@ -21,12 +21,17 @@ type ContactInput struct {
 }
 
 type Team struct {
-	Alias            graphql.String
+	Alias            string
 	Contacts         []Contact
 	Id               graphql.ID
 	Manager          User
-	Name             graphql.String
-	Responsibilities graphql.String
+	Name             string
+	Responsibilities string
+}
+
+type TeamConnection struct {
+	Nodes    []Team
+	PageInfo PageInfo
 }
 
 type TeamCreateInput struct {
@@ -124,14 +129,11 @@ func (client *Client) ListTeams() ([]Team, error) {
 	var output []Team
 	var q struct {
 		Account struct {
-			Teams struct {
-				Nodes    []Team
-				PageInfo PageInfo
-			} `graphql:"teams(after: $after, first: $first)"`
+			Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
 		}
 	}
 	v := PayloadVariables{
-		"after": "",
+		"after": graphql.String(""),
 		"first": client.pageSize,
 	}
 	if err := client.Query(&q, v); err != nil {

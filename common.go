@@ -3,13 +3,15 @@ package opslevel
 import (
 	"fmt"
 	"strings"
+
+	"github.com/shurcooL/graphql"
 )
 
 type PageInfo struct {
-	HasNextPage     bool   `graphql:"hasNextPage"`
-	HasPreviousPage bool   `graphql:"hasPreviousPage"`
-	Start           string `graphql:"startCursor"`
-	End             string `graphql:"endCursor"`
+	HasNextPage     graphql.Boolean `graphql:"hasNextPage"`
+	HasPreviousPage graphql.Boolean `graphql:"hasPreviousPage"`
+	Start           graphql.String  `graphql:"startCursor"`
+	End             graphql.String  `graphql:"endCursor"`
 }
 
 type PayloadVariables map[string]interface{}

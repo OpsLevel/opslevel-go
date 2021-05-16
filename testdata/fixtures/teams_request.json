@@ -1,0 +1,7 @@
+{
+    "query": "query($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+    "variables": {
+      "after": "",
+      "first": 100
+    }
+  }
