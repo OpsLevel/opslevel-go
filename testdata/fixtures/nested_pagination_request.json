@@ -1,0 +1,7 @@
+{
+    "query": "query($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{aliases,description,framework,language,lifecycle{alias,description,id,index,name},name,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},product,tier{alias,description,id,index,name},tags{nodes{id,owner,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+    "variables": {
+      "after": "",
+      "first": 100
+    }
+}

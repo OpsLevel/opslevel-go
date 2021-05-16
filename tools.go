@@ -26,17 +26,18 @@ const (
 
 type Tool struct {
 	Category      ToolCategory
-	CategoryAlias graphql.String `json:",omitempty"`
-	DisplayName   graphql.String
-	Environment   graphql.String `json:",omitempty"`
-	Id            graphql.ID     `json:",omitempty"`
-	Service       Service        `json:",omitempty"`
-	Url           graphql.String
+	CategoryAlias string `json:",omitempty"`
+	DisplayName   string
+	Environment   string     `json:",omitempty"`
+	Id            graphql.ID `json:",omitempty"`
+	Url           string
+	Service       ServiceId
+}
 
-	// TODO: Not sure why these fields don't work during ToolCreateInput
-	//DisplayCategory graphql.String `json:",omitempty"`
-	//Locked          graphql.Boolean `json:",omitempty"`
-	//PlainId graphql.Int `json:",omitempty"`
+type ToolConnection struct {
+	Nodes      []Tool
+	PageInfo   PageInfo
+	TotalCount int
 }
 
 type ToolCreateInput struct {
@@ -71,51 +72,57 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 //#region Retrieve
 
-type ListToolQuery struct {
-	Account struct {
-		Tools struct {
-			Nodes      []Tool
-			PageInfo   PageInfo
-			TotalCount graphql.Int
-		} `graphql:"tools(after: $after, first: $first, service: $service)"`
+func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) {
+	service, serviceErr := client.GetServiceWithAlias(alias)
+	if serviceErr != nil {
+		return nil, serviceErr
 	}
+	return client.GetToolsForService(service.Id)
 }
 
-func (q *ListToolQuery) Query(client *Client, service graphql.ID) error {
-	var subQ ListToolQuery
+// Deprecated: Use GetToolsForService instead
+func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, error) {
+	return client.GetToolsForService(service)
+}
+
+func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
+	var output []Tool
+	var q struct {
+		Account struct {
+			Service struct {
+				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
+			} `graphql:"service(alias: $service)"`
+		}
+	}
 	v := PayloadVariables{
-		"after":   q.Account.Tools.PageInfo.End,
-		"first":   graphql.Int(100),
 		"service": service,
+		"after":   graphql.String(""),
+		"first":   client.pageSize,
 	}
-	if err := client.Query(&subQ, v); err != nil {
-		return err
+	if err := client.Query(&q, v); err != nil {
+		return output, err
 	}
-	if subQ.Account.Tools.PageInfo.HasNextPage {
-		subQ.Query(client, service)
+	for _, item := range q.Account.Service.Tools.Nodes {
+		output = append(output, item)
 	}
-	for _, tool := range subQ.Account.Tools.Nodes {
-		q.Account.Tools.Nodes = append(q.Account.Tools.Nodes, tool)
+	for q.Account.Service.Tools.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tools.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Service.Tools.Nodes {
+			output = append(output, item)
+		}
 	}
-	return nil
-}
-
-func (client *Client) ListTools(service graphql.ID) ([]Tool, error) {
-	q := ListToolQuery{}
-	if err := q.Query(client, service); err != nil {
-		return []Tool{}, err
-	}
-	return q.Account.Tools.Nodes, nil
+	return output, nil
 }
 
 func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 	var q struct {
 		Account struct {
-			Tools struct {
-				Nodes      []Tool
-				PageInfo   PageInfo
-				TotalCount graphql.Int
-			} `graphql:"tools(service: $service)"`
+			Service struct {
+				Tools ToolConnection
+			} `graphql:"service(alias: $service)"`
 		}
 	}
 	v := PayloadVariables{
@@ -124,7 +131,7 @@ func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 	if err := client.Query(&q, v); err != nil {
 		return 0, err
 	}
-	return int(q.Account.Tools.TotalCount), nil
+	return int(q.Account.Service.Tools.TotalCount), nil
 }
 
 //#endregion

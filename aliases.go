@@ -26,7 +26,7 @@ func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) []stri
 			output = append(output, string(resultAlias))
 		}
 	}
-	// TODO: need to treat this like a HashSet to deduplicate
+	output = removeDuplicates(output)
 	return output
 }
 

@@ -1,0 +1,9 @@
+{
+    "query": "mutation($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}",
+    "variables": {
+      "input": {
+        "alias": "MyAwesomeService",
+        "ownerId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"
+      }
+    }
+  }

@@ -1,15 +1,11 @@
 package opslevel
 
-import (
-	"github.com/shurcooL/graphql"
-)
-
 type Tier struct {
-	Alias       graphql.String
-	Description graphql.String
-	Id          graphql.String
-	Index       graphql.Int
-	Name        graphql.String
+	Alias       string
+	Description string
+	Id          string
+	Index       int
+	Name        string
 }
 
 func (client *Client) ListTiers() ([]Tier, error) {

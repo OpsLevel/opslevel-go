@@ -1,0 +1,22 @@
+{
+  "data": {
+    "account": {
+      "service": {
+        "tools": {
+          "nodes": [
+            {
+              "category": "code",
+              "displayName": "GitHub",
+              "url": "https://github.com/opslevel/coredns"
+            }
+          ],
+          "pageInfo": {
+            "endCursor": "MQ",
+            "hasNextPage": false
+          },
+          "totalCount": 1
+        }
+      }
+    }
+  }
+}

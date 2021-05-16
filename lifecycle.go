@@ -5,11 +5,11 @@ import (
 )
 
 type Lifecycle struct {
-	Alias       graphql.String
-	Description graphql.String
+	Alias       string
+	Description string
 	Id          graphql.ID
-	Index       graphql.Int
-	Name        graphql.String
+	Index       int
+	Name        string
 }
 
 func (client *Client) ListLifecycles() ([]Lifecycle, error) {

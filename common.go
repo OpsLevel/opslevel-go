@@ -3,22 +3,20 @@ package opslevel
 import (
 	"fmt"
 	"strings"
-
-	"github.com/shurcooL/graphql"
 )
 
 type PageInfo struct {
-	HasNextPage     graphql.Boolean `graphql:"hasNextPage"`
-	HasPreviousPage graphql.Boolean `graphql:"hasPreviousPage"`
-	Start           graphql.String  `graphql:"startCursor"`
-	End             graphql.String  `graphql:"endCursor"`
+	HasNextPage     bool   `graphql:"hasNextPage"`
+	HasPreviousPage bool   `graphql:"hasPreviousPage"`
+	Start           string `graphql:"startCursor"`
+	End             string `graphql:"endCursor"`
 }
 
 type PayloadVariables map[string]interface{}
 
 type OpsLevelErrors struct {
-	Message graphql.String
-	Path    []graphql.String
+	Message string
+	Path    []string
 }
 
 func FormatErrors(errs []OpsLevelErrors) error {
@@ -33,4 +31,17 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	}
 
 	return fmt.Errorf(strings.Join(errstrings, "\n"))
+}
+
+func removeDuplicates(data []string) []string {
+	keys := make(map[string]bool)
+	list := []string{}
+
+	for _, entry := range data {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
 }

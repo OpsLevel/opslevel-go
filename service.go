@@ -4,17 +4,29 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+type ServiceId struct {
+	Id graphql.ID `json:"id"`
+}
+
 type Service struct {
 	Aliases     []graphql.String `json:"aliases"`
 	Description graphql.String   `json:"description"`
 	Framework   graphql.String   `json:"framework"`
-	Id          graphql.ID       `json:"id"`
 	Language    graphql.String   `json:"language"`
 	Lifecycle   Lifecycle        `json:"lifecycle"`
 	Name        graphql.String   `json:"name"`
 	Owner       Team             `json:"owner"`
 	Product     graphql.String   `json:"product"`
 	Tier        Tier             `json:"tier"`
+	Tags        TagConnection
+	Tools       ToolConnection
+	ServiceId
+}
+
+type ServiceConnection struct {
+	Nodes      []Service
+	PageInfo   PageInfo
+	TotalCount graphql.Int
 }
 
 type ServiceCreateInput struct {
@@ -84,7 +96,12 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	return &q.Account.Service, nil
 }
 
+// Deprecated: Use GetService instead
 func (client *Client) GetServiceWithId(id graphql.ID) (*Service, error) {
+	return client.GetService(id)
+}
+
+func (client *Client) GetService(id graphql.ID) (*Service, error) {
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`
@@ -114,40 +131,33 @@ func (client *Client) GetServiceCount() (int, error) {
 	return int(q.Account.Services.TotalCount), nil
 }
 
-type ListServicesQuery struct {
-	Account struct {
-		Services struct {
-			Nodes    []Service
-			PageInfo PageInfo
-		} `graphql:"services(after: $after, first: $first)"`
-	}
-}
-
-func (q *ListServicesQuery) Query(client *Client) error {
-	var subQ ListServicesQuery
-	v := PayloadVariables{
-		"after": q.Account.Services.PageInfo.End,
-		"first": graphql.Int(100),
-	}
-	if err := client.Query(&subQ, v); err != nil {
-		return err
-	}
-	if subQ.Account.Services.PageInfo.HasNextPage {
-		subQ.Query(client)
-	}
-	for _, service := range subQ.Account.Services.Nodes {
-		// TODO: if service.Tags.PageInfo.HasNextPage - Do Further Paginate Query?!
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, service)
-	}
-	return nil
-}
-
 func (client *Client) ListServices() ([]Service, error) {
-	q := ListServicesQuery{}
-	if err := q.Query(client); err != nil {
-		return []Service{}, err
+	var output []Service
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
+		}
 	}
-	return q.Account.Services.Nodes, nil
+	v := PayloadVariables{
+		"after": graphql.String(""),
+		"first": client.pageSize,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return output, err
+	}
+	for _, item := range q.Account.Services.Nodes {
+		output = append(output, item)
+	}
+	for q.Account.Services.PageInfo.HasNextPage {
+		v["after"] = q.Account.Services.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Services.Nodes {
+			output = append(output, item)
+		}
+	}
+	return output, nil
 }
 
 //#endregion

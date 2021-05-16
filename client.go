@@ -14,13 +14,15 @@ const defaultURL = "https://api.opslevel.com/graphql"
 type ClientSettings struct {
 	url           string
 	apiVisibility string
+	pageSize      int
 	ctx           context.Context
 }
 
 type Client struct {
-	url    string
-	ctx    context.Context // Should this be here?
-	client *graphql.Client
+	url      string
+	pageSize graphql.Int
+	ctx      context.Context // Should this be here?
+	client   *graphql.Client
 }
 
 type option func(*ClientSettings)
@@ -34,6 +36,12 @@ func SetURL(url string) option {
 func SetContext(ctx context.Context) option {
 	return func(c *ClientSettings) {
 		c.ctx = ctx
+	}
+}
+
+func SetPageSize(size int) option {
+	return func(c *ClientSettings) {
+		c.pageSize = size
 	}
 }
 
@@ -58,15 +66,17 @@ func NewClient(apiToken string, options ...option) *Client {
 	)
 	settings := &ClientSettings{
 		url:           defaultURL,
-		ctx:           context.Background(),
 		apiVisibility: "public",
+		pageSize:      100,
+		ctx:           context.Background(),
 	}
 	for _, opt := range options {
 		opt(settings)
 	}
 	return &Client{
-		url: settings.url,
-		ctx: settings.ctx,
+		url:      settings.url,
+		pageSize: graphql.Int(settings.pageSize),
+		ctx:      settings.ctx,
 		client: graphql.NewClient(settings.url, &http.Client{
 			Transport: &oauth2.Transport{
 				Source: httpToken,
