@@ -33,6 +33,11 @@ type Tool struct {
 	Url           graphql.String
 }
 
+type ToolConnection struct {
+	Nodes    []Tool
+	PageInfo PageInfo
+}
+
 type ToolCreateInput struct {
 	Category     ToolCategory `json:"category"`
 	DisplayName  string       `json:"displayName"`
@@ -70,10 +75,7 @@ func (client *Client) GetToolsForServiceWithAlias(service string) ([]Tool, error
 	var q struct {
 		Account struct {
 			Service struct {
-				Tools struct {
-					Nodes    []Tool
-					PageInfo PageInfo
-				} `graphql:"tools(after: $after, first: $first)"`
+				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
 			} `graphql:"service(alias: $service)"`
 		}
 	}
@@ -105,10 +107,7 @@ func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, erro
 	var q struct {
 		Account struct {
 			Service struct {
-				Tools struct {
-					Nodes    []Tool
-					PageInfo PageInfo
-				} `graphql:"tools(after: $after, first: $first)"`
+				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
 			} `graphql:"service(alias: $service)"`
 		}
 	}
@@ -138,11 +137,11 @@ func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, erro
 func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 	var q struct {
 		Account struct {
-			Tools struct {
-				Nodes      []Tool
-				PageInfo   PageInfo
-				TotalCount graphql.Int
-			} `graphql:"tools(service: $service)"`
+			Service struct {
+				Tools struct {
+					TotalCount graphql.Int
+				}
+			} `graphql:"service(alias: $service)"`
 		}
 	}
 	v := PayloadVariables{
@@ -151,7 +150,7 @@ func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 	if err := client.Query(&q, v); err != nil {
 		return 0, err
 	}
-	return int(q.Account.Tools.TotalCount), nil
+	return int(q.Account.Service.Tools.TotalCount), nil
 }
 
 //#endregion

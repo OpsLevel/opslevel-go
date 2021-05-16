@@ -25,6 +25,11 @@ type Tag struct {
 	Value graphql.String `json:"value"`
 }
 
+type TagConnection struct {
+	Nodes    []Tag
+	PageInfo PageInfo
+}
+
 type TagInput struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
@@ -190,10 +195,7 @@ func (client *Client) GetTagsForServiceWithAlias(service string) ([]Tag, error) 
 	var q struct {
 		Account struct {
 			Service struct {
-				Tags struct {
-					Nodes    []Tag
-					PageInfo PageInfo
-				} `graphql:"tags(after: $after, first: $first)"`
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
 			} `graphql:"service(alias: $service)"`
 		}
 	}
@@ -225,10 +227,7 @@ func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error)
 	var q struct {
 		Account struct {
 			Service struct {
-				Tags struct {
-					Nodes    []Tag
-					PageInfo PageInfo
-				} `graphql:"tags(after: $after, first: $first)"`
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}
@@ -253,6 +252,25 @@ func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error)
 		}
 	}
 	return output, nil
+}
+
+func (client *Client) GetTagCount(service graphql.ID) (int, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Tags struct {
+					TotalCount graphql.Int
+				}
+			} `graphql:"service(alias: $service)"`
+		}
+	}
+	v := PayloadVariables{
+		"service": service,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return 0, err
+	}
+	return int(q.Account.Service.Tags.TotalCount), nil
 }
 
 //#endregion

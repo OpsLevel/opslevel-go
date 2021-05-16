@@ -17,6 +17,11 @@ type Service struct {
 	Tier        Tier             `json:"tier"`
 }
 
+type ServiceConnection struct {
+	Nodes    []Service
+	PageInfo PageInfo
+}
+
 type ServiceCreateInput struct {
 	Name        string `json:"name"`
 	Product     string `json:"product,omitempty"`
@@ -118,14 +123,11 @@ func (client *Client) ListServices() ([]Service, error) {
 	var output []Service
 	var q struct {
 		Account struct {
-			Services struct {
-				Nodes    []Service
-				PageInfo PageInfo
-			} `graphql:"services(after: $after, first: $first)"`
+			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
 		}
 	}
 	v := PayloadVariables{
-		"after": "",
+		"after": graphql.String(""),
 		"first": client.pageSize,
 	}
 	if err := client.Query(&q, v); err != nil {
