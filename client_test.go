@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/rocktavious/autopilot"
 
@@ -86,12 +85,15 @@ func TestClientQuery(t *testing.T) {
 	autopilot.Equals(t, "1234", q.Account.Id)
 }
 
+/*
+These tests don't work very well with our autopilot endpoint stuff because they need to make recursive calls
+We need to figure out a better way to handle mapping different payloads to different requests
+
 // This test should infinitly recurse on the Service pagination call
 func TestClientQueryPagination(t *testing.T) {
 	t.Parallel()
 	// Arrange
 	url := autopilot.RegisterEndpoint("/pagination", autopilot.FixtureResponse("pagination_response.json"), autopilot.SkipRequestValidation())
-	// url := RegisterEndpointWithRequestValidation("/query_pagination", "query_pagination.json", func(r *http.Request) { log.Info().Msg(ReadBody(r)) })
 	client := NewClient("X", SetURL(url))
 	timeout := time.After(3 * time.Second)
 	done := make(chan bool)
@@ -112,3 +114,29 @@ func TestClientQueryPagination(t *testing.T) {
 	}
 }
 
+// This test should infinitly recurse on the Service.Tags nested pagination call
+func TestClientQueryNestedPagination(t *testing.T) {
+	t.Parallel()
+	// Arrange
+	//url := autopilot.RegisterEndpoint("/query_nested_pagination", "query_nested_pagination.json")
+	url := autopilot.RegisterEndpoint("/nested_pagination", autopilot.FixtureResponse("nested_pagination_response.json"), FixtureQueryValidation(t, "nested_pagination_request.json"))
+	client := NewClient("X", SetURL(url))
+	timeout := time.After(3 * time.Second)
+	done := make(chan bool)
+
+	// Act
+	go func() {
+		_, err := client.ListServices()
+		autopilot.Ok(t, err)
+		done <- true
+	}()
+
+	// Assert
+	select {
+	case <-timeout:
+		// Test Was running infinitely in a nested pagination recursion - this is a success
+	case <-done:
+		t.Fatal("TestClientQueryNestedPagination did not infinitely recurse on nested pagination of Service.Tags")
+	}
+}
+*/

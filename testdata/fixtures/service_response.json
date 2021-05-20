@@ -77,15 +77,48 @@
               "service": {
                 "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
               }
+            },
+            {
+              "category": "code",
+              "categoryAlias": null,
+              "displayName": "github",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNQ",
+              "url": "https://github.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "logs",
+              "categoryAlias": null,
+              "displayName": "logz",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNg",
+              "url": "https://logz.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "other",
+              "categoryAlias": null,
+              "displayName": "datadog",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNw",
+              "url": "https://datadog.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
             }
           ],
           "pageInfo": {
             "hasNextPage": false,
             "hasPreviousPage": false,
             "startCursor": "MQ",
-            "endCursor": "MQ"
+            "endCursor": "NA"
           },
-          "totalCount": 1
+          "totalCount": 4
         },
         "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
       }

@@ -30,7 +30,7 @@ func TestGetServiceWithAlias(t *testing.T) {
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
 	autopilot.Equals(t, 3, result.Tags.TotalCount)
-	autopilot.Equals(t, 1, result.Tools.TotalCount)
+	autopilot.Equals(t, 4, result.Tools.TotalCount)
 }
 
 func TestGetService(t *testing.T) {
@@ -46,5 +46,5 @@ func TestGetService(t *testing.T) {
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
 	autopilot.Equals(t, 3, result.Tags.TotalCount)
-	autopilot.Equals(t, 1, result.Tools.TotalCount)
+	autopilot.Equals(t, 4, result.Tools.TotalCount)
 }

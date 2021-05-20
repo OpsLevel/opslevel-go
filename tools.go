@@ -72,6 +72,31 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 //#region Retrieve
 
+func (conn *ToolConnection) Hydrate(service graphql.ID, client *Client) error {
+	var q struct {
+		Account struct {
+			Service struct {
+				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	v := PayloadVariables{
+		"service": service,
+		"first":   client.pageSize,
+	}
+	q.Account.Service.Tools.PageInfo = conn.PageInfo
+	for q.Account.Service.Tools.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tools.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Service.Tools.Nodes {
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
 func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) {
 	service, serviceErr := client.GetServiceIdWithAlias(alias)
 	if serviceErr != nil {
@@ -86,7 +111,6 @@ func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, erro
 }
 
 func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
-	var output []Tool
 	var q struct {
 		Account struct {
 			Service struct {
@@ -100,21 +124,12 @@ func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
 		"first":   client.pageSize,
 	}
 	if err := client.Query(&q, v); err != nil {
-		return output, err
+		return q.Account.Service.Tools.Nodes, err
 	}
-	for _, item := range q.Account.Service.Tools.Nodes {
-		output = append(output, item)
+	if err := q.Account.Service.Tools.Hydrate(service, client); err != nil {
+		return q.Account.Service.Tools.Nodes, err
 	}
-	for q.Account.Service.Tools.PageInfo.HasNextPage {
-		v["after"] = q.Account.Service.Tools.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return output, err
-		}
-		for _, item := range q.Account.Service.Tools.Nodes {
-			output = append(output, item)
-		}
-	}
-	return output, nil
+	return q.Account.Service.Tools.Nodes, nil
 }
 
 func (client *Client) GetToolCount(service graphql.ID) (int, error) {

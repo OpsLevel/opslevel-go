@@ -19,7 +19,7 @@ type Service struct {
 	Product     string         `json:"product,omitempty"`
 	Tier        Tier           `json:"tier,omitempty"`
 	Tags        TagConnection  `json:"tags,omitempty"`
-	Tools       ToolConnection `json:"tags,omitempty"`
+	Tools       ToolConnection `json:"tools,omitempty"`
 	ServiceId
 }
 
@@ -58,6 +58,8 @@ type ServiceDeleteInput struct {
 	Alias string     `json:"alias,omitempty"`
 }
 
+//#region ServiceHelpers
+
 func (s *Service) HasAlias(alias string) bool {
 	for _, a := range s.Aliases {
 		if a == alias {
@@ -85,6 +87,18 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 	return false
 }
 
+func (s *Service) Hydrate(client *Client) error {
+	if err := s.Tags.Hydrate(s.Id, client); err != nil {
+		return err
+	}
+	if err := s.Tools.Hydrate(s.Id, client); err != nil {
+		return err
+	}
+	return nil
+}
+
+//#endregion
+
 //#region Create
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
@@ -99,6 +113,9 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
+	}
+	if err := m.Payload.Service.Hydrate(client); err != nil {
+		return &m.Payload.Service, err
 	}
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
@@ -135,7 +152,9 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
-	// TODO: if q.Account.Service.Tags.PageInfo.HasNextPage - Do Further Paginate Query?!
+	if err := q.Account.Service.Hydrate(client); err != nil {
+		return &q.Account.Service, err
+	}
 	return &q.Account.Service, nil
 }
 
@@ -156,7 +175,9 @@ func (client *Client) GetService(id graphql.ID) (*Service, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
-	// TODO: if q.Account.Service.Tags.PageInfo.HasNextPage - Do Further Paginate Query?!
+	if err := q.Account.Service.Hydrate(client); err != nil {
+		return &q.Account.Service, err
+	}
 	return &q.Account.Service, nil
 }
 
@@ -174,8 +195,32 @@ func (client *Client) GetServiceCount() (int, error) {
 	return int(q.Account.Services.TotalCount), nil
 }
 
+func (conn *ServiceConnection) Hydrate(client *Client) error {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
+		}
+	}
+	v := PayloadVariables{
+		"first": client.pageSize,
+	}
+	q.Account.Services.PageInfo = conn.PageInfo
+	for q.Account.Services.PageInfo.HasNextPage {
+		v["after"] = q.Account.Services.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Services.Nodes {
+			if err := (&item).Hydrate(client); err != nil {
+				return err
+			}
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
 func (client *Client) ListServices() ([]Service, error) {
-	var output []Service
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
@@ -186,21 +231,12 @@ func (client *Client) ListServices() ([]Service, error) {
 		"first": client.pageSize,
 	}
 	if err := client.Query(&q, v); err != nil {
-		return output, err
+		return q.Account.Services.Nodes, err
 	}
-	for _, item := range q.Account.Services.Nodes {
-		output = append(output, item)
+	if err := q.Account.Services.Hydrate(client); err != nil {
+		return q.Account.Services.Nodes, err
 	}
-	for q.Account.Services.PageInfo.HasNextPage {
-		v["after"] = q.Account.Services.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return output, err
-		}
-		for _, item := range q.Account.Services.Nodes {
-			output = append(output, item)
-		}
-	}
-	return output, nil
+	return q.Account.Services.Nodes, nil
 }
 
 //#endregion
@@ -219,6 +255,9 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
+	}
+	if err := m.Payload.Service.Hydrate(client); err != nil {
+		return &m.Payload.Service, err
 	}
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }

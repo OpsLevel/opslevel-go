@@ -191,6 +191,31 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 
 //#region Retrieve
 
+func (conn *TagConnection) Hydrate(service graphql.ID, client *Client) error {
+	var q struct {
+		Account struct {
+			Service struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	v := PayloadVariables{
+		"service": service,
+		"first":   client.pageSize,
+	}
+	q.Account.Service.Tags.PageInfo = conn.PageInfo
+	for q.Account.Service.Tags.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Tags.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Service.Tags.Nodes {
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
 func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
 	service, serviceErr := client.GetServiceIdWithAlias(alias)
 	if serviceErr != nil {
@@ -205,7 +230,6 @@ func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error)
 }
 
 func (client *Client) GetTagsForService(service graphql.ID) ([]Tag, error) {
-	var output []Tag
 	var q struct {
 		Account struct {
 			Service struct {
@@ -219,21 +243,12 @@ func (client *Client) GetTagsForService(service graphql.ID) ([]Tag, error) {
 		"first":   client.pageSize,
 	}
 	if err := client.Query(&q, v); err != nil {
-		return output, err
+		return q.Account.Service.Tags.Nodes, err
 	}
-	for _, item := range q.Account.Service.Tags.Nodes {
-		output = append(output, item)
+	if err := q.Account.Service.Tags.Hydrate(service, client); err != nil {
+		return q.Account.Service.Tags.Nodes, err
 	}
-	for q.Account.Service.Tags.PageInfo.HasNextPage {
-		v["after"] = q.Account.Service.Tags.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return output, err
-		}
-		for _, item := range q.Account.Service.Tags.Nodes {
-			output = append(output, item)
-		}
-	}
-	return output, nil
+	return q.Account.Service.Tags.Nodes, nil
 }
 
 func (client *Client) GetTagCount(service graphql.ID) (int, error) {
