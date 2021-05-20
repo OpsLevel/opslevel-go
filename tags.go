@@ -37,7 +37,7 @@ type TagInput struct {
 }
 
 type TagAssignInput struct {
-	Id    graphql.ID       `json:"id"`
+	Id    graphql.ID       `json:"id,omitempty"`
 	Alias string           `json:"alias,omitempty"`
 	Type  TaggableResource `json:"type,omitempty"`
 	Tags  []TagInput       `json:"tags"`
@@ -105,7 +105,7 @@ func (client *Client) AssignTagsForId(id graphql.ID, tags map[string]string) ([]
 
 func (client *Client) AssignTagForId(id graphql.ID, key string, value string) ([]Tag, error) {
 	input := TagAssignInput{
-		Id:   graphql.ID(id),
+		Id:   id,
 		Tags: []TagInput{},
 	}
 	input.Tags = append(input.Tags, TagInput{
