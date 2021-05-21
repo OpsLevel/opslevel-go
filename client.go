@@ -2,8 +2,10 @@ package opslevel
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/shurcooL/graphql"
 	"golang.org/x/oauth2"
@@ -104,8 +106,12 @@ func (c *Client) Validate() error {
 		}
 	}
 	err := c.Query(&q, nil)
+	// TODO: we should probably use a custom OpsLevelClientError type - https://www.digitalocean.com/community/tutorials/creating-custom-errors-in-go
 	if err != nil {
-		return fmt.Errorf("Unable to Validate connection to OpsLevel API: %s", err.Error())
+		if strings.Contains(err.Error(), "401 Unauthorized") {
+			return errors.New("Client Validation Error: Please provide a valid OpsLevel API token")
+		}
+		return fmt.Errorf("Client Validation Error: %s", err.Error())
 	}
 	return nil
 }
