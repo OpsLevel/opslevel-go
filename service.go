@@ -9,17 +9,17 @@ type ServiceId struct {
 }
 
 type Service struct {
-	Aliases     []string  `json:"aliases"`
-	Description string    `json:"description"`
-	Framework   string    `json:"framework"`
-	Language    string    `json:"language"`
-	Lifecycle   Lifecycle `json:"lifecycle"`
-	Name        string    `json:"name"`
-	Owner       Team      `json:"owner"`
-	Product     string    `json:"product"`
-	Tier        Tier      `json:"tier"`
-	Tags        TagConnection
-	Tools       ToolConnection
+	Aliases     []string       `json:"aliases,omitempty"`
+	Description string         `json:"description,omitempty"`
+	Framework   string         `json:"framework,omitempty"`
+	Language    string         `json:"language,omitempty"`
+	Lifecycle   Lifecycle      `json:"lifecycle,omitempty"`
+	Name        string         `json:"name,omitempty"`
+	Owner       Team           `json:"owner,omitempty"`
+	Product     string         `json:"product,omitempty"`
+	Tier        Tier           `json:"tier,omitempty"`
+	Tags        TagConnection  `json:"tags,omitempty"`
+	Tools       ToolConnection `json:"tags,omitempty"`
 	ServiceId
 }
 
@@ -70,6 +70,15 @@ func (s *Service) HasAlias(alias string) bool {
 func (s *Service) HasTag(key string, value string) bool {
 	for _, tag := range s.Tags.Nodes {
 		if tag.Key == key && tag.Value == value {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Service) HasTool(category ToolCategory, name string, environment string) bool {
+	for _, tool := range s.Tools.Nodes {
+		if tool.Category == category && tool.DisplayName == name && tool.Environment == environment {
 			return true
 		}
 	}
