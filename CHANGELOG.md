@@ -2,6 +2,32 @@
 ## [Unreleased]
 
 
+<a name="v0.2.0"></a>
+## [v0.2.0] - 2021-05-22
+### Chore
+- set MIT license
+
+### Docs
+- add badges to readme
+
+### Feature
+- support hydration of nested resources that are paginated
+- improve error output during 401 unauthorized
+- add method to check if a service has a tool
+
+### Fix
+- fix bug with assign tag to a service with alias or id
+
+
+<a name="v0.1.3"></a>
+## [v0.1.3] - 2021-05-16
+
+<a name="v0.1.2"></a>
+## [v0.1.2] - 2021-05-16
+### Bugfix
+- fix problem with listing teams due to invalid graphql types and recursion
+
+
 <a name="v0.1.1"></a>
 ## [v0.1.1] - 2021-05-16
 ### Bugfix
@@ -27,5 +53,8 @@
 - client configuration to allow for settings api visibility header
 
 
-[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.0...HEAD
+[v0.2.0]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.3...v0.2.0
+[v0.1.3]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.2...v0.1.3
+[v0.1.2]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.0...v0.1.1
