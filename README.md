@@ -1,3 +1,20 @@
+<p align="center">
+    <a href="https://github.com/OpsLevel/opslevel-go/blob/main/LICENSE" alt="License">
+        <img src="https://img.shields.io/github/license/OpsLevel/opslevel-go.svg" /></a>
+    <a href="http://golang.org" alt="Made With Go">
+        <img src="https://img.shields.io/github/go-mod/go-version/OpsLevel/opslevel-go" /></a>
+    <a href="https://GitHub.com/OpsLevel/opslevel-go/releases/" alt="Release">
+        <img src="https://img.shields.io/github/v/release/OpsLevel/opslevel-go?include_prereleases" /></a>  
+    <a href="https://GitHub.com/OpsLevel/opslevel-go/issues/" alt="Issues">
+        <img src="https://img.shields.io/github/issues/OpsLevel/opslevel-go.svg" /></a>  
+    <a href="https://github.com/OpsLevel/opslevel-go/graphs/contributors" alt="Contributors">
+        <img src="https://img.shields.io/github/contributors/OpsLevel/opslevel-go" /></a>
+    <a href="https://github.com/OpsLevel/opslevel-go/pulse" alt="Activity">
+        <img src="https://img.shields.io/github/commit-activity/m/OpsLevel/opslevel-go" /></a>
+    <a href="https://dependabot.com/" alt="Dependabot">
+        <img src="https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot" /></a>
+</p>
+
 <img align="right" src="https://user-images.githubusercontent.com/735015/118144171-c2a40d00-b3d1-11eb-9b8c-a1cdd687cb36.png" width="320" height="160">
 
 
