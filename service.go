@@ -9,18 +9,18 @@ type ServiceId struct {
 }
 
 type Service struct {
-	Aliases     []string       `json:"aliases,omitempty"`
-	Description string         `json:"description,omitempty"`
-	Framework   string         `json:"framework,omitempty"`
-	Language    string         `json:"language,omitempty"`
-	Lifecycle   Lifecycle      `json:"lifecycle,omitempty"`
-	Name        string         `json:"name,omitempty"`
-	Owner       Team           `json:"owner,omitempty"`
-	Product     string         `json:"product,omitempty"`
-	Tier        Tier           `json:"tier,omitempty"`
-	Tags        TagConnection  `json:"tags,omitempty"`
-	Tools       ToolConnection `json:"tools,omitempty"`
+	Aliases     []string `json:"aliases,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Framework   string   `json:"framework,omitempty"`
 	ServiceId
+	Language  string         `json:"language,omitempty"`
+	Lifecycle Lifecycle      `json:"lifecycle,omitempty"`
+	Name      string         `json:"name,omitempty"`
+	Owner     Team           `json:"owner,omitempty"`
+	Product   string         `json:"product,omitempty"`
+	Tags      TagConnection  `json:"tags,omitempty"`
+	Tier      Tier           `json:"tier,omitempty"`
+	Tools     ToolConnection `json:"tools,omitempty"`
 }
 
 type ServiceConnection struct {

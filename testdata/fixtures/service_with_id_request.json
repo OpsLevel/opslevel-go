@@ -1,5 +1,5 @@
 {
-    "query": "query($service:ID!){account{service(id: $service){aliases,description,framework,language,lifecycle{alias,description,id,index,name},name,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},product,tier{alias,description,id,index,name},tags{nodes{id,owner,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},id}}}",
+    "query": "query($service:ID!){account{service(id: $service){aliases,description,framework,id,language,lifecycle{alias,description,id,index,name},name,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},product,tags{nodes{id,owner,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
     "variables": {
       "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
     }
