@@ -1,0 +1,7 @@
+{
+    "query": "query($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{defaultBranch,description,forked,htmlUrl,id,name,organization,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},private,repoKey,tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+    "variables": {
+      "after": "",
+      "first": 100
+    }
+  }

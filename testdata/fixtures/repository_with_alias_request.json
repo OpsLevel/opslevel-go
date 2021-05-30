@@ -1,0 +1,6 @@
+{
+    "query": "query($repo:String!){account{repository(alias: $repo){defaultBranch,description,forked,htmlUrl,id,name,organization,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},private,repoKey,tier{alias,description,id,index,name},type,url,visible}}}",
+    "variables": {
+      "repo": "github.com:rocktavious/autopilot"
+    }
+  }
