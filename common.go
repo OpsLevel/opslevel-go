@@ -7,6 +7,11 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+type IdentifierInput struct {
+	Id    graphql.ID     `graphql:"id,omitempty" json:"id,omitempty"`
+	Alias graphql.String `graphql:"alias,omitempty" json:"alias,omitempty"`
+}
+
 type PageInfo struct {
 	HasNextPage     graphql.Boolean `graphql:"hasNextPage"`
 	HasPreviousPage graphql.Boolean `graphql:"hasPreviousPage"`

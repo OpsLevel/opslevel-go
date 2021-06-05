@@ -1,12 +1,18 @@
 package opslevel
 
 import (
+	"fmt"
+
 	"github.com/shurcooL/graphql"
 )
 
 type Language struct {
 	Name  string
 	Usage float32
+}
+
+type RepositoryId struct {
+	Id graphql.ID
 }
 
 type Repository struct {
@@ -16,8 +22,8 @@ type Repository struct {
 	Description   string `json:",omitempty"`
 	Forked        bool   `json:",omitempty"`
 	HtmlUrl       string
-	Id            graphql.ID
-	Languages     []Language
+	RepositoryId
+	Languages []Language
 	// LastOwnerChangedAt ISO8601DateTime
 	Name         string `json:",omitempty"`
 	Organization string
@@ -54,6 +60,21 @@ type RepositoryTagConnection struct {
 	TotalCount graphql.Int
 }
 
+type ServiceRepository struct {
+	BaseDirectory string
+	DisplayName   string
+	Id            graphql.ID
+	Repository    RepositoryId
+	Service       ServiceId
+}
+
+type ServiceRepositoryCreateInput struct {
+	Service       IdentifierInput `json:"service"`
+	Repository    IdentifierInput `json:"repository"`
+	BaseDirectory string          `json:"baseDirectory"`
+	DisplayName   string          `json:"displayName,omitempty"`
+}
+
 func (r *Repository) Hydrate(client *Client) error {
 	if err := r.Services.Hydrate(r.Id, client); err != nil {
 		return err
@@ -63,6 +84,36 @@ func (r *Repository) Hydrate(client *Client) error {
 	}
 	return nil
 }
+
+//#region Create
+
+func (client *Client) ConnectServiceRepository(service *ServiceId, repository *Repository) (*ServiceRepository, error) {
+	input := ServiceRepositoryCreateInput{
+		Service:       IdentifierInput{Id: service.Id},
+		Repository:    IdentifierInput{Id: repository.Id},
+		BaseDirectory: "/",
+		DisplayName:   fmt.Sprintf("%s/%s", repository.Name, repository.Organization),
+	}
+	return client.CreateServiceRepository(input)
+}
+
+func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput) (*ServiceRepository, error) {
+	var m struct {
+		Payload struct {
+			ServiceRepository ServiceRepository
+			Errors            []OpsLevelErrors
+		} `graphql:"serviceRepositoryCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.ServiceRepository, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
 
 //#region Retrieve
 

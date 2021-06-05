@@ -1,0 +1,15 @@
+{
+    "query": "mutation($input:ServiceRepositoryCreateInput!){serviceRepositoryCreate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id},service{id}},errors{message,path}}}",
+    "variables": {
+      "input": {
+        "service": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+        },
+        "repository": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
+        },
+        "baseDirectory": "/",
+        "displayName": "autopilot/rocktavious"
+      }
+    }
+  }
