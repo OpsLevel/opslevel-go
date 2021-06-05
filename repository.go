@@ -4,26 +4,32 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+type Language struct {
+	Name  string
+	Usage float32
+}
+
 type Repository struct {
-	// CreatedOn ISO8601DateTime `json:",omitempty"`
+	// https://pkg.go.dev/github.com/relvacode/iso8601
+	//CreatedOn ISO8601DateTime `json:",omitempty"`
 	DefaultBranch string `json:",omitempty"`
 	Description   string `json:",omitempty"`
 	Forked        bool   `json:",omitempty"`
 	HtmlUrl       string
 	Id            graphql.ID
-	// Languages Language
+	Languages     []Language
 	// LastOwnerChangedAt ISO8601DateTime
 	Name         string `json:",omitempty"`
 	Organization string
 	Owner        Team `json:",omitempty"`
 	Private      bool `json:",omitempty"`
 	RepoKey      string
-	// Services      RepositoryServiceConnection
-	// Tags          TagRepositoryConnection
-	Tier    Tier
-	Type    string
-	Url     string `json:",omitempty"`
-	Visible bool   `json:",omitempty"`
+	Services     RepositoryServiceConnection
+	Tags         RepositoryTagConnection
+	Tier         Tier
+	Type         string
+	Url          string `json:",omitempty"`
+	Visible      bool   `json:",omitempty"`
 }
 
 type RepositoryConnection struct {
@@ -36,9 +42,25 @@ type RepositoryConnection struct {
 	VisibleCount      int
 }
 
+type RepositoryServiceConnection struct {
+	Nodes      []ServiceId
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
+type RepositoryTagConnection struct {
+	Nodes      []Tag
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
 func (r *Repository) Hydrate(client *Client) error {
-	// TODO: Hydrate r.Services
-	// TODO: Hydrate r.Tags
+	if err := r.Services.Hydrate(r.Id, client); err != nil {
+		return err
+	}
+	if err := r.Tags.Hydrate(r.Id, client); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -99,6 +121,56 @@ func (conn *RepositoryConnection) Hydrate(client *Client) error {
 			if err := (&item).Hydrate(client); err != nil {
 				return err
 			}
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
+func (conn *RepositoryServiceConnection) Hydrate(id graphql.ID, client *Client) error {
+	var q struct {
+		Account struct {
+			Repository struct {
+				Services RepositoryServiceConnection `graphql:"services(after: $after, first: $first)"`
+			} `graphql:"repository(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id":    id,
+		"first": client.pageSize,
+	}
+	q.Account.Repository.Services.PageInfo = conn.PageInfo
+	for q.Account.Repository.Services.PageInfo.HasNextPage {
+		v["after"] = q.Account.Repository.Services.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Repository.Services.Nodes {
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
+func (conn *RepositoryTagConnection) Hydrate(id graphql.ID, client *Client) error {
+	var q struct {
+		Account struct {
+			Repository struct {
+				Tags RepositoryTagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"repository(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id":    id,
+		"first": client.pageSize,
+	}
+	q.Account.Repository.Tags.PageInfo = conn.PageInfo
+	for q.Account.Repository.Tags.PageInfo.HasNextPage {
+		v["after"] = q.Account.Repository.Tags.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Repository.Tags.Nodes {
 			conn.Nodes = append(conn.Nodes, item)
 		}
 	}
