@@ -13,14 +13,15 @@ type Service struct {
 	Description string   `json:"description,omitempty"`
 	Framework   string   `json:"framework,omitempty"`
 	ServiceId
-	Language  string         `json:"language,omitempty"`
-	Lifecycle Lifecycle      `json:"lifecycle,omitempty"`
-	Name      string         `json:"name,omitempty"`
-	Owner     Team           `json:"owner,omitempty"`
-	Product   string         `json:"product,omitempty"`
-	Tags      TagConnection  `json:"tags,omitempty"`
-	Tier      Tier           `json:"tier,omitempty"`
-	Tools     ToolConnection `json:"tools,omitempty"`
+	Language     string                      `json:"language,omitempty"`
+	Lifecycle    Lifecycle                   `json:"lifecycle,omitempty"`
+	Name         string                      `json:"name,omitempty"`
+	Owner        Team                        `json:"owner,omitempty"`
+	Product      string                      `json:"product,omitempty"`
+	Repositories ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
+	Tags         TagConnection               `json:"tags,omitempty"`
+	Tier         Tier                        `json:"tier,omitempty"`
+	Tools        ToolConnection              `json:"tools,omitempty"`
 }
 
 type ServiceConnection struct {
@@ -92,6 +93,9 @@ func (s *Service) Hydrate(client *Client) error {
 		return err
 	}
 	if err := s.Tools.Hydrate(s.Id, client); err != nil {
+		return err
+	}
+	if err := s.Repositories.Hydrate(s.Id, client); err != nil {
 		return err
 	}
 	return nil

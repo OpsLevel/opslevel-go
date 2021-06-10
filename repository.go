@@ -38,26 +38,9 @@ type Repository struct {
 	Visible      bool   `json:",omitempty"`
 }
 
-type RepositoryConnection struct {
-	HiddenCount       int
-	Nodes             []Repository
-	OrganizationCount int
-	OwnedCount        int
-	PageInfo          PageInfo
-	TotalCount        int
-	VisibleCount      int
-}
-
-type RepositoryServiceConnection struct {
-	Nodes      []ServiceId
-	PageInfo   PageInfo
-	TotalCount graphql.Int
-}
-
-type RepositoryTagConnection struct {
-	Nodes      []Tag
-	PageInfo   PageInfo
-	TotalCount graphql.Int
+type RepositoryPath struct {
+	Href string
+	Path string
 }
 
 type ServiceRepository struct {
@@ -68,11 +51,62 @@ type ServiceRepository struct {
 	Service       ServiceId
 }
 
+type RepositoryConnection struct {
+	HiddenCount       int
+	Nodes             []Repository
+	OrganizationCount int
+	OwnedCount        int
+	PageInfo          PageInfo
+	TotalCount        int
+	VisibleCount      int
+}
+
+type RepositoryServiceEdge struct {
+	AtRoot              bool
+	Node                ServiceId
+	Paths               []RepositoryPath
+	ServiceRepositories []ServiceRepository
+}
+
+type RepositoryServiceConnection struct {
+	Edges      []RepositoryServiceEdge
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
+type ServiceRepositoryEdge struct {
+	Node                RepositoryId
+	ServiceRepositories []ServiceRepository
+}
+
+type ServiceRepositoryConnection struct {
+	Edges      []ServiceRepositoryEdge
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
+type RepositoryTagConnection struct {
+	Nodes      []Tag
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
 type ServiceRepositoryCreateInput struct {
 	Service       IdentifierInput `json:"service"`
 	Repository    IdentifierInput `json:"repository"`
 	BaseDirectory string          `json:"baseDirectory"`
 	DisplayName   string          `json:"displayName,omitempty"`
+}
+
+func (r *Repository) HasService(service graphql.ID, directory string) bool {
+	for _, edge := range r.Services.Edges {
+		for _, connection := range edge.ServiceRepositories {
+			if connection.Service.Id == service && connection.BaseDirectory == directory {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (r *Repository) Hydrate(client *Client) error {
@@ -196,8 +230,33 @@ func (conn *RepositoryServiceConnection) Hydrate(id graphql.ID, client *Client) 
 		if err := client.Query(&q, v); err != nil {
 			return err
 		}
-		for _, item := range q.Account.Repository.Services.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
+		for _, item := range q.Account.Repository.Services.Edges {
+			conn.Edges = append(conn.Edges, item)
+		}
+	}
+	return nil
+}
+
+func (conn *ServiceRepositoryConnection) Hydrate(id graphql.ID, client *Client) error {
+	var q struct {
+		Account struct {
+			Service struct {
+				Repos ServiceRepositoryConnection `graphql:"repos(after: $after, first: $first)"`
+			} `graphql:"service(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id":    id,
+		"first": client.pageSize,
+	}
+	q.Account.Service.Repos.PageInfo = conn.PageInfo
+	for q.Account.Service.Repos.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Repos.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Service.Repos.Edges {
+			conn.Edges = append(conn.Edges, item)
 		}
 	}
 	return nil

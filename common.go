@@ -26,6 +26,18 @@ type OpsLevelErrors struct {
 	Path    []string
 }
 
+func NewId(id string) *IdentifierInput {
+	return &IdentifierInput{
+		Id: graphql.ID(id),
+	}
+}
+
+func NewIdFromAlias(alias string) *IdentifierInput {
+	return &IdentifierInput{
+		Alias: graphql.String(alias),
+	}
+}
+
 func FormatErrors(errs []OpsLevelErrors) error {
 	if len(errs) == 0 {
 		return nil
