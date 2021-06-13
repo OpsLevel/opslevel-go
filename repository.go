@@ -98,15 +98,21 @@ type ServiceRepositoryCreateInput struct {
 	DisplayName   string          `json:"displayName,omitempty"`
 }
 
-func (r *Repository) HasService(service graphql.ID, directory string) bool {
+type ServiceRepositoryUpdateInput struct {
+	Id            graphql.ID `json:"id"`
+	BaseDirectory string     `json:"baseDirectory,omitempty"`
+	DisplayName   string     `json:"displayName,omitempty"`
+}
+
+func (r *Repository) GetService(service graphql.ID, directory string) *ServiceRepository {
 	for _, edge := range r.Services.Edges {
 		for _, connection := range edge.ServiceRepositories {
 			if connection.Service.Id == service && connection.BaseDirectory == directory {
-				return true
+				return &connection
 			}
 		}
 	}
-	return false
+	return nil
 }
 
 func (r *Repository) Hydrate(client *Client) error {
@@ -137,6 +143,26 @@ func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput
 			ServiceRepository ServiceRepository
 			Errors            []OpsLevelErrors
 		} `graphql:"serviceRepositoryCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.ServiceRepository, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
+//#region Update
+
+func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput) (*ServiceRepository, error) {
+	var m struct {
+		Payload struct {
+			ServiceRepository ServiceRepository
+			Errors            []OpsLevelErrors
+		} `graphql:"serviceRepositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
