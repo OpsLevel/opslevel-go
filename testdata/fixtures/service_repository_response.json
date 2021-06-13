@@ -1,0 +1,18 @@
+{
+    "data": {
+      "serviceRepositoryCreate": {
+        "serviceRepository": {
+          "baseDirectory": "",
+          "displayName": "autopilot/rocktavious",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNA",
+          "repository": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
+          },
+          "service": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81NDM4"
+          }
+        },
+        "errors": []
+      }
+    }
+  }

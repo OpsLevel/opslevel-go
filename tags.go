@@ -20,7 +20,6 @@ const (
 
 type Tag struct {
 	Id    graphql.ID `json:"id"`
-	Owner TagOwner   `json:"owner"`
 	Key   string     `json:"key"`
 	Value string     `json:"value"`
 }

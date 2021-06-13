@@ -7,6 +7,11 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+type IdentifierInput struct {
+	Id    graphql.ID     `graphql:"id,omitempty" json:"id,omitempty"`
+	Alias graphql.String `graphql:"alias,omitempty" json:"alias,omitempty"`
+}
+
 type PageInfo struct {
 	HasNextPage     graphql.Boolean `graphql:"hasNextPage"`
 	HasPreviousPage graphql.Boolean `graphql:"hasPreviousPage"`
@@ -19,6 +24,18 @@ type PayloadVariables map[string]interface{}
 type OpsLevelErrors struct {
 	Message string
 	Path    []string
+}
+
+func NewId(id string) *IdentifierInput {
+	return &IdentifierInput{
+		Id: graphql.ID(id),
+	}
+}
+
+func NewIdFromAlias(alias string) *IdentifierInput {
+	return &IdentifierInput{
+		Alias: graphql.String(alias),
+	}
 }
 
 func FormatErrors(errs []OpsLevelErrors) error {
