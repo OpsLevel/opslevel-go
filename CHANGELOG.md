@@ -2,6 +2,14 @@
 ## [Unreleased]
 
 
+<a name="v0.2.1"></a>
+## [v0.2.1] - 2021-06-13
+### Feature
+- add ability to update a ServiceRepository
+- add ability to connect service and repositories together
+- add ability to query for repositories
+
+
 <a name="v0.2.0"></a>
 ## [v0.2.0] - 2021-05-22
 ### Chore
@@ -53,7 +61,8 @@
 - client configuration to allow for settings api visibility header
 
 
-[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.3...v0.2.0
 [v0.1.3]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.1...v0.1.2
