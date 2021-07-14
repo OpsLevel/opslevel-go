@@ -5,44 +5,30 @@
           "categories": {
             "nodes": [
               {
-                "alias": "security",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjAz",
                 "name": "Security"
               },
               {
-                "alias": "reliability",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA0",
                 "name": "Reliability"
               },
               {
-                "alias": "performance",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
                 "name": "Performance"
               },
               {
-                "alias": "scalability",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA2",
                 "name": "Scalability"
               },
               {
-                "alias": "observability",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA3",
                 "name": "Observability"
               },
               {
-                "alias": "infrastructure",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA4",
                 "name": "Infrastructure"
               },
               {
-                "alias": "quality",
-                "description": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA5",
                 "name": "Quality"
               }

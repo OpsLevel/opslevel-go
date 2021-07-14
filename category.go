@@ -5,16 +5,31 @@ import (
 )
 
 type Category struct {
-	Alias       string
-	Description string     `json:"description,omitempty"`
-	Id          graphql.ID `json:"id"`
-	Name        string
+	//Alias       string
+	//Description string     `json:"description,omitempty"`
+	Id   graphql.ID `json:"id"`
+	Name string
 }
 
 type CategoryConnection struct {
 	Nodes      []Category
 	PageInfo   PageInfo
 	TotalCount graphql.Int
+}
+
+type CategoryCreateInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+}
+
+type CategoryUpdateInput struct {
+	Id          graphql.ID `json:"id"`
+	Name        string     `json:"name"`
+	Description string     `json:"description,omitempty"`
+}
+
+type CategoryDeleteInput struct {
+	Id graphql.ID `json:"id"`
 }
 
 func (conn *CategoryConnection) Hydrate(client *Client) error {
@@ -41,6 +56,26 @@ func (conn *CategoryConnection) Hydrate(client *Client) error {
 	return nil
 }
 
+//#region Create
+
+func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, error) {
+	var m struct {
+		Payload struct {
+			Category Category
+			Errors   []OpsLevelErrors
+		} `graphql:"categoryCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.Category, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
 //#region Retrieve
 
 func (client *Client) ListCategories() ([]Category, error) {
@@ -58,6 +93,46 @@ func (client *Client) ListCategories() ([]Category, error) {
 		return q.Account.Rubric.Categories.Nodes, err
 	}
 	return q.Account.Rubric.Categories.Nodes, nil
+}
+
+//#endregion
+
+//#region Update
+
+func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, error) {
+	var m struct {
+		Payload struct {
+			Category Category
+			Errors   []OpsLevelErrors
+		} `graphql:"categoryUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.Category, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
+//#region Delete
+
+func (client *Client) DeleteCategory(id graphql.ID) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID `graphql:"deletedCategoryId"`
+			Errors []OpsLevelErrors
+		} `graphql:"categoryDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": CategoryDeleteInput{Id: id},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
 }
 
 //#endregion
