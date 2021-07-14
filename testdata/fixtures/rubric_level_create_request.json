@@ -1,0 +1,9 @@
+{
+    "query": "mutation($input:LevelCreateInput!){levelCreate(input: $input){level{alias,description,id,index,name},errors{message,path}}}",
+    "variables": {
+      "input": {
+        "name": "Kyle",
+        "description": "Created By Kyle"
+      }
+    }
+  }
