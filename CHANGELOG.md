@@ -2,6 +2,12 @@
 ## [Unreleased]
 
 
+<a name="v0.2.2"></a>
+## [v0.2.2] - 2021-07-21
+### Feature
+- implement CRUD for rubric categories and levels ([#8](https://github.com/OpsLevel/opslevel-go/issues/8))
+
+
 <a name="v0.2.1"></a>
 ## [v0.2.1] - 2021-06-13
 ### Feature
@@ -61,7 +67,8 @@
 - client configuration to allow for settings api visibility header
 
 
-[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.2...HEAD
+[v0.2.2]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.3...v0.2.0
 [v0.1.3]: https://github.com/OpsLevel/opslevel-go/compare/v0.1.2...v0.1.3
