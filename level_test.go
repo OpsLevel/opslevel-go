@@ -9,8 +9,7 @@ import (
 
 func TestCreateRubricLevels(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/createRubricLevels", autopilot.FixtureResponse("rubric_level_create_response.json"), FixtureQueryValidation(t, "rubric_level_create_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/level/create")
 	// Act
 	result, _ := client.CreateLevel(LevelCreateInput{
 		Name:        "Kyle",
@@ -23,8 +22,7 @@ func TestCreateRubricLevels(t *testing.T) {
 
 func TestListRubricLevels(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/listRubricLevels", autopilot.FixtureResponse("rubric_level_response.json"), FixtureQueryValidation(t, "rubric_level_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/level/list")
 	// Act
 	result, _ := client.ListLevels()
 	// Assert
@@ -34,8 +32,7 @@ func TestListRubricLevels(t *testing.T) {
 
 func TestUpdateRubricLevels(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/updateRubricLevels", autopilot.FixtureResponse("rubric_level_update_response.json"), FixtureQueryValidation(t, "rubric_level_update_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/level/update")
 	// Act
 	result, _ := client.UpdateLevel(LevelUpdateInput{
 		Id:          graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw"),
@@ -49,8 +46,7 @@ func TestUpdateRubricLevels(t *testing.T) {
 
 func TestDeleteRubricLevels(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/deleteRubricLevels", autopilot.FixtureResponse("rubric_level_delete_response.json"), FixtureQueryValidation(t, "rubric_level_delete_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/level/delete")
 	// Act
 	err := client.DeleteLevel("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw")
 	// Assert

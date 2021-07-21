@@ -3,6 +3,7 @@ package opslevel
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -66,6 +67,16 @@ func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValid
 		json.Unmarshal(bytes, &exp)
 		autopilot.Equals(t, exp, q)
 	}
+}
+
+func RegisterEndpoint(t *testing.T, endpoint string) string {
+	return autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
+		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", endpoint)))
+}
+
+func ANewClient(t *testing.T, endpoint string) *Client {
+	return NewClient("X", SetURL(RegisterEndpoint(t, endpoint)))
 }
 
 func TestClientQuery(t *testing.T) {

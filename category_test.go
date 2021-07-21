@@ -9,8 +9,7 @@ import (
 
 func TestCreateRubricCategory(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/createRubricCategory", autopilot.FixtureResponse("rubric_category_create_response.json"), FixtureQueryValidation(t, "rubric_category_create_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/category/create")
 	// Act
 	result, _ := client.CreateCategory(CategoryCreateInput{
 		Name:        "Kyle",
@@ -22,8 +21,7 @@ func TestCreateRubricCategory(t *testing.T) {
 
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/listRubricCategories", autopilot.FixtureResponse("rubric_category_response.json"), FixtureQueryValidation(t, "rubric_category_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/category/list")
 	// Act
 	result, _ := client.ListCategories()
 	// Assert
@@ -33,8 +31,7 @@ func TestListRubricCategories(t *testing.T) {
 
 func TestUpdateRubricCategory(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/updateRubricCategory", autopilot.FixtureResponse("rubric_category_update_response.json"), FixtureQueryValidation(t, "rubric_category_update_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/category/update")
 	// Act
 	result, _ := client.UpdateCategory(CategoryUpdateInput{
 		Id:   graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"),
@@ -46,8 +43,7 @@ func TestUpdateRubricCategory(t *testing.T) {
 
 func TestDeleteRubricCategory(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/deleteRubricCategory", autopilot.FixtureResponse("rubric_category_delete_response.json"), FixtureQueryValidation(t, "rubric_category_delete_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ANewClient(t, "rubric/category/delete")
 	// Act
 	err := client.DeleteCategory("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert
