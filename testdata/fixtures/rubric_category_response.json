@@ -1,0 +1,40 @@
+{
+    "data": {
+      "account": {
+        "rubric": {
+          "categories": {
+            "nodes": [
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjAz",
+                "name": "Security"
+              },
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA0",
+                "name": "Reliability"
+              },
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+                "name": "Performance"
+              },
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA2",
+                "name": "Scalability"
+              },
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA3",
+                "name": "Observability"
+              },
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA4",
+                "name": "Infrastructure"
+              },
+              {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA5",
+                "name": "Quality"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
