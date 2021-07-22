@@ -62,6 +62,21 @@ type ServiceDeleteInput struct {
 	Alias string     `json:"alias,omitempty"`
 }
 
+type ServiceResponsePayload struct {
+	Service Service
+	Errors  []OpsLevelErrors
+}
+
+func (p *ServiceResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) (*Service, error) {
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	if err := p.Service.Hydrate(client); err != nil {
+		return &p.Service, err
+	}
+	return &p.Service, FormatErrors(p.Errors)
+}
+
 //#region ServiceHelpers
 
 func (s *Service) HasAlias(alias string) bool {
@@ -110,21 +125,12 @@ func (s *Service) Hydrate(client *Client) error {
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceCreate(input: $input)"`
+		Payload ServiceResponsePayload `graphql:"serviceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	if err := m.Payload.Service.Hydrate(client); err != nil {
-		return &m.Payload.Service, err
-	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return m.Payload.Mutate(client, &m, v)
 }
 
 //#endregion
@@ -202,6 +208,17 @@ func (client *Client) GetServiceCount() (int, error) {
 	return int(q.Account.Services.TotalCount), nil
 }
 
+// TODO: maybe we can find a way to merge ServiceConnection.Query & Hydrate
+func (conn *ServiceConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Service, error) {
+	if err := client.Query(q, v); err != nil {
+		return conn.Nodes, err
+	}
+	if err := conn.Hydrate(client); err != nil {
+		return conn.Nodes, err
+	}
+	return conn.Nodes, nil
+}
+
 func (conn *ServiceConnection) Hydrate(client *Client) error {
 	var q struct {
 		Account struct {
@@ -234,13 +251,7 @@ func (client *Client) ListServices() ([]Service, error) {
 		}
 	}
 	v := client.InitialPageVariables()
-	if err := client.Query(&q, v); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	if err := q.Account.Services.Hydrate(client); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	return q.Account.Services.Nodes, nil
+	return q.Account.Services.Query(client, &q, v)
 }
 
 func (client *Client) ListServicesWithFramework(framework string) ([]Service, error) {
@@ -251,13 +262,7 @@ func (client *Client) ListServicesWithFramework(framework string) ([]Service, er
 	}
 	v := client.InitialPageVariables()
 	v["framework"] = graphql.String(framework)
-	if err := client.Query(&q, v); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	if err := q.Account.Services.Hydrate(client); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	return q.Account.Services.Nodes, nil
+	return q.Account.Services.Query(client, &q, v)
 }
 
 func (client *Client) ListServicesWithLanguage(language string) ([]Service, error) {
@@ -268,13 +273,7 @@ func (client *Client) ListServicesWithLanguage(language string) ([]Service, erro
 	}
 	v := client.InitialPageVariables()
 	v["language"] = graphql.String(language)
-	if err := client.Query(&q, v); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	if err := q.Account.Services.Hydrate(client); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	return q.Account.Services.Nodes, nil
+	return q.Account.Services.Query(client, &q, v)
 }
 
 func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
@@ -285,13 +284,7 @@ func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
 	}
 	v := client.InitialPageVariables()
 	v["owner"] = graphql.String(owner)
-	if err := client.Query(&q, v); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	if err := q.Account.Services.Hydrate(client); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	return q.Account.Services.Nodes, nil
+	return q.Account.Services.Query(client, &q, v)
 }
 
 type TagArgs struct {
@@ -326,13 +319,7 @@ func (client *Client) ListServicesWithTag(tag TagArgs) ([]Service, error) {
 	}
 	v := client.InitialPageVariables()
 	v["tag"] = tag
-	if err := client.Query(&q, v); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	if err := q.Account.Services.Hydrate(client); err != nil {
-		return q.Account.Services.Nodes, err
-	}
-	return q.Account.Services.Nodes, nil
+	return q.Account.Services.Query(client, &q, v)
 }
 
 //#endregion
@@ -341,21 +328,12 @@ func (client *Client) ListServicesWithTag(tag TagArgs) ([]Service, error) {
 
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceUpdate(input: $input)"`
+		Payload ServiceResponsePayload `graphql:"serviceUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	if err := m.Payload.Service.Hydrate(client); err != nil {
-		return &m.Payload.Service, err
-	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return m.Payload.Mutate(client, &m, v)
 }
 
 //#endregion
