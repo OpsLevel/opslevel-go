@@ -90,6 +90,13 @@ func NewClient(apiToken string, options ...option) *Client {
 	}
 }
 
+func (c *Client) InitialPageVariables() PayloadVariables {
+	return PayloadVariables{
+		"after": graphql.String(""),
+		"first": c.pageSize,
+	}
+}
+
 // Should we create a context for every query/mutate ?
 func (c *Client) Query(q interface{}, variables map[string]interface{}) error {
 	return c.client.Query(c.ctx, q, variables)

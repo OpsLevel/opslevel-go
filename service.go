@@ -1,6 +1,8 @@
 package opslevel
 
 import (
+	"strings"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -12,6 +14,7 @@ type Service struct {
 	Aliases     []string `json:"aliases,omitempty"`
 	Description string   `json:"description,omitempty"`
 	Framework   string   `json:"framework,omitempty"`
+	HtmlURL     string   `json:"htmlUrl"`
 	ServiceId
 	Language     string                      `json:"language,omitempty"`
 	Lifecycle    Lifecycle                   `json:"lifecycle,omitempty"`
@@ -230,10 +233,99 @@ func (client *Client) ListServices() ([]Service, error) {
 			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
 		}
 	}
-	v := PayloadVariables{
-		"after": graphql.String(""),
-		"first": client.pageSize,
+	v := client.InitialPageVariables()
+	if err := client.Query(&q, v); err != nil {
+		return q.Account.Services.Nodes, err
 	}
+	if err := q.Account.Services.Hydrate(client); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	return q.Account.Services.Nodes, nil
+}
+
+func (client *Client) ListServicesWithFramework(framework string) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(framework: $framework, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["framework"] = graphql.String(framework)
+	if err := client.Query(&q, v); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	if err := q.Account.Services.Hydrate(client); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	return q.Account.Services.Nodes, nil
+}
+
+func (client *Client) ListServicesWithLanguage(language string) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(language: $language, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["language"] = graphql.String(language)
+	if err := client.Query(&q, v); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	if err := q.Account.Services.Hydrate(client); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	return q.Account.Services.Nodes, nil
+}
+
+func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(ownerAlias: $owner, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["owner"] = graphql.String(owner)
+	if err := client.Query(&q, v); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	if err := q.Account.Services.Hydrate(client); err != nil {
+		return q.Account.Services.Nodes, err
+	}
+	return q.Account.Services.Nodes, nil
+}
+
+type TagArgs struct {
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+func NewTagArgs(tag string) TagArgs {
+	kv := strings.Split(tag, ":")
+	switch len(kv) {
+	case 1:
+		return TagArgs{
+			Key: kv[0],
+		}
+	case 2:
+		return TagArgs{
+			Key:   kv[0],
+			Value: kv[1],
+		}
+	default: // TODO: is this the best we can do?
+		return TagArgs{
+			Key: tag,
+		}
+	}
+}
+
+func (client *Client) ListServicesWithTag(tag TagArgs) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(tag: $tag, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["tag"] = tag
 	if err := client.Query(&q, v); err != nil {
 		return q.Account.Services.Nodes, err
 	}
@@ -270,6 +362,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 
 //#region Delete
 
+// TODO: we should have a method that takes and ID and that follows the convention of other delete functions
 func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	var m struct {
 		Payload struct {
@@ -285,6 +378,12 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 		return err
 	}
 	return FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) DeleteServiceWithAlias(alias string) error {
+	return client.DeleteService(ServiceDeleteInput{
+		Alias: alias,
+	})
 }
 
 //#endregion

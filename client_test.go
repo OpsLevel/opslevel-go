@@ -69,14 +69,22 @@ func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValid
 	}
 }
 
-func RegisterEndpoint(t *testing.T, endpoint string) string {
-	return autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+func ANewClient(t *testing.T, endpoint string) *Client {
+	return NewClient("X", SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
-		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", endpoint)))
+		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
-func ANewClient(t *testing.T, endpoint string) *Client {
-	return NewClient("X", SetURL(RegisterEndpoint(t, endpoint)))
+func ANewClient2(t *testing.T, response string, request string) *Client {
+	return NewClient("X", SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", request),
+		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
+		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", request)))))
+}
+
+func ANewClientLogRequest(t *testing.T, endpoint string) *Client {
+	return NewClient("X", SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
+		LogRaw())))
 }
 
 func TestClientQuery(t *testing.T) {

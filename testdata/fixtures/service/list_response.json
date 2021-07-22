@@ -1,0 +1,165 @@
+{
+    "data": {
+      "account": {
+        "services": {
+          "nodes": [
+            {
+              "aliases": [
+                "db",
+                "k8s:db-default",
+                "k8s:db"
+              ],
+              "description": "Our Database - Handle With Care!",
+              "framework": "postgres",
+              "htmlUrl": "https://app.opslevel.com/services/db",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3",
+              "language": "c++",
+              "lifecycle": {
+                "alias": "generally_available",
+                "description": "Service is supporting features available to be used by all customers, and should be fully stable.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyOQ",
+                "index": 4,
+                "name": "Generally Available"
+              },
+              "name": "db",
+              "owner": null,
+              "product": "Example",
+              "repos": {
+                "edges": [],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": null,
+                  "endCursor": null
+                },
+                "totalCount": 0
+              },
+              "tags": {
+                "nodes": [
+                  {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzI1Mzg3Ng",
+                    "key": "imported",
+                    "value": "kubectl-opslevel"
+                  },
+                  {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzI1Mzg3Nw",
+                    "key": "app",
+                    "value": "db"
+                  },
+                  {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzI1Mzg3OA",
+                    "key": "environment",
+                    "value": "prod"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                },
+                "totalCount": 3
+              },
+              "tier": {
+                "alias": "tier_1",
+                "description": "Mission-critical service or repository. Failure could result in significant impact to revenue or reputation.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVGllci8zNDE",
+                "index": 1,
+                "name": "Tier 1"
+              },
+              "tools": {
+                "nodes": [
+                  {
+                    "category": "other",
+                    "categoryAlias": null,
+                    "displayName": "url",
+                    "environment": null,
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC80MTQyMw",
+                    "url": "https://example.com",
+                    "service": {
+                      "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"
+                    }
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "MQ"
+                },
+                "totalCount": 1
+              }
+            },
+            {
+              "aliases": [
+                "foo"
+              ],
+              "description": null,
+              "framework": null,
+              "htmlUrl": "https://app.opslevel.com/services/foo",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82MDI0",
+              "language": null,
+              "lifecycle": null,
+              "name": "foo",
+              "owner": {
+                "alias": "backend",
+                "contacts": [],
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTM",
+                "manager": {
+                  "name": "Kyle Rockman",
+                  "email": "kyle.rockman@mac.com"
+                },
+                "name": "Backend",
+                "responsibilities": null
+              },
+              "product": null,
+              "repos": {
+                "edges": [],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": null,
+                  "endCursor": null
+                },
+                "totalCount": 0
+              },
+              "tags": {
+                "nodes": [],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": null,
+                  "endCursor": null
+                },
+                "totalCount": 0
+              },
+              "tier": {
+                "alias": "tier_4",
+                "description": "Other service or repository. Failure doesn't result in immediate or significant impact.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVGllci8zNDQ",
+                "index": 4,
+                "name": "Tier 4"
+              },
+              "tools": {
+                "nodes": [],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": null,
+                  "endCursor": null
+                },
+                "totalCount": 0
+              }
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "Mg"
+          },
+          "totalCount": 2
+        }
+      }
+    }
+  }
