@@ -1,0 +1,8 @@
+{
+    "query": "mutation($input:FilterDeleteInput!){filterDelete(input: $input){deletedId,errors{message,path}}}",
+    "variables": {
+      "input": {
+        "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"
+      }
+    }
+  }

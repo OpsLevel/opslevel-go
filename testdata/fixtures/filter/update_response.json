@@ -1,0 +1,21 @@
+{
+    "data": {
+      "filterUpdate": {
+        "filter": {
+          "connective": null,
+          "htmlUrl": "https://app.opslevel.com/filters/622",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+          "name": "Test Updated",
+          "predicates": [
+            {
+              "key": "tier_index",
+              "keyData": null,
+              "type": "equals",
+              "value": "1"
+            }
+          ]
+        },
+        "errors": []
+      }
+    }
+  }
