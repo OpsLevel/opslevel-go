@@ -1,4 +1,4 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
@@ -8,8 +8,7 @@ import (
 
 func TestListTeams(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/teams", autopilot.FixtureResponse("teams_response.json"), FixtureQueryValidation(t, "teams_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ATestClient(t, "teams")
 	// Act
 	result, err := client.ListTeams()
 	// Assert

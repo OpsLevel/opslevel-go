@@ -1,4 +1,4 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
@@ -8,8 +8,7 @@ import (
 
 func TestCreateAliases(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/aliasCreate", autopilot.FixtureResponse("aliasCreate_response.json"), FixtureQueryValidation(t, "aliasCreate_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ATestClient(t, "aliasCreate")
 	// Act
 	result := client.CreateAliases("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", []string{"MyAwesomeService"})
 	// Assert

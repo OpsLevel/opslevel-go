@@ -1,4 +1,4 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
@@ -8,8 +8,7 @@ import (
 
 func TestListLifecycles(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/query_lifecycles", autopilot.FixtureResponse("lifecycles_response.json"), autopilot.SkipRequestValidation())
-	client := NewClient("X", SetURL(url))
+	client := ATestClientSkipRequest(t, "lifecycles")
 	// Act
 	result, err := client.ListLifecycles()
 	// Assert

@@ -1,4 +1,4 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
@@ -8,8 +8,7 @@ import (
 
 func TestListTiers(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/tiers", autopilot.FixtureResponse("tiers_response.json"), autopilot.SkipRequestValidation())
-	client := NewClient("X", SetURL(url))
+	client := ATestClientSkipRequest(t, "tiers")
 	// Act
 	result, err := client.ListTiers()
 	// Assert

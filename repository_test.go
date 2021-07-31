@@ -1,8 +1,9 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
 
+	ol "github.com/opslevel/opslevel-go"
 	"github.com/rocktavious/autopilot"
 )
 
@@ -29,19 +30,17 @@ import (
 
 func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/repository_with_alias_not_found", autopilot.FixtureResponse("repository_not_found_response.json"), FixtureQueryValidation(t, "repository_with_alias_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ATestClientAlt(t, "repository_not_found", "repository_with_alias_not_found")
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, &Repository{}, result)
+	autopilot.Equals(t, &ol.Repository{}, result)
 }
 
 func TestGetRepositoryWithAlias(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/repository_with_alias", autopilot.FixtureResponse("repository_response.json"), FixtureQueryValidation(t, "repository_with_alias_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ATestClientAlt(t, "repository", "repository_with_alias")
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -55,8 +54,7 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 
 func TestGetRepository(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/repository", autopilot.FixtureResponse("repository_response.json"), FixtureQueryValidation(t, "repository_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ATestClient(t, "repository")
 	// Act
 	result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
 	// Assert
@@ -70,8 +68,7 @@ func TestGetRepository(t *testing.T) {
 
 func TestListRepositories(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/list_repositories", autopilot.FixtureResponse("repository_list_response.json"), FixtureQueryValidation(t, "repository_list_request.json"))
-	client := NewClient("X", SetURL(url))
+	client := ATestClient(t, "repository_list")
 	// Act
 	result, err := client.ListRepositories()
 	// Assert

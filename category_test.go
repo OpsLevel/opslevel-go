@@ -1,17 +1,17 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
 
+	ol "github.com/opslevel/opslevel-go"
 	"github.com/rocktavious/autopilot"
-	"github.com/shurcooL/graphql"
 )
 
 func TestCreateRubricCategory(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "rubric/category/create")
+	client := ATestClient(t, "rubric/category/create")
 	// Act
-	result, _ := client.CreateCategory(CategoryCreateInput{
+	result, _ := client.CreateCategory(ol.CategoryCreateInput{
 		Name:        "Kyle",
 		Description: "Created By Kyle",
 	})
@@ -21,7 +21,7 @@ func TestCreateRubricCategory(t *testing.T) {
 
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "rubric/category/list")
+	client := ATestClient(t, "rubric/category/list")
 	// Act
 	result, _ := client.ListCategories()
 	// Assert
@@ -31,10 +31,10 @@ func TestListRubricCategories(t *testing.T) {
 
 func TestUpdateRubricCategory(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "rubric/category/update")
+	client := ATestClient(t, "rubric/category/update")
 	// Act
-	result, _ := client.UpdateCategory(CategoryUpdateInput{
-		Id:   graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"),
+	result, _ := client.UpdateCategory(ol.CategoryUpdateInput{
+		Id:   ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"),
 		Name: "Emily",
 	})
 	// Assert
@@ -43,7 +43,7 @@ func TestUpdateRubricCategory(t *testing.T) {
 
 func TestDeleteRubricCategory(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "rubric/category/delete")
+	client := ATestClient(t, "rubric/category/delete")
 	// Act
 	err := client.DeleteCategory("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert

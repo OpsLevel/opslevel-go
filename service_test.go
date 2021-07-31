@@ -1,15 +1,15 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
 
+	ol "github.com/opslevel/opslevel-go"
 	"github.com/rocktavious/autopilot"
-	"github.com/shurcooL/graphql"
 )
 
 func TestGetServiceIdWithAlias(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/get_id", "service/get_id_with_alias")
+	client := ATestClientAlt(t, "service/get_id", "service/get_id_with_alias")
 	// Act
 	result, err := client.GetServiceIdWithAlias("coredns")
 	// Assert
@@ -19,7 +19,7 @@ func TestGetServiceIdWithAlias(t *testing.T) {
 
 func TestGetServiceWithAlias(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/get", "service/get_with_alias")
+	client := ATestClientAlt(t, "service/get", "service/get_with_alias")
 	// Act
 	result, err := client.GetServiceWithAlias("coredns")
 	// Assert
@@ -34,7 +34,7 @@ func TestGetServiceWithAlias(t *testing.T) {
 
 func TestGetService(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "service/get")
+	client := ATestClient(t, "service/get")
 	// Act
 	result, err := client.GetService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx")
 	// Assert
@@ -49,7 +49,7 @@ func TestGetService(t *testing.T) {
 
 func TestListServices(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "service/list")
+	client := ATestClient(t, "service/list")
 	// Act
 	result, err := client.ListServices()
 	// Assert
@@ -60,7 +60,7 @@ func TestListServices(t *testing.T) {
 
 func TestListServicesWithFramework(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/list", "service/list_with_framework")
+	client := ATestClientAlt(t, "service/list", "service/list_with_framework")
 	// Act
 	result, err := client.ListServicesWithFramework("postgres")
 	// Assert
@@ -71,7 +71,7 @@ func TestListServicesWithFramework(t *testing.T) {
 
 func TestListServicesWithLanguage(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/list", "service/list_with_language")
+	client := ATestClientAlt(t, "service/list", "service/list_with_language")
 	// Act
 	result, err := client.ListServicesWithLanguage("postgres")
 	// Assert
@@ -82,7 +82,7 @@ func TestListServicesWithLanguage(t *testing.T) {
 
 func TestListServicesWithOwner(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/list", "service/list_with_owner")
+	client := ATestClientAlt(t, "service/list", "service/list_with_owner")
 	// Act
 	result, err := client.ListServicesWithOwner("postgres")
 	// Assert
@@ -93,9 +93,9 @@ func TestListServicesWithOwner(t *testing.T) {
 
 func TestListServicesWithTag(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/list", "service/list_with_tag")
+	client := ATestClientAlt(t, "service/list", "service/list_with_tag")
 	// Act
-	result, err := client.ListServicesWithTag(NewTagArgs("app:worker"))
+	result, err := client.ListServicesWithTag(ol.NewTagArgs("app:worker"))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, len(result))
@@ -104,16 +104,16 @@ func TestListServicesWithTag(t *testing.T) {
 
 func TestDeleteService(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "service/delete")
+	client := ATestClient(t, "service/delete")
 	// Act
-	err := client.DeleteService(ServiceDeleteInput{Id: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")})
+	err := client.DeleteService(ol.ServiceDeleteInput{Id: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")})
 	// Assert
 	autopilot.Ok(t, err)
 }
 
 func TestDeleteServicesWithAlias(t *testing.T) {
 	// Arrange
-	client := ANewClient2(t, "service/delete", "service/delete_with_alias")
+	client := ATestClientAlt(t, "service/delete", "service/delete_with_alias")
 	// Act
 	err := client.DeleteServiceWithAlias("db")
 	// Assert

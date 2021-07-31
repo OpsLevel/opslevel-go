@@ -1,22 +1,23 @@
-package opslevel
+package opslevel_test
 
 import (
 	"testing"
 
+	ol "github.com/opslevel/opslevel-go"
+
 	"github.com/rocktavious/autopilot"
-	"github.com/shurcooL/graphql"
 )
 
 func TestCreateFilter(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "filter/create")
+	client := ATestClient(t, "filter/create")
 	// Act
-	result, err := client.CreateFilter(FilterCreateInput{
+	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ConnectiveTypeAnd,
-		Predicates: []FilterPredicate{FilterPredicate{
+		Connective: ol.ConnectiveTypeAnd,
+		Predicates: []ol.FilterPredicate{{
 			Key:   "tier_index",
-			Type:  PredicateTypeEquals,
+			Type:  ol.PredicateTypeEquals,
 			Value: "1",
 		}},
 	})
@@ -24,12 +25,12 @@ func TestCreateFilter(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Kubernetes", result.Name)
 	autopilot.Equals(t, "tier_index", result.Predicates[0].Key)
-	autopilot.Equals(t, PredicateTypeEquals, result.Predicates[0].Type)
+	autopilot.Equals(t, ol.PredicateTypeEquals, result.Predicates[0].Type)
 }
 
 func TestGetFilter(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "filter/get")
+	client := ATestClient(t, "filter/get")
 	// Act
 	result, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -40,7 +41,7 @@ func TestGetFilter(t *testing.T) {
 
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "filter/get_missing")
+	client := ATestClient(t, "filter/get_missing")
 	// Act
 	_, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf")
 	// Assert
@@ -49,7 +50,7 @@ func TestGetMissingFilter(t *testing.T) {
 
 func TestListFilters(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "filter/list")
+	client := ATestClient(t, "filter/list")
 	// Act
 	result, err := client.ListFilters()
 	// Assert
@@ -61,14 +62,14 @@ func TestListFilters(t *testing.T) {
 
 func TestUpdateFilter(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "filter/update")
+	client := ATestClient(t, "filter/update")
 	// Act
-	result, err := client.UpdateFilter(FilterUpdateInput{
-		Id:   graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+	result, err := client.UpdateFilter(ol.FilterUpdateInput{
+		Id:   ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
 		Name: "Test Updated",
-		Predicates: []FilterPredicate{FilterPredicate{
+		Predicates: []ol.FilterPredicate{{
 			Key:   "tier_index",
-			Type:  PredicateTypeEquals,
+			Type:  ol.PredicateTypeEquals,
 			Value: "1",
 		}},
 	})
@@ -80,7 +81,7 @@ func TestUpdateFilter(t *testing.T) {
 
 func TestDeleteFilter(t *testing.T) {
 	// Arrange
-	client := ANewClient(t, "filter/delete")
+	client := ATestClient(t, "filter/delete")
 	// Act
 	err := client.DeleteFilter("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert

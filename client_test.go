@@ -1,4 +1,4 @@
-package opslevel
+package opslevel_test
 
 import (
 	"encoding/json"
@@ -9,6 +9,7 @@ import (
 	"os"
 	"testing"
 
+	ol "github.com/opslevel/opslevel-go"
 	"github.com/rocktavious/autopilot"
 
 	"github.com/rs/zerolog"
@@ -26,7 +27,7 @@ func TestMain(m *testing.M) {
 }
 
 type GraphqlQuery struct {
-	Query     string                 `json`
+	Query     string
 	Variables map[string]interface{} `json:",omitempty"`
 }
 
@@ -69,20 +70,26 @@ func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValid
 	}
 }
 
-func ANewClient(t *testing.T, endpoint string) *Client {
-	return NewClient("X", SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+func ATestClient(t *testing.T, endpoint string) *ol.Client {
+	return ol.NewClient("X", ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
 		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
-func ANewClient2(t *testing.T, response string, request string) *Client {
-	return NewClient("X", SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", request),
+func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
+	return ol.NewClient("X", ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", request),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
 		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", request)))))
 }
 
-func ANewClientLogRequest(t *testing.T, endpoint string) *Client {
-	return NewClient("X", SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {
+	return ol.NewClient("X", ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
+		autopilot.SkipRequestValidation())))
+}
+
+func ATestClientLogRequest(t *testing.T, endpoint string) *ol.Client {
+	return ol.NewClient("X", ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
 		LogRaw())))
 }
@@ -90,7 +97,7 @@ func ANewClientLogRequest(t *testing.T, endpoint string) *Client {
 func TestClientQuery(t *testing.T) {
 	// Arrange
 	url := autopilot.RegisterEndpoint("/account", autopilot.FixtureResponse("account_response.json"), QueryValidation(t, "{account{id}}"))
-	client := NewClient("X", SetURL(url))
+	client := ol.NewClient("X", ol.SetURL(url))
 	var q struct {
 		Account struct {
 			Id graphql.ID
