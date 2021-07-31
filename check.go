@@ -52,6 +52,108 @@ type Integration struct {
 	WebhookURL  string     `json:"webhookUrl"`
 }
 
+type CheckServiceConfigurationCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter graphql.ID `json:"filterId,omitempty"`
+}
+
+type CheckServiceConfigurationUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter graphql.ID `json:"filterId,omitempty"`
+}
+
+type CheckServiceOwnershipCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter graphql.ID `json:"filterId,omitempty"`
+}
+
+type CheckServiceOwnershipUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter graphql.ID `json:"filterId,omitempty"`
+}
+
+type ServiceProperty string
+
+const (
+	ServicePropertyDescription ServiceProperty = "description"
+	ServicePropertyName        ServiceProperty = "name"
+	ServicePropertyLanguage    ServiceProperty = "language"
+	ServicePropertyFramework   ServiceProperty = "framework"
+	ServicePropertyProduct     ServiceProperty = "product"
+	ServicePropertyLifecycle   ServiceProperty = "lifecycle_index"
+	ServicePropertyTier        ServiceProperty = "tier_index"
+)
+
+type CheckServicePropertyCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter    graphql.ID      `json:"filterId,omitempty"`
+	Property  ServiceProperty `json:"serviceProperty"`
+	Predicate PredicateInput  `json:"propertyValuePredicate,omitempty"`
+}
+
+type CheckServicePropertyUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter    graphql.ID      `json:"filterId,omitempty"`
+	Property  ServiceProperty `json:"serviceProperty"`
+	Predicate PredicateInput  `json:"propertyValuePredicate,omitempty"`
+}
 
 type CheckDeleteInput struct {
 	Id graphql.ID `json:"id"`
@@ -69,6 +171,69 @@ func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[strin
 	return &p.Check, FormatErrors(p.Errors)
 }
 
+//#region Create
+
+func (client *Client) CreateCheckServiceConfiguration(input CheckServiceConfigurationCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServiceConfigurationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckServiceConfiguration(input CheckServiceConfigurationUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServiceConfigurationUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckServiceOwnership(input CheckServiceOwnershipCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServiceOwnershipCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckServiceOwnership(input CheckServiceOwnershipUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServiceOwnershipUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckServiceProperty(input CheckServicePropertyCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServicePropertyCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckServiceProperty(input CheckServicePropertyUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServicePropertyUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+//#endregion
 
 //#region Retrieve
 
