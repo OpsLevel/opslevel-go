@@ -252,6 +252,74 @@ type CheckServicePropertyUpdateInput struct {
 	Predicate PredicateInput  `json:"propertyValuePredicate,omitempty"`
 }
 
+type CheckTagDefinedCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter       graphql.ID     `json:"filterId,omitempty"`
+	TagKey       string         `json:"tagKey"`
+	TagPredicate PredicateInput `json:"tagPredicate,omitempty"`
+}
+
+type CheckTagDefinedUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter       graphql.ID     `json:"filterId,omitempty"`
+	TagKey       string         `json:"tagKey"`
+	TagPredicate PredicateInput `json:"tagPredicate,omitempty"`
+}
+
+type CheckToolUsageCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter               graphql.ID     `json:"filterId,omitempty"`
+	ToolCategory         ToolCategory   `json:"toolCategory"`
+	ToolNamePredicate    PredicateInput `json:"toolNamePredicate,omitempty"`
+	EnvironmentPredicate PredicateInput `json:"environmentPredicate,omitempty"`
+}
+
+type CheckToolUsageUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter               graphql.ID     `json:"filterId,omitempty"`
+	ToolCategory         ToolCategory   `json:"toolCategory"`
+	ToolNamePredicate    PredicateInput `json:"toolNamePredicate,omitempty"`
+	EnvironmentPredicate PredicateInput `json:"environmentPredicate,omitempty"`
+}
+
 type CheckDeleteInput struct {
 	Id graphql.ID `json:"id"`
 }
@@ -382,6 +450,46 @@ func (client *Client) CreateCheckServiceProperty(input CheckServicePropertyCreat
 func (client *Client) UpdateCheckServiceProperty(input CheckServicePropertyUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkServicePropertyUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckTagDefined(input CheckTagDefinedCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkTagDefinedCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckTagDefined(input CheckTagDefinedUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkTagDefinedUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckToolUsage(input CheckToolUsageCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkToolUsageCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckToolUsage(input CheckToolUsageUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkToolUsageUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,

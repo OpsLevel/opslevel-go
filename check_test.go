@@ -193,6 +193,84 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"CreateTagDefined": {
+		fixture: "check/create_tag_defined",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckTagDefined(CheckTagDefinedCreateInput{
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+				TagKey:   "app",
+				TagPredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "postgres",
+				},
+			})
+		},
+	},
+	"UpdateTagDefined": {
+		fixture: "check/update_tag_defined",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckTagDefined(CheckTagDefinedUpdateInput{
+				Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+				TagKey:   "app",
+				TagPredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "postgres",
+				},
+			})
+		},
+	},
+	"CreateToolUsage": {
+		fixture: "check/create_tool_usage",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckToolUsage(CheckToolUsageCreateInput{
+				Name:         "Hello World",
+				Enabled:      true,
+				Category:     graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:        "Hello World Check",
+				ToolCategory: ToolCategoryMetrics,
+				ToolNamePredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "datadog",
+				},
+				EnvironmentPredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "production",
+				},
+			})
+		},
+	},
+	"UpdateToolUsage": {
+		fixture: "check/update_tool_usage",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckToolUsage(CheckToolUsageUpdateInput{
+				Id:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:         "Hello World",
+				Enabled:      true,
+				Category:     graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:        "Hello World Check",
+				ToolCategory: ToolCategoryMetrics,
+				ToolNamePredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "datadog",
+				},
+				EnvironmentPredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "production",
+				},
+			})
+		},
+	},
 	"GetCheck": {
 		fixture: "check/get",
 		body: func(c *Client) (*Check, error) {

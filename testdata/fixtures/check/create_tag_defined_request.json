@@ -1,0 +1,17 @@
+{
+    "query": "mutation($input:CheckTagDefinedCreateInput!){checkTagDefinedCreate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,webhookUrl},level{alias,description,id,index,name},name,notes},errors{message,path}}}",
+    "variables": {
+      "input": {
+        "name": "Hello World",
+        "enabled": true,
+        "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+        "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+        "notes": "Hello World Check",
+        "tagKey": "app",
+        "tagPredicate": {
+          "type": "equals",
+          "value": "postgres"
+        }
+      }
+    }
+  }

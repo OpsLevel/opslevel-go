@@ -1,0 +1,26 @@
+{
+    "data": {
+      "checkToolUsageUpdate": {
+        "check": {
+          "category": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+            "name": "Performance"
+          },
+          "checklist": null,
+          "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.",
+          "enabled": true,
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+          "integration": null,
+          "level": {
+            "alias": "bronze",
+            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+            "index": 1,
+            "name": "Bronze"
+          },
+          "name": "Hello World"
+        },
+        "errors": []
+      }
+    }
+  }
