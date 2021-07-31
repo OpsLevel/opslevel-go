@@ -68,6 +68,25 @@ type CheckRepositoryFileCreateInput struct {
 	FileContentsPredicate PredicateInput `json:"fileContentsPredicate,omitempty"`
 }
 
+type CheckRepositoryFileUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter                graphql.ID     `json:"filterId,omitempty"`
+	DirectorySearch       bool           `json:"directorySearch"`
+	Filepaths             []string       `json:"filePaths"`
+	FileContentsPredicate PredicateInput `json:"fileContentsPredicate,omitempty"`
+}
+
 type CheckRepositoryIntegratedCreateInput struct {
 	// Base
 	Name     string     `json:"name"`
@@ -81,7 +100,41 @@ type CheckRepositoryIntegratedCreateInput struct {
 	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
+type CheckRepositoryIntegratedUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter graphql.ID `json:"filterId,omitempty"`
+}
+
 type CheckRepositorySearchCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter                graphql.ID     `json:"filterId,omitempty"`
+	FileExtensions        []string       `json:"fileExtensions,omitempty"`
+	FileContentsPredicate PredicateInput `json:"fileContentsPredicate"`
+}
+
+type CheckRepositorySearchUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
 	// Base
 	Name     string     `json:"name"`
 	Enabled  bool       `json:"enabled"`
@@ -227,9 +280,28 @@ func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateI
 	return m.Payload.Mutate(client, &m, v)
 }
 
+func (client *Client) UpdateCheckRepositoryFile(input CheckRepositoryFileUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkRepositoryFileUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
 func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryIntegratedCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositoryIntegratedCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+func (client *Client) UpdateCheckRepositoryIntegrated(input CheckRepositoryIntegratedUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkRepositoryIntegratedUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -240,6 +312,16 @@ func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryInteg
 func (client *Client) CreateCheckRepositorySearch(input CheckRepositorySearchCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositorySearchCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckRepositorySearch(input CheckRepositorySearchUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkRepositorySearchUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,

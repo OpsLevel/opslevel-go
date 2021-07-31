@@ -29,6 +29,25 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"UpdateRepositoryFile": {
+		fixture: "check/update_repo_file",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckRepositoryFile(CheckRepositoryFileUpdateInput{
+				Id:              graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:            "Hello World",
+				Enabled:         true,
+				Category:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:           "Hello World Check",
+				DirectorySearch: true,
+				Filepaths:       []string{"/src", "/test"},
+				FileContentsPredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "postgres",
+				},
+			})
+		},
+	},
 	"CreateRepositoryIntegrated": {
 		fixture: "check/create_repo_integrated",
 		body: func(c *Client) (*Check, error) {
@@ -41,10 +60,41 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"UpdateRepositoryIntegrated": {
+		fixture: "check/update_repo_integrated",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckRepositoryIntegrated(CheckRepositoryIntegratedUpdateInput{
+				Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
+		},
+	},
 	"CreateRepositorySearch": {
 		fixture: "check/create_repo_search",
 		body: func(c *Client) (*Check, error) {
 			return c.CreateCheckRepositorySearch(CheckRepositorySearchCreateInput{
+				Name:           "Hello World",
+				Enabled:        true,
+				Category:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:          graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:          "Hello World Check",
+				FileExtensions: []string{"sbt", "py"},
+				FileContentsPredicate: PredicateInput{
+					Type:  PredicateTypeContains,
+					Value: "postgres",
+				},
+			})
+		},
+	},
+	"UpdateRepositorySearch": {
+		fixture: "check/update_repo_search",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckRepositorySearch(CheckRepositorySearchUpdateInput{
+				Id:             graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:           "Hello World",
 				Enabled:        true,
 				Category:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
