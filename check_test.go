@@ -11,6 +11,64 @@ var testcases = map[string]struct {
 	fixture string
 	body    func(c *Client) (*Check, error)
 }{
+	"CreateCustom": {
+		fixture: "check/create_custom",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckCustom(CheckCustomCreateInput{
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
+		},
+	},
+	"UpdateCustom": {
+		fixture: "check/update_custom",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckCustom(CheckCustomUpdateInput{
+				Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
+		},
+	},
+	"CreateCustomEvent": {
+		fixture: "check/create_custom_event",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckCustomEvent(CheckCustomEventCreateInput{
+				Name:             "Hello World",
+				Enabled:          true,
+				Category:         graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:            graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:            "Hello World Check",
+				ServiceSelector:  ".metadata.name",
+				SuccessCondition: ".metadata.name",
+				Message:          "#Hello World",
+				Integration:      graphql.ID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+			})
+		},
+	},
+	"UpdateCustomEvent": {
+		fixture: "check/update_custom_event",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckCustomEvent(CheckCustomEventUpdateInput{
+				Id:               graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:             "Hello World",
+				Enabled:          true,
+				Category:         graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:            graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:            "Hello World Check",
+				ServiceSelector:  ".metadata.name",
+				SuccessCondition: ".metadata.name",
+				Message:          "#Hello World",
+				Integration:      graphql.ID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+			})
+		},
+	},
 	"CreatePayload": {
 		fixture: "check/create_payload",
 		body: func(c *Client) (*Check, error) {
