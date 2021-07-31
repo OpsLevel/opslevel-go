@@ -7,202 +7,164 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
-func TestCreateCheckRepositoryFile(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/create_repo_file")
-	// Act
-	result, err := client.CreateCheckRepositoryFile(CheckRepositoryFileCreateInput{
-		Name:            "Hello World",
-		Enabled:         true,
-		Category:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:           "Hello World Check",
-		DirectorySearch: true,
-		Filepaths:       []string{"/src", "/test"},
-		FileContentsPredicate: PredicateInput{
-			Type:  PredicateTypeEquals,
-			Value: "postgres",
+var testcases = map[string]struct {
+	fixture string
+	body    func(c *Client) (*Check, error)
+}{
+	"CreateRepositoryFile": {
+		fixture: "check/create_repo_file",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckRepositoryFile(CheckRepositoryFileCreateInput{
+				Name:            "Hello World",
+				Enabled:         true,
+				Category:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:           "Hello World Check",
+				DirectorySearch: true,
+				Filepaths:       []string{"/src", "/test"},
+				FileContentsPredicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "postgres",
+				},
+			})
 		},
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestCreateCheckRepositoryIntegrated(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/create_repo_integrated")
-	// Act
-	result, err := client.CreateCheckRepositoryIntegrated(CheckRepositoryIntegratedCreateInput{
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestCreateCheckRepositorySearch(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/create_repo_search")
-	// Act
-	result, err := client.CreateCheckRepositorySearch(CheckRepositorySearchCreateInput{
-		Name:           "Hello World",
-		Enabled:        true,
-		Category:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:          graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:          "Hello World Check",
-		FileExtensions: []string{"sbt", "py"},
-		FileContentsPredicate: PredicateInput{
-			Type:  PredicateTypeContains,
-			Value: "postgres",
+	},
+	"CreateRepositoryIntegrated": {
+		fixture: "check/create_repo_integrated",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckRepositoryIntegrated(CheckRepositoryIntegratedCreateInput{
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
 		},
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestCreateCheckServiceConfiguration(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/create_service_configuration")
-	// Act
-	result, err := client.CreateCheckServiceConfiguration(CheckServiceConfigurationCreateInput{
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestUpdateCheckServiceConfiguration(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/update_service_configuration")
-	// Act
-	result, err := client.UpdateCheckServiceConfiguration(CheckServiceConfigurationUpdateInput{
-		Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestCreateCheckServiceOwnership(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/create_service_ownership")
-	// Act
-	result, err := client.CreateCheckServiceOwnership(CheckServiceOwnershipCreateInput{
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestUpdateCheckServiceOwnership(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/update_service_ownership")
-	// Act
-	result, err := client.UpdateCheckServiceOwnership(CheckServiceOwnershipUpdateInput{
-		Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestCreateCheckServiceProperty(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/create_service_property")
-	// Act
-	result, err := client.CreateCheckServiceProperty(CheckServicePropertyCreateInput{
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-		Property: ServicePropertyFramework,
-		Predicate: PredicateInput{
-			Type:  PredicateTypeEquals,
-			Value: "postgres",
+	},
+	"CreateRepositorySearch": {
+		fixture: "check/create_repo_search",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckRepositorySearch(CheckRepositorySearchCreateInput{
+				Name:           "Hello World",
+				Enabled:        true,
+				Category:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:          graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:          "Hello World Check",
+				FileExtensions: []string{"sbt", "py"},
+				FileContentsPredicate: PredicateInput{
+					Type:  PredicateTypeContains,
+					Value: "postgres",
+				},
+			})
 		},
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
-}
-
-func TestUpdateCheckServiceProperty(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/update_service_property")
-	// Act
-	result, err := client.UpdateCheckServiceProperty(CheckServicePropertyUpdateInput{
-		Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-		Name:     "Hello World",
-		Enabled:  true,
-		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-		Notes:    "Hello World Check",
-		Property: ServicePropertyFramework,
-		Predicate: PredicateInput{
-			Type:  PredicateTypeEquals,
-			Value: "postgres",
+	},
+	"CreateServiceConfiguration": {
+		fixture: "check/create_service_configuration",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckServiceConfiguration(CheckServiceConfigurationCreateInput{
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
 		},
-	})
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
+	},
+	"UpdateServiceConfiguration": {
+		fixture: "check/update_service_configuration",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckServiceConfiguration(CheckServiceConfigurationUpdateInput{
+				Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
+		},
+	},
+	"CreateServiceOwnership": {
+		fixture: "check/create_service_ownership",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckServiceOwnership(CheckServiceOwnershipCreateInput{
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
+		},
+	},
+	"UpdateServiceOwnership": {
+		fixture: "check/update_service_ownership",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckServiceOwnership(CheckServiceOwnershipUpdateInput{
+				Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+			})
+		},
+	},
+	"CreateServiceProperty": {
+		fixture: "check/create_service_property",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckServiceProperty(CheckServicePropertyCreateInput{
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+				Property: ServicePropertyFramework,
+				Predicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "postgres",
+				},
+			})
+		},
+	},
+	"UpdateServiceProperty": {
+		fixture: "check/update_service_property",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckServiceProperty(CheckServicePropertyUpdateInput{
+				Id:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:     "Hello World",
+				Enabled:  true,
+				Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:    "Hello World Check",
+				Property: ServicePropertyFramework,
+				Predicate: PredicateInput{
+					Type:  PredicateTypeEquals,
+					Value: "postgres",
+				},
+			})
+		},
+	},
+	"GetCheck": {
+		fixture: "check/get",
+		body: func(c *Client) (*Check, error) {
+			return c.GetCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4")
+		},
+	},
 }
 
-func TestGetCheck(t *testing.T) {
-	// Arrange
-	client := ANewClient(t, "check/get")
-	// Act
-	result, err := client.GetCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4")
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
-	autopilot.Equals(t, "Performance", result.Category.Name)
-	autopilot.Equals(t, "Bronze", result.Level.Name)
+func TestChecks(t *testing.T) {
+	for name, tc := range testcases {
+		t.Run(name, func(t *testing.T) {
+			// Arrange
+			client := ANewClient(t, tc.fixture)
+			// Act
+			result, err := tc.body(client)
+			// Assert
+			autopilot.Equals(t, nil, err)
+			autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
+			autopilot.Equals(t, "Performance", result.Category.Name)
+			autopilot.Equals(t, "Bronze", result.Level.Name)
+		})
+	}
 }
 
 func TestGetMissingCheck(t *testing.T) {
