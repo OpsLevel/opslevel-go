@@ -26,6 +26,18 @@ type OpsLevelErrors struct {
 	Path    []string
 }
 
+type IdResponsePayload struct {
+	Id     graphql.ID `graphql:"deletedCheckId"`
+	Errors []OpsLevelErrors
+}
+
+func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
+	if err := client.Mutate(m, v); err != nil {
+		return err
+	}
+	return FormatErrors(p.Errors)
+}
+
 func NewId(id string) *IdentifierInput {
 	return &IdentifierInput{
 		Id: graphql.ID(id),
