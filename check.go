@@ -87,6 +87,39 @@ type CheckRepositoryFileUpdateInput struct {
 	FileContentsPredicate PredicateInput `json:"fileContentsPredicate,omitempty"`
 }
 
+type CheckPayloadCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter       graphql.ID `json:"filterId,omitempty"`
+	JQExpression string     `json:"jqExpression"`
+	Message      string     `json:"resultMessage,omitempty"`
+}
+
+type CheckPayloadUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter       graphql.ID `json:"filterId,omitempty"`
+	JQExpression string     `json:"jqExpression"`
+	Message      string     `json:"resultMessage,omitempty"`
+}
+
 type CheckRepositoryIntegratedCreateInput struct {
 	// Base
 	Name     string     `json:"name"`
@@ -337,6 +370,26 @@ func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[strin
 }
 
 //#region Create
+
+func (client *Client) CreateCheckPayload(input CheckPayloadCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkPayloadCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckPayload(input CheckPayloadUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkPayloadUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
 
 func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateInput) (*Check, error) {
 	var m struct {

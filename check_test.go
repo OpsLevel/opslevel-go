@@ -11,6 +11,35 @@ var testcases = map[string]struct {
 	fixture string
 	body    func(c *Client) (*Check, error)
 }{
+	"CreatePayload": {
+		fixture: "check/create_payload",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckPayload(CheckPayloadCreateInput{
+				Name:         "Hello World",
+				Enabled:      true,
+				Category:     graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:        "Hello World Check",
+				JQExpression: ".metadata.name",
+				Message:      "#Hello World",
+			})
+		},
+	},
+	"UpdatePayload": {
+		fixture: "check/update_payload",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckPayload(CheckPayloadUpdateInput{
+				Id:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:         "Hello World",
+				Enabled:      true,
+				Category:     graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:        "Hello World Check",
+				JQExpression: ".metadata.name",
+				Message:      "#Hello World",
+			})
+		},
+	},
 	"CreateRepositoryFile": {
 		fixture: "check/create_repo_file",
 		body: func(c *Client) (*Check, error) {
