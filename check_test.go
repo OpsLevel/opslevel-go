@@ -409,6 +409,17 @@ func TestChecks(t *testing.T) {
 	}
 }
 
+func TestListChecks(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "check/list")
+	// Act
+	result, err := client.ListChecks()
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Metrics Tool", result[2].Name)
+	autopilot.Equals(t, "Tier 1 Services", result[2].Filter.Name)
+}
+
 func TestGetMissingCheck(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "check/get_missing")

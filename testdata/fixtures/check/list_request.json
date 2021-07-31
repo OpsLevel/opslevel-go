@@ -1,0 +1,3 @@
+{
+    "query": "{account{rubric{checks{nodes{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"
+  }

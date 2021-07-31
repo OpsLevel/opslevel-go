@@ -24,6 +24,12 @@ const (
 	CheckTypeGeneric          CheckType = "generic"
 )
 
+type Checklist struct {
+	Id   graphql.ID `json:"id"`
+	Name string     `json:"name"`
+	Path string     `json:"path"`
+}
+
 type Check struct {
 	Category    Category    `json:"category"`
 	Checklist   Checklist   `json:"checklist"`
@@ -38,10 +44,10 @@ type Check struct {
 	//Owner   Team or User - need to look into Fragments
 }
 
-type Checklist struct {
-	Id   graphql.ID `json:"id"`
-	Name string     `json:"name"`
-	Path string     `json:"path"`
+type CheckConnection struct {
+	Nodes      []Check
+	PageInfo   PageInfo
+	TotalCount graphql.Int
 }
 
 type CheckCustomCreateInput struct {
@@ -478,6 +484,30 @@ type CheckResponsePayload struct {
 	Errors []OpsLevelErrors
 }
 
+func (conn *CheckConnection) Hydrate(client *Client) error {
+	var q struct {
+		Account struct {
+			Rubric struct {
+				Checks CheckConnection `graphql:"checks(after: $after, first: $first)"`
+			}
+		}
+	}
+	v := PayloadVariables{
+		"first": client.pageSize,
+	}
+	q.Account.Rubric.Checks.PageInfo = conn.PageInfo
+	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
+		v["after"] = q.Account.Rubric.Checks.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Rubric.Checks.Nodes {
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
 func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[string]interface{}) (*Check, error) {
 	if err := client.Mutate(m, v); err != nil {
 		return nil, err
@@ -746,6 +776,23 @@ func (client *Client) GetCheck(id graphql.ID) (*Check, error) {
 		return nil, fmt.Errorf("Check with ID '%s' not found!", id)
 	}
 	return &q.Account.Check, nil
+}
+
+func (client *Client) ListChecks() ([]Check, error) {
+	var q struct {
+		Account struct {
+			Rubric struct {
+				Checks CheckConnection `graphql:"checks"`
+			}
+		}
+	}
+	if err := client.Query(&q, nil); err != nil {
+		return q.Account.Rubric.Checks.Nodes, err
+	}
+	if err := q.Account.Rubric.Checks.Hydrate(client); err != nil {
+		return q.Account.Rubric.Checks.Nodes, err
+	}
+	return q.Account.Rubric.Checks.Nodes, nil
 }
 
 //#endregion
