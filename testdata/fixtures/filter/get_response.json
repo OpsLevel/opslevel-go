@@ -1,0 +1,20 @@
+{
+    "data": {
+      "account": {
+        "filter": {
+          "connective": null,
+          "htmlUrl": "https://app.opslevel.com/filters/622",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+          "name": "Test",
+          "predicates": [
+            {
+              "key": "tier_index",
+              "keyData": null,
+              "type": "equals",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    }
+  }

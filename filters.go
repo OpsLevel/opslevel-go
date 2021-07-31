@@ -1,6 +1,10 @@
 package opslevel
 
-import "github.com/shurcooL/graphql"
+import (
+	"fmt"
+
+	"github.com/shurcooL/graphql"
+)
 
 type ConnectiveType string
 type PredicateType string
@@ -104,6 +108,24 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 //#endregion
 
 //#region Retrieve
+
+func (client *Client) GetFilter(id graphql.ID) (*Filter, error) {
+	var q struct {
+		Account struct {
+			Filter Filter `graphql:"filter(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	if q.Account.Filter.Id == nil {
+		return nil, fmt.Errorf("Filter with ID '%s' not found!", id)
+	}
+	return &q.Account.Filter, nil
+}
 
 func (client *Client) ListFilters() ([]Filter, error) {
 	var q struct {

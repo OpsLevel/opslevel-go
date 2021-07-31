@@ -27,6 +27,26 @@ func TestCreateFilter(t *testing.T) {
 	autopilot.Equals(t, PredicateTypeEquals, result.Predicates[0].Type)
 }
 
+func TestGetFilter(t *testing.T) {
+	// Arrange
+	client := ANewClient(t, "filter/get")
+	// Act
+	result, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Test", result.Name)
+	autopilot.Equals(t, "tier_index", result.Predicates[0].Key)
+}
+
+func TestGetMissingFilter(t *testing.T) {
+	// Arrange
+	client := ANewClient(t, "filter/get_missing")
+	// Act
+	_, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf")
+	// Assert
+	autopilot.Assert(t, err != nil, "This test should throw an error.")
+}
+
 func TestListFilters(t *testing.T) {
 	// Arrange
 	client := ANewClient(t, "filter/list")
