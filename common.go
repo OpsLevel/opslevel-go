@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/relvacode/iso8601"
 	"github.com/shurcooL/graphql"
 )
 
@@ -62,6 +63,11 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	}
 
 	return fmt.Errorf(strings.Join(errstrings, "\n"))
+}
+
+func NewISO8601Date(datetime string) iso8601.Time {
+	date, _ := iso8601.ParseString(datetime)
+	return iso8601.Time{Time: date}
 }
 
 func removeDuplicates(data []string) []string {

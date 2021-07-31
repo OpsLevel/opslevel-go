@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/relvacode/iso8601"
 	"github.com/shurcooL/graphql"
 )
 
@@ -116,6 +117,64 @@ type CheckCustomEventUpdateInput struct {
 	SuccessCondition string     `json:"successCondition"`
 	Message          string     `json:"resultMessage,omitempty"`
 	Integration      graphql.ID `json:"integrationId"`
+}
+
+// FrequencyTimeScale represents the time scale type for the frequency.
+type FrequencyTimeScale string
+
+// The time scale type for the frequency.
+const (
+	FrequencyTimeScaleDay   FrequencyTimeScale = "day"   // Consider the time scale of days.
+	FrequencyTimeScaleWeek  FrequencyTimeScale = "week"  // Consider the time scale of weeks.
+	FrequencyTimeScaleMonth FrequencyTimeScale = "month" // Consider the time scale of months.
+	FrequencyTimeScaleYear  FrequencyTimeScale = "year"  // Consider the time scale of years.
+)
+
+type manualCheckFrequencyInput struct {
+	StartingDate       iso8601.Time       `json:"startingDate"`
+	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale"`
+	FrequencyValue     int                `json:"frequencyValue"`
+}
+
+func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeScale, value int) manualCheckFrequencyInput {
+	return manualCheckFrequencyInput{
+		StartingDate:       NewISO8601Date(startingDate),
+		FrequencyTimeScale: timeScale,
+		FrequencyValue:     value,
+	}
+}
+
+type CheckManualCreateInput struct {
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter                graphql.ID                `json:"filterId,omitempty"`
+	UpdateFrequency       manualCheckFrequencyInput `json:"updateFrequency,omitempty"`
+	UpdateRequiresComment bool                      `json:"updateRequiresComment"`
+}
+
+type CheckManualUpdateInput struct {
+	// ID
+	Id graphql.ID `json:"id"`
+
+	// Base
+	Name     string     `json:"name"`
+	Enabled  bool       `json:"enabled"`
+	Category graphql.ID `json:"categoryId"`
+	Level    graphql.ID `json:"levelId"`
+	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Notes    string     `json:"notes,omitempty"`
+
+	// Specific
+	Filter                graphql.ID                `json:"filterId,omitempty"`
+	UpdateFrequency       manualCheckFrequencyInput `json:"updateFrequency,omitempty"`
+	UpdateRequiresComment bool                      `json:"updateRequiresComment"`
 }
 
 type CheckPayloadCreateInput struct {
@@ -470,6 +529,26 @@ func (client *Client) CreateCheckCustomEvent(input CheckCustomEventCreateInput) 
 func (client *Client) UpdateCheckCustomEvent(input CheckCustomEventUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkCustomEventUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckManual(input CheckManualCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkManualCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckManual(input CheckManualUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkManualUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,

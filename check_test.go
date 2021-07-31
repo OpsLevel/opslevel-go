@@ -69,6 +69,33 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"CreateManual": {
+		fixture: "check/create_manual",
+		body: func(c *Client) (*Check, error) {
+			return c.CreateCheckManual(CheckManualCreateInput{
+				Name:            "Hello World",
+				Enabled:         true,
+				Category:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:           "Hello World Check",
+				UpdateFrequency: NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", FrequencyTimeScaleWeek, 1),
+			})
+		},
+	},
+	"UpdateManual": {
+		fixture: "check/update_manual",
+		body: func(c *Client) (*Check, error) {
+			return c.UpdateCheckManual(CheckManualUpdateInput{
+				Id:              graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+				Name:            "Hello World",
+				Enabled:         true,
+				Category:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+				Level:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+				Notes:           "Hello World Check",
+				UpdateFrequency: NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", FrequencyTimeScaleWeek, 1),
+			})
+		},
+	},
 	"CreatePayload": {
 		fixture: "check/create_payload",
 		body: func(c *Client) (*Check, error) {
