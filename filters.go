@@ -27,6 +27,11 @@ const (
 	PredicateTypeMatchesRegex               PredicateType = "matches_regex"
 )
 
+type PredicateInput struct {
+	Type  PredicateType `json:"type"`
+	Value string        `json:"value,omitempty"`
+}
+
 type Filter struct {
 	Connective ConnectiveType
 	HtmlURL    string
