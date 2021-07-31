@@ -19,6 +19,25 @@ func TestCreateRubricCategory(t *testing.T) {
 	autopilot.Equals(t, "Kyle", result.Name)
 }
 
+func TestGetRubricCategory(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "rubric/category/get")
+	// Act
+	result, err := client.GetCategory("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Reliability", result.Name)
+}
+
+func TestGetMissingRubricCategory(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "rubric/category/get_missing")
+	// Act
+	_, err := client.GetCategory("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	// Assert
+	autopilot.Assert(t, err != nil, "This test should throw an error.")
+}
+
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "rubric/category/list")

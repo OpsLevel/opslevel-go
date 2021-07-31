@@ -1,6 +1,8 @@
 package opslevel
 
 import (
+	"fmt"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -77,6 +79,24 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 //#endregion
 
 //#region Retrieve
+
+func (client *Client) GetCategory(id graphql.ID) (*Category, error) {
+	var q struct {
+		Account struct {
+			Category Category `graphql:"category(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	if q.Account.Category.Id == nil {
+		return nil, fmt.Errorf("Category with ID '%s' not found!", id)
+	}
+	return &q.Account.Category, nil
+}
 
 func (client *Client) ListCategories() ([]Category, error) {
 	var q struct {

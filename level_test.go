@@ -20,6 +20,25 @@ func TestCreateRubricLevels(t *testing.T) {
 	autopilot.Equals(t, 4, result.Index)
 }
 
+func TestGetRubricLevel(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "rubric/level/get")
+	// Act
+	result, err := client.GetLevel("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Bronze", result.Name)
+}
+
+func TestGetMissingRubricLevel(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "rubric/level/get_missing")
+	// Act
+	_, err := client.GetLevel("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	// Assert
+	autopilot.Assert(t, err != nil, "This test should throw an error.")
+}
+
 func TestListRubricLevels(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "rubric/level/list")

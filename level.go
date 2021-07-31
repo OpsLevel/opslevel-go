@@ -1,6 +1,8 @@
 package opslevel
 
 import (
+	"fmt"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -78,6 +80,24 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 //#endregion
 
 //#region Retrieve
+
+func (client *Client) GetLevel(id graphql.ID) (*Level, error) {
+	var q struct {
+		Account struct {
+			Level Level `graphql:"level(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	if q.Account.Level.Id == nil {
+		return nil, fmt.Errorf("Level with ID '%s' not found!", id)
+	}
+	return &q.Account.Level, nil
+}
 
 func (client *Client) ListLevels() ([]Level, error) {
 	var q struct {
