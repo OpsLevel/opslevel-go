@@ -1,0 +1,15 @@
+{
+    "data": {
+      "account": {
+        "integration": {
+          "accountKey": "19e90a87-50f0-439c-87b3-d03fe41be5ec",
+          "accountName": null,
+          "accountUrl": null,
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf",
+          "name": "Deploy",
+          "type": "deploy",
+          "webhookUrl": "https://app.opslevel.com/integrations/deploy/19e90a87-50f0-439c-87b3-d03fe41be5ec"
+        }
+      }
+    }
+  }

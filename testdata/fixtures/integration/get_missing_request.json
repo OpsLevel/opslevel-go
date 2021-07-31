@@ -1,0 +1,6 @@
+{
+    "query": "query($id:ID!){account{integration(id: $id){accountKey,accountName,accountUrl,id,name,type,webhookUrl}}}",
+    "variables": {
+      "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
+    }
+  }

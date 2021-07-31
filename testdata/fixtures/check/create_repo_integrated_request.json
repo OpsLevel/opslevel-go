@@ -1,5 +1,5 @@
 {
-    "query": "mutation($input:CheckRepositoryIntegratedCreateInput!){checkRepositoryIntegratedCreate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,webhookUrl},level{alias,description,id,index,name},name,notes},errors{message,path}}}",
+    "query": "mutation($input:CheckRepositoryIntegratedCreateInput!){checkRepositoryIntegratedCreate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes},errors{message,path}}}",
     "variables": {
       "input": {
         "name": "Hello World",

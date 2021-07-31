@@ -1,0 +1,82 @@
+package opslevel
+
+import (
+	"fmt"
+
+	"github.com/shurcooL/graphql"
+)
+
+type Integration struct {
+	AccountKey  string     `json:"accountKey"`
+	AccountName string     `json:"accountName,omitempty"`
+	AccountURL  string     `json:"accountUrl,omitempty"`
+	Id          graphql.ID `json:"id"`
+	Name        string     `json:"name"`
+	Type        string     `json:"type"`
+	WebhookURL  string     `json:"webhookUrl,omitempty"`
+}
+
+type IntegrationConnection struct {
+	Nodes      []Integration
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
+func (conn *IntegrationConnection) Hydrate(client *Client) error {
+	var q struct {
+		Account struct {
+			Integrations IntegrationConnection `graphql:"integrations(after: $after, first: $first)"`
+		}
+	}
+	v := PayloadVariables{
+		"first": client.pageSize,
+	}
+	q.Account.Integrations.PageInfo = conn.PageInfo
+	for q.Account.Integrations.PageInfo.HasNextPage {
+		v["after"] = q.Account.Integrations.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Integrations.Nodes {
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
+//#region Retrieve
+
+func (client *Client) GetIntegration(id graphql.ID) (*Integration, error) {
+	var q struct {
+		Account struct {
+			Integration Integration `graphql:"integration(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	if q.Account.Integration.Id == nil {
+		return nil, fmt.Errorf("Integration with ID '%s' not found!", id)
+	}
+	return &q.Account.Integration, nil
+}
+
+func (client *Client) ListIntegrations() ([]Integration, error) {
+	var q struct {
+		Account struct {
+			Integrations IntegrationConnection `graphql:"integrations"`
+		}
+	}
+	if err := client.Query(&q, nil); err != nil {
+		return q.Account.Integrations.Nodes, err
+	}
+	if err := q.Account.Integrations.Hydrate(client); err != nil {
+		return q.Account.Integrations.Nodes, err
+	}
+	return q.Account.Integrations.Nodes, nil
+}
+
+//#endregion

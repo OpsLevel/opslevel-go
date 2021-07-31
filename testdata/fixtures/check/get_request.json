@@ -1,5 +1,5 @@
 {
-    "query": "query($id:ID!){account{check(id: $id){category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,webhookUrl},level{alias,description,id,index,name},name,notes}}}",
+    "query": "query($id:ID!){account{check(id: $id){category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes}}}",
     "variables": {
       "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"
     }

@@ -44,15 +44,6 @@ type Checklist struct {
 	Path string     `json:"path"`
 }
 
-type Integration struct {
-	AccountKey  string     `json:"accountKey"`
-	AccountName string     `json:"accountName"`
-	AccountURL  string     `json:"accountUrl"`
-	Id          graphql.ID `json:"id"`
-	Name        string     `json:"name"`
-	WebhookURL  string     `json:"webhookUrl"`
-}
-
 type CheckCustomCreateInput struct {
 	// Base
 	Name     string     `json:"name"`
