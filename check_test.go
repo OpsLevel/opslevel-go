@@ -7,6 +7,71 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+func TestCreateCheckRepositoryFile(t *testing.T) {
+	// Arrange
+	client := ANewClient(t, "check/create_repo_file")
+	// Act
+	result, err := client.CreateCheckRepositoryFile(CheckRepositoryFileCreateInput{
+		Name:            "Hello World",
+		Enabled:         true,
+		Category:        graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+		Level:           graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+		Notes:           "Hello World Check",
+		DirectorySearch: true,
+		Filepaths:       []string{"/src", "/test"},
+		FileContentsPredicate: PredicateInput{
+			Type:  PredicateTypeEquals,
+			Value: "postgres",
+		},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
+	autopilot.Equals(t, "Performance", result.Category.Name)
+	autopilot.Equals(t, "Bronze", result.Level.Name)
+}
+
+func TestCreateCheckRepositoryIntegrated(t *testing.T) {
+	// Arrange
+	client := ANewClient(t, "check/create_repo_integrated")
+	// Act
+	result, err := client.CreateCheckRepositoryIntegrated(CheckRepositoryIntegratedCreateInput{
+		Name:     "Hello World",
+		Enabled:  true,
+		Category: graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+		Level:    graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+		Notes:    "Hello World Check",
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
+	autopilot.Equals(t, "Performance", result.Category.Name)
+	autopilot.Equals(t, "Bronze", result.Level.Name)
+}
+
+func TestCreateCheckRepositorySearch(t *testing.T) {
+	// Arrange
+	client := ANewClient(t, "check/create_repo_search")
+	// Act
+	result, err := client.CreateCheckRepositorySearch(CheckRepositorySearchCreateInput{
+		Name:           "Hello World",
+		Enabled:        true,
+		Category:       graphql.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+		Level:          graphql.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+		Notes:          "Hello World Check",
+		FileExtensions: []string{"sbt", "py"},
+		FileContentsPredicate: PredicateInput{
+			Type:  PredicateTypeContains,
+			Value: "postgres",
+		},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", result.Id)
+	autopilot.Equals(t, "Performance", result.Category.Name)
+	autopilot.Equals(t, "Bronze", result.Level.Name)
+}
+
 func TestCreateCheckServiceConfiguration(t *testing.T) {
 	// Arrange
 	client := ANewClient(t, "check/create_service_configuration")
