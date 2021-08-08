@@ -29,7 +29,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckCustom(ol.CheckCustomUpdateInput{
 				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:     "Hello World",
-				Enabled:  true,
+				Enabled:  ol.Bool(true),
 				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:    "Hello World Check",
@@ -58,7 +58,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 				Id:               ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:             "Hello World",
-				Enabled:          true,
+				Enabled:          ol.Bool(true),
 				Category:         ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:            ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:            "Hello World Check",
@@ -88,7 +88,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckManual(ol.CheckManualUpdateInput{
 				Id:              ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:            "Hello World",
-				Enabled:         true,
+				Enabled:         ol.Bool(true),
 				Category:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:           "Hello World Check",
@@ -116,7 +116,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckPayload(ol.CheckPayloadUpdateInput{
 				Id:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:         "Hello World",
-				Enabled:      true,
+				Enabled:      ol.Bool(true),
 				Category:     ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:        "Hello World Check",
@@ -149,7 +149,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckRepositoryFile(ol.CheckRepositoryFileUpdateInput{
 				Id:              ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:            "Hello World",
-				Enabled:         true,
+				Enabled:         ol.Bool(true),
 				Category:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:           "Hello World Check",
@@ -180,7 +180,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckRepositoryIntegrated(ol.CheckRepositoryIntegratedUpdateInput{
 				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:     "Hello World",
-				Enabled:  true,
+				Enabled:  ol.Bool(true),
 				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:    "Hello World Check",
@@ -210,7 +210,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckRepositorySearch(ol.CheckRepositorySearchUpdateInput{
 				Id:             ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:           "Hello World",
-				Enabled:        true,
+				Enabled:        ol.Bool(true),
 				Category:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:          ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:          "Hello World Check",
@@ -240,7 +240,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckServiceConfiguration(ol.CheckServiceConfigurationUpdateInput{
 				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:     "Hello World",
-				Enabled:  true,
+				Enabled:  ol.Bool(true),
 				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:    "Hello World Check",
@@ -265,7 +265,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
 				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:     "Hello World",
-				Enabled:  true,
+				Enabled:  ol.Bool(true),
 				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:    "Hello World Check",
@@ -295,7 +295,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckServiceProperty(ol.CheckServicePropertyUpdateInput{
 				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:     "Hello World",
-				Enabled:  true,
+				Enabled:  ol.Bool(true),
 				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:    "Hello World Check",
@@ -330,7 +330,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckTagDefined(ol.CheckTagDefinedUpdateInput{
 				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:     "Hello World",
-				Enabled:  true,
+				Enabled:  ol.Bool(true),
 				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:    "Hello World Check",
@@ -369,7 +369,7 @@ var testcases = map[string]struct {
 			return c.UpdateCheckToolUsage(ol.CheckToolUsageUpdateInput{
 				Id:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
 				Name:         "Hello World",
-				Enabled:      true,
+				Enabled:      ol.Bool(true),
 				Category:     ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 				Level:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 				Notes:        "Hello World Check",

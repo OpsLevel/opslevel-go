@@ -57,10 +57,8 @@ type CheckCustomCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckCustomUpdateInput struct {
@@ -68,15 +66,13 @@ type CheckCustomUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckCustomEventCreateInput struct {
@@ -86,10 +82,10 @@ type CheckCustomEventCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter           graphql.ID `json:"filterId,omitempty"`
 	ServiceSelector  string     `json:"serviceSelector"`
 	SuccessCondition string     `json:"successCondition"`
 	Message          string     `json:"resultMessage,omitempty"`
@@ -101,19 +97,19 @@ type CheckCustomEventUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter           graphql.ID `json:"filterId,omitempty"`
-	ServiceSelector  string     `json:"serviceSelector"`
-	SuccessCondition string     `json:"successCondition"`
+	ServiceSelector  string     `json:"serviceSelector,omitempty"`
+	SuccessCondition string     `json:"successCondition,omitempty"`
 	Message          string     `json:"resultMessage,omitempty"`
-	Integration      graphql.ID `json:"integrationId"`
+	Integration      graphql.ID `json:"integrationId,omitempty"`
 }
 
 // FrequencyTimeScale represents the time scale type for the frequency.
@@ -148,10 +144,10 @@ type CheckManualCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter                graphql.ID                `json:"filterId,omitempty"`
 	UpdateFrequency       manualCheckFrequencyInput `json:"updateFrequency,omitempty"`
 	UpdateRequiresComment bool                      `json:"updateRequiresComment"`
 }
@@ -161,17 +157,17 @@ type CheckManualUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter                graphql.ID                `json:"filterId,omitempty"`
 	UpdateFrequency       manualCheckFrequencyInput `json:"updateFrequency,omitempty"`
-	UpdateRequiresComment bool                      `json:"updateRequiresComment"`
+	UpdateRequiresComment bool                      `json:"updateRequiresComment,omitempty"`
 }
 
 type CheckPayloadCreateInput struct {
@@ -181,12 +177,12 @@ type CheckPayloadCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter       graphql.ID `json:"filterId,omitempty"`
-	JQExpression string     `json:"jqExpression"`
-	Message      string     `json:"resultMessage,omitempty"`
+	JQExpression string `json:"jqExpression"`
+	Message      string `json:"resultMessage,omitempty"`
 }
 
 type CheckPayloadUpdateInput struct {
@@ -194,17 +190,17 @@ type CheckPayloadUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter       graphql.ID `json:"filterId,omitempty"`
-	JQExpression string     `json:"jqExpression"`
-	Message      string     `json:"resultMessage,omitempty"`
+	JQExpression string `json:"jqExpression,omitempty"`
+	Message      string `json:"resultMessage,omitempty"`
 }
 
 type CheckRepositoryFileCreateInput struct {
@@ -214,10 +210,10 @@ type CheckRepositoryFileCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter                graphql.ID     `json:"filterId,omitempty"`
 	DirectorySearch       bool           `json:"directorySearch"`
 	Filepaths             []string       `json:"filePaths"`
 	FileContentsPredicate PredicateInput `json:"fileContentsPredicate,omitempty"`
@@ -228,17 +224,17 @@ type CheckRepositoryFileUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter                graphql.ID     `json:"filterId,omitempty"`
-	DirectorySearch       bool           `json:"directorySearch"`
-	Filepaths             []string       `json:"filePaths"`
+	DirectorySearch       bool           `json:"directorySearch,omitempty"`
+	Filepaths             []string       `json:"filePaths,omitempty"`
 	FileContentsPredicate PredicateInput `json:"fileContentsPredicate,omitempty"`
 }
 
@@ -249,10 +245,8 @@ type CheckRepositoryIntegratedCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckRepositoryIntegratedUpdateInput struct {
@@ -260,15 +254,13 @@ type CheckRepositoryIntegratedUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckRepositorySearchCreateInput struct {
@@ -278,10 +270,10 @@ type CheckRepositorySearchCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter                graphql.ID     `json:"filterId,omitempty"`
 	FileExtensions        []string       `json:"fileExtensions,omitempty"`
 	FileContentsPredicate PredicateInput `json:"fileContentsPredicate"`
 }
@@ -291,17 +283,17 @@ type CheckRepositorySearchUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter                graphql.ID     `json:"filterId,omitempty"`
 	FileExtensions        []string       `json:"fileExtensions,omitempty"`
-	FileContentsPredicate PredicateInput `json:"fileContentsPredicate"`
+	FileContentsPredicate PredicateInput `json:"fileContentsPredicate,omitempty"`
 }
 
 type CheckServiceConfigurationCreateInput struct {
@@ -311,10 +303,8 @@ type CheckServiceConfigurationCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckServiceConfigurationUpdateInput struct {
@@ -322,15 +312,13 @@ type CheckServiceConfigurationUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckServiceOwnershipCreateInput struct {
@@ -340,10 +328,8 @@ type CheckServiceOwnershipCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type CheckServiceOwnershipUpdateInput struct {
@@ -351,15 +337,13 @@ type CheckServiceOwnershipUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
-
-	// Specific
-	Filter graphql.ID `json:"filterId,omitempty"`
 }
 
 type ServiceProperty string
@@ -381,10 +365,10 @@ type CheckServicePropertyCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter    graphql.ID      `json:"filterId,omitempty"`
 	Property  ServiceProperty `json:"serviceProperty"`
 	Predicate PredicateInput  `json:"propertyValuePredicate,omitempty"`
 }
@@ -394,16 +378,16 @@ type CheckServicePropertyUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter    graphql.ID      `json:"filterId,omitempty"`
-	Property  ServiceProperty `json:"serviceProperty"`
+	Property  ServiceProperty `json:"serviceProperty,omitempty"`
 	Predicate PredicateInput  `json:"propertyValuePredicate,omitempty"`
 }
 
@@ -414,10 +398,10 @@ type CheckTagDefinedCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter       graphql.ID     `json:"filterId,omitempty"`
 	TagKey       string         `json:"tagKey"`
 	TagPredicate PredicateInput `json:"tagPredicate,omitempty"`
 }
@@ -427,16 +411,16 @@ type CheckTagDefinedUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter       graphql.ID     `json:"filterId,omitempty"`
-	TagKey       string         `json:"tagKey"`
+	TagKey       string         `json:"tagKey,omitempty"`
 	TagPredicate PredicateInput `json:"tagPredicate,omitempty"`
 }
 
@@ -447,10 +431,10 @@ type CheckToolUsageCreateInput struct {
 	Category graphql.ID `json:"categoryId"`
 	Level    graphql.ID `json:"levelId"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter               graphql.ID     `json:"filterId,omitempty"`
 	ToolCategory         ToolCategory   `json:"toolCategory"`
 	ToolNamePredicate    PredicateInput `json:"toolNamePredicate,omitempty"`
 	EnvironmentPredicate PredicateInput `json:"environmentPredicate,omitempty"`
@@ -461,16 +445,16 @@ type CheckToolUsageUpdateInput struct {
 	Id graphql.ID `json:"id"`
 
 	// Base
-	Name     string     `json:"name"`
-	Enabled  bool       `json:"enabled"`
-	Category graphql.ID `json:"categoryId"`
-	Level    graphql.ID `json:"levelId"`
+	Name     string     `json:"name,omitempty"`
+	Enabled  *bool      `json:"enabled,omitempty"`
+	Category graphql.ID `json:"categoryId,omitempty"`
+	Level    graphql.ID `json:"levelId,omitempty"`
 	Owner    graphql.ID `json:"ownerId,omitempty"`
+	Filter   graphql.ID `json:"filterId,omitempty"`
 	Notes    string     `json:"notes,omitempty"`
 
 	// Specific
-	Filter               graphql.ID     `json:"filterId,omitempty"`
-	ToolCategory         ToolCategory   `json:"toolCategory"`
+	ToolCategory         ToolCategory   `json:"toolCategory,omitempty"`
 	ToolNamePredicate    PredicateInput `json:"toolNamePredicate,omitempty"`
 	EnvironmentPredicate PredicateInput `json:"environmentPredicate,omitempty"`
 }
