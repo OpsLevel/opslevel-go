@@ -1,5 +1,5 @@
 {
-    "query": "mutation($input:CheckRepositorySearchCreateInput!){checkRepositorySearchCreate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities}},errors{message,path}}}",
+    "query": "mutation($input:CheckRepositorySearchCreateInput!){checkRepositorySearchCreate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes,owner{... on Team{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities}}},errors{message,path}}}",
     "variables": {
       "input": {
         "name": "Hello World",

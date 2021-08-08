@@ -1,5 +1,5 @@
 {
-    "query": "mutation($input:CheckServiceOwnershipUpdateInput!){checkServiceOwnershipUpdate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities}},errors{message,path}}}",
+    "query": "mutation($input:CheckServiceOwnershipUpdateInput!){checkServiceOwnershipUpdate(input: $input){check{category{id,name},checklist{id,name,path},description,enabled,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,integration{accountKey,accountName,accountUrl,id,name,type,webhookUrl},level{alias,description,id,index,name},name,notes,owner{... on Team{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities}}},errors{message,path}}}",
     "variables": {
       "input": {
         "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",

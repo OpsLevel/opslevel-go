@@ -30,6 +30,10 @@ type Checklist struct {
 	Path string     `json:"path"`
 }
 
+type CheckOwner struct {
+	Team Team `graphql:"... on Team"`
+}
+
 type Check struct {
 	Category    Category    `json:"category"`
 	Checklist   Checklist   `json:"checklist"`
@@ -41,7 +45,7 @@ type Check struct {
 	Level       Level       `json:"level"`
 	Name        string      `json:"name"`
 	Notes       string      `json:"notes"`
-	Owner       Team        `json:"owner"`
+	Owner       CheckOwner  `json:"owner"`
 }
 
 type CheckConnection struct {
