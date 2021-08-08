@@ -1,9 +1,11 @@
 package opslevel
 
+import "github.com/shurcooL/graphql"
+
 type Tier struct {
 	Alias       string
 	Description string
-	Id          string
+	Id          graphql.ID
 	Index       int
 	Name        string
 }
