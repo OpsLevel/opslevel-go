@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/shurcooL/graphql"
 	"golang.org/x/oauth2"
@@ -80,6 +81,7 @@ func NewClient(apiToken string, options ...option) *Client {
 		pageSize: graphql.Int(settings.pageSize),
 		ctx:      settings.ctx,
 		client: graphql.NewClient(settings.url, &http.Client{
+			Timeout: time.Second * 10,
 			Transport: &oauth2.Transport{
 				Source: httpToken,
 				Base: &customTransport{
