@@ -5,13 +5,13 @@ import (
 )
 
 type User struct {
-	Name  graphql.String
-	Email graphql.String
+	Name  string
+	Email string
 }
 
 type Contact struct {
-	DisplayName graphql.String
-	Address     graphql.String
+	DisplayName string
+	Address     string
 }
 
 type ContactInput struct {
