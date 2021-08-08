@@ -41,7 +41,7 @@ type Check struct {
 	Level       Level       `json:"level"`
 	Name        string      `json:"name"`
 	Notes       string      `json:"notes"`
-	//Owner   Team or User - need to look into Fragments
+	Owner       Team        `json:"owner"`
 }
 
 type CheckConnection struct {
