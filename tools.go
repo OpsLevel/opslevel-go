@@ -24,6 +24,26 @@ const (
 	ToolCategoryOther                 ToolCategory = "other"
 )
 
+func GetToolCategoryTypes() []string {
+	return []string{
+		string(ToolCategoryAdmin),
+		string(ToolCategoryCode),
+		string(ToolCategoryContinuousIntegration),
+		string(ToolCategoryDeployment),
+		string(ToolCategoryErrors),
+		string(ToolCategoryFeatureFlag),
+		string(ToolCategoryHealthChecks),
+		string(ToolCategoryIncidents),
+		string(ToolCategoryLogs),
+		string(ToolCategoryMetrics),
+		string(ToolCategoryOrchestrator),
+		string(ToolCategoryRunbooks),
+		string(ToolCategoryStatusPage),
+		string(ToolCategoryWiki),
+		string(ToolCategoryOther),
+	}
+}
+
 type Tool struct {
 	Category      ToolCategory
 	CategoryAlias string `json:",omitempty"`

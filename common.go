@@ -73,8 +73,9 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return fmt.Errorf(strings.Join(errstrings, "\n"))
 }
 
-func NewID(id string) graphql.ID {
-	return graphql.ID(id)
+func NewID(id string) *graphql.ID {
+	output := graphql.ID(id)
+	return &output
 }
 
 func NewISO8601Date(datetime string) iso8601.Time {

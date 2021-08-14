@@ -7,12 +7,22 @@ import (
 )
 
 type ConnectiveType string
-type PredicateType string
 
 const (
 	ConnectiveTypeAnd ConnectiveType = "and"
 	ConnectiveTypeOr  ConnectiveType = "or"
+)
 
+func GetConnectiveTypes() []string {
+	return []string{
+		string(ConnectiveTypeAnd),
+		string(ConnectiveTypeOr),
+	}
+}
+
+type PredicateType string
+
+const (
 	PredicateTypeContains                   PredicateType = "contains"
 	PredicateTypeDoesNotContain             PredicateType = "does_not_contain"
 	PredicateTypeDoesNotEqual               PredicateType = "does_not_equal"
@@ -26,6 +36,23 @@ const (
 	PredicateTypeSatisfiesVersionConstraint PredicateType = "satisfies_version_constraint"
 	PredicateTypeMatchesRegex               PredicateType = "matches_regex"
 )
+
+func GetPredicateTypes() []string {
+	return []string{
+		string(PredicateTypeContains),
+		string(PredicateTypeDoesNotContain),
+		string(PredicateTypeDoesNotEqual),
+		string(PredicateTypeDoesNotExist),
+		string(PredicateTypeEndsWith),
+		string(PredicateTypeEquals),
+		string(PredicateTypeExists),
+		string(PredicateTypeGreaterThanOrEqualTo),
+		string(PredicateTypeLessThanOrEqualTo),
+		string(PredicateTypeStartsWith),
+		string(PredicateTypeSatisfiesVersionConstraint),
+		string(PredicateTypeMatchesRegex),
+	}
+}
 
 type PredicateInput struct {
 	Type  PredicateType `json:"type"`

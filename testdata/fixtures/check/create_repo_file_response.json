@@ -6,7 +6,7 @@
             "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
             "name": "Performance"
           },
-          "checklist": null,
+          
           "description": "Repo directorys ''/src' or '/test'' equals 'postgres'.",
           "enabled": true,
           "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
