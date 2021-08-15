@@ -22,6 +22,10 @@ type PageInfo struct {
 
 type PayloadVariables map[string]interface{}
 
+type DeleteInput struct {
+	Id graphql.ID `json:"id"`
+}
+
 type OpsLevelErrors struct {
 	Message string
 	Path    []string

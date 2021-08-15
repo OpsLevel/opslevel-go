@@ -155,26 +155,6 @@ func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput
 
 //#endregion
 
-//#region Update
-
-func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput) (*ServiceRepository, error) {
-	var m struct {
-		Payload struct {
-			ServiceRepository ServiceRepository
-			Errors            []OpsLevelErrors
-		} `graphql:"serviceRepositoryUpdate(input: $input)"`
-	}
-	v := PayloadVariables{
-		"input": input,
-	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.ServiceRepository, FormatErrors(m.Payload.Errors)
-}
-
-//#endregion
-
 //#region Retrieve
 
 func (client *Client) GetRepositoryWithAlias(alias string) (*Repository, error) {
@@ -331,3 +311,45 @@ func (client *Client) ListRepositories() ([]Repository, error) {
 	}
 	return q.Account.Repositories.Nodes, nil
 }
+
+//#endregion
+
+//#region Update
+
+func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput) (*ServiceRepository, error) {
+	var m struct {
+		Payload struct {
+			ServiceRepository ServiceRepository
+			Errors            []OpsLevelErrors
+		} `graphql:"serviceRepositoryUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.ServiceRepository, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
+//#region Delete
+
+func (client *Client) DeleteServiceRepository(id graphql.ID) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID `graphql:"deletedId"`
+			Errors []OpsLevelErrors
+		} `graphql:"serviceRepositoryDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": DeleteInput{Id: id},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
