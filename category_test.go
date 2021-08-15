@@ -12,8 +12,7 @@ func TestCreateRubricCategory(t *testing.T) {
 	client := ATestClient(t, "rubric/category/create")
 	// Act
 	result, _ := client.CreateCategory(ol.CategoryCreateInput{
-		Name:        "Kyle",
-		Description: "Created By Kyle",
+		Name: "Kyle",
 	})
 	// Assert
 	autopilot.Equals(t, "Kyle", result.Name)

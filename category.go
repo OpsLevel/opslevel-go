@@ -7,8 +7,6 @@ import (
 )
 
 type Category struct {
-	//Alias       string
-	//Description string     `json:"description,omitempty"`
 	Id   graphql.ID `json:"id"`
 	Name string
 }
@@ -20,14 +18,12 @@ type CategoryConnection struct {
 }
 
 type CategoryCreateInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
+	Name string `json:"name"`
 }
 
 type CategoryUpdateInput struct {
-	Id          graphql.ID `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description,omitempty"`
+	Id   graphql.ID `json:"id"`
+	Name string     `json:"name"`
 }
 
 type CategoryDeleteInput struct {
