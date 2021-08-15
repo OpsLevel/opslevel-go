@@ -52,8 +52,8 @@ type TagCreateInput struct {
 
 type TagUpdateInput struct {
 	Id    graphql.ID `json:"id"`
-	Key   string     `json:"key"`
-	Value string     `json:"value"`
+	Key   string     `json:"key,omitempty"`
+	Value string     `json:"value,omitempty"`
 }
 
 type TagDeleteInput struct {
