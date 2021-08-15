@@ -79,11 +79,11 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 	var q struct {
 		Account struct {
-			Team Team `graphql:"team(alias: $team)"`
+			Team Team `graphql:"team(alias: $alias)"`
 		}
 	}
 	v := PayloadVariables{
-		"team": alias,
+		"alias": graphql.String(alias),
 	}
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
@@ -99,11 +99,11 @@ func (client *Client) GetTeamWithId(id graphql.ID) (*Team, error) {
 func (client *Client) GetTeam(id graphql.ID) (*Team, error) {
 	var q struct {
 		Account struct {
-			Team Team `graphql:"team(id: $team)"`
+			Team Team `graphql:"team(id: $id)"`
 		}
 	}
 	v := PayloadVariables{
-		"team": id,
+		"id": id,
 	}
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
