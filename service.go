@@ -270,6 +270,17 @@ func (client *Client) ListServicesWithLanguage(language string) ([]Service, erro
 	return q.Account.Services.Query(client, &q, v)
 }
 
+func (client *Client) ListServicesWithLifecycle(lifecycle string) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(lifecycleAlias: $lifecycle, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["lifecycle"] = graphql.String(lifecycle)
+	return q.Account.Services.Query(client, &q, v)
+}
+
 func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
 	var q struct {
 		Account struct {
@@ -278,6 +289,17 @@ func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
 	}
 	v := client.InitialPageVariables()
 	v["owner"] = graphql.String(owner)
+	return q.Account.Services.Query(client, &q, v)
+}
+
+func (client *Client) ListServicesWithProduct(product string) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(product: $product, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["product"] = graphql.String(product)
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -313,6 +335,17 @@ func (client *Client) ListServicesWithTag(tag TagArgs) ([]Service, error) {
 	}
 	v := client.InitialPageVariables()
 	v["tag"] = tag
+	return q.Account.Services.Query(client, &q, v)
+}
+
+func (client *Client) ListServicesWithTier(tier string) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(tierAlias: $tier, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["tier"] = graphql.String(tier)
 	return q.Account.Services.Query(client, &q, v)
 }
 
