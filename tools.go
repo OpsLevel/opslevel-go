@@ -69,6 +69,18 @@ type ToolCreateInput struct {
 	ServiceAlias string       `json:"serviceAlias,omitempty"`
 }
 
+type ToolUpdateInput struct {
+	Id          graphql.ID   `json:"id"`
+	Category    ToolCategory `json:"category,omitempty"`
+	DisplayName string       `json:"displayName,omitempty"`
+	Url         string       `json:"url,omitempty"`
+	Environment string       `json:"environment,omitempty"`
+}
+
+type ToolDeleteInput struct {
+	Id graphql.ID `json:"id"`
+}
+
 //#region Create
 
 func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
@@ -169,6 +181,46 @@ func (client *Client) GetToolCount(service graphql.ID) (int, error) {
 		return 0, err
 	}
 	return int(q.Account.Service.Tools.TotalCount), nil
+}
+
+//#endregion
+
+//#region Update
+
+func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
+	var m struct {
+		Payload struct {
+			Tool   Tool
+			Errors []OpsLevelErrors
+		} `graphql:"toolUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.Tool, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
+//#region Delete
+
+func (client *Client) DeleteTool(id graphql.ID) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID `graphql:"deletedToolId"`
+			Errors []OpsLevelErrors
+		} `graphql:"toolDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": ToolDeleteInput{Id: id},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
 }
 
 //#endregion
