@@ -1,6 +1,9 @@
 package opslevel
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -11,8 +14,9 @@ type AliasCreateInput struct {
 
 //#region Create
 // TODO: make sure duplicate aliases throw an error that we can catch
-func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) []string {
+func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) ([]string, error) {
 	var output []string
+	var errors []string
 	for _, alias := range aliases {
 		input := AliasCreateInput{
 			Alias:   alias,
@@ -20,14 +24,18 @@ func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) []stri
 		}
 		result, err := client.CreateAlias(input)
 		if err != nil {
-			// TODO: log warning about failed create?
+			errors = append(errors, err.Error())
 		}
 		for _, resultAlias := range result {
 			output = append(output, string(resultAlias))
 		}
 	}
 	output = removeDuplicates(output)
-	return output
+	if len(errors) > 0 {
+		return output, fmt.Errorf(strings.Join(errors, "\n"))
+	} else {
+		return output, nil
+	}
 }
 
 func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
