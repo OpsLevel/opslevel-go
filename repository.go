@@ -312,6 +312,26 @@ func (client *Client) ListRepositories() ([]Repository, error) {
 	return q.Account.Repositories.Nodes, nil
 }
 
+func (client *Client) ListRepositoriesWithTier(tier string) ([]Repository, error) {
+	var q struct {
+		Account struct {
+			Repositories RepositoryConnection `graphql:"repositories(tierAlias: $tier, after: $after, first: $first)"`
+		}
+	}
+	v := PayloadVariables{
+		"after": graphql.String(""),
+		"first": client.pageSize,
+		"tier":  graphql.String(tier),
+	}
+	if err := client.Query(&q, v); err != nil {
+		return q.Account.Repositories.Nodes, err
+	}
+	if err := q.Account.Repositories.Hydrate(client); err != nil {
+		return q.Account.Repositories.Nodes, err
+	}
+	return q.Account.Repositories.Nodes, nil
+}
+
 //#endregion
 
 //#region Update
