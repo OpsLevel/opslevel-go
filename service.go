@@ -62,21 +62,6 @@ type ServiceDeleteInput struct {
 	Alias string     `json:"alias,omitempty"`
 }
 
-type ServiceResponsePayload struct {
-	Service Service
-	Errors  []OpsLevelErrors
-}
-
-func (p *ServiceResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) (*Service, error) {
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	if err := p.Service.Hydrate(client); err != nil {
-		return &p.Service, err
-	}
-	return &p.Service, FormatErrors(p.Errors)
-}
-
 //#region ServiceHelpers
 
 func (s *Service) HasAlias(alias string) bool {
@@ -125,12 +110,21 @@ func (s *Service) Hydrate(client *Client) error {
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
 	var m struct {
-		Payload ServiceResponsePayload `graphql:"serviceCreate(input: $input)"`
+		Payload struct {
+			Service Service
+			Errors  []OpsLevelErrors
+		} `graphql:"serviceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Service.Hydrate(client); err != nil {
+		return &m.Payload.Service, err
+	}
+	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
 
 //#endregion
@@ -328,12 +322,21 @@ func (client *Client) ListServicesWithTag(tag TagArgs) ([]Service, error) {
 
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
-		Payload ServiceResponsePayload `graphql:"serviceUpdate(input: $input)"`
+		Payload struct {
+			Service Service
+			Errors  []OpsLevelErrors
+		} `graphql:"serviceUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Service.Hydrate(client); err != nil {
+		return &m.Payload.Service, err
+	}
+	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
 
 //#endregion

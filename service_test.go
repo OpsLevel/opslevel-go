@@ -7,6 +7,19 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
+func TestCreateService(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "service/create")
+	// Act
+	result, err := client.CreateService(ol.ServiceCreateInput{
+		Name:        "Foo",
+		Description: "Foo service",
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, len(result.Aliases))
+}
+
 func TestGetServiceIdWithAlias(t *testing.T) {
 	// Arrange
 	client := ATestClientAlt(t, "service/get_id", "service/get_id_with_alias")

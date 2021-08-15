@@ -1,0 +1,52 @@
+{
+  "data": {
+    "serviceCreate": {
+      "service": {
+        "aliases": [
+          "foo_2"
+        ],
+        "description": "Foo service",
+        "framework": null,
+        "htmlUrl": "https://app.opslevel.com/services/foo_2",
+        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS84NjY4",
+        "language": null,
+        "lifecycle": null,
+        "name": "Foo",
+        "owner": null,
+        "product": null,
+        "repos": {
+          "edges": [],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": null,
+            "endCursor": null
+          },
+          "totalCount": 0
+        },
+        "tags": {
+          "nodes": [],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": null,
+            "endCursor": null
+          },
+          "totalCount": 0
+        },
+        "tier": null,
+        "tools": {
+          "nodes": [],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": null,
+            "endCursor": null
+          },
+          "totalCount": 0
+        }
+      },
+      "errors": []
+    }
+  }
+}
