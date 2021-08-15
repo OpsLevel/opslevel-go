@@ -154,6 +154,36 @@ func (client *Client) ListTeams() ([]Team, error) {
 	return output, nil
 }
 
+func (client *Client) ListTeamsWithManager(email string) ([]Team, error) {
+	var output []Team
+	var q struct {
+		Account struct {
+			Teams TeamConnection `graphql:"teams(managerEmail: $email, after: $after, first: $first)"`
+		}
+	}
+	v := PayloadVariables{
+		"after": graphql.String(""),
+		"first": client.pageSize,
+		"email": graphql.String(email),
+	}
+	if err := client.Query(&q, v); err != nil {
+		return output, err
+	}
+	for _, item := range q.Account.Teams.Nodes {
+		output = append(output, item)
+	}
+	for q.Account.Teams.PageInfo.HasNextPage {
+		v["after"] = q.Account.Teams.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		for _, item := range q.Account.Teams.Nodes {
+			output = append(output, item)
+		}
+	}
+	return output, nil
+}
+
 //#endregion
 
 //#region Update
