@@ -206,7 +206,7 @@ func (client *Client) DeleteFilter(id graphql.ID) error {
 		} `graphql:"filterDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": FilterDeleteInput{Id: id},
+		"input": DeleteInput{Id: graphql.ID(id)},
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err
