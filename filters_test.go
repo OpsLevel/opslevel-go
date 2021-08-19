@@ -16,7 +16,7 @@ func TestCreateFilter(t *testing.T) {
 		Name:       "Kubernetes",
 		Connective: ol.ConnectiveTypeAnd,
 		Predicates: []ol.FilterPredicate{{
-			Key:   "tier_index",
+			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEquals,
 			Value: "1",
 		}},
@@ -24,7 +24,7 @@ func TestCreateFilter(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Kubernetes", result.Name)
-	autopilot.Equals(t, "tier_index", result.Predicates[0].Key)
+	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
 	autopilot.Equals(t, ol.PredicateTypeEquals, result.Predicates[0].Type)
 }
 
@@ -36,7 +36,7 @@ func TestGetFilter(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Test", result.Name)
-	autopilot.Equals(t, "tier_index", result.Predicates[0].Key)
+	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
 }
 
 func TestGetMissingFilter(t *testing.T) {
@@ -57,7 +57,7 @@ func TestListFilters(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, 4, len(result))
 	autopilot.Equals(t, "Test", result[1].Name)
-	autopilot.Equals(t, "tier_index", result[3].Predicates[0].Key)
+	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result[3].Predicates[0].Key)
 }
 
 func TestUpdateFilter(t *testing.T) {
@@ -68,7 +68,7 @@ func TestUpdateFilter(t *testing.T) {
 		Id:   ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
 		Name: "Test Updated",
 		Predicates: []ol.FilterPredicate{{
-			Key:   "tier_index",
+			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEquals,
 			Value: "1",
 		}},
@@ -76,7 +76,7 @@ func TestUpdateFilter(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Test Updated", result.Name)
-	autopilot.Equals(t, "tier_index", result.Predicates[0].Key)
+	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
 }
 
 func TestDeleteFilter(t *testing.T) {

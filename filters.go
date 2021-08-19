@@ -54,6 +54,32 @@ func GetPredicateTypes() []string {
 	}
 }
 
+type PredicateKeyEnum string
+
+const (
+	PredicateKeyEnumTierIndex      PredicateKeyEnum = "tier_index"
+	PredicateKeyEnumLifecycleIndex PredicateKeyEnum = "lifecycle_index"
+	PredicateKeyEnumLanguage       PredicateKeyEnum = "language"
+	PredicateKeyEnumFramework      PredicateKeyEnum = "framework"
+	PredicateKeyEnumProduct        PredicateKeyEnum = "product"
+	PredicateKeyEnumName           PredicateKeyEnum = "name"
+	PredicateKeyEnumTags           PredicateKeyEnum = "tags"
+	PredicateKeyEnumOwnerId        PredicateKeyEnum = "owner_id"
+)
+
+func GetPredicateKeyEnumTypes() []string {
+	return []string{
+		string(PredicateKeyEnumTierIndex),
+		string(PredicateKeyEnumLifecycleIndex),
+		string(PredicateKeyEnumLanguage),
+		string(PredicateKeyEnumFramework),
+		string(PredicateKeyEnumProduct),
+		string(PredicateKeyEnumName),
+		string(PredicateKeyEnumTags),
+		string(PredicateKeyEnumOwnerId),
+	}
+}
+
 type PredicateInput struct {
 	Type  PredicateType `json:"type"`
 	Value string        `json:"value,omitempty"`
@@ -68,10 +94,10 @@ type Filter struct {
 }
 
 type FilterPredicate struct {
-	Key     string        `json:"key"`
-	KeyData string        `json:"keyData,omitempty"`
-	Type    PredicateType `json:"type"`
-	Value   string        `json:"value,omitempty"`
+	Key     PredicateKeyEnum `json:"key"`
+	KeyData string           `json:"keyData,omitempty"`
+	Type    PredicateType    `json:"type"`
+	Value   string           `json:"value,omitempty"`
 }
 
 type FilterConnection struct {
@@ -91,10 +117,6 @@ type FilterUpdateInput struct {
 	Name       string            `json:"name,omitempty"`
 	Predicates []FilterPredicate `json:"predicates"` //The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
 	Connective ConnectiveType    `json:"connective,omitempty"`
-}
-
-type FilterDeleteInput struct {
-	Id graphql.ID `json:"id"`
 }
 
 func (conn *FilterConnection) Hydrate(client *Client) error {
