@@ -7,13 +7,9 @@ import (
 )
 
 type Integration struct {
-	AccountKey  string     `json:"accountKey"`
-	AccountName string     `json:"accountName,omitempty"`
-	AccountURL  string     `json:"accountUrl,omitempty"`
-	Id          graphql.ID `json:"id"`
-	Name        string     `json:"name"`
-	Type        string     `json:"type"`
-	WebhookURL  string     `json:"webhookUrl,omitempty"`
+	Id   graphql.ID `json:"id"`
+	Name string     `json:"name"`
+	Type string     `json:"type"`
 }
 
 type IntegrationConnection struct {

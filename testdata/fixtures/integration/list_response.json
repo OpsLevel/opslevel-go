@@ -4,49 +4,29 @@
         "integrations": {
           "nodes": [
             {
-              "accountKey": "a",
-              "accountName": null,
-              "accountUrl": null,
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkNoZWNrSW50ZWdyYXRpb24vMzI2",
               "name": "Check",
-              "type": "check",
-              "webhookUrl": "https://app.opslevel.com/integrations/check/a"
+              "type": "check"
             },
             {
-              "accountKey": "1",
-              "accountName": null,
-              "accountUrl": null,
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkRlcGxveUludGVncmF0aW9uLzMyNw",
               "name": "Deploy",
-              "type": "deploy",
-              "webhookUrl": "https://app.opslevel.com/integrations/deploy/1"
+              "type": "deploy"
             },
             {
-              "accountKey": "e",
-              "accountName": null,
-              "accountUrl": null,
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OlBheWxvYWRJbnRlZ3JhdGlvbi8zNDg",
               "name": "Payload",
-              "type": "payload",
-              "webhookUrl": "https://app.opslevel.com/integrations/payload/e"
+              "type": "payload"
             },
             {
-              "accountKey": "b",
-              "accountName": null,
-              "accountUrl": null,
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg",
               "name": "Kubernetes",
-              "type": "generic",
-              "webhookUrl": "https://app.opslevel.com/integrations/custom_event/b"
+              "type": "generic"
             },
             {
-              "accountKey": "5",
-              "accountName": null,
-              "accountUrl": null,
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81ODQ",
               "name": "Kubernetes",
-              "type": "generic",
-              "webhookUrl": "https://app.opslevel.com/integrations/custom_event/5"
+              "type": "generic"
             }
           ],
           "pageInfo": {

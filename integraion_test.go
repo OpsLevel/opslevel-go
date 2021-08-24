@@ -6,7 +6,7 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
-func TestGetIntegraion(t *testing.T) {
+func TestGetIntegration(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "integration/get")
 	// Act
