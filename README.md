@@ -59,7 +59,7 @@ Find a service given an alias and print the owning team name:
 
 ```go
 foundService, foundServiceErr := client.GetServiceWithAlias("MyCoolService")
-if foundServiceErr != nil {![OpsLevel Golang Gopher NoBG](https://user-images.githubusercontent.com/735015/118144162-c041b300-b3d1-11eb-8eb2-03d01e7a3fc7.png)
+if foundServiceErr != nil {
 
 	panic(foundServiceErr)
 }
