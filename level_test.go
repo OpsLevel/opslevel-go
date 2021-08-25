@@ -14,6 +14,7 @@ func TestCreateRubricLevels(t *testing.T) {
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
 		Description: "Created By Kyle",
+		Index:       ol.NewInt(4),
 	})
 	// Assert
 	autopilot.Equals(t, "kyle", result.Alias)

@@ -23,6 +23,7 @@ type LevelConnection struct {
 type LevelCreateInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
+	Index       *int   `json:"index,omitempty"`
 }
 
 type LevelUpdateInput struct {

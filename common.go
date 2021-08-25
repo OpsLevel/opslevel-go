@@ -82,6 +82,11 @@ func NewID(id string) *graphql.ID {
 	return &output
 }
 
+func NewInt(i int) *int {
+	output := i
+	return &output
+}
+
 func NewISO8601Date(datetime string) iso8601.Time {
 	date, _ := iso8601.ParseString(datetime)
 	return iso8601.Time{Time: date}
