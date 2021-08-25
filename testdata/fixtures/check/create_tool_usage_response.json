@@ -10,7 +10,7 @@
           "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.",
           "enabled": true,
           "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-          "integration": null,
+  
           "level": {
             "alias": "bronze",
             "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",

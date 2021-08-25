@@ -80,6 +80,11 @@ func GetPredicateKeyEnumTypes() []string {
 	}
 }
 
+type Predicate struct {
+	Type  PredicateType `graphql:"type"`
+	Value string        `graphql:"value"`
+}
+
 type PredicateInput struct {
 	Type  PredicateType `json:"type"`
 	Value string        `json:"value,omitempty"`

@@ -11,7 +11,7 @@
                 "enabled": true,
                 "filter": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8xMzI1",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -29,7 +29,7 @@
                 "enabled": true,
                 "filter": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNSZXBvc2l0b3J5LzEzMjY",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -59,7 +59,7 @@
                   ]
                 },
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpUb29sVXNhZ2UvMTMyNw",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -89,7 +89,7 @@
                   ]
                 },
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpUb29sVXNhZ2UvMTMyOA",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -119,7 +119,7 @@
                   ]
                 },
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpDdXN0b20vMTUyOA",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -149,7 +149,7 @@
                   ]
                 },
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpQYXlsb2FkLzE1Njc",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -170,7 +170,7 @@
                 "enabled": true,
                 "filter": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpDdXN0b20vMjQ1Mg",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
@@ -191,7 +191,7 @@
                 "enabled": true,
                 "filter": null,
                 "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpTZXJ2aWNlUHJvcGVydHkvMjQ5OA",
-                "integration": null,
+        
                 "level": {
                   "alias": "bronze",
                   "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",

@@ -7,6 +7,23 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
+var checkCreateInput = ol.CheckCreateInput{
+	Name:     "Hello World",
+	Enabled:  true,
+	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+	Notes:    "Hello World Check",
+}
+
+var checkUpdateInput = ol.CheckUpdateInput{
+	Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+	Name:     "Hello World",
+	Enabled:  ol.Bool(true),
+	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+	Notes:    "Hello World Check",
+}
+
 var testcases = map[string]struct {
 	fixture string
 	body    func(c *ol.Client) (*ol.Check, error)
@@ -15,11 +32,7 @@ var testcases = map[string]struct {
 		fixture: "check/create_custom_event",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckCustomEvent(ol.CheckCustomEventCreateInput{
-				Name:             "Hello World",
-				Enabled:          true,
-				Category:         ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:            ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:            "Hello World Check",
+				CheckCreateInput: checkCreateInput,
 				ServiceSelector:  ".metadata.name",
 				SuccessCondition: ".metadata.name",
 				Message:          "#Hello World",
@@ -31,12 +44,7 @@ var testcases = map[string]struct {
 		fixture: "check/update_custom_event",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-				Id:               ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:             "Hello World",
-				Enabled:          ol.Bool(true),
-				Category:         ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:            ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:            "Hello World Check",
+				CheckUpdateInput: checkUpdateInput,
 				ServiceSelector:  ".metadata.name",
 				SuccessCondition: ".metadata.name",
 				Message:          "#Hello World",
@@ -48,12 +56,8 @@ var testcases = map[string]struct {
 		fixture: "check/create_manual",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckManual(ol.CheckManualCreateInput{
-				Name:            "Hello World",
-				Enabled:         true,
-				Category:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:           "Hello World Check",
-				UpdateFrequency: ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
+				CheckCreateInput: checkCreateInput,
+				UpdateFrequency:  ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
 			})
 		},
 	},
@@ -61,13 +65,8 @@ var testcases = map[string]struct {
 		fixture: "check/update_manual",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckManual(ol.CheckManualUpdateInput{
-				Id:              ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:            "Hello World",
-				Enabled:         ol.Bool(true),
-				Category:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:           "Hello World Check",
-				UpdateFrequency: ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
+				CheckUpdateInput: checkUpdateInput,
+				UpdateFrequency:  ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
 			})
 		},
 	},
@@ -75,13 +74,9 @@ var testcases = map[string]struct {
 		fixture: "check/create_repo_file",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckRepositoryFile(ol.CheckRepositoryFileCreateInput{
-				Name:            "Hello World",
-				Enabled:         true,
-				Category:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:           "Hello World Check",
-				DirectorySearch: true,
-				Filepaths:       []string{"/src", "/test"},
+				CheckCreateInput: checkCreateInput,
+				DirectorySearch:  true,
+				Filepaths:        []string{"/src", "/test"},
 				FileContentsPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "postgres",
@@ -93,14 +88,9 @@ var testcases = map[string]struct {
 		fixture: "check/update_repo_file",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckRepositoryFile(ol.CheckRepositoryFileUpdateInput{
-				Id:              ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:            "Hello World",
-				Enabled:         ol.Bool(true),
-				Category:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:           "Hello World Check",
-				DirectorySearch: true,
-				Filepaths:       []string{"/src", "/test"},
+				CheckUpdateInput: checkUpdateInput,
+				DirectorySearch:  true,
+				Filepaths:        []string{"/src", "/test"},
 				FileContentsPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "postgres",
@@ -112,11 +102,7 @@ var testcases = map[string]struct {
 		fixture: "check/create_repo_integrated",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckRepositoryIntegrated(ol.CheckRepositoryIntegratedCreateInput{
-				Name:     "Hello World",
-				Enabled:  true,
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
+				CheckCreateInput: checkCreateInput,
 			})
 		},
 	},
@@ -124,12 +110,7 @@ var testcases = map[string]struct {
 		fixture: "check/update_repo_integrated",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckRepositoryIntegrated(ol.CheckRepositoryIntegratedUpdateInput{
-				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:     "Hello World",
-				Enabled:  ol.Bool(true),
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
+				CheckUpdateInput: checkUpdateInput,
 			})
 		},
 	},
@@ -137,12 +118,8 @@ var testcases = map[string]struct {
 		fixture: "check/create_repo_search",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckRepositorySearch(ol.CheckRepositorySearchCreateInput{
-				Name:           "Hello World",
-				Enabled:        true,
-				Category:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:          ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:          "Hello World Check",
-				FileExtensions: []string{"sbt", "py"},
+				CheckCreateInput: checkCreateInput,
+				FileExtensions:   []string{"sbt", "py"},
 				FileContentsPredicate: ol.PredicateInput{
 					Type:  ol.PredicateTypeContains,
 					Value: "postgres",
@@ -154,13 +131,8 @@ var testcases = map[string]struct {
 		fixture: "check/update_repo_search",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckRepositorySearch(ol.CheckRepositorySearchUpdateInput{
-				Id:             ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:           "Hello World",
-				Enabled:        ol.Bool(true),
-				Category:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:          ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:          "Hello World Check",
-				FileExtensions: []string{"sbt", "py"},
+				CheckUpdateInput: checkUpdateInput,
+				FileExtensions:   []string{"sbt", "py"},
 				FileContentsPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeContains,
 					Value: "postgres",
@@ -172,11 +144,7 @@ var testcases = map[string]struct {
 		fixture: "check/create_service_configuration",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckServiceConfiguration(ol.CheckServiceConfigurationCreateInput{
-				Name:     "Hello World",
-				Enabled:  true,
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
+				CheckCreateInput: checkCreateInput,
 			})
 		},
 	},
@@ -184,12 +152,7 @@ var testcases = map[string]struct {
 		fixture: "check/update_service_configuration",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckServiceConfiguration(ol.CheckServiceConfigurationUpdateInput{
-				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:     "Hello World",
-				Enabled:  ol.Bool(true),
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
+				CheckUpdateInput: checkUpdateInput,
 			})
 		},
 	},
@@ -197,11 +160,7 @@ var testcases = map[string]struct {
 		fixture: "check/create_service_ownership",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckServiceOwnership(ol.CheckServiceOwnershipCreateInput{
-				Name:     "Hello World",
-				Enabled:  true,
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
+				CheckCreateInput: checkCreateInput,
 			})
 		},
 	},
@@ -209,12 +168,7 @@ var testcases = map[string]struct {
 		fixture: "check/update_service_ownership",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
-				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:     "Hello World",
-				Enabled:  ol.Bool(true),
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
+				CheckUpdateInput: checkUpdateInput,
 			})
 		},
 	},
@@ -222,12 +176,8 @@ var testcases = map[string]struct {
 		fixture: "check/create_service_property",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckServiceProperty(ol.CheckServicePropertyCreateInput{
-				Name:     "Hello World",
-				Enabled:  true,
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
-				Property: ol.ServicePropertyFramework,
+				CheckCreateInput: checkCreateInput,
+				Property:         ol.ServicePropertyFramework,
 				Predicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "postgres",
@@ -239,13 +189,8 @@ var testcases = map[string]struct {
 		fixture: "check/update_service_property",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckServiceProperty(ol.CheckServicePropertyUpdateInput{
-				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:     "Hello World",
-				Enabled:  ol.Bool(true),
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
-				Property: ol.ServicePropertyFramework,
+				CheckUpdateInput: checkUpdateInput,
+				Property:         ol.ServicePropertyFramework,
 				Predicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "postgres",
@@ -257,12 +202,8 @@ var testcases = map[string]struct {
 		fixture: "check/create_tag_defined",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckTagDefined(ol.CheckTagDefinedCreateInput{
-				Name:     "Hello World",
-				Enabled:  true,
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
-				TagKey:   "app",
+				CheckCreateInput: checkCreateInput,
+				TagKey:           "app",
 				TagPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "postgres",
@@ -274,13 +215,8 @@ var testcases = map[string]struct {
 		fixture: "check/update_tag_defined",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckTagDefined(ol.CheckTagDefinedUpdateInput{
-				Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:     "Hello World",
-				Enabled:  ol.Bool(true),
-				Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:    "Hello World Check",
-				TagKey:   "app",
+				CheckUpdateInput: checkUpdateInput,
+				TagKey:           "app",
 				TagPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "postgres",
@@ -292,12 +228,8 @@ var testcases = map[string]struct {
 		fixture: "check/create_tool_usage",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckToolUsage(ol.CheckToolUsageCreateInput{
-				Name:         "Hello World",
-				Enabled:      true,
-				Category:     ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:        "Hello World Check",
-				ToolCategory: ol.ToolCategoryMetrics,
+				CheckCreateInput: checkCreateInput,
+				ToolCategory:     ol.ToolCategoryMetrics,
 				ToolNamePredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "datadog",
@@ -313,13 +245,8 @@ var testcases = map[string]struct {
 		fixture: "check/update_tool_usage",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckToolUsage(ol.CheckToolUsageUpdateInput{
-				Id:           ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-				Name:         "Hello World",
-				Enabled:      ol.Bool(true),
-				Category:     ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-				Level:        ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-				Notes:        "Hello World Check",
-				ToolCategory: ol.ToolCategoryMetrics,
+				CheckUpdateInput: checkUpdateInput,
+				ToolCategory:     ol.ToolCategoryMetrics,
 				ToolNamePredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEquals,
 					Value: "datadog",

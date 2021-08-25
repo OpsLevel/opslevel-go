@@ -3,7 +3,8 @@
     "variables": {
       "input": {
         "name": "Kyle",
-        "description": "Created By Kyle"
+        "description": "Created By Kyle",
+        "index": 4
       }
     }
   }
