@@ -38,12 +38,12 @@ type TagInput struct {
 	Value string `json:"value"`
 }
 
-var tagKeyRegex = regexp.MustCompile("\\A[a-z][0-9a-z_\\.\\/\\\\-]*\\z")
-var tagErrorMsg = "invalid tag key name '%s' - must start with a letter and only lowercase alphanumerics, underscores, hyphens, periods, and slashes are allowed."
+var TagKeyRegex = regexp.MustCompile("\\A[a-z][0-9a-z_\\.\\/\\\\-]*\\z")
+var TagKeyErrorMsg = "must start with a letter and only lowercase alphanumerics, underscores, hyphens, periods, and slashes are allowed."
 
 func (t *TagInput) Validate() error {
-	if !tagKeyRegex.MatchString(t.Key) {
-		return fmt.Errorf(tagErrorMsg, t.Key)
+	if !TagKeyRegex.MatchString(t.Key) {
+		return fmt.Errorf("invalid tag key name '%s' - %s", t.Key, TagKeyErrorMsg)
 	}
 	return nil
 }
@@ -73,8 +73,8 @@ type TagCreateInput struct {
 }
 
 func (t *TagCreateInput) Validate() error {
-	if !tagKeyRegex.MatchString(t.Key) {
-		return fmt.Errorf(tagErrorMsg, t.Key)
+	if !TagKeyRegex.MatchString(t.Key) {
+		return fmt.Errorf("invalid tag key name '%s' - %s", t.Key, TagKeyErrorMsg)
 	}
 	return nil
 }
@@ -86,8 +86,8 @@ type TagUpdateInput struct {
 }
 
 func (t *TagUpdateInput) Validate() error {
-	if !tagKeyRegex.MatchString(t.Key) {
-		return fmt.Errorf(tagErrorMsg, t.Key)
+	if !TagKeyRegex.MatchString(t.Key) {
+		return fmt.Errorf("invalid tag key name '%s' - %s", t.Key, TagKeyErrorMsg)
 	}
 	return nil
 }
