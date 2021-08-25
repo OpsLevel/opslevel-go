@@ -1,6 +1,9 @@
 package opslevel
 
 import (
+	"fmt"
+	"regexp"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -35,11 +38,30 @@ type TagInput struct {
 	Value string `json:"value"`
 }
 
+var tagKeyRegex = regexp.MustCompile("\\A[a-z][0-9a-z_\\.\\/\\\\-]*\\z")
+var tagErrorMsg = "invalid tag key name '%s' - must start with a letter and only lowercase alphanumerics, underscores, hyphens, periods, and slashes are allowed."
+
+func (t *TagInput) Validate() error {
+	if !tagKeyRegex.MatchString(t.Key) {
+		return fmt.Errorf(tagErrorMsg, t.Key)
+	}
+	return nil
+}
+
 type TagAssignInput struct {
 	Id    graphql.ID       `json:"id,omitempty"`
 	Alias string           `json:"alias,omitempty"`
 	Type  TaggableResource `json:"type,omitempty"`
 	Tags  []TagInput       `json:"tags"`
+}
+
+func (t *TagAssignInput) Validate() error {
+	for _, tag := range t.Tags {
+		if err := tag.Validate(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type TagCreateInput struct {
@@ -50,10 +72,24 @@ type TagCreateInput struct {
 	Value string           `json:"value"`
 }
 
+func (t *TagCreateInput) Validate() error {
+	if !tagKeyRegex.MatchString(t.Key) {
+		return fmt.Errorf(tagErrorMsg, t.Key)
+	}
+	return nil
+}
+
 type TagUpdateInput struct {
 	Id    graphql.ID `json:"id"`
 	Key   string     `json:"key,omitempty"`
 	Value string     `json:"value,omitempty"`
+}
+
+func (t *TagUpdateInput) Validate() error {
+	if !tagKeyRegex.MatchString(t.Key) {
+		return fmt.Errorf(tagErrorMsg, t.Key)
+	}
+	return nil
 }
 
 type TagDeleteInput struct {
@@ -124,6 +160,9 @@ func (client *Client) AssignTags(input TagAssignInput) ([]Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
+	if err := input.Validate(); err != nil {
+		return nil, err
+	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
 	}
@@ -179,6 +218,9 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	}
 	v := PayloadVariables{
 		"input": input,
+	}
+	if err := input.Validate(); err != nil {
+		return nil, err
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
@@ -282,6 +324,9 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	}
 	v := PayloadVariables{
 		"input": input,
+	}
+	if err := input.Validate(); err != nil {
+		return nil, err
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
