@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/relvacode/iso8601"
 	"github.com/shurcooL/graphql"
 )
 
@@ -11,31 +12,34 @@ type Language struct {
 	Usage float32
 }
 
+// Lightweight Repository struct used to make some API calls return less data
 type RepositoryId struct {
-	Id graphql.ID
+	Id           graphql.ID
+	DefaultAlias string
 }
 
 type Repository struct {
-	// https://pkg.go.dev/github.com/relvacode/iso8601
-	//CreatedOn ISO8601DateTime `json:",omitempty"`
-	DefaultBranch string `json:",omitempty"`
-	Description   string `json:",omitempty"`
-	Forked        bool   `json:",omitempty"`
-	HtmlUrl       string
-	RepositoryId
-	Languages []Language
-	// LastOwnerChangedAt ISO8601DateTime
-	Name         string `json:",omitempty"`
-	Organization string
-	Owner        Team `json:",omitempty"`
-	Private      bool `json:",omitempty"`
-	RepoKey      string
-	Services     RepositoryServiceConnection
-	Tags         RepositoryTagConnection
-	Tier         Tier
-	Type         string
-	Url          string `json:",omitempty"`
-	Visible      bool   `json:",omitempty"`
+	ArchivedAt         iso8601.Time
+	CreatedOn          iso8601.Time
+	DefaultAlias       string
+	DefaultBranch      string
+	Description        string
+	Forked             bool
+	HtmlUrl            string
+	Id                 graphql.ID
+	Languages          []Language
+	LastOwnerChangedAt iso8601.Time
+	Name               string
+	Organization       string
+	Owner              Team
+	Private            bool
+	RepoKey            string
+	Services           RepositoryServiceConnection
+	Tags               RepositoryTagConnection
+	Tier               Tier
+	Type               string
+	Url                string
+	Visible            bool
 }
 
 type RepositoryPath struct {

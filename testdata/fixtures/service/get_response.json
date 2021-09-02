@@ -33,7 +33,8 @@
           "edges": [
             {
               "node": {
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
+                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
+                "defaultAlias": "github.com:rocktavious/autopilot"
               },
               "serviceRepositories": [
                 {
@@ -41,7 +42,8 @@
                   "displayName": "rocktavious/autopilot",
                   "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNw",
                   "repository": {
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
+                    "defaultAlias": "github.com:rocktavious/autopilot"
                   },
                   "service": {
                     "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81NDI5"

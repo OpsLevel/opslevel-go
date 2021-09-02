@@ -30,7 +30,7 @@ import (
 
 func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "repository_not_found", "repository_with_alias_not_found")
+	client := ATestClientAlt(t, "repository/get_not_found", "repository/get_with_alias")
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -40,7 +40,7 @@ func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 
 func TestGetRepositoryWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "repository", "repository_with_alias")
+	client := ATestClientAlt(t, "repository/get", "repository/get_with_alias")
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -54,7 +54,7 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 
 func TestGetRepository(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "repository")
+	client := ATestClient(t, "repository/get")
 	// Act
 	result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
 	// Assert
@@ -68,7 +68,7 @@ func TestGetRepository(t *testing.T) {
 
 func TestListRepositories(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "repository_list")
+	client := ATestClient(t, "repository/list")
 	// Act
 	result, err := client.ListRepositories()
 	// Assert

@@ -1,5 +1,5 @@
 {
-    "query": "query($repo:ID!){account{repository(id: $repo){defaultBranch,description,forked,htmlUrl,id,languages{name,usage},name,organization,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},private,repoKey,services{edges{atRoot,node{id},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id},service{id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
+    "query": "query($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,contacts{displayName,address},id,manager{name,email},name,responsibilities},private,repoKey,services{edges{atRoot,node{id},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
     "variables": {
       "repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
     }

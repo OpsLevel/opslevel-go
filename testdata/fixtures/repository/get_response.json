@@ -2,6 +2,9 @@
     "data": {
       "account": {
         "repository": {
+          "archivedAt": null,
+          "createdOn": "2021-04-20T03:03:43.000000Z",
+          "defaultAlias": "github.com:rocktavious/autopilot",
           "defaultBranch": "main",
           "description": "A golang testing utils library",
           "forked": false,
@@ -13,6 +16,7 @@
               "usage": 1
             }
           ],
+          "lastOwnerChangedAt": "2021-05-30T19:10:13.111394Z",
           "name": "autopilot",
           "organization": "rocktavious",
           "owner": {

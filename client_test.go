@@ -77,7 +77,7 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 }
 
 func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
-	return ol.NewClient("X", ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", request),
+	return ol.NewClient("X", ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s__%s", response, request),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
 		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", request)))))
 }
