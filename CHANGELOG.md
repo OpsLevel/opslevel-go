@@ -2,8 +2,14 @@
 ## [Unreleased]
 
 
+<a name="v0.3.2"></a>
+## [v0.3.2] - 2021-09-14
+### Feature
+- add PredicateType “SatisfiesJqExpression”
+
+
 <a name="v0.3.1"></a>
-## [v0.3.1] - 2021-09-02
+## [v0.3.1] - 2021-09-11
 ### Dependency
 - bump github.com/rs/zerolog from 1.21.0 to 1.23.0 ([#13](https://github.com/OpsLevel/opslevel-go/issues/13))
 
@@ -118,7 +124,8 @@
 - client configuration to allow for settings api visibility header
 
 
-[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.2...HEAD
+[v0.3.2]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.0...v0.3.1
 [v0.3.0]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.2...v0.3.0
 [v0.2.2]: https://github.com/OpsLevel/opslevel-go/compare/v0.2.1...v0.2.2
