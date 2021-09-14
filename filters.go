@@ -52,6 +52,7 @@ func GetPredicateTypes() []string {
 		string(PredicateTypeStartsWith),
 		string(PredicateTypeSatisfiesVersionConstraint),
 		string(PredicateTypeMatchesRegex),
+		string(PredicateTypeSatisfiesJqExpression),
 	}
 }
 
