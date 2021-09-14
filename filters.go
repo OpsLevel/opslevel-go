@@ -35,6 +35,7 @@ const (
 	PredicateTypeStartsWith                 PredicateType = "starts_with"
 	PredicateTypeSatisfiesVersionConstraint PredicateType = "satisfies_version_constraint"
 	PredicateTypeMatchesRegex               PredicateType = "matches_regex"
+	PredicateTypeSatisfiesJqExpression      PredicateType = "satisfies_jq_expression"
 )
 
 func GetPredicateTypes() []string {
