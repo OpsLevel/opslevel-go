@@ -6,94 +6,18 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
-type ConnectiveType string
-
-const (
-	ConnectiveTypeAnd ConnectiveType = "and"
-	ConnectiveTypeOr  ConnectiveType = "or"
-)
-
-func GetConnectiveTypes() []string {
-	return []string{
-		string(ConnectiveTypeAnd),
-		string(ConnectiveTypeOr),
-	}
-}
-
-type PredicateType string
-
-const (
-	PredicateTypeContains                   PredicateType = "contains"
-	PredicateTypeDoesNotContain             PredicateType = "does_not_contain"
-	PredicateTypeDoesNotEqual               PredicateType = "does_not_equal"
-	PredicateTypeDoesNotExist               PredicateType = "does_not_exist"
-	PredicateTypeEndsWith                   PredicateType = "ends_with"
-	PredicateTypeEquals                     PredicateType = "equals"
-	PredicateTypeExists                     PredicateType = "exists"
-	PredicateTypeGreaterThanOrEqualTo       PredicateType = "greater_than_or_equal_to"
-	PredicateTypeLessThanOrEqualTo          PredicateType = "less_than_or_equal_to"
-	PredicateTypeStartsWith                 PredicateType = "starts_with"
-	PredicateTypeSatisfiesVersionConstraint PredicateType = "satisfies_version_constraint"
-	PredicateTypeMatchesRegex               PredicateType = "matches_regex"
-	PredicateTypeSatisfiesJqExpression      PredicateType = "satisfies_jq_expression"
-)
-
-func GetPredicateTypes() []string {
-	return []string{
-		string(PredicateTypeContains),
-		string(PredicateTypeDoesNotContain),
-		string(PredicateTypeDoesNotEqual),
-		string(PredicateTypeDoesNotExist),
-		string(PredicateTypeEndsWith),
-		string(PredicateTypeEquals),
-		string(PredicateTypeExists),
-		string(PredicateTypeGreaterThanOrEqualTo),
-		string(PredicateTypeLessThanOrEqualTo),
-		string(PredicateTypeStartsWith),
-		string(PredicateTypeSatisfiesVersionConstraint),
-		string(PredicateTypeMatchesRegex),
-		string(PredicateTypeSatisfiesJqExpression),
-	}
-}
-
-type PredicateKeyEnum string
-
-const (
-	PredicateKeyEnumTierIndex      PredicateKeyEnum = "tier_index"
-	PredicateKeyEnumLifecycleIndex PredicateKeyEnum = "lifecycle_index"
-	PredicateKeyEnumLanguage       PredicateKeyEnum = "language"
-	PredicateKeyEnumFramework      PredicateKeyEnum = "framework"
-	PredicateKeyEnumProduct        PredicateKeyEnum = "product"
-	PredicateKeyEnumName           PredicateKeyEnum = "name"
-	PredicateKeyEnumTags           PredicateKeyEnum = "tags"
-	PredicateKeyEnumOwnerId        PredicateKeyEnum = "owner_id"
-)
-
-func GetPredicateKeyEnumTypes() []string {
-	return []string{
-		string(PredicateKeyEnumTierIndex),
-		string(PredicateKeyEnumLifecycleIndex),
-		string(PredicateKeyEnumLanguage),
-		string(PredicateKeyEnumFramework),
-		string(PredicateKeyEnumProduct),
-		string(PredicateKeyEnumName),
-		string(PredicateKeyEnumTags),
-		string(PredicateKeyEnumOwnerId),
-	}
-}
-
 type Predicate struct {
-	Type  PredicateType `graphql:"type"`
-	Value string        `graphql:"value"`
+	Type  PredicateTypeEnum `graphql:"type"`
+	Value string            `graphql:"value"`
 }
 
 type PredicateInput struct {
-	Type  PredicateType `json:"type"`
-	Value string        `json:"value,omitempty"`
+	Type  PredicateTypeEnum `json:"type"`
+	Value string            `json:"value,omitempty"`
 }
 
 type Filter struct {
-	Connective ConnectiveType
+	Connective ConnectiveEnum
 	HtmlURL    string
 	Id         graphql.ID
 	Name       string
@@ -101,10 +25,10 @@ type Filter struct {
 }
 
 type FilterPredicate struct {
-	Key     PredicateKeyEnum `json:"key"`
-	KeyData string           `json:"keyData,omitempty"`
-	Type    PredicateType    `json:"type"`
-	Value   string           `json:"value,omitempty"`
+	Key     PredicateKeyEnum  `json:"key"`
+	KeyData string            `json:"keyData,omitempty"`
+	Type    PredicateTypeEnum `json:"type"`
+	Value   string            `json:"value,omitempty"`
 }
 
 type FilterConnection struct {
@@ -116,14 +40,14 @@ type FilterConnection struct {
 type FilterCreateInput struct {
 	Name       string            `json:"name"`
 	Predicates []FilterPredicate `json:"predicates"`
-	Connective ConnectiveType    `json:"connective,omitempty"`
+	Connective ConnectiveEnum    `json:"connective,omitempty"`
 }
 
 type FilterUpdateInput struct {
 	Id         graphql.ID        `json:"id"`
 	Name       string            `json:"name,omitempty"`
 	Predicates []FilterPredicate `json:"predicates"` //The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
-	Connective ConnectiveType    `json:"connective,omitempty"`
+	Connective ConnectiveEnum    `json:"connective,omitempty"`
 }
 
 func (conn *FilterConnection) Hydrate(client *Client) error {

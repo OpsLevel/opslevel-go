@@ -78,7 +78,7 @@ var testcases = map[string]struct {
 				DirectorySearch:  true,
 				Filepaths:        []string{"/src", "/test"},
 				FileContentsPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
 			})
@@ -92,7 +92,7 @@ var testcases = map[string]struct {
 				DirectorySearch:  true,
 				Filepaths:        []string{"/src", "/test"},
 				FileContentsPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
 			})
@@ -121,7 +121,7 @@ var testcases = map[string]struct {
 				CheckCreateInput: checkCreateInput,
 				FileExtensions:   []string{"sbt", "py"},
 				FileContentsPredicate: ol.PredicateInput{
-					Type:  ol.PredicateTypeContains,
+					Type:  ol.PredicateTypeEnumContains,
 					Value: "postgres",
 				},
 			})
@@ -134,7 +134,7 @@ var testcases = map[string]struct {
 				CheckUpdateInput: checkUpdateInput,
 				FileExtensions:   []string{"sbt", "py"},
 				FileContentsPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeContains,
+					Type:  ol.PredicateTypeEnumContains,
 					Value: "postgres",
 				},
 			})
@@ -177,9 +177,9 @@ var testcases = map[string]struct {
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.CreateCheckServiceProperty(ol.CheckServicePropertyCreateInput{
 				CheckCreateInput: checkCreateInput,
-				Property:         ol.ServicePropertyFramework,
+				Property:         ol.ServicePropertyTypeEnumFramework,
 				Predicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
 			})
@@ -190,9 +190,9 @@ var testcases = map[string]struct {
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckServiceProperty(ol.CheckServicePropertyUpdateInput{
 				CheckUpdateInput: checkUpdateInput,
-				Property:         ol.ServicePropertyFramework,
+				Property:         ol.ServicePropertyTypeEnumFramework,
 				Predicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
 			})
@@ -205,7 +205,7 @@ var testcases = map[string]struct {
 				CheckCreateInput: checkCreateInput,
 				TagKey:           "app",
 				TagPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
 			})
@@ -218,7 +218,7 @@ var testcases = map[string]struct {
 				CheckUpdateInput: checkUpdateInput,
 				TagKey:           "app",
 				TagPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
 			})
@@ -231,11 +231,11 @@ var testcases = map[string]struct {
 				CheckCreateInput: checkCreateInput,
 				ToolCategory:     ol.ToolCategoryMetrics,
 				ToolNamePredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "datadog",
 				},
 				EnvironmentPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "production",
 				},
 			})
@@ -248,11 +248,11 @@ var testcases = map[string]struct {
 				CheckUpdateInput: checkUpdateInput,
 				ToolCategory:     ol.ToolCategoryMetrics,
 				ToolNamePredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "datadog",
 				},
 				EnvironmentPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEquals,
+					Type:  ol.PredicateTypeEnumEquals,
 					Value: "production",
 				},
 			})
