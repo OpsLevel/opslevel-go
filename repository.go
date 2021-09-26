@@ -31,7 +31,7 @@ type Repository struct {
 	LastOwnerChangedAt iso8601.Time
 	Name               string
 	Organization       string
-	Owner              Team
+	Owner              TeamId
 	Private            bool
 	RepoKey            string
 	Services           RepositoryServiceConnection

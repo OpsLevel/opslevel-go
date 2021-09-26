@@ -19,7 +19,7 @@ type Service struct {
 	Language     string                      `json:"language,omitempty"`
 	Lifecycle    Lifecycle                   `json:"lifecycle,omitempty"`
 	Name         string                      `json:"name,omitempty"`
-	Owner        Team                        `json:"owner,omitempty"`
+	Owner        TeamId                      `json:"owner,omitempty"`
 	Product      string                      `json:"product,omitempty"`
 	Repositories ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
 	Tags         TagConnection               `json:"tags,omitempty"`

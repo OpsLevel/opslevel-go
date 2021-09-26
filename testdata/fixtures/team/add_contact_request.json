@@ -1,0 +1,10 @@
+{
+    "query":"mutation($input:ContactCreateInput!){contactCreate(input: $input){contact{address,displayName,id,type},errors{message,path}}}",
+    "variables":{
+        "input":{
+            "type":"slack",
+            "address":"#general",
+            "teamId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"
+        }
+    }
+}

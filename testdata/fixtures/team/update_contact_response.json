@@ -1,0 +1,13 @@
+{
+    "data": {
+      "contactUpdate": {
+        "contact": {
+          "address": "#general",
+          "displayName": "Main Channel",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTg2",
+          "type": "slack"
+        },
+        "errors": []
+      }
+    }
+  }

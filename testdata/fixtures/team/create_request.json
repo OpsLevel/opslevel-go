@@ -1,0 +1,22 @@
+{
+  "query":"mutation($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},htmlUrl,manager{email,htmlUrl,id,name,role},members{nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities},errors{message,path}}}",
+  "variables":{
+      "input":{
+          "name":"Example",
+          "managerEmail":"john@example.com",
+          "responsibilities":"Foobar",
+          "contacts":[
+              {
+                  "type":"slack",
+                  "displayName":"",
+                  "address":"#general"
+              },
+              {
+                  "type":"web",
+                  "displayName":"Homepage",
+                  "address":"https://example.com"
+              }
+          ]
+      }
+  }
+}

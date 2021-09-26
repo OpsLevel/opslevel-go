@@ -102,15 +102,7 @@
               "lifecycle": null,
               "name": "foo",
               "owner": {
-                "alias": "backend",
-                "contacts": [],
-                "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTM",
-                "manager": {
-                  "name": "Kyle Rockman",
-                  "email": "kyle.rockman@mac.com"
-                },
-                "name": "Backend",
-                "responsibilities": null
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTM"
               },
               "product": null,
               "repos": {

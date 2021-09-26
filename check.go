@@ -8,7 +8,7 @@ import (
 )
 
 type CheckOwner struct {
-	Team Team `graphql:"... on Team"`
+	Team TeamId `graphql:"... on Team"`
 	// User User `graphql:"... on User"` // TODO: will this be public?
 }
 
