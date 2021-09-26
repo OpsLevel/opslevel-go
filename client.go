@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -15,10 +17,11 @@ import (
 const defaultURL = "https://api.opslevel.com/graphql"
 
 type ClientSettings struct {
-	url           string
-	apiVisibility string
-	pageSize      int
-	ctx           context.Context
+	url            string
+	apiVisibility  string
+	userAgentExtra string
+	pageSize       int
+	ctx            context.Context
 }
 
 type Client struct {
@@ -54,12 +57,20 @@ func SetAPIVisibility(visibility string) option {
 	}
 }
 
+func SetUserAgentExtra(extra string) option {
+	return func(c *ClientSettings) {
+		c.userAgentExtra = extra
+	}
+}
+
 type customTransport struct {
 	apiVisibility string
+	userAgent     string
 }
 
 func (t *customTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Set("GraphQL-Visibility", t.apiVisibility)
+	req.Header.Set("User-Agent", t.userAgent)
 	return http.DefaultTransport.RoundTrip(req)
 }
 
@@ -86,10 +97,28 @@ func NewClient(apiToken string, options ...option) *Client {
 				Source: httpToken,
 				Base: &customTransport{
 					apiVisibility: settings.apiVisibility,
+					userAgent:     buildUserAgent(settings.userAgentExtra),
 				},
 			},
 		}),
 	}
+}
+
+/*
+Return a string suitable for use as a User-Agent header.
+The string will be of the form:
+
+<agent_name>/<agent_version> go/<go_ver> <plat_name>/<plat_ver> client/<code_extras> user/<user_extras>
+*/
+func buildUserAgent(extra string) string {
+	base := fmt.Sprintf("opslevel-go/%s go/%s %s/%s", clientVersion, runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	if extra != "" {
+		base = fmt.Sprintf("%s client/%s", base, extra)
+	}
+	if value, present := os.LookupEnv("OPSLEVEL_USER_AGENT_EXTRAS"); present {
+		base = fmt.Sprintf("%s user/%s", base, value)
+	}
+	return base
 }
 
 func (c *Client) InitialPageVariables() PayloadVariables {
