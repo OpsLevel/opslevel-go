@@ -27,6 +27,7 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 	autopilot.Equals(t, "main", result.DefaultBranch)
 	autopilot.Equals(t, "autopilot", result.Name)
 	autopilot.Equals(t, "359666903", result.RepoKey)
+	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_2", result.Tier.Alias)
 }
 
@@ -40,6 +41,7 @@ func TestGetRepository(t *testing.T) {
 	autopilot.Equals(t, "main", result.DefaultBranch)
 	autopilot.Equals(t, "autopilot", result.Name)
 	autopilot.Equals(t, "359666903", result.RepoKey)
+	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_2", result.Tier.Alias)
 }
 

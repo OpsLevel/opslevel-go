@@ -20,6 +20,7 @@
           "name": "autopilot",
           "organization": "rocktavious",
           "owner": {
+            "alias": "developers",
             "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
           },
           "private": false,

@@ -18,6 +18,7 @@
         },
         "name": "coredns",
         "owner": {
+          "alias": "developers",
           "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
         },
         "product": "MyProduct",
