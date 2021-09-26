@@ -14,13 +14,6 @@ const (
 	TagOwnerRepository TagOwner = "Repository"
 )
 
-type TaggableResource string
-
-const (
-	TaggableResourceService    TaggableResource = "Service"    // Used to identify a Service.
-	TaggableResourceRepository TaggableResource = "Repository" // Used to identify a Repository.
-)
-
 type Tag struct {
 	Id    graphql.ID `json:"id"`
 	Key   string     `json:"key"`

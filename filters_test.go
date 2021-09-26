@@ -14,10 +14,10 @@ func TestCreateFilter(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ol.ConnectiveTypeAnd,
+		Connective: ol.ConnectiveEnumAnd,
 		Predicates: []ol.FilterPredicate{{
 			Key:   ol.PredicateKeyEnumTierIndex,
-			Type:  ol.PredicateTypeEquals,
+			Type:  ol.PredicateTypeEnumEquals,
 			Value: "1",
 		}},
 	})
@@ -25,7 +25,7 @@ func TestCreateFilter(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Kubernetes", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.PredicateTypeEquals, result.Predicates[0].Type)
+	autopilot.Equals(t, ol.PredicateTypeEnumEquals, result.Predicates[0].Type)
 }
 
 func TestGetFilter(t *testing.T) {
@@ -69,7 +69,7 @@ func TestUpdateFilter(t *testing.T) {
 		Name: "Test Updated",
 		Predicates: []ol.FilterPredicate{{
 			Key:   ol.PredicateKeyEnumTierIndex,
-			Type:  ol.PredicateTypeEquals,
+			Type:  ol.PredicateTypeEnumEquals,
 			Value: "1",
 		}},
 	})

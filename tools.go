@@ -4,46 +4,6 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
-type ToolCategory string
-
-const (
-	ToolCategoryAdmin                 ToolCategory = "admin"
-	ToolCategoryCode                  ToolCategory = "code"
-	ToolCategoryContinuousIntegration ToolCategory = "continuous_integration"
-	ToolCategoryDeployment            ToolCategory = "deployment"
-	ToolCategoryErrors                ToolCategory = "errors"
-	ToolCategoryFeatureFlag           ToolCategory = "feature_flag"
-	ToolCategoryHealthChecks          ToolCategory = "health_checks"
-	ToolCategoryIncidents             ToolCategory = "incidents"
-	ToolCategoryLogs                  ToolCategory = "logs"
-	ToolCategoryMetrics               ToolCategory = "metrics"
-	ToolCategoryOrchestrator          ToolCategory = "orchestrator"
-	ToolCategoryRunbooks              ToolCategory = "runbooks"
-	ToolCategoryStatusPage            ToolCategory = "status_page"
-	ToolCategoryWiki                  ToolCategory = "wiki"
-	ToolCategoryOther                 ToolCategory = "other"
-)
-
-func GetToolCategoryTypes() []string {
-	return []string{
-		string(ToolCategoryAdmin),
-		string(ToolCategoryCode),
-		string(ToolCategoryContinuousIntegration),
-		string(ToolCategoryDeployment),
-		string(ToolCategoryErrors),
-		string(ToolCategoryFeatureFlag),
-		string(ToolCategoryHealthChecks),
-		string(ToolCategoryIncidents),
-		string(ToolCategoryLogs),
-		string(ToolCategoryMetrics),
-		string(ToolCategoryOrchestrator),
-		string(ToolCategoryRunbooks),
-		string(ToolCategoryStatusPage),
-		string(ToolCategoryWiki),
-		string(ToolCategoryOther),
-	}
-}
-
 type Tool struct {
 	Category      ToolCategory
 	CategoryAlias string `json:",omitempty"`

@@ -7,23 +7,6 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
-type CheckType string
-
-const (
-	CheckTypeHasOwner         CheckType = "has_owner"
-	CheckTypeServiceProperty  CheckType = "service_property"
-	CheckTypeHasServiceConfig CheckType = "has_service_config"
-	CheckTypeHasRepository    CheckType = "has_repository"
-	CheckTypeToolUsage        CheckType = "tool_usage"
-	CheckTypeTagDefined       CheckType = "tag_defined"
-	CheckTypeRepoFile         CheckType = "repo_file"
-	CheckTypeRepoSearch       CheckType = "repo_search"
-	CheckTypeCustom           CheckType = "custom"
-	CheckTypePayload          CheckType = "payload"
-	CheckTypeManual           CheckType = "manual"
-	CheckTypeGeneric          CheckType = "generic"
-)
-
 type CheckOwner struct {
 	Team Team `graphql:"... on Team"`
 	// User User `graphql:"... on User"` // TODO: will this be public?
@@ -74,8 +57,8 @@ type RepositorySearchCheckFragment struct {
 }
 
 type ServicePropertyCheckFragment struct {
-	Property  ServiceProperty `graphql:"serviceProperty"`
-	Predicate *Predicate      `graphql:"propertyValuePredicate"`
+	Property  ServicePropertyTypeEnum `graphql:"serviceProperty"`
+	Predicate *Predicate              `graphql:"propertyValuePredicate"`
 }
 
 type TagDefinedCheckFragment struct {
@@ -148,26 +131,6 @@ type CheckCustomEventUpdateInput struct {
 	SuccessCondition string      `json:"successCondition,omitempty"`
 	Message          string      `json:"resultMessage,omitempty"`
 	Integration      *graphql.ID `json:"integrationId,omitempty"`
-}
-
-// FrequencyTimeScale represents the time scale type for the frequency.
-type FrequencyTimeScale string
-
-// The time scale type for the frequency.
-const (
-	FrequencyTimeScaleDay   FrequencyTimeScale = "day"   // Consider the time scale of days.
-	FrequencyTimeScaleWeek  FrequencyTimeScale = "week"  // Consider the time scale of weeks.
-	FrequencyTimeScaleMonth FrequencyTimeScale = "month" // Consider the time scale of months.
-	FrequencyTimeScaleYear  FrequencyTimeScale = "year"  // Consider the time scale of years.
-)
-
-func GetFrequencyTimeScales() []string {
-	return []string{
-		string(FrequencyTimeScaleDay),
-		string(FrequencyTimeScaleWeek),
-		string(FrequencyTimeScaleMonth),
-		string(FrequencyTimeScaleYear),
-	}
 }
 
 type ManualCheckFrequency struct {
@@ -258,42 +221,18 @@ type CheckServiceOwnershipUpdateInput struct {
 	CheckUpdateInput
 }
 
-type ServiceProperty string
-
-const (
-	ServicePropertyDescription ServiceProperty = "description"
-	ServicePropertyName        ServiceProperty = "name"
-	ServicePropertyLanguage    ServiceProperty = "language"
-	ServicePropertyFramework   ServiceProperty = "framework"
-	ServicePropertyProduct     ServiceProperty = "product"
-	ServicePropertyLifecycle   ServiceProperty = "lifecycle_index"
-	ServicePropertyTier        ServiceProperty = "tier_index"
-)
-
-func GetServicePropertyTypes() []string {
-	return []string{
-		string(ServicePropertyDescription),
-		string(ServicePropertyName),
-		string(ServicePropertyLanguage),
-		string(ServicePropertyFramework),
-		string(ServicePropertyProduct),
-		string(ServicePropertyLifecycle),
-		string(ServicePropertyTier),
-	}
-}
-
 type CheckServicePropertyCreateInput struct {
 	CheckCreateInput
 
-	Property  ServiceProperty `json:"serviceProperty"`
-	Predicate *PredicateInput `json:"propertyValuePredicate,omitempty"`
+	Property  ServicePropertyTypeEnum `json:"serviceProperty"`
+	Predicate *PredicateInput         `json:"propertyValuePredicate,omitempty"`
 }
 
 type CheckServicePropertyUpdateInput struct {
 	CheckUpdateInput
 
-	Property  ServiceProperty `json:"serviceProperty,omitempty"`
-	Predicate *PredicateInput `json:"propertyValuePredicate,omitempty"`
+	Property  ServicePropertyTypeEnum `json:"serviceProperty,omitempty"`
+	Predicate *PredicateInput         `json:"propertyValuePredicate,omitempty"`
 }
 
 type CheckTagDefinedCreateInput struct {
