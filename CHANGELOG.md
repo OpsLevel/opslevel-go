@@ -2,6 +2,16 @@
 ## [Unreleased]
 
 
+<a name="v0.4.0"></a>
+## [v0.4.0] - 2021-09-26
+### Feature
+- use codegen to generate all enums from graphql API schema
+- set custom http user-agent header as well as allow it to be appendable by both the client code and end user
+
+### Refactor
+- Team now has parity with what is available in the public API
+
+
 <a name="v0.3.3"></a>
 ## [v0.3.3] - 2021-09-14
 ### Bugfix
@@ -130,7 +140,8 @@
 - client configuration to allow for settings api visibility header
 
 
-[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/OpsLevel/opslevel-go/compare/v0.4.0...HEAD
+[v0.4.0]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.3...v0.4.0
 [v0.3.3]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.2...v0.3.3
 [v0.3.2]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/OpsLevel/opslevel-go/compare/v0.3.0...v0.3.1
