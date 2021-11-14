@@ -3,7 +3,7 @@
       "aliasCreate": {
         "aliases": [
           "MyCoolService",
-          "MyAwesomeService"
+          "MyAwesomeAlias"
         ],
         "ownerId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2",
         "errors": []

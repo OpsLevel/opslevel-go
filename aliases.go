@@ -12,6 +12,11 @@ type AliasCreateInput struct {
 	OwnerId graphql.ID `json:"ownerId"`
 }
 
+type AliasDeleteInput struct {
+	Alias   string     `json:"alias"`
+	OwnerType AliasOwnerTypeEnum `json:"ownerType"`
+}
+
 //#region Create
 // TODO: make sure duplicate aliases throw an error that we can catch
 func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) ([]string, error) {
@@ -57,6 +62,40 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 		output[i] = string(item)
 	}
 	return output, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
+//#region Delete
+
+func (client *Client) DeleteServiceAlias(alias string) error {
+	return client.DeleteAlias(AliasDeleteInput{
+		Alias: alias,
+		OwnerType: AliasOwnerTypeEnumService,
+	})
+}
+
+func (client *Client) DeleteTeamAlias(alias string) error {
+	return client.DeleteAlias(AliasDeleteInput{
+		Alias: alias,
+		OwnerType: AliasOwnerTypeEnumTeam,
+	})
+}
+
+func (client *Client) DeleteAlias(input AliasDeleteInput) error {
+	var m struct {
+		Payload struct {
+			Alias graphql.String `graphql:"deletedAlias"`
+			Errors  []OpsLevelErrors
+		} `graphql:"aliasDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
 }
 
 //#endregion

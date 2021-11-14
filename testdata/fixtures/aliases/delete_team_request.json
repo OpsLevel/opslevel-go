@@ -1,0 +1,9 @@
+{
+    "query": "mutation($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}",
+    "variables": {
+      "input": {
+        "alias": "MyAwesomeAlias",
+        "ownerType": "team"
+      }
+    }
+  }
