@@ -2,6 +2,22 @@
 
 package opslevel
 
+// AliasOwnerTypeEnum represents the owner type an alias is assigned to.
+type AliasOwnerTypeEnum string
+
+const (
+	AliasOwnerTypeEnumService AliasOwnerTypeEnum = "service" // Aliases that are assigned to services.
+	AliasOwnerTypeEnumTeam    AliasOwnerTypeEnum = "team"    // Aliases that are assigned to teams.
+)
+
+// All AliasOwnerTypeEnum as []string
+func AllAliasOwnerTypeEnum() []string {
+	return []string{
+		string(AliasOwnerTypeEnumService),
+		string(AliasOwnerTypeEnumTeam),
+	}
+}
+
 // CheckStatus represents the evaluation status of the check.
 type CheckStatus string
 
