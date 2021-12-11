@@ -123,7 +123,9 @@ func (c *AliasCacher) doCacheTeams(client *Client) {
 	}
 
 	for _, item := range data {
-		c.Teams[string(item.Alias)] = item
+		for _, alias := range item.Aliases {
+			c.Teams[string(alias)] = item
+		}
 	}
 }
 
