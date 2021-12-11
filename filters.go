@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/gosimple/slug"
 	"github.com/shurcooL/graphql"
 )
 
@@ -48,6 +49,10 @@ type FilterUpdateInput struct {
 	Name       string            `json:"name,omitempty"`
 	Predicates []FilterPredicate `json:"predicates"` //The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
 	Connective ConnectiveEnum    `json:"connective,omitempty"`
+}
+
+func (self *Filter) Alias() string {
+	return slug.Make(self.Name)
 }
 
 func (conn *FilterConnection) Hydrate(client *Client) error {

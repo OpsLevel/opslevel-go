@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/gosimple/slug"
 	"github.com/shurcooL/graphql"
 )
 
@@ -28,6 +29,10 @@ type CategoryUpdateInput struct {
 
 type CategoryDeleteInput struct {
 	Id graphql.ID `json:"id"`
+}
+
+func (self *Category) Alias() string {
+	return slug.Make(self.Name)
 }
 
 func (conn *CategoryConnection) Hydrate(client *Client) error {

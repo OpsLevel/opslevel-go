@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/gosimple/slug"
 	"github.com/shurcooL/graphql"
 )
 
@@ -16,6 +17,10 @@ type IntegrationConnection struct {
 	Nodes      []Integration
 	PageInfo   PageInfo
 	TotalCount graphql.Int
+}
+
+func (self *Integration) Alias() string {
+	return fmt.Sprintf("%s-%s", slug.Make(self.Type), slug.Make(self.Name))
 }
 
 func (conn *IntegrationConnection) Hydrate(client *Client) error {
