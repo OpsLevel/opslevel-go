@@ -92,15 +92,17 @@ func AllConnectiveEnum() []string {
 type ContactType string
 
 const (
-	ContactTypeSlack ContactType = "slack" // A Slack channel contact method.
-	ContactTypeEmail ContactType = "email" // An email contact method.
-	ContactTypeWeb   ContactType = "web"   // A website contact method.
+	ContactTypeSlack       ContactType = "slack"        // A Slack channel contact method.
+	ContactTypeSlackHandle ContactType = "slack_handle" // A Slack handle contact method.
+	ContactTypeEmail       ContactType = "email"        // An email contact method.
+	ContactTypeWeb         ContactType = "web"          // A website contact method.
 )
 
 // All ContactType as []string
 func AllContactType() []string {
 	return []string{
 		string(ContactTypeSlack),
+		string(ContactTypeSlackHandle),
 		string(ContactTypeEmail),
 		string(ContactTypeWeb),
 	}
