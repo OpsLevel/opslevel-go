@@ -11,6 +11,8 @@
         <img src="https://img.shields.io/github/contributors/OpsLevel/opslevel-go" /></a>
     <a href="https://github.com/OpsLevel/opslevel-go/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/OpsLevel/opslevel-go" /></a>
+	<a href="https://codecov.io/gh/OpsLevel/opslevel-go">
+  		<img src="https://codecov.io/gh/OpsLevel/opslevel-go/branch/main/graph/badge.svg?token=GHQHRIJ9UW"/></a>
     <a href="https://dependabot.com/" alt="Dependabot">
         <img src="https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot" /></a>
 </p>
