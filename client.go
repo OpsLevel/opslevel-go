@@ -31,33 +31,33 @@ type Client struct {
 	client   *graphql.Client
 }
 
-type option func(*ClientSettings)
+type Option func(*ClientSettings)
 
-func SetURL(url string) option {
+func SetURL(url string) Option {
 	return func(c *ClientSettings) {
 		c.url = url
 	}
 }
 
-func SetContext(ctx context.Context) option {
+func SetContext(ctx context.Context) Option {
 	return func(c *ClientSettings) {
 		c.ctx = ctx
 	}
 }
 
-func SetPageSize(size int) option {
+func SetPageSize(size int) Option {
 	return func(c *ClientSettings) {
 		c.pageSize = size
 	}
 }
 
-func SetAPIVisibility(visibility string) option {
+func SetAPIVisibility(visibility string) Option {
 	return func(c *ClientSettings) {
 		c.apiVisibility = visibility
 	}
 }
 
-func SetUserAgentExtra(extra string) option {
+func SetUserAgentExtra(extra string) Option {
 	return func(c *ClientSettings) {
 		c.userAgentExtra = extra
 	}
@@ -74,7 +74,7 @@ func (t *customTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-func NewClient(apiToken string, options ...option) *Client {
+func NewClient(apiToken string, options ...Option) *Client {
 	httpToken := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: apiToken, TokenType: "Bearer"},
 	)
