@@ -1,0 +1,3 @@
+kind: Feature
+body: Add ability to specify a client timeout - defaults to 10s
+time: 2022-01-26T15:36:46.670818-06:00

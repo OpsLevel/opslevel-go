@@ -20,6 +20,7 @@ type ClientSettings struct {
 	url            string
 	apiVisibility  string
 	userAgentExtra string
+	timeout        time.Duration
 	pageSize       int
 	ctx            context.Context
 }
@@ -63,6 +64,12 @@ func SetUserAgentExtra(extra string) Option {
 	}
 }
 
+func SetTimeout(amount time.Duration) Option {
+	return func(c *ClientSettings) {
+		c.timeout = amount
+	}
+}
+
 type customTransport struct {
 	apiVisibility string
 	userAgent     string
@@ -82,6 +89,7 @@ func NewClient(apiToken string, options ...Option) *Client {
 		url:           defaultURL,
 		apiVisibility: "public",
 		pageSize:      100,
+		timeout:       time.Second * 10,
 		ctx:           context.Background(),
 	}
 	for _, opt := range options {
@@ -92,7 +100,7 @@ func NewClient(apiToken string, options ...Option) *Client {
 		pageSize: graphql.Int(settings.pageSize),
 		ctx:      settings.ctx,
 		client: graphql.NewClient(settings.url, &http.Client{
-			Timeout: time.Second * 10,
+			Timeout: settings.timeout,
 			Transport: &oauth2.Transport{
 				Source: httpToken,
 				Base: &customTransport{
