@@ -3,7 +3,7 @@ module github.com/opslevel/opslevel-go
 go 1.16
 
 require (
-	github.com/gosimple/slug v1.11.2
+	github.com/gosimple/slug v1.12.0
 	github.com/relvacode/iso8601 v1.1.0
 	github.com/rocktavious/autopilot v0.1.5
 	github.com/rs/zerolog v1.26.1
