@@ -1,13 +1,23 @@
 package opslevel_example
 
-var query struct {
-	Account struct {
-		Tiers []Tier
+import (
+	"fmt"
+
+	"github.com/opslevel/opslevel-go"
+)
+
+func init() {
+	var query struct {
+		Account struct {
+			Tiers []opslevel.Tier
+		}
 	}
-}
-if err := client.Query(&query, nil); err != nil {
-	panic(err)
-}
-for _, tier := range m.Account.Tiers {
-	fmt.Println(tier.Name)
+
+	client := opslevel.NewClient("xxx")
+	if err := client.Query(&query, nil); err != nil {
+		panic(err)
+	}
+	for _, tier := range query.Account.Tiers {
+		fmt.Println(tier.Name)
+	}
 }
