@@ -1,3 +1,9 @@
+package opslevel_example
+
+import (
+	"github.com/shurcooL/graphql"
+)
+
 var mutation struct {
 	Payload struct {
 		Aliases []graphql.String

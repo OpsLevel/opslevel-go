@@ -1,3 +1,5 @@
+package opslevel_example
+
 var query struct {
 	Account struct {
 		Tiers []Tier

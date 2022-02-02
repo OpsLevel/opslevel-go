@@ -5,7 +5,11 @@ context or disallowing (to the best of Go's ability) access to specific receiver
 while also maintaining the ability to pass in default options, with the ability to extend your own
 set of options if need-be:
 */
+package opslevel_example
 
+import (
+	"github.com/opslevel/opslevel-go"
+)
 
 type Client struct{
 	*opslevel.Client
