@@ -1,0 +1,4 @@
+kind: Refactor
+body: Removes tag key name validation logic because the API downcases it and its causes
+  bugs in other tools
+time: 2022-02-14T11:31:45.735515-06:00
