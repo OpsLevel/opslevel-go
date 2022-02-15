@@ -1,6 +1,8 @@
 package opslevel
 
 import (
+	"html"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -133,6 +135,7 @@ func (conn *UserConnection) Hydrate(id graphql.ID, client *Client) error {
 }
 
 func (self *Team) Hydrate(client *Client) error {
+	self.Responsibilities = html.UnescapeString(self.Responsibilities)
 	if err := self.Members.Hydrate(self.Id, client); err != nil {
 		return err
 	}
@@ -147,6 +150,12 @@ func (conn *TeamConnection) Hydrate(client *Client) error {
 	}
 	v := PayloadVariables{
 		"first": client.pageSize,
+	}
+	for i, item := range conn.Nodes {
+		if err := (&item).Hydrate(client); err != nil {
+			return err
+		}
+		conn.Nodes[i] = item
 	}
 	q.Account.Teams.PageInfo = conn.PageInfo
 	for q.Account.Teams.PageInfo.HasNextPage {

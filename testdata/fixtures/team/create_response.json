@@ -61,7 +61,7 @@
             }
           },
           "name": "Example",
-          "responsibilities": "Foobar"
+          "responsibilities": "Foo &amp; bar"
         },
         "errors": []
       }

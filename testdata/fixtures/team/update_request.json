@@ -3,7 +3,8 @@
     "variables":{
         "input":{
             "id":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
-            "managerEmail":"ken@example.com"
+            "managerEmail":"ken@example.com",
+            "responsibilities": "Foo & bar"
         }
     }
 }

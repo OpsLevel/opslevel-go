@@ -29,13 +29,14 @@ func TestCreateTeam(t *testing.T) {
 	result, err := client.CreateTeam(opslevel.TeamCreateInput{
 		Name:             "Example",
 		ManagerEmail:     "john@example.com",
-		Responsibilities: "Foobar",
+		Responsibilities: "Foo & bar",
 		Contacts:         contacts,
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
+	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
 }
 
 func TestGetTeam(t *testing.T) {
@@ -47,6 +48,7 @@ func TestGetTeam(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
+	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
 }
 
 func TestGetTeamWithAlias(t *testing.T) {
@@ -58,6 +60,7 @@ func TestGetTeamWithAlias(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
+	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
 }
 
 func TestListTeams(t *testing.T) {
@@ -70,6 +73,7 @@ func TestListTeams(t *testing.T) {
 	autopilot.Equals(t, 5, len(result))
 	autopilot.Equals(t, "devops", result[0].Alias)
 	autopilot.Equals(t, "developers", result[1].Alias)
+	autopilot.Equals(t, "Own Infra & Tools.", result[0].Responsibilities)
 }
 
 func TestUpdateTeam(t *testing.T) {
@@ -77,13 +81,15 @@ func TestUpdateTeam(t *testing.T) {
 	client := ATestClient(t, "team/update")
 	// Act
 	result, err := client.UpdateTeam(opslevel.TeamUpdateInput{
-		Id:           opslevel.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"),
-		ManagerEmail: "ken@example.com",
+		Id:               opslevel.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"),
+		ManagerEmail:     "ken@example.com",
+		Responsibilities: "Foo & bar",
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "ken@example.com", result.Manager.Email)
+	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
 }
 
 func TestDeleteTeam(t *testing.T) {
