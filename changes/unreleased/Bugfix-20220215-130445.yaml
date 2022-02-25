@@ -1,3 +1,0 @@
-kind: Bugfix
-body: Update team functions to return responsibilities without html encoding characters
-time: 2022-02-15T13:04:45.874074-06:00
