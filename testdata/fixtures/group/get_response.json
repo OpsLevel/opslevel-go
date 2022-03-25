@@ -1,0 +1,13 @@
+{
+  "data": {
+    "account": {
+      "group": {
+        "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI",
+        "alias": "test_group_1",
+        "name": "test_group_1",
+        "description": null,
+        "parent": null
+      }
+    }
+  }
+}
