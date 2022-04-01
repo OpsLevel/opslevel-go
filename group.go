@@ -118,3 +118,14 @@ func (client *Client) ListGroups() ([]Group, error) {
 	v := client.InitialPageVariables()
 	return q.Account.Groups.Query(client, &q, v)
 }
+
+func (client *Client) ListGroupsWithParent(parent string) ([]Group, error) {
+	var q struct {
+		Account struct {
+			Groups GroupConnection `graphql:"groups(parentAlias: $parent, after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	v["parent"] = graphql.String(parent)
+	return q.Account.Groups.Query(client, &q, v)
+}
