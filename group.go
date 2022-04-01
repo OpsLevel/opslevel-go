@@ -96,6 +96,13 @@ func (conn *GroupConnection) Hydrate(client *Client) error {
 	v := PayloadVariables{
 		"first": client.pageSize,
 	}
+	hydratedGroups := GroupConnection{}
+	for _, item := range conn.Nodes {
+		if err := (&item).Hydrate(client); err != nil {
+			return err
+		}
+		hydratedGroups.Nodes = append(hydratedGroups.Nodes, item)
+	}
 	q.Account.Groups.PageInfo = conn.PageInfo
 	for q.Account.Groups.PageInfo.HasNextPage {
 		v["after"] = q.Account.Groups.PageInfo.End
@@ -106,9 +113,10 @@ func (conn *GroupConnection) Hydrate(client *Client) error {
 			if err := (&item).Hydrate(client); err != nil {
 				return err
 			}
-			conn.Nodes = append(conn.Nodes, item)
+			hydratedGroups.Nodes = append(hydratedGroups.Nodes, item)
 		}
 	}
+	conn.Nodes = hydratedGroups.Nodes
 	return nil
 }
 
