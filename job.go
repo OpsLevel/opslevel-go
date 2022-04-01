@@ -1,0 +1,106 @@
+package opslevel
+
+import (
+	"github.com/shurcooL/graphql"
+)
+
+// RunnerJobOutcomeEnum represents the runner job outcome.
+type RunnerJobOutcomeEnum string
+
+const (
+	RunnerJobOutcomeEnumUnstarted        RunnerJobOutcomeEnum = "unstarted"         // translation missing: en.graphql.types.runner_job_outcome_enum.unstarted.
+	RunnerJobOutcomeEnumCanceled         RunnerJobOutcomeEnum = "canceled"          // Job was canceled.
+	RunnerJobOutcomeEnumFailed           RunnerJobOutcomeEnum = "failed"            // Job failed during execution.
+	RunnerJobOutcomeEnumSuccess          RunnerJobOutcomeEnum = "success"           // Job succeded the execution.
+	RunnerJobOutcomeEnumQueueTimeout     RunnerJobOutcomeEnum = "queue_timeout"     // Job was not assigned to a runner for too long.
+	RunnerJobOutcomeEnumExecutionTimeout RunnerJobOutcomeEnum = "execution_timeout" // Job run took too long to complete, and was marked as failed.
+)
+
+// All RunnerJobOutcomeEnum as []string
+func AllRunnerJobOutcomeEnum() []string {
+	return []string{
+		string(RunnerJobOutcomeEnumUnstarted),
+		string(RunnerJobOutcomeEnumCanceled),
+		string(RunnerJobOutcomeEnumFailed),
+		string(RunnerJobOutcomeEnumSuccess),
+		string(RunnerJobOutcomeEnumQueueTimeout),
+		string(RunnerJobOutcomeEnumExecutionTimeout),
+	}
+}
+
+// RunnerJobStatusEnum represents the runner job status.
+type RunnerJobStatusEnum string
+
+const (
+	RunnerJobStatusEnumCreated  RunnerJobStatusEnum = "created"  // A created runner job, but not yet ready to be run.
+	RunnerJobStatusEnumPending  RunnerJobStatusEnum = "pending"  // A runner job ready to be run.
+	RunnerJobStatusEnumRunning  RunnerJobStatusEnum = "running"  // A runner job being run by a runner.
+	RunnerJobStatusEnumComplete RunnerJobStatusEnum = "complete" // A finished runner job.
+)
+
+// All RunnerJobStatusEnum as []string
+func AllRunnerJobStatusEnum() []string {
+	return []string{
+		string(RunnerJobStatusEnumCreated),
+		string(RunnerJobStatusEnumPending),
+		string(RunnerJobStatusEnumRunning),
+		string(RunnerJobStatusEnumComplete),
+	}
+}
+
+type RunnerJobVariable struct {
+	Key       string `json:"key"`
+	Sensitive bool   `json:"sensitive"`
+	Value     string `json:"value"`
+}
+
+type RunnerJobStatus struct {
+	Id      graphql.ID           `json:"id"`
+	Outcome RunnerJobOutcomeEnum `json:"outcome"`
+	Status  RunnerJobStatusEnum  `json:"status"`
+}
+
+type RunnerJob struct {
+	RunnerJobStatus
+	Commands  []string            `json:"commands"`
+	Image     string              `json:"image"`
+	Variables []RunnerJobVariable `json:"variables"`
+}
+
+type RunnerReportJobOutcomeInput struct {
+	RunnerId    graphql.ID           `json:"runnerId"`
+	RunnerJobId graphql.ID           `json:"runnerJobId"`
+	Outcome     RunnerJobOutcomeEnum `json:"outcome"`
+}
+
+func (s *Client) ReportJobOutcome(input RunnerReportJobOutcomeInput) (*RunnerJobStatus, error) {
+	var m struct {
+		Payload struct {
+			RunnerJob RunnerJobStatus
+			Errors    []OpsLevelErrors
+		} `graphql:"runnerReportJobOutcome(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := s.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.RunnerJob, FormatErrors(m.Payload.Errors)
+}
+
+func (s *Client) GetPendingJob(runnerId graphql.ID) (*RunnerJob, error) {
+	var m struct {
+		Payload struct {
+			RunnerJob RunnerJob
+			Errors    []OpsLevelErrors
+		} `graphql:"runnerGetPendingJob(runnerId: $runnerId)"`
+	}
+	v := PayloadVariables{
+		"runnerId": runnerId,
+	}
+	if err := s.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	return &m.Payload.RunnerJob, FormatErrors(m.Payload.Errors)
+}

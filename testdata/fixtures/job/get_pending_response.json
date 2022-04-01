@@ -1,0 +1,24 @@
+{
+  "data": {
+    "runnerGetPendingJob": {
+      "runnerJob": {
+        "id": "Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzE",
+        "image": "public.ecr.aws/opslevel/cli:v2022.02.25",
+        "outcome": "unstarted",
+        "status": "running",
+        "commands": [
+          "pwd",
+          "ls -al",
+          "env | grep AWS"
+        ],
+        "variables": [
+          {
+            "key": "AWS_ACCESS_KEY",
+            "value": "XXXXXXX"
+          }
+        ]
+      },
+      "errors": []
+    }
+  }
+}

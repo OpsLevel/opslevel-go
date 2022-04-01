@@ -1,0 +1,6 @@
+{
+    "query": "mutation($input:RunnerReportJobOutcomeInput!){runnerReportJobOutcome(input: $input){runnerJob{id,outcome,status},errors{message,path}}}",
+    "variables": {
+      "input": {"outcome":"execution_timeout", "runnerId":"1234567890", "runnerJobId":"Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzE"}
+    }
+  }
