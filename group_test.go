@@ -29,3 +29,15 @@ func TestGetGroupWithAlias(t *testing.T) {
 	autopilot.Equals(t, "test_group_1", result.Alias)
 	autopilot.Equals(t, nil, result.Parent.GroupId.Id)
 }
+
+func TestListGroups(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "group/list")
+	// Act
+	result, err := client.ListGroups()
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(result))
+	autopilot.Equals(t, "test_group_2", result[0].Alias)
+	autopilot.Equals(t, "test_group_1", result[1].Alias)
+}

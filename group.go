@@ -33,6 +33,17 @@ type Group struct {
 // 	TotalCount graphql.Int
 // }
 
+type GroupConnection struct {
+	Nodes      []Group
+	PageInfo   PageInfo
+	TotalCount graphql.Int
+}
+
+func (s *Group) Hydrate(client *Client) error {
+	// TODO: Will need to hydrate descendants and members here
+	return nil
+}
+
 func (client *Client) GetGroup(id graphql.ID) (*Group, error) {
 	var q struct {
 		Account struct {
@@ -61,4 +72,49 @@ func (client *Client) GetGroupWithAlias(alias string) (*Group, error) {
 		return nil, err
 	}
 	return &q.Account.Group, nil
+}
+
+func (conn *GroupConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Group, error) {
+	if err := client.Query(q, v); err != nil {
+		return conn.Nodes, err
+	}
+	if err := conn.Hydrate(client); err != nil {
+		return conn.Nodes, err
+	}
+	return conn.Nodes, nil
+}
+
+func (conn *GroupConnection) Hydrate(client *Client) error {
+	var q struct {
+		Account struct {
+			Groups GroupConnection `graphql:"groups(after: $after, first: $first)"`
+		}
+	}
+	v := PayloadVariables{
+		"first": client.pageSize,
+	}
+	q.Account.Groups.PageInfo = conn.PageInfo
+	for q.Account.Groups.PageInfo.HasNextPage {
+		v["after"] = q.Account.Groups.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Groups.Nodes {
+			if err := (&item).Hydrate(client); err != nil {
+				return err
+			}
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
+}
+
+func (client *Client) ListGroups() ([]Group, error) {
+	var q struct {
+		Account struct {
+			Groups GroupConnection `graphql:"groups(after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	return q.Account.Groups.Query(client, &q, v)
 }
