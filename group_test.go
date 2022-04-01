@@ -41,14 +41,3 @@ func TestListGroups(t *testing.T) {
 	autopilot.Equals(t, "test_group_2", result[0].Alias)
 	autopilot.Equals(t, "test_group_1", result[1].Alias)
 }
-
-func TestListGroupsWithParent(t *testing.T) {
-	// Arrange
-	client := ATestClientAlt(t, "group/list", "group/list_with_parent")
-	// Act
-	result, err := client.ListGroupsWithParent("test_group_1")
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, "test_group_2", result[0].Alias)
-}

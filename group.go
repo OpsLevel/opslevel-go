@@ -56,6 +56,9 @@ func (client *Client) GetGroup(id graphql.ID) (*Group, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
+	if err := q.Account.Group.Hydrate(client); err != nil {
+		return &q.Account.Group, err
+	}
 	return &q.Account.Group, nil
 }
 
@@ -116,16 +119,5 @@ func (client *Client) ListGroups() ([]Group, error) {
 		}
 	}
 	v := client.InitialPageVariables()
-	return q.Account.Groups.Query(client, &q, v)
-}
-
-func (client *Client) ListGroupsWithParent(parent string) ([]Group, error) {
-	var q struct {
-		Account struct {
-			Groups GroupConnection `graphql:"groups(parentAlias: $parent, after: $after, first: $first)"`
-		}
-	}
-	v := client.InitialPageVariables()
-	v["parent"] = graphql.String(parent)
 	return q.Account.Groups.Query(client, &q, v)
 }

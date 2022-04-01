@@ -1,8 +1,0 @@
-{
-    "query": "query($after:String!$first:Int!$parent:String!){account{groups(parentAlias: $parent, after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id,alias}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-    "variables": {
-      "after": "",
-      "first": 100,
-      "parent": "test_group_1"
-    }
-  }
