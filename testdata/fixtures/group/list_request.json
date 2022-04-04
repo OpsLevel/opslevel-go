@@ -1,0 +1,7 @@
+{
+    "query": "query($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id,alias}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+    "variables": {
+      "after": "",
+      "first": 100
+    }
+  }
