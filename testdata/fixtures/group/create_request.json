@@ -1,0 +1,14 @@
+{
+  "query":"mutation($input:GroupCreateInput!){groupCreate(input: $input){group{alias,id,description,htmlUrl,members{nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parent{alias,id,alias}},errors{message,path}}}",
+  "variables":{
+      "input":{
+        "name": "platform",
+        "description":"Another test group",
+        "members":[
+            {
+                "email":"edgar+test@opslevel.com"
+            }
+        ]
+      }
+  }
+}
