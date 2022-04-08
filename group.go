@@ -12,6 +12,11 @@ type GroupCreateInput struct {
 	Teams       []IdentifierInput `json:"teams,omitempty"`
 }
 
+type GroupDeleteInput struct {
+	Id    graphql.ID `json:"id,omitempty"`
+	Alias string     `json:"alias,omitempty"`
+}
+
 type GroupId struct {
 	Alias string     `json:"alias,omitempty"`
 	Id    graphql.ID `json:"id"`
@@ -68,6 +73,44 @@ func (client *Client) CreateGroup(input GroupCreateInput) (*Group, error) {
 		return &m.Payload.Group, err
 	}
 	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) DeleteGroupWithAlias(alias string) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID       `graphql:"deletedId"`
+			Alias  graphql.String   `graphql:"deletedAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"groupDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": ResourceDeletePayload{
+			Alias: alias,
+		},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) DeleteGroup(id graphql.ID) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID       `graphql:"deletedId"`
+			Alias  graphql.String   `graphql:"deletedAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"groupDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": ResourceDeletePayload{
+			Id: id,
+		},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
 }
 
 func (s *Group) Hydrate(client *Client) error {

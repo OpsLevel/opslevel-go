@@ -7,7 +7,9 @@
         "description": "This is the first test group",
         "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1",
         "name": "test_group_1",
-        "parent": null
+        "parent": {
+          "alias": "test_group_2"
+        }
       },
       "errors": []
     }

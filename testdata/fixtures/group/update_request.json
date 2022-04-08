@@ -1,5 +1,5 @@
 {
-    "query":"mutation($input:GroupUpdateInput!){groupUpdate(input: $input){group{alias,id,description,htmlUrl,members{nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parent{alias,id,alias}},errors{message,path}}}",
+    "query":"mutation($input:GroupUpdateInput!){groupUpdate(input: $input){group{alias,id,description,htmlUrl,name,parent{alias,id}},errors{message,path}}}",
     "variables":{
         "input":{
             "alias":"test_group_1",
@@ -8,6 +8,14 @@
                 {
                     "email": "edgar+test@opslevel.com"
                 }
+            ],
+            "parent": {
+                "alias": "test_group_2"
+            },
+            "teams": [
+              {
+                "alias": "platform"
+              }
             ]
         }
     }

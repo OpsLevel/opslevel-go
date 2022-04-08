@@ -19,22 +19,23 @@ func TestCreateGroup(t *testing.T) {
 		Name:        "platform",
 		Description: "Another test group",
 		Members:     members,
-		Parent: opslevel.IdentifierInput{Alias: "test_group_1"},
+		Parent:      opslevel.IdentifierInput{Alias: "test_group_1"},
 		Teams: []opslevel.IdentifierInput{
 			opslevel.IdentifierInput{Alias: "platform"},
-		}
+		},
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "platform", result.Name)
 	autopilot.Equals(t, "Another test group", result.Description)
+	autopilot.Equals(t, "test_group_1", result.Parent.Alias)
 }
 
 func TestDeleteGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/delete")
 	// Act
-	err := client.DeleteGroup("Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI")
+	err := client.DeleteGroup("Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTc")
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -43,7 +44,7 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 	// Arrange
 	client := ATestClientAlt(t, "group/delete", "group/delete_with_alias")
 	// Act
-	err := client.DeleteGroupWithAlias("test_group_2")
+	err := client.DeleteGroupWithAlias("platform")
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -57,7 +58,7 @@ func TestGetGroup(t *testing.T) {
 	fmt.Printf("%v", result)
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "test_group_1", result.Alias)
-	autopilot.Equals(t, nil, result.Parent.GroupId.Id)
+	autopilot.Equals(t, nil, result.Parent.Id)
 }
 
 func TestGetGroupWithAlias(t *testing.T) {
@@ -68,7 +69,7 @@ func TestGetGroupWithAlias(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "test_group_1", result.Alias)
-	autopilot.Equals(t, nil, result.Parent.GroupId.Id)
+	autopilot.Equals(t, nil, result.Parent.Id)
 }
 
 func TestListGroups(t *testing.T) {
@@ -94,13 +95,14 @@ func TestUpdateGroup(t *testing.T) {
 		Alias:       "test_group_1",
 		Description: "This is the first test group",
 		Members:     members,
-		Parent: opslevel.IdentifierInput{Alias: "test_group_2"},
+		Parent:      opslevel.IdentifierInput{Alias: "test_group_2"},
 		Teams: []opslevel.IdentifierInput{
 			opslevel.IdentifierInput{Alias: "platform"},
-		}
+		},
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "test_group_1", result.Name)
 	autopilot.Equals(t, "This is the first test group", result.Description)
+	autopilot.Equals(t, "test_group_2", result.Parent.Alias)
 }

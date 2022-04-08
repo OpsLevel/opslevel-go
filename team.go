@@ -6,19 +6,6 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
-type User struct {
-	Email   string
-	HTMLUrl string
-	Id      graphql.ID
-	Name    string
-	Role    UserRole
-}
-
-type UserConnection struct {
-	Nodes    []User
-	PageInfo PageInfo
-}
-
 type Contact struct {
 	Address     string
 	DisplayName string

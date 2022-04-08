@@ -7,7 +7,9 @@
         "alias": "platform",
         "name": "platform",
         "description": "Another test group",
-        "parent": null
+        "parent": {
+          "alias": "test_group_1"
+        }
       }
     }
   }
