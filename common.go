@@ -36,6 +36,12 @@ type IdResponsePayload struct {
 	Errors []OpsLevelErrors
 }
 
+type ResourceDeletePayload struct {
+	Alias  string           `graphql:"deletedAlias,omitempty" json:"alias,omitempty"`
+	Id     graphql.ID       `graphql:"deletedId,omitempty" json:"id,omitempty"`
+	Errors []OpsLevelErrors `graphql:"errors,omitempty" json:"errors,omitempty"`
+}
+
 func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
 	if err := client.Mutate(m, v); err != nil {
 		return err

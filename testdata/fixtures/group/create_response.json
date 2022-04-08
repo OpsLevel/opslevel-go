@@ -1,0 +1,16 @@
+{
+  "data": {
+    "groupCreate": {
+      "errors": [],
+      "group": {
+        "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTc",
+        "alias": "platform",
+        "name": "platform",
+        "description": "Another test group",
+        "parent": {
+          "alias": "test_group_1"
+        }
+      }
+    }
+  }
+}

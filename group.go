@@ -4,14 +4,26 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
+type GroupCreateInput struct {
+	Description string            `json:"description,omitempty"`
+	Members     []MemberInput     `json:"members,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Parent      IdentifierInput   `json:"parent,omitempty"`
+	Teams       []IdentifierInput `json:"teams,omitempty"`
+}
+
 type GroupId struct {
 	Alias string     `json:"alias,omitempty"`
 	Id    graphql.ID `json:"id"`
 }
 
-type GroupParent struct {
-	GroupId
-	Alias string
+type GroupUpdateInput struct {
+	Alias       string            `json:"alias,omitempty"`
+	Description string            `json:"description,omitempty"`
+	Members     []MemberInput     `json:"members,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Parent      IdentifierInput   `json:"parent,omitempty"`
+	Teams       []IdentifierInput `json:"teams,omitempty"`
 }
 
 type Group struct {
@@ -23,8 +35,8 @@ type Group struct {
 	Description string `json:"description,omitempty"`
 	HtmlURL     string `json:"htmlUrl,omitempty"`
 	// Members     UserConnection `json:"members,omitempty"`
-	Name   string      `json:"name,omitempty"`
-	Parent GroupParent `json:"parent,omitempty"`
+	Name   string  `json:"name,omitempty"`
+	Parent GroupId `json:"parent,omitempty"`
 }
 
 // type SubgroupConnection struct {
@@ -37,6 +49,63 @@ type GroupConnection struct {
 	Nodes      []Group
 	PageInfo   PageInfo
 	TotalCount graphql.Int
+}
+
+func (client *Client) CreateGroup(input GroupCreateInput) (*Group, error) {
+	var m struct {
+		Payload struct {
+			Group  Group
+			Errors []OpsLevelErrors
+		} `graphql:"groupCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Group.Hydrate(client); err != nil {
+		return &m.Payload.Group, err
+	}
+	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) DeleteGroupWithAlias(alias string) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID       `graphql:"deletedId"`
+			Alias  graphql.String   `graphql:"deletedAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"groupDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": ResourceDeletePayload{
+			Alias: alias,
+		},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) DeleteGroup(id graphql.ID) error {
+	var m struct {
+		Payload struct {
+			Id     graphql.ID       `graphql:"deletedId"`
+			Alias  graphql.String   `graphql:"deletedAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"groupDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": ResourceDeletePayload{
+			Id: id,
+		},
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
 }
 
 func (s *Group) Hydrate(client *Client) error {
@@ -128,4 +197,23 @@ func (client *Client) ListGroups() ([]Group, error) {
 	}
 	v := client.InitialPageVariables()
 	return q.Account.Groups.Query(client, &q, v)
+}
+
+func (client *Client) UpdateGroup(input GroupUpdateInput) (*Group, error) {
+	var m struct {
+		Payload struct {
+			Group  Group
+			Errors []OpsLevelErrors
+		} `graphql:"groupUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Group.Hydrate(client); err != nil {
+		return &m.Payload.Group, err
+	}
+	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
 }

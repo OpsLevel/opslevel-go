@@ -1,0 +1,22 @@
+{
+  "query":"mutation($input:GroupCreateInput!){groupCreate(input: $input){group{alias,id,description,htmlUrl,name,parent{alias,id}},errors{message,path}}}",
+  "variables":{
+      "input":{
+        "name": "platform",
+        "description":"Another test group",
+        "members":[
+            {
+                "email":"edgar+test@opslevel.com"
+            }
+        ],
+        "parent": {
+          "alias": "test_group_1"
+        },
+        "teams": [
+          {
+            "alias": "platform"
+          }
+        ]
+      }
+  }
+}
