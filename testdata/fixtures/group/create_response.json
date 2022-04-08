@@ -7,13 +7,6 @@
         "alias": "platform",
         "name": "platform",
         "description": "Another test group",
-        "members": {
-          "nodes": [
-            {
-              "email": "edgar+test@opslevel.com"
-            }
-          ]
-        },
         "parent": null
       }
     }

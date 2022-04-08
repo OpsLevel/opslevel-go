@@ -5,11 +5,11 @@ import (
 )
 
 type GroupCreateInput struct {
-	Description string             `json:"description,omitempty"`
-	Members     []GroupMemberInput `json:"members,omitempty"`
-	Name        string             `json:"name,omitempty"`
-	Parent      graphql.ID         `json:"parent,omitempty"`
-	Teams       graphql.ID         `json:"teams,omitempty"`
+	Description string            `json:"description,omitempty"`
+	Members     []MemberInput     `json:"members,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Parent      IdentifierInput   `json:"parent,omitempty"`
+	Teams       []IdentifierInput `json:"teams,omitempty"`
 }
 
 type GroupId struct {
@@ -17,13 +17,13 @@ type GroupId struct {
 	Id    graphql.ID `json:"id"`
 }
 
-type GroupMemberInput struct {
-	Email string `json:"email"`
-}
-
-type GroupParent struct {
-	GroupId
-	Alias string
+type GroupUpdateInput struct {
+	Alias       string            `json:"alias,omitempty"`
+	Description string            `json:"description,omitempty"`
+	Members     []MemberInput     `json:"members,omitempty"`
+	Name        string            `json:"name,omitempty"`
+	Parent      IdentifierInput   `json:"parent,omitempty"`
+	Teams       []IdentifierInput `json:"teams,omitempty"`
 }
 
 type Group struct {
@@ -32,11 +32,11 @@ type Group struct {
 	// DescendantSubgroups    SubgroupConnection   `json:"descendantSubgroups,omitempty"`
 	// DescendantTeams        TeamConnection       `json:"descendantTeams,omitempty"`
 	GroupId
-	Description string         `json:"description,omitempty"`
-	HtmlURL     string         `json:"htmlUrl,omitempty"`
-	Members     UserConnection `json:"members,omitempty"`
-	Name        string         `json:"name,omitempty"`
-	Parent      GroupParent    `json:"parent,omitempty"`
+	Description string `json:"description,omitempty"`
+	HtmlURL     string `json:"htmlUrl,omitempty"`
+	// Members     UserConnection `json:"members,omitempty"`
+	Name   string  `json:"name,omitempty"`
+	Parent GroupId `json:"parent,omitempty"`
 }
 
 // type SubgroupConnection struct {
@@ -159,4 +159,23 @@ func (client *Client) ListGroups() ([]Group, error) {
 	}
 	v := client.InitialPageVariables()
 	return q.Account.Groups.Query(client, &q, v)
+}
+
+func (client *Client) UpdateGroup(input GroupUpdateInput) (*Group, error) {
+	var m struct {
+		Payload struct {
+			Group  Group
+			Errors []OpsLevelErrors
+		} `graphql:"groupUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Group.Hydrate(client); err != nil {
+		return &m.Payload.Group, err
+	}
+	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
 }
