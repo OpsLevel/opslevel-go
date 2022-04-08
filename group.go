@@ -12,11 +12,6 @@ type GroupCreateInput struct {
 	Teams       []IdentifierInput `json:"teams,omitempty"`
 }
 
-type GroupDeleteInput struct {
-	Id    graphql.ID `json:"id,omitempty"`
-	Alias string     `json:"alias,omitempty"`
-}
-
 type GroupId struct {
 	Alias string     `json:"alias,omitempty"`
 	Id    graphql.ID `json:"id"`
