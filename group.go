@@ -1,6 +1,8 @@
 package opslevel
 
 import (
+	"fmt"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -13,7 +15,7 @@ type Group struct {
 	// DescendantRepositories RepositoryConnection `json:"descendantRepositories,omitempty"`
 	// DescendantServices ServiceConnection `json:"descendantServices,omitempty"`
 	// DescendantSubgroups    SubgroupConnection   `json:"descendantSubgroups,omitempty"`
-	// DescendantTeams        TeamConnection       `json:"descendantTeams,omitempty"`
+	DescendantTeamsConnection Connection `json:"descendantTeams,omitempty"`
 	GroupId
 	Description string `json:"description,omitempty"`
 	HtmlURL     string `json:"htmlUrl,omitempty"`
@@ -132,6 +134,38 @@ func (client *Client) ListGroups() ([]Group, error) {
 	}
 	v := client.InitialPageVariables()
 	return q.Account.Groups.Query(client, &q, v)
+}
+
+func (g *Group) DescendantTeams(client *Client) ([]Team, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantTeams struct {
+					Nodes    []Team
+					PageInfo PageInfo
+				} `graphql:"descendantTeams(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("failed to request 'DescendantTeams' for group because there is not a valid id '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+	}
+	output := []Team{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	for q.Account.Group.DescendantTeams.PageInfo.HasNextPage {
+		output = append(output, q.Account.Group.DescendantTeams.Nodes...)
+		v["after"] = q.Account.Group.DescendantTeams.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+	}
+	return output, nil
 }
 
 //#endregion
