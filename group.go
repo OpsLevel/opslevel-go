@@ -66,9 +66,6 @@ func (client *Client) CreateGroup(input GroupCreateInput) (*Group, error) {
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
 	}
-	if err := m.Payload.Group.Hydrate(client); err != nil {
-		return &m.Payload.Group, err
-	}
 	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
 }
 
@@ -165,9 +162,6 @@ func (client *Client) UpdateGroup(input GroupUpdateInput) (*Group, error) {
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
-	}
-	if err := m.Payload.Group.Hydrate(client); err != nil {
-		return &m.Payload.Group, err
 	}
 	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
 }
