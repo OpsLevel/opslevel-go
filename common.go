@@ -37,9 +37,9 @@ type IdResponsePayload struct {
 }
 
 type ResourceDeletePayload struct {
-	Alias  string           `graphql:"deletedAlias,omitempty" json:"alias,omitempty"`
-	Id     graphql.ID       `graphql:"deletedId,omitempty" json:"id,omitempty"`
-	Errors []OpsLevelErrors `graphql:"errors,omitempty" json:"errors,omitempty"`
+	Alias  string           `graphql:"deletedAlias" json:"alias,omitempty"`
+	Id     graphql.ID       `graphql:"deletedId" json:"id,omitempty"`
+	Errors []OpsLevelErrors `graphql:"errors" json:"errors,omitempty"`
 }
 
 func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
@@ -86,6 +86,10 @@ func FormatErrors(errs []OpsLevelErrors) error {
 func NewID(id string) *graphql.ID {
 	output := graphql.ID(id)
 	return &output
+}
+
+func NewString(v string) graphql.String {
+	return graphql.String(v)
 }
 
 func NewInt(i int) *int {
