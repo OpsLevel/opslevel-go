@@ -147,14 +147,15 @@ func (client *Client) ListGroups() ([]Group, error) {
 
 //#region Update
 
-func (client *Client) UpdateGroup(input GroupUpdateInput) (*Group, error) {
+func (client *Client) UpdateGroup(id IdentifierInput, input GroupUpdateInput) (*Group, error) {
 	var m struct {
 		Payload struct {
 			Group  Group
 			Errors []OpsLevelErrors
-		} `graphql:"groupUpdate(input: $input)"`
+		} `graphql:"groupUpdate(group: $group, input: $input)"`
 	}
 	v := PayloadVariables{
+		"group": id,
 		"input": input,
 	}
 	if err := client.Mutate(&m, v); err != nil {
