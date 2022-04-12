@@ -12,7 +12,7 @@ func TestCreateGroup(t *testing.T) {
 	client := ATestClient(t, "group/create")
 	// Act
 	members := []opslevel.MemberInput{
-		opslevel.MemberInput{Email: "edgar+test@opslevel.com"},
+		{Email: "edgar+test@opslevel.com"},
 	}
 	result, err := client.CreateGroup(opslevel.GroupInput{
 		Name:        "platform",
@@ -20,7 +20,7 @@ func TestCreateGroup(t *testing.T) {
 		Members:     members,
 		Parent:      &opslevel.IdentifierInput{Alias: "test_group_1"},
 		Teams: []opslevel.IdentifierInput{
-			opslevel.IdentifierInput{Alias: "platform"},
+			{Alias: "platform"},
 		},
 	})
 	// Assert
@@ -86,7 +86,7 @@ func TestUpdateGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/update")
 	members := []opslevel.MemberInput{
-		opslevel.MemberInput{Email: "edgar+test@opslevel.com"},
+		{Email: "edgar+test@opslevel.com"},
 	}
 	// Act
 	result, err := client.UpdateGroup(opslevel.IdentifierInput{Id: "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"}, opslevel.GroupInput{
