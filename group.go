@@ -35,11 +35,11 @@ type GroupConnection struct {
 }
 
 type GroupInput struct {
-	Name        string            `json:"name,omitempty"`
-	Description string            `json:"description,omitempty"`
-	Parent      *IdentifierInput  `json:"parent,omitempty"`
-	Members     []MemberInput     `json:"members,omitempty"`
-	Teams       []IdentifierInput `json:"teams,omitempty"`
+	Name        string             `json:"name,omitempty"`
+	Description string             `json:"description,omitempty"`
+	Parent      *IdentifierInput   `json:"parent,omitempty"`
+	Members     *[]MemberInput     `json:"members,omitempty"`
+	Teams       *[]IdentifierInput `json:"teams,omitempty"`
 }
 
 //#region Create
