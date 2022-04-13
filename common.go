@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -9,8 +10,8 @@ import (
 )
 
 type IdentifierInput struct {
-	Id    graphql.ID     `graphql:"id,omitempty" json:"id,omitempty"`
-	Alias graphql.String `graphql:"alias,omitempty" json:"alias,omitempty"`
+	Id    graphql.ID     `graphql:"id" json:"id,omitempty"`
+	Alias graphql.String `graphql:"alias" json:"alias,omitempty"`
 }
 
 type PageInfo struct {
@@ -49,15 +50,22 @@ func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVaria
 	return FormatErrors(p.Errors)
 }
 
-func NewId(id string) *IdentifierInput {
-	return &IdentifierInput{
-		Id: graphql.ID(id),
+func IsID(value string) bool {
+	decoded, err := base64.RawURLEncoding.DecodeString(value)
+	if err != nil {
+		return false
 	}
+	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-func NewIdFromAlias(alias string) *IdentifierInput {
+func NewIdentifier(value string) *IdentifierInput {
+	if IsID(value) {
+		return &IdentifierInput{
+			Id: graphql.ID(value),
+		}
+	}
 	return &IdentifierInput{
-		Alias: graphql.String(alias),
+		Alias: graphql.String(value),
 	}
 }
 
@@ -86,10 +94,6 @@ func FormatErrors(errs []OpsLevelErrors) error {
 func NewID(id string) *graphql.ID {
 	output := graphql.ID(id)
 	return &output
-}
-
-func NewString(v string) graphql.String {
-	return graphql.String(v)
 }
 
 func NewInt(i int) *int {
