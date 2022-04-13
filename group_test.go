@@ -94,7 +94,7 @@ func TestUpdateGroup(t *testing.T) {
 		{Alias: "platform"},
 	}
 	// Act
-	result, err := client.UpdateGroup(opslevel.IdentifierInput{Id: "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"}, opslevel.GroupInput{
+	result, err := client.UpdateGroup("Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", opslevel.GroupInput{
 		Description: "This is the first test group",
 		Members:     &members,
 		Parent:      opslevel.NewIdentifier("test_group_2"),

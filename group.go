@@ -138,7 +138,7 @@ func (client *Client) ListGroups() ([]Group, error) {
 
 //#region Update
 
-func (client *Client) UpdateGroup(id IdentifierInput, input GroupInput) (*Group, error) {
+func (client *Client) UpdateGroup(identifier string, input GroupInput) (*Group, error) {
 	var m struct {
 		Payload struct {
 			Group  Group
@@ -146,7 +146,7 @@ func (client *Client) UpdateGroup(id IdentifierInput, input GroupInput) (*Group,
 		} `graphql:"groupUpdate(group: $group, input: $input)"`
 	}
 	v := PayloadVariables{
-		"group": id,
+		"group": *NewIdentifier(identifier),
 		"input": input,
 	}
 	if err := client.Mutate(&m, v); err != nil {
