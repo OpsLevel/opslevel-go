@@ -158,12 +158,13 @@ func (g *Group) DescendantTeams(client *Client) ([]Team, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
+	output = append(output, q.Account.Group.DescendantTeams.Nodes...)
 	for q.Account.Group.DescendantTeams.PageInfo.HasNextPage {
-		output = append(output, q.Account.Group.DescendantTeams.Nodes...)
 		v["after"] = q.Account.Group.DescendantTeams.PageInfo.End
 		if err := client.Query(&q, v); err != nil {
 			return nil, err
 		}
+		output = append(output, q.Account.Group.DescendantTeams.Nodes...)
 	}
 	return output, nil
 }

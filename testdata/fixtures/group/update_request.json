@@ -1,5 +1,5 @@
 {
-    "query":"mutation($group:IdentifierInput!$input:GroupInput!){groupUpdate(group: $group, input: $input){group{alias,id,description,htmlUrl,name,parent{alias,id}},errors{message,path}}}",
+    "query":"mutation($group:IdentifierInput!$input:GroupInput!){groupUpdate(group: $group, input: $input){group{descendantTeamsConnection{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},alias,id,description,htmlUrl,name,parent{alias,id}},errors{message,path}}}",
     "variables":{
         "group": {
             "id":"Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"

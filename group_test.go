@@ -7,6 +7,17 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
+// TODO: not sure if there is a better way to handle reusing a client
+// Probably should be a feature of autopilot
+var getGroupWithAliasClient *opslevel.Client
+
+func getGroupWithAliasTestClient(t *testing.T) *opslevel.Client {
+	if getGroupWithAliasClient == nil {
+		getGroupWithAliasClient = ATestClientAlt(t, "group/get", "group/get_with_alias")
+	}
+	return getGroupWithAliasClient
+}
+
 func TestCreateGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/create")
@@ -50,6 +61,18 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 	autopilot.Ok(t, err)
 }
 
+func TestDescendantTeams(t *testing.T) {
+	// Arrange
+	client1 := getGroupWithAliasTestClient(t)
+	client2 := ATestClient(t, "group/descendant_teams")
+	// Act
+	group, _ := client1.GetGroupWithAlias("test_group_1")
+	result, err := group.DescendantTeams(client2)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "platform", result[0].Alias)
+}
+
 func TestGetGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/get")
@@ -63,7 +86,7 @@ func TestGetGroup(t *testing.T) {
 
 func TestGetGroupWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "group/get", "group/get_with_alias")
+	client := getGroupWithAliasTestClient(t)
 	// Act
 	result, err := client.GetGroupWithAlias("test_group_1")
 	// Assert
