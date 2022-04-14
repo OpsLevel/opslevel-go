@@ -1,5 +1,5 @@
 {
-    "query": "query($group:ID!){account{group(id: $group){descendantTeamsConnection{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},alias,id,description,htmlUrl,name,parent{alias,id}}}}",
+    "query": "query($group:ID!){account{group(id: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}",
     "variables": {
       "group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
     }

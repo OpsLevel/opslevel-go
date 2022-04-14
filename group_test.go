@@ -73,6 +73,42 @@ func TestDescendantTeams(t *testing.T) {
 	autopilot.Equals(t, "platform", result[0].Alias)
 }
 
+func TestDescendantRepositories(t *testing.T) {
+	// Arrange
+	client1 := getGroupWithAliasTestClient(t)
+	client2 := ATestClient(t, "group/descendant_repositories")
+	// Act
+	group, _ := client1.GetGroupWithAlias("test_group_1")
+	result, err := group.DescendantRepositories(client2)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 0, len(result))
+}
+
+func TestDescendantServices(t *testing.T) {
+	// Arrange
+	client1 := getGroupWithAliasTestClient(t)
+	client2 := ATestClient(t, "group/descendant_services")
+	// Act
+	group, _ := client1.GetGroupWithAlias("test_group_1")
+	result, err := group.DescendantServices(client2)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "atlantis", result[0].Name)
+}
+
+func TestDescendantSubgroups(t *testing.T) {
+	// Arrange
+	client1 := getGroupWithAliasTestClient(t)
+	client2 := ATestClient(t, "group/descendant_subgroups")
+	// Act
+	group, _ := client1.GetGroupWithAlias("test_group_1")
+	result, err := group.DescendantSubgroups(client2)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "test_group_2", result[0].Alias)
+}
+
 func TestGetGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/get")
@@ -105,6 +141,18 @@ func TestListGroups(t *testing.T) {
 	autopilot.Equals(t, 2, len(result))
 	autopilot.Equals(t, "test_group_2", result[0].Alias)
 	autopilot.Equals(t, "test_group_1", result[1].Alias)
+}
+
+func TestMembers(t *testing.T) {
+	// Arrange
+	client1 := getGroupWithAliasTestClient(t)
+	client2 := ATestClient(t, "group/members")
+	// Act
+	group, _ := client1.GetGroupWithAlias("test_group_1")
+	result, err := group.Members(client2)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "edgar+test@opslevel.com", result[0].Email)
 }
 
 func TestUpdateGroup(t *testing.T) {

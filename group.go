@@ -15,11 +15,11 @@ type Group struct {
 	// DescendantRepositories RepositoryConnection `json:"descendantRepositories,omitempty"`
 	// DescendantServices ServiceConnection `json:"descendantServices,omitempty"`
 	// DescendantSubgroups    SubgroupConnection   `json:"descendantSubgroups,omitempty"`
-	DescendantTeamsConnection Connection `json:"descendantTeams,omitempty"`
+	// DescendantTeamsConnection Connection `json:"descendantTeams,omitempty"`
 	GroupId
 	Description string `json:"description,omitempty"`
 	HtmlURL     string `json:"htmlUrl,omitempty"`
-	// Members     UserConnection `json:"members,omitempty"`
+	// MembersConnection Connection `json:"members,omitempty"`
 	Name   string  `json:"name,omitempty"`
 	Parent GroupId `json:"parent,omitempty"`
 }
@@ -165,6 +165,138 @@ func (g *Group) DescendantTeams(client *Client) ([]Team, error) {
 			return nil, err
 		}
 		output = append(output, q.Account.Group.DescendantTeams.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) DescendantRepositories(client *Client) ([]Repository, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantRepositories struct {
+					Nodes    []Repository
+					PageInfo PageInfo
+				} `graphql:"descendantRepositories(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("failed to request 'DescendantRepositories' for group because there is not a valid id '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+	}
+	output := []Repository{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantRepositories.Nodes...)
+	for q.Account.Group.DescendantRepositories.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantRepositories.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantRepositories.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) DescendantServices(client *Client) ([]Service, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantServices struct {
+					Nodes    []Service
+					PageInfo PageInfo
+				} `graphql:"descendantServices(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("failed to request 'DescendantServices' for group because there is not a valid id '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+	}
+	output := []Service{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantServices.Nodes...)
+	for q.Account.Group.DescendantServices.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantServices.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantServices.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) DescendantSubgroups(client *Client) ([]Group, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantSubgroups struct {
+					Nodes    []Group
+					PageInfo PageInfo
+				} `graphql:"descendantSubgroups(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("failed to request 'DescendantSubgroups' for group because there is not a valid id '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+	}
+	output := []Group{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantSubgroups.Nodes...)
+	for q.Account.Group.DescendantSubgroups.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantSubgroups.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantSubgroups.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) Members(client *Client) ([]User, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				Members struct {
+					Nodes    []User
+					PageInfo PageInfo
+				} `graphql:"members(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("failed to request 'Members' for group because there is not a valid id '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+	}
+	output := []User{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.Members.Nodes...)
+	for q.Account.Group.Members.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.Members.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.Members.Nodes...)
 	}
 	return output, nil
 }

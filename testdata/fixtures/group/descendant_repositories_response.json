@@ -1,0 +1,17 @@
+{
+    "data": {
+      "account": {
+        "group": {
+          "descendantRepositories": {
+            "nodes": [],
+            "pageInfo": {
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": null,
+              "endCursor": null
+            }
+          }
+        }
+      }
+    }
+  }
