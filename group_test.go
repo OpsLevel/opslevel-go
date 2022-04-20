@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/opslevel/opslevel-go"
@@ -66,8 +67,11 @@ func TestDescendantTeams(t *testing.T) {
 	client1 := getGroupWithAliasTestClient(t)
 	client2 := ATestClient(t, "group/descendant_teams")
 	// Act
-	group, _ := client1.GetGroupWithAlias("test_group_1")
+	fmt.Println("HERE1")
+	group, err := client1.GetGroupWithAlias("test_group_1")
+	fmt.Println(err)
 	result, err := group.DescendantTeams(client2)
+	fmt.Println("HERE3")
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "platform", result[0].Alias)
