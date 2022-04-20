@@ -164,9 +164,7 @@ func (client *Client) DeleteGroupWithAlias(alias string) error {
 		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": IdentifierInput{
-			Alias: graphql.String(alias),
-		},
+		"input": *NewIdentifier(alias),
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err
@@ -179,9 +177,7 @@ func (client *Client) DeleteGroup(id graphql.ID) error {
 		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": IdentifierInput{
-			Id: id,
-		},
+		"input": *NewIdentifier(id.(string)),
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err
