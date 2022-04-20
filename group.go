@@ -150,7 +150,6 @@ func (g *Group) DescendantTeams(client *Client) ([]Team, error) {
 	if g.Id == nil {
 		return nil, fmt.Errorf("failed to request 'DescendantTeams' for group because there is not a valid id '%s'", g.Id)
 	}
-	fmt.Println("HERE")
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
