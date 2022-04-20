@@ -10,18 +10,20 @@ import (
 func TestCreateGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/create")
-	// Act
 	members := []opslevel.MemberInput{
-		opslevel.MemberInput{Email: "edgar+test@opslevel.com"},
+		{Email: "edgar+test@opslevel.com"},
 	}
-	result, err := client.CreateGroup(opslevel.GroupCreateInput{
+	teams := []opslevel.IdentifierInput{
+		{Alias: "platform"},
+	}
+	// Act
+
+	result, err := client.CreateGroup(opslevel.GroupInput{
 		Name:        "platform",
 		Description: "Another test group",
-		Members:     members,
-		Parent:      opslevel.IdentifierInput{Alias: "test_group_1"},
-		Teams: []opslevel.IdentifierInput{
-			opslevel.IdentifierInput{Alias: "platform"},
-		},
+		Members:     &members,
+		Parent:      opslevel.NewIdentifier("test_group_1"),
+		Teams:       &teams,
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -86,17 +88,17 @@ func TestUpdateGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/update")
 	members := []opslevel.MemberInput{
-		opslevel.MemberInput{Email: "edgar+test@opslevel.com"},
+		{Email: "edgar+test@opslevel.com"},
+	}
+	teams := []opslevel.IdentifierInput{
+		{Alias: "platform"},
 	}
 	// Act
-	result, err := client.UpdateGroup(opslevel.GroupUpdateInput{
-		Alias:       "test_group_1",
+	result, err := client.UpdateGroup("Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", opslevel.GroupInput{
 		Description: "This is the first test group",
-		Members:     members,
-		Parent:      opslevel.IdentifierInput{Alias: "test_group_2"},
-		Teams: []opslevel.IdentifierInput{
-			opslevel.IdentifierInput{Alias: "platform"},
-		},
+		Members:     &members,
+		Parent:      opslevel.NewIdentifier("test_group_2"),
+		Teams:       &teams,
 	})
 	// Assert
 	autopilot.Ok(t, err)

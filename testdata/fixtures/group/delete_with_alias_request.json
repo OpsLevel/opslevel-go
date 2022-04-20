@@ -1,1 +1,1 @@
-{"query":"mutation($input:ResourceDeletePayload!){groupDelete(input: $input){deletedId,deletedAlias,errors{message,path}}}","variables":{"input":{"alias":"platform"}}}
+{"query":"mutation($input:IdentifierInput!){groupDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}","variables":{"input":{"alias":"platform"}}}

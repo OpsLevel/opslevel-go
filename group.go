@@ -4,26 +4,9 @@ import (
 	"github.com/shurcooL/graphql"
 )
 
-type GroupCreateInput struct {
-	Description string            `json:"description,omitempty"`
-	Members     []MemberInput     `json:"members,omitempty"`
-	Name        string            `json:"name,omitempty"`
-	Parent      IdentifierInput   `json:"parent,omitempty"`
-	Teams       []IdentifierInput `json:"teams,omitempty"`
-}
-
 type GroupId struct {
 	Alias string     `json:"alias,omitempty"`
 	Id    graphql.ID `json:"id"`
-}
-
-type GroupUpdateInput struct {
-	Alias       string            `json:"alias,omitempty"`
-	Description string            `json:"description,omitempty"`
-	Members     []MemberInput     `json:"members,omitempty"`
-	Name        string            `json:"name,omitempty"`
-	Parent      IdentifierInput   `json:"parent,omitempty"`
-	Teams       []IdentifierInput `json:"teams,omitempty"`
 }
 
 type Group struct {
@@ -51,9 +34,17 @@ type GroupConnection struct {
 	TotalCount graphql.Int
 }
 
+type GroupInput struct {
+	Name        string             `json:"name,omitempty"`
+	Description string             `json:"description,omitempty"`
+	Parent      *IdentifierInput   `json:"parent,omitempty"`
+	Members     *[]MemberInput     `json:"members,omitempty"`
+	Teams       *[]IdentifierInput `json:"teams,omitempty"`
+}
+
 //#region Create
 
-func (client *Client) CreateGroup(input GroupCreateInput) (*Group, error) {
+func (client *Client) CreateGroup(input GroupInput) (*Group, error) {
 	var m struct {
 		Payload struct {
 			Group  Group
@@ -147,14 +138,15 @@ func (client *Client) ListGroups() ([]Group, error) {
 
 //#region Update
 
-func (client *Client) UpdateGroup(input GroupUpdateInput) (*Group, error) {
+func (client *Client) UpdateGroup(identifier string, input GroupInput) (*Group, error) {
 	var m struct {
 		Payload struct {
 			Group  Group
 			Errors []OpsLevelErrors
-		} `graphql:"groupUpdate(input: $input)"`
+		} `graphql:"groupUpdate(group: $group, input: $input)"`
 	}
 	v := PayloadVariables{
+		"group": *NewIdentifier(identifier),
 		"input": input,
 	}
 	if err := client.Mutate(&m, v); err != nil {
@@ -169,16 +161,10 @@ func (client *Client) UpdateGroup(input GroupUpdateInput) (*Group, error) {
 
 func (client *Client) DeleteGroupWithAlias(alias string) error {
 	var m struct {
-		Payload struct {
-			Id     graphql.ID       `graphql:"deletedId"`
-			Alias  graphql.String   `graphql:"deletedAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"groupDelete(input: $input)"`
+		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": ResourceDeletePayload{
-			Alias: alias,
-		},
+		"input": *NewIdentifier(alias),
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err
@@ -188,16 +174,10 @@ func (client *Client) DeleteGroupWithAlias(alias string) error {
 
 func (client *Client) DeleteGroup(id graphql.ID) error {
 	var m struct {
-		Payload struct {
-			Id     graphql.ID       `graphql:"deletedId"`
-			Alias  graphql.String   `graphql:"deletedAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"groupDelete(input: $input)"`
+		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": ResourceDeletePayload{
-			Id: id,
-		},
+		"input": *NewIdentifier(id.(string)),
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err

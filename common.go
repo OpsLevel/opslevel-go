@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -9,8 +10,8 @@ import (
 )
 
 type IdentifierInput struct {
-	Id    graphql.ID     `graphql:"id,omitempty" json:"id,omitempty"`
-	Alias graphql.String `graphql:"alias,omitempty" json:"alias,omitempty"`
+	Id    graphql.ID     `graphql:"id" json:"id,omitempty"`
+	Alias graphql.String `graphql:"alias" json:"alias,omitempty"`
 }
 
 type PageInfo struct {
@@ -37,9 +38,9 @@ type IdResponsePayload struct {
 }
 
 type ResourceDeletePayload struct {
-	Alias  string           `graphql:"deletedAlias,omitempty" json:"alias,omitempty"`
-	Id     graphql.ID       `graphql:"deletedId,omitempty" json:"id,omitempty"`
-	Errors []OpsLevelErrors `graphql:"errors,omitempty" json:"errors,omitempty"`
+	Alias  string           `graphql:"deletedAlias" json:"alias,omitempty"`
+	Id     graphql.ID       `graphql:"deletedId" json:"id,omitempty"`
+	Errors []OpsLevelErrors `graphql:"errors" json:"errors,omitempty"`
 }
 
 func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
@@ -49,15 +50,22 @@ func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVaria
 	return FormatErrors(p.Errors)
 }
 
-func NewId(id string) *IdentifierInput {
-	return &IdentifierInput{
-		Id: graphql.ID(id),
+func IsID(value string) bool {
+	decoded, err := base64.RawURLEncoding.DecodeString(value)
+	if err != nil {
+		return false
 	}
+	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-func NewIdFromAlias(alias string) *IdentifierInput {
+func NewIdentifier(value string) *IdentifierInput {
+	if IsID(value) {
+		return &IdentifierInput{
+			Id: graphql.ID(value),
+		}
+	}
 	return &IdentifierInput{
-		Alias: graphql.String(alias),
+		Alias: graphql.String(value),
 	}
 }
 
