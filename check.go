@@ -13,24 +13,33 @@ type CheckOwner struct {
 }
 
 type Check struct {
-	Category    Category   `graphql:"category"`
-	Description string     `graphql:"description"`
-	Enabled     bool       `graphql:"enabled"`
-	Filter      Filter     `graphql:"filter"`
-	Id          graphql.ID `graphql:"id"`
-	Level       Level      `graphql:"level"`
-	Name        string     `graphql:"name"`
-	Notes       string     `graphql:"notes"`
-	Owner       CheckOwner `graphql:"owner"`
-	Type        CheckType  `graphql:"type"`
+	Category    Category     `graphql:"category"`
+	Description string       `graphql:"description"`
+	Enabled     bool         `graphql:"enabled"`
+	EnabledOn   iso8601.Time `graphql:"enabledOn"`
+	Filter      Filter       `graphql:"filter"`
+	Id          graphql.ID   `graphql:"id"`
+	Level       Level        `graphql:"level"`
+	Name        string       `graphql:"name"`
+	Notes       string       `graphql:"notes"`
+	Owner       CheckOwner   `graphql:"owner"`
+	Type        CheckType    `graphql:"type"`
 
-	CustomEventCheckFragment      `graphql:"... on CustomEventCheck"`
-	ManualCheckFragment           `graphql:"... on ManualCheck"`
-	RepositoryFileCheckFragment   `graphql:"... on RepositoryFileCheck"`
-	RepositorySearchCheckFragment `graphql:"... on RepositorySearchCheck"`
-	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`
-	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
-	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
+	AlertSourceUsageCheckFragment    `graphql:"... on AlertSourceUsageCheck"`
+	CustomEventCheckFragment         `graphql:"... on CustomEventCheck"`
+	GitBranchProtectionCheckFragment `graphql:"... on GitBranchProtectionCheck"`
+	HasRecentDeployCheckFragment     `graphql:"... on HasRecentDeployCheckFragment"`
+	ManualCheckFragment              `graphql:"... on ManualCheck"`
+	RepositoryFileCheckFragment      `graphql:"... on RepositoryFileCheck"`
+	RepositorySearchCheckFragment    `graphql:"... on RepositorySearchCheck"`
+	ServicePropertyCheckFragment     `graphql:"... on ServicePropertyCheck"`
+	TagDefinedCheckFragment          `graphql:"... on TagDefinedCheck"`
+	ToolUsageCheckFragment           `graphql:"... on ToolUsageCheck"`
+}
+
+type AlertSourceUsageCheckFragment struct {
+	AlertSourceNamePredicate Predicate           `graphql:"alertSourceNamePredicate"`
+	AlertSourceType          AlertSourceTypeEnum `graphql:"alertSourceType"`
 }
 
 type CustomEventCheckFragment struct {
@@ -38,6 +47,13 @@ type CustomEventCheckFragment struct {
 	ResultMessage    string      `graphql:"resultMessage"`
 	ServiceSelector  string      `graphql:"serviceSelector"`
 	SuccessCondition string      `graphql:"successCondition"`
+}
+
+type GitBranchProtectionCheckFragment struct {
+}
+
+type HasRecentDeployCheckFragment struct {
+	Days int `graphql:"days"`
 }
 
 type ManualCheckFragment struct {
@@ -83,13 +99,14 @@ type CheckCreateInputProvider interface {
 }
 
 type CheckCreateInput struct {
-	Name     string      `json:"name"`
-	Enabled  bool        `json:"enabled"`
-	Category graphql.ID  `json:"categoryId"`
-	Level    graphql.ID  `json:"levelId"`
-	Owner    *graphql.ID `json:"ownerId,omitempty"`
-	Filter   *graphql.ID `json:"filterId,omitempty"`
-	Notes    string      `json:"notes,omitempty"`
+	Name      string        `json:"name"`
+	Enabled   bool          `json:"enabled"`
+	EnabledOn *iso8601.Time `json:"enabledOn,omitempty"`
+	Category  graphql.ID    `json:"categoryId"`
+	Level     graphql.ID    `json:"levelId"`
+	Owner     *graphql.ID   `json:"ownerId,omitempty"`
+	Filter    *graphql.ID   `json:"filterId,omitempty"`
+	Notes     string        `json:"notes,omitempty"`
 }
 
 func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
@@ -101,18 +118,33 @@ type CheckUpdateInputProvider interface {
 }
 
 type CheckUpdateInput struct {
-	Id       graphql.ID  `json:"id"`
-	Name     string      `json:"name,omitempty"`
-	Enabled  *bool       `json:"enabled,omitempty"`
-	Category *graphql.ID `json:"categoryId,omitempty"`
-	Level    *graphql.ID `json:"levelId,omitempty"`
-	Owner    *graphql.ID `json:"ownerId,omitempty"`
-	Filter   *graphql.ID `json:"filterId,omitempty"`
-	Notes    string      `json:"notes,omitempty"`
+	Id        graphql.ID    `json:"id"`
+	Name      string        `json:"name,omitempty"`
+	Enabled   *bool         `json:"enabled,omitempty"`
+	EnabledOn *iso8601.Time `json:"enabledOn,omitempty"`
+	Category  *graphql.ID   `json:"categoryId,omitempty"`
+	Level     *graphql.ID   `json:"levelId,omitempty"`
+	Owner     *graphql.ID   `json:"ownerId,omitempty"`
+	Filter    *graphql.ID   `json:"filterId,omitempty"`
+	Notes     string        `json:"notes,omitempty"`
 }
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
 	return c
+}
+
+type CheckAlertSourceUsageCreateInput struct {
+	CheckCreateInput
+
+	AlertSourceType          AlertSourceTypeEnum `json:"alertSourceType,omitempty"`
+	AlertSourceNamePredicate *PredicateInput     `json:"alertSourceNamePredicate,omitempty"`
+}
+
+type CheckAlertSourceUsageUpdateInput struct {
+	CheckUpdateInput
+
+	AlertSourceType          AlertSourceTypeEnum   `json:"alertSourceType,omitempty"`
+	AlertSourceNamePredicate *PredicateUpdateInput `json:"alertSourceNamePredicate,omitempty"`
 }
 
 type CheckCustomEventCreateInput struct {
@@ -131,6 +163,26 @@ type CheckCustomEventUpdateInput struct {
 	SuccessCondition string      `json:"successCondition,omitempty"`
 	Message          string      `json:"resultMessage,omitempty"`
 	Integration      *graphql.ID `json:"integrationId,omitempty"`
+}
+
+type CheckGitBranchProtectionCreateInput struct {
+	CheckCreateInput
+}
+
+type CheckGitBranchProtectionUpdateInput struct {
+	CheckUpdateInput
+}
+
+type CheckHasRecentDeployCreateInput struct {
+	CheckCreateInput
+
+	Days int `json:"days"`
+}
+
+type CheckHasRecentDeployUpdateInput struct {
+	CheckUpdateInput
+
+	Days *int `json:"days,omitempty"`
 }
 
 type ManualCheckFrequency struct {
@@ -292,9 +344,7 @@ func (conn *CheckConnection) Hydrate(client *Client) error {
 		if err := client.Query(&q, v); err != nil {
 			return err
 		}
-		for _, item := range q.Account.Rubric.Checks.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
+		conn.Nodes = append(conn.Nodes, q.Account.Rubric.Checks.Nodes...)
 	}
 	return nil
 }
@@ -307,6 +357,26 @@ func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[strin
 }
 
 //#region Create
+
+func (client *Client) CreateCheckAlertSourceUsage(input CheckAlertSourceUsageCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkAlertSourceUsageCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckAlertSourceUsage(input CheckAlertSourceUsageUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkAlertSourceUsageUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
 
 func (client *Client) CreateCheckCustomEvent(input CheckCustomEventCreateInput) (*Check, error) {
 	var m struct {
@@ -321,6 +391,46 @@ func (client *Client) CreateCheckCustomEvent(input CheckCustomEventCreateInput) 
 func (client *Client) UpdateCheckCustomEvent(input CheckCustomEventUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkCustomEventUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckGitBranchProtection(input CheckGitBranchProtectionCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkGitBranchProtectionCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckGitBranchProtection(input CheckGitBranchProtectionUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkGitBranchProtectionUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkHasRecentDeployCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckHasRecentDeploy(input CheckHasRecentDeployUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkHasRecentDeployUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -524,7 +634,7 @@ func (client *Client) GetCheck(id graphql.ID) (*Check, error) {
 		return nil, err
 	}
 	if q.Account.Check.Id == nil {
-		return nil, fmt.Errorf("Check with ID '%s' not found!", id)
+		return nil, fmt.Errorf("check with ID '%s' not found", id)
 	}
 	return &q.Account.Check, nil
 }

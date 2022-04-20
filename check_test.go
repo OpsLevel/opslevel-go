@@ -28,6 +28,69 @@ var testcases = map[string]struct {
 	fixture string
 	body    func(c *ol.Client) (*ol.Check, error)
 }{
+	"CreateAlertSourceUsage": {
+		fixture: "check/create_alert_source_usage",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.CreateCheckAlertSourceUsage(ol.CheckAlertSourceUsageCreateInput{
+				CheckCreateInput: checkCreateInput,
+				AlertSourceType:  ol.AlertSourceTypeEnumDatadog,
+				AlertSourceNamePredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumEquals,
+					Value: "Requests",
+				},
+			})
+		},
+	},
+	"UpdateAlertSourceUsage": {
+		fixture: "check/update_alert_source_usage",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckAlertSourceUsage(ol.CheckAlertSourceUsageUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				AlertSourceType:  ol.AlertSourceTypeEnumDatadog,
+				AlertSourceNamePredicate: &ol.PredicateUpdateInput{
+					Type:  ol.PredicateTypeEnumEquals,
+					Value: "Requests",
+				},
+			})
+		},
+	},
+
+	"CreateGitBranchProtection": {
+		fixture: "check/create_git_branch_protection",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.CreateCheckGitBranchProtection(ol.CheckGitBranchProtectionCreateInput{
+				CheckCreateInput: checkCreateInput,
+			})
+		},
+	},
+	"UpdateGitBranchProtection": {
+		fixture: "check/update_git_branch_protection",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckGitBranchProtection(ol.CheckGitBranchProtectionUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+			})
+		},
+	},
+
+	"CreateHasRecentDeploy": {
+		fixture: "check/create_has_recent_deploy",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.CreateCheckHasRecentDeploy(ol.CheckHasRecentDeployCreateInput{
+				CheckCreateInput: checkCreateInput,
+				Days:             5,
+			})
+		},
+	},
+	"UpdateHasRecentDeploy": {
+		fixture: "check/update_has_recent_deploy",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckHasRecentDeploy(ol.CheckHasRecentDeployUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				Days:             ol.NewInt(5),
+			})
+		},
+	},
+
 	"CreateCustomEvent": {
 		fixture: "check/create_custom_event",
 		body: func(c *ol.Client) (*ol.Check, error) {

@@ -17,6 +17,11 @@ type PredicateInput struct {
 	Value string            `json:"value,omitempty"`
 }
 
+type PredicateUpdateInput struct {
+	Type  PredicateTypeEnum `json:"type,omitempty"`
+	Value string            `json:"value,omitempty"`
+}
+
 type Filter struct {
 	Connective ConnectiveEnum
 	HtmlURL    string
