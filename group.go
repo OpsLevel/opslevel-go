@@ -12,16 +12,16 @@ type GroupId struct {
 }
 
 type Group struct {
-	// DescendantRepositories RepositoryConnection `json:"descendantRepositories,omitempty"`
-	// DescendantServices ServiceConnection `json:"descendantServices,omitempty"`
-	// DescendantSubgroups    SubgroupConnection   `json:"descendantSubgroups,omitempty"`
-	// DescendantTeamsConnection Connection `json:"descendantTeams,omitempty"`
+	DescendantRepositoriesConnection Connection `json:"-" graphql:"descendantRepositories"`
+	DescendantServicesConnection     Connection `json:"-" graphql:"descendantServices"`
+	DescendantSubgroupsConnection    Connection `json:"-" graphql:"descendantSubgroups"`
+	DescendantTeamsConnection        Connection `json:"-" graphql:"descendantTeams"`
 	GroupId
-	Description string `json:"description,omitempty"`
-	HtmlURL     string `json:"htmlUrl,omitempty"`
-	// MembersConnection Connection `json:"members,omitempty"`
-	Name   string  `json:"name,omitempty"`
-	Parent GroupId `json:"parent,omitempty"`
+	Description       string     `json:"description,omitempty"`
+	HtmlURL           string     `json:"htmlUrl,omitempty"`
+	MembersConnection Connection `json:"-" graphql:"members"`
+	Name              string     `json:"name,omitempty"`
+	Parent            GroupId    `json:"parent,omitempty"`
 }
 
 // type SubgroupConnection struct {
@@ -153,7 +153,7 @@ func (g *Group) DescendantTeams(client *Client) ([]Team, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": g.DescendantTeamsConnection.PageInfo.Start,
 	}
 	output := []Team{}
 	if err := client.Query(&q, v); err != nil {
@@ -187,7 +187,7 @@ func (g *Group) DescendantRepositories(client *Client) ([]Repository, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": g.DescendantRepositoriesConnection.PageInfo.Start,
 	}
 	output := []Repository{}
 	if err := client.Query(&q, v); err != nil {
@@ -221,7 +221,7 @@ func (g *Group) DescendantServices(client *Client) ([]Service, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": g.DescendantServicesConnection.PageInfo.Start,
 	}
 	output := []Service{}
 	if err := client.Query(&q, v); err != nil {
@@ -255,7 +255,7 @@ func (g *Group) DescendantSubgroups(client *Client) ([]Group, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": g.DescendantSubgroupsConnection.PageInfo.Start,
 	}
 	output := []Group{}
 	if err := client.Query(&q, v); err != nil {
@@ -289,7 +289,7 @@ func (g *Group) Members(client *Client) ([]User, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": g.MembersConnection.PageInfo.Start,
 	}
 	output := []User{}
 	if err := client.Query(&q, v); err != nil {
