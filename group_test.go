@@ -82,7 +82,7 @@ func TestDescendantRepositories(t *testing.T) {
 	result, err := group.DescendantRepositories(client2)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 0, len(result))
+	autopilot.Equals(t, "github.com:OpsLevel/cli", result[0].DefaultAlias)
 }
 
 func TestDescendantServices(t *testing.T) {
@@ -94,7 +94,7 @@ func TestDescendantServices(t *testing.T) {
 	result, err := group.DescendantServices(client2)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "atlantis", result[0].Name)
+	autopilot.Equals(t, "atlantis", result[0].Aliases[0])
 }
 
 func TestDescendantSubgroups(t *testing.T) {
@@ -106,7 +106,7 @@ func TestDescendantSubgroups(t *testing.T) {
 	result, err := group.DescendantSubgroups(client2)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "test_group_2", result[0].Alias)
+	autopilot.Equals(t, "platform", result[0].Alias)
 }
 
 func TestGetGroup(t *testing.T) {

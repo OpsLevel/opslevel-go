@@ -6,10 +6,7 @@
             "nodes": [
               {
                 "email": "edgar+test@opslevel.com",
-                "htmlUrl": "https://app.opslevel-staging.com/users/410",
-                "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA",
-                "name": "Edgar Ochoa",
-                "role": "admin"
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA"
               }
             ],
             "pageInfo": {

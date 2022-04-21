@@ -12,8 +12,8 @@
           "pageInfo": {
             "hasNextPage": false,
             "hasPreviousPage": false,
-            "startCursor": null,
-            "endCursor": null
+            "startCursor": "MQ",
+            "endCursor": "MTM"
           }
         },
         "descendantServices": {
@@ -33,6 +33,14 @@
           }
         },
         "descendantTeams": {
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "MQ"
+          }
+        },
+        "members": {
           "pageInfo": {
             "hasNextPage": false,
             "hasPreviousPage": false,
