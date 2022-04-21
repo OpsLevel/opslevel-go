@@ -249,10 +249,13 @@ const (
 	ToolCategoryFeatureFlag           ToolCategory = "feature_flag"           // Tools used for managing feature flags.
 	ToolCategoryHealthChecks          ToolCategory = "health_checks"          // Tools used for tracking/reporting the health of a service.
 	ToolCategoryIncidents             ToolCategory = "incidents"              // Tools used to surface incidents on a service.
+	ToolCategoryIssueTracking         ToolCategory = "issue_tracking"         // Tools used for tracking issues.
 	ToolCategoryLogs                  ToolCategory = "logs"                   // Tools used for displaying logs from services.
 	ToolCategoryMetrics               ToolCategory = "metrics"                // Tools used for tracking/reporting service metrics.
 	ToolCategoryOrchestrator          ToolCategory = "orchestrator"           // Tools used for orchestrating a service.
+	ToolCategoryResiliency            ToolCategory = "resiliency"             // Tools used for testing the resiliency of a service.
 	ToolCategoryRunbooks              ToolCategory = "runbooks"               // Tools used for managing runbooks for a service.
+	ToolCategorySecurityScans         ToolCategory = "security_scans"         // Tools used for performing security scans.
 	ToolCategoryStatusPage            ToolCategory = "status_page"            // Tools used for reporting the status of a service.
 	ToolCategoryWiki                  ToolCategory = "wiki"                   // Tools used as a wiki for this service.
 	ToolCategoryOther                 ToolCategory = "other"                  // Tools that do not fit into the available categories.
@@ -270,10 +273,13 @@ func AllToolCategory() []string {
 		string(ToolCategoryFeatureFlag),
 		string(ToolCategoryHealthChecks),
 		string(ToolCategoryIncidents),
+		string(ToolCategoryIssueTracking),
 		string(ToolCategoryLogs),
 		string(ToolCategoryMetrics),
 		string(ToolCategoryOrchestrator),
+		string(ToolCategoryResiliency),
 		string(ToolCategoryRunbooks),
+		string(ToolCategorySecurityScans),
 		string(ToolCategoryStatusPage),
 		string(ToolCategoryWiki),
 		string(ToolCategoryOther),
