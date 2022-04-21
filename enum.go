@@ -2,6 +2,24 @@
 
 package opslevel
 
+// AlertSourceTypeEnum represents the type of the alert source.
+type AlertSourceTypeEnum string
+
+const (
+	AlertSourceTypeEnumPagerduty AlertSourceTypeEnum = "pagerduty" // A PagerDuty alert source (aka service).
+	AlertSourceTypeEnumDatadog   AlertSourceTypeEnum = "datadog"   // A Datadog alert source (aka monitor).
+	AlertSourceTypeEnumOpsgenie  AlertSourceTypeEnum = "opsgenie"  // An Opsgenie alert source (aka service).
+)
+
+// All AlertSourceTypeEnum as []string
+func AllAlertSourceTypeEnum() []string {
+	return []string{
+		string(AlertSourceTypeEnumPagerduty),
+		string(AlertSourceTypeEnumDatadog),
+		string(AlertSourceTypeEnumOpsgenie),
+	}
+}
+
 // AliasOwnerTypeEnum represents the owner type an alias is assigned to.
 type AliasOwnerTypeEnum string
 
@@ -40,24 +58,28 @@ func AllCheckStatus() []string {
 type CheckType string
 
 const (
-	CheckTypeHasOwner         CheckType = "has_owner"          // Verifies that the service has an owner defined.
-	CheckTypeServiceProperty  CheckType = "service_property"   // Verifies that a service property is set or matches a specified format.
-	CheckTypeHasServiceConfig CheckType = "has_service_config" // Verifies that the service is maintained though the use of an opslevel.yml service config.
-	CheckTypeHasRepository    CheckType = "has_repository"     // Verifies that the service has a repository integrated.
-	CheckTypeToolUsage        CheckType = "tool_usage"         // Verifies that the service is using a tool of a particular category or name.
-	CheckTypeTagDefined       CheckType = "tag_defined"        // Verifies that the service has the specified tag defined.
-	CheckTypeRepoFile         CheckType = "repo_file"          // Verifies that the service's repository contains a file with a certain path. (Optional: Can also be used to check for specific file contents).
-	CheckTypeRepoSearch       CheckType = "repo_search"        // Searches the service's repository and verifies if any file matches the given contents.
-	CheckTypeCustom           CheckType = "custom"             // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing.
-	CheckTypePayload          CheckType = "payload"            // Requires a payload integration api call to complete a check for the service.
-	CheckTypeManual           CheckType = "manual"             // Requires a service owner to manually complete a check for the service.
-	CheckTypeGeneric          CheckType = "generic"            // Requires a generic integration api call to complete a series of checks for multiple services.
+	CheckTypeHasOwner            CheckType = "has_owner"             // Verifies that the service has an owner defined.
+	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verified that the services has received a deploy within a specified number of days.
+	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format.
+	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config.
+	CheckTypeHasRepository       CheckType = "has_repository"        // Verifies that the service has a repository integrated.
+	CheckTypeToolUsage           CheckType = "tool_usage"            // Verifies that the service is using a tool of a particular category or name.
+	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined.
+	CheckTypeRepoFile            CheckType = "repo_file"             // Verifies that the service's repository contains a file with a certain path. (Optional: Can also be used to check for specific file contents).
+	CheckTypeRepoSearch          CheckType = "repo_search"           // Searches the service's repository and verifies if any file matches the given contents.
+	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing.
+	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service.
+	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service.
+	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services.
+	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name.
+	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
 )
 
 // All CheckType as []string
 func AllCheckType() []string {
 	return []string{
 		string(CheckTypeHasOwner),
+		string(CheckTypeHasRecentDeploy),
 		string(CheckTypeServiceProperty),
 		string(CheckTypeHasServiceConfig),
 		string(CheckTypeHasRepository),
@@ -69,6 +91,8 @@ func AllCheckType() []string {
 		string(CheckTypePayload),
 		string(CheckTypeManual),
 		string(CheckTypeGeneric),
+		string(CheckTypeAlertSourceUsage),
+		string(CheckTypeGitBranchProtection),
 	}
 }
 
@@ -140,6 +164,7 @@ const (
 	PredicateKeyEnumName           PredicateKeyEnum = "name"            // Filter by `name` field.
 	PredicateKeyEnumTags           PredicateKeyEnum = "tags"            // Filter by `tags` field.
 	PredicateKeyEnumOwnerID        PredicateKeyEnum = "owner_id"        // Filter by `owner` field.
+	PredicateKeyEnumGroupIDs       PredicateKeyEnum = "group_ids"       // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain.
 )
 
 // All PredicateKeyEnum as []string
@@ -153,6 +178,7 @@ func AllPredicateKeyEnum() []string {
 		string(PredicateKeyEnumName),
 		string(PredicateKeyEnumTags),
 		string(PredicateKeyEnumOwnerID),
+		string(PredicateKeyEnumGroupIDs),
 	}
 }
 
@@ -172,6 +198,7 @@ const (
 	PredicateTypeEnumStartsWith                 PredicateTypeEnum = "starts_with"                  // Starts with a specific value.
 	PredicateTypeEnumSatisfiesVersionConstraint PredicateTypeEnum = "satisfies_version_constraint" // Satisfies version constraint (tag value only).
 	PredicateTypeEnumMatchesRegex               PredicateTypeEnum = "matches_regex"                // Matches a value using a regular expression.
+	PredicateTypeEnumBelongsTo                  PredicateTypeEnum = "belongs_to"                   // Belongs to a group's hierarchy.
 	PredicateTypeEnumSatisfiesJqExpression      PredicateTypeEnum = "satisfies_jq_expression"      // Satisfies an expression defined in jq.
 )
 
@@ -190,6 +217,7 @@ func AllPredicateTypeEnum() []string {
 		string(PredicateTypeEnumStartsWith),
 		string(PredicateTypeEnumSatisfiesVersionConstraint),
 		string(PredicateTypeEnumMatchesRegex),
+		string(PredicateTypeEnumBelongsTo),
 		string(PredicateTypeEnumSatisfiesJqExpression),
 	}
 }

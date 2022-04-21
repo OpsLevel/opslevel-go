@@ -1,0 +1,4 @@
+kind: Feature
+body: Add support for new Check Types - AlertSourceUsage, GitBranchProtection and
+  HasRecentDeploy
+time: 2022-04-19T20:08:40.616587-05:00
