@@ -1,0 +1,21 @@
+{
+  "data": {
+    "account": {
+      "group": {
+        "descendantServices": {
+          "nodes": [
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8yNjE5"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "MQ"
+          }
+        }
+      }
+    }
+  }
+}

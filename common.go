@@ -43,6 +43,10 @@ type ResourceDeletePayload struct {
 	Errors []OpsLevelErrors `graphql:"errors" json:"errors,omitempty"`
 }
 
+type Connection struct {
+	PageInfo PageInfo `graphql:"pageInfo"`
+}
+
 func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
 	if err := client.Mutate(m, v); err != nil {
 		return err

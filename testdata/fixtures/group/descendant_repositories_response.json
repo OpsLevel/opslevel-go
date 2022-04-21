@@ -1,0 +1,22 @@
+{
+  "data": {
+    "account": {
+      "group": {
+        "descendantRepositories": {
+          "nodes": [
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvNDIwODc",
+              "defaultAlias": "github.com:OpsLevel/cli"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "Mg",
+            "endCursor": "MTM"
+          }
+        }
+      }
+    }
+  }
+}

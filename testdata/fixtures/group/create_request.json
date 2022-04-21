@@ -1,5 +1,5 @@
 {
-  "query":"mutation($input:GroupInput!){groupCreate(input: $input){group{alias,id,description,htmlUrl,name,parent{alias,id}},errors{message,path}}}",
+  "query":"mutation($input:GroupInput!){groupCreate(input: $input){group{descendantRepositories{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},descendantServices{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},descendantSubgroups{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},descendantTeams{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},alias,id,description,htmlUrl,members{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parent{alias,id}},errors{message,path}}}",
   "variables":{
       "input":{
         "name": "platform",

@@ -1,0 +1,22 @@
+{
+    "data": {
+      "account": {
+        "group": {
+          "members": {
+            "nodes": [
+              {
+                "email": "edgar+test@opslevel.com",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA"
+              }
+            ],
+            "pageInfo": {
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "MQ",
+              "endCursor": "MQ"
+            }
+          }
+        }
+      }
+    }
+  }

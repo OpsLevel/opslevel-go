@@ -1,0 +1,8 @@
+{
+    "query": "query($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+    "variables": {
+      "first": 100,
+      "group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI",
+      "after": ""
+    }
+}

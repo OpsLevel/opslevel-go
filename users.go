@@ -14,6 +14,11 @@ type User struct {
 	Role    UserRole
 }
 
+type UserId struct {
+	Email string
+	Id    graphql.ID
+}
+
 type UserConnection struct {
 	Nodes    []User
 	PageInfo PageInfo

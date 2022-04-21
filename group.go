@@ -1,6 +1,8 @@
 package opslevel
 
 import (
+	"fmt"
+
 	"github.com/shurcooL/graphql"
 )
 
@@ -10,16 +12,16 @@ type GroupId struct {
 }
 
 type Group struct {
-	// DescendantRepositories RepositoryConnection `json:"descendantRepositories,omitempty"`
-	// DescendantServices ServiceConnection `json:"descendantServices,omitempty"`
-	// DescendantSubgroups    SubgroupConnection   `json:"descendantSubgroups,omitempty"`
-	// DescendantTeams        TeamConnection       `json:"descendantTeams,omitempty"`
+	DescendantRepositoriesConnection Connection `json:"-" graphql:"descendantRepositories"`
+	DescendantServicesConnection     Connection `json:"-" graphql:"descendantServices"`
+	DescendantSubgroupsConnection    Connection `json:"-" graphql:"descendantSubgroups"`
+	DescendantTeamsConnection        Connection `json:"-" graphql:"descendantTeams"`
 	GroupId
-	Description string `json:"description,omitempty"`
-	HtmlURL     string `json:"htmlUrl,omitempty"`
-	// Members     UserConnection `json:"members,omitempty"`
-	Name   string  `json:"name,omitempty"`
-	Parent GroupId `json:"parent,omitempty"`
+	Description       string     `json:"description,omitempty"`
+	HtmlURL           string     `json:"htmlUrl,omitempty"`
+	MembersConnection Connection `json:"-" graphql:"members"`
+	Name              string     `json:"name,omitempty"`
+	Parent            GroupId    `json:"parent,omitempty"`
 }
 
 // type SubgroupConnection struct {
@@ -132,6 +134,176 @@ func (client *Client) ListGroups() ([]Group, error) {
 	}
 	v := client.InitialPageVariables()
 	return q.Account.Groups.Query(client, &q, v)
+}
+
+func (g *Group) DescendantTeams(client *Client) ([]TeamId, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantTeams struct {
+					Nodes    []TeamId
+					PageInfo PageInfo
+				} `graphql:"descendantTeams(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []TeamId{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantTeams.Nodes...)
+	for q.Account.Group.DescendantTeams.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantTeams.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantTeams.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) DescendantRepositories(client *Client) ([]RepositoryId, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantRepositories struct {
+					Nodes    []RepositoryId
+					PageInfo PageInfo
+				} `graphql:"descendantRepositories(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("Unable to get Repositories, invalid group id: '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []RepositoryId{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantRepositories.Nodes...)
+	for q.Account.Group.DescendantRepositories.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantRepositories.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantRepositories.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) DescendantServices(client *Client) ([]ServiceId, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantServices struct {
+					Nodes    []ServiceId
+					PageInfo PageInfo
+				} `graphql:"descendantServices(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("Unable to get Services, invalid group id: '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []ServiceId{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantServices.Nodes...)
+	for q.Account.Group.DescendantServices.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantServices.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantServices.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) DescendantSubgroups(client *Client) ([]GroupId, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				DescendantSubgroups struct {
+					Nodes    []GroupId
+					PageInfo PageInfo
+				} `graphql:"descendantSubgroups(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("Unable to get Subgroups, invalid group id: '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []GroupId{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.DescendantSubgroups.Nodes...)
+	for q.Account.Group.DescendantSubgroups.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.DescendantSubgroups.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.DescendantSubgroups.Nodes...)
+	}
+	return output, nil
+}
+
+func (g *Group) Members(client *Client) ([]UserId, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				Members struct {
+					Nodes    []UserId
+					PageInfo PageInfo
+				} `graphql:"members(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("Unable to get Members, invalid group id: '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []UserId{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.Members.Nodes...)
+	for q.Account.Group.Members.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.Members.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.Members.Nodes...)
+	}
+	return output, nil
 }
 
 //#endregion
