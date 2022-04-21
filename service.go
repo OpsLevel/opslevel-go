@@ -7,8 +7,7 @@ import (
 )
 
 type ServiceId struct {
-	Id      graphql.ID `json:"id"`
-	Aliases []string   `json:"aliases,omitempty"`
+	Id graphql.ID `json:"id"`
 }
 
 type Service struct {

@@ -5,11 +5,7 @@
         "descendantServices": {
           "nodes": [
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8yNjE5",
-              "aliases": [
-                "atlantis",
-                "k8s:atlantis-atlantis"
-              ]
+              "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8yNjE5"
             }
           ],
           "pageInfo": {

@@ -94,7 +94,7 @@ func TestDescendantServices(t *testing.T) {
 	result, err := group.DescendantServices(client2)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "atlantis", result[0].Aliases[0])
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8yNjE5", result[0].Id)
 }
 
 func TestDescendantSubgroups(t *testing.T) {
