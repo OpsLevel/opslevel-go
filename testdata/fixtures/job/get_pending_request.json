@@ -1,4 +1,4 @@
 {
-    "query": "mutation($runnerId:ID!){runnerGetPendingJob(runnerId: $runnerId){runnerJob{id,outcome,status,commands,image,variables{key,sensitive,value}},errors{message,path}}}",
+    "query": "mutation($runnerId:ID!){runnerGetPendingJob(runnerId: $runnerId){runnerJob{commands,id,image,outcome,status,variables{key,sensitive,value}},errors{message,path}}}",
     "variables": {"runnerId":"1234567890"}
 }

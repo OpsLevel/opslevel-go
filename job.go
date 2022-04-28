@@ -54,39 +54,40 @@ type RunnerJobVariable struct {
 	Value     string `json:"value"`
 }
 
-type RunnerJobStatus struct {
-	Id      graphql.ID           `json:"id"`
-	Outcome RunnerJobOutcomeEnum `json:"outcome"`
-	Status  RunnerJobStatusEnum  `json:"status"`
+type RunnerJob struct {
+	Commands  []string             `json:"commands"`
+	Id        graphql.ID           `json:"id"`
+	Image     string               `json:"image"`
+	Outcome   RunnerJobOutcomeEnum `json:"outcome"`
+	Status    RunnerJobStatusEnum  `json:"status"`
+	Variables []RunnerJobVariable  `json:"variables"`
 }
 
-type RunnerJob struct {
-	RunnerJobStatus
-	Commands  []string            `json:"commands"`
-	Image     string              `json:"image"`
-	Variables []RunnerJobVariable `json:"variables"`
+type RunnerJobOutcomeVariable struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type RunnerReportJobOutcomeInput struct {
-	RunnerId    graphql.ID           `json:"runnerId"`
-	RunnerJobId graphql.ID           `json:"runnerJobId"`
-	Outcome     RunnerJobOutcomeEnum `json:"outcome"`
+	RunnerId         graphql.ID                 `json:"runnerId"`
+	RunnerJobId      graphql.ID                 `json:"runnerJobId"`
+	Outcome          RunnerJobOutcomeEnum       `json:"outcome"`
+	OutcomeVariables []RunnerJobOutcomeVariable `json:"outcomeVariables,omitempty"`
 }
 
-func (s *Client) ReportJobOutcome(input RunnerReportJobOutcomeInput) (*RunnerJobStatus, error) {
+func (s *Client) ReportJobOutcome(input RunnerReportJobOutcomeInput) error {
 	var m struct {
 		Payload struct {
-			RunnerJob RunnerJobStatus
-			Errors    []OpsLevelErrors
+			Errors []OpsLevelErrors
 		} `graphql:"runnerReportJobOutcome(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	if err := s.Mutate(&m, v); err != nil {
-		return nil, err
+		return err
 	}
-	return &m.Payload.RunnerJob, FormatErrors(m.Payload.Errors)
+	return FormatErrors(m.Payload.Errors)
 }
 
 func (s *Client) GetPendingJob(runnerId graphql.ID) (*RunnerJob, error) {

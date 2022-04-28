@@ -22,12 +22,11 @@ func TestSetJobStatus(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "job/report_outcome")
 	// Act
-	result, err := client.ReportJobOutcome(ol.RunnerReportJobOutcomeInput{
+	err := client.ReportJobOutcome(ol.RunnerReportJobOutcomeInput{
 		RunnerId:    ol.NewID("1234567890"),
 		RunnerJobId: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzE"),
 		Outcome:     ol.RunnerJobOutcomeEnumExecutionTimeout,
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.RunnerJobStatusEnumComplete, result.Status)
 }

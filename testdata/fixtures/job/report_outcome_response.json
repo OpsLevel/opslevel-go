@@ -1,11 +1,6 @@
 {
   "data": {
     "runnerReportJobOutcome": {
-      "runnerJob": {
-        "id": "Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzE",
-        "status": "complete",
-        "outcome": "success"
-      },
       "errors": []
     }
   }
