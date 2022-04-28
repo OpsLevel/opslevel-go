@@ -90,18 +90,20 @@ func (s *Client) ReportJobOutcome(input RunnerReportJobOutcomeInput) error {
 	return FormatErrors(m.Payload.Errors)
 }
 
-func (s *Client) GetPendingJob(runnerId graphql.ID) (*RunnerJob, error) {
+func (s *Client) GetPendingJob(runnerId graphql.ID, lastUpdateToken graphql.ID) (*RunnerJob, *graphql.ID, error) {
 	var m struct {
 		Payload struct {
-			RunnerJob RunnerJob
-			Errors    []OpsLevelErrors
-		} `graphql:"runnerGetPendingJob(runnerId: $runnerId)"`
+			RunnerJob       RunnerJob
+			LastUpdateToken graphql.ID
+			Errors          []OpsLevelErrors
+		} `graphql:"runnerGetPendingJob(runnerId: $id lastUpdateToken: $token)"`
 	}
 	v := PayloadVariables{
-		"runnerId": runnerId,
+		"id":    runnerId,
+		"token": lastUpdateToken,
 	}
 	if err := s.Mutate(&m, v); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return &m.Payload.RunnerJob, FormatErrors(m.Payload.Errors)
+	return &m.Payload.RunnerJob, &m.Payload.LastUpdateToken, FormatErrors(m.Payload.Errors)
 }
