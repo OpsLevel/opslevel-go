@@ -16,7 +16,7 @@ type Check struct {
 	Category    Category     `graphql:"category"`
 	Description string       `graphql:"description"`
 	Enabled     bool         `graphql:"enabled"`
-	EnabledOn   iso8601.Time `graphql:"enabledOn"`
+	EnableOn    iso8601.Time `graphql:"enableOn"`
 	Filter      Filter       `graphql:"filter"`
 	Id          graphql.ID   `graphql:"id"`
 	Level       Level        `graphql:"level"`
@@ -25,16 +25,15 @@ type Check struct {
 	Owner       CheckOwner   `graphql:"owner"`
 	Type        CheckType    `graphql:"type"`
 
-	AlertSourceUsageCheckFragment    `graphql:"... on AlertSourceUsageCheck"`
-	CustomEventCheckFragment         `graphql:"... on CustomEventCheck"`
-	GitBranchProtectionCheckFragment `graphql:"... on GitBranchProtectionCheck"`
-	HasRecentDeployCheckFragment     `graphql:"... on HasRecentDeployCheckFragment"`
-	ManualCheckFragment              `graphql:"... on ManualCheck"`
-	RepositoryFileCheckFragment      `graphql:"... on RepositoryFileCheck"`
-	RepositorySearchCheckFragment    `graphql:"... on RepositorySearchCheck"`
-	ServicePropertyCheckFragment     `graphql:"... on ServicePropertyCheck"`
-	TagDefinedCheckFragment          `graphql:"... on TagDefinedCheck"`
-	ToolUsageCheckFragment           `graphql:"... on ToolUsageCheck"`
+	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
+	CustomEventCheckFragment      `graphql:"... on CustomEventCheck"`
+	HasRecentDeployCheckFragment  `graphql:"... on HasRecentDeployCheck"`
+	ManualCheckFragment           `graphql:"... on ManualCheck"`
+	RepositoryFileCheckFragment   `graphql:"... on RepositoryFileCheck"`
+	RepositorySearchCheckFragment `graphql:"... on RepositorySearchCheck"`
+	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`
+	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
+	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
 }
 
 type AlertSourceUsageCheckFragment struct {
@@ -44,6 +43,7 @@ type AlertSourceUsageCheckFragment struct {
 
 type CustomEventCheckFragment struct {
 	Integration      Integration `graphql:"integration"`
+	PassPending      bool        `graphql:"passPending"`
 	ResultMessage    string      `graphql:"resultMessage"`
 	ServiceSelector  string      `graphql:"serviceSelector"`
 	SuccessCondition string      `graphql:"successCondition"`
@@ -99,14 +99,14 @@ type CheckCreateInputProvider interface {
 }
 
 type CheckCreateInput struct {
-	Name      string        `json:"name"`
-	Enabled   bool          `json:"enabled"`
-	EnabledOn *iso8601.Time `json:"enabledOn,omitempty"`
-	Category  graphql.ID    `json:"categoryId"`
-	Level     graphql.ID    `json:"levelId"`
-	Owner     *graphql.ID   `json:"ownerId,omitempty"`
-	Filter    *graphql.ID   `json:"filterId,omitempty"`
-	Notes     string        `json:"notes,omitempty"`
+	Name     string        `json:"name"`
+	Enabled  bool          `json:"enabled"`
+	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
+	Category graphql.ID    `json:"categoryId"`
+	Level    graphql.ID    `json:"levelId"`
+	Owner    *graphql.ID   `json:"ownerId,omitempty"`
+	Filter   *graphql.ID   `json:"filterId,omitempty"`
+	Notes    string        `json:"notes,omitempty"`
 }
 
 func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
@@ -118,15 +118,15 @@ type CheckUpdateInputProvider interface {
 }
 
 type CheckUpdateInput struct {
-	Id        graphql.ID    `json:"id"`
-	Name      string        `json:"name,omitempty"`
-	Enabled   *bool         `json:"enabled,omitempty"`
-	EnabledOn *iso8601.Time `json:"enabledOn,omitempty"`
-	Category  *graphql.ID   `json:"categoryId,omitempty"`
-	Level     *graphql.ID   `json:"levelId,omitempty"`
-	Owner     *graphql.ID   `json:"ownerId,omitempty"`
-	Filter    *graphql.ID   `json:"filterId,omitempty"`
-	Notes     string        `json:"notes,omitempty"`
+	Id       graphql.ID    `json:"id"`
+	Name     string        `json:"name,omitempty"`
+	Enabled  *bool         `json:"enabled,omitempty"`
+	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
+	Category *graphql.ID   `json:"categoryId,omitempty"`
+	Level    *graphql.ID   `json:"levelId,omitempty"`
+	Owner    *graphql.ID   `json:"ownerId,omitempty"`
+	Filter   *graphql.ID   `json:"filterId,omitempty"`
+	Notes    string        `json:"notes,omitempty"`
 }
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
@@ -162,6 +162,7 @@ type CheckCustomEventUpdateInput struct {
 	ServiceSelector  string      `json:"serviceSelector,omitempty"`
 	SuccessCondition string      `json:"successCondition,omitempty"`
 	Message          string      `json:"resultMessage,omitempty"`
+	PassPending      bool        `json:"passPending,omitempty"`
 	Integration      *graphql.ID `json:"integrationId,omitempty"`
 }
 
