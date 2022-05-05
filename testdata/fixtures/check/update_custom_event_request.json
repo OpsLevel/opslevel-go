@@ -8,7 +8,7 @@
         "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
         "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
         "notes": "Hello World Check",
-        "passPending":false,
+        "passPending": false,
         "serviceSelector": ".metadata.name",
         "successCondition": ".metadata.name",
         "resultMessage": "#Hello World",
