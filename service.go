@@ -7,14 +7,14 @@ import (
 )
 
 type ServiceId struct {
-	Id graphql.ID `json:"id"`
+	Id      graphql.ID `json:"id"`
+	Aliases []string   `json:"aliases,omitempty"`
 }
 
 type Service struct {
-	Aliases     []string `json:"aliases,omitempty"`
-	Description string   `json:"description,omitempty"`
-	Framework   string   `json:"framework,omitempty"`
-	HtmlURL     string   `json:"htmlUrl"`
+	Description string `json:"description,omitempty"`
+	Framework   string `json:"framework,omitempty"`
+	HtmlURL     string `json:"htmlUrl"`
 	ServiceId
 	Language     string                      `json:"language,omitempty"`
 	Lifecycle    Lifecycle                   `json:"lifecycle,omitempty"`
