@@ -154,7 +154,7 @@ type CheckCustomEventCreateInput struct {
 	ServiceSelector  string     `json:"serviceSelector"`
 	SuccessCondition string     `json:"successCondition"`
 	Message          string     `json:"resultMessage,omitempty"`
-	PassPending      bool       `json:"passPending,omitempty"`
+	PassPending      bool       `json:"passPending"`
 }
 
 type CheckCustomEventUpdateInput struct {
@@ -163,7 +163,7 @@ type CheckCustomEventUpdateInput struct {
 	ServiceSelector  string      `json:"serviceSelector,omitempty"`
 	SuccessCondition string      `json:"successCondition,omitempty"`
 	Message          string      `json:"resultMessage,omitempty"`
-	PassPending      bool        `json:"passPending,omitempty"`
+	PassPending      bool        `json:"passPending"`
 	Integration      *graphql.ID `json:"integrationId,omitempty"`
 }
 
