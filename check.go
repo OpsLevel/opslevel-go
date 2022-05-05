@@ -154,6 +154,7 @@ type CheckCustomEventCreateInput struct {
 	ServiceSelector  string     `json:"serviceSelector"`
 	SuccessCondition string     `json:"successCondition"`
 	Message          string     `json:"resultMessage,omitempty"`
+	PassPending      bool       `json:"passPending,omitempty"`
 }
 
 type CheckCustomEventUpdateInput struct {
