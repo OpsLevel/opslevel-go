@@ -18,4 +18,4 @@ jobs:
         args: "--prune-repeated-subdependencies --json --file=go.mod --json-file-output=./snyk_report.json"
     - name: Report To OpsLevel
       run: |
-        curl -X POST ${{ secrets.OL_SNYK_INTEGRATION_URL }} -H 'content-type: application/json' --data-binary ./snyk_report.json
+        curl -X POST ${{ secrets.OL_SNYK_INTEGRATION_URL }} -H 'content-type: application/json' --data-binary @./snyk_report.json
