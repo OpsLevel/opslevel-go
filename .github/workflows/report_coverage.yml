@@ -1,0 +1,14 @@
+name: "Coverage"
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Report To OpsLevel
+      run: |
+        export DATA=$(curl -X GET -H "Authorization: ${CODECOV_TOKEN}" https://codecov.io/api/gh/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA})
+        echo ${DATA} | curl -X POST ${{ secrets.OL_COVERAGE_INTEGRATION_URL }} -H 'content-type: application/json' -d @-
