@@ -16,6 +16,7 @@ type Group struct {
 	DescendantServicesConnection     Connection `json:"-" graphql:"descendantServices"`
 	DescendantSubgroupsConnection    Connection `json:"-" graphql:"descendantSubgroups"`
 	DescendantTeamsConnection        Connection `json:"-" graphql:"descendantTeams"`
+	ChildTeamsConnection             Connection `json:"-" graphql:"childTeams"`
 	GroupId
 	Description       string     `json:"description,omitempty"`
 	HtmlURL           string     `json:"htmlUrl,omitempty"`
@@ -134,6 +135,40 @@ func (client *Client) ListGroups() ([]Group, error) {
 	}
 	v := client.InitialPageVariables()
 	return q.Account.Groups.Query(client, &q, v)
+}
+
+func (g *Group) ChildTeams(client *Client) ([]TeamId, error) {
+	var q struct {
+		Account struct {
+			Group struct {
+				ChildTeams struct {
+					Nodes    []TeamId
+					PageInfo PageInfo
+				} `graphql:"childTeams(after: $after, first: $first)"`
+			} `graphql:"group(id: $group)"`
+		}
+	}
+	if g.Id == nil {
+		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
+	}
+	v := PayloadVariables{
+		"group": g.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []TeamId{}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Group.ChildTeams.Nodes...)
+	for q.Account.Group.ChildTeams.PageInfo.HasNextPage {
+		v["after"] = q.Account.Group.ChildTeams.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Group.ChildTeams.Nodes...)
+	}
+	return output, nil
 }
 
 func (g *Group) DescendantTeams(client *Client) ([]TeamId, error) {
