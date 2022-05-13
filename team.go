@@ -248,41 +248,25 @@ func (client *Client) AddMember(team *TeamId, email string) ([]User, error) {
 	return client.AddMembers(team, emails)
 }
 
-func (client *Client) AddContact(team *TeamId, contact ContactInput) (*Contact, error) {
+func (client *Client) AddContact(team string, contact ContactInput) (*Contact, error) {
 	var m struct {
 		Payload struct {
 			Contact Contact
 			Errors  []OpsLevelErrors
 		} `graphql:"contactCreate(input: $input)"`
 	}
-	v := PayloadVariables{
-		"input": ContactCreateInput{
-			TeamId:      &team.Id,
-			Type:        contact.Type,
-			DisplayName: contact.DisplayName,
-			Address:     contact.Address,
-		},
+	contactInput := ContactCreateInput{
+		Type:        contact.Type,
+		DisplayName: contact.DisplayName,
+		Address:     contact.Address,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Contact, FormatErrors(m.Payload.Errors)
-}
-
-func (client *Client) AddContactWithTeamAlias(team string, contact ContactInput) (*Contact, error) {
-	var m struct {
-		Payload struct {
-			Contact Contact
-			Errors  []OpsLevelErrors
-		} `graphql:"contactCreate(input: $input)"`
+	if IsID(team) {
+		contactInput.TeamId = graphql.NewID(team)
+	} else {
+		contactInput.TeamAlias = team
 	}
 	v := PayloadVariables{
-		"input": ContactCreateInput{
-			TeamAlias:   team,
-			Type:        contact.Type,
-			DisplayName: contact.DisplayName,
-			Address:     contact.Address,
-		},
+		"input": contactInput,
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err
