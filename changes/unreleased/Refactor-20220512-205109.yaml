@@ -1,0 +1,3 @@
+kind: Refactor
+body: AddContact now accepts a ID or Alias for the target team
+time: 2022-05-12T20:51:09.136048-05:00

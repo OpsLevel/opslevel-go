@@ -140,7 +140,7 @@ func TestTeamAddContact(t *testing.T) {
 	client2 := ATestClient(t, "team/add_contact")
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddContact(&team.TeamId, opslevel.CreateContactSlack("#general", ""))
+	result, err := client2.AddContact(team.TeamId.Id.(string), opslevel.CreateContactSlack("#general", ""))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "#general", result.Address)
