@@ -65,6 +65,7 @@ type RepositoryFileCheckFragment struct {
 	DirectorySearch       bool       `graphql:"directorySearch"`
 	Filepaths             []string   `graphql:"filePaths"`
 	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
+	UseAbsoluteRoot       bool      `graphql:"useAbsoluteRoot"`
 }
 
 type RepositorySearchCheckFragment struct {
@@ -227,14 +228,16 @@ type CheckRepositoryFileCreateInput struct {
 	DirectorySearch       bool            `json:"directorySearch"`
 	Filepaths             []string        `json:"filePaths"`
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
+	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty"`
 }
 
 type CheckRepositoryFileUpdateInput struct {
 	CheckUpdateInput
 
-	DirectorySearch       bool            `json:"directorySearch,omitempty"`
+	DirectorySearch       *bool            `json:"directorySearch,omitempty"`
 	Filepaths             []string        `json:"filePaths,omitempty"`
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
+	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty"`
 }
 
 type CheckRepositoryIntegratedCreateInput struct {
