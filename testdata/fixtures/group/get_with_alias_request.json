@@ -1,5 +1,5 @@
 {
-    "query": "query($group:String!){account{group(alias: $group){descendantRepositories{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},descendantServices{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},descendantSubgroups{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},descendantTeams{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},childTeams{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},alias,id,description,htmlUrl,members{pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parent{alias,id}}}}",
+    "query": "query($group:String!){account{group(alias: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}",
     "variables": {
       "group": "test_group_1"
     }

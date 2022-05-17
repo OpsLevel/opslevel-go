@@ -12,17 +12,11 @@ type GroupId struct {
 }
 
 type Group struct {
-	DescendantRepositoriesConnection Connection `json:"-" graphql:"descendantRepositories"`
-	DescendantServicesConnection     Connection `json:"-" graphql:"descendantServices"`
-	DescendantSubgroupsConnection    Connection `json:"-" graphql:"descendantSubgroups"`
-	DescendantTeamsConnection        Connection `json:"-" graphql:"descendantTeams"`
-	ChildTeamsConnection             Connection `json:"-" graphql:"childTeams"`
 	GroupId
-	Description       string     `json:"description,omitempty"`
-	HtmlURL           string     `json:"htmlUrl,omitempty"`
-	MembersConnection Connection `json:"-" graphql:"members"`
-	Name              string     `json:"name,omitempty"`
-	Parent            GroupId    `json:"parent,omitempty"`
+	Description string  `json:"description,omitempty"`
+	HtmlURL     string  `json:"htmlUrl,omitempty"`
+	Name        string  `json:"name,omitempty"`
+	Parent      GroupId `json:"parent,omitempty"`
 }
 
 // type SubgroupConnection struct {
