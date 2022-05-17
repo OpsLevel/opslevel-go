@@ -7,47 +7,7 @@
         "description": null,
         "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1",
         "name": "test_group_1",
-        "parent": null,
-        "descendantRepositories": {
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MTM"
-          }
-        },
-        "descendantServices": {
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
-        },
-        "descendantSubgroups": {
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "Mg"
-          }
-        },
-        "descendantTeams": {
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
-        },
-        "members": {
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
-        }
+        "parent": null
       }
     }
   }

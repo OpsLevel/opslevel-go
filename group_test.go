@@ -61,6 +61,18 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 	autopilot.Ok(t, err)
 }
 
+func TestChildTeams(t *testing.T) {
+	// Arrange
+	client1 := getGroupWithAliasTestClient(t)
+	client2 := ATestClient(t, "group/child_teams")
+	// Act
+	group, err := client1.GetGroupWithAlias("test_group_1")
+	result, err := group.ChildTeams(client2)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "platform", result[0].Alias)
+}
+
 func TestDescendantTeams(t *testing.T) {
 	// Arrange
 	client1 := getGroupWithAliasTestClient(t)
