@@ -40,7 +40,7 @@ type GroupConnection struct {
 type GroupInput struct {
 	Name        string             `json:"name,omitempty"`
 	Description string             `json:"description,omitempty"`
-	Parent      *IdentifierInput   `json:"parent,omitempty"`
+	Parent      *IdentifierInput   `json:"parent"`
 	Members     *[]MemberInput     `json:"members,omitempty"`
 	Teams       *[]IdentifierInput `json:"teams,omitempty"`
 }
