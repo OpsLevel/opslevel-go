@@ -1,5 +1,5 @@
 {
-    "query":"query($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},htmlUrl,manager{email,htmlUrl,id,name,role},members{nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities}}}",
+    "query":"query($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{email,htmlUrl,id,name,role},members{nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities}}}",
     "variables":{
         "id":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"
     }

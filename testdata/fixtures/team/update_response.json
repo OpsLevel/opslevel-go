@@ -21,6 +21,10 @@
               "type": "web"
             }
           ],
+          "group": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvNTI",
+            "alias": "test_group"
+          },
           "htmlUrl": "https://app.opslevel.com/teams/example",
           "manager":               {
             "email": "ken@example.com",

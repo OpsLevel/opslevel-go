@@ -48,6 +48,7 @@ type Team struct {
 
 	Aliases          []string
 	Contacts         []Contact
+	Group            GroupId
 	HTMLUrl          string
 	Manager          User
 	Members          UserConnection
@@ -61,18 +62,20 @@ type TeamConnection struct {
 }
 
 type TeamCreateInput struct {
-	Name             string         `json:"name"`
-	ManagerEmail     string         `json:"managerEmail,omitempty"`
-	Responsibilities string         `json:"responsibilities,omitempty"`
-	Contacts         []ContactInput `json:"contacts,omitempty"`
+	Name             string           `json:"name"`
+	ManagerEmail     string           `json:"managerEmail,omitempty"`
+	Responsibilities string           `json:"responsibilities,omitempty"`
+	Group            *IdentifierInput `json:"group"`
+	Contacts         []ContactInput   `json:"contacts,omitempty"`
 }
 
 type TeamUpdateInput struct {
-	Id               graphql.ID `json:"id,omitempty"`
-	Alias            string     `json:"alias,omitempty"`
-	Name             string     `json:"name,omitempty"`
-	ManagerEmail     string     `json:"managerEmail,omitempty"`
-	Responsibilities string     `json:"responsibilities,omitempty"`
+	Id               graphql.ID       `json:"id,omitempty"`
+	Alias            string           `json:"alias,omitempty"`
+	Name             string           `json:"name,omitempty"`
+	ManagerEmail     string           `json:"managerEmail,omitempty"`
+	Group            *IdentifierInput `json:"group"`
+	Responsibilities string           `json:"responsibilities,omitempty"`
 }
 
 type TeamDeleteInput struct {
