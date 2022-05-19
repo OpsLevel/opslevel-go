@@ -31,12 +31,14 @@ func TestCreateTeam(t *testing.T) {
 		ManagerEmail:     "john@example.com",
 		Responsibilities: "Foo & bar",
 		Contacts:         contacts,
+		Group:            opslevel.NewIdentifier("test_group"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
+	autopilot.Equals(t, "test_group", result.Group.Alias)
 }
 
 func TestGetTeam(t *testing.T) {
@@ -84,12 +86,14 @@ func TestUpdateTeam(t *testing.T) {
 		Id:               opslevel.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"),
 		ManagerEmail:     "ken@example.com",
 		Responsibilities: "Foo & bar",
+		Group:            opslevel.NewIdentifier("test_group"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "ken@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
+	autopilot.Equals(t, "test_group", result.Group.Alias)
 }
 
 func TestDeleteTeam(t *testing.T) {
