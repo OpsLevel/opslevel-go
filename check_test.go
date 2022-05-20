@@ -100,6 +100,7 @@ var testcases = map[string]struct {
 				SuccessCondition: ".metadata.name",
 				Message:          "#Hello World",
 				Integration:      ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+				PassPending:      ol.Bool(false),
 			})
 		},
 	},
@@ -112,6 +113,7 @@ var testcases = map[string]struct {
 				SuccessCondition: ".metadata.name",
 				Message:          "#Hello World",
 				Integration:      ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+				PassPending:      ol.Bool(false),
 			})
 		},
 	},

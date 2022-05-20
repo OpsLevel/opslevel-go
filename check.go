@@ -65,7 +65,7 @@ type RepositoryFileCheckFragment struct {
 	DirectorySearch       bool       `graphql:"directorySearch"`
 	Filepaths             []string   `graphql:"filePaths"`
 	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
-	UseAbsoluteRoot       bool      `graphql:"useAbsoluteRoot"`
+	UseAbsoluteRoot       bool       `graphql:"useAbsoluteRoot"`
 }
 
 type RepositorySearchCheckFragment struct {
@@ -155,7 +155,7 @@ type CheckCustomEventCreateInput struct {
 	ServiceSelector  string     `json:"serviceSelector"`
 	SuccessCondition string     `json:"successCondition"`
 	Message          string     `json:"resultMessage,omitempty"`
-	PassPending      bool       `json:"passPending"`
+	PassPending      *bool      `json:"passPending,omitempty"`
 }
 
 type CheckCustomEventUpdateInput struct {
@@ -164,7 +164,7 @@ type CheckCustomEventUpdateInput struct {
 	ServiceSelector  string      `json:"serviceSelector,omitempty"`
 	SuccessCondition string      `json:"successCondition,omitempty"`
 	Message          string      `json:"resultMessage,omitempty"`
-	PassPending      bool        `json:"passPending"`
+	PassPending      *bool       `json:"passPending,omitempty"`
 	Integration      *graphql.ID `json:"integrationId,omitempty"`
 }
 
@@ -234,7 +234,7 @@ type CheckRepositoryFileCreateInput struct {
 type CheckRepositoryFileUpdateInput struct {
 	CheckUpdateInput
 
-	DirectorySearch       *bool            `json:"directorySearch,omitempty"`
+	DirectorySearch       *bool           `json:"directorySearch,omitempty"`
 	Filepaths             []string        `json:"filePaths,omitempty"`
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
 	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty"`
