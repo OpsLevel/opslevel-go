@@ -1,6 +1,10 @@
 package opslevel
 
-import "github.com/shurcooL/graphql"
+import (
+	"fmt"
+
+	"github.com/shurcooL/graphql"
+)
 
 type MemberInput struct {
 	Email string `json:"email"`
@@ -20,8 +24,9 @@ type UserId struct {
 }
 
 type UserConnection struct {
-	Nodes    []User
-	PageInfo PageInfo
+	Nodes      []User
+	PageInfo   PageInfo
+	TotalCount graphql.Int
 }
 
 type UserIdentifierInput struct {
@@ -47,7 +52,39 @@ func NewUserIdentifier(value string) *UserIdentifierInput {
 	}
 }
 
-// TODO: func (u *User) Teams(client *Client) ([]Team, error)
+func (u *User) Teams(client *Client) ([]Team, error) {
+	var q struct {
+		Account struct {
+			User struct {
+				Teams struct {
+					Nodes    []Team
+					PageInfo PageInfo
+				} `graphql:"teams(after: $after, first: $first)"`
+			} `graphql:"user(id: $user)"`
+		}
+	}
+	if u.Id == nil {
+		return nil, fmt.Errorf("unable to get teams, invalid user id: '%s'", u.Id)
+	}
+	v := PayloadVariables{
+		"user":  u.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	output := []Team{}
+	if err := client.Query(&q, v); err != nil {
+		return output, err
+	}
+	output = append(output, q.Account.User.Teams.Nodes...)
+	for q.Account.User.Teams.PageInfo.HasNextPage {
+		v["after"] = q.Account.User.Teams.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		output = append(output, q.Account.User.Teams.Nodes...)
+	}
+	return output, nil
+}
 
 //#endregion
 
@@ -68,6 +105,46 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 		return nil, err
 	}
 	return &m.Payload.User, FormatErrors(m.Payload.Errors)
+}
+
+//#endregion
+
+//#region Retrieve
+
+func (client *Client) GetUser(id graphql.ID) (*User, error) {
+	var q struct {
+		Account struct {
+			User User `graphql:"user(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	return &q.Account.User, nil
+}
+
+func (client *Client) ListUsers() ([]User, error) {
+	output := []User{}
+	var q struct {
+		Account struct {
+			Users UserConnection `graphql:"users(after: $after, first: $first)"`
+		}
+	}
+	v := client.InitialPageVariables()
+	if err := client.Query(q, v); err != nil {
+		return output, err
+	}
+	for q.Account.Users.PageInfo.HasNextPage {
+		v["after"] = q.Account.Users.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return output, err
+		}
+		output = append(output, q.Account.Users.Nodes...)
+	}
+	return output, nil
 }
 
 //#endregion
