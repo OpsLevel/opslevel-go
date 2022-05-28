@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"github.com/relvacode/iso8601"
 	"github.com/shurcooL/graphql"
 )
 
@@ -63,6 +64,13 @@ type RunnerJob struct {
 	Variables []RunnerJobVariable  `json:"variables"`
 }
 
+type RunnerAppendJobLogInput struct {
+	RunnerId    graphql.ID   `json:"runnerId"`
+	RunnerJobId graphql.ID   `json:"runnerJobId"`
+	SentAt      iso8601.Time `json:"sentAt"`
+	Logs        []string     `json:"logChunk"`
+}
+
 type RunnerJobOutcomeVariable struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
@@ -75,22 +83,7 @@ type RunnerReportJobOutcomeInput struct {
 	OutcomeVariables []RunnerJobOutcomeVariable `json:"outcomeVariables,omitempty"`
 }
 
-func (s *Client) ReportJobOutcome(input RunnerReportJobOutcomeInput) error {
-	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors
-		} `graphql:"runnerReportJobOutcome(input: $input)"`
-	}
-	v := PayloadVariables{
-		"input": input,
-	}
-	if err := s.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
-}
-
-func (s *Client) GetPendingJob(runnerId graphql.ID, lastUpdateToken graphql.ID) (*RunnerJob, *graphql.ID, error) {
+func (s *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphql.ID) (*RunnerJob, *graphql.ID, error) {
 	var m struct {
 		Payload struct {
 			RunnerJob       RunnerJob
@@ -106,4 +99,34 @@ func (s *Client) GetPendingJob(runnerId graphql.ID, lastUpdateToken graphql.ID) 
 		return nil, nil, err
 	}
 	return &m.Payload.RunnerJob, &m.Payload.LastUpdateToken, FormatErrors(m.Payload.Errors)
+}
+
+func (s *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
+	var m struct {
+		Payload struct {
+			Errors []OpsLevelErrors
+		} `graphql:"runnerAppendJobLog(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := s.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
+}
+
+func (s *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
+	var m struct {
+		Payload struct {
+			Errors []OpsLevelErrors
+		} `graphql:"runnerReportJobOutcome(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := s.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
 }

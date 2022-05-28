@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/relvacode/iso8601"
 	"github.com/shurcooL/graphql"
@@ -108,6 +109,10 @@ func NewInt(i int) *int {
 func NewISO8601Date(datetime string) iso8601.Time {
 	date, _ := iso8601.ParseString(datetime)
 	return iso8601.Time{Time: date}
+}
+
+func NewISO8601DateNow() iso8601.Time {
+	return iso8601.Time{Time: time.Now()}
 }
 
 func removeDuplicates(data []string) []string {
