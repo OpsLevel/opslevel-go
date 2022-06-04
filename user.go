@@ -25,7 +25,6 @@ type UserId struct {
 type UserConnection struct {
 	Nodes      []User
 	PageInfo   PageInfo
-	TotalCount graphql.Int
 }
 
 type UserIdentifierInput struct {
