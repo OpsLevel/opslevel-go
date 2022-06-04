@@ -1,0 +1,14 @@
+{
+  "data": {
+    "userDelete": {
+      "errors": [
+        {
+          "message": "User with email 'not-found@opslevel.com' does not exist on this account",
+          "path": [
+            "user"
+          ]
+        }
+      ]
+    }
+  }
+}

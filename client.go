@@ -129,29 +129,29 @@ func buildUserAgent(extra string) string {
 	return base
 }
 
-func (c *Client) InitialPageVariables() PayloadVariables {
+func (client *Client) InitialPageVariables() PayloadVariables {
 	return PayloadVariables{
 		"after": graphql.String(""),
-		"first": c.pageSize,
+		"first": client.pageSize,
 	}
 }
 
 // Should we create a context for every query/mutate ?
-func (c *Client) Query(q interface{}, variables map[string]interface{}) error {
-	return c.client.Query(c.ctx, q, variables)
+func (client *Client) Query(q interface{}, variables map[string]interface{}) error {
+	return client.client.Query(client.ctx, q, variables)
 }
 
-func (c *Client) Mutate(m interface{}, variables map[string]interface{}) error {
-	return c.client.Mutate(c.ctx, m, variables)
+func (client *Client) Mutate(m interface{}, variables map[string]interface{}) error {
+	return client.client.Mutate(client.ctx, m, variables)
 }
 
-func (c *Client) Validate() error {
+func (client *Client) Validate() error {
 	var q struct {
 		Account struct {
 			Id graphql.ID
 		}
 	}
-	err := c.Query(&q, nil)
+	err := client.Query(&q, nil)
 	// TODO: we should probably use a custom OpsLevelClientError type - https://www.digitalocean.com/community/tutorials/creating-custom-errors-in-go
 	if err != nil {
 		if strings.Contains(err.Error(), "401 Unauthorized") {

@@ -1,8 +1,7 @@
 package opslevel
 
 import (
-	"fmt"
-
+	"errors"
 	"github.com/shurcooL/graphql"
 )
 
@@ -35,19 +34,19 @@ type UserIdentifierInput struct {
 }
 
 type UserInput struct {
-	Name string
-	Role UserRole
+	Name string `json:"name,omitempty"`
+	Role UserRole `json:"role,omitempty"`
 }
 
 //#region Helpers
 
-func NewUserIdentifier(value string) *UserIdentifierInput {
+func NewUserIdentifier(value string) UserIdentifierInput {
 	if IsID(value) {
-		return &UserIdentifierInput{
+		return UserIdentifierInput{
 			Id: graphql.ID(value),
 		}
 	}
-	return &UserIdentifierInput{
+	return UserIdentifierInput{
 		Email: graphql.String(value),
 	}
 }
@@ -64,14 +63,14 @@ func (u *User) Teams(client *Client) ([]Team, error) {
 		}
 	}
 	if u.Id == nil {
-		return nil, fmt.Errorf("unable to get teams, invalid user id: '%s'", u.Id)
+		return nil, errors.New("unable to get teams, nil user id")
 	}
 	v := PayloadVariables{
 		"user":  u.Id,
 		"first": client.pageSize,
 		"after": graphql.String(""),
 	}
-	output := []Team{}
+	var output []Team
 	if err := client.Query(&q, v); err != nil {
 		return output, err
 	}
@@ -98,7 +97,7 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 		} `graphql:"userInvite(email: $email input: $input)"`
 	}
 	v := PayloadVariables{
-		"email": email,
+		"email": graphql.String(email),
 		"input": input,
 	}
 	if err := client.Mutate(&m, v); err != nil {
@@ -127,16 +126,17 @@ func (client *Client) GetUser(id graphql.ID) (*User, error) {
 }
 
 func (client *Client) ListUsers() ([]User, error) {
-	output := []User{}
+	var output []User
 	var q struct {
 		Account struct {
 			Users UserConnection `graphql:"users(after: $after, first: $first)"`
 		}
 	}
 	v := client.InitialPageVariables()
-	if err := client.Query(q, v); err != nil {
+	if err := client.Query(&q, v); err != nil {
 		return output, err
 	}
+	output = append(output, q.Account.Users.Nodes...)
 	for q.Account.Users.PageInfo.HasNextPage {
 		v["after"] = q.Account.Users.PageInfo.End
 		if err := client.Query(&q, v); err != nil {
