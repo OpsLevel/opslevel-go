@@ -1,5 +1,5 @@
 {
-  "query": "query($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+  "query": "query($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
   "variables": {
     "after":"",
     "first":100
