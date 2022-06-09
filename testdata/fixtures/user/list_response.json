@@ -1,0 +1,28 @@
+{
+  "data": {
+    "account": {
+      "users": {
+        "nodes": [
+          {
+            "email": "kyle@opslevel.com",
+            "id": "1",
+            "name": "Kyle Rockman",
+            "role": "user"
+          },
+          {
+            "email": "edgar@opslevel.com",
+            "id": "2",
+            "name": "Edgar Ochoa",
+            "role": "admin"
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": false,
+          "startCursor": "MQ",
+          "endCursor": "NDc"
+        }
+      }
+    }
+  }
+}

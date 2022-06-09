@@ -1,0 +1,13 @@
+{
+  "data": {
+    "userInvite": {
+      "user": {
+        "email": "kyle@opslevel.com",
+        "id": "1",
+        "name": "Kyle Rockman",
+        "role": "user"
+      },
+      "errors": []
+    }
+  }
+}

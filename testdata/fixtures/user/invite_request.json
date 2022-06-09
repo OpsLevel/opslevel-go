@@ -1,0 +1,9 @@
+{
+  "query": "mutation($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{email,htmlUrl,id,name,role},errors{message,path}}}",
+  "variables": {
+    "email": "kyle@opslevel.com",
+    "input": {
+      "name": "Kyle Rockman"
+    }
+  }
+}
