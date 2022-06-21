@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/go-retryablehttp"
 	"net/http"
 	"os"
 	"runtime"
@@ -21,6 +22,7 @@ type ClientSettings struct {
 	apiVisibility  string
 	userAgentExtra string
 	timeout        time.Duration
+	retries        int
 	pageSize       int
 	ctx            context.Context
 }
@@ -70,15 +72,22 @@ func SetTimeout(amount time.Duration) Option {
 	}
 }
 
+func SetMaxRetries(amount int) Option {
+	return func(c *ClientSettings) {
+		c.retries = amount
+	}
+}
+
 type customTransport struct {
-	apiVisibility string
-	userAgent     string
+	apiVisibility       string
+	userAgent           string
+	underlyingTransport http.RoundTripper
 }
 
 func (t *customTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.Header.Set("GraphQL-Visibility", t.apiVisibility)
 	req.Header.Set("User-Agent", t.userAgent)
-	return http.DefaultTransport.RoundTrip(req)
+	return t.underlyingTransport.RoundTrip(req)
 }
 
 func NewClient(apiToken string, options ...Option) *Client {
@@ -90,25 +99,31 @@ func NewClient(apiToken string, options ...Option) *Client {
 		apiVisibility: "public",
 		pageSize:      100,
 		timeout:       time.Second * 10,
+		retries:       10,
 		ctx:           context.Background(),
 	}
 	for _, opt := range options {
 		opt(settings)
 	}
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = settings.retries
+
+	standardClient := retryClient.StandardClient()
+	standardClient.Timeout = settings.timeout
+	standardClient.Transport = &oauth2.Transport{
+		Source: httpToken,
+		Base: &customTransport{
+			apiVisibility:       settings.apiVisibility,
+			userAgent:           buildUserAgent(settings.userAgentExtra),
+			underlyingTransport: standardClient.Transport,
+		},
+	}
+
 	return &Client{
 		url:      settings.url,
 		pageSize: graphql.Int(settings.pageSize),
 		ctx:      settings.ctx,
-		client: graphql.NewClient(settings.url, &http.Client{
-			Timeout: settings.timeout,
-			Transport: &oauth2.Transport{
-				Source: httpToken,
-				Base: &customTransport{
-					apiVisibility: settings.apiVisibility,
-					userAgent:     buildUserAgent(settings.userAgentExtra),
-				},
-			},
-		}),
+		client:   graphql.NewClient(settings.url, standardClient),
 	}
 }
 
