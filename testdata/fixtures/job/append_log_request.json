@@ -1,0 +1,4 @@
+{
+  "query": "mutation($input:RunnerAppendJobLogInput!){runnerAppendJobLog(input: $input){errors{message,path}}}",
+  "variables": {"input":{"logChunk":["Log1", "Log2"], "runnerId":"1234", "runnerJobId":"5678", "sentAt":"2022-07-01T01:00:00Z"}}
+}

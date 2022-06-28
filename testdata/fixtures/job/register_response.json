@@ -1,0 +1,11 @@
+{
+  "data": {
+    "runnerRegister": {
+      "runner": {
+        "id": "1234",
+        "status": "registered"
+      },
+      "errors": []
+    }
+  }
+}

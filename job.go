@@ -111,7 +111,8 @@ func (c *Client) RunnerRegister() (*Runner, error) {
 			Errors []OpsLevelErrors
 		} `graphql:"runnerRegister"`
 	}
-	if err := c.Mutate(&m, nil); err != nil {
+	v := PayloadVariables{}
+	if err := c.Mutate(&m, v); err != nil {
 		return nil, err
 	}
 	return &m.Payload.Runner, FormatErrors(m.Payload.Errors)
@@ -165,14 +166,14 @@ func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error
 	return FormatErrors(m.Payload.Errors)
 }
 
-func (c *Client) RunnerUregister(runnerId graphql.ID) error {
+func (c *Client) RunnerUnregister(runnerId *graphql.ID) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
-		} `graphql:"runnerRegister"`
+		} `graphql:"runnerUnregister(runnerId: $runnerId)"`
 	}
 	v := PayloadVariables{
-		"runnerId": runnerId,
+		"runnerId": *runnerId,
 	}
 	if err := c.Mutate(&m, v); err != nil {
 		return err
