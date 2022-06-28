@@ -49,6 +49,27 @@ func AllRunnerJobStatusEnum() []string {
 	}
 }
 
+// RunnerStatusTypeEnum represents The status of an OpsLevel runner.
+type RunnerStatusTypeEnum string
+
+const (
+	RunnerStatusTypeEnumInactive   RunnerJobStatusEnum = "inactive"   // The runner will not actively take jobs.
+	RunnerStatusTypeEnumRegistered RunnerJobStatusEnum = "registered" // The runner will process jobs.
+)
+
+// All RunnerStatusTypeEnum as []string
+func AllRunnerStatusTypeEnum() []string {
+	return []string{
+		string(RunnerStatusTypeEnumInactive),
+		string(RunnerStatusTypeEnumRegistered),
+	}
+}
+
+type Runner struct {
+	Id     graphql.ID           `json:"id"`
+	Status RunnerStatusTypeEnum `json:"status"`
+}
+
 type RunnerJobVariable struct {
 	Key       string `json:"key"`
 	Sensitive bool   `json:"sensitive"`
@@ -83,7 +104,20 @@ type RunnerReportJobOutcomeInput struct {
 	OutcomeVariables []RunnerJobOutcomeVariable `json:"outcomeVariables,omitempty"`
 }
 
-func (s *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphql.ID) (*RunnerJob, *graphql.ID, error) {
+func (c *Client) RunnerRegister() (*Runner, error) {
+	var m struct {
+		Payload struct {
+			Runner Runner
+			Errors []OpsLevelErrors
+		} `graphql:"runnerRegister"`
+	}
+	if err := c.Mutate(&m, nil); err != nil {
+		return nil, err
+	}
+	return &m.Payload.Runner, FormatErrors(m.Payload.Errors)
+}
+
+func (c *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphql.ID) (*RunnerJob, *graphql.ID, error) {
 	var m struct {
 		Payload struct {
 			RunnerJob       RunnerJob
@@ -95,13 +129,13 @@ func (s *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphq
 		"id":    runnerId,
 		"token": lastUpdateToken,
 	}
-	if err := s.Mutate(&m, v); err != nil {
+	if err := c.Mutate(&m, v); err != nil {
 		return nil, nil, err
 	}
 	return &m.Payload.RunnerJob, &m.Payload.LastUpdateToken, FormatErrors(m.Payload.Errors)
 }
 
-func (s *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
+func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
@@ -110,13 +144,13 @@ func (s *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := s.Mutate(&m, v); err != nil {
+	if err := c.Mutate(&m, v); err != nil {
 		return err
 	}
 	return FormatErrors(m.Payload.Errors)
 }
 
-func (s *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
+func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
@@ -125,7 +159,22 @@ func (s *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := s.Mutate(&m, v); err != nil {
+	if err := c.Mutate(&m, v); err != nil {
+		return err
+	}
+	return FormatErrors(m.Payload.Errors)
+}
+
+func (c *Client) RunnerUregister(runnerId graphql.ID) error {
+	var m struct {
+		Payload struct {
+			Errors []OpsLevelErrors
+		} `graphql:"runnerRegister"`
+	}
+	v := PayloadVariables{
+		"runnerId": runnerId,
+	}
+	if err := c.Mutate(&m, v); err != nil {
 		return err
 	}
 	return FormatErrors(m.Payload.Errors)
