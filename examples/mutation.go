@@ -3,7 +3,7 @@ package opslevel_example
 import (
 	"fmt"
 
-	"github.com/opslevel/opslevel-go"
+	"github.com/opslevel/opslevel-go/v2022"
 	"github.com/shurcooL/graphql"
 )
 

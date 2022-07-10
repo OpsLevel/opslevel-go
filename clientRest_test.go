@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	ol "github.com/opslevel/opslevel-go"
+	ol "github.com/opslevel/opslevel-go/v2022"
 	"github.com/rocktavious/autopilot"
 	"testing"
 )

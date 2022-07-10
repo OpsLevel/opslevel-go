@@ -8,9 +8,7 @@ set of options if need-be:
 package opslevel_example
 
 import (
-	"context"
-
-	"github.com/opslevel/opslevel-go"
+	"github.com/opslevel/opslevel-go/v2022"
 )
 
 type Client struct {
@@ -20,13 +18,13 @@ type Client struct {
 	customOption string
 }
 
-func NewClient(ctx context.Context, apiToken string, options ...Option) *Client {
+func NewClient(apiToken string, options ...Option) *Client {
 	var c Client
 
 	for i := range options {
 		options[i](&c)
 	}
-	c.Client = opslevel.NewClient(apiToken, c.do.opsLevelOptions(ctx)...)
+	c.Client = opslevel.NewClient(apiToken, c.do.opsLevelOptions()...)
 
 	return &c
 }
@@ -36,8 +34,8 @@ type opsLevelDefaultOptions struct {
 	pageSize *int
 }
 
-func (o *opsLevelDefaultOptions) opsLevelOptions(ctx context.Context) []opslevel.Option {
-	opts := []opslevel.Option{opslevel.SetContext(ctx)} // Always set the context.
+func (o *opsLevelDefaultOptions) opsLevelOptions() []opslevel.Option {
+	opts := []opslevel.Option{} // Always set the context.
 
 	if o.url != nil {
 		opts = append(opts, opslevel.SetURL(*o.url))
