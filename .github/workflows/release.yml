@@ -24,6 +24,13 @@ jobs:
         id: version
         run: |
           echo "::set-output name=RELEASE_VERSION::$(date +v%Y.%-m.%-d)"
+      - name: Set Package Version
+        run: |
+          cat << EOF > version.go
+          package opslevel
+  
+          const clientVersion = "${{ steps.version.outputs.RELEASE_VERSION }}"
+          EOF
       - name: Ensure Changelog
         run: |
           if test -f .changes/${{ steps.version.outputs.RELEASE_VERSION }}.md
