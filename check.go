@@ -31,6 +31,7 @@ type Check struct {
 	ManualCheckFragment           `graphql:"... on ManualCheck"`
 	RepositoryFileCheckFragment   `graphql:"... on RepositoryFileCheck"`
 	RepositorySearchCheckFragment `graphql:"... on RepositorySearchCheck"`
+	ServiceOwnershipCheckFragment `graphql:"... on ServiceOwnershipCheck"`
 	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`
 	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
 	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
@@ -47,6 +48,11 @@ type CustomEventCheckFragment struct {
 	ResultMessage    string      `graphql:"resultMessage"`
 	ServiceSelector  string      `graphql:"serviceSelector"`
 	SuccessCondition string      `graphql:"successCondition"`
+}
+
+type ServiceOwnershipCheckFragment struct {
+	RequireContactMethod *bool        `graphql:"requireContactMethod"`
+	ContactMethod        *ContactType `graphql:"contactMethod"`
 }
 
 type GitBranchProtectionCheckFragment struct {
@@ -272,10 +278,16 @@ type CheckServiceConfigurationUpdateInput struct {
 
 type CheckServiceOwnershipCreateInput struct {
 	CheckCreateInput
+
+	RequireContactMethod *bool        `json:"requireContactMethod,omitempty"`
+	ContactMethod        *ContactType `json:"contactMethod,omitempty"`
 }
 
 type CheckServiceOwnershipUpdateInput struct {
 	CheckUpdateInput
+
+	RequireContactMethod *bool        `json:"requireContactMethod,omitempty"`
+	ContactMethod        *ContactType `json:"contactMethod,omitempty"`
 }
 
 type CheckServicePropertyCreateInput struct {
