@@ -3,15 +3,15 @@ package opslevel_test
 import (
 	"testing"
 
-	"github.com/opslevel/opslevel-go"
+	ol "github.com/opslevel/opslevel-go/v2022"
 	"github.com/rocktavious/autopilot"
 )
 
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
-var getWithAliasClient *opslevel.Client
+var getWithAliasClient *ol.Client
 
-func getWithAliasTestClient(t *testing.T) *opslevel.Client {
+func getWithAliasTestClient(t *testing.T) *ol.Client {
 	if getWithAliasClient == nil {
 		getWithAliasClient = ATestClientAlt(t, "team/get", "team/get_with_alias")
 	}
@@ -22,16 +22,16 @@ func TestCreateTeam(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/create")
 	// Act
-	contacts := []opslevel.ContactInput{
-		opslevel.CreateContactSlack("#general", ""),
-		opslevel.CreateContactWeb("https://example.com", "Homepage"),
+	contacts := []ol.ContactInput{
+		ol.CreateContactSlack("#general", ""),
+		ol.CreateContactWeb("https://example.com", "Homepage"),
 	}
-	result, err := client.CreateTeam(opslevel.TeamCreateInput{
+	result, err := client.CreateTeam(ol.TeamCreateInput{
 		Name:             "Example",
 		ManagerEmail:     "john@example.com",
 		Responsibilities: "Foo & bar",
 		Contacts:         contacts,
-		Group:            opslevel.NewIdentifier("test_group"),
+		Group:            ol.NewIdentifier("test_group"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -82,11 +82,11 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/update")
 	// Act
-	result, err := client.UpdateTeam(opslevel.TeamUpdateInput{
-		Id:               opslevel.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"),
+	result, err := client.UpdateTeam(ol.TeamUpdateInput{
+		Id:               ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"),
 		ManagerEmail:     "ken@example.com",
 		Responsibilities: "Foo & bar",
-		Group:            opslevel.NewIdentifier("test_group"),
+		Group:            ol.NewIdentifier("test_group"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -144,7 +144,7 @@ func TestTeamAddContact(t *testing.T) {
 	client2 := ATestClient(t, "team/add_contact")
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddContact(team.TeamId.Id.(string), opslevel.CreateContactSlack("#general", ""))
+	result, err := client2.AddContact(team.TeamId.Id.(string), ol.CreateContactSlack("#general", ""))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "#general", result.Address)
@@ -154,7 +154,7 @@ func TestTeamUpdateContact(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/update_contact")
 	// Act
-	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", opslevel.CreateContactSlack("#general", "Main Channel"))
+	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.CreateContactSlack("#general", "Main Channel"))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)

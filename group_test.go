@@ -3,15 +3,15 @@ package opslevel_test
 import (
 	"testing"
 
-	"github.com/opslevel/opslevel-go"
+	ol "github.com/opslevel/opslevel-go/v2022"
 	"github.com/rocktavious/autopilot"
 )
 
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
-var getGroupWithAliasClient *opslevel.Client
+var getGroupWithAliasClient *ol.Client
 
-func getGroupWithAliasTestClient(t *testing.T) *opslevel.Client {
+func getGroupWithAliasTestClient(t *testing.T) *ol.Client {
 	if getGroupWithAliasClient == nil {
 		getGroupWithAliasClient = ATestClientAlt(t, "group/get", "group/get_with_alias")
 	}
@@ -21,19 +21,19 @@ func getGroupWithAliasTestClient(t *testing.T) *opslevel.Client {
 func TestCreateGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/create")
-	members := []opslevel.MemberInput{
+	members := []ol.MemberInput{
 		{Email: "edgar+test@opslevel.com"},
 	}
-	teams := []opslevel.IdentifierInput{
+	teams := []ol.IdentifierInput{
 		{Alias: "platform"},
 	}
 	// Act
 
-	result, err := client.CreateGroup(opslevel.GroupInput{
+	result, err := client.CreateGroup(ol.GroupInput{
 		Name:        "platform",
 		Description: "Another test group",
 		Members:     &members,
-		Parent:      opslevel.NewIdentifier("test_group_1"),
+		Parent:      ol.NewIdentifier("test_group_1"),
 		Teams:       &teams,
 	})
 	// Assert
@@ -171,17 +171,17 @@ func TestMembers(t *testing.T) {
 func TestUpdateGroup(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "group/update")
-	members := []opslevel.MemberInput{
+	members := []ol.MemberInput{
 		{Email: "edgar+test@opslevel.com"},
 	}
-	teams := []opslevel.IdentifierInput{
+	teams := []ol.IdentifierInput{
 		{Alias: "platform"},
 	}
 	// Act
-	result, err := client.UpdateGroup("Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", opslevel.GroupInput{
+	result, err := client.UpdateGroup("Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", ol.GroupInput{
 		Description: "This is the first test group",
 		Members:     &members,
-		Parent:      opslevel.NewIdentifier("test_group_2"),
+		Parent:      ol.NewIdentifier("test_group_2"),
 		Teams:       &teams,
 	})
 	// Assert

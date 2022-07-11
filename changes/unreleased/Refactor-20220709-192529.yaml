@@ -1,0 +1,3 @@
+kind: Refactor
+body: Change how API Token is set to GQL client
+time: 2022-07-09T19:25:29.640884-05:00
