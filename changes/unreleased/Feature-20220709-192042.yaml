@@ -1,0 +1,3 @@
+kind: Feature
+body: Add retryable http client to GQL client with a default of 10 retries
+time: 2022-07-09T19:20:42.050218-05:00

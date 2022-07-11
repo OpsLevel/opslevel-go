@@ -1,0 +1,3 @@
+kind: Refactor
+body: Refactor GQL client to use same settings as REST client
+time: 2022-07-09T19:20:21.32204-05:00

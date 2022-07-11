@@ -3,7 +3,9 @@ module github.com/opslevel/opslevel-go
 go 1.18
 
 require (
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.12.0
+	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/relvacode/iso8601 v1.1.0
 	github.com/rocktavious/autopilot v0.1.5
 	github.com/rs/zerolog v1.27.0
@@ -14,10 +16,8 @@ require (
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.14 // indirect
-	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
-	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
-	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
+	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
+	google.golang.org/appengine v1.6.6 // indirect
+	google.golang.org/protobuf v1.25.0 // indirect
 )
