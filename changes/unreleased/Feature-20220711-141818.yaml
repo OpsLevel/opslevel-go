@@ -1,4 +1,4 @@
 kind: Feature
-body: '- Add requireContactMethod and contactMethod optional args to the serviceOwnershipCheck
+body: 'Add requireContactMethod and contactMethod optional args to the serviceOwnershipCheck
   type'
 time: 2022-07-11T14:18:18.196558-04:00
