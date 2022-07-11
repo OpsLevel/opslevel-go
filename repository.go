@@ -136,7 +136,7 @@ func (client *Client) ConnectServiceRepository(service *ServiceId, repository *R
 		Service:       IdentifierInput{Id: service.Id},
 		Repository:    IdentifierInput{Id: repository.Id},
 		BaseDirectory: "/",
-		DisplayName:   fmt.Sprintf("%s/%s", repository.Name, repository.Organization),
+		DisplayName:   fmt.Sprintf("%s/%s", repository.Organization, repository.Name),
 	}
 	return client.CreateServiceRepository(input)
 }
