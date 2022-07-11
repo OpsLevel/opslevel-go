@@ -51,7 +51,7 @@ type CustomEventCheckFragment struct {
 }
 
 type ServiceOwnershipCheckFragment struct {
-	RequireContactMethod bool        `graphql:"requireContactMethod"`
+	RequireContactMethod *bool        `graphql:"requireContactMethod"`
 	ContactMethod        *ContactType `graphql:"contactMethod"`
 }
 
@@ -279,15 +279,15 @@ type CheckServiceConfigurationUpdateInput struct {
 type CheckServiceOwnershipCreateInput struct {
 	CheckCreateInput
 
-	RequireContactMethod bool         `graphql:"requireContactMethod"`
-	ContactMethod        *ContactType `graphql:"contactMethod"`
+	RequireContactMethod *bool        `json:"requireContactMethod,omitempty"`
+	ContactMethod        *ContactType `json:"contactMethod,omitempty"`
 }
 
 type CheckServiceOwnershipUpdateInput struct {
 	CheckUpdateInput
 
-	RequireContactMethod bool         `graphql:"requireContactMethod"`
-	ContactMethod        *ContactType `graphql:"contactMethod"`
+	RequireContactMethod *bool        `json:"requireContactMethod,omitempty"`
+	ContactMethod        *ContactType `json:"contactMethod,omitempty"`
 }
 
 type CheckServicePropertyCreateInput struct {

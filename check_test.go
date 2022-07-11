@@ -226,16 +226,22 @@ var testcases = map[string]struct {
 	"CreateServiceOwnership": {
 		fixture: "check/create_service_ownership",
 		body: func(c *ol.Client) (*ol.Check, error) {
+			slackContactType := ol.ContactTypeSlack
 			return c.CreateCheckServiceOwnership(ol.CheckServiceOwnershipCreateInput{
-				CheckCreateInput: checkCreateInput,
+				CheckCreateInput:     checkCreateInput,
+				RequireContactMethod: ol.Bool(true),
+				ContactMethod:        &slackContactType,
 			})
 		},
 	},
 	"UpdateServiceOwnership": {
 		fixture: "check/update_service_ownership",
 		body: func(c *ol.Client) (*ol.Check, error) {
+			emailContactType := ol.ContactTypeEmail
 			return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
 				CheckUpdateInput: checkUpdateInput,
+				RequireContactMethod: ol.Bool(true),
+				ContactMethod:        &emailContactType,
 			})
 		},
 	},
