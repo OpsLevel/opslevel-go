@@ -1,0 +1,91 @@
+{
+  "data": {
+    "account": {
+      "services": {
+        "nodes": [
+          {
+            "name": "Example",
+            "maturityReport": {
+              "categoryBreakdown": [
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTU",
+                    "name": "Security"
+                  },
+                  "level": {
+                    "alias": "gold",
+                    "description": "Services in this level satisfy critical, important and useful checks. This is the requirement for your highest tier services but all services should aspire to be in this level.",
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI2",
+                    "index": 3,
+                    "name": "Gold"
+                  }
+                },
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTY",
+                    "name": "Reliability"
+                  },
+                  "level": null
+                },
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTc",
+                    "name": "Performance"
+                  },
+                  "level": null
+                },
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTg",
+                    "name": "Scalability"
+                  },
+                  "level": null
+                },
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTk",
+                    "name": "Observability"
+                  },
+                  "level": null
+                },
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMjA",
+                    "name": "Infrastructure"
+                  },
+                  "level": null
+                },
+                {
+                  "category": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMjE",
+                    "name": "Quality"
+                  },
+                  "level": {
+                    "alias": "gold",
+                    "description": "Services in this level satisfy critical, important and useful checks. This is the requirement for your highest tier services but all services should aspire to be in this level.",
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI2",
+                    "index": 3,
+                    "name": "Gold"
+                  }
+                }
+              ],
+              "overallLevel": {
+                "alias": "gold",
+                "description": "Services in this level satisfy critical, important and useful checks. This is the requirement for your highest tier services but all services should aspire to be in this level.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI2",
+                "index": 3,
+                "name": "Gold"
+              }
+            }
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": false,
+          "startCursor": "MQ",
+          "endCursor": "MTA"
+        }
+      }
+    }
+  }
+}

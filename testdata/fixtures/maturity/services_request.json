@@ -1,0 +1,4 @@
+{
+  "query": "query($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+  "variables": {"after":"", "first":100}
+}
