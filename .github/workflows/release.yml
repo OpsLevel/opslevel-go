@@ -35,19 +35,19 @@ jobs:
         run: |
           git config user.name "OpsLevel Bots"
           git config user.email "bots@opslevel.com"
-          if test -f ./.changes/${{ github.event.inputs.release-version }}.md
+          if test -f ./.changes/${{ steps.version.outputs.RELEASE_VERSION }}.md
           then
             echo "Skip Changie..."
           else
             go install github.com/miniscruff/changie@latest
-            changie batch ${{ github.event.inputs.release-version }}
+            changie batch ${{ steps.version.outputs.RELEASE_VERSION }}
             changie merge
             git add .
-            git commit -m "Cut Release '${{ github.event.inputs.release-version }}'"
+            git commit -m "Cut Release '${{ steps.version.outputs.RELEASE_VERSION }}'"
             git push origin HEAD
           fi
-          git tag -f ${{ github.event.inputs.release-version }} -m "Cut Release '${{ github.event.inputs.release-version }}'"
-          git push -f origin refs/tags/${{ github.event.inputs.release-version }}
+          git tag -f ${{ steps.version.outputs.RELEASE_VERSION }} -m "Cut Release '${{ steps.version.outputs.RELEASE_VERSION }}'"
+          git push -f origin refs/tags/${{ steps.version.outputs.RELEASE_VERSION }}
       - name: Ensure Release Does Not Exist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
