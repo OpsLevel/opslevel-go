@@ -1,0 +1,4 @@
+{
+  "query": "mutation{runnerRegister{runner{id,status},errors{message,path}}}",
+  "variables": ""
+}
