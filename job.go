@@ -15,6 +15,7 @@ const (
 	RunnerJobOutcomeEnumSuccess          RunnerJobOutcomeEnum = "success"           // Job succeded the execution.
 	RunnerJobOutcomeEnumQueueTimeout     RunnerJobOutcomeEnum = "queue_timeout"     // Job was not assigned to a runner for too long.
 	RunnerJobOutcomeEnumExecutionTimeout RunnerJobOutcomeEnum = "execution_timeout" // Job run took too long to complete, and was marked as failed.
+	RunnerJobOutcomeEnumPodTimeout       RunnerJobOutcomeEnum = "pod_timeout"       // A pod could not be scheduled for the job in time.
 )
 
 // All RunnerJobOutcomeEnum as []string
@@ -26,6 +27,7 @@ func AllRunnerJobOutcomeEnum() []string {
 		string(RunnerJobOutcomeEnumSuccess),
 		string(RunnerJobOutcomeEnumQueueTimeout),
 		string(RunnerJobOutcomeEnumExecutionTimeout),
+		string(RunnerJobOutcomeEnumPodTimeout),
 	}
 }
 
