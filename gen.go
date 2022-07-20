@@ -1,3 +1,4 @@
+//go:build ignore
 // +build ignore
 
 package main
@@ -15,7 +16,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/opslevel/opslevel-go"
+	"github.com/opslevel/opslevel-go/v2022"
 	"github.com/shurcooL/graphql/ident"
 )
 
