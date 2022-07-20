@@ -1,3 +1,0 @@
-kind: Bugfix
-body: Fix problem with REST client base url including `graphql`
-time: 2022-07-20T11:21:31.823974-05:00
