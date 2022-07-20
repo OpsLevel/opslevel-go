@@ -56,10 +56,17 @@ func NewGQLClient(options ...Option) *Client {
 			underlyingTransport: standardClient.Transport,
 		},
 	}
+	var url string
+	if strings.Contains(settings.url, "/LOCAL_TESTING/") {
+		url = settings.url
+	} else {
+		url = fmt.Sprintf("%s/graphql", settings.url)
+	}
+	fmt.Println(url)
 
 	return &Client{
 		pageSize: graphql.Int(settings.pageSize),
-		client:   graphql.NewClient(settings.url, standardClient),
+		client:   graphql.NewClient(url, standardClient),
 	}
 }
 

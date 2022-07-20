@@ -9,7 +9,7 @@ import (
 )
 
 func ATestRestClient(t *testing.T, endpoint string) *resty.Client {
-	return ol.NewRestClient(ol.SetTestURL(
+	return ol.NewRestClient(ol.SetURL(
 		autopilot.RegisterEndpoint(
 			fmt.Sprintf("/%s", endpoint),
 			autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),

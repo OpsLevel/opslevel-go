@@ -43,14 +43,7 @@ func SetAPIToken(apiToken string) Option {
 
 func SetURL(url string) Option {
 	return func(c *ClientSettings) {
-		c.url = fmt.Sprintf("%s/graphql", strings.TrimRight(url, "/"))
-	}
-}
-
-// SetTestUrl - Only use this when making test Clients
-func SetTestURL(url string) Option {
-	return func(c *ClientSettings) {
-		c.url = url
+		c.url = fmt.Sprintf("%s", strings.TrimRight(url, "/"))
 	}
 }
 

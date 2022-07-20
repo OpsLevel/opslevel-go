@@ -71,33 +71,33 @@ func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValid
 }
 
 func ATestClient(t *testing.T, endpoint string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetTestURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
 		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
 func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetTestURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s__%s", response, request),
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s__%s", response, request),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
 		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", request)))))
 }
 
 func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetTestURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
 		autopilot.SkipRequestValidation())))
 }
 
 func ATestClientLogRequest(t *testing.T, endpoint string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetTestURL(autopilot.RegisterEndpoint(fmt.Sprintf("/%s", endpoint),
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
 		LogRaw())))
 }
 
 func TestClientQuery(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/account", autopilot.FixtureResponse("account_response.json"), QueryValidation(t, "{account{id}}"))
-	client := ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetTestURL(url))
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/account", autopilot.FixtureResponse("account_response.json"), QueryValidation(t, "{account{id}}"))
+	client := ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetURL(url))
 	var q struct {
 		Account struct {
 			Id graphql.ID
