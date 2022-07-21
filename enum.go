@@ -113,9 +113,32 @@ func AllConnectiveEnum() []string {
 }
 
 // ContactType represents the method of contact.
+type ServiceOwnershipCheckContactType string
+
+const (
+	ServiceOwnershipCheckContactTypeAny         ServiceOwnershipCheckContactType = "any"          // A Slack channel contact method.
+	ServiceOwnershipCheckContactTypeSlack       ServiceOwnershipCheckContactType = "slack"        // A Slack channel contact method.
+	ServiceOwnershipCheckContactTypeSlackHandle ServiceOwnershipCheckContactType = "slack_handle" // A Slack handle contact method.
+	ServiceOwnershipCheckContactTypeEmail       ServiceOwnershipCheckContactType = "email"        // An email contact method.
+	ServiceOwnershipCheckContactTypeWeb         ServiceOwnershipCheckContactType = "web"          // A website contact method.
+)
+
+// All ContactType as []string
+func AllServiceOwnershipCheckContactType() []string {
+	return []string{
+		string(ServiceOwnershipCheckContactTypeAny),
+		string(ServiceOwnershipCheckContactTypeSlack),
+		string(ServiceOwnershipCheckContactTypeSlackHandle),
+		string(ServiceOwnershipCheckContactTypeEmail),
+		string(ServiceOwnershipCheckContactTypeWeb),
+	}
+}
+
+// ContactType represents the method of contact.
 type ContactType string
 
 const (
+	ContactTypeAny         ContactType = "any"        // A Slack channel contact method.
 	ContactTypeSlack       ContactType = "slack"        // A Slack channel contact method.
 	ContactTypeSlackHandle ContactType = "slack_handle" // A Slack handle contact method.
 	ContactTypeEmail       ContactType = "email"        // An email contact method.
@@ -125,6 +148,7 @@ const (
 // All ContactType as []string
 func AllContactType() []string {
 	return []string{
+		string(ContactTypeAny),
 		string(ContactTypeSlack),
 		string(ContactTypeSlackHandle),
 		string(ContactTypeEmail),
