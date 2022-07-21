@@ -5,7 +5,8 @@ import (
 )
 
 type RestResponse struct {
-	Result string `json:"result"`
+	Result  string `json:"result"`
+	Message string `json:"message"`
 }
 
 func NewRestClient(options ...Option) *resty.Client {
