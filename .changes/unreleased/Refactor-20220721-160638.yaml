@@ -1,0 +1,3 @@
+kind: Refactor
+body: Add ServiceOwnershipCheckContactType to enum.go
+time: 2022-07-21T16:06:38.007329-04:00
