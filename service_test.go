@@ -50,8 +50,10 @@ func TestGetServiceWithAlias(t *testing.T) {
 func TestGetService(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "service/get")
+	client2 := ATestClient(t, "service/get_documents")
 	// Act
 	result, err := client.GetService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx")
+	docs, err := result.Documents(client2)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, len(result.Aliases))
@@ -60,6 +62,8 @@ func TestGetService(t *testing.T) {
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
 	autopilot.Equals(t, 3, result.Tags.TotalCount)
 	autopilot.Equals(t, 4, result.Tools.TotalCount)
+	autopilot.Equals(t, 1, len(docs))
+	autopilot.Equals(t, "", docs[0].HtmlURL)
 }
 
 func TestListServices(t *testing.T) {

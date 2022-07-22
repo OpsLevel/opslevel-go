@@ -19,16 +19,16 @@ type ServiceDocumentContent struct {
 	Content string `graphql:"content" json:"content,omitempty"`
 }
 
-func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource ApiDocumentSourceEnum) (*ServiceId, error) {
+func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource ApiDocumentSourceEnum) (*Service, error) {
 	var m struct {
 		Payload struct {
-			Service ServiceId
+			Service Service
 			Errors  []OpsLevelErrors
 		} `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
 	}
 	v := PayloadVariables{
-		"service":   NewIdentifier(service),
-		"docPath":   docPath,
+		"service":   *NewIdentifier(service),
+		"docPath":   graphql.String(docPath),
 		"docSource": docSource,
 	}
 	if err := c.Mutate(&m, v); err != nil {
