@@ -6,6 +6,7 @@
           "coredns",
           "coredns-kube-system"
         ],
+        "apiDocumentPath": null,
         "description": null,
         "framework": null,
         "language": "go",
@@ -21,6 +22,20 @@
           "alias": "developers",
           "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
         },
+        "preferredApiDocument": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvRG9jdW1lbnRzOjpBcGkvOTU0MQ",
+          "htmlUrl": null,
+          "source": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkRvY3VtZW50czo6QXBpRG9jSW50ZWdyYXRpb24vMTgxNw",
+            "name": "API Docs",
+            "type": "apiDoc"
+          },
+          "timestamps": {
+            "createdAt": "2022-07-22T17:01:53.080794Z",
+            "updatedAt": "2022-07-22T17:01:53.101899Z"
+          }
+        },
+        "preferredApiDocumentSource": "PUSH",
         "product": "MyProduct",
         "repos": {
           "edges": [
@@ -85,6 +100,10 @@
             "endCursor": "Mw"
           },
           "totalCount": 3
+        },
+        "timestamps": {
+          "createdAt": "2022-07-22T16:59:20.361676Z",
+          "updatedAt": "2022-07-22T16:59:38.940251Z"
         },
         "tools": {
           "nodes": [

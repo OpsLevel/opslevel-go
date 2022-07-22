@@ -43,6 +43,8 @@ func TestGetServiceWithAlias(t *testing.T) {
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
 	autopilot.Equals(t, 3, result.Tags.TotalCount)
 	autopilot.Equals(t, 4, result.Tools.TotalCount)
+	autopilot.Equals(t, "API Docs", result.PreferredApiDocument.Source.Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result.PreferredApiDocumentSource)
 }
 
 func TestGetService(t *testing.T) {
@@ -69,6 +71,8 @@ func TestListServices(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, len(result))
 	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
+	autopilot.Equals(t, "API Docs", result[0].PreferredApiDocument.Source.Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result[0].PreferredApiDocumentSource)
 }
 
 func TestListServicesWithFramework(t *testing.T) {
