@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/shurcooL/graphql"
@@ -12,19 +13,23 @@ type ServiceId struct {
 }
 
 type Service struct {
-	Description string `json:"description,omitempty"`
-	Framework   string `json:"framework,omitempty"`
-	HtmlURL     string `json:"htmlUrl"`
+	ApiDocumentPath string `json:apiDocumentPath,omitempty`
+	Description     string `json:"description,omitempty"`
+	Framework       string `json:"framework,omitempty"`
+	HtmlURL         string `json:"htmlUrl"`
 	ServiceId
-	Language     string                      `json:"language,omitempty"`
-	Lifecycle    Lifecycle                   `json:"lifecycle,omitempty"`
-	Name         string                      `json:"name,omitempty"`
-	Owner        TeamId                      `json:"owner,omitempty"`
-	Product      string                      `json:"product,omitempty"`
-	Repositories ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
-	Tags         TagConnection               `json:"tags,omitempty"`
-	Tier         Tier                        `json:"tier,omitempty"`
-	Tools        ToolConnection              `json:"tools,omitempty"`
+	Language                   string                      `json:"language,omitempty"`
+	Lifecycle                  Lifecycle                   `json:"lifecycle,omitempty"`
+	Name                       string                      `json:"name,omitempty"`
+	Owner                      TeamId                      `json:"owner,omitempty"`
+	PreferredApiDocument       *ServiceDocument            `json:"preferredApiDocument,omitempty"`
+	PreferredApiDocumentSource *ApiDocumentSourceEnum      `json:"preferredApiDocumentSource,omitempty"`
+	Product                    string                      `json:"product,omitempty"`
+	Repositories               ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
+	Tags                       TagConnection               `json:"tags,omitempty"`
+	Tier                       Tier                        `json:"tier,omitempty"`
+	Timestamps                 Timestamps                  `json:"timestamps"`
+	Tools                      ToolConnection              `json:"tools,omitempty"`
 }
 
 type ServiceConnection struct {
@@ -102,6 +107,40 @@ func (s *Service) Hydrate(client *Client) error {
 		return err
 	}
 	return nil
+}
+
+func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Documents struct {
+					Nodes    []ServiceDocument
+					PageInfo PageInfo
+				} `graphql:"documents(after: $after, first: $first)"`
+			} `graphql:"service(id: $id)"`
+		}
+	}
+	if s.Id == nil {
+		return nil, fmt.Errorf("unable to get 'Documents', invalid service id: '%s'", s.Id)
+	}
+	v := PayloadVariables{
+		"id":    s.Id,
+		"first": client.pageSize,
+		"after": graphql.String(""),
+	}
+	var output []ServiceDocument
+	if err := client.Query(&q, v); err != nil {
+		return nil, err
+	}
+	output = append(output, q.Account.Service.Documents.Nodes...)
+	for q.Account.Service.Documents.PageInfo.HasNextPage {
+		v["after"] = q.Account.Service.Documents.PageInfo.End
+		if err := client.Query(&q, v); err != nil {
+			return nil, err
+		}
+		output = append(output, q.Account.Service.Documents.Nodes...)
+	}
+	return output, nil
 }
 
 //#endregion

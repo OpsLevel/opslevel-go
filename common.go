@@ -48,6 +48,11 @@ type Connection struct {
 	PageInfo PageInfo `graphql:"pageInfo"`
 }
 
+type Timestamps struct {
+	CreatedAt iso8601.Time `json:"createdAt"`
+	UpdatedAt iso8601.Time `json:"updatedAt"`
+}
+
 func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
 	if err := client.Mutate(m, v); err != nil {
 		return err

@@ -62,7 +62,6 @@ func NewGQLClient(options ...Option) *Client {
 	} else {
 		url = fmt.Sprintf("%s/graphql", settings.url)
 	}
-	fmt.Println(url)
 
 	return &Client{
 		pageSize: graphql.Int(settings.pageSize),
