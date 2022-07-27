@@ -13,7 +13,7 @@ type ServiceId struct {
 }
 
 type Service struct {
-	ApiDocumentPath string `json:apiDocumentPath,omitempty`
+	ApiDocumentPath string `json:"apiDocumentPath,omitempty"`
 	Description     string `json:"description,omitempty"`
 	Framework       string `json:"framework,omitempty"`
 	HtmlURL         string `json:"htmlUrl"`
