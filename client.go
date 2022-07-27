@@ -22,7 +22,7 @@ type Option func(*ClientSettings)
 
 func newClientSettings(options ...Option) *ClientSettings {
 	settings := &ClientSettings{
-		url:     "https://app.opslevel.com/",
+		url:     "https://app.opslevel.com",
 		timeout: time.Second * 10,
 		retries: 10,
 

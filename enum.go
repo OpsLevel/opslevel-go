@@ -36,6 +36,22 @@ func AllAliasOwnerTypeEnum() []string {
 	}
 }
 
+// ApiDocumentSourceEnum represents the source used to determine the preferred API document.
+type ApiDocumentSourceEnum string
+
+const (
+	ApiDocumentSourceEnumPush ApiDocumentSourceEnum = "PUSH" // Use the document that was pushed to OpsLevel via an API Docs integration.
+	ApiDocumentSourceEnumPull ApiDocumentSourceEnum = "PULL" // Use the document that was pulled by OpsLevel via a repo.
+)
+
+// All ApiDocumentSourceEnum as []string
+func AllApiDocumentSourceEnum() []string {
+	return []string{
+		string(ApiDocumentSourceEnumPush),
+		string(ApiDocumentSourceEnumPull),
+	}
+}
+
 // CheckStatus represents the evaluation status of the check.
 type CheckStatus string
 

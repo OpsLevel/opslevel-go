@@ -4,6 +4,7 @@
         "services": {
           "nodes": [
             {
+              "apiDocumentPath": null,
               "aliases": [
                 "db",
                 "k8s:db-default",
@@ -23,6 +24,20 @@
               },
               "name": "db",
               "owner": null,
+              "preferredApiDocument": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvRG9jdW1lbnRzOjpBcGkvOTU0MQ",
+                "htmlUrl": null,
+                "source": {
+                  "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkRvY3VtZW50czo6QXBpRG9jSW50ZWdyYXRpb24vMTgxNw",
+                  "name": "API Docs",
+                  "type": "apiDoc"
+                },
+                "timestamps": {
+                  "createdAt": "2022-07-22T17:01:53.080794Z",
+                  "updatedAt": "2022-07-22T17:01:53.101899Z"
+                }
+              },
+              "preferredApiDocumentSource": "PUSH",
               "product": "Example",
               "repos": {
                 "edges": [],
@@ -66,6 +81,10 @@
                 "id": "Z2lkOi8vb3BzbGV2ZWwvVGllci8zNDE",
                 "index": 1,
                 "name": "Tier 1"
+              },
+              "timestamps": {
+                "createdAt": "2022-07-22T16:59:20.361676Z",
+                "updatedAt": "2022-07-22T16:59:38.940251Z"
               },
               "tools": {
                 "nodes": [
