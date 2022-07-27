@@ -268,6 +268,14 @@ type CheckRepositorySearchUpdateInput struct {
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
 }
 
+type CheckServiceDependencyCreateInput struct {
+	CheckCreateInput
+}
+
+type CheckServiceDependencyUpdateInput struct {
+	CheckUpdateInput
+}
+
 type CheckServiceConfigurationCreateInput struct {
 	CheckCreateInput
 }
@@ -527,6 +535,26 @@ func (client *Client) CreateCheckRepositorySearch(input CheckRepositorySearchCre
 func (client *Client) UpdateCheckRepositorySearch(input CheckRepositorySearchUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositorySearchUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckServiceDependency(input CheckServiceDependencyCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServiceDependencyCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckServiceDependency(input CheckServiceDependencyUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkServiceDependencyUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,

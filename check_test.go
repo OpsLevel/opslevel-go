@@ -207,6 +207,22 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"CreateServiceDependency": {
+		fixture: "check/create_service_dependency",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.CreateCheckServiceDependency(ol.CheckServiceDependencyCreateInput{
+				CheckCreateInput: checkCreateInput,
+			})
+		},
+	},
+	"UpdateServiceDependency": {
+		fixture: "check/update_service_dependency",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckServiceDependency(ol.CheckServiceDependencyUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+			})
+		},
+	},
 	"CreateServiceConfiguration": {
 		fixture: "check/create_service_configuration",
 		body: func(c *ol.Client) (*ol.Check, error) {
