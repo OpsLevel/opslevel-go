@@ -7,12 +7,14 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
+var notes = "Hello World Check"
+
 var checkCreateInput = ol.CheckCreateInput{
 	Name:     "Hello World",
 	Enabled:  true,
 	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    "Hello World Check",
+	Notes:    &notes,
 }
 
 var checkUpdateInput = ol.CheckUpdateInput{
@@ -21,7 +23,7 @@ var checkUpdateInput = ol.CheckUpdateInput{
 	Enabled:  ol.Bool(true),
 	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    "Hello World Check",
+	Notes:    &notes,
 }
 
 var testcases = map[string]struct {
@@ -239,7 +241,7 @@ var testcases = map[string]struct {
 		body: func(c *ol.Client) (*ol.Check, error) {
 			emailType := ol.ServiceOwnershipCheckContactTypeEmail
 			return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
-				CheckUpdateInput: checkUpdateInput,
+				CheckUpdateInput:     checkUpdateInput,
 				RequireContactMethod: ol.Bool(true),
 				ContactMethod:        &emailType,
 			})

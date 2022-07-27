@@ -21,7 +21,7 @@ type Check struct {
 	Id          graphql.ID   `graphql:"id"`
 	Level       Level        `graphql:"level"`
 	Name        string       `graphql:"name"`
-	Notes       string       `graphql:"notes"`
+	Notes       *string      `graphql:"notes"`
 	Owner       CheckOwner   `graphql:"owner"`
 	Type        CheckType    `graphql:"type"`
 
@@ -113,7 +113,7 @@ type CheckCreateInput struct {
 	Level    graphql.ID    `json:"levelId"`
 	Owner    *graphql.ID   `json:"ownerId,omitempty"`
 	Filter   *graphql.ID   `json:"filterId,omitempty"`
-	Notes    string        `json:"notes,omitempty"`
+	Notes    *string       `json:"notes"`
 }
 
 func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
@@ -133,7 +133,7 @@ type CheckUpdateInput struct {
 	Level    *graphql.ID   `json:"levelId,omitempty"`
 	Owner    *graphql.ID   `json:"ownerId,omitempty"`
 	Filter   *graphql.ID   `json:"filterId,omitempty"`
-	Notes    string        `json:"notes,omitempty"`
+	Notes    *string       `json:"notes"`
 }
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
