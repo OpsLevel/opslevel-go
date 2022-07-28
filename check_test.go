@@ -7,14 +7,12 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
-var notes = "Hello World Check"
-
 var checkCreateInput = ol.CheckCreateInput{
 	Name:     "Hello World",
 	Enabled:  true,
 	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    &notes,
+	Notes:    "Hello World Check",
 }
 
 var checkUpdateInput = ol.CheckUpdateInput{
@@ -23,7 +21,7 @@ var checkUpdateInput = ol.CheckUpdateInput{
 	Enabled:  ol.Bool(true),
 	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    &notes,
+	Notes:    "Hello World Check",
 }
 
 var testcases = map[string]struct {
