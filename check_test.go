@@ -239,7 +239,7 @@ var testcases = map[string]struct {
 		body: func(c *ol.Client) (*ol.Check, error) {
 			emailType := ol.ServiceOwnershipCheckContactTypeEmail
 			return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
-				CheckUpdateInput: checkUpdateInput,
+				CheckUpdateInput:     checkUpdateInput,
 				RequireContactMethod: ol.Bool(true),
 				ContactMethod:        &emailType,
 			})
