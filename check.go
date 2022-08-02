@@ -35,6 +35,7 @@ type Check struct {
 	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`
 	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
 	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
+	HasDocumentationCheckFragment `graphql:"... on HasDocumentationCheck"`
 }
 
 type AlertSourceUsageCheckFragment struct {
@@ -60,6 +61,11 @@ type GitBranchProtectionCheckFragment struct {
 
 type HasRecentDeployCheckFragment struct {
 	Days int `graphql:"days"`
+}
+
+type HasDocumentationCheckFragment struct {
+	DocumentType    HasDocumentationTypeEnum    `graphql:"documentType"`
+	DocumentSubtype HasDocumentationSubtypeEnum `graphql:"documentSubtype"`
 }
 
 type ManualCheckFragment struct {
@@ -180,6 +186,20 @@ type CheckGitBranchProtectionCreateInput struct {
 
 type CheckGitBranchProtectionUpdateInput struct {
 	CheckUpdateInput
+}
+
+type CheckHasDocumentationCreateInput struct {
+	CheckCreateInput
+
+	DocumentType    HasDocumentationTypeEnum    `json:"documentType"`
+	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype"`
+}
+
+type CheckHasDocumentationUpdateInput struct {
+	CheckUpdateInput
+
+	DocumentType    HasDocumentationTypeEnum    `json:"documentType"`
+	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype"`
 }
 
 type CheckHasRecentDeployCreateInput struct {
@@ -456,6 +476,26 @@ func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreat
 func (client *Client) UpdateCheckHasRecentDeploy(input CheckHasRecentDeployUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkHasRecentDeployUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckHasDocumentation(input CheckHasDocumentationCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkHasDocumentationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckHasDocumentation(input CheckHasDocumentationUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkHasDocumentationUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
