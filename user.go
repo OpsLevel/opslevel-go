@@ -23,8 +23,8 @@ type UserId struct {
 }
 
 type UserConnection struct {
-	Nodes      []User
-	PageInfo   PageInfo
+	Nodes    []User
+	PageInfo PageInfo
 }
 
 type UserIdentifierInput struct {
@@ -33,7 +33,7 @@ type UserIdentifierInput struct {
 }
 
 type UserInput struct {
-	Name string `json:"name,omitempty"`
+	Name string   `json:"name,omitempty"`
 	Role UserRole `json:"role,omitempty"`
 }
 

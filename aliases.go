@@ -13,7 +13,7 @@ type AliasCreateInput struct {
 }
 
 type AliasDeleteInput struct {
-	Alias   string     `json:"alias"`
+	Alias     string             `json:"alias"`
 	OwnerType AliasOwnerTypeEnum `json:"ownerType"`
 }
 
@@ -70,14 +70,14 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 
 func (client *Client) DeleteServiceAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
-		Alias: alias,
+		Alias:     alias,
 		OwnerType: AliasOwnerTypeEnumService,
 	})
 }
 
 func (client *Client) DeleteTeamAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
-		Alias: alias,
+		Alias:     alias,
 		OwnerType: AliasOwnerTypeEnumTeam,
 	})
 }
@@ -85,8 +85,8 @@ func (client *Client) DeleteTeamAlias(alias string) error {
 func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	var m struct {
 		Payload struct {
-			Alias graphql.String `graphql:"deletedAlias"`
-			Errors  []OpsLevelErrors
+			Alias  graphql.String `graphql:"deletedAlias"`
+			Errors []OpsLevelErrors
 		} `graphql:"aliasDelete(input: $input)"`
 	}
 	v := PayloadVariables{
