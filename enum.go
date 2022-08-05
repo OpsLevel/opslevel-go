@@ -90,7 +90,7 @@ const (
 	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services.
 	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name.
 	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
-	CheckServiceDependency       CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
+	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
 )
 
 // All CheckType as []string
@@ -112,7 +112,7 @@ func AllCheckType() []string {
 		string(CheckTypeGeneric),
 		string(CheckTypeAlertSourceUsage),
 		string(CheckTypeGitBranchProtection),
-		string(CheckServiceDependency),
+		string(CheckTypeServiceDependency),
 	}
 }
 
