@@ -78,6 +78,7 @@ const (
 	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verified that the services has received a deploy within a specified number of days.
 	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format.
 	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config.
+	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype.
 	CheckTypeHasRepository       CheckType = "has_repository"        // Verifies that the service has a repository integrated.
 	CheckTypeToolUsage           CheckType = "tool_usage"            // Verifies that the service is using a tool of a particular category or name.
 	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined.
@@ -89,7 +90,7 @@ const (
 	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services.
 	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name.
 	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
-	CheckServiceDependency       CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
+	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
 )
 
 // All CheckType as []string
@@ -99,6 +100,7 @@ func AllCheckType() []string {
 		string(CheckTypeHasRecentDeploy),
 		string(CheckTypeServiceProperty),
 		string(CheckTypeHasServiceConfig),
+		string(CheckTypeHasDocumentation),
 		string(CheckTypeHasRepository),
 		string(CheckTypeToolUsage),
 		string(CheckTypeTagDefined),
@@ -110,7 +112,7 @@ func AllCheckType() []string {
 		string(CheckTypeGeneric),
 		string(CheckTypeAlertSourceUsage),
 		string(CheckTypeGitBranchProtection),
-		string(CheckServiceDependency),
+		string(CheckTypeServiceDependency),
 	}
 }
 
@@ -189,6 +191,34 @@ func AllFrequencyTimeScale() []string {
 		string(FrequencyTimeScaleWeek),
 		string(FrequencyTimeScaleMonth),
 		string(FrequencyTimeScaleYear),
+	}
+}
+
+// HasDocumentationSubtypeEnum represents the subtype of the document.
+type HasDocumentationSubtypeEnum string
+
+const (
+	HasDocumentationSubtypeEnumOpenapi HasDocumentationSubtypeEnum = "openapi" // Document is an OpenAPI document.
+)
+
+// All HasDocumentationSubtypeEnum as []string
+func AllHasDocumentationSubtypeEnum() []string {
+	return []string{
+		string(HasDocumentationSubtypeEnumOpenapi),
+	}
+}
+
+// HasDocumentationTypeEnum represents the type of the document.
+type HasDocumentationTypeEnum string
+
+const (
+	HasDocumentationTypeEnumAPI HasDocumentationTypeEnum = "api" // Document is an API document.
+)
+
+// All HasDocumentationTypeEnum as []string
+func AllHasDocumentationTypeEnum() []string {
+	return []string{
+		string(HasDocumentationTypeEnumAPI),
 	}
 }
 

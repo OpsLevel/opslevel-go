@@ -64,6 +64,16 @@ Next, to create a new change entry, in the root of the repository run: `changie 
 
 Follow the prompts to create your change entry - remember this is what will show up in the changelog.  Changie registers the change in a .yaml file, and that file must be included in your pull request before we can release.
 
+### Auto Generating Types
+
+There is a code generator that helps maintain the various Enum types we use in graphql. It introspects the public Graphql Interface and keeps `enum.go` up to date. To use it:
+
+```
+go generate
+```
+
+Once the GraphQL API is made public, and before adding any other types - try the above command to pull down any types that can be auto-generated.
+
 ## Submitting a Pull Request
 
 OpsLevel provides a CI environment to test changes through Github Actions. For example, if you submit a pull request to the repo, GitHub will trigger automated code checks and tests upon approval from an OpsLevel maintainer.

@@ -91,6 +91,27 @@ var testcases = map[string]struct {
 		},
 	},
 
+	"CreateHasDocumentation": {
+		fixture: "check/create_has_documentation",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.CreateCheckHasDocumentation(ol.CheckHasDocumentationCreateInput{
+				CheckCreateInput: checkCreateInput,
+				DocumentType:     "api",
+				DocumentSubtype:  "openapi",
+			})
+		},
+	},
+	"UpdateHasDocumentation": {
+		fixture: "check/update_has_documentation",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckHasDocumentation(ol.CheckHasDocumentationUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				DocumentType:     "api",
+				DocumentSubtype:  "openapi",
+			})
+		},
+	},
+
 	"CreateCustomEvent": {
 		fixture: "check/create_custom_event",
 		body: func(c *ol.Client) (*ol.Check, error) {
