@@ -1,5 +1,5 @@
 {
-  "query":"query($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url,metadata}}}",
+  "query":"query($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}",
   "variables": {
     "id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE"
   }

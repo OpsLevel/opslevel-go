@@ -10,7 +10,6 @@
           "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpQYWdlcmR1dHlJbnRlZ3JhdGlvbi8zMg",
           "type": "datadog"
         },
-        "metadata": "test-metadata",
         "name": "Example",
         "type": "datadog",
         "url": "https://example.com"

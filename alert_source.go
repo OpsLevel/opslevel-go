@@ -5,19 +5,18 @@ import (
 )
 
 type AlertSourceExternalIdentifier struct {
-	Type 			 AlertSourceTypeEnum	`graphql:"type" json:"type"`
-	ExternalId string 							`graphql:"externalId" json:"externalId"`
+	Type       AlertSourceTypeEnum  `json:"type"`
+	ExternalId string               `json:"externalId"`
 }
 
 type AlertSource struct {
-	Name           string
-	Description    string
-	Id             graphql.ID
-	Type           AlertSourceTypeEnum
-	ExternalId     string
-	Integration    Integration
-	Url            string
-	Metadata       string
+	Name           string                 `graphql:"name"`
+	Description    string                 `graphql:"description"`
+	Id             graphql.ID             `graphql:"id"`
+	Type           AlertSourceTypeEnum    `graphql:"type"`
+	ExternalId     string                 `graphql:"externalId"`
+	Integration    Integration            `graphql:"integration"`
+	Url            string                 `graphql:"url"`
 }
 
 //#region Retrieve
