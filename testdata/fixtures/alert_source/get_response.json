@@ -1,0 +1,19 @@
+{
+  "data": {
+    "account": {
+      "alertSource": {
+        "description": "test",
+        "externalId": "12345678",
+        "id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE",
+        "integration": {
+          "name": "test-integration",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpQYWdlcmR1dHlJbnRlZ3JhdGlvbi8zMg",
+          "type": "datadog"
+        },
+        "name": "Example",
+        "type": "datadog",
+        "url": "https://example.com"
+      }
+    }
+  }
+}
