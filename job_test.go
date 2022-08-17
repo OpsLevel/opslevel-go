@@ -60,9 +60,30 @@ func TestRunnerReportJobOutcome(t *testing.T) {
 func TestRunnerUnregister(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "job/unregister")
-	//id := ol.NewID("1234")
 	// Act
 	err := client.RunnerUnregister(ol.NewID("1234"))
 	// Assert
 	autopilot.Ok(t, err)
+}
+
+func TestRunnerJobNumber(t *testing.T) {
+	// Arrange
+	job := ol.RunnerJob{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzIyNQ",
+	}
+	// Act
+	jobNumber := job.Number()
+	// Assert
+	autopilot.Equals(t, "225", jobNumber)
+}
+
+func TestRunnerJobNumberFailure(t *testing.T) {
+	// Arrange
+	job := ol.RunnerJob{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iU",
+	}
+	// Act
+	jobNumber := job.Number()
+	// Assert
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iU", jobNumber)
 }
