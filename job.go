@@ -1,8 +1,10 @@
 package opslevel
 
 import (
+	"encoding/base64"
 	"github.com/relvacode/iso8601"
 	"github.com/shurcooL/graphql"
+	"strings"
 )
 
 // RunnerJobOutcomeEnum represents the runner job outcome.
@@ -85,6 +87,15 @@ type RunnerJob struct {
 	Outcome   RunnerJobOutcomeEnum `json:"outcome"`
 	Status    RunnerJobStatusEnum  `json:"status"`
 	Variables []RunnerJobVariable  `json:"variables"`
+}
+
+func (j *RunnerJob) Number() string {
+	id := j.Id.(string)
+	decoded, err := base64.RawURLEncoding.DecodeString(id)
+	if err != nil {
+		return id
+	}
+	return strings.ReplaceAll(string(decoded), "gid://opslevel/Runners::JobRun/", "")
 }
 
 type RunnerAppendJobLogInput struct {
