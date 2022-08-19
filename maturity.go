@@ -1,5 +1,7 @@
 package opslevel
 
+import "github.com/shurcooL/graphql"
+
 type CategoryBreakdown struct {
 	Category Category
 	Level    Level
@@ -23,6 +25,21 @@ func (s *MaturityReport) Get(category string) *Level {
 		}
 	}
 	return nil
+}
+
+func (c *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturity, error) {
+	var q struct {
+		Account struct {
+			Service ServiceMaturity `graphql:"service(alias:$service)"`
+		}
+	}
+	v := PayloadVariables{
+		"service": graphql.String(alias),
+	}
+	if err := c.Query(&q, v); err != nil {
+		return nil, err
+	}
+	return &q.Account.Service, nil
 }
 
 func (c *Client) ListServicesMaturity() ([]ServiceMaturity, error) {

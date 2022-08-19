@@ -6,6 +6,17 @@ import (
 	"github.com/rocktavious/autopilot"
 )
 
+func TestGetServiceMaturityWithAlias(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "maturity/get_service_maturity_with_alias")
+	// Act
+	result, err := client.GetServiceMaturityWithAlias("cert-manager")
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "cert-manager", result.Name)
+	autopilot.Equals(t, "beginner", result.MaturityReport.OverallLevel.Alias)
+}
+
 func TestListServicesMaturity(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "maturity/services")
