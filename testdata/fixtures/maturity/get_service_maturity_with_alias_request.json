@@ -1,0 +1,6 @@
+{
+  "query": "query($service:String!){account{service(alias:$service){name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}}}}",
+  "variables": {"service": "cert-manager"}
+}
+
+

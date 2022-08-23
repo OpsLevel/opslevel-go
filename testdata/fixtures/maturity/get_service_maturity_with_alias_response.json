@@ -1,0 +1,109 @@
+{
+  "data": {
+    "account": {
+      "service": {
+        "name": "cert-manager",
+        "maturityReport": {
+          "categoryBreakdown": [
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzA1",
+                "name": "Service Ownership"
+              },
+              "level": {
+                "alias": "beginner",
+                "description": "Services in this level are below the minimum standard to ship to production. You should address your failing checks as soon as possible.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ0",
+                "index": 0,
+                "name": "Beginner"
+              }
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzA2",
+                "name": "Security"
+              },
+              "level": {
+                "alias": "beginner",
+                "description": "Services in this level are below the minimum standard to ship to production. You should address your failing checks as soon as possible.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ0",
+                "index": 0,
+                "name": "Beginner"
+              }
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzA3",
+                "name": "Reliability"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzA4",
+                "name": "Performance"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzA5",
+                "name": "Scalability"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw",
+                "name": "Observability"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEx",
+                "name": "Infrastructure"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEy",
+                "name": "Quality"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEz",
+                "name": "Service Ownership"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzU2",
+                "name": "Test"
+              },
+              "level": null
+            },
+            {
+              "category": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzU3",
+                "name": "Test"
+              },
+              "level": null
+            }
+          ],
+          "overallLevel": {
+            "alias": "beginner",
+            "description": "Services in this level are below the minimum standard to ship to production. You should address your failing checks as soon as possible.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ0",
+            "index": 0,
+            "name": "Beginner"
+          }
+        }
+      }
+    }
+  }
+}
