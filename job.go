@@ -80,6 +80,11 @@ type RunnerJobVariable struct {
 	Value     string `json:"value"`
 }
 
+type RunnerJobFile struct {
+	Name     string `json:"name"`
+	Contents string `json:"contents"`
+}
+
 type RunnerJob struct {
 	Commands  []string             `json:"commands"`
 	Id        graphql.ID           `json:"id"`
@@ -87,6 +92,7 @@ type RunnerJob struct {
 	Outcome   RunnerJobOutcomeEnum `json:"outcome"`
 	Status    RunnerJobStatusEnum  `json:"status"`
 	Variables []RunnerJobVariable  `json:"variables"`
+	Files     []RunnerJobFile      `json:"files"`
 }
 
 func (j *RunnerJob) Number() string {
