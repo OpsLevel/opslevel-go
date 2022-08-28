@@ -15,6 +15,8 @@
   		<img src="https://codecov.io/gh/OpsLevel/opslevel-go/branch/main/graph/badge.svg?token=GHQHRIJ9UW"/></a>
     <a href="https://dependabot.com/" alt="Dependabot">
         <img src="https://badgen.net/badge/Dependabot/enabled/green?icon=dependabot" /></a>
+    <a href="https://pkg.go.dev/github.com/opslevel/opslevel-go/v2022" alt="Go Reference">
+        <img src="https://pkg.go.dev/badge/github.com/opslevel/opslevel.svg" /></a>
 </p>
 
 <img align="right" src="https://user-images.githubusercontent.com/735015/118144171-c2a40d00-b3d1-11eb-9b8c-a1cdd687cb36.png" width="320" height="160">
