@@ -31,6 +31,11 @@ type GraphqlQuery struct {
 	Variables map[string]interface{} `json:",omitempty"`
 }
 
+func ToJson(query GraphqlQuery) string {
+	bytes, _ := json.Marshal(query)
+	return string(bytes)
+}
+
 func Parse(r *http.Request) GraphqlQuery {
 	output := GraphqlQuery{}
 	defer r.Body.Close()
@@ -66,7 +71,7 @@ func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValid
 		exp := GraphqlQuery{}
 		bytes := []byte(autopilot.Fixture(fixture))
 		json.Unmarshal(bytes, &exp)
-		autopilot.Equals(t, exp, q)
+		autopilot.Equals(t, ToJson(exp), ToJson(q))
 	}
 }
 
