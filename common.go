@@ -79,6 +79,15 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
+func NewString(value string) *graphql.String {
+	var output *graphql.String = nil
+	if value != "" {
+		s := graphql.String(value)
+		output = &s
+	}
+	return output
+}
+
 // Bool is a helper routine that allocates a new bool value
 // to store v and returns a pointer to it.
 func Bool(v bool) *bool {
