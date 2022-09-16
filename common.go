@@ -79,6 +79,11 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
+func NewEmptyString() *graphql.String {
+	s := graphql.String("")
+	return &s
+}
+
 func NewString(value string) *graphql.String {
 	var output *graphql.String = nil
 	if value != "" {
