@@ -4,7 +4,7 @@ import (
 	ol "github.com/opslevel/opslevel-go/v2022"
 	"testing"
 
-	"github.com/rocktavious/autopilot"
+	"github.com/rocktavious/autopilot/v2022"
 )
 
 func TestServiceApiDocSettingsUpdate(t *testing.T) {
@@ -15,7 +15,7 @@ func TestServiceApiDocSettingsUpdate(t *testing.T) {
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", &docSource)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zOTI4MQ", result.Id)
+	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", result.Id)
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result.PreferredApiDocumentSource)
 	autopilot.Equals(t, "/src/swagger.json", result.ApiDocumentPath)
 }
@@ -27,7 +27,7 @@ func TestServiceApiDocSettingsUpdateDocSourceNull(t *testing.T) {
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", nil)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zOTI4MQ", result.Id)
+	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", result.Id)
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result.PreferredApiDocumentSource)
 	autopilot.Equals(t, "/src/swagger.json", result.ApiDocumentPath)
 }
@@ -40,7 +40,7 @@ func TestServiceApiDocSettingsUpdateDocPathNull(t *testing.T) {
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "", &docSource)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zOTI4MQ", result.Id)
+	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", result.Id)
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result.PreferredApiDocumentSource)
 	autopilot.Equals(t, "/src/swagger.json", result.ApiDocumentPath)
 }
