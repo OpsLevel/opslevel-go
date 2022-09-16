@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
