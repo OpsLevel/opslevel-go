@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2022"
-	"github.com/rocktavious/autopilot"
+	"github.com/rocktavious/autopilot/v2022"
 )
 
 func TestCreateService(t *testing.T) {

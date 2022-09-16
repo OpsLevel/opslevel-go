@@ -1,64 +1,7 @@
 {
   "data": {
     "serviceApiDocSettingsUpdate": {
-      "service": {
-        "apiDocumentPath": "/src/swagger.json",
-        "description": null,
-        "framework": null,
-        "htmlUrl": "https://app.opslevel.com/services/example",
-        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zOTI4MQ",
-        "aliases": [
-          "example"
-        ],
-        "language": null,
-        "lifecycle": null,
-        "name": "Example",
-        "owner": null,
-        "preferredApiDocument": null,
-        "preferredApiDocumentSource": "PULL",
-        "product": null,
-        "repos": {
-          "edges": [],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": null,
-            "endCursor": null
-          },
-          "totalCount": 0
-        },
-        "tags": {
-          "nodes": [],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": null,
-            "endCursor": null
-          },
-          "totalCount": 0
-        },
-        "tier": {
-          "alias": "tier_2",
-          "description": "Customer-facing service or repository. Failure results in degraded experience for customers, although without significant impact to revenue or reputation.",
-          "id": "Z2lkOi8vb3BzbGV2ZWwvVGllci8zNDI",
-          "index": 2,
-          "name": "Tier 2"
-        },
-        "timestamps": {
-          "createdAt": "2022-07-22T16:59:20.361676Z",
-          "updatedAt": "2022-07-22T18:34:14.732257Z"
-        },
-        "tools": {
-          "nodes": [],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": null,
-            "endCursor": null
-          },
-          "totalCount": 0
-        }
-      },
+      "service": {{ template "service.tpl" }},
       "errors": []
     }
   }

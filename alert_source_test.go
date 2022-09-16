@@ -2,7 +2,7 @@ package opslevel_test
 
 import (
 	ol "github.com/opslevel/opslevel-go/v2022"
-	"github.com/rocktavious/autopilot"
+	"github.com/rocktavious/autopilot/v2022"
 	"testing"
 )
 
@@ -11,7 +11,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	client := ATestClientAlt(t, "alert_source/get", "alert_source/get_with_external_identifier")
 	// Act
 	result, err := client.GetAlertSourceWithExternalIdentifier(ol.AlertSourceExternalIdentifier{
-		Type: 			ol.AlertSourceTypeEnumDatadog,
+		Type:       ol.AlertSourceTypeEnumDatadog,
 		ExternalId: "12345678",
 	})
 	// Assert

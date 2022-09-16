@@ -1,7 +1,6 @@
 package opslevel_test
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -10,7 +9,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2022"
-	"github.com/rocktavious/autopilot"
+	"github.com/rocktavious/autopilot/v2022"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -78,13 +77,13 @@ func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValid
 func ATestClient(t *testing.T, endpoint string) *ol.Client {
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
-		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
+		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
 func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s__%s", response, request),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
-		FixtureQueryValidation(t, fmt.Sprintf("%s_request.json", request)))))
+		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", request)))))
 }
 
 func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {
@@ -101,7 +100,7 @@ func ATestClientLogRequest(t *testing.T, endpoint string) *ol.Client {
 
 func TestClientQuery(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/account", autopilot.FixtureResponse("account_response.json"), QueryValidation(t, "{account{id}}"))
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/account", autopilot.FixtureResponse("account_response.json"), autopilot.GraphQLQueryValidation(t, "{account{id}}"))
 	client := ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
 	var q struct {
 		Account struct {
@@ -150,7 +149,7 @@ func TestClientQueryNestedPagination(t *testing.T) {
 	t.Parallel()
 	// Arrange
 	//url := autopilot.RegisterEndpoint("/query_nested_pagination", "query_nested_pagination.json")
-	url := autopilot.RegisterEndpoint("/nested_pagination", autopilot.FixtureResponse("nested_pagination_response.json"), FixtureQueryValidation(t, "nested_pagination_request.json"))
+	url := autopilot.RegisterEndpoint("/nested_pagination", autopilot.FixtureResponse("nested_pagination_response.json"), autopilot.GraphQLQueryFixtureValidation(t, "nested_pagination_request.json"))
 	client := NewGQLClient("X", SetURL(url))
 	timeout := time.After(3 * time.Second)
 	done := make(chan bool)

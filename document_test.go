@@ -4,7 +4,7 @@ import (
 	ol "github.com/opslevel/opslevel-go/v2022"
 	"testing"
 
-	"github.com/rocktavious/autopilot"
+	"github.com/rocktavious/autopilot/v2022"
 )
 
 func TestServiceApiDocSettingsUpdate(t *testing.T) {
