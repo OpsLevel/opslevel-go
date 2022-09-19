@@ -1,0 +1,10 @@
+{
+  "query": "{{ template "level_mutation.tpl" }}",
+  "variables": {
+    "input": {
+      "id": "{{ template "id1" }}",
+      "name": "{{ template "name1" }}",
+      "description": ""
+    }
+  }
+}

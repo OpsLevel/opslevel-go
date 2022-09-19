@@ -50,18 +50,62 @@ func TestListRubricLevels(t *testing.T) {
 	autopilot.Equals(t, "Bronze", result[1].Name)
 }
 
-func TestUpdateRubricLevels(t *testing.T) {
+func TestUpdateRubricLevel(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "rubric/level/update")
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw"),
-		Name:        "Kyle",
-		Description: "Updated By Kyle",
+		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Name:        "Example",
+		Description: ol.NewString("An example description"),
 	})
 	// Assert
-	autopilot.Equals(t, "kyle", result.Alias)
-	autopilot.Equals(t, "Updated By Kyle", result.Description)
+	autopilot.Equals(t, "example", result.Alias)
+	autopilot.Equals(t, "Example", result.Name)
+	autopilot.Equals(t, "An example description", result.Description)
+}
+
+func TestUpdateRubricLevelNoName(t *testing.T) {
+	// Arrange
+	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_noname")
+	// Act
+	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
+		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Description: ol.NewString("An example description"),
+	})
+	// Assert
+	autopilot.Equals(t, "example", result.Alias)
+	autopilot.Equals(t, "Example", result.Name)
+	autopilot.Equals(t, "An example description", result.Description)
+}
+
+func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
+	// Arrange
+	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_emptydescription")
+	// Act
+	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
+		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Name:        "Example",
+		Description: ol.NewEmptyString(),
+	})
+	// Assert
+	autopilot.Equals(t, "example", result.Alias)
+	autopilot.Equals(t, "Example", result.Name)
+	autopilot.Equals(t, "An example description", result.Description)
+}
+
+func TestUpdateRubricLevelNoDescription(t *testing.T) {
+	// Arrange
+	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_nodescription")
+	// Act
+	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
+		Id:   ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Name: "Example",
+	})
+	// Assert
+	autopilot.Equals(t, "example", result.Alias)
+	autopilot.Equals(t, "Example", result.Name)
+	autopilot.Equals(t, "An example description", result.Description)
 }
 
 func TestDeleteRubricLevels(t *testing.T) {

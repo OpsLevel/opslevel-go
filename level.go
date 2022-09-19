@@ -27,9 +27,9 @@ type LevelCreateInput struct {
 }
 
 type LevelUpdateInput struct {
-	Id          graphql.ID `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description,omitempty"`
+	Id          graphql.ID      `json:"id"`
+	Name        graphql.String  `json:"name,omitempty"`
+	Description *graphql.String `json:"description,omitempty"`
 }
 
 type LevelDeleteInput struct {

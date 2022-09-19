@@ -3,8 +3,7 @@
     "variables": {
       "input": {
         "id": "{{ template "id1" }}",
-        "name": "{{ template "name1" }}",
-        "description": "{{ template "description" }}"
+        "name": "{{ template "name1" }}"
       }
     }
   }
