@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/relvacode/iso8601 v1.1.0
 	github.com/rocktavious/autopilot/v2022 v2022.8.28
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29
 	golang.org/x/oauth2 v0.0.0-20220608161450-d0670ef3b1eb
 )
