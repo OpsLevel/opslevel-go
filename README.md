@@ -52,7 +52,7 @@ You can validate the client can successfully talk to the OpsLevel API.
 
 ```go
 client := opslevel.NewClient("XXX_API_TOKEN_XXX")
-if err := client.Validate() {
+if err := client.Validate(); err != nil {
 	panic(err)
 }
 ```
