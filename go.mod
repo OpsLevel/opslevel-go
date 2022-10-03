@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/gosimple/slug v1.12.0
+	github.com/gosimple/slug v1.13.0
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/relvacode/iso8601 v1.1.0
 	github.com/rocktavious/autopilot/v2022 v2022.8.28
