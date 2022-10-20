@@ -98,6 +98,7 @@ type TagDefinedCheckFragment struct {
 type ToolUsageCheckFragment struct {
 	ToolCategory         ToolCategory `graphql:"toolCategory"`
 	ToolNamePredicate    *Predicate   `graphql:"toolNamePredicate"`
+	ToolUrlPredicate     *Predicate   `graphql:"toolUrlPredicate"`
 	EnvironmentPredicate *Predicate   `graphql:"environmentPredicate"`
 }
 
@@ -351,6 +352,7 @@ type CheckToolUsageCreateInput struct {
 
 	ToolCategory         ToolCategory    `json:"toolCategory"`
 	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty"`
+	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty"`
 	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty"`
 }
 
@@ -359,6 +361,7 @@ type CheckToolUsageUpdateInput struct {
 
 	ToolCategory         ToolCategory    `json:"toolCategory,omitempty"`
 	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty"`
+	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty"`
 	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty"`
 }
 

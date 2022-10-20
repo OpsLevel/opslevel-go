@@ -344,6 +344,10 @@ var testcases = map[string]struct {
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "datadog",
 				},
+				ToolUrlPredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumContains,
+					Value: "https://",
+				},
 				EnvironmentPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "production",
@@ -360,6 +364,10 @@ var testcases = map[string]struct {
 				ToolNamePredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "datadog",
+				},
+				ToolUrlPredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumContains,
+					Value: "https://",
 				},
 				EnvironmentPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEnumEquals,
