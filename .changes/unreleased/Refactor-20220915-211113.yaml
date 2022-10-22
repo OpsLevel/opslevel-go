@@ -1,4 +1,0 @@
-kind: Refactor
-body: 'BREAKING: change signature of LevelUpdateInput so that mutation works and description
-  can be set to empty string'
-time: 2022-09-15T21:11:13.227105-05:00
