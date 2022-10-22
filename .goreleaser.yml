@@ -7,4 +7,7 @@ builds:
 checksum:
   disable: true
 changelog:
-  skip: true
+  sort: desc
+  filters:
+    exclude:
+      - "^Merge"
