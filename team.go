@@ -387,13 +387,18 @@ func (client *Client) UpdateContact(id graphql.ID, contact ContactInput) (*Conta
 			Errors  []OpsLevelErrors
 		} `graphql:"contactUpdate(input: $input)"`
 	}
+	input := ContactUpdateInput{
+		Id:          id,
+		DisplayName: contact.DisplayName,
+		Address:     contact.Address,
+	}
+	if contact.Type == "" {
+		input.Type = nil
+	} else {
+		input.Type = &contact.Type
+	}
 	v := PayloadVariables{
-		"input": ContactUpdateInput{
-			Id:          id,
-			Type:        &contact.Type,
-			DisplayName: contact.DisplayName,
-			Address:     contact.Address,
-		},
+		"input": input,
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return nil, err

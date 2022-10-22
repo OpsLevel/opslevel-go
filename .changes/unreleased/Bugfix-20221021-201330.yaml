@@ -1,0 +1,4 @@
+kind: Bugfix
+body: Fix issue with UpdateContact where it would pass an "" to the API for contact
+  type when it should be omitted
+time: 2022-10-21T20:13:30.250341-05:00

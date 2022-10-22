@@ -160,6 +160,16 @@ func TestTeamUpdateContact(t *testing.T) {
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
 }
 
+func TestTeamUpdateContactWithTypeNil(t *testing.T) {
+	// Arrange
+	client := ATestClientAlt(t, "team/update_contact", "team/update_contact_nil_type")
+	// Act
+	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.ContactInput{Address: "#general", DisplayName: "Main Channel"})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Main Channel", result.DisplayName)
+}
+
 func TestTeamRemoveContact(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/remove_contact")
