@@ -324,6 +324,7 @@ type TaggableResource string
 const (
 	TaggableResourceService    TaggableResource = "Service"    // Used to identify a Service.
 	TaggableResourceRepository TaggableResource = "Repository" // Used to identify a Repository.
+	TaggableResourceTeam       TaggableResource = "Team"       // Used to identify a Team.
 )
 
 // All TaggableResource as []string
@@ -331,6 +332,7 @@ func AllTaggableResource() []string {
 	return []string{
 		string(TaggableResourceService),
 		string(TaggableResourceRepository),
+		string(TaggableResourceTeam),
 	}
 }
 
