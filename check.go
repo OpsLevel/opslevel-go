@@ -54,8 +54,8 @@ type CustomEventCheckFragment struct {
 type ServiceOwnershipCheckFragment struct {
 	RequireContactMethod *bool                             `graphql:"requireContactMethod"`
 	ContactMethod        *ServiceOwnershipCheckContactType `graphql:"contactMethod"`
-	TagKey               *string                           `graphql:"tagKey"`
-	TagPredicate         *Predicate                        `graphql:"tagPredicate"`
+	TeamTagKey           string                            `graphql:"tagKey"`
+	TeamTagPredicate     *Predicate                        `graphql:"tagPredicate"`
 }
 
 type GitBranchProtectionCheckFragment struct {
@@ -312,8 +312,8 @@ type CheckServiceOwnershipCreateInput struct {
 
 	RequireContactMethod *bool                             `json:"requireContactMethod,omitempty"`
 	ContactMethod        *ServiceOwnershipCheckContactType `json:"contactMethod,omitempty"`
-	TagKey       *string                                    `json:"tagKey,omitempt"`
-	TagPredicate *PredicateInput                           `json:"tagPredicate,omitempty"`
+	TeamTagKey           string                            `json:"tagKey,omitempt"`
+	TeamTagPredicate     *PredicateInput                   `json:"tagPredicate,omitempty"`
 }
 
 type CheckServiceOwnershipUpdateInput struct {
@@ -321,8 +321,8 @@ type CheckServiceOwnershipUpdateInput struct {
 
 	RequireContactMethod *bool                             `json:"requireContactMethod,omitempty"`
 	ContactMethod        *ServiceOwnershipCheckContactType `json:"contactMethod,omitempty"`
-	TagKey       *string                                   `json:"tagKey,omitempt"`
-	TagPredicate *PredicateUpdateInput                     `json:"tagPredicate,omitempty"`
+	TeamTagKey           *string                           `json:"tagKey,omitempt"`
+	TeamTagPredicate     *PredicateUpdateInput             `json:"tagPredicate,omitempty"`
 }
 
 type CheckServicePropertyCreateInput struct {
