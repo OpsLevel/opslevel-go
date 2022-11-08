@@ -312,7 +312,7 @@ type CheckServiceOwnershipCreateInput struct {
 
 	RequireContactMethod *bool                             `json:"requireContactMethod,omitempty"`
 	ContactMethod        *ServiceOwnershipCheckContactType `json:"contactMethod,omitempty"`
-	TeamTagKey           string                            `json:"tagKey,omitempt"`
+	TeamTagKey           string                            `json:"tagKey,omitempty"`
 	TeamTagPredicate     *PredicateInput                   `json:"tagPredicate,omitempty"`
 }
 
@@ -321,7 +321,7 @@ type CheckServiceOwnershipUpdateInput struct {
 
 	RequireContactMethod *bool                             `json:"requireContactMethod,omitempty"`
 	ContactMethod        *ServiceOwnershipCheckContactType `json:"contactMethod,omitempty"`
-	TeamTagKey           string                           `json:"tagKey,omitempt"`
+	TeamTagKey           string                           `json:"tagKey,omitempty"`
 	TeamTagPredicate     *PredicateUpdateInput             `json:"tagPredicate,omitempty"`
 }
 
