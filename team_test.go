@@ -51,6 +51,7 @@ func TestGetTeam(t *testing.T) {
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
+	autopilot.Equals(t, 3, result.Tags.TotalCount)
 }
 
 func TestGetTeamWithAlias(t *testing.T) {
@@ -63,6 +64,7 @@ func TestGetTeamWithAlias(t *testing.T) {
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
+	autopilot.Equals(t, 3, result.Tags.TotalCount)
 }
 
 func TestListTeams(t *testing.T) {

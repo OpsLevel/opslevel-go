@@ -54,6 +54,7 @@ type Team struct {
 	Members          UserConnection
 	Name             string
 	Responsibilities string
+	Tags             TagConnection
 }
 
 type TeamConnection struct {
@@ -129,6 +130,9 @@ func (self *Team) Hydrate(client *Client) error {
 	if err := self.Members.Hydrate(self.Id, client); err != nil {
 		return err
 	}
+	if err := self.Tags.Hydrate(self.Id, client); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -202,6 +206,15 @@ func CreateContactWeb(address string, name string) ContactInput {
 		DisplayName: name,
 		Address:     address,
 	}
+}
+
+func (s *Team) HasTag(key string, value string) bool {
+	for _, tag := range s.Tags.Nodes {
+		if tag.Key == key && tag.Value == value {
+			return true
+		}
+	}
+	return false
 }
 
 //#endregion
@@ -355,6 +368,11 @@ func (client *Client) ListTeamsWithManager(email string) ([]Team, error) {
 	v := client.InitialPageVariables()
 	v["email"] = graphql.String(email)
 	return q.Account.Teams.Query(client, &q, v)
+}
+
+type TeamTagArgs struct {
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 //#endregion
