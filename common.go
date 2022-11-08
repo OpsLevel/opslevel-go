@@ -120,6 +120,11 @@ func NewID(id string) *graphql.ID {
 	return &output
 }
 
+func NewString(s string) *string {
+    output := s
+    return &output
+}
+
 func NewInt(i int) *int {
 	output := i
 	return &output

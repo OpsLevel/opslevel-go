@@ -21,7 +21,24 @@ var checkUpdateInput = ol.CheckUpdateInput{
 	Enabled:  ol.Bool(true),
 	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    "Hello World Check",
+    Notes:    ol.NewString("Hello World Check"),
+}
+
+var checkUpdateInputWithEmptyString = ol.CheckUpdateInput{
+    Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+    Name:     "Hello World",
+    Enabled:  ol.Bool(true),
+    Category: ol.NewID(""),
+    Level:    ol.NewID(""),
+    Owner:    ol.NewID(""),
+    Filter:   ol.NewID(""),
+    Notes:    ol.NewString(""),
+}
+
+var checkUpdateInputWithNulls = ol.CheckUpdateInput{
+    Id:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+    Name:     "Hello World",
+    Enabled:  ol.Bool(true),
 }
 
 var testcases = map[string]struct {
@@ -282,6 +299,30 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+
+    "UpdateServiceOwnershipWithEmptyString": {
+        fixture: "check/update_service_ownership_with_empty_string",
+        body: func(c *ol.Client) (*ol.Check, error) {
+            emailContactType := ol.ContactTypeEmail
+            return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
+                CheckUpdateInput: checkUpdateInputWithEmptyString,
+                RequireContactMethod: ol.Bool(true),
+                ContactMethod:        &emailContactType,
+                })
+        },
+    },
+    "UpdateServiceOwnershipWithNulls": {
+        fixture: "check/update_service_ownership_with_nulls",
+        body: func(c *ol.Client) (*ol.Check, error) {
+            emailContactType := ol.ContactTypeEmail
+            return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
+                CheckUpdateInput: checkUpdateInputWithNulls,
+                RequireContactMethod: ol.Bool(true),
+                ContactMethod:        &emailContactType,
+                })
+        },
+    },
+
 	"CreateServiceProperty": {
 		fixture: "check/create_service_property",
 		body: func(c *ol.Client) (*ol.Check, error) {

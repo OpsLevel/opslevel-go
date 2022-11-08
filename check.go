@@ -140,7 +140,11 @@ type CheckUpdateInput struct {
 	Level    *graphql.ID   `json:"levelId,omitempty"`
 	Owner    *graphql.ID   `json:"ownerId,omitempty"`
 	Filter   *graphql.ID   `json:"filterId,omitempty"`
+<<<<<<< Updated upstream
 	Notes    string        `json:"notes"`
+=======
+	Notes    *string       `json:"notes,omitempty"`
+>>>>>>> Stashed changes
 }
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
