@@ -370,11 +370,6 @@ func (client *Client) ListTeamsWithManager(email string) ([]Team, error) {
 	return q.Account.Teams.Query(client, &q, v)
 }
 
-type TeamTagArgs struct {
-	Key   string `json:"key,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
 //#endregion
 
 //#region Update
