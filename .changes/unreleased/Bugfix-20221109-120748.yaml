@@ -1,0 +1,8 @@
+kind: Bugfix
+body: 'Unable to "unset" the category, level, owner and filter of a check when doing
+  an Update mutation.  BREAKING CHANGE:  This change will likely cause issues with
+  check update if you are not setting all the fields of a `CheckUpdateInput` This
+  is because now unset id fields will be passed through as null and therefore will
+  unset any values already set.  Please ensure you fill out all the fields on a `CheckUpdateInput`
+  type.'
+time: 2022-11-09T12:07:48.574228-06:00
