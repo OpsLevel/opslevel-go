@@ -268,6 +268,11 @@ var testcases = map[string]struct {
 				CheckCreateInput:     checkCreateInput,
 				RequireContactMethod: ol.Bool(true),
 				ContactMethod:        &slackType,
+				TeamTagKey:           "updated_at",
+				TeamTagPredicate:     &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumEquals,
+					Value: "2-11-2022",
+				},
 			})
 		},
 	},
@@ -279,6 +284,11 @@ var testcases = map[string]struct {
 				CheckUpdateInput:     checkUpdateInput,
 				RequireContactMethod: ol.Bool(true),
 				ContactMethod:        &emailType,
+				TeamTagKey:           "updated_at",       
+				TeamTagPredicate:     &ol.PredicateUpdateInput{
+					Type:  ol.PredicateTypeEnumEquals,
+					Value: "2-11-2022",
+				},
 			})
 		},
 	},
