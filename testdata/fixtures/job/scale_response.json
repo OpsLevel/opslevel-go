@@ -1,0 +1,9 @@
+{
+  "data": {
+    "account": {
+      "runnerScale": {
+        "recommendedReplicaCount": 6
+      }
+    }
+  }
+}
