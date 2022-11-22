@@ -159,7 +159,7 @@ func (c *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphq
 	return &m.Payload.RunnerJob, &m.Payload.LastUpdateToken, FormatErrors(m.Payload.Errors)
 }
 
-func (c *Client) GetRunnerScale(runnerId graphql.ID, currentReplicaCount int32, jobConcurrency int) (*RunnerScale, error) {
+func (c *Client) GetRunnerScale(runnerId graphql.ID, currentReplicaCount, jobConcurrency int) (*RunnerScale, error) {
 	var q struct {
 		Account struct {
 			RunnerScale RunnerScale `graphql:"runnerScale(runnerId: $runnerId, currentReplicaCount: $currentReplicaCount, jobConcurrency: $jobConcurrency)"`
