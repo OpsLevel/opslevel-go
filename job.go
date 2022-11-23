@@ -123,6 +123,10 @@ type RunnerReportJobOutcomeInput struct {
 	OutcomeVariables []RunnerJobOutcomeVariable `json:"outcomeVariables,omitempty"`
 }
 
+type RunnerScale struct {
+	RecommendedReplicaCount int `json:"recommendedReplicaCount"`
+}
+
 func (c *Client) RunnerRegister() (*Runner, error) {
 	var m struct {
 		Payload struct {
@@ -153,6 +157,23 @@ func (c *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphq
 		return nil, nil, err
 	}
 	return &m.Payload.RunnerJob, &m.Payload.LastUpdateToken, FormatErrors(m.Payload.Errors)
+}
+
+func (c *Client) RunnerScale(runnerId graphql.ID, currentReplicaCount, jobConcurrency int) (*RunnerScale, error) {
+	var q struct {
+		Account struct {
+			RunnerScale RunnerScale `graphql:"runnerScale(runnerId: $runnerId, currentReplicaCount: $currentReplicaCount, jobConcurrency: $jobConcurrency)"`
+		}
+	}
+	v := PayloadVariables{
+		"runnerId":            runnerId,
+		"currentReplicaCount": graphql.Int(currentReplicaCount),
+		"jobConcurrency":      graphql.Int(jobConcurrency),
+	}
+	if err := c.Query(&q, v); err != nil {
+		return nil, err
+	}
+	return &q.Account.RunnerScale, nil
 }
 
 func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {

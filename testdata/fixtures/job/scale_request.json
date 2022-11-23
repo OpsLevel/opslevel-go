@@ -1,0 +1,4 @@
+{
+  "query": "query($currentReplicaCount:Int!$jobConcurrency:Int!$runnerId:ID!){account{runnerScale(runnerId: $runnerId, currentReplicaCount: $currentReplicaCount, jobConcurrency: $jobConcurrency){recommendedReplicaCount}}}",
+  "variables": {"currentReplicaCount":2,"jobConcurrency":3,"runnerId":"1234567890"}
+}

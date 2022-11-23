@@ -17,6 +17,16 @@ func TestRunnerRegister(t *testing.T) {
 	autopilot.Equals(t, *ol.NewID("1234"), result.Id)
 }
 
+func TestRunnerGetScale(t *testing.T) {
+	// Arrange
+	client := ATestClient(t, "job/scale")
+	// Act
+	result, err := client.RunnerScale("1234567890", 2, 3)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 6, result.RecommendedReplicaCount)
+}
+
 func TestRunnerGetPendingJobs(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "job/get_pending")
