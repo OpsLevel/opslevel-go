@@ -82,6 +82,12 @@ type RepositoryFileCheckFragment struct {
 	UseAbsoluteRoot       bool       `graphql:"useAbsoluteRoot"`
 }
 
+type RepositoryGrepCheckFragment struct {
+	DirectorySearch       bool       `graphql:"directorySearch"`
+	Filepaths             []string   `graphql:"filePaths"`
+	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
+}
+
 type RepositorySearchCheckFragment struct {
 	FileExtensions        []string  `graphql:"fileExtensions"`
 	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"`
@@ -269,6 +275,22 @@ type CheckRepositoryFileUpdateInput struct {
 	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty"`
 }
 
+type CheckRepositoryGrepCreateInput struct {
+	CheckCreateInput
+
+	DirectorySearch       bool            `json:"directorySearch"`
+	Filepaths             []string        `json:"filePaths"`
+	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
+}
+
+type CheckRepositoryGrepUpdateInput struct {
+	CheckUpdateInput
+
+	DirectorySearch       *bool           `json:"directorySearch,omitempty"`
+	Filepaths             []string        `json:"filePaths,omitempty"`
+	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
+}
+
 type CheckRepositoryIntegratedCreateInput struct {
 	CheckCreateInput
 }
@@ -321,7 +343,7 @@ type CheckServiceOwnershipUpdateInput struct {
 
 	RequireContactMethod *bool                             `json:"requireContactMethod,omitempty"`
 	ContactMethod        *ServiceOwnershipCheckContactType `json:"contactMethod,omitempty"`
-	TeamTagKey           string                           `json:"tagKey,omitempty"`
+	TeamTagKey           string                            `json:"tagKey,omitempty"`
 	TeamTagPredicate     *PredicateUpdateInput             `json:"tagPredicate,omitempty"`
 }
 
@@ -545,6 +567,26 @@ func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateI
 func (client *Client) UpdateCheckRepositoryFile(input CheckRepositoryFileUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositoryFileUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) CreateCheckRepositoryGrep(input CheckRepositoryGrepCreateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkRepositoryGrepCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	return m.Payload.Mutate(client, &m, v)
+}
+
+func (client *Client) UpdateCheckRepositoryGrep(input CheckRepositoryGrepUpdateInput) (*Check, error) {
+	var m struct {
+		Payload CheckResponsePayload `graphql:"checkRepositoryGrepUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
