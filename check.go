@@ -30,6 +30,7 @@ type Check struct {
 	HasRecentDeployCheckFragment  `graphql:"... on HasRecentDeployCheck"`
 	ManualCheckFragment           `graphql:"... on ManualCheck"`
 	RepositoryFileCheckFragment   `graphql:"... on RepositoryFileCheck"`
+	RepositoryGrepCheckFragment   `graphql:"... on RepositoryGrepCheck"`
 	RepositorySearchCheckFragment `graphql:"... on RepositorySearchCheck"`
 	ServiceOwnershipCheckFragment `graphql:"... on ServiceOwnershipCheck"`
 	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`

@@ -8,8 +8,7 @@
           "**/hello.go"
         ],
         "fileContentsPredicate": {
-          "type": "exists",
-          "value": ""
+          "type": "exists"
         }
       }
     }
