@@ -200,19 +200,6 @@ var testcases = map[string]struct {
 			})
 		},
 	},
-	"CreateRepositoryGrepMissingDirectorySearch": {
-		fixture: "check/create_repo_grep_missing_directory_search",
-		body: func(c *ol.Client) (*ol.Check, error) {
-			return c.CreateCheckRepositoryGrep(ol.CheckRepositoryGrepCreateInput{
-				CheckCreateInput: checkCreateInput,
-				Filepaths:        []string{"**/hello.go"},
-				FileContentsPredicate: &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumExists,
-					Value: "",
-				},
-			})
-		},
-	},
 	"UpdateRepositoryGrep": {
 		fixture: "check/update_repo_grep",
 		body: func(c *ol.Client) (*ol.Check, error) {
@@ -227,13 +214,26 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"UpdateRepositoryGrepMissingDirectorySearch": {
+		fixture: "check/update_repo_grep_missing_directory_search",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckRepositoryGrep(ol.CheckRepositoryGrepUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				Filepaths:        []string{"**/go.mod"},
+				FileContentsPredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumExists,
+					Value: "",
+				},
+			})
+		},
+	},
 	"UpdateRepositoryGrepMissingFileContentsPredicate": {
 		fixture: "check/update_repo_grep_missing_file_contents_predicate",
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckRepositoryGrep(ol.CheckRepositoryGrepUpdateInput{
 				CheckUpdateInput: checkUpdateInput,
-				Filepaths:        []string{"**/go.mod"},
 				DirectorySearch:  ol.Bool(true),
+				Filepaths:        []string{"**/go.mod"},
 			})
 		},
 	},

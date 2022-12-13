@@ -1,6 +1,6 @@
 {
   "data": {
-    "checkRepositoryGrepCreate": {
+    "checkRepositoryGrepUpdate": {
       "check": {
         "category": {
           "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw",
@@ -18,18 +18,10 @@
           "index": 1,
           "name": "Bronze"
         },
-        "name": "Hello World2",
+        "name": "Hello World",
         "notes": "Hello World Check",
         "owner": null,
-        "type": "repo_grep",
-        "directorySearch": false,
-        "filePaths": [
-          "**/hello.go"
-        ],
-        "fileContentsPredicate": {
-          "type": "exists",
-          "value": ""
-        }
+        "type": "repo_grep"
       },
       "errors": []
     }
