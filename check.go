@@ -287,7 +287,7 @@ type CheckRepositoryGrepCreateInput struct {
 type CheckRepositoryGrepUpdateInput struct {
 	CheckUpdateInput
 
-	DirectorySearch       *bool           `json:"directorySearch,omitempty"`
+	DirectorySearch       bool            `json:"directorySearch"`
 	Filepaths             []string        `json:"filePaths,omitempty"`
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
 }
