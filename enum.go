@@ -83,6 +83,7 @@ const (
 	CheckTypeToolUsage           CheckType = "tool_usage"            // Verifies that the service is using a tool of a particular category or name.
 	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined.
 	CheckTypeRepoFile            CheckType = "repo_file"             // Verifies that the service's repository contains a file with a certain path. (Optional: Can also be used to check for specific file contents).
+	CheckTypeRepoGrep            CheckType = "repo_grep"             // Runs a comprehensive search across the service's repository with advanced search parameters.
 	CheckTypeRepoSearch          CheckType = "repo_search"           // Searches the service's repository and verifies if any file matches the given contents.
 	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing.
 	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service.
