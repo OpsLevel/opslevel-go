@@ -186,6 +186,47 @@ var testcases = map[string]struct {
 			})
 		},
 	},
+	"CreateRepositoryGrep": {
+		fixture: "check/create_repo_grep",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.CreateCheckRepositoryGrep(ol.CheckRepositoryGrepCreateInput{
+				CheckCreateInput: checkCreateInput,
+				DirectorySearch:  true,
+				Filepaths:        []string{"**/hello.go"},
+				FileContentsPredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumExists,
+					Value: "",
+				},
+			})
+		},
+	},
+	"UpdateRepositoryGrep": {
+		fixture: "check/update_repo_grep",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckRepositoryGrep(ol.CheckRepositoryGrepUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				DirectorySearch:  true,
+				Filepaths:        []string{"**/go.mod"},
+				FileContentsPredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumExists,
+					Value: "",
+				},
+			})
+		},
+	},
+	"UpdateRepositoryGrepMissingDirectorySearch": {
+		fixture: "check/update_repo_grep_missing_directory_search",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			return c.UpdateCheckRepositoryGrep(ol.CheckRepositoryGrepUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				Filepaths:        []string{"**/go.mod"},
+				FileContentsPredicate: &ol.PredicateInput{
+					Type:  ol.PredicateTypeEnumExists,
+					Value: "",
+				},
+			})
+		},
+	},
 	"CreateRepositoryIntegrated": {
 		fixture: "check/create_repo_integrated",
 		body: func(c *ol.Client) (*ol.Check, error) {
@@ -269,7 +310,7 @@ var testcases = map[string]struct {
 				RequireContactMethod: ol.Bool(true),
 				ContactMethod:        &slackType,
 				TeamTagKey:           "updated_at",
-				TeamTagPredicate:     &ol.PredicateInput{
+				TeamTagPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "2-11-2022",
 				},
@@ -284,8 +325,8 @@ var testcases = map[string]struct {
 				CheckUpdateInput:     checkUpdateInput,
 				RequireContactMethod: ol.Bool(true),
 				ContactMethod:        &emailType,
-				TeamTagKey:           "updated_at",       
-				TeamTagPredicate:     &ol.PredicateUpdateInput{
+				TeamTagKey:           "updated_at",
+				TeamTagPredicate: &ol.PredicateUpdateInput{
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "2-11-2022",
 				},
