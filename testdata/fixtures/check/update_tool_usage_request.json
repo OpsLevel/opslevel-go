@@ -3,7 +3,11 @@
     "variables": {
       "input": {
         "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-        {{ template "check_base_vars" }},
+        "name": "Hello World",
+        "enabled": true,
+        "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+        "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+        "notes": "Hello World Check",
         "toolCategory": "metrics",
         "toolNamePredicate": {
           "type": "equals",

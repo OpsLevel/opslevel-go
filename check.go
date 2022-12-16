@@ -145,10 +145,10 @@ type CheckUpdateInput struct {
 	Name     string        `json:"name,omitempty"`
 	Enabled  *bool         `json:"enabled,omitempty"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category *graphql.ID   `json:"categoryId"`
-	Level    *graphql.ID   `json:"levelId"`
-	Owner    *graphql.ID   `json:"ownerId"`
-	Filter   *graphql.ID   `json:"filterId"`
+	Category *graphql.ID   `json:"categoryId,omitempty"`
+	Level    *graphql.ID   `json:"levelId,omitempty"`
+	Owner    *graphql.ID   `json:"ownerId,omitempty"`
+	Filter   *graphql.ID   `json:"filterId,omitempty"`
 	Notes    string        `json:"notes"`
 }
 
