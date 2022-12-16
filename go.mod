@@ -1,4 +1,4 @@
-module github.com/opslevel/opslevel-go/v2022
+module github.com/opslevel/opslevel-go/v2023
 
 go 1.18
 
