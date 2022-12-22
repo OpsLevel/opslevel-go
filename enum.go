@@ -117,6 +117,24 @@ func AllCheckType() []string {
 	}
 }
 
+// CustomActionsHttpMethodEnum An HTTP request method
+type CustomActionsHttpMethodEnum string
+
+const (
+	CustomActionsHttpMethodEnumPost   CustomActionsHttpMethodEnum = "POST" // An HTTP POST request
+	CustomActionsHttpMethodEnumPut    CustomActionsHttpMethodEnum = "PUT"  // An HTTP PUT request
+	CustomActionsHttpMethodEnumDELETE CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request
+)
+
+// All ConnectiveEnum as []string
+func AllCustomActionsHttpMethodEnum() []string {
+	return []string{
+		string(CustomActionsHttpMethodEnumPost),
+		string(CustomActionsHttpMethodEnumPut),
+		string(CustomActionsHttpMethodEnumDELETE),
+	}
+}
+
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
 type ConnectiveEnum string
 

@@ -22,11 +22,15 @@ type PredicateUpdateInput struct {
 	Value string            `json:"value,omitempty"`
 }
 
+type FilterId struct {
+	Id   graphql.ID
+	Name string
+}
+
 type Filter struct {
 	Connective ConnectiveEnum
 	HtmlURL    string
-	Id         graphql.ID
-	Name       string
+	FilterId
 	Predicates []FilterPredicate
 }
 
