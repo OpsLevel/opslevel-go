@@ -281,6 +281,7 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 
 	client := ABetterTestClient(t, "custom_actions/delete_trigger", request, response)
 	clientErr := ABetterTestClient(t, "custom_actions/delete_trigger_err", request, responseErr)
+	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
 	// Act
 	err := client.DeleteTriggerDefinition(ol.IdentifierInput{
 		Id: "123456789",
@@ -288,7 +289,11 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	err2 := clientErr.DeleteTriggerDefinition(ol.IdentifierInput{
 		Id: "123456789",
 	})
+	err3 := clientErr2.DeleteTriggerDefinition(ol.IdentifierInput{
+		Id: "123456789",
+	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "OpsLevel API Errors:\n\t* Example Error", err2.Error())
+	autopilot.Assert(t, err3 != nil, "Expected error was not thrown")
 }
