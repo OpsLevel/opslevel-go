@@ -26,10 +26,9 @@ func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, doc
 			Errors  []OpsLevelErrors
 		} `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
 	}
-	var dp *graphql.String
 	v := PayloadVariables{
 		"service":   *NewIdentifier(service),
-		"docPath":   dp,
+		"docPath":   NullString(),
 		"docSource": docSource,
 	}
 	if docPath != "" {
