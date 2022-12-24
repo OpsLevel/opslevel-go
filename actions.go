@@ -3,9 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"github.com/shurcooL/graphql"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 type CustomActionsId struct {
@@ -26,7 +23,7 @@ type CustomActionsExternalAction struct {
 type CustomActionsWebhookAction struct {
 	BasicAuthUserName string                      `graphql:"basicAuthUserName"`
 	BasicAuthPassword string                      `graphql:"basicAuthPassword"`
-	HeadersString     string                      `graphql:"headers"`
+	Headers           JSON                        `graphql:"headers"`
 	HTTPMethod        CustomActionsHttpMethodEnum `graphql:"httpMethod"`
 	WebhookURL        string                      `graphql:"webhookUrl"`
 }
@@ -56,57 +53,44 @@ type CustomActionsTriggerDefinitionsConnection struct {
 
 type CustomActionsWebhookActionCreateInput struct {
 	Name              string                      `json:"name"`
-	Description       *string                     `json:"description,omitempty"`
+	Description       *graphql.String             `json:"description,omitempty"`
 	LiquidTemplate    string                      `json:"liquidTemplate"`
 	WebhookURL        string                      `json:"webhookUrl"`
 	HTTPMethod        CustomActionsHttpMethodEnum `json:"httpMethod"`
-	BasicAuthUserName *string                     `json:"basicAuthUserName,omitempty"`
-	BasicAuthPassword *string                     `json:"basicAuthPassword,omitempty"`
-	Headers           map[string]string           `json:"-"`
-	HeadersString     *string                     `json:"headers,omitempty"`
+	BasicAuthUserName *graphql.String             `json:"basicAuthUserName,omitempty"`
+	BasicAuthPassword *graphql.String             `json:"basicAuthPassword,omitempty"`
+	Headers           JSON                        `json:"headers,omitempty"`
+}
+
+type CustomActionsWebhookActionUpdateInput struct {
+	Id                graphql.ID                  `json:"id"`
+	Name              *graphql.String             `json:"name,omitempty"`
+	Description       *graphql.String             `json:"description,omitempty"`
+	LiquidTemplate    *graphql.String             `json:"liquidTemplate,omitempty"`
+	WebhookURL        *graphql.String             `json:"webhookUrl,omitempty"`
+	HTTPMethod        CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
+	BasicAuthUserName *graphql.String             `json:"basicAuthUserName,omitempty"`
+	BasicAuthPassword *graphql.String             `json:"basicAuthPassword,omitempty"`
+	Headers           JSON                        `json:"headers,omitempty"`
 }
 
 type CustomActionsTriggerDefinitionCreateInput struct {
-	Name        string      `json:"name"`
-	Description *string     `json:"description,omitempty"`
-	Owner       graphql.ID  `json:"ownerId"`
-	Action      *graphql.ID `json:"actionId,omitempty"`
-	Filter      *graphql.ID `json:"filterId,omitempty"`
+	Name        string          `json:"name"`
+	Description *graphql.String `json:"description,omitempty"`
+	Owner       graphql.ID      `json:"ownerId"`
+	Action      *graphql.ID     `json:"actionId,omitempty"`
+	Filter      *graphql.ID     `json:"filterId,omitempty"`
 	// This is being explictly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
 }
 
-func (s *CustomActionsWebhookAction) Headers() map[string]string {
-	return CustomActionsToHeaders(s.HeadersString)
-}
-
-func CustomActionsToHeaders(input string) map[string]string {
-	output := map[string]string{}
-	headers := strings.Split(input, "\n")
-	for _, header := range headers {
-		parts := strings.Split(header, "=")
-		// TODO: handle parts split error / len != 2
-		s, _ := strconv.Unquote(parts[1])
-		// TODO: handle Unquote error
-		output[parts[0]] = s
-	}
-	return output
-}
-
-func CustomActionsFromHeaders(input map[string]string) string {
-	// To ensure consistent output we use a sorted list of keys
-	// This way the string of headers always appears in alphabetical order
-	keys := make([]string, 0, len(input))
-	for k := range input {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	builder := strings.Builder{}
-	for _, k := range keys {
-		builder.WriteString(fmt.Sprintf("%s=\"%s\"\n", k, input[k]))
-	}
-	return strings.TrimSuffix(builder.String(), "\n")
+type CustomActionsTriggerDefinitionUpdateInput struct {
+	Id          graphql.ID      `json:"id"`
+	Name        *graphql.String `json:"name,omitempty"`
+	Description *graphql.String `json:"description,omitempty"`
+	Owner       *graphql.ID     `json:"ownerId,omitempty"`
+	Action      *graphql.ID     `json:"actionId,omitempty"`
+	Filter      *graphql.ID     `json:"filterId,omitempty"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
@@ -116,15 +100,11 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 			Errors        []OpsLevelErrors
 		} `graphql:"customActionsWebhookActionCreate(input: $input)"`
 	}
-	marshalledHeaders := CustomActionsFromHeaders(input.Headers)
-	input.HeadersString = &marshalledHeaders
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.WebhookAction, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
 // TODO: Not implemented in the API yet
@@ -159,6 +139,31 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (CustomActi
 	return q.Account.Actions, nil
 }
 
+func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdateInput) (*CustomActionsExternalAction, error) {
+	var m struct {
+		Payload struct {
+			WebhookAction CustomActionsExternalAction
+			Errors        []OpsLevelErrors
+		} `graphql:"customActionsWebhookActionUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v)
+	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) DeleteWebhookAction(input IdentifierInput) error {
+	var m struct {
+		Payload ResourceDeletePayload `graphql:"customActionsWebhookActionDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefinitionCreateInput) (*CustomActionsTriggerDefinition, error) {
 	var m struct {
 		Payload struct {
@@ -169,10 +174,8 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.TriggerDefinition, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomActionsTriggerDefinition, error) {
@@ -184,13 +187,11 @@ func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomAction
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
+	err := client.Query(&q, v)
 	if q.Account.Definition.Id == nil {
-		return nil, fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
+		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
 	}
-	return &q.Account.Definition, nil
+	return &q.Account.Definition, HandleErrors(err, nil)
 }
 
 func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (CustomActionsTriggerDefinitionsConnection, error) {
@@ -218,4 +219,29 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (Custo
 		q.Account.Definitions.PageInfo = resp.PageInfo
 	}
 	return q.Account.Definitions, nil
+}
+
+func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefinitionUpdateInput) (*CustomActionsTriggerDefinition, error) {
+	var m struct {
+		Payload struct {
+			TriggerDefinition CustomActionsTriggerDefinition
+			Errors            []OpsLevelErrors
+		} `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v)
+	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) DeleteTriggerDefinition(input IdentifierInput) error {
+	var m struct {
+		Payload ResourceDeletePayload `graphql:"customActionsTriggerDefinitionDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }

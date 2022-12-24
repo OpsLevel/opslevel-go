@@ -8,7 +8,7 @@
     "name": "Deploy Rollback",
     "basicAuthUserName": null,
     "basicAuthPassword": null,
-    "headers": "Content-Type=\"application/json\"",
+    "headers": "{\"Content-Type\": \"application/json\"}",
     "httpMethod": "POST",
     "webhookUrl": "https://gitlab.com/api/v4/projects/1/trigger/pipeline"
 }{{ end }}
@@ -20,7 +20,7 @@
     "name": "Deploy Freeze",
     "basicAuthUserName": null,
     "basicAuthPassword": null,
-    "headers": "Accept=\"application/vnd.github+json\"\nContent-Type=\"application/json\"",
+    "headers": "{\"Accept\": \"application/vnd.github+json\", \"Content-Type\": \"application/json\"}",
     "httpMethod": "PUT",
     "webhookUrl": "https://gitlab.com/api/v4/projects/1/trigger/pipeline"
 }{{ end }}

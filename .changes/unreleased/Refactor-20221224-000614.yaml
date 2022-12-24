@@ -1,0 +1,4 @@
+kind: Refactor
+body: refactor "NewId" method to allow for "null" as a value for Update mutations
+  where the input can have a null ID field that acts as an "unset" this field
+time: 2022-12-24T00:06:14.70708-06:00

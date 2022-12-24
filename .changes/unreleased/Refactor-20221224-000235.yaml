@@ -1,0 +1,4 @@
+kind: Refactor
+body: removed "NewEmptyString" function by refactoring "NewString" to work in the
+  expected way.  This maybe cause a BREAKING CHANGE!
+time: 2022-12-24T00:02:35.512382-06:00

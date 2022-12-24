@@ -13,4 +13,12 @@
     "startCursor": "MQ",
     "endCursor": "NA"
 }{{ end }}
+{{- define "error1" }}{
+    "message": "Example Error",
+    "path": [
+        "one",
+        "two",
+        "three"
+    ]
+}{{ end }}
 

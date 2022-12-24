@@ -79,18 +79,9 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
-func NewEmptyString() *graphql.String {
-	s := graphql.String("")
-	return &s
-}
-
 func NewString(value string) *graphql.String {
-	var output *graphql.String = nil
-	if value != "" {
-		s := graphql.String(value)
-		output = &s
-	}
-	return output
+	output := graphql.String(value)
+	return &output
 }
 
 // Bool is a helper routine that allocates a new bool value
@@ -99,6 +90,13 @@ func Bool(v bool) *bool {
 	p := new(bool)
 	*p = v
 	return p
+}
+
+func HandleErrors(err error, errs []OpsLevelErrors) error {
+	if err != nil {
+		return err
+	}
+	return FormatErrors(errs)
 }
 
 func FormatErrors(errs []OpsLevelErrors) error {
@@ -115,8 +113,12 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return fmt.Errorf(strings.Join(errstrings, "\n"))
 }
 
+// NewId use "" to set "null" for ID input fields that can be nullified
 func NewID(id string) *graphql.ID {
-	output := graphql.ID(id)
+	var output graphql.ID
+	if id != "" {
+		output = graphql.ID(id)
+	}
 	return &output
 }
 

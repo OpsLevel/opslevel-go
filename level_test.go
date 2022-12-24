@@ -86,7 +86,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
 		Name:        "Example",
-		Description: ol.NewEmptyString(),
+		Description: ol.NewString(""),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
