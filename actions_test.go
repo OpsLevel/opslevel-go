@@ -124,7 +124,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 func TestDeleteWebhookAction(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:IdentifierInput!){customActionsWebhookActionDelete(input: $input){deletedAlias,deletedId,errors{message,path}}}",
+		"mutation($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
 		"variables":{"input":{"id": "123456789"}}
 	}`
 	response := `{"data": {"customActionsWebhookActionDelete": {
@@ -265,7 +265,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 func TestDeleteTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:IdentifierInput!){customActionsTriggerDefinitionDelete(input: $input){deletedAlias,deletedId,errors{message,path}}}",
+		"mutation($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
 		"variables":{"input":{"id":"123456789"}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionDelete": {
