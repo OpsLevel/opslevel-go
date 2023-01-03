@@ -21,11 +21,9 @@ type CustomActionsExternalAction struct {
 }
 
 type CustomActionsWebhookAction struct {
-	BasicAuthUserName string                      `graphql:"basicAuthUserName"`
-	BasicAuthPassword string                      `graphql:"basicAuthPassword"`
-	Headers           JSON                        `graphql:"headers"`
-	HTTPMethod        CustomActionsHttpMethodEnum `graphql:"httpMethod"`
-	WebhookURL        string                      `graphql:"webhookUrl"`
+	Headers    JSON                        `graphql:"headers"`
+	HTTPMethod CustomActionsHttpMethodEnum `graphql:"httpMethod"`
+	WebhookURL string                      `graphql:"webhookUrl"`
 }
 
 type CustomActionsTriggerDefinition struct {
@@ -52,26 +50,22 @@ type CustomActionsTriggerDefinitionsConnection struct {
 }
 
 type CustomActionsWebhookActionCreateInput struct {
-	Name              string                      `json:"name"`
-	Description       *graphql.String             `json:"description,omitempty"`
-	LiquidTemplate    string                      `json:"liquidTemplate"`
-	WebhookURL        string                      `json:"webhookUrl"`
-	HTTPMethod        CustomActionsHttpMethodEnum `json:"httpMethod"`
-	BasicAuthUserName *graphql.String             `json:"basicAuthUserName,omitempty"`
-	BasicAuthPassword *graphql.String             `json:"basicAuthPassword,omitempty"`
-	Headers           JSON                        `json:"headers,omitempty"`
+	Name           string                      `json:"name"`
+	Description    *graphql.String             `json:"description,omitempty"`
+	LiquidTemplate string                      `json:"liquidTemplate"`
+	WebhookURL     string                      `json:"webhookUrl"`
+	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod"`
+	Headers        JSON                        `json:"headers,omitempty"`
 }
 
 type CustomActionsWebhookActionUpdateInput struct {
-	Id                graphql.ID                  `json:"id"`
-	Name              *graphql.String             `json:"name,omitempty"`
-	Description       *graphql.String             `json:"description,omitempty"`
-	LiquidTemplate    *graphql.String             `json:"liquidTemplate,omitempty"`
-	WebhookURL        *graphql.String             `json:"webhookUrl,omitempty"`
-	HTTPMethod        CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
-	BasicAuthUserName *graphql.String             `json:"basicAuthUserName,omitempty"`
-	BasicAuthPassword *graphql.String             `json:"basicAuthPassword,omitempty"`
-	Headers           JSON                        `json:"headers,omitempty"`
+	Id             graphql.ID                  `json:"id"`
+	Name           *graphql.String             `json:"name,omitempty"`
+	Description    *graphql.String             `json:"description"`
+	LiquidTemplate *graphql.String             `json:"liquidTemplate,omitempty"`
+	WebhookURL     *graphql.String             `json:"webhookUrl,omitempty"`
+	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
+	Headers        JSON                        `json:"headers"`
 }
 
 type CustomActionsTriggerDefinitionCreateInput struct {
