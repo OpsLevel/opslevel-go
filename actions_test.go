@@ -9,13 +9,17 @@ import (
 func TestCreateWebhookAction(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
+		"mutation ($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
 		"variables":{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST","liquidTemplate":"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}","name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}
 	}`
 	response := `{"data": {"customActionsWebhookActionCreate": {
       "webhookAction": {{ template "custom_action1" }},
       "errors": []
   }}}`
+
+	//fmt.Print(Templated(request))
+	//fmt.Print(Templated(response))
+	//panic(1)
 
 	client := ABetterTestClient(t, "custom_actions/create_action", request, response)
 
@@ -42,15 +46,15 @@ func TestListCustomActions(t *testing.T) {
 		"variables":{}
 	}`
 	response := `{"data": {"account": {
-       "customActionsExternalActions": {
-         "nodes": [
-           {{ template "custom_action1" }},
-           {{ template "custom_action2" }}
-         ],
-         {{ template "no_pagination_response" }},
-         "totalCount": 2
-       }
-   }}}`
+      "customActionsExternalActions": {
+        "nodes": [
+          {{ template "custom_action1" }},
+          {{ template "custom_action2" }}
+        ],
+        {{ template "no_pagination_response" }},
+        "totalCount": 2
+      }
+  }}}`
 
 	// An easy way to see the results of templating is by uncommenting this
 	//fmt.Print(Templated(request))
@@ -72,21 +76,20 @@ func TestListCustomActions(t *testing.T) {
 func TestUpdateWebhookAction(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
-		"variables":{"input":{"id": "123456789", "httpMethod":"PUT","basicAuthUserName":""}}
+		"mutation ($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
+		"variables":{"input":{"id": "123456789", "httpMethod":"PUT"}}
 	}`
 	response := `{"data": {"customActionsWebhookActionUpdate": {
-      "webhookAction": {{ template "custom_action1" }},
-      "errors": []
-  }}}`
+     "webhookAction": {{ template "custom_action1" }},
+     "errors": []
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/update_action", request, response)
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
-		Id:                "123456789",
-		HTTPMethod:        ol.CustomActionsHttpMethodEnumPut,
-		BasicAuthUserName: ol.NewString(""),
+		Id:         "123456789",
+		HTTPMethod: ol.CustomActionsHttpMethodEnumPut,
 	})
 
 	// Assert
@@ -97,13 +100,13 @@ func TestUpdateWebhookAction(t *testing.T) {
 func TestUpdateWebhookAction2(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
+		"mutation ($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
 		"variables":{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}
 	}`
 	response := `{"data": {"customActionsWebhookActionUpdate": {
-      "webhookAction": {{ template "custom_action1" }},
-      "errors": []
-  }}}`
+     "webhookAction": {{ template "custom_action1" }},
+     "errors": []
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/update_action2", request, response)
 
@@ -124,14 +127,14 @@ func TestUpdateWebhookAction2(t *testing.T) {
 func TestDeleteWebhookAction(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
+		"mutation ($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
 		"variables":{"input":{"id": "123456789"}}
 	}`
 	response := `{"data": {"customActionsWebhookActionDelete": {
-      "deletedId": "123456789",
-      "deletedAlias": "",
-      "errors": []
-  }}}`
+     "deletedId": "123456789",
+     "deletedAlias": "",
+     "errors": []
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/delete_action", request, response)
 
@@ -147,13 +150,13 @@ func TestDeleteWebhookAction(t *testing.T) {
 func TestCreateTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
+		"mutation ($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","filterId":"987654321","name":"Deploy Rollback","ownerId":"123456789"}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionCreate": {
-      "triggerDefinition": {{ template "custom_action_trigger1" }},
-      "errors": []
-  }}}`
+     "triggerDefinition": {{ template "custom_action_trigger1" }},
+     "errors": []
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/create_trigger", request, response)
 	// Act
@@ -161,7 +164,7 @@ func TestCreateTriggerDefinition(t *testing.T) {
 		Name:        "Deploy Rollback",
 		Description: ol.NewString("Disables the Deploy Freeze"),
 		Action:      ol.NewID("123456789"),
-		Owner:       ol.NewID("123456789"),
+		Owner:       "123456789",
 		Filter:      ol.NewID("987654321"),
 	})
 	// Assert
@@ -172,12 +175,12 @@ func TestCreateTriggerDefinition(t *testing.T) {
 func TestGetTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"query($input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){{ template "custom_actions_trigger_request" }}}}",
+		"query ($input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){{ template "custom_actions_trigger_request" }}}}",
 		"variables":{"input":{"id":"123456789"}}
 	}`
 	response := `{"data": {"account": {
-       "customActionsTriggerDefinition": {{ template "custom_action_trigger2" }}
-   }}}`
+      "customActionsTriggerDefinition": {{ template "custom_action_trigger2" }}
+  }}}`
 
 	client := ABetterTestClient(t, "custom_actions/get_trigger", request, response)
 	// Act
@@ -186,7 +189,7 @@ func TestGetTriggerDefinition(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Release", trigger.Name)
 	autopilot.Equals(t, "Uses Ruby", trigger.Filter.Name)
-	autopilot.Equals(t, "123456789", trigger.Owner.Id)
+	autopilot.Equals(t, "123456789", string(trigger.Owner.Id))
 }
 
 func TestListTriggerDefinitions(t *testing.T) {
@@ -196,15 +199,15 @@ func TestListTriggerDefinitions(t *testing.T) {
 		"variables":{}
 	}`
 	response := `{"data": {"account": {
-       "customActionsTriggerDefinitions": {
-         "nodes": [
-           {{ template "custom_action_trigger1" }},
-           {{ template "custom_action_trigger2" }}
-         ],
-         {{ template "no_pagination_response" }},
-         "totalCount": 2
-       }
-   }}}`
+      "customActionsTriggerDefinitions": {
+        "nodes": [
+          {{ template "custom_action_trigger1" }},
+          {{ template "custom_action_trigger2" }}
+        ],
+        {{ template "no_pagination_response" }},
+        "totalCount": 2
+      }
+  }}}`
 
 	client := ABetterTestClient(t, "custom_actions/list_triggers", request, response)
 	// Act
@@ -214,25 +217,25 @@ func TestListTriggerDefinitions(t *testing.T) {
 	autopilot.Equals(t, 2, triggers.TotalCount)
 	autopilot.Equals(t, "Release", triggers.Nodes[1].Name)
 	autopilot.Equals(t, "Uses Ruby", triggers.Nodes[1].Filter.Name)
-	autopilot.Equals(t, "123456789", triggers.Nodes[1].Owner.Id)
+	autopilot.Equals(t, "123456789", string(triggers.Nodes[1].Owner.Id))
 }
 
 func TestUpdateTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
+		"mutation ($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"id":"123456789", "filterId":null}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
-      "triggerDefinition": {{ template "custom_action_trigger1" }},
-      "errors": []
-  }}}`
+     "triggerDefinition": {{ template "custom_action_trigger1" }},
+     "errors": []
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/update_trigger", request, response)
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:     "123456789",
-		Filter: ol.NewID(""),
+		Filter: ol.NullString(),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -242,13 +245,13 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 func TestUpdateTriggerDefinition2(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
+		"mutation ($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"id":"123456789", "name":"test", "description": ""}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
-      "triggerDefinition": {{ template "custom_action_trigger1" }},
-      "errors": []
-  }}}`
+     "triggerDefinition": {{ template "custom_action_trigger1" }},
+     "errors": []
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/update_trigger2", request, response)
 	// Act
@@ -265,19 +268,19 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 func TestDeleteTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
+		"mutation ($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
 		"variables":{"input":{"id":"123456789"}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionDelete": {
-      "deletedAlias": "",
-      "deletedId": "123456789",
-      "errors": []
-  }}}`
+     "deletedAlias": "",
+     "deletedId": "123456789",
+     "errors": []
+ }}}`
 	responseErr := `{"data": {"customActionsTriggerDefinitionDelete": {
-      "deletedAlias": null,
-      "deletedId": null,
-      "errors": [{{ template "error1" }}]
-  }}}`
+     "deletedAlias": null,
+     "deletedId": null,
+     "errors": [{{ template "error1" }}]
+ }}}`
 
 	client := ABetterTestClient(t, "custom_actions/delete_trigger", request, response)
 	clientErr := ABetterTestClient(t, "custom_actions/delete_trigger_err", request, responseErr)

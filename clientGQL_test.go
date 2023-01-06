@@ -12,9 +12,9 @@ import (
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/shurcooL/graphql"
 )
 
 func TestMain(m *testing.M) {
@@ -129,7 +129,7 @@ func TestClientQuery(t *testing.T) {
 	err := client.Query(&q, v)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "1234", q.Account.Id)
+	autopilot.Equals(t, "1234", string(q.Account.Id))
 }
 
 /*

@@ -85,7 +85,7 @@ func TestUpdateTeam(t *testing.T) {
 	client := ATestClient(t, "team/update")
 	// Act
 	result, err := client.UpdateTeam(ol.TeamUpdateInput{
-		Id:               ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ"),
+		Id:               "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
 		ManagerEmail:     "ken@example.com",
 		Responsibilities: "Foo & bar",
 		Group:            ol.NewIdentifier("test_group"),
@@ -146,7 +146,7 @@ func TestTeamAddContact(t *testing.T) {
 	client2 := ATestClient(t, "team/add_contact")
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddContact(team.TeamId.Id.(string), ol.CreateContactSlack("#general", ""))
+	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", ""))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "#general", result.Address)

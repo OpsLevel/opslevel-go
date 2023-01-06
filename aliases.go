@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type AliasCreateInput struct {
@@ -17,7 +17,7 @@ type AliasDeleteInput struct {
 	OwnerType AliasOwnerTypeEnum `json:"ownerType"`
 }
 
-//#region Create
+// #region Create
 // TODO: make sure duplicate aliases throw an error that we can catch
 func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) ([]string, error) {
 	var output []string

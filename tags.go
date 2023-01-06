@@ -1,7 +1,7 @@
 package opslevel
 
 import (
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type TagOwner string

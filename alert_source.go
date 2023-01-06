@@ -1,22 +1,22 @@
 package opslevel
 
 import (
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type AlertSourceExternalIdentifier struct {
-	Type       AlertSourceTypeEnum  `json:"type"`
-	ExternalId string               `json:"externalId"`
+	Type       AlertSourceTypeEnum `json:"type"`
+	ExternalId string              `json:"externalId"`
 }
 
 type AlertSource struct {
-	Name           string                 `graphql:"name"`
-	Description    string                 `graphql:"description"`
-	Id             graphql.ID             `graphql:"id"`
-	Type           AlertSourceTypeEnum    `graphql:"type"`
-	ExternalId     string                 `graphql:"externalId"`
-	Integration    Integration            `graphql:"integration"`
-	Url            string                 `graphql:"url"`
+	Name        string              `graphql:"name"`
+	Description string              `graphql:"description"`
+	Id          graphql.ID          `graphql:"id"`
+	Type        AlertSourceTypeEnum `graphql:"type"`
+	ExternalId  string              `graphql:"externalId"`
+	Integration Integration         `graphql:"integration"`
+	Url         string              `graphql:"url"`
 }
 
 //#region Retrieve

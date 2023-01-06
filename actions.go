@@ -2,7 +2,7 @@ package opslevel
 
 import (
 	"fmt"
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type CustomActionsId struct {
@@ -21,13 +21,13 @@ type CustomActionsExternalAction struct {
 }
 
 type CustomActionsWebhookAction struct {
-	Headers    JSON                        `graphql:"headers"`
+	Headers    JSON                        `graphql:"headers" scalar:"true"`
 	HTTPMethod CustomActionsHttpMethodEnum `graphql:"httpMethod"`
 	WebhookURL string                      `graphql:"webhookUrl"`
 }
 
 type CustomActionsTriggerDefinition struct {
-	Action      CustomActionsId `graphql: "action"`
+	Action      CustomActionsId `graphql:"action"`
 	Aliases     []string        `graphql:"aliases"`
 	Description string          `graphql:"description"`
 	Filter      FilterId        `graphql:"filter"`
@@ -61,11 +61,11 @@ type CustomActionsWebhookActionCreateInput struct {
 type CustomActionsWebhookActionUpdateInput struct {
 	Id             graphql.ID                  `json:"id"`
 	Name           *graphql.String             `json:"name,omitempty"`
-	Description    *graphql.String             `json:"description"`
+	Description    *graphql.String             `json:"description,omitempty"`
 	LiquidTemplate *graphql.String             `json:"liquidTemplate,omitempty"`
 	WebhookURL     *graphql.String             `json:"webhookUrl,omitempty"`
 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
-	Headers        JSON                        `json:"headers"`
+	Headers        JSON                        `json:"headers,omitempty"`
 }
 
 type CustomActionsTriggerDefinitionCreateInput struct {
@@ -74,7 +74,7 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	Owner       graphql.ID      `json:"ownerId"`
 	Action      *graphql.ID     `json:"actionId,omitempty"`
 	Filter      *graphql.ID     `json:"filterId,omitempty"`
-	// This is being explictly left out to reduce the complexity of the implementation
+	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
 }
 
@@ -82,9 +82,9 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	Id          graphql.ID      `json:"id"`
 	Name        *graphql.String `json:"name,omitempty"`
 	Description *graphql.String `json:"description,omitempty"`
-	Owner       *graphql.ID     `json:"ownerId,omitempty"`
-	Action      *graphql.ID     `json:"actionId,omitempty"`
-	Filter      *graphql.ID     `json:"filterId,omitempty"`
+	Owner       interface{}     `json:"ownerId,omitempty"`
+	Action      interface{}     `json:"actionId,omitempty"`
+	Filter      interface{}     `json:"filterId,omitempty"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
@@ -101,10 +101,21 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
-// TODO: Not implemented in the API yet
-//func (client *Client) GetCustomAction(input IdentifierInput) (*CustomActionsTriggerDefinition, error) {
-
-//}
+func (client *Client) GetCustomAction(input IdentifierInput) (*CustomActionsExternalAction, error) {
+	var q struct {
+		Account struct {
+			Action CustomActionsExternalAction `graphql:"customActionsExternalAction(input: $input)"`
+		}
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Query(&q, v)
+	if q.Account.Action.Id == "" {
+		err = fmt.Errorf("CustomActionsExternalAction with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
+	}
+	return &q.Account.Action, HandleErrors(err, nil)
+}
 
 func (client *Client) ListCustomActions(variables *PayloadVariables) (CustomActionsExternalActionsConnection, error) {
 	var q struct {
@@ -182,7 +193,7 @@ func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomAction
 		"input": input,
 	}
 	err := client.Query(&q, v)
-	if q.Account.Definition.Id == nil {
+	if q.Account.Definition.Id == "" {
 		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
 	}
 	return &q.Account.Definition, HandleErrors(err, nil)

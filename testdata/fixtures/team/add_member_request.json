@@ -1,5 +1,5 @@
 {
-    "query":"mutation($input:TeamMembershipCreateInput!){teamMembershipCreate(input: $input){members{email,htmlUrl,id,name,role},errors{message,path}}}",
+    "query":"mutation ($input:TeamMembershipCreateInput!){teamMembershipCreate(input: $input){members{email,htmlUrl,id,name,role},errors{message,path}}}",
     "variables":{
         "input":{
             "teamId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",

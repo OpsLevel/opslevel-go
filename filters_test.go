@@ -65,7 +65,7 @@ func TestUpdateFilter(t *testing.T) {
 	client := ATestClient(t, "filter/update")
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: "Test Updated",
 		Predicates: []ol.FilterPredicate{{
 			Key:   ol.PredicateKeyEnumTierIndex,

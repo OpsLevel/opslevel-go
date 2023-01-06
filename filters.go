@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Predicate struct {
@@ -120,7 +120,7 @@ func (client *Client) GetFilter(id graphql.ID) (*Filter, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
-	if q.Account.Filter.Id == nil {
+	if q.Account.Filter.Id == "" {
 		return nil, fmt.Errorf("Filter with ID '%s' not found!", id)
 	}
 	return &q.Account.Filter, nil

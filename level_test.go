@@ -55,7 +55,7 @@ func TestUpdateRubricLevel(t *testing.T) {
 	client := ATestClient(t, "rubric/level/update")
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Id:          "MTIzNDU2Nzg5MTIzNDU2Nzg5",
 		Name:        "Example",
 		Description: ol.NewString("An example description"),
 	})
@@ -70,7 +70,7 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_noname")
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Id:          "MTIzNDU2Nzg5MTIzNDU2Nzg5",
 		Description: ol.NewString("An example description"),
 	})
 	// Assert
@@ -84,7 +84,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_emptydescription")
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Id:          "MTIzNDU2Nzg5MTIzNDU2Nzg5",
 		Name:        "Example",
 		Description: ol.NewString(""),
 	})
@@ -99,7 +99,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_nodescription")
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:   ol.NewID("MTIzNDU2Nzg5MTIzNDU2Nzg5"),
+		Id:   "MTIzNDU2Nzg5MTIzNDU2Nzg5",
 		Name: "Example",
 	})
 	// Assert

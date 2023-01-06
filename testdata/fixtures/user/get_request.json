@@ -1,5 +1,5 @@
 {
-  "query": "query($id:ID!){account{user(id: $id){email,htmlUrl,id,name,role}}}",
+  "query": "query ($id:ID!){account{user(id: $id){email,htmlUrl,id,name,role}}}",
   "variables": {
       "id": "kyle@opslevel.com"
   }

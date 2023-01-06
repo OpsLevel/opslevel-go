@@ -1,5 +1,5 @@
 {
-    "query": "mutation($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}",
+    "query": "mutation ($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}",
     "variables": {
       "input": {
         "alias": "MyAwesomeAlias",

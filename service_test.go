@@ -27,7 +27,7 @@ func TestGetServiceIdWithAlias(t *testing.T) {
 	result, err := client.GetServiceIdWithAlias("coredns")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx", result.Id)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx", string(result.Id))
 }
 
 func TestGetServiceWithAlias(t *testing.T) {
@@ -127,7 +127,7 @@ func TestDeleteService(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "service/delete")
 	// Act
-	err := client.DeleteService(ol.ServiceDeleteInput{Id: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")})
+	err := client.DeleteService(ol.ServiceDeleteInput{Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"})
 	// Assert
 	autopilot.Ok(t, err)
 }

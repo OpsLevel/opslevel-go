@@ -1,5 +1,5 @@
 {
-    "query": "mutation($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}",
+    "query": "mutation ($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}",
     "variables": {
       "input": {
         "alias": "coredns",

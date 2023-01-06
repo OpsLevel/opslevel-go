@@ -1,1 +1,1 @@
-{"query":"mutation($input:TeamDeleteInput!){teamDelete(input: $input){deletedTeamId,deletedTeamAlias,errors{message,path}}}","variables":{"input":{"alias":"example"}}}
+{"query":"mutation ($input:TeamDeleteInput!){teamDelete(input: $input){deletedTeamId,deletedTeamAlias,errors{message,path}}}","variables":{"input":{"alias":"example"}}}

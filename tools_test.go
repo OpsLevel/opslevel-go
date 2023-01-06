@@ -19,7 +19,7 @@ func TestCreateTool(t *testing.T) {
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", result.Service.Id)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", string(result.Service.Id))
 	autopilot.Equals(t, ol.ToolCategoryOther, result.Category)
 	autopilot.Equals(t, "example", result.DisplayName)
 	autopilot.Equals(t, "https://example.com", result.Url)

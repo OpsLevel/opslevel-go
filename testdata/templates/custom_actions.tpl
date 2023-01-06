@@ -1,4 +1,4 @@
-{{- define "custom_actions_request" }}{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{basicAuthUserName,basicAuthPassword,headers,httpMethod,webhookUrl}}{{ end }}
+{{- define "custom_actions_request" }}{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}}{{ end }}
 {{- define "custom_actions_trigger_request" }}{action{aliases,id},aliases,description,filter{id,name},id,name,owner{alias,id},timestamps{createdAt,updatedAt}}{{ end }}
 {{- define "custom_action1" }}{
     "aliases": [],
@@ -6,9 +6,9 @@
     "id": "123456789",
     "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}",
     "name": "Deploy Rollback",
-    "basicAuthUserName": null,
-    "basicAuthPassword": null,
-    "headers": "{\"Content-Type\": \"application/json\"}",
+    "headers": {
+        "Content-Type": "application/json"
+    },
     "httpMethod": "POST",
     "webhookUrl": "https://gitlab.com/api/v4/projects/1/trigger/pipeline"
 }{{ end }}
@@ -18,9 +18,10 @@
     "id": "987654321",
     "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"freeze\"}",
     "name": "Deploy Freeze",
-    "basicAuthUserName": null,
-    "basicAuthPassword": null,
-    "headers": "{\"Accept\": \"application/vnd.github+json\", \"Content-Type\": \"application/json\"}",
+    "headers": {
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json"
+    },
     "httpMethod": "PUT",
     "webhookUrl": "https://gitlab.com/api/v4/projects/1/trigger/pipeline"
 }{{ end }}

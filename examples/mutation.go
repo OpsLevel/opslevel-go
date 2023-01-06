@@ -2,9 +2,9 @@ package opslevel_example
 
 import (
 	"fmt"
+	"github.com/hasura/go-graphql-client"
 
 	"github.com/opslevel/opslevel-go/v2023"
-	"github.com/shurcooL/graphql"
 )
 
 func init() {

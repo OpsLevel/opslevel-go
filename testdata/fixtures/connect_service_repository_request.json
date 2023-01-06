@@ -1,5 +1,5 @@
 {
-    "query": "mutation($input:ServiceRepositoryCreateInput!){serviceRepositoryCreate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id},service{id}},errors{message,path}}}",
+    "query": "mutation ($input:ServiceRepositoryCreateInput!){serviceRepositoryCreate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id},service{id}},errors{message,path}}}",
     "variables": {
       "input": {
         "service": {

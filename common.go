@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
-	"github.com/shurcooL/graphql"
 )
 
 type IdentifierInput struct {
@@ -143,7 +143,7 @@ func NewISO8601DateNow() iso8601.Time {
 
 func removeDuplicates(data []string) []string {
 	keys := make(map[string]bool)
-	list := []string{}
+	var list []string
 
 	for _, entry := range data {
 		if _, value := keys[entry]; !value {

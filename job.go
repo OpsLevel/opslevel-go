@@ -2,8 +2,8 @@ package opslevel
 
 import (
 	"encoding/base64"
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
-	"github.com/shurcooL/graphql"
 	"strings"
 )
 
@@ -96,7 +96,7 @@ type RunnerJob struct {
 }
 
 func (j *RunnerJob) Number() string {
-	id := j.Id.(string)
+	id := string(j.Id)
 	decoded, err := base64.RawURLEncoding.DecodeString(id)
 	if err != nil {
 		return id
@@ -151,7 +151,7 @@ func (c *Client) RunnerGetPendingJob(runnerId graphql.ID, lastUpdateToken graphq
 	}
 	v := PayloadVariables{
 		"id":    runnerId,
-		"token": lastUpdateToken,
+		"token": &lastUpdateToken,
 	}
 	if err := c.Mutate(&m, v); err != nil {
 		return nil, nil, err

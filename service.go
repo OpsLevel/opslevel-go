@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type ServiceId struct {
@@ -120,7 +120,7 @@ func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {
 			} `graphql:"service(id: $id)"`
 		}
 	}
-	if s.Id == nil {
+	if s.Id == "" {
 		return nil, fmt.Errorf("unable to get 'Documents', invalid service id: '%s'", s.Id)
 	}
 	v := PayloadVariables{

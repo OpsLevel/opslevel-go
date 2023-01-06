@@ -32,7 +32,7 @@ func TestRunnerGetPendingJobs(t *testing.T) {
 	client := ATestClient(t, "job/get_pending")
 	token := ol.NewID("1234")
 	// Act
-	result, token, err := client.RunnerGetPendingJob("1234567890", &token)
+	result, token, err := client.RunnerGetPendingJob("1234567890", *token)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.Image)
@@ -45,8 +45,8 @@ func TestRunnerAppendJobLog(t *testing.T) {
 	client := ATestClient(t, "job/append_log")
 	// Act
 	err := client.RunnerAppendJobLog(ol.RunnerAppendJobLogInput{
-		RunnerId:    ol.NewID("1234"),
-		RunnerJobId: ol.NewID("5678"),
+		RunnerId:    "1234",
+		RunnerJobId: "5678",
 		SentAt:      ol.NewISO8601Date("2022-07-01T01:00:00.000Z"),
 		Logs:        []string{"Log1", "Log2"},
 	})
@@ -59,8 +59,8 @@ func TestRunnerReportJobOutcome(t *testing.T) {
 	client := ATestClient(t, "job/report_outcome")
 	// Act
 	err := client.RunnerReportJobOutcome(ol.RunnerReportJobOutcomeInput{
-		RunnerId:    ol.NewID("1234567890"),
-		RunnerJobId: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzE"),
+		RunnerId:    "1234567890",
+		RunnerJobId: "Z2lkOi8vb3BzbGV2ZWwvUnVubmVyczo6Sm9iUnVuLzE",
 		Outcome:     ol.RunnerJobOutcomeEnumExecutionTimeout,
 	})
 	// Assert

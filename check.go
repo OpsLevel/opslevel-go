@@ -3,8 +3,8 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
-	"github.com/shurcooL/graphql"
 )
 
 type CheckOwner struct {
@@ -770,7 +770,7 @@ func (client *Client) GetCheck(id graphql.ID) (*Check, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
-	if q.Account.Check.Id == nil {
+	if q.Account.Check.Id == "" {
 		return nil, fmt.Errorf("check with ID '%s' not found", id)
 	}
 	return &q.Account.Check, nil

@@ -1,5 +1,5 @@
 {
-  "query": "mutation($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}",
+  "query": "mutation ($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}",
   "variables": {
     "user": {
       "email": "kyle@opslevel.com"
