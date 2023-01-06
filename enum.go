@@ -126,12 +126,30 @@ const (
 	CustomActionsHttpMethodEnumDELETE CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request
 )
 
-// All ConnectiveEnum as []string
+// All CustomActionsHttpMethodEnum as []string
 func AllCustomActionsHttpMethodEnum() []string {
 	return []string{
 		string(CustomActionsHttpMethodEnumPost),
 		string(CustomActionsHttpMethodEnumPut),
 		string(CustomActionsHttpMethodEnumDELETE),
+	}
+}
+
+// CustomActionsTriggerVisibilityEnum Who can see and use the trigger definition
+type CustomActionsTriggerVisibilityEnum string
+
+const (
+	CustomActionsTriggerVisibilityEnumEveryone   CustomActionsTriggerVisibilityEnum = "everyone" // All users of OpsLevel
+	CustomActionsTriggerVisibilityEnumAdmins    CustomActionsTriggerVisibilityEnum = "admins"  // Admin users
+	CustomActionsTriggerVisibilityEnumServiceOwners CustomActionsTriggerVisibilityEnum = "service_owners" // The owners of a service
+)
+
+// All CustomActionsTriggerVisibilityEnum as []string
+func AllCustomActionsTriggerVisibilityEnum() []string {
+	return []string{
+		string(CustomActionsTriggerVisibilityEnumEveryone),
+		string(CustomActionsTriggerVisibilityEnumAdmins),
+		string(CustomActionsTriggerVisibilityEnumServiceOwners),
 	}
 }
 
