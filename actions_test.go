@@ -27,7 +27,7 @@ func TestCreateWebhookAction(t *testing.T) {
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}",
-		Headers: map[string]string{
+		Headers: ol.JSON{
 			"Content-Type": "application/json",
 		},
 		HTTPMethod: ol.CustomActionsHttpMethodEnumPost,
@@ -109,14 +109,15 @@ func TestUpdateWebhookAction2(t *testing.T) {
  }}}`
 
 	client := ABetterTestClient(t, "custom_actions/update_action2", request, response)
+	headers := ol.JSON{
+		"Accept": "application/json",
+	}
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          "123456789",
 		Description: ol.NewString(""),
-		Headers: map[string]string{
-			"Accept": "application/json",
-		},
+		Headers:     &headers,
 	})
 
 	// Assert
