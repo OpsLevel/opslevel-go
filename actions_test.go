@@ -151,7 +151,7 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
 		"mutation ($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","filterId":"987654321","name":"Deploy Rollback","ownerId":"123456789", "visibility": "everyone"}}
+		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","filterId":"987654321","name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionCreate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},
@@ -224,7 +224,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
 		"mutation ($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "filterId":null, "visibility": "everyone"}}
+		"variables":{"input":{"id":"123456789", "filterId":null, "accessControl": "everyone"}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},
@@ -246,7 +246,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 	//Arrange
 	request := `{"query":
 		"mutation ($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "name":"test", "description": "", "visibility": "everyone"}}
+		"variables":{"input":{"id":"123456789", "name":"test", "description": "", "accessControl": "everyone"}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},

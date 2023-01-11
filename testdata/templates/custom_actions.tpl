@@ -1,5 +1,5 @@
 {{- define "custom_actions_request" }}{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}}{{ end }}
-{{- define "custom_actions_trigger_request" }}{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},visibility}{{ end }}
+{{- define "custom_actions_trigger_request" }}{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate}{{ end }}
 {{- define "custom_action1" }}{
     "aliases": [],
     "description": null,

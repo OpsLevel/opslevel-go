@@ -135,21 +135,21 @@ func AllCustomActionsHttpMethodEnum() []string {
 	}
 }
 
-// CustomActionsTriggerVisibilityEnum Who can see and use the trigger definition
-type CustomActionsTriggerVisibilityEnum string
+// CustomActionsTriggerDefinitionAccessControlEnum Who can see and use the trigger definition
+type CustomActionsTriggerDefinitionAccessControlEnum string
 
 const (
-	CustomActionsTriggerVisibilityEnumEveryone   CustomActionsTriggerVisibilityEnum = "everyone" // All users of OpsLevel
-	CustomActionsTriggerVisibilityEnumAdmins    CustomActionsTriggerVisibilityEnum = "admins"  // Admin users
-	CustomActionsTriggerVisibilityEnumServiceOwners CustomActionsTriggerVisibilityEnum = "service_owners" // The owners of a service
+	CustomActionsTriggerDefinitionAccessControlEnumEveryone   CustomActionsTriggerDefinitionAccessControlEnum = "everyone" // All users of OpsLevel
+	CustomActionsTriggerDefinitionAccessControlEnumAdmins    CustomActionsTriggerDefinitionAccessControlEnum = "admins"  // Admin users
+	CustomActionsTriggerDefinitionAccessControlEnumServiceOwners CustomActionsTriggerDefinitionAccessControlEnum = "service_owners" // The owners of a service
 )
 
-// All CustomActionsTriggerVisibilityEnum as []string
-func AllCustomActionsTriggerVisibilityEnum() []string {
+// All CustomActionsTriggerDefinitionAccessControlEnum as []string
+func AllCustomActionsTriggerDefinitionAccessControlEnum() []string {
 	return []string{
-		string(CustomActionsTriggerVisibilityEnumEveryone),
-		string(CustomActionsTriggerVisibilityEnumAdmins),
-		string(CustomActionsTriggerVisibilityEnumServiceOwners),
+		string(CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		string(CustomActionsTriggerDefinitionAccessControlEnumAdmins),
+		string(CustomActionsTriggerDefinitionAccessControlEnumServiceOwners),
 	}
 }
 

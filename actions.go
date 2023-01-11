@@ -27,17 +27,18 @@ type CustomActionsWebhookAction struct {
 }
 
 type CustomActionsTriggerDefinition struct {
-	Action                 CustomActionsId                    `graphql:"action"`
-	Aliases                []string                           `graphql:"aliases"`
-	Description            string                             `graphql:"description"`
-	Filter                 FilterId                           `graphql:"filter"`
-	Id                     graphql.ID                         `graphql:"id"`
-	ManualInputsDefinition string                             `graphql:"manualInputsDefinition"`
-	Name                   string                             `graphql:"name"`
-	Owner                  TeamId                             `graphql:"owner"`
-	Published              bool                               `graphql:"published"`
-	Timestamps             Timestamps                         `graphql:"timestamps"`
-	Visibility             CustomActionsTriggerVisibilityEnum `graphql:"visibility"`
+	Action                 CustomActionsId                                 `graphql:"action"`
+	Aliases                []string                                        `graphql:"aliases"`
+	Description            string                                          `graphql:"description"`
+	Filter                 FilterId                                        `graphql:"filter"`
+	Id                     graphql.ID                                      `graphql:"id"`
+	ManualInputsDefinition string                                          `graphql:"manualInputsDefinition"`
+	Name                   string                                          `graphql:"name"`
+	Owner                  TeamId                                          `graphql:"owner"`
+	Published              bool                                            `graphql:"published"`
+	Timestamps             Timestamps                                      `graphql:"timestamps"`
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `graphql:"accessControl"`
+	ResponseTemplate       string                                          `graphql:"responseTemplate"`
 }
 
 type CustomActionsExternalActionsConnection struct {
@@ -79,21 +80,23 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	Filter      *graphql.ID     `json:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition *graphql.String                    `json:"manualInputsDefinition,omitempty"`
-	Published              *bool                              `json:"published,omitempty"`
-	Visibility             CustomActionsTriggerVisibilityEnum `json:"visibility"`
+	ManualInputsDefinition *graphql.String                                         `json:"manualInputsDefinition,omitempty"`
+	Published              *bool                                           `json:"published,omitempty"`
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
+	ResponseTemplate       string                                          `json:"responseTemplate"`
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
-	Id                     graphql.ID                         `json:"id"`
-	Name                   *graphql.String                    `json:"name,omitempty"`
-	Description            *graphql.String                    `json:"description,omitempty"`
-	Owner                  interface{}                        `json:"ownerId,omitempty"`
-	Action                 interface{}                        `json:"actionId,omitempty"`
-	Filter                 interface{}                        `json:"filterId,omitempty"`
-	ManualInputsDefinition *graphql.String                    `json:"manualInputsDefinition,omitempty"`
-	Published              *bool                              `json:"published,omitempty"`
-	Visibility             CustomActionsTriggerVisibilityEnum `json:"visibility"`
+	Id                     graphql.ID                                      `json:"id"`
+	Name                   *graphql.String                                 `json:"name,omitempty"`
+	Description            *graphql.String                                 `json:"description,omitempty"`
+	Owner                  interface{}                                     `json:"ownerId,omitempty"`
+	Action                 interface{}                                     `json:"actionId,omitempty"`
+	Filter                 interface{}                                     `json:"filterId,omitempty"`
+	ManualInputsDefinition *graphql.String                                         `json:"manualInputsDefinition,omitempty"`
+	Published              *bool                                           `json:"published,omitempty"`
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
+	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
@@ -185,8 +188,8 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 			Errors            []OpsLevelErrors
 		} `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
 	}
-	if input.Visibility == "" {
-		input.Visibility = CustomActionsTriggerVisibilityEnumEveryone
+	if input.AccessControl == "" {
+		input.AccessControl = CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -245,8 +248,8 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 			Errors            []OpsLevelErrors
 		} `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
 	}
-	if input.Visibility == "" {
-		input.Visibility = CustomActionsTriggerVisibilityEnumEveryone
+	if input.AccessControl == "" {
+		input.AccessControl = CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	}
 	v := PayloadVariables{
 		"input": input,
