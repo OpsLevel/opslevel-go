@@ -58,7 +58,7 @@ type CustomActionsWebhookActionCreateInput struct {
 	LiquidTemplate string                      `json:"liquidTemplate"`
 	WebhookURL     string                      `json:"webhookUrl"`
 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod"`
-	Headers        JSON                        `json:"headers,omitempty"`
+	Headers        JSON                        `json:"headers"`
 }
 
 type CustomActionsWebhookActionUpdateInput struct {
@@ -68,7 +68,7 @@ type CustomActionsWebhookActionUpdateInput struct {
 	LiquidTemplate *graphql.String             `json:"liquidTemplate,omitempty"`
 	WebhookURL     *graphql.String             `json:"webhookUrl,omitempty"`
 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
-	Headers        JSON                        `json:"headers,omitempty"`
+	Headers        *JSON                       `json:"headers,omitempty"`
 }
 
 type CustomActionsTriggerDefinitionCreateInput struct {
@@ -79,7 +79,7 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	Filter      *graphql.ID     `json:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition *string                            `json:"manualInputsDefinition,omitempty"`
+	ManualInputsDefinition *graphql.String                    `json:"manualInputsDefinition,omitempty"`
 	Published              *bool                              `json:"published,omitempty"`
 	Visibility             CustomActionsTriggerVisibilityEnum `json:"visibility"`
 }
@@ -91,7 +91,7 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	Owner                  interface{}                        `json:"ownerId,omitempty"`
 	Action                 interface{}                        `json:"actionId,omitempty"`
 	Filter                 interface{}                        `json:"filterId,omitempty"`
-	ManualInputsDefinition *string                            `json:"manualInputsDefinition,omitempty"`
+	ManualInputsDefinition *graphql.String                    `json:"manualInputsDefinition,omitempty"`
 	Published              *bool                              `json:"published,omitempty"`
 	Visibility             CustomActionsTriggerVisibilityEnum `json:"visibility"`
 }
