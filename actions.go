@@ -80,7 +80,7 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	Filter      *graphql.ID     `json:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition *graphql.String                                         `json:"manualInputsDefinition,omitempty"`
+	ManualInputsDefinition string                                          `json:"manualInputsDefinition"`
 	Published              *bool                                           `json:"published,omitempty"`
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
 	ResponseTemplate       string                                          `json:"responseTemplate"`
@@ -93,9 +93,9 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	Owner                  interface{}                                     `json:"ownerId,omitempty"`
 	Action                 interface{}                                     `json:"actionId,omitempty"`
 	Filter                 interface{}                                     `json:"filterId,omitempty"`
-	ManualInputsDefinition *graphql.String                                         `json:"manualInputsDefinition,omitempty"`
+	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty"`
 	Published              *bool                                           `json:"published,omitempty"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty"`
 	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty"`
 }
 
@@ -247,9 +247,6 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 			TriggerDefinition CustomActionsTriggerDefinition
 			Errors            []OpsLevelErrors
 		} `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
-	}
-	if input.AccessControl == "" {
-		input.AccessControl = CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	}
 	v := PayloadVariables{
 		"input": input,
