@@ -145,11 +145,11 @@ type CheckUpdateInput struct {
 	Name     string        `json:"name,omitempty"`
 	Enabled  *bool         `json:"enabled,omitempty"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category *graphql.ID   `json:"categoryId"`
-	Level    *graphql.ID   `json:"levelId"`
-	Owner    *graphql.ID   `json:"ownerId"`
-	Filter   *graphql.ID   `json:"filterId"`
-	Notes    string        `json:"notes"`
+	Category interface{}   `json:"categoryId,omitempty"`
+	Level    interface{}   `json:"levelId,omitempty"`
+	Owner    interface{}   `json:"ownerId,omitempty"`
+	Filter   interface{}   `json:"filterId,omitempty"`
+	Notes    *string       `json:"notes,omitempty"`
 }
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
