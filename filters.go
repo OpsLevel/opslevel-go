@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Predicate struct {
@@ -22,11 +22,15 @@ type PredicateUpdateInput struct {
 	Value string            `json:"value,omitempty"`
 }
 
+type FilterId struct {
+	Id   graphql.ID
+	Name string
+}
+
 type Filter struct {
 	Connective ConnectiveEnum
 	HtmlURL    string
-	Id         graphql.ID
-	Name       string
+	FilterId
 	Predicates []FilterPredicate
 }
 
@@ -116,7 +120,7 @@ func (client *Client) GetFilter(id graphql.ID) (*Filter, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
-	if q.Account.Filter.Id == nil {
+	if q.Account.Filter.Id == "" {
 		return nil, fmt.Errorf("Filter with ID '%s' not found!", id)
 	}
 	return &q.Account.Filter, nil

@@ -1,5 +1,5 @@
 {
-    "query": "query($id:ID!){account{level(id: $id){alias,description,id,index,name}}}",
+    "query": "query ($id:ID!){account{level(id: $id){alias,description,id,index,name}}}",
     "variables": {
       "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
     }

@@ -52,7 +52,7 @@ func TestUpdateRubricCategory(t *testing.T) {
 	client := ATestClient(t, "rubric/category/update")
 	// Act
 	result, _ := client.UpdateCategory(ol.CategoryUpdateInput{
-		Id:   ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"),
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz",
 		Name: "Emily",
 	})
 	// Assert

@@ -1,5 +1,5 @@
 {
-    "query":"mutation($input:ContactDeleteInput!){contactDelete(input: $input){deletedContactId,errors{message,path}}}",
+    "query":"mutation ($input:ContactDeleteInput!){contactDelete(input: $input){deletedContactId,errors{message,path}}}",
     "variables":{
         "input":{
             "id":"Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4"

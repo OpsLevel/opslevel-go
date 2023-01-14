@@ -6,4 +6,19 @@
 {{- define "id2" }}OTg3NjU0MzIxOTg3NjU0MzIx{{ end }}
 {{- define "eid1" }}NzQxODUyOTYzNzQxODUyOTYz{{ end }}
 {{- define "description" }}An example description{{ end }}
+{{- define "pagination_request" }}pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount{{ end }}
+{{- define "no_pagination_response" }}"pageInfo": {
+    "hasNextPage": false,
+    "hasPreviousPage": false,
+    "startCursor": "MQ",
+    "endCursor": "NA"
+}{{ end }}
+{{- define "error1" }}{
+    "message": "Example Error",
+    "path": [
+        "one",
+        "two",
+        "three"
+    ]
+}{{ end }}
 

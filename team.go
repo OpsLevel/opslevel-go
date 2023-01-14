@@ -3,7 +3,7 @@ package opslevel
 import (
 	"html"
 
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Contact struct {

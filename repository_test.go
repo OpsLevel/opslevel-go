@@ -59,7 +59,7 @@ func TestDeleteServiceRepository(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "repository/service/delete")
 	// Act
-	err := client.DeleteServiceRepository(ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"))
+	err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
 	// Assert
 	autopilot.Ok(t, err)
 }

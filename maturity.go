@@ -1,6 +1,6 @@
 package opslevel
 
-import "github.com/shurcooL/graphql"
+import "github.com/hasura/go-graphql-client"
 
 type CategoryBreakdown struct {
 	Category Category

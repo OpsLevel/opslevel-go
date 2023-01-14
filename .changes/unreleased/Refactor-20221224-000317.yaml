@@ -1,0 +1,4 @@
+kind: Refactor
+body: Add a "HandleErrors" method that wraps "FormatErrors" to reduce code paths and
+  increase test coverage
+time: 2022-12-24T00:03:17.108283-06:00

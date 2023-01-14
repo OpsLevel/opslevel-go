@@ -2,7 +2,7 @@ package opslevel
 
 import (
 	"errors"
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type MemberInput struct {
@@ -61,7 +61,7 @@ func (u *User) Teams(client *Client) ([]Team, error) {
 			} `graphql:"user(id: $user)"`
 		}
 	}
-	if u.Id == nil {
+	if u.Id == "" {
 		return nil, errors.New("unable to get teams, nil user id")
 	}
 	v := PayloadVariables{

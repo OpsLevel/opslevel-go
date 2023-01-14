@@ -1,0 +1,4 @@
+kind: Feature
+body: Add a new input type "JSON" which supports turning a map[string]string into
+  escaped json when used in mutation input
+time: 2022-12-24T00:07:22.121073-06:00

@@ -1,6 +1,6 @@
 package opslevel
 
-import "github.com/shurcooL/graphql"
+import "github.com/hasura/go-graphql-client"
 
 type ServiceDocumentSource struct {
 	Integration       `graphql:"... on ApiDocIntegration"`
@@ -28,11 +28,12 @@ func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, doc
 	}
 	v := PayloadVariables{
 		"service":   *NewIdentifier(service),
-		"docPath":   NewString(docPath),
+		"docPath":   NullString(),
 		"docSource": docSource,
 	}
-	if err := c.Mutate(&m, v); err != nil {
-		return nil, err
+	if docPath != "" {
+		v["docPath"] = NewString(docPath)
 	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	err := c.Mutate(&m, v)
+	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }

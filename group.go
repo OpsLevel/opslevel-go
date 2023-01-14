@@ -3,7 +3,7 @@ package opslevel
 import (
 	"fmt"
 
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type GroupId struct {
@@ -142,7 +142,7 @@ func (g *Group) ChildTeams(client *Client) ([]TeamId, error) {
 			} `graphql:"group(id: $group)"`
 		}
 	}
-	if g.Id == nil {
+	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
 	}
 	v := PayloadVariables{
@@ -176,7 +176,7 @@ func (g *Group) DescendantTeams(client *Client) ([]TeamId, error) {
 			} `graphql:"group(id: $group)"`
 		}
 	}
-	if g.Id == nil {
+	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
 	}
 	v := PayloadVariables{
@@ -210,7 +210,7 @@ func (g *Group) DescendantRepositories(client *Client) ([]RepositoryId, error) {
 			} `graphql:"group(id: $group)"`
 		}
 	}
-	if g.Id == nil {
+	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Repositories, invalid group id: '%s'", g.Id)
 	}
 	v := PayloadVariables{
@@ -244,7 +244,7 @@ func (g *Group) DescendantServices(client *Client) ([]ServiceId, error) {
 			} `graphql:"group(id: $group)"`
 		}
 	}
-	if g.Id == nil {
+	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Services, invalid group id: '%s'", g.Id)
 	}
 	v := PayloadVariables{
@@ -278,7 +278,7 @@ func (g *Group) DescendantSubgroups(client *Client) ([]GroupId, error) {
 			} `graphql:"group(id: $group)"`
 		}
 	}
-	if g.Id == nil {
+	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Subgroups, invalid group id: '%s'", g.Id)
 	}
 	v := PayloadVariables{
@@ -312,7 +312,7 @@ func (g *Group) Members(client *Client) ([]UserId, error) {
 			} `graphql:"group(id: $group)"`
 		}
 	}
-	if g.Id == nil {
+	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Members, invalid group id: '%s'", g.Id)
 	}
 	v := PayloadVariables{
@@ -378,7 +378,7 @@ func (client *Client) DeleteGroup(id graphql.ID) error {
 		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": *NewIdentifier(id.(string)),
+		"input": *NewIdentifier(string(id)),
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err

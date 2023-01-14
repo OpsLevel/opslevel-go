@@ -1,5 +1,5 @@
 {
-    "query": "query($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value}}}}",
+    "query": "query ($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value}}}}",
     "variables": {
       "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
     }

@@ -12,9 +12,9 @@ import (
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/shurcooL/graphql"
 )
 
 func TestMain(m *testing.M) {
@@ -26,18 +26,15 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-type GraphqlQuery struct {
-	Query     string
-	Variables map[string]interface{} `json:",omitempty"`
-}
-
-func ToJson(query GraphqlQuery) string {
+func ToJson(query autopilot.GraphqlQuery) string {
 	bytes, _ := json.Marshal(query)
 	return string(bytes)
 }
 
-func Parse(r *http.Request) GraphqlQuery {
-	output := GraphqlQuery{}
+func Parse(r *http.Request) autopilot.GraphqlQuery {
+	output := autopilot.GraphqlQuery{
+		Variables: map[string]interface{}{},
+	}
 	defer r.Body.Close()
 	bytes, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -58,21 +55,40 @@ func LogRaw() autopilot.RequestValidation {
 	}
 }
 
-func QueryValidation(t *testing.T, exp string) autopilot.RequestValidation {
-	return func(r *http.Request) {
-		q := Parse(r)
-		autopilot.Equals(t, exp, q.Query)
+func Templated(input string) string {
+	response, err := autopilot.Templater.Use(input)
+	if err != nil {
+		panic(err)
+	}
+	return response
+}
+
+func TemplatedResponse(response string) autopilot.ResponseWriter {
+	return func(w http.ResponseWriter) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, Templated(response))
 	}
 }
 
-func FixtureQueryValidation(t *testing.T, fixture string) autopilot.RequestValidation {
-	return func(r *http.Request) {
-		q := Parse(r)
-		exp := GraphqlQuery{}
-		bytes := []byte(autopilot.Fixture(fixture))
-		json.Unmarshal(bytes, &exp)
-		autopilot.Equals(t, ToJson(exp), ToJson(q))
+func GraphQLQueryTemplate(request string) autopilot.GraphqlQuery {
+	exp := autopilot.GraphqlQuery{
+		Variables: nil,
 	}
+	json.Unmarshal([]byte(Templated(request)), &exp)
+	return exp
+}
+
+func GraphQLQueryTemplatedValidation(t *testing.T, request string) autopilot.RequestValidation {
+	return func(r *http.Request) {
+		autopilot.Equals(t, ToJson(GraphQLQueryTemplate(request)), ToJson(Parse(r)))
+	}
+}
+
+func ABetterTestClient(t *testing.T, endpoint string, request string, response string) *ol.Client {
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
+		TemplatedResponse(response),
+		GraphQLQueryTemplatedValidation(t, request))))
 }
 
 func ATestClient(t *testing.T, endpoint string) *ol.Client {
@@ -113,7 +129,7 @@ func TestClientQuery(t *testing.T) {
 	err := client.Query(&q, v)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "1234", q.Account.Id)
+	autopilot.Equals(t, "1234", string(q.Account.Id))
 }
 
 /*

@@ -106,7 +106,7 @@ func TestDescendantServices(t *testing.T) {
 	result, err := group.DescendantServices(client2)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8yNjE5", result[0].Id)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8yNjE5", string(result[0].Id))
 	autopilot.Equals(t, "atlantis", result[0].Aliases[0])
 }
 
@@ -130,7 +130,7 @@ func TestGetGroup(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "test_group_1", result.Alias)
-	autopilot.Equals(t, nil, result.Parent.Id)
+	autopilot.Equals(t, "", string(result.Parent.Id))
 }
 
 func TestGetGroupWithAlias(t *testing.T) {
@@ -141,7 +141,7 @@ func TestGetGroupWithAlias(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "test_group_1", result.Alias)
-	autopilot.Equals(t, nil, result.Parent.Id)
+	autopilot.Equals(t, "", string(result.Parent.Id))
 }
 
 func TestListGroups(t *testing.T) {

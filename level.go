@@ -3,7 +3,7 @@ package opslevel
 import (
 	"fmt"
 
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Level struct {
@@ -94,7 +94,7 @@ func (client *Client) GetLevel(id graphql.ID) (*Level, error) {
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
-	if q.Account.Level.Id == nil {
+	if q.Account.Level.Id == "" {
 		return nil, fmt.Errorf("Level with ID '%s' not found!", id)
 	}
 	return &q.Account.Level, nil

@@ -3,8 +3,8 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
-	"github.com/shurcooL/graphql"
 )
 
 type Language struct {

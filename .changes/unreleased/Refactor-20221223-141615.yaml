@@ -1,0 +1,4 @@
+kind: Refactor
+body: change webhook action headers to purely just be a map[string]string because
+  the API now supports it
+time: 2022-12-23T14:16:15.621954-06:00

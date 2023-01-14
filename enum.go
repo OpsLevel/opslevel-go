@@ -117,6 +117,42 @@ func AllCheckType() []string {
 	}
 }
 
+// CustomActionsHttpMethodEnum An HTTP request method
+type CustomActionsHttpMethodEnum string
+
+const (
+	CustomActionsHttpMethodEnumPost   CustomActionsHttpMethodEnum = "POST" // An HTTP POST request
+	CustomActionsHttpMethodEnumPut    CustomActionsHttpMethodEnum = "PUT"  // An HTTP PUT request
+	CustomActionsHttpMethodEnumDELETE CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request
+)
+
+// All CustomActionsHttpMethodEnum as []string
+func AllCustomActionsHttpMethodEnum() []string {
+	return []string{
+		string(CustomActionsHttpMethodEnumPost),
+		string(CustomActionsHttpMethodEnumPut),
+		string(CustomActionsHttpMethodEnumDELETE),
+	}
+}
+
+// CustomActionsTriggerDefinitionAccessControlEnum Who can see and use the trigger definition
+type CustomActionsTriggerDefinitionAccessControlEnum string
+
+const (
+	CustomActionsTriggerDefinitionAccessControlEnumEveryone   CustomActionsTriggerDefinitionAccessControlEnum = "everyone" // All users of OpsLevel
+	CustomActionsTriggerDefinitionAccessControlEnumAdmins    CustomActionsTriggerDefinitionAccessControlEnum = "admins"  // Admin users
+	CustomActionsTriggerDefinitionAccessControlEnumServiceOwners CustomActionsTriggerDefinitionAccessControlEnum = "service_owners" // The owners of a service
+)
+
+// All CustomActionsTriggerDefinitionAccessControlEnum as []string
+func AllCustomActionsTriggerDefinitionAccessControlEnum() []string {
+	return []string{
+		string(CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		string(CustomActionsTriggerDefinitionAccessControlEnumAdmins),
+		string(CustomActionsTriggerDefinitionAccessControlEnumServiceOwners),
+	}
+}
+
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
 type ConnectiveEnum string
 

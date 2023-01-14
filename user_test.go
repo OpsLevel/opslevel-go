@@ -16,7 +16,7 @@ func TestInviteUser(t *testing.T) {
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "1", result.Id)
+	autopilot.Equals(t, "1", string(result.Id))
 	autopilot.Equals(t, "Kyle Rockman", result.Name)
 	autopilot.Equals(t, ol.UserRoleUser, result.Role)
 }
@@ -28,7 +28,7 @@ func TestGetUser(t *testing.T) {
 	result, err := client.GetUser("kyle@opslevel.com")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "1", result.Id)
+	autopilot.Equals(t, "1", string(result.Id))
 	autopilot.Equals(t, "Kyle Rockman", result.Name)
 	autopilot.Equals(t, ol.UserRoleUser, result.Role)
 }
@@ -54,7 +54,7 @@ func TestUpdateUser(t *testing.T) {
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "1", result.Id)
+	autopilot.Equals(t, "1", string(result.Id))
 	autopilot.Equals(t, "Kyle Rockman", result.Name)
 	autopilot.Equals(t, ol.UserRoleAdmin, result.Role)
 }

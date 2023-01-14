@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/shurcooL/graphql"
+	"github.com/hasura/go-graphql-client"
 	"golang.org/x/oauth2"
 	"net/http"
 	"os"

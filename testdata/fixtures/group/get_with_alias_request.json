@@ -1,5 +1,5 @@
 {
-    "query": "query($group:String!){account{group(alias: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}",
+    "query": "query ($group:String!){account{group(alias: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}",
     "variables": {
       "group": "test_group_1"
     }
