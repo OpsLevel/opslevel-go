@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.13.1
-	github.com/hashicorp/go-retryablehttp v0.7.1
+	github.com/hashicorp/go-retryablehttp v0.7.2
 	github.com/hasura/go-graphql-client v0.8.1
 	github.com/relvacode/iso8601 v1.1.0
 	github.com/rocktavious/autopilot/v2022 v2022.11.9
@@ -20,7 +20,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/huandu/xstrings v1.3.1 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/klauspost/compress v1.15.14 // indirect
