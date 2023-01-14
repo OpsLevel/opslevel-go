@@ -15,13 +15,15 @@ var checkCreateInput = ol.CheckCreateInput{
 	Notes:    "Hello World Check",
 }
 
+var checkUpdateNotes = "Hello World Check"
+
 var checkUpdateInput = ol.CheckUpdateInput{
 	Id:       "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
 	Name:     "Hello World",
 	Enabled:  ol.Bool(true),
 	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
 	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    "Hello World Check",
+	Notes:    &checkUpdateNotes,
 }
 
 var testcases = map[string]struct {
