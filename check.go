@@ -145,10 +145,10 @@ type CheckUpdateInput struct {
 	Name     string        `json:"name,omitempty"`
 	Enabled  *bool         `json:"enabled,omitempty"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category interface{}   `json:"categoryId,omitempty"`
-	Level    interface{}   `json:"levelId,omitempty"`
-	Owner    interface{}   `json:"ownerId,omitempty"`
-	Filter   interface{}   `json:"filterId,omitempty"`
+	Category interface{}   `json:"categoryId"`
+	Level    interface{}   `json:"levelId"`
+	Owner    interface{}   `json:"ownerId"`
+	Filter   interface{}   `json:"filterId"`
 	Notes    *string       `json:"notes,omitempty"`
 }
 
