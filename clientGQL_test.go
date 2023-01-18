@@ -86,9 +86,10 @@ func GraphQLQueryTemplatedValidation(t *testing.T, request string) autopilot.Req
 }
 
 func ABetterTestClient(t *testing.T, endpoint string, request string, response string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
-		TemplatedResponse(response),
-		GraphQLQueryTemplatedValidation(t, request))))
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0),
+		ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
+			TemplatedResponse(response),
+			GraphQLQueryTemplatedValidation(t, request))))
 }
 
 func ATestClient(t *testing.T, endpoint string) *ol.Client {
@@ -97,10 +98,41 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
+type TestRequest struct {
+	Request  string
+	Response string
+}
+
+func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
+	url := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
+	requestCount := 0
+	autopilot.Mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		//fmt.Printf("This is request #%d\n", requestCount)
+		//fmt.Printf("%s\n", requests[requestCount].Response)
+		autopilot.SkipRequestValidation()(r)
+		//GraphQLQueryTemplatedValidation(t, requests[requestCount].Request)(r)
+		//TemplatedResponse(requests[requestCount].Response)(w)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, requests[requestCount].Response)
+
+		requestCount += 1
+	})
+	return autopilot.Server.URL + url
+}
+
+func APaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
+	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
+}
+
 func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s__%s", response, request),
-		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
-		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", request)))))
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0),
+		ol.SetURL(
+			autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s__%s", response, request),
+				autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
+				autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", request)))))
 }
 
 func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {

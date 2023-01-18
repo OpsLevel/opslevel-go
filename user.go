@@ -3,6 +3,7 @@ package opslevel
 import (
 	"errors"
 	"github.com/hasura/go-graphql-client"
+	"github.com/rs/zerolog/log"
 )
 
 type MemberInput struct {
@@ -136,12 +137,20 @@ func (client *Client) ListUsers() ([]User, error) {
 		return output, err
 	}
 	output = append(output, q.Account.Users.Nodes...)
-	for q.Account.Users.PageInfo.HasNextPage {
-		v["after"] = q.Account.Users.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+	pageInfo := q.Account.Users.PageInfo
+	for pageInfo.HasNextPage {
+		log.Warn().Msgf("HERE %+v", pageInfo)
+		var q2 struct {
+			Account struct {
+				Users UserConnection `graphql:"users(after: $after, first: $first)"`
+			}
+		}
+		v["after"] = pageInfo.End
+		if err := client.Query(&q2, v); err != nil {
 			return output, err
 		}
-		output = append(output, q.Account.Users.Nodes...)
+		output = append(output, q2.Account.Users.Nodes...)
+		pageInfo = q2.Account.Users.PageInfo
 	}
 	return output, nil
 }
