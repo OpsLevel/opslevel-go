@@ -8,8 +8,8 @@ import (
 )
 
 type AliasCreateInput struct {
-	Alias   string     `json:"alias"`
-	OwnerId graphql.ID `json:"ownerId"`
+	Alias   string `json:"alias"`
+	OwnerId ID     `json:"ownerId"`
 }
 
 type AliasDeleteInput struct {
@@ -19,7 +19,7 @@ type AliasDeleteInput struct {
 
 // #region Create
 // TODO: make sure duplicate aliases throw an error that we can catch
-func (client *Client) CreateAliases(ownerId graphql.ID, aliases []string) ([]string, error) {
+func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
 	var output []string
 	var errors []string
 	for _, alias := range aliases {

@@ -8,9 +8,9 @@ import (
 )
 
 type Integration struct {
-	Id   graphql.ID `json:"id"`
-	Name string     `json:"name"`
-	Type string     `json:"type"`
+	Id   ID     `json:"id"`
+	Name string `json:"name"`
+	Type string `json:"type"`
 }
 
 type IntegrationConnection struct {
@@ -47,7 +47,7 @@ func (conn *IntegrationConnection) Hydrate(client *Client) error {
 
 //#region Retrieve
 
-func (client *Client) GetIntegration(id graphql.ID) (*Integration, error) {
+func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	var q struct {
 		Account struct {
 			Integration Integration `graphql:"integration(id: $id)"`

@@ -103,7 +103,8 @@ func (s *Service) Hydrate(client *Client) error {
 	if err := s.Tools.Hydrate(s.Id, client); err != nil {
 		return err
 	}
-	if err := s.Repositories.Hydrate(s.Id, client); err != nil {
+	// TODO: this ID(string(ID)) is because i don't wan't to convert all of service objects
+	if err := s.Repositories.Hydrate(ID(string(s.Id)), client); err != nil {
 		return err
 	}
 	return nil

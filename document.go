@@ -1,14 +1,12 @@
 package opslevel
 
-import "github.com/hasura/go-graphql-client"
-
 type ServiceDocumentSource struct {
 	Integration       `graphql:"... on ApiDocIntegration"`
 	ServiceRepository `graphql:"... on ServiceRepository"`
 }
 
 type ServiceDocument struct {
-	Id         graphql.ID            `graphql:"id" json:"id"`
+	Id         ID                    `graphql:"id" json:"id"`
 	HtmlURL    string                `graphql:"htmlUrl" json:"htmUrl,omitempty"`
 	Source     ServiceDocumentSource `graphql:"source" json:"source"`
 	Timestamps Timestamps            `graphql:"timestamps" json:"timestamps"`

@@ -11,7 +11,7 @@ import (
 )
 
 type IdentifierInput struct {
-	Id    graphql.ID     `graphql:"id" json:"id,omitempty"`
+	Id    ID             `graphql:"id" json:"id,omitempty"`
 	Alias graphql.String `graphql:"alias" json:"alias,omitempty"`
 }
 
@@ -25,7 +25,7 @@ type PageInfo struct {
 type PayloadVariables map[string]interface{}
 
 type DeleteInput struct {
-	Id graphql.ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 type OpsLevelErrors struct {
@@ -34,13 +34,13 @@ type OpsLevelErrors struct {
 }
 
 type IdResponsePayload struct {
-	Id     graphql.ID `graphql:"deletedCheckId"`
+	Id     ID `graphql:"deletedCheckId"`
 	Errors []OpsLevelErrors
 }
 
 type ResourceDeletePayload struct {
 	Alias  string           `graphql:"deletedAlias" json:"alias,omitempty"`
-	Id     graphql.ID       `graphql:"deletedId" json:"id,omitempty"`
+	Id     ID               `graphql:"deletedId" json:"id,omitempty"`
 	Errors []OpsLevelErrors `graphql:"errors" json:"errors,omitempty"`
 }
 
@@ -71,7 +71,7 @@ func IsID(value string) bool {
 func NewIdentifier(value string) *IdentifierInput {
 	if IsID(value) {
 		return &IdentifierInput{
-			Id: graphql.ID(value),
+			Id: ID(value),
 		}
 	}
 	return &IdentifierInput{

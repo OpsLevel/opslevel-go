@@ -14,7 +14,7 @@ type Language struct {
 
 // Lightweight Repository struct used to make some API calls return less data
 type RepositoryId struct {
-	Id           graphql.ID
+	Id           ID
 	DefaultAlias string
 }
 
@@ -26,7 +26,7 @@ type Repository struct {
 	Description        string
 	Forked             bool
 	HtmlUrl            string
-	Id                 graphql.ID
+	Id                 ID
 	Languages          []Language
 	LastOwnerChangedAt iso8601.Time
 	Name               string
@@ -50,7 +50,7 @@ type RepositoryPath struct {
 type ServiceRepository struct {
 	BaseDirectory string
 	DisplayName   string
-	Id            graphql.ID
+	Id            ID
 	Repository    RepositoryId
 	Service       ServiceId
 }
@@ -103,15 +103,16 @@ type ServiceRepositoryCreateInput struct {
 }
 
 type ServiceRepositoryUpdateInput struct {
-	Id            graphql.ID `json:"id"`
-	BaseDirectory string     `json:"baseDirectory,omitempty"`
-	DisplayName   string     `json:"displayName,omitempty"`
+	Id            ID     `json:"id"`
+	BaseDirectory string `json:"baseDirectory,omitempty"`
+	DisplayName   string `json:"displayName,omitempty"`
 }
 
-func (r *Repository) GetService(service graphql.ID, directory string) *ServiceRepository {
+func (r *Repository) GetService(service ID, directory string) *ServiceRepository {
 	for _, edge := range r.Services.Edges {
 		for _, connection := range edge.ServiceRepositories {
-			if connection.Service.Id == service && connection.BaseDirectory == directory {
+			// TODO: this string cast is just for during the conversion so i don't have to change all of Service objects
+			if string(connection.Service.Id) == string(service) && connection.BaseDirectory == directory {
 				return &connection
 			}
 		}
@@ -133,7 +134,7 @@ func (r *Repository) Hydrate(client *Client) error {
 
 func (client *Client) ConnectServiceRepository(service *ServiceId, repository *Repository) (*ServiceRepository, error) {
 	input := ServiceRepositoryCreateInput{
-		Service:       IdentifierInput{Id: service.Id},
+		Service:       IdentifierInput{Id: ID(service.Id)}, // TODO: only temporary - can undo once we finally convert service objects
 		Repository:    IdentifierInput{Id: repository.Id},
 		BaseDirectory: "/",
 		DisplayName:   fmt.Sprintf("%s/%s", repository.Organization, repository.Name),
@@ -179,7 +180,7 @@ func (client *Client) GetRepositoryWithAlias(alias string) (*Repository, error) 
 	return &q.Account.Repository, nil
 }
 
-func (client *Client) GetRepository(id graphql.ID) (*Repository, error) {
+func (client *Client) GetRepository(id ID) (*Repository, error) {
 	var q struct {
 		Account struct {
 			Repository Repository `graphql:"repository(id: $repo)"`
@@ -222,7 +223,7 @@ func (conn *RepositoryConnection) Hydrate(client *Client) error {
 	return nil
 }
 
-func (conn *RepositoryServiceConnection) Hydrate(id graphql.ID, client *Client) error {
+func (conn *RepositoryServiceConnection) Hydrate(id ID, client *Client) error {
 	var q struct {
 		Account struct {
 			Repository struct {
@@ -247,7 +248,7 @@ func (conn *RepositoryServiceConnection) Hydrate(id graphql.ID, client *Client) 
 	return nil
 }
 
-func (conn *ServiceRepositoryConnection) Hydrate(id graphql.ID, client *Client) error {
+func (conn *ServiceRepositoryConnection) Hydrate(id ID, client *Client) error {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -272,7 +273,7 @@ func (conn *ServiceRepositoryConnection) Hydrate(id graphql.ID, client *Client) 
 	return nil
 }
 
-func (conn *RepositoryTagConnection) Hydrate(id graphql.ID, client *Client) error {
+func (conn *RepositoryTagConnection) Hydrate(id ID, client *Client) error {
 	var q struct {
 		Account struct {
 			Repository struct {
@@ -360,10 +361,10 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 
 //#region Delete
 
-func (client *Client) DeleteServiceRepository(id graphql.ID) error {
+func (client *Client) DeleteServiceRepository(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID `graphql:"deletedId"`
+			Id     ID `graphql:"deletedId"`
 			Errors []OpsLevelErrors
 		} `graphql:"serviceRepositoryDelete(input: $input)"`
 	}

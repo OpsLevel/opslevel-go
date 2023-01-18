@@ -8,8 +8,8 @@ import (
 
 type Level struct {
 	Alias       string
-	Description string     `json:"description,omitempty"`
-	Id          graphql.ID `json:"id"`
+	Description string `json:"description,omitempty"`
+	Id          ID     `json:"id"`
 	Index       int
 	Name        string
 }
@@ -27,13 +27,13 @@ type LevelCreateInput struct {
 }
 
 type LevelUpdateInput struct {
-	Id          graphql.ID      `json:"id"`
+	Id          ID              `json:"id"`
 	Name        graphql.String  `json:"name,omitempty"`
 	Description *graphql.String `json:"description,omitempty"`
 }
 
 type LevelDeleteInput struct {
-	Id graphql.ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 func (conn *LevelConnection) Hydrate(client *Client) error {
@@ -82,7 +82,7 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 
 //#region Retrieve
 
-func (client *Client) GetLevel(id graphql.ID) (*Level, error) {
+func (client *Client) GetLevel(id ID) (*Level, error) {
 	var q struct {
 		Account struct {
 			Level Level `graphql:"level(id: $id)"`
@@ -141,7 +141,7 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 
 //#region Delete
 
-func (client *Client) DeleteLevel(id graphql.ID) error {
+func (client *Client) DeleteLevel(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     graphql.ID `graphql:"deletedLevelId"`

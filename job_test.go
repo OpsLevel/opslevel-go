@@ -14,7 +14,7 @@ func TestRunnerRegister(t *testing.T) {
 	result, err := client.RunnerRegister()
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, *ol.NewID("1234"), result.Id)
+	autopilot.Equals(t, ol.ID("1234"), result.Id)
 }
 
 func TestRunnerGetScale(t *testing.T) {
@@ -30,14 +30,13 @@ func TestRunnerGetScale(t *testing.T) {
 func TestRunnerGetPendingJobs(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "job/get_pending")
-	token := ol.NewID("1234")
 	// Act
-	result, token, err := client.RunnerGetPendingJob("1234567890", *token)
+	result, token, err := client.RunnerGetPendingJob("1234567890", "1234")
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.Image)
 	autopilot.Equals(t, "ls -al", result.Commands[1])
-	autopilot.Equals(t, ol.NewID("12344321"), token)
+	autopilot.Equals(t, ol.ID("12344321"), token)
 }
 
 func TestRunnerAppendJobLog(t *testing.T) {
@@ -71,7 +70,7 @@ func TestRunnerUnregister(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "job/unregister")
 	// Act
-	err := client.RunnerUnregister(ol.NewID("1234"))
+	err := client.RunnerUnregister("1234")
 	// Assert
 	autopilot.Ok(t, err)
 }

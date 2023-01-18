@@ -8,7 +8,7 @@ import (
 )
 
 type Category struct {
-	Id   graphql.ID `json:"id"`
+	Id   ID `json:"id"`
 	Name string
 }
 
@@ -23,12 +23,12 @@ type CategoryCreateInput struct {
 }
 
 type CategoryUpdateInput struct {
-	Id   graphql.ID `json:"id"`
-	Name string     `json:"name"`
+	Id   ID     `json:"id"`
+	Name string `json:"name"`
 }
 
 type CategoryDeleteInput struct {
-	Id graphql.ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 func (self *Category) Alias() string {
@@ -81,7 +81,7 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 
 //#region Retrieve
 
-func (client *Client) GetCategory(id graphql.ID) (*Category, error) {
+func (client *Client) GetCategory(id ID) (*Category, error) {
 	var q struct {
 		Account struct {
 			Category Category `graphql:"category(id: $id)"`
@@ -140,10 +140,10 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 
 //#region Delete
 
-func (client *Client) DeleteCategory(id graphql.ID) error {
+func (client *Client) DeleteCategory(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID `graphql:"deletedCategoryId"`
+			Id     ID `graphql:"deletedCategoryId"`
 			Errors []OpsLevelErrors
 		} `graphql:"categoryDelete(input: $input)"`
 	}
