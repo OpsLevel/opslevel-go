@@ -35,14 +35,83 @@ func TestGetUser(t *testing.T) {
 
 func TestListUser(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "user/list")
+	requests := []TestRequest{
+		{`{
+  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+  "variables": {
+    "after":"",
+    "first":100
+  }
+}`,
+			`{
+  "data": {
+    "account": {
+      "users": {
+        "nodes": [
+          {
+            "email": "kyle@opslevel.com",
+            "id": "1",
+            "name": "Kyle Rockman",
+            "role": "user"
+          },
+          {
+            "email": "edgar@opslevel.com",
+            "id": "2",
+            "name": "Edgar Ochoa",
+            "role": "admin"
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": true,
+          "hasPreviousPage": false,
+          "startCursor": "MQ",
+          "endCursor": "NDc"
+        }
+      }
+    }
+  }
+}`},
+		{`{
+  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+  "variables": {
+    "after":"NDc",
+    "first":100
+  }
+}`,
+			`{
+  "data": {
+    "account": {
+      "users": {
+        "nodes": [
+          {
+            "email": "matthew@opslevel.com",
+            "id": "3",
+            "name": "Matthew Brahms",
+            "role": "admin"
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": true,
+          "startCursor": "NDc",
+          "endCursor": "EOf"
+        }
+      }
+    }
+  }
+}`},
+	}
+	client := APaginatedTestClient(t, "user/list", requests...)
 	// Act
-	result, err := client.ListUsers()
+	response, err := client.ListUsers(nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
+	autopilot.Equals(t, 3, len(result))
 	autopilot.Equals(t, "Edgar Ochoa", result[1].Name)
 	autopilot.Equals(t, ol.UserRoleAdmin, result[1].Role)
+	autopilot.Equals(t, "Matthew Brahms", result[2].Name)
+	autopilot.Equals(t, ol.UserRoleAdmin, result[2].Role)
 }
 
 func TestUpdateUser(t *testing.T) {

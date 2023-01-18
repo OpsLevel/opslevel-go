@@ -75,6 +75,14 @@ func (client *Client) InitialPageVariables() PayloadVariables {
 	}
 }
 
+func (client *Client) InitialPageVariablesPointer() *PayloadVariables {
+	v := PayloadVariables{
+		"after": graphql.String(""),
+		"first": client.pageSize,
+	}
+	return &v
+}
+
 func (client *Client) Query(q interface{}, variables map[string]interface{}) error {
 	return client.QueryCTX(context.Background(), q, variables)
 }
