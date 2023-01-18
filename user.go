@@ -3,7 +3,6 @@ package opslevel
 import (
 	"errors"
 	"github.com/hasura/go-graphql-client"
-	"github.com/rs/zerolog/log"
 )
 
 type MemberInput struct {
@@ -125,34 +124,31 @@ func (client *Client) GetUser(id graphql.ID) (*User, error) {
 	return &q.Account.User, nil
 }
 
-func (client *Client) ListUsers() ([]User, error) {
-	var output []User
+func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, error) {
 	var q struct {
 		Account struct {
 			Users UserConnection `graphql:"users(after: $after, first: $first)"`
 		}
 	}
-	v := client.InitialPageVariables()
-	if err := client.Query(&q, v); err != nil {
-		return output, err
-	}
-	output = append(output, q.Account.Users.Nodes...)
-	pageInfo := q.Account.Users.PageInfo
-	for pageInfo.HasNextPage {
-		log.Warn().Msgf("HERE %+v", pageInfo)
-		var q2 struct {
-			Account struct {
-				Users UserConnection `graphql:"users(after: $after, first: $first)"`
-			}
+	if variables == nil {
+		variables = &PayloadVariables{
+			"after": "",
+			"first": client.pageSize,
 		}
-		v["after"] = pageInfo.End
-		if err := client.Query(&q2, v); err != nil {
-			return output, err
-		}
-		output = append(output, q2.Account.Users.Nodes...)
-		pageInfo = q2.Account.Users.PageInfo
 	}
-	return output, nil
+	if err := client.Query(&q, *variables); err != nil {
+		return UserConnection{}, err
+	}
+	for q.Account.Users.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Users.PageInfo.End
+		resp, err := client.ListUsers(variables)
+		if err != nil {
+			return UserConnection{}, err
+		}
+		q.Account.Users.Nodes = append(q.Account.Users.Nodes, resp.Nodes...)
+		q.Account.Users.PageInfo = resp.PageInfo
+	}
+	return q.Account.Users, nil
 }
 
 //#endregion
