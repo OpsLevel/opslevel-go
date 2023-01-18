@@ -97,6 +97,27 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
+type TestRequest struct {
+	Request  string
+	Response string
+}
+
+func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
+	url := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
+	requestCount := 0
+	autopilot.Mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		GraphQLQueryTemplatedValidation(t, requests[requestCount].Request)(r)
+		TemplatedResponse(requests[requestCount].Response)(w)
+		requestCount += 1
+	})
+	return autopilot.Server.URL + url
+}
+
+func APaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
+	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
+}
+
 func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s__%s", response, request),
 		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
