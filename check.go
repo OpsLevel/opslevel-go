@@ -772,7 +772,7 @@ func (client *Client) GetCheck(id ID) (*Check, error) {
 	return &q.Account.Check, HandleErrors(err, nil)
 }
 
-func (client *Client) ListChecks() ([]Check, error) {
+func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, error) {
 	var q struct {
 		Account struct {
 			Rubric struct {
@@ -780,13 +780,22 @@ func (client *Client) ListChecks() ([]Check, error) {
 			}
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return q.Account.Rubric.Checks.Nodes, err
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := q.Account.Rubric.Checks.Hydrate(client); err != nil {
-		return q.Account.Rubric.Checks.Nodes, err
+	if err := client.Query(&q, *variables); err != nil {
+		return CheckConnection{}, err
 	}
-	return q.Account.Rubric.Checks.Nodes, nil
+	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Rubric.Checks.PageInfo.End
+		resp, err := client.ListChecks(variables)
+		if err != nil {
+			return CheckConnection{}, err
+		}
+		q.Account.Rubric.Checks.Nodes = append(q.Account.Rubric.Checks.Nodes, resp.Nodes...)
+		q.Account.Rubric.Checks.PageInfo = resp.PageInfo
+	}
+	return q.Account.Rubric.Checks, nil
 }
 
 //#endregion

@@ -552,13 +552,253 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 
 func TestListChecks(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "check/list")
+	requests := []TestRequest{
+		{`{
+			"query": "{account{rubric{checks{nodes{category{id,name},description,enabled,enableOn,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{startingDate,frequencyTimeScale,frequencyValue},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				"after": "",
+		        "first": 100
+            }`,
+			`{
+				"data": {
+      				"account": {
+						"rubric": {
+						  "checks": {
+							"nodes": [
+							  {
+								"category": null,
+								
+								"description": "Verifies that the service has a repository integrated.",
+								"enabled": true,
+								"filter": null,
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNSZXBvc2l0b3J5LzEzMjY",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "Repository Integrated",
+								"notes": null
+							  },
+							  {
+								"category": null,
+								"description": "The service has a metrics tool.",
+								"enabled": true,
+								"filter": {
+								  "connective": null,
+								  "htmlUrl": "https://app.opslevel.com/filters/401",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
+								  "name": "Tier 1 Services",
+								  "predicates": [
+									{
+									  "key": "tier_index",
+									  "keyData": null,
+									  "type": "equals",
+									  "value": "1"
+									}
+								  ]
+								},
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpUb29sVXNhZ2UvMTMyNw",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "Metrics Tool",
+								"notes": null
+							  },
+							  {
+								"category": null,
+								"description": "The service has an incidents tool.",
+								"enabled": true,
+								"filter": {
+								  "connective": null,
+								  "htmlUrl": "https://app.opslevel.com/filters/401",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
+								  "name": "Tier 1 Services",
+								  "predicates": [
+									{
+									  "key": "tier_index",
+									  "keyData": null,
+									  "type": "equals",
+									  "value": "1"
+									}
+								  ]
+								},
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpUb29sVXNhZ2UvMTMyOA",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "Incidents Tool",
+								"notes": null
+							  },
+							  {
+								"category": null,
+								"description": "Requires a check integration api call to complete a check for the service.",
+								"enabled": true,
+								"filter": {
+								  "connective": null,
+								  "htmlUrl": "https://app.opslevel.com/filters/452",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQ1Mg",
+								  "name": "Kubernetes",
+								  "predicates": [
+									{
+									  "key": "tier_index",
+									  "keyData": null,
+									  "type": "equals",
+									  "value": "1"
+									}
+								  ]
+								},
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpDdXN0b20vMTUyOA",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "k8s-controller-check",
+								"notes": "# Hello\n\nworld\n\n* One\n* Two"
+							  },
+							  {
+								"category": null,
+								"description": "Requires a payload integration api call to complete a check for the service.",
+								"enabled": false,
+								"filter": {
+								  "connective": null,
+								  "htmlUrl": "https://app.opslevel.com/filters/452",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQ1Mg",
+								  "name": "Kubernetes",
+								  "predicates": [
+									{
+									  "key": "tier_index",
+									  "keyData": null,
+									  "type": "equals",
+									  "value": "1"
+									}
+								  ]
+								},
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpQYXlsb2FkLzE1Njc",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "Image Security Validation",
+								"notes": null
+							  },
+							  {
+								"category": {
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+								  "name": "Performance"
+								},
+								
+								"description": "Requires a check integration api call to complete a check for the service.",
+								"enabled": true,
+								"filter": null,
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpDdXN0b20vMjQ1Mg",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "Hello World",
+								"notes": "Hello World Check"
+							  },
+							  {
+								"category": {
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+								  "name": "Performance"
+								},
+								
+								"description": "The service has a framework that equals <code>postgres</code>",
+								"enabled": true,
+								"filter": null,
+								"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpTZXJ2aWNlUHJvcGVydHkvMjQ5OA",
+						
+								"level": {
+								  "alias": "bronze",
+								  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+								  "index": 1,
+								  "name": "Bronze"
+								},
+								"name": "Hello World",
+								"notes": "Hello World Check"
+							  }
+							],
+							"pageInfo": {
+							  "hasNextPage": true,
+							  "hasPreviousPage": false,
+							  "startCursor": "MQ",
+							  "endCursor": "OA"
+							},
+							"totalCount": 7
+						  }}}}}`,
+			`{
+				"data": {
+				  "account": {
+					"rubric": {
+					  "checks": {
+						"nodes": [
+						  {
+							"category": null,
+							
+							"description": "Verifies that the service has an owner defined.",
+							"enabled": true,
+							"filter": null,
+							"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8xMzI9",
+					
+							"level": {
+							  "alias": "bronze",
+							  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+							  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+							  "index": 1,
+							  "name": "Bronze"
+							},
+							"name": "Owner Defined",
+							"notes": null
+						  }
+						],
+						"pageInfo": {
+						  "hasNextPage": false,
+						  "hasPreviousPage": true,
+						  "startCursor": "OA",
+						  "endCursor": "EOf"
+						},
+						"totalCount": 1
+					  }}}}}`},
+	}
+	client := APaginatedTestClient(t, "check/list", requests...)
 	// Act
-	result, err := client.ListChecks()
+	response, err := client.ListChecks(nil)
+	result := response.Nodes
 	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Metrics Tool", result[2].Name)
-	autopilot.Equals(t, "Tier 1 Services", result[2].Filter.Name)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 8, len(result))
+	autopilot.Equals(t, "Metrics Tool", result[1].Name)
+	autopilot.Equals(t, "Tier 1 Services", result[1].Filter.Name)
+	autopilot.Equals(t, "Owner Defined", result[8].Name)
+	autopilot.Equals(t, "Verifies that the service has an owner defined.", result[8].Description)
 }
 
 func TestGetMissingCheck(t *testing.T) {
