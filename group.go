@@ -7,8 +7,8 @@ import (
 )
 
 type GroupId struct {
-	Alias string     `json:"alias,omitempty"`
-	Id    graphql.ID `json:"id"`
+	Alias string `json:"alias,omitempty"`
+	Id    ID     `json:"id"`
 }
 
 type Group struct {
@@ -61,7 +61,7 @@ func (client *Client) CreateGroup(input GroupInput) (*Group, error) {
 
 //#region Retrieve
 
-func (client *Client) GetGroup(id graphql.ID) (*Group, error) {
+func (client *Client) GetGroup(id ID) (*Group, error) {
 	var q struct {
 		Account struct {
 			Group Group `graphql:"group(id: $group)"`
@@ -373,7 +373,7 @@ func (client *Client) DeleteGroupWithAlias(alias string) error {
 	return FormatErrors(m.Payload.Errors)
 }
 
-func (client *Client) DeleteGroup(id graphql.ID) error {
+func (client *Client) DeleteGroup(id ID) error {
 	var m struct {
 		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}

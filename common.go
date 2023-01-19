@@ -119,10 +119,10 @@ func FormatErrors(errs []OpsLevelErrors) error {
 }
 
 // NewId use "" to set "null" for ID input fields that can be nullified
-func NewID(id string) *graphql.ID {
-	var output graphql.ID
+func NewID(id string) *ID {
+	var output ID
 	if id != "" {
-		output = graphql.ID(id)
+		output = ID(id)
 	}
 	return &output
 }

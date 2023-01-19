@@ -164,9 +164,9 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:        "Deploy Rollback",
 		Description: ol.NewString("Disables the Deploy Freeze"),
-		Action:      ol.NewID("123456789"),
+		Action:      ol.ID("123456789"),
 		Owner:       "123456789",
-		Filter:      ol.NewID("987654321"),
+		Filter:      ol.ID("987654321"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -225,7 +225,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
 		"mutation ($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "filterId":null}}
+		"variables":{"input":{"actionId":null, "id":"123456789", "filterId":null, "ownerId":null}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},
@@ -235,8 +235,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	client := ABetterTestClient(t, "custom_actions/update_trigger", request, response)
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
-		Id:     "123456789",
-		Filter: ol.NullString(),
+		Id: "123456789",
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -247,7 +246,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 	//Arrange
 	request := `{"query":
 		"mutation ($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "name":"test", "description": ""}}
+		"variables":{"input":{"actionId":null,"id":"123456789", "name":"test", "description": "", "filterId":null, "ownerId":null}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},

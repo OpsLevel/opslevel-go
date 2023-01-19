@@ -8,8 +8,8 @@ type Tool struct {
 	Category      ToolCategory
 	CategoryAlias string `json:",omitempty"`
 	DisplayName   string
-	Environment   string     `json:",omitempty"`
-	Id            graphql.ID `json:",omitempty"`
+	Environment   string `json:",omitempty"`
+	Id            ID     `json:",omitempty"`
 	Url           string
 	Service       ServiceId
 }
@@ -25,12 +25,12 @@ type ToolCreateInput struct {
 	DisplayName  string       `json:"displayName"`
 	Url          string       `json:"url"`
 	Environment  string       `json:"environment,omitempty"`
-	ServiceId    graphql.ID   `json:"serviceId,omitempty"`
+	ServiceId    ID           `json:"serviceId,omitempty"`
 	ServiceAlias string       `json:"serviceAlias,omitempty"`
 }
 
 type ToolUpdateInput struct {
-	Id          graphql.ID   `json:"id"`
+	Id          ID           `json:"id"`
 	Category    ToolCategory `json:"category,omitempty"`
 	DisplayName string       `json:"displayName,omitempty"`
 	Url         string       `json:"url,omitempty"`
@@ -38,7 +38,7 @@ type ToolUpdateInput struct {
 }
 
 type ToolDeleteInput struct {
-	Id graphql.ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 //#region Create
@@ -64,7 +64,7 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 //#region Retrieve
 
-func (conn *ToolConnection) Hydrate(service graphql.ID, client *Client) error {
+func (conn *ToolConnection) Hydrate(service ID, client *Client) error {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -98,11 +98,11 @@ func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) 
 }
 
 // Deprecated: Use GetToolsForService instead
-func (client *Client) GetToolsForServiceWithId(service graphql.ID) ([]Tool, error) {
+func (client *Client) GetToolsForServiceWithId(service ID) ([]Tool, error) {
 	return client.GetToolsForService(service)
 }
 
-func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
+func (client *Client) GetToolsForService(service ID) ([]Tool, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -124,7 +124,7 @@ func (client *Client) GetToolsForService(service graphql.ID) ([]Tool, error) {
 	return q.Account.Service.Tools.Nodes, nil
 }
 
-func (client *Client) GetToolCount(service graphql.ID) (int, error) {
+func (client *Client) GetToolCount(service ID) (int, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -167,10 +167,10 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 
 //#region Delete
 
-func (client *Client) DeleteTool(id graphql.ID) error {
+func (client *Client) DeleteTool(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID `graphql:"deletedToolId"`
+			Id     ID `graphql:"deletedToolId"`
 			Errors []OpsLevelErrors
 		} `graphql:"toolDelete(input: $input)"`
 	}

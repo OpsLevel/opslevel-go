@@ -8,8 +8,8 @@ import (
 )
 
 type ServiceId struct {
-	Id      graphql.ID `json:"id"`
-	Aliases []string   `json:"aliases,omitempty"`
+	Id      ID       `json:"id"`
+	Aliases []string `json:"aliases,omitempty"`
 }
 
 type Service struct {
@@ -50,21 +50,21 @@ type ServiceCreateInput struct {
 }
 
 type ServiceUpdateInput struct {
-	Id          graphql.ID `json:"id,omitempty"`
-	Alias       string     `json:"alias,omitempty"`
-	Name        string     `json:"name,omitempty"`
-	Product     string     `json:"product,omitempty"`
-	Description string     `json:"description,omitempty"`
-	Language    string     `json:"language,omitempty"`
-	Framework   string     `json:"framework,omitempty"`
-	Tier        string     `json:"tierAlias,omitempty"`
-	Owner       string     `json:"ownerAlias,omitempty"`
-	Lifecycle   string     `json:"lifecycleAlias,omitempty"`
+	Id          ID     `json:"id,omitempty"`
+	Alias       string `json:"alias,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Product     string `json:"product,omitempty"`
+	Description string `json:"description,omitempty"`
+	Language    string `json:"language,omitempty"`
+	Framework   string `json:"framework,omitempty"`
+	Tier        string `json:"tierAlias,omitempty"`
+	Owner       string `json:"ownerAlias,omitempty"`
+	Lifecycle   string `json:"lifecycleAlias,omitempty"`
 }
 
 type ServiceDeleteInput struct {
-	Id    graphql.ID `json:"id,omitempty"`
-	Alias string     `json:"alias,omitempty"`
+	Id    ID     `json:"id,omitempty"`
+	Alias string `json:"alias,omitempty"`
 }
 
 //#region ServiceHelpers
@@ -206,11 +206,11 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 }
 
 // Deprecated: Use GetService instead
-func (client *Client) GetServiceWithId(id graphql.ID) (*Service, error) {
+func (client *Client) GetServiceWithId(id ID) (*Service, error) {
 	return client.GetService(id)
 }
 
-func (client *Client) GetService(id graphql.ID) (*Service, error) {
+func (client *Client) GetService(id ID) (*Service, error) {
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`
@@ -420,7 +420,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID       `graphql:"deletedServiceId"`
+			Id     ID               `graphql:"deletedServiceId"`
 			Alias  graphql.String   `graphql:"deletedServiceAlias"`
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"serviceDelete(input: $input)"`

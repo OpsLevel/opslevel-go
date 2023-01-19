@@ -173,21 +173,21 @@ type CheckAlertSourceUsageUpdateInput struct {
 type CheckCustomEventCreateInput struct {
 	CheckCreateInput
 
-	Integration      graphql.ID `json:"integrationId"`
-	ServiceSelector  string     `json:"serviceSelector"`
-	SuccessCondition string     `json:"successCondition"`
-	Message          string     `json:"resultMessage,omitempty"`
-	PassPending      *bool      `json:"passPending,omitempty"`
+	Integration      ID     `json:"integrationId"`
+	ServiceSelector  string `json:"serviceSelector"`
+	SuccessCondition string `json:"successCondition"`
+	Message          string `json:"resultMessage,omitempty"`
+	PassPending      *bool  `json:"passPending,omitempty"`
 }
 
 type CheckCustomEventUpdateInput struct {
 	CheckUpdateInput
 
-	ServiceSelector  string      `json:"serviceSelector,omitempty"`
-	SuccessCondition string      `json:"successCondition,omitempty"`
-	Message          string      `json:"resultMessage,omitempty"`
-	PassPending      *bool       `json:"passPending,omitempty"`
-	Integration      *graphql.ID `json:"integrationId,omitempty"`
+	ServiceSelector  string `json:"serviceSelector,omitempty"`
+	SuccessCondition string `json:"successCondition,omitempty"`
+	Message          string `json:"resultMessage,omitempty"`
+	PassPending      *bool  `json:"passPending,omitempty"`
+	Integration      *ID    `json:"integrationId"`
 }
 
 type CheckGitBranchProtectionCreateInput struct {
