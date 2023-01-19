@@ -404,28 +404,6 @@ type CheckResponsePayload struct {
 	Errors []OpsLevelErrors
 }
 
-func (conn *CheckConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Rubric struct {
-				Checks CheckConnection `graphql:"checks(after: $after, first: $first)"`
-			}
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	q.Account.Rubric.Checks.PageInfo = conn.PageInfo
-	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
-		v["after"] = q.Account.Rubric.Checks.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		conn.Nodes = append(conn.Nodes, q.Account.Rubric.Checks.Nodes...)
-	}
-	return nil
-}
-
 func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[string]interface{}) (*Check, error) {
 	err := client.Mutate(m, v)
 	return &p.Check, HandleErrors(err, p.Errors)
