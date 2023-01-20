@@ -600,8 +600,6 @@ func TestListChecks(t *testing.T) {
 	autopilot.Equals(t, "Tier 1 Services", result[1].Filter.Name)
 	autopilot.Equals(t, "Owner Defined", result[2].Name)
 	autopilot.Equals(t, "Verifies that the service has an owner defined.", result[2].Description)
-	//fmt.Println(Templated(requests[1].Request))
-	//panic(true)
 }
 
 func TestGetMissingCheck(t *testing.T) {
