@@ -1,9 +1,5 @@
 package opslevel
 
-import (
-	"github.com/hasura/go-graphql-client"
-)
-
 type AlertSourceExternalIdentifier struct {
 	Type       AlertSourceTypeEnum `json:"type"`
 	ExternalId string              `json:"externalId"`
@@ -12,7 +8,7 @@ type AlertSourceExternalIdentifier struct {
 type AlertSource struct {
 	Name        string              `graphql:"name"`
 	Description string              `graphql:"description"`
-	Id          graphql.ID          `graphql:"id"`
+	Id          ID                  `graphql:"id"`
 	Type        AlertSourceTypeEnum `graphql:"type"`
 	ExternalId  string              `graphql:"externalId"`
 	Integration Integration         `graphql:"integration"`
@@ -37,7 +33,7 @@ func (client *Client) GetAlertSourceWithExternalIdentifier(input AlertSourceExte
 	return &q.Account.AlertSource, nil
 }
 
-func (client *Client) GetAlertSource(id graphql.ID) (*AlertSource, error) {
+func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 	var q struct {
 		Account struct {
 			AlertSource AlertSource `graphql:"alertSource(id: $id)"`

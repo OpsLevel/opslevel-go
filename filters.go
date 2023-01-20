@@ -23,7 +23,7 @@ type PredicateUpdateInput struct {
 }
 
 type FilterId struct {
-	Id   graphql.ID
+	Id   ID
 	Name string
 }
 
@@ -54,7 +54,7 @@ type FilterCreateInput struct {
 }
 
 type FilterUpdateInput struct {
-	Id         graphql.ID        `json:"id"`
+	Id         ID                `json:"id"`
 	Name       string            `json:"name,omitempty"`
 	Predicates []FilterPredicate `json:"predicates"` //The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
 	Connective ConnectiveEnum    `json:"connective,omitempty"`
@@ -108,7 +108,7 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 
 //#region Retrieve
 
-func (client *Client) GetFilter(id graphql.ID) (*Filter, error) {
+func (client *Client) GetFilter(id ID) (*Filter, error) {
 	var q struct {
 		Account struct {
 			Filter Filter `graphql:"filter(id: $id)"`
@@ -165,15 +165,15 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 
 //#region Delete
 
-func (client *Client) DeleteFilter(id graphql.ID) error {
+func (client *Client) DeleteFilter(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID `graphql:"deletedId"`
+			Id     ID `graphql:"deletedId"`
 			Errors []OpsLevelErrors
 		} `graphql:"filterDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": DeleteInput{Id: graphql.ID(id)},
+		"input": DeleteInput{Id: id},
 	}
 	if err := client.Mutate(&m, v); err != nil {
 		return err

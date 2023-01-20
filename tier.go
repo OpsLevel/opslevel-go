@@ -1,11 +1,9 @@
 package opslevel
 
-import "github.com/hasura/go-graphql-client"
-
 type Tier struct {
 	Alias       string
 	Description string
-	Id          graphql.ID
+	Id          ID
 	Index       int
 	Name        string
 }
