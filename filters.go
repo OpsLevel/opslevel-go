@@ -64,28 +64,6 @@ func (self *Filter) Alias() string {
 	return slug.Make(self.Name)
 }
 
-func (conn *FilterConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Filters FilterConnection `graphql:"filters(after: $after, first: $first)"`
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	q.Account.Filters.PageInfo = conn.PageInfo
-	for q.Account.Filters.PageInfo.HasNextPage {
-		v["after"] = q.Account.Filters.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		for _, item := range q.Account.Filters.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
-	}
-	return nil
-}
-
 //#region Create
 
 func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
@@ -122,19 +100,28 @@ func (client *Client) GetFilter(id ID) (*Filter, error) {
 	return &q.Account.Filter, HandleErrors(err, nil)
 }
 
-func (client *Client) ListFilters() ([]Filter, error) {
+func (client *Client) ListFilters(variables *PayloadVariables) (FilterConnection, error) {
 	var q struct {
 		Account struct {
 			Filters FilterConnection `graphql:"filters"`
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return q.Account.Filters.Nodes, err
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := q.Account.Filters.Hydrate(client); err != nil {
-		return q.Account.Filters.Nodes, err
+	if err := client.Query(&q, *variables); err != nil {
+		return FilterConnection{}, err
 	}
-	return q.Account.Filters.Nodes, nil
+	for q.Account.Filters.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Filters.PageInfo.End
+		resp, err := client.ListFilters(variables)
+		if err != nil {
+			return FilterConnection{}, err
+		}
+		q.Account.Filters.Nodes = append(q.Account.Filters.Nodes, resp.Nodes...)
+		q.Account.Filters.PageInfo = resp.PageInfo
+	}
+	return q.Account.Filters, nil
 }
 
 //#endregion

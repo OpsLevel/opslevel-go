@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
@@ -50,14 +51,52 @@ func TestGetMissingFilter(t *testing.T) {
 
 func TestListFilters(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "filter/list")
-	// Act
-	result, err := client.ListFilters()
-	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, 4, len(result))
-	autopilot.Equals(t, "Test", result[1].Name)
-	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result[3].Predicates[0].Key)
+	requests := []TestRequest{
+		{`{"query": "query ($after:String!$first:Int!){account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"filters": {
+							"nodes": [
+								{
+									{{ template "filter_kubernetes_response" }}
+								},
+								{
+									{{ template "filter_tier1service_response" }} 
+								}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 2
+						  }}}}`},
+		{`{"query": "query ($after:String!$first:Int!){account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"filters": {
+							"nodes": [
+								{
+									{{ template "filter_complex_kubernetes_response" }}
+								}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }}}}`},
+	}
+	//client := APaginatedTestClient(t, "filter/list", requests...)
+	//// Act
+	//response, err := client.ListFilters(nil)
+	//result := response.Nodes
+	//// Assert
+	//autopilot.Ok(t, err)
+	//autopilot.Equals(t, 3, len(result))
+	//autopilot.Equals(t, "Tier 1 Services", result[1].Name)
+	//autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result[2].Predicates[0].Key)
+	fmt.Println(Templated(requests[0].Request))
+	panic(true)
 }
 
 func TestUpdateFilter(t *testing.T) {
