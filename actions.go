@@ -76,8 +76,10 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	Name        string          `json:"name"`
 	Description *graphql.String `json:"description,omitempty"`
 	Owner       ID              `json:"ownerId"`
-	Action      ID              `json:"actionId"`
-	Filter      ID              `json:"filterId"`
+	// In the API actionID is `ID!` but that's because of the CustomActionsWebhookActionCreateInput
+	// But we are not implementing that because it is used for the UI, so we need to enforce an actionId is given
+	Action ID  `json:"actionId"`
+	Filter *ID `json:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
 	ManualInputsDefinition string                                          `json:"manualInputsDefinition"`
@@ -87,12 +89,14 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
-	Id                     ID                                              `json:"id"`
-	Name                   *graphql.String                                 `json:"name,omitempty"`
-	Description            *graphql.String                                 `json:"description,omitempty"`
-	Owner                  *ID                                             `json:"ownerId"`
-	Action                 *ID                                             `json:"actionId"`
-	Filter                 *ID                                             `json:"filterId"`
+	Id          ID              `json:"id"`
+	Name        *graphql.String `json:"name,omitempty"`
+	Description *graphql.String `json:"description,omitempty"`
+	Owner       *ID             `json:"ownerId,omitempty"`
+	Action      *ID             `json:"actionId,omitempty"`
+	Filter      *ID             `json:"filterId,omitempty"`
+	// This is being explicitly left out to reduce the complexity of the implementation
+	// action *CustomActionsWebhookActionCreateInput
 	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty"`
 	Published              *bool                                           `json:"published,omitempty"`
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty"`

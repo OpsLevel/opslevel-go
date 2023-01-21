@@ -213,7 +213,7 @@ func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
 	if serviceErr != nil {
 		return nil, serviceErr
 	}
-	return client.GetTagsForService(ID(service.Id))
+	return client.GetTagsForService(service.Id)
 }
 
 // Deprecated: use GetTagsForService instead
