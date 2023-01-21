@@ -37,7 +37,7 @@ func TestListUser(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{
-  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
   "variables": {
     "after":"",
     "first":100
@@ -72,7 +72,7 @@ func TestListUser(t *testing.T) {
   }
 }`},
 		{`{
-  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{email,htmlUrl,id,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
   "variables": {
     "after":"NDc",
     "first":100

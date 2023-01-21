@@ -289,7 +289,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 func (client *Client) DeleteTag(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID `graphql:"deletedTagId"`
+			Id     ID `graphql:"deletedTagId"`
 			Errors []OpsLevelErrors
 		} `graphql:"tagDelete(input: $input)"`
 	}

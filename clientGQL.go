@@ -102,7 +102,7 @@ func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables ma
 func (client *Client) Validate() error {
 	var q struct {
 		Account struct {
-			Id graphql.ID
+			Id ID
 		}
 	}
 	err := client.Query(&q, nil)

@@ -144,7 +144,7 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 func (client *Client) DeleteLevel(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     graphql.ID `graphql:"deletedLevelId"`
+			Id     ID `graphql:"deletedLevelId"`
 			Errors []OpsLevelErrors
 		} `graphql:"levelDelete(input: $input)"`
 	}

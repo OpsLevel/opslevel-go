@@ -12,7 +12,6 @@ import (
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
 
-	"github.com/hasura/go-graphql-client"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -142,7 +141,7 @@ func TestClientQuery(t *testing.T) {
 	client := ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
 	var q struct {
 		Account struct {
-			Id graphql.ID
+			Id ol.ID
 		}
 	}
 	var v map[string]interface{}

@@ -9,17 +9,16 @@ type MemberInput struct {
 	Email string `json:"email"`
 }
 
-type User struct {
-	Email   string
-	HTMLUrl string
-	Id      graphql.ID
-	Name    string
-	Role    UserRole
+type UserId struct {
+	Id    ID
+	Email string
 }
 
-type UserId struct {
-	Email string
-	Id    graphql.ID
+type User struct {
+	UserId
+	HTMLUrl string
+	Name    string
+	Role    UserRole
 }
 
 type UserConnection struct {
@@ -28,7 +27,7 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    graphql.ID     `graphql:"id" json:"id,omitempty"`
+	Id    ID             `graphql:"id" json:"id,omitempty"`
 	Email graphql.String `graphql:"email" json:"email,omitempty"`
 }
 
@@ -42,7 +41,7 @@ type UserInput struct {
 func NewUserIdentifier(value string) UserIdentifierInput {
 	if IsID(value) {
 		return UserIdentifierInput{
-			Id: graphql.ID(value),
+			Id: ID(value),
 		}
 	}
 	return UserIdentifierInput{
@@ -109,14 +108,14 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 
 //#region Retrieve
 
-func (client *Client) GetUser(id graphql.ID) (*User, error) {
+func (client *Client) GetUser(value string) (*User, error) {
 	var q struct {
 		Account struct {
-			User User `graphql:"user(id: $id)"`
+			User User `graphql:"user(input: $input)"`
 		}
 	}
 	v := PayloadVariables{
-		"id": id,
+		"input": NewUserIdentifier(value),
 	}
 	if err := client.Query(&q, v); err != nil {
 		return nil, err
