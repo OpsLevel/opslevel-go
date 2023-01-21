@@ -18,7 +18,7 @@ type Check struct {
 	Enabled     bool         `graphql:"enabled"`
 	EnableOn    iso8601.Time `graphql:"enableOn"`
 	Filter      Filter       `graphql:"filter"`
-	Id          graphql.ID   `graphql:"id"`
+	Id          ID           `graphql:"id"`
 	Level       Level        `graphql:"level"`
 	Name        string       `graphql:"name"`
 	Notes       string       `graphql:"notes"`
@@ -125,10 +125,10 @@ type CheckCreateInput struct {
 	Name     string        `json:"name"`
 	Enabled  bool          `json:"enabled"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category graphql.ID    `json:"categoryId"`
-	Level    graphql.ID    `json:"levelId"`
-	Owner    *graphql.ID   `json:"ownerId,omitempty"`
-	Filter   *graphql.ID   `json:"filterId,omitempty"`
+	Category ID            `json:"categoryId"`
+	Level    ID            `json:"levelId"`
+	Owner    *ID           `json:"ownerId,omitempty"`
+	Filter   *ID           `json:"filterId,omitempty"`
 	Notes    string        `json:"notes"`
 }
 
@@ -141,14 +141,14 @@ type CheckUpdateInputProvider interface {
 }
 
 type CheckUpdateInput struct {
-	Id       graphql.ID    `json:"id"`
+	Id       ID            `json:"id"`
 	Name     string        `json:"name,omitempty"`
 	Enabled  *bool         `json:"enabled,omitempty"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category interface{}   `json:"categoryId"`
-	Level    interface{}   `json:"levelId"`
-	Owner    interface{}   `json:"ownerId"`
-	Filter   interface{}   `json:"filterId"`
+	Category ID            `json:"categoryId,omitempty"`
+	Level    ID            `json:"levelId,omitempty"`
+	Owner    *ID           `json:"ownerId,omitempty"`
+	Filter   *ID           `json:"filterId,omitempty"`
 	Notes    *string       `json:"notes,omitempty"`
 }
 
@@ -187,7 +187,7 @@ type CheckCustomEventUpdateInput struct {
 	SuccessCondition string `json:"successCondition,omitempty"`
 	Message          string `json:"resultMessage,omitempty"`
 	PassPending      *bool  `json:"passPending,omitempty"`
-	Integration      *ID    `json:"integrationId"`
+	Integration      *ID    `json:"integrationId,omitempty"`
 }
 
 type CheckGitBranchProtectionCreateInput struct {
@@ -395,7 +395,7 @@ type CheckToolUsageUpdateInput struct {
 }
 
 type CheckDeleteInput struct {
-	Id graphql.ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 // Encompass CheckCreatePayload and CheckUpdatePayload into 1 struct
@@ -758,7 +758,7 @@ func (client *Client) UpdateCheckToolUsage(input CheckToolUsageUpdateInput) (*Ch
 
 //#region Retrieve
 
-func (client *Client) GetCheck(id graphql.ID) (*Check, error) {
+func (client *Client) GetCheck(id ID) (*Check, error) {
 	var q struct {
 		Account struct {
 			Check Check `graphql:"check(id: $id)"`
@@ -797,7 +797,7 @@ func (client *Client) ListChecks() ([]Check, error) {
 
 //#region Delete
 
-func (client *Client) DeleteCheck(id graphql.ID) error {
+func (client *Client) DeleteCheck(id ID) error {
 	var m struct {
 		Payload IdResponsePayload `graphql:"checkDelete(input: $input)"`
 	}
