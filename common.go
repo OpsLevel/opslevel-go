@@ -79,9 +79,15 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
-func NullString() *graphql.String {
-	var output *graphql.String
+func NullString() *string {
+	var output *string
 	return output
+}
+
+// TODO: this can be replaced with NewString when its no longer a graphql.String type
+func EmptyString() *string {
+	output := ""
+	return &output
 }
 
 func NewString(value string) *graphql.String {
@@ -118,11 +124,15 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return fmt.Errorf(strings.Join(errstrings, "\n"))
 }
 
+func NullID() *ID {
+	return NewID("")
+}
+
 // NewId use "" to set "null" for ID input fields that can be nullified
-func NewID(id string) *graphql.ID {
-	var output graphql.ID
+func NewID(id string) *ID {
+	var output ID
 	if id != "" {
-		output = graphql.ID(id)
+		output = ID(id)
 	}
 	return &output
 }

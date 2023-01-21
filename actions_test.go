@@ -164,7 +164,7 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:        "Deploy Rollback",
 		Description: ol.NewString("Disables the Deploy Freeze"),
-		Action:      ol.NewID("123456789"),
+		Action:      "123456789",
 		Owner:       "123456789",
 		Filter:      ol.NewID("987654321"),
 	})
@@ -236,7 +236,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:     "123456789",
-		Filter: ol.NullString(),
+		Filter: ol.NullID(),
 	})
 	// Assert
 	autopilot.Ok(t, err)

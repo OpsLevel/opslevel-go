@@ -6,8 +6,8 @@ import (
 )
 
 type CustomActionsId struct {
-	Aliases []string   `graphql:"aliases"`
-	Id      graphql.ID `graphql:"id"`
+	Aliases []string `graphql:"aliases"`
+	Id      ID       `graphql:"id"`
 }
 
 type CustomActionsExternalAction struct {
@@ -31,7 +31,7 @@ type CustomActionsTriggerDefinition struct {
 	Aliases                []string                                        `graphql:"aliases"`
 	Description            string                                          `graphql:"description"`
 	Filter                 FilterId                                        `graphql:"filter"`
-	Id                     graphql.ID                                      `graphql:"id"`
+	Id                     ID                                              `graphql:"id"`
 	ManualInputsDefinition string                                          `graphql:"manualInputsDefinition"`
 	Name                   string                                          `graphql:"name"`
 	Owner                  TeamId                                          `graphql:"owner"`
@@ -63,7 +63,7 @@ type CustomActionsWebhookActionCreateInput struct {
 }
 
 type CustomActionsWebhookActionUpdateInput struct {
-	Id             graphql.ID                  `json:"id"`
+	Id             ID                          `json:"id"`
 	Name           *graphql.String             `json:"name,omitempty"`
 	Description    *graphql.String             `json:"description,omitempty"`
 	LiquidTemplate *graphql.String             `json:"liquidTemplate,omitempty"`
@@ -75,9 +75,11 @@ type CustomActionsWebhookActionUpdateInput struct {
 type CustomActionsTriggerDefinitionCreateInput struct {
 	Name        string          `json:"name"`
 	Description *graphql.String `json:"description,omitempty"`
-	Owner       graphql.ID      `json:"ownerId"`
-	Action      *graphql.ID     `json:"actionId,omitempty"`
-	Filter      *graphql.ID     `json:"filterId,omitempty"`
+	Owner       ID              `json:"ownerId"`
+	// In the API actionID is `ID!` but that's because of the CustomActionsWebhookActionCreateInput
+	// But we are not implementing that because it is used for the UI, so we need to enforce an actionId is given
+	Action ID  `json:"actionId"`
+	Filter *ID `json:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
 	ManualInputsDefinition string                                          `json:"manualInputsDefinition"`
@@ -87,12 +89,14 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
-	Id                     graphql.ID                                      `json:"id"`
-	Name                   *graphql.String                                 `json:"name,omitempty"`
-	Description            *graphql.String                                 `json:"description,omitempty"`
-	Owner                  interface{}                                     `json:"ownerId,omitempty"`
-	Action                 interface{}                                     `json:"actionId,omitempty"`
-	Filter                 interface{}                                     `json:"filterId,omitempty"`
+	Id          ID              `json:"id"`
+	Name        *graphql.String `json:"name,omitempty"`
+	Description *graphql.String `json:"description,omitempty"`
+	Owner       *ID             `json:"ownerId,omitempty"`
+	Action      *ID             `json:"actionId,omitempty"`
+	Filter      *ID             `json:"filterId,omitempty"`
+	// This is being explicitly left out to reduce the complexity of the implementation
+	// action *CustomActionsWebhookActionCreateInput
 	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty"`
 	Published              *bool                                           `json:"published,omitempty"`
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty"`

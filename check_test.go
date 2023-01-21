@@ -21,8 +21,8 @@ var checkUpdateInput = ol.CheckUpdateInput{
 	Id:       "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
 	Name:     "Hello World",
 	Enabled:  ol.Bool(true),
-	Category: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-	Level:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
+	Category: "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+	Level:    "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
 	Notes:    &checkUpdateNotes,
 }
 
@@ -451,6 +451,103 @@ func TestChecks(t *testing.T) {
 			autopilot.Equals(t, "Bronze", result.Level.Name)
 		})
 	}
+}
+
+func TestCanUpdateFilterToNull(t *testing.T) {
+	// Arrange
+	request := `{
+    "query": "mutation ($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enabled,enableOn,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{startingDate,frequencyTimeScale,frequencyValue},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}",
+    "variables": {
+      "input": {
+        "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+		"filterId": null
+      }
+    }
+  }`
+	response := `{
+    "data": {
+      "checkCustomEventUpdate": {
+        "check": {
+          "category": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+            "name": "Performance"
+          },
+          "enabled": true,
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+          "level": {
+            "alias": "bronze",
+            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+            "index": 1,
+            "name": "Bronze"
+          },
+          "notes": "Hello World Notes",
+          "name": "Hello World"
+        },
+        "errors": []
+      }
+    }
+  }`
+	client := ABetterTestClient(t, "check/can_update_filter_to_null", request, response)
+	// Act
+	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
+		CheckUpdateInput: ol.CheckUpdateInput{
+			Id:     "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+			Filter: ol.NullID(),
+		},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Hello World", result.Name)
+	autopilot.Equals(t, ol.ID(""), result.Filter.Id)
+}
+
+func TestCanUpdateNotesToNull(t *testing.T) {
+	// Arrange
+	request := `{
+    "query": "mutation ($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enabled,enableOn,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{startingDate,frequencyTimeScale,frequencyValue},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}",
+    "variables": {
+      "input": {
+        "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+		"notes": ""
+      }
+    }
+  }`
+	response := `{
+    "data": {
+      "checkCustomEventUpdate": {
+        "check": {
+          "category": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
+            "name": "Performance"
+          },
+          "enabled": true,
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+          "level": {
+            "alias": "bronze",
+            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+            "index": 1,
+            "name": "Bronze"
+          },
+          "name": "Hello World"
+        },
+        "errors": []
+      }
+    }
+  }`
+	client := ABetterTestClient(t, "check/can_update_notes_to_null", request, response)
+	// Act
+	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
+		CheckUpdateInput: ol.CheckUpdateInput{
+			Id:    "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+			Notes: ol.EmptyString(),
+		},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Hello World", result.Name)
+	autopilot.Equals(t, "", result.Notes)
 }
 
 func TestListChecks(t *testing.T) {

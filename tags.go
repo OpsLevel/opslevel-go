@@ -12,9 +12,9 @@ const (
 )
 
 type Tag struct {
-	Id    graphql.ID `json:"id"`
-	Key   string     `json:"key"`
-	Value string     `json:"value"`
+	Id    ID     `json:"id"`
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type TagConnection struct {
@@ -29,14 +29,14 @@ type TagInput struct {
 }
 
 type TagAssignInput struct {
-	Id    graphql.ID       `json:"id,omitempty"`
+	Id    ID               `json:"id,omitempty"`
 	Alias string           `json:"alias,omitempty"`
 	Type  TaggableResource `json:"type,omitempty"`
 	Tags  []TagInput       `json:"tags"`
 }
 
 type TagCreateInput struct {
-	Id    graphql.ID       `json:"id"`
+	Id    ID               `json:"id"`
 	Alias string           `json:"alias,omitempty"`
 	Type  TaggableResource `json:"type,omitempty"`
 	Key   string           `json:"key"`
@@ -44,13 +44,13 @@ type TagCreateInput struct {
 }
 
 type TagUpdateInput struct {
-	Id    graphql.ID `json:"id"`
-	Key   string     `json:"key,omitempty"`
-	Value string     `json:"value,omitempty"`
+	Id    ID     `json:"id"`
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type TagDeleteInput struct {
-	Id graphql.ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 //#region Assign
@@ -81,9 +81,9 @@ func (client *Client) AssignTagForAlias(alias string, key string, value string) 
 	return client.AssignTags(input)
 }
 
-func (client *Client) AssignTagsForId(id graphql.ID, tags map[string]string) ([]Tag, error) {
+func (client *Client) AssignTagsForId(id ID, tags map[string]string) ([]Tag, error) {
 	input := TagAssignInput{
-		Id:   graphql.ID(id),
+		Id:   id,
 		Tags: []TagInput{},
 	}
 	for key, value := range tags {
@@ -95,7 +95,7 @@ func (client *Client) AssignTagsForId(id graphql.ID, tags map[string]string) ([]
 	return client.AssignTags(input)
 }
 
-func (client *Client) AssignTagForId(id graphql.ID, key string, value string) ([]Tag, error) {
+func (client *Client) AssignTagForId(id ID, key string, value string) ([]Tag, error) {
 	input := TagAssignInput{
 		Id:   id,
 		Tags: []TagInput{},
@@ -145,7 +145,7 @@ func (client *Client) CreateTags(alias string, tags map[string]string) ([]Tag, e
 	return output, nil
 }
 
-func (client *Client) CreateTagsForId(id graphql.ID, tags map[string]string) ([]Tag, error) {
+func (client *Client) CreateTagsForId(id ID, tags map[string]string) ([]Tag, error) {
 	var output []Tag
 	for key, value := range tags {
 		input := TagCreateInput{
@@ -183,7 +183,7 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 
 //#region Retrieve
 
-func (conn *TagConnection) Hydrate(service graphql.ID, client *Client) error {
+func (conn *TagConnection) Hydrate(service ID, client *Client) error {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -217,11 +217,11 @@ func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
 }
 
 // Deprecated: use GetTagsForService instead
-func (client *Client) GetTagsForServiceWithId(service graphql.ID) ([]Tag, error) {
+func (client *Client) GetTagsForServiceWithId(service ID) ([]Tag, error) {
 	return client.GetTagsForService(service)
 }
 
-func (client *Client) GetTagsForService(service graphql.ID) ([]Tag, error) {
+func (client *Client) GetTagsForService(service ID) ([]Tag, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -243,7 +243,7 @@ func (client *Client) GetTagsForService(service graphql.ID) ([]Tag, error) {
 	return q.Account.Service.Tags.Nodes, nil
 }
 
-func (client *Client) GetTagCount(service graphql.ID) (int, error) {
+func (client *Client) GetTagCount(service ID) (int, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -286,7 +286,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 
 //#region Delete
 
-func (client *Client) DeleteTag(id graphql.ID) error {
+func (client *Client) DeleteTag(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     graphql.ID `graphql:"deletedTagId"`
