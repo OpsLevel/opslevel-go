@@ -1,6 +1,0 @@
-kind: Refactor
-body: 'BREAKING CHANGE: Make new ID type that works like our API expects.  The entire
-  codebase has been refactor and method signatures have been changed to use the builtin 
-  ID type instead of graphql.ID type.  This will fix a number of bugs with Update mutations 
-  being unable to "unset" or null out an IDs where permitted.'
-time: 2023-01-21T09:25:10.739201-06:00

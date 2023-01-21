@@ -1,4 +1,0 @@
-kind: Refactor
-body: Deprecated `DeleteGroupWithAlias` in favor of `DeleteGroup` handling both ID
-  or Alias
-time: 2023-01-21T13:54:02.234781-06:00
