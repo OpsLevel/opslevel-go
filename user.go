@@ -98,10 +98,8 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 		"email": graphql.String(email),
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.User, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -117,10 +115,8 @@ func (client *Client) GetUser(value string) (*User, error) {
 	v := PayloadVariables{
 		"input": NewUserIdentifier(value),
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.User, nil
+	err := client.Query(&q, v)
+	return &q.Account.User, HandleErrors(err, nil)
 }
 
 func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, error) {
@@ -164,10 +160,8 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 		"user":  NewUserIdentifier(user),
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.User, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -183,10 +177,8 @@ func (client *Client) DeleteUser(user string) error {
 	v := PayloadVariables{
 		"user": NewUserIdentifier(user),
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

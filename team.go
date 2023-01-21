@@ -253,10 +253,8 @@ func (client *Client) AddMembers(team *TeamId, emails []string) ([]User, error) 
 			Members: BuildMembershipInput(emails),
 		},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return m.Payload.Members, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) AddMember(team *TeamId, email string) ([]User, error) {
@@ -284,10 +282,8 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 	v := PayloadVariables{
 		"input": contactInput,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Contact, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -343,10 +339,8 @@ func (client *Client) GetTeamCount() (int, error) {
 			}
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return 0, err
-	}
-	return int(q.Account.Teams.TotalCount), nil
+	err := client.Query(&q, nil)
+	return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
 }
 
 func (client *Client) ListTeams() ([]Team, error) {
@@ -413,10 +407,8 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Contact, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -436,10 +428,8 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 			Alias: alias,
 		},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 // Deprecated: use DeleteTeam instead
@@ -460,10 +450,8 @@ func (client *Client) DeleteTeam(id ID) error {
 			Id: id,
 		},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, error) {
@@ -479,10 +467,8 @@ func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, erro
 			Members: BuildMembershipInput(emails),
 		},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return m.Payload.Members, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) RemoveMember(team *TeamId, email string) ([]User, error) {
@@ -502,10 +488,8 @@ func (client *Client) RemoveContact(contact ID) error {
 			Id: contact,
 		},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

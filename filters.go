@@ -98,10 +98,8 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Filter, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Filter, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -117,13 +115,11 @@ func (client *Client) GetFilter(id ID) (*Filter, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
+	err := client.Query(&q, v)
 	if q.Account.Filter.Id == "" {
-		return nil, fmt.Errorf("Filter with ID '%s' not found!", id)
+		err = fmt.Errorf("Filter with ID '%s' not found!", id)
 	}
-	return &q.Account.Filter, nil
+	return &q.Account.Filter, HandleErrors(err, nil)
 }
 
 func (client *Client) ListFilters() ([]Filter, error) {
@@ -155,10 +151,8 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Filter, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Filter, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -175,10 +169,8 @@ func (client *Client) DeleteFilter(id ID) error {
 	v := PayloadVariables{
 		"input": DeleteInput{Id: id},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

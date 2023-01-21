@@ -71,10 +71,8 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Category, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Category, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -90,13 +88,11 @@ func (client *Client) GetCategory(id ID) (*Category, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
+	err := client.Query(&q, v)
 	if q.Account.Category.Id == "" {
-		return nil, fmt.Errorf("Category with ID '%s' not found!", id)
+		err = fmt.Errorf("Category with ID '%s' not found!", id)
 	}
-	return &q.Account.Category, nil
+	return &q.Account.Category, HandleErrors(err, nil)
 }
 
 func (client *Client) ListCategories() ([]Category, error) {
@@ -130,10 +126,8 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Category, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Category, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -150,10 +144,8 @@ func (client *Client) DeleteCategory(id ID) error {
 	v := PayloadVariables{
 		"input": CategoryDeleteInput{Id: id},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

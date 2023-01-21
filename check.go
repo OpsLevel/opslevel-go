@@ -427,10 +427,8 @@ func (conn *CheckConnection) Hydrate(client *Client) error {
 }
 
 func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[string]interface{}) (*Check, error) {
-	if err := client.Mutate(m, v); err != nil {
-		return nil, err
-	}
-	return &p.Check, FormatErrors(p.Errors)
+	err := client.Mutate(m, v)
+	return &p.Check, HandleErrors(err, p.Errors)
 }
 
 //#region Create
@@ -767,13 +765,11 @@ func (client *Client) GetCheck(id ID) (*Check, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
+	err := client.Query(&q, v)
 	if q.Account.Check.Id == "" {
-		return nil, fmt.Errorf("check with ID '%s' not found", id)
+		err = fmt.Errorf("check with ID '%s' not found", id)
 	}
-	return &q.Account.Check, nil
+	return &q.Account.Check, HandleErrors(err, nil)
 }
 
 func (client *Client) ListChecks() ([]Check, error) {

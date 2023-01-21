@@ -152,10 +152,8 @@ func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.ServiceRepository, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.ServiceRepository, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -351,10 +349,8 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.ServiceRepository, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.ServiceRepository, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -371,10 +367,8 @@ func (client *Client) DeleteServiceRepository(id ID) error {
 	v := PayloadVariables{
 		"input": DeleteInput{Id: id},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

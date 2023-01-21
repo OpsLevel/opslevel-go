@@ -117,10 +117,8 @@ func (client *Client) AssignTags(input TagAssignInput) ([]Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return m.Payload.Tags, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return m.Payload.Tags, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -173,10 +171,8 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Tag, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -256,10 +252,8 @@ func (client *Client) GetTagCount(service ID) (int, error) {
 	v := PayloadVariables{
 		"service": service,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return 0, err
-	}
-	return int(q.Account.Service.Tags.TotalCount), nil
+	err := client.Query(&q, v)
+	return int(q.Account.Service.Tags.TotalCount), HandleErrors(err, nil)
 }
 
 //#endregion
@@ -276,10 +270,8 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Tag, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -296,10 +288,8 @@ func (client *Client) DeleteTag(id ID) error {
 	v := PayloadVariables{
 		"input": TagDeleteInput{Id: id},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

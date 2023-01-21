@@ -72,10 +72,8 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Level, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Level, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -91,13 +89,11 @@ func (client *Client) GetLevel(id ID) (*Level, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
+	err := client.Query(&q, v)
 	if q.Account.Level.Id == "" {
-		return nil, fmt.Errorf("Level with ID '%s' not found!", id)
+		err = fmt.Errorf("Level with ID '%s' not found!", id)
 	}
-	return &q.Account.Level, nil
+	return &q.Account.Level, HandleErrors(err, nil)
 }
 
 func (client *Client) ListLevels() ([]Level, error) {
@@ -131,10 +127,8 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Level, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Level, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -151,10 +145,8 @@ func (client *Client) DeleteLevel(id ID) error {
 	v := PayloadVariables{
 		"input": LevelDeleteInput{Id: id},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

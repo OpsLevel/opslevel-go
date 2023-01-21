@@ -27,10 +27,8 @@ func (client *Client) GetAlertSourceWithExternalIdentifier(input AlertSourceExte
 	v := PayloadVariables{
 		"externalIdentifier": input,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.AlertSource, nil
+	err := client.Query(&q, v)
+	return &q.Account.AlertSource, HandleErrors(err, nil)
 }
 
 func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
@@ -43,10 +41,8 @@ func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.AlertSource, nil
+	err := client.Query(&q, v)
+	return &q.Account.AlertSource, HandleErrors(err, nil)
 }
 
 //#endregion

@@ -54,10 +54,8 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Tool, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -137,10 +135,8 @@ func (client *Client) GetToolCount(service ID) (int, error) {
 	v := PayloadVariables{
 		"service": service,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return 0, err
-	}
-	return int(q.Account.Service.Tools.TotalCount), nil
+	err := client.Query(&q, v)
+	return int(q.Account.Service.Tools.TotalCount), HandleErrors(err, nil)
 }
 
 //#endregion
@@ -157,10 +153,8 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Tool, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -177,10 +171,8 @@ func (client *Client) DeleteTool(id ID) error {
 	v := PayloadVariables{
 		"input": ToolDeleteInput{Id: id},
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

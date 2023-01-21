@@ -56,13 +56,11 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
+	err := client.Query(&q, v)
 	if q.Account.Integration.Id == "" {
-		return nil, fmt.Errorf("Integration with ID '%s' not found!", id)
+		err = fmt.Errorf("Integration with ID '%s' not found!", id)
 	}
-	return &q.Account.Integration, nil
+	return &q.Account.Integration, HandleErrors(err, nil)
 }
 
 func (client *Client) ListIntegrations() ([]Integration, error) {

@@ -36,10 +36,8 @@ func (c *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturity, er
 	v := PayloadVariables{
 		"service": graphql.String(alias),
 	}
-	if err := c.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.Service, nil
+	err := c.Query(&q, v)
+	return &q.Account.Service, HandleErrors(err, nil)
 }
 
 func (c *Client) ListServicesMaturity() ([]ServiceMaturity, error) {

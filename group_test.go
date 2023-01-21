@@ -56,7 +56,7 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 	// Arrange
 	client := ATestClientAlt(t, "group/delete", "group/delete_with_alias")
 	// Act
-	err := client.DeleteGroupWithAlias("platform")
+	err := client.DeleteGroup("platform")
 	// Assert
 	autopilot.Ok(t, err)
 }

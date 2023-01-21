@@ -135,10 +135,8 @@ func (c *Client) RunnerRegister() (*Runner, error) {
 		} `graphql:"runnerRegister"`
 	}
 	v := PayloadVariables{}
-	if err := c.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Runner, FormatErrors(m.Payload.Errors)
+	err := c.Mutate(&m, v)
+	return &m.Payload.Runner, HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*RunnerJob, ID, error) {
@@ -153,10 +151,8 @@ func (c *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*RunnerJo
 		"id":    runnerId,
 		"token": &lastUpdateToken,
 	}
-	if err := c.Mutate(&m, v); err != nil {
-		return nil, lastUpdateToken, err
-	}
-	return &m.Payload.RunnerJob, m.Payload.LastUpdateToken, FormatErrors(m.Payload.Errors)
+	err := c.Mutate(&m, v)
+	return &m.Payload.RunnerJob, m.Payload.LastUpdateToken, HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurrency int) (*RunnerScale, error) {
@@ -170,10 +166,8 @@ func (c *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurrency in
 		"currentReplicaCount": graphql.Int(currentReplicaCount),
 		"jobConcurrency":      graphql.Int(jobConcurrency),
 	}
-	if err := c.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.RunnerScale, nil
+	err := c.Query(&q, v)
+	return &q.Account.RunnerScale, HandleErrors(err, nil)
 }
 
 func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
@@ -185,10 +179,8 @@ func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := c.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := c.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
@@ -200,10 +192,8 @@ func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := c.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := c.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) RunnerUnregister(runnerId ID) error {
@@ -215,8 +205,6 @@ func (c *Client) RunnerUnregister(runnerId ID) error {
 	v := PayloadVariables{
 		"runnerId": runnerId,
 	}
-	if err := c.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := c.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }

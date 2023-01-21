@@ -51,10 +51,8 @@ func (client *Client) CreateGroup(input GroupInput) (*Group, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Group, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -70,10 +68,8 @@ func (client *Client) GetGroup(id ID) (*Group, error) {
 	v := PayloadVariables{
 		"group": id,
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.Group, nil
+	err := client.Query(&q, v)
+	return &q.Account.Group, HandleErrors(err, nil)
 }
 
 func (client *Client) GetGroupWithAlias(alias string) (*Group, error) {
@@ -85,10 +81,8 @@ func (client *Client) GetGroupWithAlias(alias string) (*Group, error) {
 	v := PayloadVariables{
 		"group": graphql.String(alias),
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.Group, nil
+	err := client.Query(&q, v)
+	return &q.Account.Group, HandleErrors(err, nil)
 }
 
 func (conn *GroupConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Group, error) {
@@ -350,40 +344,28 @@ func (client *Client) UpdateGroup(identifier string, input GroupInput) (*Group, 
 		"group": *NewIdentifier(identifier),
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
-	return &m.Payload.Group, FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return &m.Payload.Group, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
 
 //#region Delete
 
+// Deprecated: Please use DeleteGroup instead
 func (client *Client) DeleteGroupWithAlias(alias string) error {
-	var m struct {
-		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
-	}
-	v := PayloadVariables{
-		"input": *NewIdentifier(alias),
-	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	return client.DeleteGroup(alias)
 }
 
-func (client *Client) DeleteGroup(id ID) error {
+func (client *Client) DeleteGroup(identifier string) error {
 	var m struct {
 		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": *NewIdentifier(string(id)),
+		"input": *NewIdentifier(identifier),
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

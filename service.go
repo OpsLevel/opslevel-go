@@ -181,10 +181,8 @@ func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
 	v := PayloadVariables{
 		"service": graphql.String(alias),
 	}
-	if err := client.Query(&q, v); err != nil {
-		return nil, err
-	}
-	return &q.Account.Service, nil
+	err := client.Query(&q, v)
+	return &q.Account.Service, HandleErrors(err, nil)
 }
 
 func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
@@ -236,10 +234,8 @@ func (client *Client) GetServiceCount() (int, error) {
 			}
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return 0, err
-	}
-	return int(q.Account.Services.TotalCount), nil
+	err := client.Query(&q, nil)
+	return int(q.Account.Services.TotalCount), HandleErrors(err, nil)
 }
 
 // TODO: maybe we can find a way to merge ServiceConnection.Query & Hydrate
@@ -428,10 +424,8 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return err
-	}
-	return FormatErrors(m.Payload.Errors)
+	err := client.Mutate(&m, v)
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) DeleteServiceWithAlias(alias string) error {
