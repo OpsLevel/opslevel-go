@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"testing"
@@ -23,35 +22,6 @@ func TestMain(m *testing.M) {
 	teardown := autopilot.Setup()
 	defer teardown()
 	os.Exit(m.Run())
-}
-
-func ToJson(query autopilot.GraphqlQuery) string {
-	bytes, _ := json.Marshal(query)
-	return string(bytes)
-}
-
-func Parse(r *http.Request) autopilot.GraphqlQuery {
-	output := autopilot.GraphqlQuery{
-		Variables: map[string]interface{}{},
-	}
-	defer r.Body.Close()
-	bytes, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return output
-	}
-	json.Unmarshal(bytes, &output)
-	return output
-}
-
-func LogRaw() autopilot.RequestValidation {
-	return func(r *http.Request) {
-		defer r.Body.Close()
-		bytes, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			log.Err(err)
-		}
-		log.Info().Msg(string(bytes))
-	}
 }
 
 func Templated(input string) string {
@@ -80,7 +50,7 @@ func GraphQLQueryTemplate(request string) autopilot.GraphqlQuery {
 
 func GraphQLQueryTemplatedValidation(t *testing.T, request string) autopilot.RequestValidation {
 	return func(r *http.Request) {
-		autopilot.Equals(t, ToJson(GraphQLQueryTemplate(request)), ToJson(Parse(r)))
+		autopilot.Equals(t, autopilot.ToJson(GraphQLQueryTemplate(request)), autopilot.ToJson(autopilot.Parse(r)))
 	}
 }
 
@@ -129,12 +99,6 @@ func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {
 		autopilot.SkipRequestValidation())))
 }
 
-func ATestClientLogRequest(t *testing.T, endpoint string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
-		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
-		LogRaw())))
-}
-
 func TestClientQuery(t *testing.T) {
 	// Arrange
 	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/account", autopilot.FixtureResponse("account_response.json"), autopilot.GraphQLQueryValidation(t, "{account{id}}"))
@@ -151,59 +115,3 @@ func TestClientQuery(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "1234", string(q.Account.Id))
 }
-
-/*
-These tests don't work very well with our autopilot endpoint stuff because they need to make recursive calls
-We need to figure out a better way to handle mapping different payloads to different requests
-
-// This test should infinitly recurse on the Service pagination call
-func TestClientQueryPagination(t *testing.T) {
-	t.Parallel()
-	// Arrange
-	url := autopilot.RegisterEndpoint("/pagination", autopilot.FixtureResponse("pagination_response.json"), autopilot.SkipRequestValidation())
-	client := NewGQLClient("X", SetURL(url))
-	timeout := time.After(3 * time.Second)
-	done := make(chan bool)
-
-	// Act
-	go func() {
-		_, err := client.ListServices()
-		autopilot.Ok(t, err)
-		done <- true
-	}()
-
-	// Assert
-	select {
-	case <-timeout:
-		// Test Was running infinitely in a pagination recursion - this is a success
-	case <-done:
-		t.Fatal("TestClientQueryPagination did not infinitely recurse on pagination of Services")
-	}
-}
-
-// This test should infinitly recurse on the Service.Tags nested pagination call
-func TestClientQueryNestedPagination(t *testing.T) {
-	t.Parallel()
-	// Arrange
-	//url := autopilot.RegisterEndpoint("/query_nested_pagination", "query_nested_pagination.json")
-	url := autopilot.RegisterEndpoint("/nested_pagination", autopilot.FixtureResponse("nested_pagination_response.json"), autopilot.GraphQLQueryFixtureValidation(t, "nested_pagination_request.json"))
-	client := NewGQLClient("X", SetURL(url))
-	timeout := time.After(3 * time.Second)
-	done := make(chan bool)
-
-	// Act
-	go func() {
-		_, err := client.ListServices()
-		autopilot.Ok(t, err)
-		done <- true
-	}()
-
-	// Assert
-	select {
-	case <-timeout:
-		// Test Was running infinitely in a nested pagination recursion - this is a success
-	case <-done:
-		t.Fatal("TestClientQueryNestedPagination did not infinitely recurse on nested pagination of Service.Tags")
-	}
-}
-*/
