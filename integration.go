@@ -44,7 +44,7 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 func (client *Client) ListIntegrations(variables *PayloadVariables) (IntegrationConnection, error) {
 	var q struct {
 		Account struct {
-			Integrations IntegrationConnection `graphql:"integrations"`
+			Integrations IntegrationConnection `graphql:"integrations(after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {

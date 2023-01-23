@@ -754,7 +754,7 @@ func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, 
 	var q struct {
 		Account struct {
 			Rubric struct {
-				Checks CheckConnection `graphql:"checks"`
+				Checks CheckConnection `graphql:"checks(after: $after, first: $first)"`
 			}
 		}
 	}
