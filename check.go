@@ -404,28 +404,6 @@ type CheckResponsePayload struct {
 	Errors []OpsLevelErrors
 }
 
-func (conn *CheckConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Rubric struct {
-				Checks CheckConnection `graphql:"checks(after: $after, first: $first)"`
-			}
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	q.Account.Rubric.Checks.PageInfo = conn.PageInfo
-	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
-		v["after"] = q.Account.Rubric.Checks.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		conn.Nodes = append(conn.Nodes, q.Account.Rubric.Checks.Nodes...)
-	}
-	return nil
-}
-
 func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[string]interface{}) (*Check, error) {
 	err := client.Mutate(m, v)
 	return &p.Check, HandleErrors(err, p.Errors)
@@ -772,7 +750,7 @@ func (client *Client) GetCheck(id ID) (*Check, error) {
 	return &q.Account.Check, HandleErrors(err, nil)
 }
 
-func (client *Client) ListChecks() ([]Check, error) {
+func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, error) {
 	var q struct {
 		Account struct {
 			Rubric struct {
@@ -780,13 +758,22 @@ func (client *Client) ListChecks() ([]Check, error) {
 			}
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return q.Account.Rubric.Checks.Nodes, err
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := q.Account.Rubric.Checks.Hydrate(client); err != nil {
-		return q.Account.Rubric.Checks.Nodes, err
+	if err := client.Query(&q, *variables); err != nil {
+		return CheckConnection{}, err
 	}
-	return q.Account.Rubric.Checks.Nodes, nil
+	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Rubric.Checks.PageInfo.End
+		resp, err := client.ListChecks(variables)
+		if err != nil {
+			return CheckConnection{}, err
+		}
+		q.Account.Rubric.Checks.Nodes = append(q.Account.Rubric.Checks.Nodes, resp.Nodes...)
+		q.Account.Rubric.Checks.PageInfo = resp.PageInfo
+	}
+	return q.Account.Rubric.Checks, nil
 }
 
 //#endregion

@@ -13,6 +13,34 @@
     "startCursor": "MQ",
     "endCursor": "NA"
 }{{ end }}
+{{- define "pagination_initial_query_variables" }}
+"variables": {
+    "after": "",
+    "first": 100
+}
+{{ end }}
+{{- define "pagination_second_query_variables" }}
+"variables": {
+	"after": "OA",
+	"first": 100
+}
+{{ end }}
+{{- define "pagination_initial_pageInfo_response" }}
+"pageInfo": {
+  "hasNextPage": true,
+  "hasPreviousPage": false,
+  "startCursor": "MQ",
+  "endCursor": "OA"
+}
+{{ end }}
+{{- define "pagination_second_pageInfo_response" }}
+"pageInfo": {
+  "hasNextPage": false,
+  "hasPreviousPage": true,
+  "startCursor": "OA",
+  "endCursor": "EOf"
+}
+{{ end }}
 {{- define "error1" }}{
     "message": "Example Error",
     "path": [

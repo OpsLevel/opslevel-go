@@ -552,13 +552,54 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 
 func TestListChecks(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "check/list")
+	requests := []TestRequest{
+		{`{"query": "query ($after:String!$first:Int!){account{rubric{checks{nodes{category{id,name},description,enabled,enableOn,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{startingDate,frequencyTimeScale,frequencyValue},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"rubric": {
+							"checks": {
+								"nodes": [
+									{
+										{{ template "common_check_response" }}
+									},
+									{
+										{{ template "metrics_tool_check" }} 
+									}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							  }}}}}`},
+		{`{"query": "query ($after:String!$first:Int!){account{rubric{checks{nodes{category{id,name},description,enabled,enableOn,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{startingDate,frequencyTimeScale,frequencyValue},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"rubric": {
+							"checks": {
+								"nodes": [
+									{
+										{{ template "owner_defined_check" }}
+									}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							  }}}}}`},
+	}
+	client := APaginatedTestClient(t, "check/list", requests...)
 	// Act
-	result, err := client.ListChecks()
+	response, err := client.ListChecks(nil)
+	result := response.Nodes
 	// Assert
-	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Metrics Tool", result[2].Name)
-	autopilot.Equals(t, "Tier 1 Services", result[2].Filter.Name)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, "Metrics Tool", result[1].Name)
+	autopilot.Equals(t, "Tier 1 Services", result[1].Filter.Name)
+	autopilot.Equals(t, "Owner Defined", result[2].Name)
+	autopilot.Equals(t, "Verifies that the service has an owner defined.", result[2].Description)
 }
 
 func TestGetMissingCheck(t *testing.T) {
