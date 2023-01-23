@@ -29,7 +29,7 @@ func TestGetMissingIntegraion(t *testing.T) {
 func TestListIntegrations(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query {account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query {account{integrations{nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -47,7 +47,7 @@ func TestListIntegrations(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 					}}}}`},
-		{`{"query": "query {account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query {account{integrations{nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
