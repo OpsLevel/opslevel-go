@@ -51,7 +51,7 @@ func TestGetMissingFilter(t *testing.T) {
 func TestListFilters(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query ($after:String!$first:Int!){account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{`{"query": "query ($after:String!$first:Int!){account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -69,7 +69,7 @@ func TestListFilters(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 						  }}}}`},
-		{`{"query": "query ($after:String!$first:Int!){account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{`{"query": "query ($after:String!$first:Int!){account{filters{nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{

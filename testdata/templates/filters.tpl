@@ -1,11 +1,11 @@
-{{-define "filter_kubernetes_response" }}
+{{- define "filter_kubernetes_response" }}
   "connective": null,
   "htmlUrl": "https://app.opslevel.com/filters/458",
   "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQ1OA",
   "name": "Kubernetes",
   "predicates": []
 {{ end }}
-{{-define "filter_tier1service_response" }}
+{{- define "filter_tier1service_response" }}
   "connective": null,
   "htmlUrl": "https://app.opslevel.com/filters/401",
   "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
