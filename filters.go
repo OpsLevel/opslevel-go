@@ -103,7 +103,7 @@ func (client *Client) GetFilter(id ID) (*Filter, error) {
 func (client *Client) ListFilters(variables *PayloadVariables) (FilterConnection, error) {
 	var q struct {
 		Account struct {
-			Filters FilterConnection `graphql:"filters"`
+			Filters FilterConnection `graphql:"filters(after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {
