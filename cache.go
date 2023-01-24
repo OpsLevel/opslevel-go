@@ -158,12 +158,12 @@ func (c *Cacher) doCacheLevels(client *Client) {
 func (c *Cacher) doCacheFilters(client *Client) {
 	log.Info().Msg("Caching 'Filter' lookup table from API ...")
 
-	data, dataErr := client.ListFilters()
+	data, dataErr := client.ListFilters(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Filter' from API - REASON: %s", dataErr.Error())
 	}
 
-	for _, item := range data {
+	for _, item := range data.Nodes {
 		c.Filters[item.Alias()] = item
 	}
 }
