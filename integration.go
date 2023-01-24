@@ -23,28 +23,6 @@ func (self *Integration) Alias() string {
 	return fmt.Sprintf("%s-%s", slug.Make(self.Type), slug.Make(self.Name))
 }
 
-func (conn *IntegrationConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Integrations IntegrationConnection `graphql:"integrations(after: $after, first: $first)"`
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	q.Account.Integrations.PageInfo = conn.PageInfo
-	for q.Account.Integrations.PageInfo.HasNextPage {
-		v["after"] = q.Account.Integrations.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		for _, item := range q.Account.Integrations.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
-	}
-	return nil
-}
-
 //#region Retrieve
 
 func (client *Client) GetIntegration(id ID) (*Integration, error) {
@@ -63,19 +41,28 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	return &q.Account.Integration, HandleErrors(err, nil)
 }
 
-func (client *Client) ListIntegrations() ([]Integration, error) {
+func (client *Client) ListIntegrations(variables *PayloadVariables) (IntegrationConnection, error) {
 	var q struct {
 		Account struct {
-			Integrations IntegrationConnection `graphql:"integrations"`
+			Integrations IntegrationConnection `graphql:"integrations(after: $after, first: $first)"`
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return q.Account.Integrations.Nodes, err
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := q.Account.Integrations.Hydrate(client); err != nil {
-		return q.Account.Integrations.Nodes, err
+	if err := client.Query(&q, *variables); err != nil {
+		return IntegrationConnection{}, err
 	}
-	return q.Account.Integrations.Nodes, nil
+	for q.Account.Integrations.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Integrations.PageInfo.End
+		resp, err := client.ListIntegrations(variables)
+		if err != nil {
+			return IntegrationConnection{}, err
+		}
+		q.Account.Integrations.Nodes = append(q.Account.Integrations.Nodes, resp.Nodes...)
+		q.Account.Integrations.PageInfo = resp.PageInfo
+	}
+	return q.Account.Integrations, nil
 }
 
 //#endregion

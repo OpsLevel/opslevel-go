@@ -171,12 +171,12 @@ func (c *Cacher) doCacheFilters(client *Client) {
 func (c *Cacher) doCacheIntegrations(client *Client) {
 	log.Info().Msg("Caching 'Integration' lookup table from API ...")
 
-	data, dataErr := client.ListIntegrations()
+	data, dataErr := client.ListIntegrations(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Integration' from API - REASON: %s", dataErr.Error())
 	}
 
-	for _, item := range data {
+	for _, item := range data.Nodes {
 		c.Integrations[item.Alias()] = item
 	}
 }

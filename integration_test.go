@@ -28,10 +28,51 @@ func TestGetMissingIntegraion(t *testing.T) {
 
 func TestListIntegrations(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "integration/list")
+	requests := []TestRequest{
+		{`{"query": "query ($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"integrations": {
+							"nodes": [
+								{
+									{{ template "deploy_integration_response" }}
+								},
+								{
+									{{ template "payload_integration_response" }} 
+								}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 2
+					}}}}`},
+		{`{"query": "query ($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"integrations": {
+							"nodes": [
+								{
+									{{ template "kubernetes_integration_response" }}
+								}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+					}}}}`},
+	}
+
+	client := APaginatedTestClient(t, "integration/list", requests...)
 	// Act
-	result, _ := client.ListIntegrations()
+	response, err := client.ListIntegrations(nil)
+	result := response.Nodes
 	// Assert
-	autopilot.Equals(t, 5, len(result))
-	autopilot.Equals(t, "Deploy", result[1].Name)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, "Payload", result[1].Name)
+	autopilot.Equals(t, "Kubernetes", result[2].Name)
+	//fmt.Println(Templated(requests[1].Request))
+	//panic(true)
 }
