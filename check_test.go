@@ -130,11 +130,26 @@ var testcases = map[string]struct {
 	"UpdateCustomEvent": {
 		fixture: "check/update_custom_event",
 		body: func(c *ol.Client) (*ol.Check, error) {
+			message := "#Hello World"
 			return c.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 				CheckUpdateInput: checkUpdateInput,
 				ServiceSelector:  ".metadata.name",
 				SuccessCondition: ".metadata.name",
-				Message:          "#Hello World",
+				Message:          &message,
+				Integration:      ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+				PassPending:      ol.Bool(false),
+			})
+		},
+	},
+	"UpdateCustomEventNoMessage": {
+		fixture: "check/update_custom_event_no_message",
+		body: func(c *ol.Client) (*ol.Check, error) {
+			message := ""
+			return c.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
+				CheckUpdateInput: checkUpdateInput,
+				ServiceSelector:  ".metadata.name",
+				SuccessCondition: ".metadata.name",
+				Message:          &message,
 				Integration:      ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
 				PassPending:      ol.Bool(false),
 			})

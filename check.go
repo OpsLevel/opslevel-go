@@ -183,8 +183,8 @@ type CheckCustomEventCreateInput struct {
 type CheckCustomEventUpdateInput struct {
 	CheckUpdateInput
 
-	ServiceSelector  *string `json:"serviceSelector,omitempty"`
-	SuccessCondition *string `json:"successCondition,omitempty"`
+	ServiceSelector  string  `json:"serviceSelector,omitempty"`
+	SuccessCondition string  `json:"successCondition,omitempty"`
 	Message          *string `json:"resultMessage,omitempty"`
 	PassPending      *bool   `json:"passPending,omitempty"`
 	Integration      *ID     `json:"integrationId,omitempty"`
