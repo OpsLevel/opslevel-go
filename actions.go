@@ -140,12 +140,9 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (CustomActi
 		}
 	}
 	if variables == nil {
-		variables = &PayloadVariables{
-			"after": "",
-			"first": client.pageSize,
-		}
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, nil); err != nil {
+	if err := client.Query(&q, *variables); err != nil {
 		return CustomActionsExternalActionsConnection{}, err
 	}
 	for q.Account.Actions.PageInfo.HasNextPage {
@@ -225,12 +222,9 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (Custo
 		}
 	}
 	if variables == nil {
-		variables = &PayloadVariables{
-			"after": "",
-			"first": client.pageSize,
-		}
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, nil); err != nil {
+	if err := client.Query(&q, *variables); err != nil {
 		return CustomActionsTriggerDefinitionsConnection{}, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
