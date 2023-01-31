@@ -263,7 +263,7 @@ func TestListTriggerDefinitions(t *testing.T) {
 	result := triggers.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, 3, triggers.TotalCount)
 	autopilot.Equals(t, "Release", result[1].Name)
 	autopilot.Equals(t, "Uses Ruby", result[1].Filter.Name)
 	autopilot.Equals(t, "123456789", string(result[1].Owner.Id))

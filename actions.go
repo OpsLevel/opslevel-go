@@ -235,6 +235,7 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (Custo
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo
+		q.Account.Definitions.TotalCount += resp.TotalCount
 	}
 	return q.Account.Definitions, nil
 }
