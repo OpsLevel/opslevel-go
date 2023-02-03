@@ -86,7 +86,7 @@ type ServiceRepositoryEdge struct {
 type ServiceRepositoryConnection struct {
 	Edges      []ServiceRepositoryEdge
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type RepositoryTagConnection struct {

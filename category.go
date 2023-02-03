@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
-	"github.com/hasura/go-graphql-client"
 )
 
 type Category struct {
@@ -15,7 +14,7 @@ type Category struct {
 type CategoryConnection struct {
 	Nodes      []Category
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type CategoryCreateInput struct {
@@ -33,30 +32,6 @@ type CategoryDeleteInput struct {
 
 func (self *Category) Alias() string {
 	return slug.Make(self.Name)
-}
-
-func (conn *CategoryConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Rubric struct {
-				Categories CategoryConnection `graphql:"categories(after: $after, first: $first)"`
-			}
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	q.Account.Rubric.Categories.PageInfo = conn.PageInfo
-	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
-		v["after"] = q.Account.Rubric.Categories.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		for _, item := range q.Account.Rubric.Categories.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
-	}
-	return nil
 }
 
 //#region Create
@@ -95,21 +70,31 @@ func (client *Client) GetCategory(id ID) (*Category, error) {
 	return &q.Account.Category, HandleErrors(err, nil)
 }
 
-func (client *Client) ListCategories() ([]Category, error) {
+func (client *Client) ListCategories(variables *PayloadVariables) (CategoryConnection, error) {
 	var q struct {
 		Account struct {
 			Rubric struct {
-				Categories CategoryConnection
+				Categories CategoryConnection `graphql:"categories(after: $after, first: $first)"`
 			}
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return q.Account.Rubric.Categories.Nodes, err
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := q.Account.Rubric.Categories.Hydrate(client); err != nil {
-		return q.Account.Rubric.Categories.Nodes, err
+	if err := client.Query(&q, *variables); err != nil {
+		return CategoryConnection{}, err
 	}
-	return q.Account.Rubric.Categories.Nodes, nil
+	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Rubric.Categories.PageInfo.End
+		resp, err := client.ListCategories(variables)
+		if err != nil {
+			return CategoryConnection{}, err
+		}
+		q.Account.Rubric.Categories.Nodes = append(q.Account.Rubric.Categories.Nodes, resp.Nodes...)
+		q.Account.Rubric.Categories.PageInfo = resp.PageInfo
+		q.Account.Rubric.Categories.TotalCount += resp.TotalCount
+	}
+	return q.Account.Rubric.Categories, nil
 }
 
 //#endregion
