@@ -41,36 +41,56 @@ func TestCreateWebhookAction(t *testing.T) {
 
 func TestListCustomActions(t *testing.T) {
 	//Arrange
-	request := `{"query":
-		"{account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }}}}}",
-		"variables":{}
-	}`
-	response := `{"data": {"account": {
-      "customActionsExternalActions": {
-        "nodes": [
-          {{ template "custom_action1" }},
-          {{ template "custom_action2" }}
-        ],
-        {{ template "no_pagination_response" }},
-        "totalCount": 2
-      }
-  }}}`
-
+	requests := []TestRequest{
+		{`{"query": "query ($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"customActionsExternalActions": {
+							"nodes": [
+								{
+									{{ template "custom_action1_response" }}
+								},
+								{
+									{{ template "custom_action2_response" }} 
+								}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 2
+						  }}}}`},
+		{`{"query": "query ($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"customActionsExternalActions": {
+							"nodes": [
+								{
+									{{ template "custom_action3_response" }}
+								}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }}}}`},
+	}
 	// An easy way to see the results of templating is by uncommenting this
 	//fmt.Print(Templated(request))
 	//fmt.Print(Templated(response))
 	//panic(1)
 
-	client := ABetterTestClient(t, "custom_actions/list_actions", request, response)
+	client := APaginatedTestClient(t, "custom_actions/list_actions", requests...)
 	// Act
-	actions, err := client.ListCustomActions(nil)
-	headers := actions.Nodes[1].Headers
+	response, err := client.ListCustomActions(nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, actions.TotalCount)
-	autopilot.Assert(t, "MQ" == actions.PageInfo.Start, "Failed to Marshall pagination info")
-	autopilot.Equals(t, "Deploy Freeze", actions.Nodes[1].Name)
-	autopilot.Equals(t, "application/vnd.github+json", headers["Accept"])
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, "Deploy Freeze", result[1].Name)
+	autopilot.Equals(t, "Page On-Call", result[2].Name)
+	autopilot.Equals(t, "application/json", result[0].Headers["Content-Type"])
 }
 
 func TestUpdateWebhookAction(t *testing.T) {
@@ -195,30 +215,61 @@ func TestGetTriggerDefinition(t *testing.T) {
 
 func TestListTriggerDefinitions(t *testing.T) {
 	//Arrange
-	request := `{"query":
-		"{account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{{ template "custom_actions_trigger_request" }},{{ template "pagination_request" }}}}}",
-		"variables":{}
-	}`
-	response := `{"data": {"account": {
-      "customActionsTriggerDefinitions": {
-        "nodes": [
-          {{ template "custom_action_trigger1" }},
-          {{ template "custom_action_trigger2" }}
-        ],
-        {{ template "no_pagination_response" }},
-        "totalCount": 2
-      }
-  }}}`
+	requests := []TestRequest{
+		{`{"query": "query ($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"customActionsTriggerDefinitions": {
+							"nodes": [
+								{
+									{{ template "custom_action_trigger1_response" }}
+								},
+								{
+									{{ template "custom_action_trigger2_response" }} 
+								}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 2
+						  }}}}`},
+		{`{"query": "query ($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"customActionsTriggerDefinitions": {
+							"nodes": [
+								{
+									{{ template "custom_action_trigger3_response" }}
+								}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }}}}`},
+	}
 
-	client := ABetterTestClient(t, "custom_actions/list_triggers", request, response)
+	// An easy way to see the results of templating is by uncommenting this
+	//fmt.Println(Templated(requests[0].Response))
+	//panic(true)
+
+	//"{account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate}}}}",
+
+	client := APaginatedTestClient(t, "custom_actions/list_triggers", requests...)
 	// Act
 	triggers, err := client.ListTriggerDefinitions(nil)
+	result := triggers.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, triggers.TotalCount)
-	autopilot.Equals(t, "Release", triggers.Nodes[1].Name)
-	autopilot.Equals(t, "Uses Ruby", triggers.Nodes[1].Filter.Name)
-	autopilot.Equals(t, "123456789", string(triggers.Nodes[1].Owner.Id))
+	autopilot.Equals(t, 3, triggers.TotalCount)
+	autopilot.Equals(t, "Release", result[1].Name)
+	autopilot.Equals(t, "Uses Ruby", result[1].Filter.Name)
+	autopilot.Equals(t, "123456789", string(result[1].Owner.Id))
+	autopilot.Equals(t, "Rollback", result[2].Name)
+	autopilot.Equals(t, "Uses Go", result[2].Filter.Name)
+	autopilot.Equals(t, "123456781", string(result[2].Owner.Id))
 }
 
 func TestUpdateTriggerDefinition(t *testing.T) {
