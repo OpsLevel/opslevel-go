@@ -610,7 +610,7 @@ func TestListChecks(t *testing.T) {
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Metrics Tool", result[1].Name)
 	autopilot.Equals(t, "Tier 1 Services", result[1].Filter.Name)
 	autopilot.Equals(t, "Owner Defined", result[2].Name)

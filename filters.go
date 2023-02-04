@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
-	"github.com/hasura/go-graphql-client"
 )
 
 type Predicate struct {
@@ -44,7 +43,7 @@ type FilterPredicate struct {
 type FilterConnection struct {
 	Nodes      []Filter
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type FilterCreateInput struct {
@@ -120,6 +119,7 @@ func (client *Client) ListFilters(variables *PayloadVariables) (FilterConnection
 		}
 		q.Account.Filters.Nodes = append(q.Account.Filters.Nodes, resp.Nodes...)
 		q.Account.Filters.PageInfo = resp.PageInfo
+		q.Account.Filters.TotalCount += resp.TotalCount
 	}
 	return q.Account.Filters, nil
 }

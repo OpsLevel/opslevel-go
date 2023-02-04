@@ -139,7 +139,7 @@ func TestListFilters(t *testing.T) {
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Tier 1 Services", result[1].Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result[2].Predicates[0].Key)
 	//fmt.Println(Templated(requests[0].Request))
