@@ -132,12 +132,12 @@ func (c *Cacher) doCacheTeams(client *Client) {
 func (c *Cacher) doCacheCategories(client *Client) {
 	log.Info().Msg("Caching 'Category' lookup table from API ...")
 
-	data, dataErr := client.ListCategories()
+	data, dataErr := client.ListCategories(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Category' from API - REASON: %s", dataErr.Error())
 	}
 
-	for _, item := range data {
+	for _, item := range data.Nodes {
 		c.Categories[item.Alias()] = item
 	}
 }
