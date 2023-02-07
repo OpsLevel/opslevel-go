@@ -83,20 +83,20 @@ func (client *Client) InitialPageVariablesPointer() *PayloadVariables {
 	return &v
 }
 
-func (client *Client) Query(q interface{}, variables map[string]interface{}) error {
-	return client.QueryCTX(context.Background(), q, variables)
+func (client *Client) Query(q interface{}, variables map[string]interface{}, options ...graphql.Option) error {
+	return client.QueryCTX(context.Background(), q, variables, options...)
 }
 
-func (client *Client) QueryCTX(ctx context.Context, q interface{}, variables map[string]interface{}) error {
-	return client.client.Query(ctx, q, variables)
+func (client *Client) QueryCTX(ctx context.Context, q interface{}, variables map[string]interface{}, options ...graphql.Option) error {
+	return client.client.Query(ctx, q, variables, options...)
 }
 
-func (client *Client) Mutate(m interface{}, variables map[string]interface{}) error {
-	return client.MutateCTX(context.Background(), m, variables)
+func (client *Client) Mutate(m interface{}, variables map[string]interface{}, options ...graphql.Option) error {
+	return client.MutateCTX(context.Background(), m, variables, options...)
 }
 
-func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables map[string]interface{}) error {
-	return client.client.Mutate(ctx, m, variables)
+func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables map[string]interface{}, options ...graphql.Option) error {
+	return client.client.Mutate(ctx, m, variables, options...)
 }
 
 func (client *Client) Validate() error {
@@ -111,4 +111,8 @@ func (client *Client) Validate() error {
 		return fmt.Errorf("client validation error: %s", err.Error())
 	}
 	return nil
+}
+
+func WithName(name string) graphql.Option {
+	return graphql.OperationName(name)
 }

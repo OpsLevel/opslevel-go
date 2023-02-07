@@ -113,7 +113,7 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("WebhookActionCreate"))
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -126,7 +126,7 @@ func (client *Client) GetCustomAction(input IdentifierInput) (*CustomActionsExte
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("ExternalActionGet"))
 	if q.Account.Action.Id == "" {
 		err = fmt.Errorf("CustomActionsExternalAction with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
 	}
@@ -142,7 +142,7 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (CustomActi
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("ExternalActionList")); err != nil {
 		return CustomActionsExternalActionsConnection{}, err
 	}
 	for q.Account.Actions.PageInfo.HasNextPage {
@@ -167,7 +167,7 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("WebhookActionUpdate"))
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -178,7 +178,7 @@ func (client *Client) DeleteWebhookAction(input IdentifierInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("WebhookActionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
@@ -195,7 +195,7 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TriggerDefinitionCreate"))
 	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -208,7 +208,7 @@ func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomAction
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("TriggerDefinitionGet"))
 	if q.Account.Definition.Id == "" {
 		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
 	}
@@ -224,7 +224,7 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (Custo
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("TriggerDefinitionList")); err != nil {
 		return CustomActionsTriggerDefinitionsConnection{}, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
@@ -250,7 +250,7 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TriggerDefinitionUpdate"))
 	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -261,6 +261,6 @@ func (client *Client) DeleteTriggerDefinition(input IdentifierInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TriggerDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
