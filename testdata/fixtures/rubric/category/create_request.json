@@ -1,8 +1,0 @@
-{
-    "query": "mutation ($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}",
-    "variables": {
-      "input": {
-        "name": "Kyle"
-      }
-    }
-  }
