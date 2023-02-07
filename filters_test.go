@@ -10,7 +10,31 @@ import (
 
 func TestCreateFilter(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "filter/create")
+	request := `{
+    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			"name": "Kubernetes",
+			"predicates": [
+				{
+				"key": "tier_index",
+				"type": "equals",
+				"value": "1"
+				}
+			],
+			"connective": "and"
+		}
+    }
+}`
+	response := `{"data": {
+	"filterCreate": {
+		"filter": {
+			{{ template "filter_tier1service_response" }}
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "filter/create", request, response)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
@@ -23,25 +47,49 @@ func TestCreateFilter(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Kubernetes", result.Name)
+	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
 	autopilot.Equals(t, ol.PredicateTypeEnumEquals, result.Predicates[0].Type)
 }
 
 func TestGetFilter(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "filter/get")
+	request := `{
+    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value}}}}",
+	"variables":{
+		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"filter": {
+			{{ template "filter_tier1service_response" }}
+		}
+	}
+}}`
+	client := ABetterTestClient(t, "filter/get", request, response)
 	// Act
 	result, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Test", result.Name)
+	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
 }
 
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "filter/get_missing")
+	request := `{
+    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value}}}}",
+	"variables":{
+		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"filter": null
+	}
+}}`
+	client := ABetterTestClient(t, "filter/get_missing", request, response)
 	// Act
 	_, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf")
 	// Assert
@@ -51,7 +99,7 @@ func TestGetMissingFilter(t *testing.T) {
 func TestListFilters(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query ($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -69,7 +117,7 @@ func TestListFilters(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 						  }}}}`},
-		{`{"query": "query ($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -100,7 +148,31 @@ func TestListFilters(t *testing.T) {
 
 func TestUpdateFilter(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "filter/update")
+	request := `{
+    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+			"name": "Test Updated",
+			"predicates": [
+				{
+				"key": "tier_index",
+				"type": "equals",
+				"value": "1"
+				}
+			]
+		}
+    }
+}`
+	response := `{"data": {
+	"filterUpdate": {
+		"filter": {
+			{{ template "filter_tier1service_response" }}
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "filter/update", request, response)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -113,13 +185,27 @@ func TestUpdateFilter(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Test Updated", result.Name)
+	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
 }
 
 func TestDeleteFilter(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "filter/delete")
+	request := `{
+    "query": "mutation FilterDelete($input:DeleteInput!){filterDelete(input: $input){deletedId,errors{message,path}}}",
+	"variables":{
+		"input": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"
+		}
+    }
+}`
+	response := `{"data": {
+	"filterDelete": {
+		"deletedId": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyNQ",
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "filter/delete", request, response)
 	// Act
 	err := client.DeleteFilter("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert
