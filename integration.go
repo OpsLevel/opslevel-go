@@ -34,7 +34,7 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("IntegrationGet"))
 	if q.Account.Integration.Id == "" {
 		err = fmt.Errorf("Integration with ID '%s' not found!", id)
 	}
@@ -50,7 +50,7 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (Integration
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
 		return IntegrationConnection{}, err
 	}
 	for q.Account.Integrations.PageInfo.HasNextPage {

@@ -8,7 +8,22 @@ import (
 
 func TestGetIntegration(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "integration/get")
+	request := `{
+	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type}}}",
+	"variables":{
+		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"integration": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf",
+			"name": "Deploy",
+			"type": "deploy"
+		}
+	}
+}}`
+	client := ABetterTestClient(t, "integration/get", request, response)
 	// Act
 	result, err := client.GetIntegration("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
 	// Assert
@@ -19,7 +34,18 @@ func TestGetIntegration(t *testing.T) {
 
 func TestGetMissingIntegraion(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "integration/get_missing")
+	request := `{
+	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type}}}",
+	"variables":{
+		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"integration": null
+	}
+}}`
+	client := ABetterTestClient(t, "integration/get_missing", request, response)
 	// Act
 	_, err := client.GetIntegration("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
 	// Assert
@@ -29,7 +55,7 @@ func TestGetMissingIntegraion(t *testing.T) {
 func TestListIntegrations(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query ($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -47,7 +73,7 @@ func TestListIntegrations(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 					}}}}`},
-		{`{"query": "query ($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
