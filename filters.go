@@ -76,7 +76,7 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("FilterCreate"))
 	return &m.Payload.Filter, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -93,7 +93,7 @@ func (client *Client) GetFilter(id ID) (*Filter, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("FilterGet"))
 	if q.Account.Filter.Id == "" {
 		err = fmt.Errorf("Filter with ID '%s' not found!", id)
 	}
@@ -109,7 +109,7 @@ func (client *Client) ListFilters(variables *PayloadVariables) (FilterConnection
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("FilterList")); err != nil {
 		return FilterConnection{}, err
 	}
 	for q.Account.Filters.PageInfo.HasNextPage {
@@ -138,7 +138,7 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("FilterUpdate"))
 	return &m.Payload.Filter, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -156,7 +156,7 @@ func (client *Client) DeleteFilter(id ID) error {
 	v := PayloadVariables{
 		"input": DeleteInput{Id: id},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("FilterDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
