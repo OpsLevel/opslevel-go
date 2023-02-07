@@ -111,8 +111,7 @@ type ServiceRepositoryUpdateInput struct {
 func (r *Repository) GetService(service ID, directory string) *ServiceRepository {
 	for _, edge := range r.Services.Edges {
 		for _, connection := range edge.ServiceRepositories {
-			// TODO: this string cast is just for during the conversion so i don't have to change all of Service objects
-			if string(connection.Service.Id) == string(service) && connection.BaseDirectory == directory {
+			if connection.Service.Id == service && connection.BaseDirectory == directory {
 				return &connection
 			}
 		}
@@ -152,7 +151,7 @@ func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ServiceRepositoryCreate"))
 	return &m.Payload.ServiceRepository, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -169,7 +168,7 @@ func (client *Client) GetRepositoryWithAlias(alias string) (*Repository, error) 
 	v := PayloadVariables{
 		"repo": graphql.String(alias),
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("RepositoryGet")); err != nil {
 		return nil, err
 	}
 	if err := q.Account.Repository.Hydrate(client); err != nil {
@@ -187,7 +186,7 @@ func (client *Client) GetRepository(id ID) (*Repository, error) {
 	v := PayloadVariables{
 		"repo": id,
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("RepositoryGet")); err != nil {
 		return nil, err
 	}
 	if err := q.Account.Repository.Hydrate(client); err != nil {
@@ -306,7 +305,7 @@ func (client *Client) ListRepositories() ([]Repository, error) {
 		"after": graphql.String(""),
 		"first": client.pageSize,
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("RepositoryList")); err != nil {
 		return q.Account.Repositories.Nodes, err
 	}
 	if err := q.Account.Repositories.Hydrate(client); err != nil {
@@ -326,7 +325,7 @@ func (client *Client) ListRepositoriesWithTier(tier string) ([]Repository, error
 		"first": client.pageSize,
 		"tier":  graphql.String(tier),
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("RepositoryList")); err != nil {
 		return q.Account.Repositories.Nodes, err
 	}
 	if err := q.Account.Repositories.Hydrate(client); err != nil {
@@ -349,7 +348,7 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ServiceRepositoryUpdate"))
 	return &m.Payload.ServiceRepository, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -367,7 +366,7 @@ func (client *Client) DeleteServiceRepository(id ID) error {
 	v := PayloadVariables{
 		"input": DeleteInput{Id: id},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ServiceRepositoryDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
