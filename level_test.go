@@ -9,7 +9,29 @@ import (
 
 func TestCreateRubricLevels(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "rubric/level/create")
+	request := `{
+	   "query": "mutation LevelCreate($input:LevelCreateInput!){levelCreate(input: $input){level{alias,description,id,index,name},errors{message,path}}}",
+		"variables":{
+			"input": {
+				"name": "Kyle",
+				"description": "Created By Kyle",
+				"index": 4
+			}
+	   }
+	}`
+	response := `{"data": {
+	"levelCreate": {
+		"level": {
+			"alias": "kyle",
+			"description": "Created By Kyle",
+			"id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw",
+			"index": 4,
+			"name": "Kyle"
+		},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_create", request, response)
 	// Act
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
@@ -23,7 +45,24 @@ func TestCreateRubricLevels(t *testing.T) {
 
 func TestGetRubricLevel(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "rubric/level/get")
+	request := `{
+	   "query": "query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}",
+		"variables":{
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
+	   }
+	}`
+	response := `{"data": {
+	"account": {
+		"level": {
+			"alias": "bronze",
+			"description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+			"id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+			"index": 1,
+			"name": "Bronze"
+		}
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_get", request, response)
 	// Act
 	result, err := client.GetLevel("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -33,7 +72,18 @@ func TestGetRubricLevel(t *testing.T) {
 
 func TestGetMissingRubricLevel(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "rubric/level/get_missing")
+	request := `{
+	   "query": "query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}",
+		"variables":{
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
+	   }
+	}`
+	response := `{"data": {
+	"account": {
+		"level": null
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_get_missing", request, response)
 	// Act
 	_, err := client.GetLevel("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -52,7 +102,23 @@ func TestListRubricLevels(t *testing.T) {
 
 func TestUpdateRubricLevel(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "rubric/level/update")
+	request := `{
+	   "query": "mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}",
+		"variables":{
+			"input": {
+				"id": "{{ template "id1" }}",
+				"name": "{{ template "name1" }}",
+				"description": "{{ template "description" }}"
+			}
+	   }
+	}`
+	response := `{"data": {
+	"levelUpdate": {
+		"level": {{ template "level.tpl" }},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_update", request, response)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          "MTIzNDU2Nzg5MTIzNDU2Nzg5",
@@ -67,7 +133,22 @@ func TestUpdateRubricLevel(t *testing.T) {
 
 func TestUpdateRubricLevelNoName(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_noname")
+	request := `{
+	   "query": "mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}",
+		"variables":{
+			"input": {
+				"id": "{{ template "id1" }}",
+				"description": "{{ template "description" }}"
+			}
+	   }
+	}`
+	response := `{"data": {
+	"levelUpdate": {
+		"level": {{ template "level.tpl" }},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_update_noname", request, response)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          "MTIzNDU2Nzg5MTIzNDU2Nzg5",
@@ -81,7 +162,23 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 
 func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_emptydescription")
+	request := `{
+	   "query": "mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}",
+		"variables":{
+			"input": {
+				"id": "{{ template "id1" }}",
+				"name": "{{ template "name1" }}",
+				"description": ""
+			}
+	   }
+	}`
+	response := `{"data": {
+	"levelUpdate": {
+		"level": {{ template "level.tpl" }},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_update_emptydescription", request, response)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          "MTIzNDU2Nzg5MTIzNDU2Nzg5",
@@ -96,7 +193,22 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 
 func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "rubric/level/update", "rubric/level/update_nodescription")
+	request := `{
+	   "query": "mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}",
+		"variables":{
+			"input": {
+				"id": "{{ template "id1" }}",
+				"name": "{{ template "name1" }}"
+			}
+	   }
+	}`
+	response := `{"data": {
+	"levelUpdate": {
+		"level": {{ template "level.tpl" }},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_update_nodescription", request, response)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:   "MTIzNDU2Nzg5MTIzNDU2Nzg5",
@@ -110,7 +222,21 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 
 func TestDeleteRubricLevels(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "rubric/level/delete")
+	request := `{
+	   "query": "mutation LevelDelete($input:LevelDeleteInput!){levelDelete(input: $input){deletedLevelId,errors{message,path}}}",
+		"variables":{
+			"input": {
+				"id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw"
+			}
+	   }
+	}`
+	response := `{"data": {
+	"levelDelete": {
+		"deletedLevelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw",
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "rubric/level_delete", request, response)
 	// Act
 	err := client.DeleteLevel("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw")
 	// Assert
