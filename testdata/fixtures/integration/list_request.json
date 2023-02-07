@@ -1,3 +1,0 @@
-{
-    "query": "{account{integrations{nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"
-}
