@@ -32,6 +32,6 @@ func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, doc
 	if docPath != "" {
 		v["docPath"] = NewString(docPath)
 	}
-	err := c.Mutate(&m, v)
+	err := c.Mutate(&m, v, WithName("ServiceApiDocSettingsUpdate"))
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }
