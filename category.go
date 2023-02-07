@@ -46,7 +46,7 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("CategoryCreate"))
 	return &m.Payload.Category, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -63,7 +63,7 @@ func (client *Client) GetCategory(id ID) (*Category, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("CategoryGet"))
 	if q.Account.Category.Id == "" {
 		err = fmt.Errorf("Category with ID '%s' not found!", id)
 	}
@@ -81,7 +81,7 @@ func (client *Client) ListCategories(variables *PayloadVariables) (CategoryConne
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("CategoryList")); err != nil {
 		return CategoryConnection{}, err
 	}
 	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
@@ -111,7 +111,7 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("CategoryUpdate"))
 	return &m.Payload.Category, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -129,7 +129,7 @@ func (client *Client) DeleteCategory(id ID) error {
 	v := PayloadVariables{
 		"input": CategoryDeleteInput{Id: id},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("CategoryDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 

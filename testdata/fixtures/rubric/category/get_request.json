@@ -1,6 +1,0 @@
-{
-    "query": "query ($id:ID!){account{category(id: $id){id,name}}}",
-    "variables": {
-      "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
-    }
-  }

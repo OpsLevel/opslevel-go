@@ -1,3 +1,0 @@
-{
-    "query": "{account{rubric{categories{nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"
-}
