@@ -54,14 +54,12 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
-		return nil, err
-	}
+	err := client.Mutate(&m, v, WithName("AliasCreate"))
 	output := make([]string, len(m.Payload.Aliases))
 	for i, item := range m.Payload.Aliases {
 		output[i] = string(item)
 	}
-	return output, FormatErrors(m.Payload.Errors)
+	return output, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -92,7 +90,7 @@ func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("AliasDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
