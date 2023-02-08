@@ -1,4 +1,0 @@
-{
-  "query": "mutation ($runnerId:ID!){runnerUnregister(runnerId: $runnerId){errors{message,path}}}",
-  "variables": {"runnerId": "1234"}
-}

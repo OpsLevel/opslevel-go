@@ -135,7 +135,7 @@ func (c *Client) RunnerRegister() (*Runner, error) {
 		} `graphql:"runnerRegister"`
 	}
 	v := PayloadVariables{}
-	err := c.Mutate(&m, v)
+	err := c.Mutate(&m, v, WithName("RunnerRegister"))
 	return &m.Payload.Runner, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -151,7 +151,7 @@ func (c *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*RunnerJo
 		"id":    runnerId,
 		"token": &lastUpdateToken,
 	}
-	err := c.Mutate(&m, v)
+	err := c.Mutate(&m, v, WithName("RunnerGetPendingJob"))
 	return &m.Payload.RunnerJob, m.Payload.LastUpdateToken, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -166,7 +166,7 @@ func (c *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurrency in
 		"currentReplicaCount": graphql.Int(currentReplicaCount),
 		"jobConcurrency":      graphql.Int(jobConcurrency),
 	}
-	err := c.Query(&q, v)
+	err := c.Query(&q, v, WithName("RunnerScale"))
 	return &q.Account.RunnerScale, HandleErrors(err, nil)
 }
 
@@ -179,7 +179,7 @@ func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := c.Mutate(&m, v)
+	err := c.Mutate(&m, v, WithName("RunnerAppendJobLog"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
@@ -192,7 +192,7 @@ func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := c.Mutate(&m, v)
+	err := c.Mutate(&m, v, WithName("RunnerReportJobOutcome"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
@@ -205,6 +205,6 @@ func (c *Client) RunnerUnregister(runnerId ID) error {
 	v := PayloadVariables{
 		"runnerId": runnerId,
 	}
-	err := c.Mutate(&m, v)
+	err := c.Mutate(&m, v, WithName("RunnerUnregister"))
 	return HandleErrors(err, m.Payload.Errors)
 }
