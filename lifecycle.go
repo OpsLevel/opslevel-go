@@ -14,6 +14,6 @@ func (client *Client) ListLifecycles() ([]Lifecycle, error) {
 			Lifecycles []Lifecycle
 		}
 	}
-	err := client.Query(&q, nil)
+	err := client.Query(&q, nil, WithName("LifecycleList"))
 	return q.Account.Lifecycles, HandleErrors(err, nil)
 }

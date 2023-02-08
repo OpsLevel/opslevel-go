@@ -8,7 +8,22 @@ import (
 
 func TestListLifecycles(t *testing.T) {
 	// Arrange
-	client := ATestClientSkipRequest(t, "lifecycles")
+	request := `{
+    "query": "query LifecycleList{account{lifecycles{alias,description,id,index,name}}}",
+	"variables":{}
+}`
+	response := `{"data": {
+	"account": {
+		"lifecycles": [
+			{{ template "lifecycle-pre-alpha" }},
+			{{ template "lifecycle-alpha" }},
+			{{ template "lifecycle-beta" }},
+			{{ template "lifecycle-ga" }},
+			{{ template "lifecycle-eol" }}
+		]
+	}
+}}`
+	client := ABetterTestClient(t, "lifecycles", request, response)
 	// Act
 	result, err := client.ListLifecycles()
 	// Assert
