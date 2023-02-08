@@ -72,7 +72,7 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("LevelCreate"))
 	return &m.Payload.Level, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -89,7 +89,7 @@ func (client *Client) GetLevel(id ID) (*Level, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("LevelGet"))
 	if q.Account.Level.Id == "" {
 		err = fmt.Errorf("Level with ID '%s' not found!", id)
 	}
@@ -127,7 +127,7 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("LevelUpdate"))
 	return &m.Payload.Level, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -145,7 +145,7 @@ func (client *Client) DeleteLevel(id ID) error {
 	v := PayloadVariables{
 		"input": LevelDeleteInput{Id: id},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("LevelDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
