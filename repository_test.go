@@ -9,7 +9,18 @@ import (
 
 func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "repository/get_not_found", "repository/get_with_alias")
+	request := `{
+	"query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
+	"variables":{
+		"repo": "github.com:rocktavious/autopilot"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"repository": null
+	}
+}}`
+	client := ABetterTestClient(t, "repository/get_not_found", request, response)
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -19,7 +30,18 @@ func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 
 func TestGetRepositoryWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "repository/get", "repository/get_with_alias")
+	request := `{
+	"query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
+	"variables":{
+		"repo": "github.com:rocktavious/autopilot"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"repository": {{ template "repository_1" }}
+	}
+}}`
+	client := ABetterTestClient(t, "repository/get_with_alias", request, response)
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -33,7 +55,18 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 
 func TestGetRepository(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "repository/get")
+	request := `{
+	"query": "query RepositoryGet($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
+	"variables":{
+		"repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
+    }
+}`
+	response := `{"data": {
+	"account": {
+		"repository": {{ template "repository_1" }}
+	}
+}}`
+	client := ABetterTestClient(t, "repository/get", request, response)
 	// Act
 	result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
 	// Assert
@@ -57,7 +90,21 @@ func TestListRepositories(t *testing.T) {
 
 func TestDeleteServiceRepository(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "repository/service/delete")
+	request := `{
+	"query": "mutation ServiceRepositoryDelete($input:DeleteInput!){serviceRepositoryDelete(input: $input){deletedId,errors{message,path}}}",
+	"variables":{
+		"input": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"
+		}
+    }
+}`
+	response := `{"data": {
+	"serviceRepositoryDelete": {
+		"deletedId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3",
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "repository/service_delete", request, response)
 	// Act
 	err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
 	// Assert
