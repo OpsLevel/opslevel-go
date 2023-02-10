@@ -28,7 +28,7 @@ type Group struct {
 type GroupConnection struct {
 	Nodes      []Group
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type GroupInput struct {
@@ -51,7 +51,7 @@ func (client *Client) CreateGroup(input GroupInput) (*Group, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("GroupCreate"))
 	return &m.Payload.Group, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -68,7 +68,7 @@ func (client *Client) GetGroup(id ID) (*Group, error) {
 	v := PayloadVariables{
 		"group": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("GroupGet"))
 	return &q.Account.Group, HandleErrors(err, nil)
 }
 
@@ -79,14 +79,14 @@ func (client *Client) GetGroupWithAlias(alias string) (*Group, error) {
 		}
 	}
 	v := PayloadVariables{
-		"group": graphql.String(alias),
+		"group": alias,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("GroupGet"))
 	return &q.Account.Group, HandleErrors(err, nil)
 }
 
 func (conn *GroupConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Group, error) {
-	if err := client.Query(q, v); err != nil {
+	if err := client.Query(q, v, WithName("GroupList")); err != nil {
 		return conn.Nodes, err
 	}
 	if err := conn.Hydrate(client); err != nil {
@@ -344,7 +344,7 @@ func (client *Client) UpdateGroup(identifier string, input GroupInput) (*Group, 
 		"group": *NewIdentifier(identifier),
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("GroupUpdate"))
 	return &m.Payload.Group, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -364,7 +364,7 @@ func (client *Client) DeleteGroup(identifier string) error {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("GroupDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
