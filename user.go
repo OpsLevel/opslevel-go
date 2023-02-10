@@ -22,8 +22,9 @@ type User struct {
 }
 
 type UserConnection struct {
-	Nodes    []User
-	PageInfo PageInfo
+	Nodes      []User
+	PageInfo   PageInfo
+	TotalCount int
 }
 
 type UserIdentifierInput struct {
@@ -98,7 +99,7 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 		"email": graphql.String(email),
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("UserInvite"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -115,7 +116,7 @@ func (client *Client) GetUser(value string) (*User, error) {
 	v := PayloadVariables{
 		"input": NewUserIdentifier(value),
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("UserGet"))
 	return &q.Account.User, HandleErrors(err, nil)
 }
 
@@ -129,7 +130,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, er
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
 		return UserConnection{}, err
 	}
 	//output = append(output, q.Account.Users.Nodes...)
@@ -141,6 +142,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, er
 		}
 		q.Account.Users.Nodes = append(q.Account.Users.Nodes, resp.Nodes...)
 		q.Account.Users.PageInfo = resp.PageInfo
+		q.Account.Users.TotalCount += resp.TotalCount
 	}
 	return q.Account.Users, nil
 }
@@ -160,7 +162,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 		"user":  NewUserIdentifier(user),
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("UserUpdate"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -177,7 +179,7 @@ func (client *Client) DeleteUser(user string) error {
 	v := PayloadVariables{
 		"user": NewUserIdentifier(user),
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("UserDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 

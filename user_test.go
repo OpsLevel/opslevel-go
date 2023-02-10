@@ -9,7 +9,20 @@ import (
 
 func TestInviteUser(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "user/invite")
+	request := `{"query":"mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}",
+	"variables":{
+		"email": "kyle@opslevel.com",
+		"input": {
+			"name": "Kyle Rockman"
+		}
+	}}`
+	response := `{"data": {
+	"userInvite": {
+		"user": {{ template "user_1" }},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "user/invite", request, response)
 	// Act
 	result, err := client.InviteUser("kyle@opslevel.com", ol.UserInput{
 		Name: "Kyle Rockman",
@@ -23,7 +36,18 @@ func TestInviteUser(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "user/get")
+	request := `{"query":"query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}",
+	"variables":{
+		"input": {
+			"email": "kyle@opslevel.com"
+		}
+	}}`
+	response := `{"data": {
+	"account": {
+		"user": {{ template "user_1" }}
+	}
+	}}`
+	client := ABetterTestClient(t, "user/get", request, response)
 	// Act
 	result, err := client.GetUser("kyle@opslevel.com")
 	// Assert
@@ -37,65 +61,36 @@ func TestListUser(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{
-  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-  "variables": {
-    "after":"",
-    "first":100
-  }
+  "query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+  {{ template "pagination_initial_query_variables" }}
 }`,
 			`{
   "data": {
     "account": {
       "users": {
         "nodes": [
-          {
-            "email": "kyle@opslevel.com",
-            "id": "1",
-            "name": "Kyle Rockman",
-            "role": "user"
-          },
-          {
-            "email": "edgar@opslevel.com",
-            "id": "2",
-            "name": "Edgar Ochoa",
-            "role": "admin"
-          }
+          {{ template "user_1" }},
+          {{ template "user_2" }}
         ],
-        "pageInfo": {
-          "hasNextPage": true,
-          "hasPreviousPage": false,
-          "startCursor": "MQ",
-          "endCursor": "NDc"
-        }
+        {{ template "pagination_initial_pageInfo_response" }},
+		"totalCount": 2
       }
     }
   }
 }`},
 		{`{
-  "query": "query ($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-  "variables": {
-    "after":"NDc",
-    "first":100
-  }
+  "query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+  {{ template "pagination_second_query_variables" }}
 }`,
 			`{
   "data": {
     "account": {
       "users": {
         "nodes": [
-          {
-            "email": "matthew@opslevel.com",
-            "id": "3",
-            "name": "Matthew Brahms",
-            "role": "admin"
-          }
+			{{ template "user_3" }}
         ],
-        "pageInfo": {
-          "hasNextPage": false,
-          "hasPreviousPage": true,
-          "startCursor": "NDc",
-          "endCursor": "EOf"
-        }
+        {{ template "pagination_second_pageInfo_response" }},
+		"totalCount": 1
       }
     }
   }
@@ -107,7 +102,7 @@ func TestListUser(t *testing.T) {
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Edgar Ochoa", result[1].Name)
 	autopilot.Equals(t, ol.UserRoleAdmin, result[1].Role)
 	autopilot.Equals(t, "Matthew Brahms", result[2].Name)
@@ -116,7 +111,22 @@ func TestListUser(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "user/update")
+	request := `{"query":"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}",
+	"variables":{
+		"input": {
+			"role": "admin"
+		},
+		"user": {
+			"email": "kyle@opslevel.com"
+		}
+	}}`
+	response := `{"data": {
+	"userUpdate": {
+		"user": {{ template "user_1_update" }},
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "user/update", request, response)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
 		Role: ol.UserRoleAdmin,
@@ -130,7 +140,18 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "user/delete")
+	request := `{"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}",
+	"variables":{
+		"user": {
+			"email": "kyle@opslevel.com"
+		}
+	}}`
+	response := `{"data": {
+	"userDelete": {
+		"errors": []
+	}
+	}}`
+	client := ABetterTestClient(t, "user/delete", request, response)
 	// Act
 	err := client.DeleteUser("kyle@opslevel.com")
 	// Assert
@@ -139,7 +160,21 @@ func TestDeleteUser(t *testing.T) {
 
 func TestDeleteUserDoesNotExist(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "user/delete_not_found")
+	request := `{"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}",
+	"variables":{
+		"user": {
+			"email": "not-found@opslevel.com"
+		}
+	}}`
+	response := `{"data": {
+	"userDelete": {
+		"errors": [{
+			"message": "User with email 'not-found@opslevel.com' does not exist on this account",
+			"path": ["user"]
+		}]
+	}
+	}}`
+	client := ABetterTestClient(t, "user/delete_not_found", request, response)
 	// Act
 	err := client.DeleteUser("not-found@opslevel.com")
 	// Assert

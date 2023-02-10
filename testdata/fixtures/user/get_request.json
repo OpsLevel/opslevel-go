@@ -1,8 +1,0 @@
-{
-  "query": "query ($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}",
-  "variables": {
-      "input": {
-        "email": "kyle@opslevel.com"
-      }
-  }
-}
