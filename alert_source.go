@@ -27,7 +27,7 @@ func (client *Client) GetAlertSourceWithExternalIdentifier(input AlertSourceExte
 	v := PayloadVariables{
 		"externalIdentifier": input,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("AlertSourceGet"))
 	return &q.Account.AlertSource, HandleErrors(err, nil)
 }
 
@@ -41,7 +41,7 @@ func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("AlertSourceGet"))
 	return &q.Account.AlertSource, HandleErrors(err, nil)
 }
 

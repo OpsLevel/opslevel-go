@@ -1,9 +1,0 @@
-{
-  "query":"query ($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}",
-  "variables": {
-    "externalIdentifier": {
-      "type": "datadog",
-      "externalId": "12345678"
-    }
-  }
-}
