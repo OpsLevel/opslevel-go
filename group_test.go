@@ -146,14 +146,98 @@ func TestGetGroupWithAlias(t *testing.T) {
 
 func TestListGroups(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "group/list")
+	requests := []TestRequest{
+		{
+			`{
+    "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+    "variables": {
+      "after": "",
+      "first": 100
+    }
+  }`,
+			`{
+  "data": {
+    "account": {
+      "groups": {
+        "nodes": [
+          {
+            "alias": "test_group_2",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTE",
+            "description": "test1123",
+            "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_2",
+            "name": "test_group_2",
+            "parent": {
+              "alias": "test_group_1",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
+            }
+          },
+          {
+            "alias": "test_group_1",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI",
+            "description": null,
+            "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1",
+            "name": "test_group_1",
+            "parent": null
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": true,
+          "hasPreviousPage": false,
+          "startCursor": "MQ",
+          "endCursor": "Mg"
+        },
+        "totalCount": 2
+      }
+    }
+  }
+}`},
+		{
+			`{
+    "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+    "variables": {
+      "after": "Mg",
+      "first": 100
+    }
+  }`,
+			`{
+  "data": {
+    "account": {
+      "groups": {
+        "nodes": [
+          {
+            "alias": "test_group_3",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvNTE",
+            "description": "third test group",
+            "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_3",
+            "name": "test_group_3",
+            "parent": {
+              "alias": "test_group_1",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
+            }
+          }
+        ],
+        "pageInfo": {
+          "hasNextPage": false,
+          "hasPreviousPage": true,
+          "startCursor": "Mg",
+          "endCursor": "EOf"
+        },
+        "totalCount": 1
+      }
+    }
+  }
+}`},
+	}
+	client := APaginatedTestClient(t, "group/list", requests...)
 	// Act
-	result, err := client.ListGroups()
+	response, err := client.ListGroups(nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
+	autopilot.Equals(t, 3, len(result))
 	autopilot.Equals(t, "test_group_2", result[0].Alias)
 	autopilot.Equals(t, "test_group_1", result[1].Alias)
+	autopilot.Equals(t, "test_group_3", result[2].Alias)
 }
 
 func TestMembers(t *testing.T) {
