@@ -99,6 +99,14 @@ func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables ma
 	return client.client.Mutate(ctx, m, variables, options...)
 }
 
+func (client *Client) ExecRaw(q string, variables map[string]interface{}, options ...graphql.Option) ([]byte, error) {
+	return client.ExecRawCTX(context.Background(), q, variables, options...)
+}
+
+func (client *Client) ExecRawCTX(ctx context.Context, q string, variables map[string]interface{}, options ...graphql.Option) ([]byte, error) {
+	return client.client.ExecRaw(ctx, q, variables, options...)
+}
+
 func (client *Client) Validate() error {
 	var q struct {
 		Account struct {
