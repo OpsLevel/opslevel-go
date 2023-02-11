@@ -9,13 +9,11 @@ import (
 )
 
 type ClientSettings struct {
-	url            string
-	userAgentExtra string
-	timeout        time.Duration
-	retries        int
-
-	apiVisibility string // Only Used by GQL
-	pageSize      int    // Only Used by GQL
+	url      string
+	timeout  time.Duration
+	retries  int
+	headers  map[string]string
+	pageSize int // Only Used by GQL
 }
 
 type Option func(*ClientSettings)
@@ -26,8 +24,11 @@ func newClientSettings(options ...Option) *ClientSettings {
 		timeout: time.Second * 10,
 		retries: 10,
 
-		pageSize:      100,
-		apiVisibility: "public",
+		pageSize: 100,
+		headers: map[string]string{
+			"User-Agent":         buildUserAgent(""),
+			"GraphQL-Visibility": "public",
+		},
 	}
 	for _, opt := range options {
 		opt(settings)
@@ -47,10 +48,14 @@ func SetURL(url string) Option {
 	}
 }
 
-func SetUserAgentExtra(extra string) Option {
+func SetHeader(key string, value string) Option {
 	return func(c *ClientSettings) {
-		c.userAgentExtra = extra
+		c.headers[key] = value
 	}
+}
+
+func SetUserAgentExtra(extra string) Option {
+	return SetHeader("User-Agent", buildUserAgent(extra))
 }
 
 func SetTimeout(amount time.Duration) Option {
@@ -66,9 +71,7 @@ func SetMaxRetries(amount int) Option {
 }
 
 func SetAPIVisibility(visibility string) Option {
-	return func(c *ClientSettings) {
-		c.apiVisibility = visibility
-	}
+	return SetHeader("GraphQL-Visibility", visibility)
 }
 
 func SetPageSize(size int) Option {
