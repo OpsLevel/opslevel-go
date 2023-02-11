@@ -136,47 +136,6 @@ func (self *Team) Hydrate(client *Client) error {
 	return nil
 }
 
-func (conn *TeamConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	for i, item := range conn.Nodes {
-		if err := (&item).Hydrate(client); err != nil {
-			return err
-		}
-		conn.Nodes[i] = item
-	}
-	q.Account.Teams.PageInfo = conn.PageInfo
-	for q.Account.Teams.PageInfo.HasNextPage {
-		v["after"] = q.Account.Teams.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		for _, item := range q.Account.Teams.Nodes {
-			if err := (&item).Hydrate(client); err != nil {
-				return err
-			}
-			conn.Nodes = append(conn.Nodes, item)
-		}
-	}
-	return nil
-}
-
-func (conn *TeamConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Team, error) {
-	if err := client.Query(q, v); err != nil {
-		return conn.Nodes, err
-	}
-	if err := conn.Hydrate(client); err != nil {
-		return conn.Nodes, err
-	}
-	return conn.Nodes, nil
-}
-
 func BuildMembershipInput(members []string) (output []TeamMembershipUserInput) {
 	for _, email := range members {
 		output = append(output, TeamMembershipUserInput{Email: email})
@@ -369,15 +328,30 @@ func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, er
 	return q.Account.Teams, nil
 }
 
-func (client *Client) ListTeamsWithManager(email string) ([]Team, error) {
+func (client *Client) ListTeamsWithManager(email string, variables *PayloadVariables) (TeamConnection, error) {
 	var q struct {
 		Account struct {
 			Teams TeamConnection `graphql:"teams(managerEmail: $email, after: $after, first: $first)"`
 		}
 	}
-	v := client.InitialPageVariables()
-	v["email"] = graphql.String(email)
-	return q.Account.Teams.Query(client, &q, v)
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+
+	if err := client.Query(&q, *variables); err != nil {
+		return TeamConnection{}, err
+	}
+
+	for q.Account.Teams.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		resp, err := client.ListTeams(variables)
+		if err != nil {
+			return TeamConnection{}, err
+		}
+		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		q.Account.Teams.PageInfo = resp.PageInfo
+	}
+	return q.Account.Teams, nil
 }
 
 //#endregion
