@@ -54,6 +54,14 @@ func SetHeader(key string, value string) Option {
 	}
 }
 
+func SetHeaders(headers map[string]string) Option {
+	return func(c *ClientSettings) {
+		for key, value := range headers {
+			c.headers[key] = value
+		}
+	}
+}
+
 func SetUserAgentExtra(extra string) Option {
 	return SetHeader("User-Agent", buildUserAgent(extra))
 }
