@@ -69,14 +69,250 @@ func TestGetTeamWithAlias(t *testing.T) {
 
 func TestListTeams(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/list")
+	requests := []TestRequest{
+		{`{
+    "query": "query ($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+    "variables": {
+      "after": "",
+      "first": 100
+    }
+  }`,
+			`{
+    "data": {
+      "account": {
+        "teams": {
+          "nodes": [
+            {
+              "alias": "devops",
+              "aliases": [
+                "devops"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/devops",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+              "manager": {
+                "name": "Kyle Rockman",
+                "email": "kyle.rockman@mac.com"
+              },
+              "members": {
+                "nodes": [
+                  {
+                    "name": "Andrew Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Ashley Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Drew Example",
+                    "email": "example@opslevel.com"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "DevOps",
+              "responsibilities": "Own Infra & Tools."
+            },
+            {
+              "alias": "developers",
+              "aliases": [
+                "developers"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/developers",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk",
+              "manager": {
+                "name": "Kyle Rockman",
+                "email": "kyle.rockman@mac.com"
+              },
+              "members": {
+                "nodes": [
+                  {
+                    "name": "Andrew Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Ashley Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Drew Example",
+                    "email": "example@opslevel.com"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "Developers",
+              "responsibilities": null
+            },
+            {
+              "alias": "marketing",
+              "aliases": [
+                "marketing"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/marketing",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTA",
+              "manager": {
+                "name": "Kyle Rockman",
+                "email": "kyle.rockman@mac.com"
+              },
+              "members": {
+                "nodes": [
+                  {
+                    "name": "Andrew Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Ashley Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Drew Example",
+                    "email": "example@opslevel.com"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "Marketing",
+              "responsibilities": null
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": true,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "NDc"
+          }
+        }
+      }
+    }
+  }`},
+		{`{
+    "query": "query ($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+    "variables": {
+      "after": "NDc",
+      "first": 100
+    }
+  }`,
+			`{
+    "data": {
+      "account": {
+        "teams": {
+          "nodes": [
+            {
+              "alias": "security",
+              "aliases": [
+                "security"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/security",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTE",
+              "manager": {
+                "name": "Kyle Rockman",
+                "email": "kyle.rockman@mac.com"
+              },
+              "members": {
+                "nodes": [
+                  {
+                    "name": "Andrew Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Ashley Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Drew Example",
+                    "email": "example@opslevel.com"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "Security",
+              "responsibilities": null
+            },
+            {
+              "alias": "vps",
+              "aliases": [
+                "vps"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/vps",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTI",
+              "manager": {
+                "name": "Kyle Rockman",
+                "email": "kyle.rockman@mac.com"
+              },
+              "members": {
+                "nodes": [
+                  {
+                    "name": "Andrew Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Ashley Example",
+                    "email": "example@opslevel.com"
+                  },
+                  {
+                    "name": "Drew Example",
+                    "email": "example@opslevel.com"
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "VPs",
+              "responsibilities": null
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": true,
+            "startCursor": "NDc",
+            "endCursor": "EOf"
+          }
+        }
+      }
+    }
+  }`},
+	}
+	client := APaginatedTestClient(t, "team/list", requests...)
 	// Act
-	result, err := client.ListTeams()
+	response, err := client.ListTeams(nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 5, len(result))
 	autopilot.Equals(t, "devops", result[0].Alias)
 	autopilot.Equals(t, "developers", result[1].Alias)
+	autopilot.Equals(t, "security", result[3].Alias)
+	autopilot.Equals(t, "vps", result[4].Alias)
 	autopilot.Equals(t, "Own Infra & Tools.", result[0].Responsibilities)
 }
 

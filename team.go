@@ -343,14 +343,30 @@ func (client *Client) GetTeamCount() (int, error) {
 	return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
 }
 
-func (client *Client) ListTeams() ([]Team, error) {
+func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, error) {
 	var q struct {
 		Account struct {
 			Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
 		}
 	}
-	v := client.InitialPageVariables()
-	return q.Account.Teams.Query(client, &q, v)
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+
+	if err := client.Query(&q, *variables); err != nil {
+		return TeamConnection{}, err
+	}
+
+	for q.Account.Teams.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		resp, err := client.ListTeams(variables)
+		if err != nil {
+			return TeamConnection{}, err
+		}
+		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		q.Account.Teams.PageInfo = resp.PageInfo
+	}
+	return q.Account.Teams, nil
 }
 
 func (client *Client) ListTeamsWithManager(email string) ([]Team, error) {
