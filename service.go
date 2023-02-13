@@ -130,13 +130,13 @@ func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {
 		"after": graphql.String(""),
 	}
 	var output []ServiceDocument
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("ServiceDocumentsList")); err != nil {
 		return nil, err
 	}
 	output = append(output, q.Account.Service.Documents.Nodes...)
 	for q.Account.Service.Documents.PageInfo.HasNextPage {
 		v["after"] = q.Account.Service.Documents.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		if err := client.Query(&q, v, WithName("ServiceDocumentsList")); err != nil {
 			return nil, err
 		}
 		output = append(output, q.Account.Service.Documents.Nodes...)
@@ -158,7 +158,7 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
+	if err := client.Mutate(&m, v, WithName("ServiceCreate")); err != nil {
 		return nil, err
 	}
 	if err := m.Payload.Service.Hydrate(client); err != nil {
@@ -181,7 +181,7 @@ func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
 	v := PayloadVariables{
 		"service": graphql.String(alias),
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("ServiceGet"))
 	return &q.Account.Service, HandleErrors(err, nil)
 }
 
@@ -194,7 +194,7 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	v := PayloadVariables{
 		"service": graphql.String(alias),
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("ServiceGet")); err != nil {
 		return nil, err
 	}
 	if err := q.Account.Service.Hydrate(client); err != nil {
@@ -217,7 +217,7 @@ func (client *Client) GetService(id ID) (*Service, error) {
 	v := PayloadVariables{
 		"service": id,
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("ServiceGet")); err != nil {
 		return nil, err
 	}
 	if err := q.Account.Service.Hydrate(client); err != nil {
@@ -234,13 +234,13 @@ func (client *Client) GetServiceCount() (int, error) {
 			}
 		}
 	}
-	err := client.Query(&q, nil)
+	err := client.Query(&q, nil, WithName("ServiceCountGet"))
 	return int(q.Account.Services.TotalCount), HandleErrors(err, nil)
 }
 
 // TODO: maybe we can find a way to merge ServiceConnection.Query & Hydrate
 func (conn *ServiceConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Service, error) {
-	if err := client.Query(q, v); err != nil {
+	if err := client.Query(q, v, WithName("ServiceList")); err != nil {
 		return conn.Nodes, err
 	}
 	if err := conn.Hydrate(client); err != nil {
@@ -261,7 +261,7 @@ func (conn *ServiceConnection) Hydrate(client *Client) error {
 	q.Account.Services.PageInfo = conn.PageInfo
 	for q.Account.Services.PageInfo.HasNextPage {
 		v["after"] = q.Account.Services.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		if err := client.Query(&q, v, WithName("ServiceList")); err != nil {
 			return err
 		}
 		for _, item := range q.Account.Services.Nodes {
@@ -399,7 +399,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
+	if err := client.Mutate(&m, v, WithName("ServiceUpdate")); err != nil {
 		return nil, err
 	}
 	if err := m.Payload.Service.Hydrate(client); err != nil {
@@ -424,7 +424,7 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ServiceDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
