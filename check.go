@@ -3,7 +3,6 @@ package opslevel
 import (
 	"fmt"
 
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -114,7 +113,7 @@ type ToolUsageCheckFragment struct {
 type CheckConnection struct {
 	Nodes      []Check
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type CheckCreateInputProvider interface {
@@ -772,6 +771,7 @@ func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, 
 		}
 		q.Account.Rubric.Checks.Nodes = append(q.Account.Rubric.Checks.Nodes, resp.Nodes...)
 		q.Account.Rubric.Checks.PageInfo = resp.PageInfo
+		q.Account.Rubric.Checks.TotalCount += resp.TotalCount
 	}
 	return q.Account.Rubric.Checks, nil
 }

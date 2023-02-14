@@ -96,7 +96,7 @@ func TestListIntegrations(t *testing.T) {
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Payload", result[1].Name)
 	autopilot.Equals(t, "Kubernetes", result[2].Name)
 	//fmt.Println(Templated(requests[1].Request))

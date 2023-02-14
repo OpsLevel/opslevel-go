@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
-	"github.com/hasura/go-graphql-client"
 )
 
 type Integration struct {
@@ -16,7 +15,7 @@ type Integration struct {
 type IntegrationConnection struct {
 	Nodes      []Integration
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 func (self *Integration) Alias() string {
@@ -61,6 +60,7 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (Integration
 		}
 		q.Account.Integrations.Nodes = append(q.Account.Integrations.Nodes, resp.Nodes...)
 		q.Account.Integrations.PageInfo = resp.PageInfo
+		q.Account.Integrations.TotalCount += resp.TotalCount
 	}
 	return q.Account.Integrations, nil
 }
