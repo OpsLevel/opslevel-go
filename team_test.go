@@ -242,6 +242,189 @@ func TestListTeams(t *testing.T) {
 	autopilot.Equals(t, "Own Infra & Tools.", result[0].Responsibilities)
 }
 
+func TestListTeamsWithManager(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{
+    "query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+	"variables": {
+		"after": "",
+		"first": 100,
+		"email": "kyle@opslevel.com"
+	}
+  }`,
+			`{
+    "data": {
+      "account": {
+        "teams": {
+          "nodes": [
+            {
+              "alias": "devops",
+              "aliases": [
+                "devops"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/devops",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+              "manager": {{ template "user_1" }},
+              "members": {
+                "nodes": [
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "DevOps",
+              "responsibilities": "Own Infra & Tools."
+            },
+            {
+              "alias": "developers",
+              "aliases": [
+                "developers"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/developers",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk",
+              "manager": {{ template "user_1" }},
+              "members": {
+                "nodes": [
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "Developers",
+              "responsibilities": null
+            },
+            {
+              "alias": "marketing",
+              "aliases": [
+                "marketing"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/marketing",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTA",
+              "manager": {{ template "user_1" }},
+              "members": {
+                "nodes": [
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "Marketing",
+              "responsibilities": null
+            }
+          ],
+{{ template "pagination_initial_pageInfo_response" }},
+			"totalCount": 3
+        }
+      }
+    }
+  }`},
+		{`{
+    "query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+	"variables": {
+		"after": "OA",
+		"first": 100,
+		"email": "kyle@opslevel.com"
+	}
+  }`,
+			`{
+    "data": {
+      "account": {
+        "teams": {
+          "nodes": [
+            {
+              "alias": "security",
+              "aliases": [
+                "security"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/security",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTE",
+              "manager": {{ template "user_1" }},
+              "members": {
+                "nodes": [
+					{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "Security",
+              "responsibilities": null
+            },
+            {
+              "alias": "vps",
+              "aliases": [
+                "vps"
+              ],
+              "contacts": [],
+              "htmlUrl": "https://app.opslevel.com/teams/vps",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTI",
+              "manager": {{ template "user_1" }},
+              "members": {
+                "nodes": [
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "Mw"
+                }
+              },
+              "name": "VPs",
+              "responsibilities": null
+            }
+          ],
+{{ template "pagination_second_pageInfo_response" }},
+			"totalCount": 2
+        }
+      }
+    }
+  }`},
+	}
+	client := APaginatedTestClient(t, "team/list_with_manager", requests...)
+	// Act
+	response, err := client.ListTeamsWithManager("kyle@opslevel.com", nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 5, response.TotalCount)
+	autopilot.Equals(t, "devops", result[0].Alias)
+	autopilot.Equals(t, "developers", result[1].Alias)
+	autopilot.Equals(t, "security", result[3].Alias)
+	autopilot.Equals(t, "vps", result[4].Alias)
+	autopilot.Equals(t, "Own Infra & Tools.", result[0].Responsibilities)
+}
+
 func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/update")

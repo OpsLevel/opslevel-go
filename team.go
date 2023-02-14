@@ -339,6 +339,7 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
+	(*variables)["email"] = email
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
 		return TeamConnection{}, err
@@ -346,12 +347,13 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
-		resp, err := client.ListTeams(variables)
+		resp, err := client.ListTeamsWithManager(email, variables)
 		if err != nil {
 			return TeamConnection{}, err
 		}
 		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
 		q.Account.Teams.PageInfo = resp.PageInfo
+		q.Account.Teams.TotalCount += resp.TotalCount
 	}
 	return q.Account.Teams, nil
 }
