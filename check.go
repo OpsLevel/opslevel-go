@@ -404,11 +404,6 @@ type CheckResponsePayload struct {
 	Errors []OpsLevelErrors
 }
 
-func (p *CheckResponsePayload) Mutate(client *Client, m interface{}, v map[string]interface{}) (*Check, error) {
-	err := client.Mutate(m, v)
-	return &p.Check, HandleErrors(err, p.Errors)
-}
-
 //#region Create
 
 func (client *Client) CreateCheckAlertSourceUsage(input CheckAlertSourceUsageCreateInput) (*Check, error) {
@@ -418,7 +413,8 @@ func (client *Client) CreateCheckAlertSourceUsage(input CheckAlertSourceUsageCre
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckAlertSourceUsageCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckAlertSourceUsage(input CheckAlertSourceUsageUpdateInput) (*Check, error) {
@@ -428,7 +424,8 @@ func (client *Client) UpdateCheckAlertSourceUsage(input CheckAlertSourceUsageUpd
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckAlertSourceUsageUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckCustomEvent(input CheckCustomEventCreateInput) (*Check, error) {
@@ -438,7 +435,8 @@ func (client *Client) CreateCheckCustomEvent(input CheckCustomEventCreateInput) 
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckCustomEventCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckCustomEvent(input CheckCustomEventUpdateInput) (*Check, error) {
@@ -448,7 +446,8 @@ func (client *Client) UpdateCheckCustomEvent(input CheckCustomEventUpdateInput) 
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckCustomEventUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckGitBranchProtection(input CheckGitBranchProtectionCreateInput) (*Check, error) {
@@ -458,7 +457,8 @@ func (client *Client) CreateCheckGitBranchProtection(input CheckGitBranchProtect
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckGitBranchProtectionCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckGitBranchProtection(input CheckGitBranchProtectionUpdateInput) (*Check, error) {
@@ -468,7 +468,8 @@ func (client *Client) UpdateCheckGitBranchProtection(input CheckGitBranchProtect
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckGitBranchProtectionUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreateInput) (*Check, error) {
@@ -478,7 +479,8 @@ func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreat
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckHasRecentDeployCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckHasRecentDeploy(input CheckHasRecentDeployUpdateInput) (*Check, error) {
@@ -488,7 +490,8 @@ func (client *Client) UpdateCheckHasRecentDeploy(input CheckHasRecentDeployUpdat
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckHasRecentDeployUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckHasDocumentation(input CheckHasDocumentationCreateInput) (*Check, error) {
@@ -498,7 +501,8 @@ func (client *Client) CreateCheckHasDocumentation(input CheckHasDocumentationCre
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckHasDocumentationCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckHasDocumentation(input CheckHasDocumentationUpdateInput) (*Check, error) {
@@ -508,7 +512,8 @@ func (client *Client) UpdateCheckHasDocumentation(input CheckHasDocumentationUpd
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckHasDocumentationUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckManual(input CheckManualCreateInput) (*Check, error) {
@@ -518,7 +523,8 @@ func (client *Client) CreateCheckManual(input CheckManualCreateInput) (*Check, e
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckManualCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckManual(input CheckManualUpdateInput) (*Check, error) {
@@ -528,7 +534,8 @@ func (client *Client) UpdateCheckManual(input CheckManualUpdateInput) (*Check, e
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckManualUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateInput) (*Check, error) {
@@ -538,7 +545,8 @@ func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateI
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositoryFileCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckRepositoryFile(input CheckRepositoryFileUpdateInput) (*Check, error) {
@@ -548,7 +556,8 @@ func (client *Client) UpdateCheckRepositoryFile(input CheckRepositoryFileUpdateI
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositoryFileUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckRepositoryGrep(input CheckRepositoryGrepCreateInput) (*Check, error) {
@@ -558,7 +567,8 @@ func (client *Client) CreateCheckRepositoryGrep(input CheckRepositoryGrepCreateI
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositoryGrepCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckRepositoryGrep(input CheckRepositoryGrepUpdateInput) (*Check, error) {
@@ -568,7 +578,8 @@ func (client *Client) UpdateCheckRepositoryGrep(input CheckRepositoryGrepUpdateI
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositoryGrepUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryIntegratedCreateInput) (*Check, error) {
@@ -578,7 +589,8 @@ func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryInteg
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositoryIntegratedCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 func (client *Client) UpdateCheckRepositoryIntegrated(input CheckRepositoryIntegratedUpdateInput) (*Check, error) {
 	var m struct {
@@ -587,7 +599,8 @@ func (client *Client) UpdateCheckRepositoryIntegrated(input CheckRepositoryInteg
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositoryIntegratedUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckRepositorySearch(input CheckRepositorySearchCreateInput) (*Check, error) {
@@ -597,7 +610,8 @@ func (client *Client) CreateCheckRepositorySearch(input CheckRepositorySearchCre
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositorySearchCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckRepositorySearch(input CheckRepositorySearchUpdateInput) (*Check, error) {
@@ -607,7 +621,8 @@ func (client *Client) UpdateCheckRepositorySearch(input CheckRepositorySearchUpd
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckRepositorySearchUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckServiceDependency(input CheckServiceDependencyCreateInput) (*Check, error) {
@@ -617,7 +632,8 @@ func (client *Client) CreateCheckServiceDependency(input CheckServiceDependencyC
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServiceDependencyCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckServiceDependency(input CheckServiceDependencyUpdateInput) (*Check, error) {
@@ -627,7 +643,8 @@ func (client *Client) UpdateCheckServiceDependency(input CheckServiceDependencyU
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServiceDependencyUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckServiceConfiguration(input CheckServiceConfigurationCreateInput) (*Check, error) {
@@ -637,7 +654,8 @@ func (client *Client) CreateCheckServiceConfiguration(input CheckServiceConfigur
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServiceConfigurationCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckServiceConfiguration(input CheckServiceConfigurationUpdateInput) (*Check, error) {
@@ -647,7 +665,8 @@ func (client *Client) UpdateCheckServiceConfiguration(input CheckServiceConfigur
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServiceConfigurationUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckServiceOwnership(input CheckServiceOwnershipCreateInput) (*Check, error) {
@@ -657,7 +676,8 @@ func (client *Client) CreateCheckServiceOwnership(input CheckServiceOwnershipCre
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServiceOwnershipCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckServiceOwnership(input CheckServiceOwnershipUpdateInput) (*Check, error) {
@@ -667,7 +687,8 @@ func (client *Client) UpdateCheckServiceOwnership(input CheckServiceOwnershipUpd
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServiceOwnershipUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckServiceProperty(input CheckServicePropertyCreateInput) (*Check, error) {
@@ -677,7 +698,8 @@ func (client *Client) CreateCheckServiceProperty(input CheckServicePropertyCreat
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServicePropertyCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckServiceProperty(input CheckServicePropertyUpdateInput) (*Check, error) {
@@ -687,7 +709,8 @@ func (client *Client) UpdateCheckServiceProperty(input CheckServicePropertyUpdat
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckServicePropertyUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckTagDefined(input CheckTagDefinedCreateInput) (*Check, error) {
@@ -697,7 +720,8 @@ func (client *Client) CreateCheckTagDefined(input CheckTagDefinedCreateInput) (*
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckTagDefinedCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckTagDefined(input CheckTagDefinedUpdateInput) (*Check, error) {
@@ -707,7 +731,8 @@ func (client *Client) UpdateCheckTagDefined(input CheckTagDefinedUpdateInput) (*
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckTagDefinedUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateCheckToolUsage(input CheckToolUsageCreateInput) (*Check, error) {
@@ -717,7 +742,8 @@ func (client *Client) CreateCheckToolUsage(input CheckToolUsageCreateInput) (*Ch
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckToolUsageCreate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateCheckToolUsage(input CheckToolUsageUpdateInput) (*Check, error) {
@@ -727,7 +753,8 @@ func (client *Client) UpdateCheckToolUsage(input CheckToolUsageUpdateInput) (*Ch
 	v := PayloadVariables{
 		"input": input,
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckToolUsageUpdate"))
+	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -743,7 +770,7 @@ func (client *Client) GetCheck(id ID) (*Check, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("CheckGet"))
 	if q.Account.Check.Id == "" {
 		err = fmt.Errorf("check with ID '%s' not found", id)
 	}
@@ -761,7 +788,7 @@ func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, 
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("CheckList")); err != nil {
 		return CheckConnection{}, err
 	}
 	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
@@ -787,7 +814,8 @@ func (client *Client) DeleteCheck(id ID) error {
 	v := PayloadVariables{
 		"input": CheckDeleteInput{Id: id},
 	}
-	return m.Payload.Mutate(client, &m, v)
+	err := client.Mutate(&m, v, WithName("CheckDelete"))
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
