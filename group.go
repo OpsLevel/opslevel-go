@@ -103,6 +103,7 @@ func (client *Client) ListGroups(variables *PayloadVariables) (GroupConnection, 
 		}
 		q.Account.Groups.Nodes = append(q.Account.Groups.Nodes, resp.Nodes...)
 		q.Account.Groups.PageInfo = resp.PageInfo
+		q.Account.Groups.TotalCount += resp.TotalCount
 	}
 	return q.Account.Groups, nil
 }

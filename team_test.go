@@ -71,11 +71,8 @@ func TestListTeams(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{
-    "query": "query ($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-    "variables": {
-      "after": "",
-      "first": 100
-    }
+    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+{{ template "pagination_initial_query_variables" }}
   }`,
 			`{
     "data": {
@@ -194,22 +191,15 @@ func TestListTeams(t *testing.T) {
               "responsibilities": null
             }
           ],
-          "pageInfo": {
-            "hasNextPage": true,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "NDc"
-          }
+{{ template "pagination_initial_pageInfo_response" }},
+			"totalCount": 3
         }
       }
     }
   }`},
 		{`{
-    "query": "query ($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-    "variables": {
-      "after": "NDc",
-      "first": 100
-    }
+    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+{{ template "pagination_second_query_variables" }}
   }`,
 			`{
     "data": {
@@ -291,12 +281,8 @@ func TestListTeams(t *testing.T) {
               "responsibilities": null
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": true,
-            "startCursor": "NDc",
-            "endCursor": "EOf"
-          }
+{{ template "pagination_second_pageInfo_response" }},
+			"totalCount": 2
         }
       }
     }
@@ -308,7 +294,7 @@ func TestListTeams(t *testing.T) {
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 5, len(result))
+	autopilot.Equals(t, 5, response.TotalCount)
 	autopilot.Equals(t, "devops", result[0].Alias)
 	autopilot.Equals(t, "developers", result[1].Alias)
 	autopilot.Equals(t, "security", result[3].Alias)

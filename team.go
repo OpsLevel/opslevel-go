@@ -58,8 +58,9 @@ type Team struct {
 }
 
 type TeamConnection struct {
-	Nodes    []Team
-	PageInfo PageInfo
+	Nodes      []Team
+	PageInfo   PageInfo
+	TotalCount int
 }
 
 type TeamCreateInput struct {
@@ -312,7 +313,7 @@ func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, er
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
 		return TeamConnection{}, err
 	}
 
@@ -324,6 +325,7 @@ func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, er
 		}
 		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
 		q.Account.Teams.PageInfo = resp.PageInfo
+		q.Account.Teams.TotalCount += resp.TotalCount
 	}
 	return q.Account.Teams, nil
 }
@@ -338,7 +340,7 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	if err := client.Query(&q, *variables); err != nil {
+	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
 		return TeamConnection{}, err
 	}
 

@@ -150,10 +150,7 @@ func TestListGroups(t *testing.T) {
 		{
 			`{
     "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-    "variables": {
-      "after": "",
-      "first": 100
-    }
+{{ template "pagination_initial_query_variables" }}
   }`,
 			`{
   "data": {
@@ -180,12 +177,7 @@ func TestListGroups(t *testing.T) {
             "parent": null
           }
         ],
-        "pageInfo": {
-          "hasNextPage": true,
-          "hasPreviousPage": false,
-          "startCursor": "MQ",
-          "endCursor": "Mg"
-        },
+{{ template "pagination_initial_pageInfo_response" }},
         "totalCount": 2
       }
     }
@@ -194,10 +186,7 @@ func TestListGroups(t *testing.T) {
 		{
 			`{
     "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-    "variables": {
-      "after": "Mg",
-      "first": 100
-    }
+{{ template "pagination_second_query_variables" }}
   }`,
 			`{
   "data": {
@@ -216,12 +205,7 @@ func TestListGroups(t *testing.T) {
             }
           }
         ],
-        "pageInfo": {
-          "hasNextPage": false,
-          "hasPreviousPage": true,
-          "startCursor": "Mg",
-          "endCursor": "EOf"
-        },
+{{ template "pagination_second_pageInfo_response" }},
         "totalCount": 1
       }
     }
@@ -234,7 +218,7 @@ func TestListGroups(t *testing.T) {
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "test_group_2", result[0].Alias)
 	autopilot.Equals(t, "test_group_1", result[1].Alias)
 	autopilot.Equals(t, "test_group_3", result[2].Alias)
