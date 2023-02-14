@@ -1,5 +1,5 @@
 {
-  "query": "query ($after:String!$first:Int!$id:ID!){account{service(id: $id){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+  "query": "query ServiceDocumentsList($after:String!$first:Int!$id:ID!){account{service(id: $id){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
   "variables": {
     "after":"",
     "first":100,
