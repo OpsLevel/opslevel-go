@@ -54,7 +54,7 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ToolCreate"))
 	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -113,7 +113,7 @@ func (client *Client) GetToolsForService(service ID) ([]Tool, error) {
 		"after":   graphql.String(""),
 		"first":   client.pageSize,
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("ServiceToolsList")); err != nil {
 		return q.Account.Service.Tools.Nodes, err
 	}
 	if err := q.Account.Service.Tools.Hydrate(service, client); err != nil {
@@ -135,7 +135,7 @@ func (client *Client) GetToolCount(service ID) (int, error) {
 	v := PayloadVariables{
 		"service": service,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("ServiceToolCount"))
 	return int(q.Account.Service.Tools.TotalCount), HandleErrors(err, nil)
 }
 
@@ -153,7 +153,7 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ToolUpdate"))
 	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -171,7 +171,7 @@ func (client *Client) DeleteTool(id ID) error {
 	v := PayloadVariables{
 		"input": ToolDeleteInput{Id: id},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ToolDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
