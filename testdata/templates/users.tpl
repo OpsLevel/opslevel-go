@@ -30,3 +30,21 @@
 "role": "admin"
 }
 {{ end }}
+{{- define "user_4" }}
+{
+"name": "Andrew Example",
+"email": "example@opslevel.com"
+}
+{{ end }}
+{{- define "user_5" }}
+{
+"name": "Ashley Example",
+"email": "example@opslevel.com"
+}
+{{ end }}
+{{- define "user_6" }}
+{
+"name": "Drew Example",
+"email": "example@opslevel.com"
+}
+{{ end }}
