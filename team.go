@@ -116,7 +116,7 @@ func (conn *UserConnection) Hydrate(id ID, client *Client) error {
 	q.Account.Team.Members.PageInfo = conn.PageInfo
 	for q.Account.Team.Members.PageInfo.HasNextPage {
 		v["after"] = q.Account.Team.Members.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		if err := client.Query(&q, v, WithName("TeamMembersList")); err != nil {
 			return err
 		}
 		for _, item := range q.Account.Team.Members.Nodes {
@@ -191,7 +191,7 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
+	if err := client.Mutate(&m, v, WithName("TeamCreate")); err != nil {
 		return nil, err
 	}
 	if err := m.Payload.Team.Hydrate(client); err != nil {
@@ -213,7 +213,7 @@ func (client *Client) AddMembers(team *TeamId, emails []string) ([]User, error) 
 			Members: BuildMembershipInput(emails),
 		},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TeamMembershipCreate"))
 	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -242,7 +242,7 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 	v := PayloadVariables{
 		"input": contactInput,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ContactCreate"))
 	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -259,7 +259,7 @@ func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 	v := PayloadVariables{
 		"alias": graphql.String(alias),
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
 		return nil, err
 	}
 	if err := q.Account.Team.Hydrate(client); err != nil {
@@ -282,7 +282,7 @@ func (client *Client) GetTeam(id ID) (*Team, error) {
 	v := PayloadVariables{
 		"id": id,
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
 		return nil, err
 	}
 	if err := q.Account.Team.Hydrate(client); err != nil {
@@ -299,7 +299,7 @@ func (client *Client) GetTeamCount() (int, error) {
 			}
 		}
 	}
-	err := client.Query(&q, nil)
+	err := client.Query(&q, nil, WithName("TeamCount"))
 	return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
 }
 
@@ -372,7 +372,7 @@ func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v); err != nil {
+	if err := client.Mutate(&m, v, WithName("TeamUpdate")); err != nil {
 		return nil, err
 	}
 	if err := m.Payload.Team.Hydrate(client); err != nil {
@@ -401,7 +401,7 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ContactUpdate"))
 	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -422,7 +422,7 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 			Alias: alias,
 		},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TeamDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
@@ -444,7 +444,7 @@ func (client *Client) DeleteTeam(id ID) error {
 			Id: id,
 		},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TeamDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
@@ -461,7 +461,7 @@ func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, erro
 			Members: BuildMembershipInput(emails),
 		},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TeamMembershipDelete"))
 	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -482,7 +482,7 @@ func (client *Client) RemoveContact(contact ID) error {
 			Id: contact,
 		},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("ContactDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 

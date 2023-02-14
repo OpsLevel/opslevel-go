@@ -1,5 +1,5 @@
 {
-    "query":"mutation ($input:ContactCreateInput!){contactCreate(input: $input){contact{address,displayName,id,type},errors{message,path}}}",
+    "query":"mutation ContactCreate($input:ContactCreateInput!){contactCreate(input: $input){contact{address,displayName,id,type},errors{message,path}}}",
     "variables":{
         "input":{
             "type":"slack",
