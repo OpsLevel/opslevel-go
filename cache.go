@@ -117,12 +117,12 @@ func (c *Cacher) doCacheLifecycles(client *Client) {
 func (c *Cacher) doCacheTeams(client *Client) {
 	log.Info().Msg("Caching 'Team' lookup table from API ...")
 
-	data, dataErr := client.ListTeams()
+	data, dataErr := client.ListTeams(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Team' from API - REASON: %s", dataErr.Error())
 	}
 
-	for _, item := range data {
+	for _, item := range data.Nodes {
 		for _, alias := range item.Aliases {
 			c.Teams[string(alias)] = item
 		}

@@ -2,8 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-
-	"github.com/hasura/go-graphql-client"
 )
 
 type GroupId struct {
@@ -85,44 +83,29 @@ func (client *Client) GetGroupWithAlias(alias string) (*Group, error) {
 	return &q.Account.Group, HandleErrors(err, nil)
 }
 
-func (conn *GroupConnection) Query(client *Client, q interface{}, v PayloadVariables) ([]Group, error) {
-	if err := client.Query(q, v, WithName("GroupList")); err != nil {
-		return conn.Nodes, err
-	}
-	if err := conn.Hydrate(client); err != nil {
-		return conn.Nodes, err
-	}
-	return conn.Nodes, nil
-}
-
-func (conn *GroupConnection) Hydrate(client *Client) error {
+func (client *Client) ListGroups(variables *PayloadVariables) (GroupConnection, error) {
 	var q struct {
 		Account struct {
 			Groups GroupConnection `graphql:"groups(after: $after, first: $first)"`
 		}
 	}
-	v := PayloadVariables{
-		"first": client.pageSize,
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	q.Account.Groups.PageInfo = conn.PageInfo
+	if err := client.Query(&q, *variables); err != nil {
+		return GroupConnection{}, err
+	}
 	for q.Account.Groups.PageInfo.HasNextPage {
-		v["after"] = q.Account.Groups.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
+		(*variables)["after"] = q.Account.Groups.PageInfo.End
+		resp, err := client.ListGroups(variables)
+		if err != nil {
+			return GroupConnection{}, err
 		}
-		conn.Nodes = append(conn.Nodes, q.Account.Groups.Nodes...)
+		q.Account.Groups.Nodes = append(q.Account.Groups.Nodes, resp.Nodes...)
+		q.Account.Groups.PageInfo = resp.PageInfo
+		q.Account.Groups.TotalCount += resp.TotalCount
 	}
-	return nil
-}
-
-func (client *Client) ListGroups() ([]Group, error) {
-	var q struct {
-		Account struct {
-			Groups GroupConnection `graphql:"groups(after: $after, first: $first)"`
-		}
-	}
-	v := client.InitialPageVariables()
-	return q.Account.Groups.Query(client, &q, v)
+	return q.Account.Groups, nil
 }
 
 func (g *Group) ChildTeams(client *Client) ([]TeamId, error) {
@@ -142,7 +125,7 @@ func (g *Group) ChildTeams(client *Client) ([]TeamId, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	output := []TeamId{}
 	if err := client.Query(&q, v); err != nil {
@@ -176,7 +159,7 @@ func (g *Group) DescendantTeams(client *Client) ([]TeamId, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	output := []TeamId{}
 	if err := client.Query(&q, v); err != nil {
@@ -210,7 +193,7 @@ func (g *Group) DescendantRepositories(client *Client) ([]RepositoryId, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	output := []RepositoryId{}
 	if err := client.Query(&q, v); err != nil {
@@ -244,7 +227,7 @@ func (g *Group) DescendantServices(client *Client) ([]ServiceId, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	output := []ServiceId{}
 	if err := client.Query(&q, v); err != nil {
@@ -278,7 +261,7 @@ func (g *Group) DescendantSubgroups(client *Client) ([]GroupId, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	output := []GroupId{}
 	if err := client.Query(&q, v); err != nil {
@@ -312,7 +295,7 @@ func (g *Group) Members(client *Client) ([]UserId, error) {
 	v := PayloadVariables{
 		"group": g.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	output := []UserId{}
 	if err := client.Query(&q, v); err != nil {
