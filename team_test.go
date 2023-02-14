@@ -71,7 +71,7 @@ func TestListTeams(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{
-    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 {{ template "pagination_initial_query_variables" }}
   }`,
 			`{
@@ -87,12 +87,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/devops",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
-              "manager": {{ template "user_id_1" }},
+              "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
-                  	{{ template "user_id_2" }},
-					{{ template "user_id_3" }},
-                    {{ template "user_id_4" }}
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
@@ -112,12 +112,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/developers",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk",
-              "manager": {{ template "user_id_1" }},
+              "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
-                  	{{ template "user_id_2" }},
-					{{ template "user_id_3" }},
-                    {{ template "user_id_4" }}
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
@@ -137,12 +137,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/marketing",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTA",
-              "manager": {{ template "user_id_1" }},
+              "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
-                  	{{ template "user_id_2" }},
-					{{ template "user_id_3" }},
-                    {{ template "user_id_4" }}
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
@@ -162,7 +162,7 @@ func TestListTeams(t *testing.T) {
     }
   }`},
 		{`{
-    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 {{ template "pagination_second_query_variables" }}
   }`,
 			`{
@@ -178,24 +178,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/security",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTE",
-              "manager": {
-                "name": "Kyle Rockman",
-                "email": "kyle.rockman@mac.com"
-              },
+              "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
-                  {
-                    "name": "Andrew Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Ashley Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Drew Example",
-                    "email": "example@opslevel.com"
-                  }
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
@@ -215,24 +203,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/vps",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTI",
-              "manager": {
-                "name": "Kyle Rockman",
-                "email": "kyle.rockman@mac.com"
-              },
+              "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
-                  {
-                    "name": "Andrew Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Ashley Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Drew Example",
-                    "email": "example@opslevel.com"
-                  }
+                  	{{ template "user_4" }},
+					{{ template "user_5" }},
+                    {{ template "user_6" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
