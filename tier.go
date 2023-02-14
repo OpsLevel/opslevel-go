@@ -14,6 +14,6 @@ func (client *Client) ListTiers() ([]Tier, error) {
 			Tiers []Tier
 		}
 	}
-	err := client.Query(&q, nil)
+	err := client.Query(&q, nil, WithName("TierList"))
 	return q.Account.Tiers, HandleErrors(err, nil)
 }

@@ -1,5 +1,5 @@
 {
-    "query":"mutation ($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,role},errors{message,path}}}",
+    "query":"mutation TeamMembershipDelete($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,role},errors{message,path}}}",
     "variables":{
         "input":{
             "teamId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
