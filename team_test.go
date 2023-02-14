@@ -87,24 +87,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/devops",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
-              "manager": {
-                "name": "Kyle Rockman",
-                "email": "kyle.rockman@mac.com"
-              },
+              "manager": {{ template "user_id_1" }},
               "members": {
                 "nodes": [
-                  {
-                    "name": "Andrew Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Ashley Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Drew Example",
-                    "email": "example@opslevel.com"
-                  }
+                  	{{ template "user_id_2" }},
+					{{ template "user_id_3" }},
+                    {{ template "user_id_4" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
@@ -124,24 +112,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/developers",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk",
-              "manager": {
-                "name": "Kyle Rockman",
-                "email": "kyle.rockman@mac.com"
-              },
+              "manager": {{ template "user_id_1" }},
               "members": {
                 "nodes": [
-                  {
-                    "name": "Andrew Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Ashley Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Drew Example",
-                    "email": "example@opslevel.com"
-                  }
+                  	{{ template "user_id_2" }},
+					{{ template "user_id_3" }},
+                    {{ template "user_id_4" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
@@ -161,24 +137,12 @@ func TestListTeams(t *testing.T) {
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/marketing",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTA",
-              "manager": {
-                "name": "Kyle Rockman",
-                "email": "kyle.rockman@mac.com"
-              },
+              "manager": {{ template "user_id_1" }},
               "members": {
                 "nodes": [
-                  {
-                    "name": "Andrew Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Ashley Example",
-                    "email": "example@opslevel.com"
-                  },
-                  {
-                    "name": "Drew Example",
-                    "email": "example@opslevel.com"
-                  }
+                  	{{ template "user_id_2" }},
+					{{ template "user_id_3" }},
+                    {{ template "user_id_4" }}
                 ],
                 "pageInfo": {
                   "hasNextPage": false,
