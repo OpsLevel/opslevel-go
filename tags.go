@@ -117,7 +117,7 @@ func (client *Client) AssignTags(input TagAssignInput) ([]Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TagAssign"))
 	return m.Payload.Tags, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -171,7 +171,7 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TagCreate"))
 	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -230,7 +230,7 @@ func (client *Client) GetTagsForService(service ID) ([]Tag, error) {
 		"after":   graphql.String(""),
 		"first":   client.pageSize,
 	}
-	if err := client.Query(&q, v); err != nil {
+	if err := client.Query(&q, v, WithName("ServiceTagsList")); err != nil {
 		return q.Account.Service.Tags.Nodes, err
 	}
 	if err := q.Account.Service.Tags.Hydrate(service, client); err != nil {
@@ -252,7 +252,7 @@ func (client *Client) GetTagCount(service ID) (int, error) {
 	v := PayloadVariables{
 		"service": service,
 	}
-	err := client.Query(&q, v)
+	err := client.Query(&q, v, WithName("ServiceCount"))
 	return int(q.Account.Service.Tags.TotalCount), HandleErrors(err, nil)
 }
 
@@ -270,7 +270,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TagUpdate"))
 	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -288,7 +288,7 @@ func (client *Client) DeleteTag(id ID) error {
 	v := PayloadVariables{
 		"input": TagDeleteInput{Id: id},
 	}
-	err := client.Mutate(&m, v)
+	err := client.Mutate(&m, v, WithName("TagDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
