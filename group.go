@@ -233,38 +233,35 @@ func (g *Group) DescendantServices(client *Client, variables *PayloadVariables) 
 	return &q.Account.Group.DescendantServices, nil
 }
 
-func (g *Group) DescendantSubgroups(client *Client) ([]GroupId, error) {
+func (g *Group) DescendantSubgroups(client *Client, variables *PayloadVariables) (*GroupConnection, error) {
 	var q struct {
 		Account struct {
 			Group struct {
-				DescendantSubgroups struct {
-					Nodes    []GroupId
-					PageInfo PageInfo
-				} `graphql:"descendantSubgroups(after: $after, first: $first)"`
+				DescendantSubgroups GroupConnection `graphql:"descendantSubgroups(after: $after, first: $first)"`
 			} `graphql:"group(id: $group)"`
 		}
 	}
 	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Subgroups, invalid group id: '%s'", g.Id)
 	}
-	v := PayloadVariables{
-		"group": g.Id,
-		"first": client.pageSize,
-		"after": "",
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	output := []GroupId{}
-	if err := client.Query(&q, v); err != nil {
+	(*variables)["group"] = g.Id
+	if err := client.Query(&q, *variables, WithName("GroupDescendantSubgroupsList")); err != nil {
 		return nil, err
 	}
-	output = append(output, q.Account.Group.DescendantSubgroups.Nodes...)
 	for q.Account.Group.DescendantSubgroups.PageInfo.HasNextPage {
-		v["after"] = q.Account.Group.DescendantSubgroups.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		(*variables)["after"] = q.Account.Group.DescendantSubgroups.PageInfo.End
+		resp, err := g.DescendantSubgroups(client, variables)
+		if err != nil {
 			return nil, err
 		}
-		output = append(output, q.Account.Group.DescendantSubgroups.Nodes...)
+		q.Account.Group.DescendantSubgroups.Nodes = append(q.Account.Group.DescendantSubgroups.Nodes, resp.Nodes...)
+		q.Account.Group.DescendantSubgroups.PageInfo = resp.PageInfo
+		q.Account.Group.DescendantSubgroups.TotalCount += resp.TotalCount
 	}
-	return output, nil
+	return &q.Account.Group.DescendantSubgroups, nil
 }
 
 func (g *Group) Members(client *Client) ([]UserId, error) {

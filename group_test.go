@@ -272,8 +272,6 @@ func TestDescendantServices(t *testing.T) {
 							}
 						  }}}}`},
 	}
-	//fmt.Println(Templated(requests[1].Request))
-	//panic(true)
 	client := APaginatedTestClient(t, "group/descendant_services", requests...)
 	// Act
 	group := ol.Group{
@@ -292,14 +290,58 @@ func TestDescendantServices(t *testing.T) {
 
 func TestDescendantSubgroups(t *testing.T) {
 	// Arrange
-	client1 := getGroupWithAliasTestClient(t)
-	client2 := ATestClient(t, "group/descendant_subgroups")
+	requests := []TestRequest{
+		{`{"query": "query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"group": {
+							"descendantSubgroups": {
+								"nodes": [
+									{{ template "group_1"}}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+		{`{"query": "query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"group": {
+							"descendantSubgroups": {
+								"nodes": [
+									{{ template "group_2" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+	client := APaginatedTestClient(t, "group/descendant_subgroups", requests...)
 	// Act
-	group, _ := client1.GetGroupWithAlias("test_group_1")
-	result, err := group.DescendantSubgroups(client2)
+	group := ol.Group{
+		GroupId: ol.GroupId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI",
+		},
+	}
+	resp, err := group.DescendantSubgroups(client, nil)
+	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "platform", result[0].Alias)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "test_group_1", result[0].Alias)
+	autopilot.Equals(t, "test_group_2", result[1].Alias)
 }
 
 func TestGetGroup(t *testing.T) {
