@@ -21,7 +21,7 @@ func TestServiceApiDocSettingsUpdate(t *testing.T) {
 }`
 	response := `{"data": {
 	"serviceApiDocSettingsUpdate": {
-		"service": {{ template "service.tpl" }},
+		"service": {{ template "service_1" }},
 		"errors": []
 	}
 }}`
@@ -50,7 +50,7 @@ func TestServiceApiDocSettingsUpdateDocSourceNull(t *testing.T) {
 }`
 	response := `{"data": {
 	"serviceApiDocSettingsUpdate": {
-		"service": {{ template "service.tpl" }},
+		"service": {{ template "service_1" }},
 		"errors": []
 	}
 }}`
@@ -78,7 +78,7 @@ func TestServiceApiDocSettingsUpdateDocPathNull(t *testing.T) {
 }`
 	response := `{"data": {
 	"serviceApiDocSettingsUpdate": {
-		"service": {{ template "service.tpl" }},
+		"service": {{ template "service_1" }},
 		"errors": []
 	}
 }}`

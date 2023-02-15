@@ -180,7 +180,7 @@ func (g *Group) DescendantRepositories(client *Client, variables *PayloadVariabl
 		}
 	}
 	if g.Id == "" {
-		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
+		return nil, fmt.Errorf("Unable to get Repositories, invalid group id: '%s'", g.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
@@ -202,38 +202,35 @@ func (g *Group) DescendantRepositories(client *Client, variables *PayloadVariabl
 	return &q.Account.Group.DescendantRepositories, nil
 }
 
-func (g *Group) DescendantServices(client *Client) ([]ServiceId, error) {
+func (g *Group) DescendantServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Group struct {
-				DescendantServices struct {
-					Nodes    []ServiceId
-					PageInfo PageInfo
-				} `graphql:"descendantServices(after: $after, first: $first)"`
+				DescendantServices ServiceConnection `graphql:"descendantServices(after: $after, first: $first)"`
 			} `graphql:"group(id: $group)"`
 		}
 	}
 	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Services, invalid group id: '%s'", g.Id)
 	}
-	v := PayloadVariables{
-		"group": g.Id,
-		"first": client.pageSize,
-		"after": "",
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	output := []ServiceId{}
-	if err := client.Query(&q, v); err != nil {
+	(*variables)["group"] = g.Id
+	if err := client.Query(&q, *variables, WithName("GroupDescendantServicesList")); err != nil {
 		return nil, err
 	}
-	output = append(output, q.Account.Group.DescendantServices.Nodes...)
 	for q.Account.Group.DescendantServices.PageInfo.HasNextPage {
-		v["after"] = q.Account.Group.DescendantServices.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		(*variables)["after"] = q.Account.Group.DescendantServices.PageInfo.End
+		resp, err := g.DescendantServices(client, variables)
+		if err != nil {
 			return nil, err
 		}
-		output = append(output, q.Account.Group.DescendantServices.Nodes...)
+		q.Account.Group.DescendantServices.Nodes = append(q.Account.Group.DescendantServices.Nodes, resp.Nodes...)
+		q.Account.Group.DescendantServices.PageInfo = resp.PageInfo
+		q.Account.Group.DescendantServices.TotalCount += resp.TotalCount
 	}
-	return output, nil
+	return &q.Account.Group.DescendantServices, nil
 }
 
 func (g *Group) DescendantSubgroups(client *Client) ([]GroupId, error) {
