@@ -140,38 +140,35 @@ func (g *Group) ChildTeams(client *Client, variables *PayloadVariables) (*TeamCo
 	return &q.Account.Group.ChildTeams, nil
 }
 
-func (g *Group) DescendantTeams(client *Client) ([]TeamId, error) {
+func (g *Group) DescendantTeams(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
 			Group struct {
-				DescendantTeams struct {
-					Nodes    []TeamId
-					PageInfo PageInfo
-				} `graphql:"descendantTeams(after: $after, first: $first)"`
+				DescendantTeams TeamConnection `graphql:"descendantTeams(after: $after, first: $first)"`
 			} `graphql:"group(id: $group)"`
 		}
 	}
 	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
 	}
-	v := PayloadVariables{
-		"group": g.Id,
-		"first": client.pageSize,
-		"after": "",
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	output := []TeamId{}
-	if err := client.Query(&q, v); err != nil {
+	(*variables)["group"] = g.Id
+	if err := client.Query(&q, *variables, WithName("GroupDescendantTeamsList")); err != nil {
 		return nil, err
 	}
-	output = append(output, q.Account.Group.DescendantTeams.Nodes...)
 	for q.Account.Group.DescendantTeams.PageInfo.HasNextPage {
-		v["after"] = q.Account.Group.DescendantTeams.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		(*variables)["after"] = q.Account.Group.DescendantTeams.PageInfo.End
+		resp, err := g.DescendantTeams(client, variables)
+		if err != nil {
 			return nil, err
 		}
-		output = append(output, q.Account.Group.DescendantTeams.Nodes...)
+		q.Account.Group.DescendantTeams.Nodes = append(q.Account.Group.DescendantTeams.Nodes, resp.Nodes...)
+		q.Account.Group.DescendantTeams.PageInfo = resp.PageInfo
+		q.Account.Group.DescendantTeams.TotalCount += resp.TotalCount
 	}
-	return output, nil
+	return &q.Account.Group.DescendantTeams, nil
 }
 
 func (g *Group) DescendantRepositories(client *Client) ([]RepositoryId, error) {
