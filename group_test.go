@@ -63,14 +63,58 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 
 func TestChildTeams(t *testing.T) {
 	// Arrange
-	client1 := getGroupWithAliasTestClient(t)
-	client2 := ATestClient(t, "group/child_teams")
+	requests := []TestRequest{
+		{`{"query": "query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},"group": "123456789"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"group": {
+							"childTeams": {
+								"nodes": [
+									{{ template "team_1" }},
+									{{ template "team_2" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},"group": "123456789"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"group": {
+							"childTeams": {
+								"nodes": [
+									{{ template "team_3" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "group/child_teams", requests...)
+	group := ol.Group{
+		GroupId: ol.GroupId{
+			Id: "123456789",
+		},
+	}
 	// Act
-	group, err := client1.GetGroupWithAlias("test_group_1")
-	result, err := group.ChildTeams(client2)
+	resp, err := group.ChildTeams(client, nil)
+	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "platform", result[0].Alias)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "example", result[0].Alias)
+	autopilot.Equals(t, "example_3", result[2].Alias)
 }
 
 func TestDescendantTeams(t *testing.T) {
