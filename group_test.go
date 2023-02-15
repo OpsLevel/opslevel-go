@@ -448,14 +448,58 @@ func TestListGroups(t *testing.T) {
 
 func TestMembers(t *testing.T) {
 	// Arrange
-	client1 := getGroupWithAliasTestClient(t)
-	client2 := ATestClient(t, "group/members")
+	requests := []TestRequest{
+		{`{"query": "query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"group": {
+							"members": {
+								"nodes": [
+									{{ template "user_1"}},
+									{{ template "user_2"}}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"group": {
+							"members": {
+								"nodes": [
+									{{ template "user_3"}}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+	client := APaginatedTestClient(t, "group/members", requests...)
 	// Act
-	group, _ := client1.GetGroupWithAlias("test_group_1")
-	result, err := group.Members(client2)
+	group := ol.Group{
+		GroupId: ol.GroupId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI",
+		},
+	}
+	resp, err := group.Members(client, nil)
+	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "edgar+test@opslevel.com", result[0].Email)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "kyle@opslevel.com", result[0].Email)
 }
 
 func TestUpdateGroup(t *testing.T) {

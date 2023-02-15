@@ -264,38 +264,35 @@ func (g *Group) DescendantSubgroups(client *Client, variables *PayloadVariables)
 	return &q.Account.Group.DescendantSubgroups, nil
 }
 
-func (g *Group) Members(client *Client) ([]UserId, error) {
+func (g *Group) Members(client *Client, variables *PayloadVariables) (*UserConnection, error) {
 	var q struct {
 		Account struct {
 			Group struct {
-				Members struct {
-					Nodes    []UserId
-					PageInfo PageInfo
-				} `graphql:"members(after: $after, first: $first)"`
+				Members UserConnection `graphql:"members(after: $after, first: $first)"`
 			} `graphql:"group(id: $group)"`
 		}
 	}
 	if g.Id == "" {
 		return nil, fmt.Errorf("Unable to get Members, invalid group id: '%s'", g.Id)
 	}
-	v := PayloadVariables{
-		"group": g.Id,
-		"first": client.pageSize,
-		"after": "",
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	output := []UserId{}
-	if err := client.Query(&q, v); err != nil {
+	(*variables)["group"] = g.Id
+	if err := client.Query(&q, *variables, WithName("GroupMembersList")); err != nil {
 		return nil, err
 	}
-	output = append(output, q.Account.Group.Members.Nodes...)
 	for q.Account.Group.Members.PageInfo.HasNextPage {
-		v["after"] = q.Account.Group.Members.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		(*variables)["after"] = q.Account.Group.Members.PageInfo.End
+		resp, err := g.Members(client, variables)
+		if err != nil {
 			return nil, err
 		}
-		output = append(output, q.Account.Group.Members.Nodes...)
+		q.Account.Group.Members.Nodes = append(q.Account.Group.Members.Nodes, resp.Nodes...)
+		q.Account.Group.Members.PageInfo = resp.PageInfo
+		q.Account.Group.Members.TotalCount += resp.TotalCount
 	}
-	return output, nil
+	return &q.Account.Group.Members, nil
 }
 
 //#endregion
