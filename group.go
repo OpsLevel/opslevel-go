@@ -171,38 +171,35 @@ func (g *Group) DescendantTeams(client *Client, variables *PayloadVariables) (*T
 	return &q.Account.Group.DescendantTeams, nil
 }
 
-func (g *Group) DescendantRepositories(client *Client) ([]RepositoryId, error) {
+func (g *Group) DescendantRepositories(client *Client, variables *PayloadVariables) (*RepositoryConnection, error) {
 	var q struct {
 		Account struct {
 			Group struct {
-				DescendantRepositories struct {
-					Nodes    []RepositoryId
-					PageInfo PageInfo
-				} `graphql:"descendantRepositories(after: $after, first: $first)"`
+				DescendantRepositories RepositoryConnection `graphql:"descendantRepositories(after: $after, first: $first)"`
 			} `graphql:"group(id: $group)"`
 		}
 	}
 	if g.Id == "" {
-		return nil, fmt.Errorf("Unable to get Repositories, invalid group id: '%s'", g.Id)
+		return nil, fmt.Errorf("Unable to get Teams, invalid group id: '%s'", g.Id)
 	}
-	v := PayloadVariables{
-		"group": g.Id,
-		"first": client.pageSize,
-		"after": "",
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	output := []RepositoryId{}
-	if err := client.Query(&q, v); err != nil {
+	(*variables)["group"] = g.Id
+	if err := client.Query(&q, *variables, WithName("GroupDescendantRepositoriesList")); err != nil {
 		return nil, err
 	}
-	output = append(output, q.Account.Group.DescendantRepositories.Nodes...)
 	for q.Account.Group.DescendantRepositories.PageInfo.HasNextPage {
-		v["after"] = q.Account.Group.DescendantRepositories.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		(*variables)["after"] = q.Account.Group.DescendantRepositories.PageInfo.End
+		resp, err := g.DescendantRepositories(client, variables)
+		if err != nil {
 			return nil, err
 		}
-		output = append(output, q.Account.Group.DescendantRepositories.Nodes...)
+		q.Account.Group.DescendantRepositories.Nodes = append(q.Account.Group.DescendantRepositories.Nodes, resp.Nodes...)
+		q.Account.Group.DescendantRepositories.PageInfo = resp.PageInfo
+		q.Account.Group.DescendantRepositories.TotalCount += resp.TotalCount
 	}
-	return output, nil
+	return &q.Account.Group.DescendantRepositories, nil
 }
 
 func (g *Group) DescendantServices(client *Client) ([]ServiceId, error) {
