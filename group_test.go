@@ -500,6 +500,7 @@ func TestMembers(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "kyle@opslevel.com", result[0].Email)
+	autopilot.Equals(t, "Matthew Brahms", result[2].Name)
 }
 
 func TestUpdateGroup(t *testing.T) {
