@@ -1,7 +1,7 @@
 {
   "data": {
     "serviceCreate": {
-      "service": {{ template "service.tpl" }},
+      "service": {{ template "service_1" }},
       "errors": []
     }
   }
