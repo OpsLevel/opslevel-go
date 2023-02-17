@@ -26,7 +26,7 @@ type Service struct {
 	PreferredApiDocumentSource *ApiDocumentSourceEnum      `json:"preferredApiDocumentSource,omitempty"`
 	Product                    string                      `json:"product,omitempty"`
 	Repositories               ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
-	Tags                       TagConnection               `json:"tags,omitempty"`
+	Tags                       *TagConnection              `json:"tags,omitempty" graphql:"-"`
 	Tier                       Tier                        `json:"tier,omitempty"`
 	Timestamps                 Timestamps                  `json:"timestamps"`
 	Tools                      ToolConnection              `json:"tools,omitempty"`
@@ -97,9 +97,11 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 }
 
 func (s *Service) Hydrate(client *Client) error {
-	if err := s.Tags.Hydrate(s.Id, client); err != nil {
+	tags, err := s.GetTags(client, nil)
+	if err != nil {
 		return err
 	}
+	s.Tags = tags
 	if err := s.Tools.Hydrate(s.Id, client); err != nil {
 		return err
 	}
@@ -108,6 +110,37 @@ func (s *Service) Hydrate(client *Client) error {
 		return err
 	}
 	return nil
+}
+
+func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid service id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = s.Id
+	if err := client.Query(&q, *variables, WithName("ServiceTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.Service.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Service.Tags.PageInfo.End
+		resp, err := s.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Service.Tags.Nodes = append(q.Account.Service.Tags.Nodes, resp.Nodes...)
+		q.Account.Service.Tags.PageInfo = resp.PageInfo
+		q.Account.Service.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Service.Tags, nil
 }
 
 func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {

@@ -7,6 +7,72 @@ import (
 	"github.com/rocktavious/autopilot/v2022"
 )
 
+func TestServiceTags(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"service": {
+							"tags": {
+								"nodes": [
+									{
+									  "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5",
+									  "key": "prod",
+									  "value": "false"
+									}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+		{`{"query": "query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"service": {
+							"tags": {
+								"nodes": [
+									{
+									  "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4",
+									  "key": "test",
+									  "value": "true"
+									}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+	client := APaginatedTestClient(t, "service/tags", requests...)
+	// Act
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	resp, err := service.GetTags(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "prod", result[0].Key)
+	autopilot.Equals(t, "false", result[0].Value)
+	autopilot.Equals(t, "test", result[1].Key)
+	autopilot.Equals(t, "true", result[1].Value)
+}
+
 func TestCreateService(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "service/create")
@@ -41,7 +107,6 @@ func TestGetServiceWithAlias(t *testing.T) {
 	autopilot.Equals(t, "alpha", result.Lifecycle.Alias)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
-	autopilot.Equals(t, 3, result.Tags.TotalCount)
 	autopilot.Equals(t, 4, result.Tools.TotalCount)
 	autopilot.Equals(t, "API Docs", result.PreferredApiDocument.Source.Name)
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result.PreferredApiDocumentSource)
@@ -60,7 +125,8 @@ func TestGetService(t *testing.T) {
 	autopilot.Equals(t, "alpha", result.Lifecycle.Alias)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
-	autopilot.Equals(t, 3, result.Tags.TotalCount)
+	// TODO: Figure out how to get tags count here, probably a separate call after refactor
+	//autopilot.Equals(t, 3, result.Tags.TotalCount)
 	autopilot.Equals(t, 4, result.Tools.TotalCount)
 	autopilot.Equals(t, 1, len(docs))
 	autopilot.Equals(t, "", docs[0].HtmlURL)
