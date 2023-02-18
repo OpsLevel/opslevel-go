@@ -1,3 +1,24 @@
+{{- define "category_1" }}
+{
+  "id": "{{ template "id1" }}",
+  "name": "{{ template "name1" }}"
+}
+{{ end }}
+
+{{- define "category_2" }}
+{
+  "id": "{{ template "id2" }}",
+  "name": "{{ template "name2" }}"
+}
+{{ end }}
+
+{{- define "category_3" }}
+{
+  "id": "{{ template "id3" }}",
+  "name": "{{ template "name3" }}"
+}
+{{ end }}
+
 {{- define "rubric_categories_response1" }}
   "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjAz",
   "name": "🔐 Security"
