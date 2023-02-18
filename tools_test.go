@@ -9,38 +9,83 @@ import (
 
 func TestCreateTool(t *testing.T) {
 	// Arrange
-	client := ATestClientSkipRequest(t, "toolCreate")
+	request := `{
+    "query": "mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}",
+    "variables": {
+		"input": {
+			"category": "other",
+			"displayName": "example",
+			"serviceId": "{{ template "id1" }}",
+			"url": "https://example.com"
+		}
+}}`
+	response := `{"data": {
+		"toolCreate": {
+			"tool": {{ template "tool_1" }},
+			"errors": []
+		}
+}}`
+	client := ABetterTestClient(t, "toolCreate", request, response)
 	// Act
 	result, err := client.CreateTool(ol.ToolCreateInput{
 		Category:    ol.ToolCategoryOther,
 		DisplayName: "example",
+		ServiceId:   "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
 		Url:         "https://example.com",
-		ServiceId:   "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2",
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", string(result.Service.Id))
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), result.Service.Id)
 	autopilot.Equals(t, ol.ToolCategoryOther, result.Category)
-	autopilot.Equals(t, "example", result.DisplayName)
+	autopilot.Equals(t, "Example", result.DisplayName)
 	autopilot.Equals(t, "https://example.com", result.Url)
 }
 
-func TestGetToolsForService(t *testing.T) {
+func TestUpdateTool(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "tools")
+	request := `{
+    "query": "mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}",
+    "variables": {
+		"input": {
+			"id": "{{ template "id1" }}",
+			"category": "deployment"
+		}
+}}`
+	response := `{"data": {
+		"toolUpdate": {
+			"tool": {{ template "tool_1_update" }},
+			"errors": []
+		}
+}}`
+	client := ABetterTestClient(t, "toolUpdate", request, response)
 	// Act
-	result, err := client.GetToolsForService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2")
+	result, err := client.UpdateTool(ol.ToolUpdateInput{
+		Id:       "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Category: ol.ToolCategoryDeployment,
+	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 1, len(result))
+	autopilot.Equals(t, ol.ToolCategoryDeployment, result.Category)
+	autopilot.Equals(t, "prod", result.Environment)
 }
 
-func TestGetToolsCount(t *testing.T) {
+func TestDeleteTool(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "tools_count")
+	request := `{
+    "query": "mutation ToolDelete($input:ToolDeleteInput!){toolDelete(input: $input){errors{message,path}}}",
+    "variables": {
+		"input": {
+			"id": "{{ template "id1" }}"
+		}
+}}`
+	response := `{"data": {
+		"toolDelete": {
+			"errors": []
+		}
+}}`
+	client := ABetterTestClient(t, "toolDelete", request, response)
 	// Act
-	result, err := client.GetToolCount("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2")
+	err := client.DeleteTool("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 1, result)
 }

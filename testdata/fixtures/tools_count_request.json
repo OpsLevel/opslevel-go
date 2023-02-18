@@ -1,6 +1,0 @@
-{
-    "query": "query ServiceToolCount($service:ID!){account{service(id: $service){tools{totalCount}}}}",
-    "variables": {
-      "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2"
-    }
-  }
