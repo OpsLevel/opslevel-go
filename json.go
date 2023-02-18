@@ -8,7 +8,7 @@ import (
 // JSON is a specialized map[string]string to support proper graphql serialization
 type JSON map[string]string
 
-func (u JSON) GetGraphQLType() string { return "JSON" }
+func (s JSON) GetGraphQLType() string { return "JSON" }
 
 func (s JSON) MarshalJSON() ([]byte, error) {
 	dto := map[string]string{}
