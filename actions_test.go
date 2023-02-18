@@ -148,12 +148,10 @@ func TestUpdateWebhookAction2(t *testing.T) {
 func TestDeleteWebhookAction(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation WebhookActionDelete($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
+		"mutation WebhookActionDelete($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){errors{message,path}}}",
 		"variables":{"input":{"id": "123456789"}}
 	}`
 	response := `{"data": {"customActionsWebhookActionDelete": {
-     "deletedId": "123456789",
-     "deletedAlias": "",
      "errors": []
  }}}`
 
@@ -287,7 +285,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:     "123456789",
-		Filter: ol.NullID(),
+		Filter: ol.NewID(),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -320,17 +318,13 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 func TestDeleteTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
-		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}",
+		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
 		"variables":{"input":{"id":"123456789"}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionDelete": {
-     "deletedAlias": "",
-     "deletedId": "123456789",
      "errors": []
  }}}`
 	responseErr := `{"data": {"customActionsTriggerDefinitionDelete": {
-     "deletedAlias": null,
-     "deletedId": null,
      "errors": [{{ template "error1" }}]
  }}}`
 

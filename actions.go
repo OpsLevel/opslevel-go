@@ -173,7 +173,9 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 
 func (client *Client) DeleteWebhookAction(input IdentifierInput) error {
 	var m struct {
-		Payload ResourceDeletePayload `graphql:"customActionsWebhookActionDelete(resource: $input)"`
+		Payload struct {
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"customActionsWebhookActionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -256,7 +258,9 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 
 func (client *Client) DeleteTriggerDefinition(input IdentifierInput) error {
 	var m struct {
-		Payload ResourceDeletePayload `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
+		Payload struct {
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,

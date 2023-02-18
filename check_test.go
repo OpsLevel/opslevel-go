@@ -508,7 +508,7 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 		CheckUpdateInput: ol.CheckUpdateInput{
 			Id:     "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-			Filter: ol.NullID(),
+			Filter: ol.NewID(),
 		},
 	})
 	// Assert
