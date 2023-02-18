@@ -1,3 +1,40 @@
+{{- define "filter_1" }}
+{
+    "connective": null,
+    "htmlUrl": "https://app.opslevel.com/filters/1",
+    "id": "{{ template "id1" }}",
+    "name": "{{ template "name1" }}",
+    "predicates": []
+}
+{{ end }}
+
+{{- define "filter_2" }}
+{
+    "connective": null,
+    "htmlUrl": "https://app.opslevel.com/filters/2",
+    "id": "{{ template "id2" }}",
+    "name": "{{ template "name2" }}",
+    "predicates": [
+        {
+        "key": "tier_index",
+        "keyData": null,
+        "type": "equals",
+        "value": "1"
+        }
+    ]
+}
+{{ end }}
+
+{{- define "filter_3" }}
+{
+    "connective": null,
+    "htmlUrl": "https://app.opslevel.com/filters/3",
+    "id": "{{ template "id3" }}",
+    "name": "{{ template "name3" }}",
+    "predicates": []
+}
+{{ end }}
+
 {{- define "filter_kubernetes_response" }}
   "connective": null,
   "htmlUrl": "https://app.opslevel.com/filters/458",

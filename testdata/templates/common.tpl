@@ -1,15 +1,18 @@
 {{- define "alias1" }}example{{ end }}
 {{- define "alias2" }}example_2{{ end }}
 {{- define "alias3" }}example_3{{ end }}
+{{- define "alias4" }}example_4{{ end }}
 {{- define "name1" }}Example{{ end }}
 {{- define "name2" }}Example 2{{ end }}
 {{- define "name3" }}Example 3{{ end }}
+{{- define "name4" }}Example 4{{ end }}
 {{- define "email1" }}kyle@opslevel.com{{ end }}
 {{- define "email2" }}edgar@opslevel.com{{ end }}
 {{- define "email3" }}matthew@opslevel.com{{ end }}
 {{- define "id1" }}MTIzNDU2Nzg5MTIzNDU2Nzg5{{ end }}
 {{- define "id2" }}OTg3NjU0MzIxOTg3NjU0MzIx{{ end }}
 {{- define "id3" }}OTg3NjU0Mzg5MTIzNjU0MzIx{{ end }}
+{{- define "id4" }}Z2lkOi8vMTkyODM3NDY1{{ end }}
 {{- define "eid1" }}NzQxODUyOTYzNzQxODUyOTYz{{ end }}
 {{- define "description" }}An example description{{ end }}
 {{- define "pagination_request" }}pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount{{ end }}

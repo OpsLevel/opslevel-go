@@ -22,7 +22,8 @@ jobs:
           go-version: 1.18
       - name: Run Tests
         run: |-
-          go test -race -coverprofile=coverage.txt -covermode=atomic -v ./...
+          go test -race -coverprofile=coverage.out -covermode=atomic -v ./...
+          cat coverage.out | grep -v "/enum.go" > coverage.txt
       - name: Upload Coverage
         run: |-
           bash <(curl -s https://codecov.io/bash)

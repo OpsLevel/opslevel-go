@@ -1,3 +1,13 @@
+{{- define "lifecycle_1" }}
+{
+"alias": "{{ template "alias1" }}",
+"description": "{{ template "description" }}",
+"id": "{{ template "id1" }}",
+"index": 1,
+"name": "{{ template "name1" }}"
+}
+{{ end }}
+
 {{- define "lifecycle-pre-alpha" }}
 {
 "alias": "pre-alpha",
