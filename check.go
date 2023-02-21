@@ -809,7 +809,9 @@ func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, 
 
 func (client *Client) DeleteCheck(id ID) error {
 	var m struct {
-		Payload IdResponsePayload `graphql:"checkDelete(input: $input)"`
+		Payload struct {
+			Errors []OpsLevelErrors
+		} `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": CheckDeleteInput{Id: id},

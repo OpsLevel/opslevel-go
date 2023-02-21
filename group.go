@@ -325,7 +325,9 @@ func (client *Client) DeleteGroupWithAlias(alias string) error {
 
 func (client *Client) DeleteGroup(identifier string) error {
 	var m struct {
-		Payload ResourceDeletePayload `graphql:"groupDelete(resource: $input)"`
+		Payload struct {
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"groupDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),

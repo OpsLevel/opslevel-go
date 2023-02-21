@@ -1,10 +1,20 @@
 package opslevel
 
 import (
+	"encoding/base64"
 	"strconv"
+	"strings"
 )
 
 type ID string
+
+func NewID(id ...string) *ID {
+	var output ID
+	if len(id) == 1 {
+		output = ID(id[0])
+	}
+	return &output
+}
 
 func (s ID) GetGraphQLType() string { return "ID" }
 
@@ -13,4 +23,33 @@ func (s *ID) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return []byte(strconv.Quote(string(*s))), nil
+}
+
+type Identifier struct {
+	Id      ID       `graphql:"id"`
+	Aliases []string `graphql:"aliases"`
+}
+
+type IdentifierInput struct {
+	Id    ID     `graphql:"id" json:"id,omitempty"`
+	Alias string `graphql:"alias" json:"alias,omitempty"`
+}
+
+func NewIdentifier(value string) *IdentifierInput {
+	if IsID(value) {
+		return &IdentifierInput{
+			Id: ID(value),
+		}
+	}
+	return &IdentifierInput{
+		Alias: value,
+	}
+}
+
+func IsID(value string) bool {
+	decoded, err := base64.RawURLEncoding.DecodeString(value)
+	if err != nil {
+		return false
+	}
+	return strings.HasPrefix(string(decoded), "gid://")
 }

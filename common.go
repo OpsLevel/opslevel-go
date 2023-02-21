@@ -1,7 +1,6 @@
 package opslevel
 
 import (
-	"encoding/base64"
 	"fmt"
 	"strings"
 	"time"
@@ -9,11 +8,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
-
-type IdentifierInput struct {
-	Id    ID             `graphql:"id" json:"id,omitempty"`
-	Alias graphql.String `graphql:"alias" json:"alias,omitempty"`
-}
 
 type PageInfo struct {
 	HasNextPage     graphql.Boolean `graphql:"hasNextPage"`
@@ -33,50 +27,9 @@ type OpsLevelErrors struct {
 	Path    []string
 }
 
-type IdResponsePayload struct {
-	Id     ID `graphql:"deletedCheckId"`
-	Errors []OpsLevelErrors
-}
-
-type ResourceDeletePayload struct {
-	Alias  string           `graphql:"deletedAlias" json:"alias,omitempty"`
-	Id     ID               `graphql:"deletedId" json:"id,omitempty"`
-	Errors []OpsLevelErrors `graphql:"errors" json:"errors,omitempty"`
-}
-
-type Connection struct {
-	PageInfo PageInfo `graphql:"pageInfo"`
-}
-
 type Timestamps struct {
 	CreatedAt iso8601.Time `json:"createdAt"`
 	UpdatedAt iso8601.Time `json:"updatedAt"`
-}
-
-func (p *IdResponsePayload) Mutate(client *Client, m interface{}, v PayloadVariables) error {
-	if err := client.Mutate(m, v); err != nil {
-		return err
-	}
-	return FormatErrors(p.Errors)
-}
-
-func IsID(value string) bool {
-	decoded, err := base64.RawURLEncoding.DecodeString(value)
-	if err != nil {
-		return false
-	}
-	return strings.HasPrefix(string(decoded), "gid://")
-}
-
-func NewIdentifier(value string) *IdentifierInput {
-	if IsID(value) {
-		return &IdentifierInput{
-			Id: ID(value),
-		}
-	}
-	return &IdentifierInput{
-		Alias: graphql.String(value),
-	}
 }
 
 func NullString() *string {
@@ -122,19 +75,6 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	}
 
 	return fmt.Errorf(strings.Join(errstrings, "\n"))
-}
-
-func NullID() *ID {
-	return NewID("")
-}
-
-// NewId use "" to set "null" for ID input fields that can be nullified
-func NewID(id string) *ID {
-	var output ID
-	if id != "" {
-		output = ID(id)
-	}
-	return &output
 }
 
 func NewInt(i int) *int {
