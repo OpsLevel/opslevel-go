@@ -170,10 +170,46 @@ func TestServiceRepositories(t *testing.T) {
 						"service": {
 							"repos": {
 							  "edges": [
-								{{ template "service_repo_1" }}
+								{
+								  "node": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+									"defaultAlias": "bitbucket.org:raptors-store/Store Front"
+								  },
+								  "serviceRepositories": [
+									{
+									  "baseDirectory": "shopping-cart",
+									  "displayName": "raptors-store/Store Front",
+									  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjc2Nw",
+									  "repository": {
+										"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+										"defaultAlias": "bitbucket.org:raptors-store/Store Front"
+									  },
+									  "service": {
+										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xOTQy",
+										"aliases": [
+										  "dogfood",
+										  "opslevel-frontend",
+										  "opslevel_com",
+										  "service_alias",
+										  "shopping_cart",
+										  "shopping_cart 1",
+										  "shopping_cart_1235",
+										  "shopping_cart_2",
+										  "shopping_cart_service_2",
+										  "shopping_tart",
+										  "shopping_tarts"
+										]
+									  }
+									}
+								  ]
+								}
+							  ],
+							  "nodes": [
+								{{ template "service_repo_node_1" }},
+								{{ template "service_repo_node_2" }}
 							  ],
 								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 1
+								"totalCount": 2
 							}
 						  }}}}`},
 		{`{"query": "query ServiceRepositoriesList($after:String!$first:Int!$service:ID!){account{service(id: $service){repos(after: $after, first: $first){edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
@@ -188,7 +224,42 @@ func TestServiceRepositories(t *testing.T) {
 						"service": {
 							"repos": {
 							  "edges": [
-								{{ template "service_repo_1" }}
+								{
+								  "node": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+									"defaultAlias": "bitbucket.org:raptors-store/Store Front"
+								  },
+								  "serviceRepositories": [
+									{
+									  "baseDirectory": "shopping-cart",
+									  "displayName": "raptors-store/Store Front",
+									  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjc2Nw",
+									  "repository": {
+										"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+										"defaultAlias": "bitbucket.org:raptors-store/Store Front"
+									  },
+									  "service": {
+										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xOTQy",
+										"aliases": [
+										  "dogfood",
+										  "opslevel-frontend",
+										  "opslevel_com",
+										  "service_alias",
+										  "shopping_cart",
+										  "shopping_cart 1",
+										  "shopping_cart_1235",
+										  "shopping_cart_2",
+										  "shopping_cart_service_2",
+										  "shopping_tart",
+										  "shopping_tarts"
+										]
+									  }
+									}
+								  ]
+								}
+							  ],
+							  "nodes": [
+								{{ template "service_repo_node_3" }}
 							  ],
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
@@ -206,9 +277,10 @@ func TestServiceRepositories(t *testing.T) {
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "https://bitbucket.org/raptors-store/store-front", result[0].Url)
 	autopilot.Equals(t, "Store Front", result[1].Name)
+	autopilot.Equals(t, "https://bitbucket.org/raptors-store/catalogue", result[2].Url)
 }
 
 func TestCreateService(t *testing.T) {
