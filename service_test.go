@@ -73,7 +73,7 @@ func TestServiceTags(t *testing.T) {
 	autopilot.Equals(t, "true", result[1].Value)
 }
 
-func TestService_GetTools(t *testing.T) {
+func TestServiceTools(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",

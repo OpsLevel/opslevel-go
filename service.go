@@ -29,7 +29,7 @@ type Service struct {
 	Tags                       *TagConnection              `json:"tags,omitempty" graphql:"-"`
 	Tier                       Tier                        `json:"tier,omitempty"`
 	Timestamps                 Timestamps                  `json:"timestamps"`
-	Tools                      ToolConnection              `json:"tools,omitempty" graphql:"-"`
+	Tools                      *ToolConnection             `json:"tools,omitempty" graphql:"-"`
 }
 
 type ServiceConnection struct {
@@ -102,9 +102,12 @@ func (s *Service) Hydrate(client *Client) error {
 		return err
 	}
 	s.Tags = tags
-	if err := s.Tools.Hydrate(s.Id, client); err != nil {
+
+	tools, err := s.GetTools(client, nil)
+	if err != nil {
 		return err
 	}
+	s.Tools = tools
 	// TODO: this ID(string(ID)) is because i don't wan't to convert all of service objects
 	if err := s.Repositories.Hydrate(ID(string(s.Id)), client); err != nil {
 		return err
