@@ -1,3 +1,27 @@
+{{ define "integration_1" }}
+{
+    "id": "{{ template "id1" }}",
+    "name": "{{ template "name1" }}",
+    "type": "deploy"
+}
+{{ end }}
+
+{{ define "integration_2" }}
+{
+    "id": "{{ template "id2" }}",
+    "name": "{{ template "name2" }}",
+    "type": "payload"
+}
+{{ end }}
+
+{{ define "integration_3" }}
+{
+    "id": "{{ template "id3" }}",
+    "name": "{{ template "name3" }}",
+    "type": "generic"
+}
+{{ end }}
+
 {{- define "deploy_integration_response" }}
   "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkRlcGxveUludGVncmF0aW9uLzMyNw",
   "name": "Deploy",

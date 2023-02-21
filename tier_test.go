@@ -14,5 +14,5 @@ func TestListTiers(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 4, len(result))
-	autopilot.Equals(t, "tier_1", result[0].Alias)
+	autopilot.Equals(t, "example", result[0].Alias)
 }

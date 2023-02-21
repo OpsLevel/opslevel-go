@@ -114,7 +114,7 @@ func TestUpdateRubricLevel(t *testing.T) {
 	}`
 	response := `{"data": {
 	"levelUpdate": {
-		"level": {{ template "level.tpl" }},
+		"level": {{ template "level_1" }},
 		"errors": []
 	}
 	}}`
@@ -144,7 +144,7 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 	}`
 	response := `{"data": {
 	"levelUpdate": {
-		"level": {{ template "level.tpl" }},
+		"level": {{ template "level_1" }},
 		"errors": []
 	}
 	}}`
@@ -174,7 +174,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	}`
 	response := `{"data": {
 	"levelUpdate": {
-		"level": {{ template "level.tpl" }},
+		"level": {{ template "level_1" }},
 		"errors": []
 	}
 	}}`
@@ -204,7 +204,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	}`
 	response := `{"data": {
 	"levelUpdate": {
-		"level": {{ template "level.tpl" }},
+		"level": {{ template "level_1" }},
 		"errors": []
 	}
 	}}`
