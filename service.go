@@ -18,18 +18,18 @@ type Service struct {
 	Framework       string `json:"framework,omitempty"`
 	HtmlURL         string `json:"htmlUrl"`
 	ServiceId
-	Language                   string                      `json:"language,omitempty"`
-	Lifecycle                  Lifecycle                   `json:"lifecycle,omitempty"`
-	Name                       string                      `json:"name,omitempty"`
-	Owner                      TeamId                      `json:"owner,omitempty"`
-	PreferredApiDocument       *ServiceDocument            `json:"preferredApiDocument,omitempty"`
-	PreferredApiDocumentSource *ApiDocumentSourceEnum      `json:"preferredApiDocumentSource,omitempty"`
-	Product                    string                      `json:"product,omitempty"`
-	Repositories               ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
-	Tags                       TagConnection               `json:"tags,omitempty"`
-	Tier                       Tier                        `json:"tier,omitempty"`
-	Timestamps                 Timestamps                  `json:"timestamps"`
-	Tools                      ToolConnection              `json:"tools,omitempty"`
+	Language                   string                       `json:"language,omitempty"`
+	Lifecycle                  Lifecycle                    `json:"lifecycle,omitempty"`
+	Name                       string                       `json:"name,omitempty"`
+	Owner                      TeamId                       `json:"owner,omitempty"`
+	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
+	PreferredApiDocumentSource *ApiDocumentSourceEnum       `json:"preferredApiDocumentSource,omitempty"`
+	Product                    string                       `json:"product,omitempty"`
+	Repositories               *ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
+	Tags                       *TagConnection               `json:"tags,omitempty"`
+	Tier                       Tier                         `json:"tier,omitempty"`
+	Timestamps                 Timestamps                   `json:"timestamps"`
+	Tools                      *ToolConnection              `json:"tools,omitempty"`
 }
 
 type ServiceConnection struct {
@@ -97,17 +97,140 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 }
 
 func (s *Service) Hydrate(client *Client) error {
-	if err := s.Tags.Hydrate(s.Id, client); err != nil {
-		return err
+	if s.Tags.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = s.Tags.PageInfo.End
+		_, err := s.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
 	}
-	if err := s.Tools.Hydrate(s.Id, client); err != nil {
-		return err
+
+	if s.Tools.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = s.Tools.PageInfo.End
+		resp, err := s.GetTools(client, variables)
+		if err != nil {
+			return err
+		}
+		s.Tools = resp
 	}
-	// TODO: this ID(string(ID)) is because i don't wan't to convert all of service objects
-	if err := s.Repositories.Hydrate(ID(string(s.Id)), client); err != nil {
-		return err
+
+	if s.Repositories.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = s.Repositories.PageInfo.End
+		resp, err := s.GetRepositories(client, variables)
+		if err != nil {
+			return err
+		}
+		s.Repositories = resp
 	}
 	return nil
+}
+
+func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid service id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = s.Id
+	if err := client.Query(&q, *variables, WithName("ServiceTagsList")); err != nil {
+		return nil, err
+	}
+	if s.Tags == nil {
+		tags := TagConnection{}
+		s.Tags = &tags
+	}
+	s.Tags.Nodes = append(s.Tags.Nodes, q.Account.Service.Tags.Nodes...)
+	s.Tags.PageInfo = q.Account.Service.Tags.PageInfo
+	s.Tags.TotalCount += q.Account.Service.Tags.TotalCount
+	for s.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = s.Tags.PageInfo.End
+		_, err := s.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.Tags, nil
+}
+
+func (s *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Tools ToolConnection `graphql:"tools(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tools, invalid service id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = s.Id
+	if err := client.Query(&q, *variables, WithName("ServiceToolsList")); err != nil {
+		return nil, err
+	}
+	if s.Tools == nil {
+		tools := ToolConnection{}
+		s.Tools = &tools
+	}
+	s.Tools.Nodes = append(s.Tools.Nodes, q.Account.Service.Tools.Nodes...)
+	s.Tools.PageInfo = q.Account.Service.Tools.PageInfo
+	s.Tools.TotalCount += q.Account.Service.Tools.TotalCount
+	for s.Tools.PageInfo.HasNextPage {
+		(*variables)["after"] = s.Tools.PageInfo.End
+		_, err := s.GetTools(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.Tools, nil
+}
+
+func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (*ServiceRepositoryConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				ServiceRepositories ServiceRepositoryConnection `graphql:"repos(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Repositories, invalid service id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = s.Id
+	if err := client.Query(&q, *variables, WithName("ServiceRepositoriesList")); err != nil {
+		return nil, err
+	}
+	if s.Repositories == nil {
+		repositories := ServiceRepositoryConnection{}
+		s.Repositories = &repositories
+	}
+	s.Repositories.Nodes = append(s.Repositories.Nodes, q.Account.Service.ServiceRepositories.Nodes...)
+	s.Repositories.PageInfo = q.Account.Service.ServiceRepositories.PageInfo
+	s.Repositories.TotalCount += q.Account.Service.ServiceRepositories.TotalCount
+	for s.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = s.Repositories.PageInfo.End
+		_, err := s.GetRepositories(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.Repositories, nil
 }
 
 func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {
@@ -179,7 +302,7 @@ func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
 		}
 	}
 	v := PayloadVariables{
-		"service": graphql.String(alias),
+		"service": alias,
 	}
 	err := client.Query(&q, v, WithName("ServiceGet"))
 	return &q.Account.Service, HandleErrors(err, nil)
@@ -192,7 +315,7 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 		}
 	}
 	v := PayloadVariables{
-		"service": graphql.String(alias),
+		"service": alias,
 	}
 	if err := client.Query(&q, v, WithName("ServiceGet")); err != nil {
 		return nil, err
@@ -291,7 +414,7 @@ func (client *Client) ListServicesWithFramework(framework string) ([]Service, er
 		}
 	}
 	v := client.InitialPageVariables()
-	v["framework"] = graphql.String(framework)
+	v["framework"] = framework
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -302,7 +425,7 @@ func (client *Client) ListServicesWithLanguage(language string) ([]Service, erro
 		}
 	}
 	v := client.InitialPageVariables()
-	v["language"] = graphql.String(language)
+	v["language"] = language
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -313,7 +436,7 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string) ([]Service, er
 		}
 	}
 	v := client.InitialPageVariables()
-	v["lifecycle"] = graphql.String(lifecycle)
+	v["lifecycle"] = lifecycle
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -324,7 +447,7 @@ func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
 		}
 	}
 	v := client.InitialPageVariables()
-	v["owner"] = graphql.String(owner)
+	v["owner"] = owner
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -335,7 +458,7 @@ func (client *Client) ListServicesWithProduct(product string) ([]Service, error)
 		}
 	}
 	v := client.InitialPageVariables()
-	v["product"] = graphql.String(product)
+	v["product"] = product
 	return q.Account.Services.Query(client, &q, v)
 }
 
