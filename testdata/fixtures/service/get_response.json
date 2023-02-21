@@ -37,37 +37,6 @@
         },
         "preferredApiDocumentSource": "PUSH",
         "product": "MyProduct",
-        "repos": {
-          "edges": [
-            {
-              "node": {
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
-                "defaultAlias": "github.com:rocktavious/autopilot"
-              },
-              "serviceRepositories": [
-                {
-                  "baseDirectory": "",
-                  "displayName": "rocktavious/autopilot",
-                  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNw",
-                  "repository": {
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
-                    "defaultAlias": "github.com:rocktavious/autopilot"
-                  },
-                  "service": {
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81NDI5"
-                  }
-                }
-              ]
-            }
-          ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          },
-          "totalCount": 1
-        },
         "tier": {
           "alias": "tier_1",
           "description": "Mission-critical service or repository. Failure could result in significant impact to revenue or reputation.",

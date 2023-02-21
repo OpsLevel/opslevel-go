@@ -18,18 +18,18 @@ type Service struct {
 	Framework       string `json:"framework,omitempty"`
 	HtmlURL         string `json:"htmlUrl"`
 	ServiceId
-	Language                   string                      `json:"language,omitempty"`
-	Lifecycle                  Lifecycle                   `json:"lifecycle,omitempty"`
-	Name                       string                      `json:"name,omitempty"`
-	Owner                      TeamId                      `json:"owner,omitempty"`
-	PreferredApiDocument       *ServiceDocument            `json:"preferredApiDocument,omitempty"`
-	PreferredApiDocumentSource *ApiDocumentSourceEnum      `json:"preferredApiDocumentSource,omitempty"`
-	Product                    string                      `json:"product,omitempty"`
-	Repositories               ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
-	Tags                       *TagConnection              `json:"tags,omitempty" graphql:"-"`
-	Tier                       Tier                        `json:"tier,omitempty"`
-	Timestamps                 Timestamps                  `json:"timestamps"`
-	Tools                      *ToolConnection             `json:"tools,omitempty" graphql:"-"`
+	Language                   string                 `json:"language,omitempty"`
+	Lifecycle                  Lifecycle              `json:"lifecycle,omitempty"`
+	Name                       string                 `json:"name,omitempty"`
+	Owner                      TeamId                 `json:"owner,omitempty"`
+	PreferredApiDocument       *ServiceDocument       `json:"preferredApiDocument,omitempty"`
+	PreferredApiDocumentSource *ApiDocumentSourceEnum `json:"preferredApiDocumentSource,omitempty"`
+	Product                    string                 `json:"product,omitempty"`
+	Repositories               *RepositoryConnection  `json:"repos,omitempty" graphql:"-"`
+	Tags                       *TagConnection         `json:"tags,omitempty" graphql:"-"`
+	Tier                       Tier                   `json:"tier,omitempty"`
+	Timestamps                 Timestamps             `json:"timestamps"`
+	Tools                      *ToolConnection        `json:"tools,omitempty" graphql:"-"`
 }
 
 type ServiceConnection struct {
@@ -108,10 +108,12 @@ func (s *Service) Hydrate(client *Client) error {
 		return err
 	}
 	s.Tools = tools
-	// TODO: this ID(string(ID)) is because i don't wan't to convert all of service objects
-	if err := s.Repositories.Hydrate(ID(string(s.Id)), client); err != nil {
+
+	repositories, err := s.GetRepositories(client, nil)
+	if err != nil {
 		return err
 	}
+	s.Repositories = repositories
 	return nil
 }
 
@@ -175,6 +177,37 @@ func (s *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolCo
 		q.Account.Service.Tools.TotalCount += resp.TotalCount
 	}
 	return &q.Account.Service.Tools, nil
+}
+
+func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (*RepositoryConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Repositories RepositoryConnection `graphql:"repositories(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Repositories, invalid service id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = s.Id
+	if err := client.Query(&q, *variables, WithName("ServiceRepositoriesList")); err != nil {
+		return nil, err
+	}
+	for q.Account.Service.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Service.Repositories.PageInfo.End
+		resp, err := s.GetRepositories(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Service.Repositories.Nodes = append(q.Account.Service.Repositories.Nodes, resp.Nodes...)
+		q.Account.Service.Repositories.PageInfo = resp.PageInfo
+		q.Account.Service.Repositories.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Service.Repositories, nil
 }
 
 func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {

@@ -155,6 +155,62 @@ func TestServiceTools(t *testing.T) {
 	autopilot.Equals(t, ol.ToolCategoryContinuousIntegration, result[1].Category)
 }
 
+func TestServiceRepositories(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceRepositoriesList($after:String!$first:Int!$service:ID!){account{service(id: $service){repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"service": {
+							"repositories": {
+								"nodes": [
+									{{ template "repository_1" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+		{`{"query": "query ServiceRepositoriesList($after:String!$first:Int!$service:ID!){account{service(id: $service){repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"service": {
+							"repositories": {
+								"nodes": [
+									{{ template "repository_2" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+	client := APaginatedTestClient(t, "service/repositories", requests...)
+	// Act
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	resp, err := service.GetRepositories(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "https://github.com/rocktavious/autopilot", result[0].Url)
+	autopilot.Equals(t, "cli", result[1].Name)
+}
+
 func TestCreateService(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "service/create")

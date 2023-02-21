@@ -15,16 +15,6 @@
     "preferredApiDocument": null,
     "preferredApiDocumentSource": "PULL",
     "product": null,
-    "repos": {
-        "edges": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    },
     "tier": null
 }
 {{ end }}
@@ -45,16 +35,6 @@
     "preferredApiDocument": null,
     "preferredApiDocumentSource": "PULL",
     "product": null,
-    "repos": {
-        "edges": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    },
     "tier": null
 }
 {{ end }}

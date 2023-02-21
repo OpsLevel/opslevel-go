@@ -39,16 +39,6 @@
               },
               "preferredApiDocumentSource": "PUSH",
               "product": "Example",
-              "repos": {
-                "edges": [],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": null,
-                  "endCursor": null
-                },
-                "totalCount": 0
-              },
               "tier": {
                 "alias": "tier_1",
                 "description": "Mission-critical service or repository. Failure could result in significant impact to revenue or reputation.",
@@ -76,16 +66,6 @@
                 "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTM"
               },
               "product": null,
-              "repos": {
-                "edges": [],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": null,
-                  "endCursor": null
-                },
-                "totalCount": 0
-              },
               "tier": {
                 "alias": "tier_4",
                 "description": "Other service or repository. Failure doesn't result in immediate or significant impact.",
