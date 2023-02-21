@@ -202,7 +202,7 @@ func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (
 	var q struct {
 		Account struct {
 			Service struct {
-				ServiceRepositories ServiceRepositoryConnection `graphql:"repos(after: $after, first: $first)"`
+				Repositories ServiceRepositoryConnection `graphql:"repos(after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}
@@ -220,9 +220,9 @@ func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (
 		repositories := ServiceRepositoryConnection{}
 		s.Repositories = &repositories
 	}
-	s.Repositories.Nodes = append(s.Repositories.Nodes, q.Account.Service.ServiceRepositories.Nodes...)
-	s.Repositories.PageInfo = q.Account.Service.ServiceRepositories.PageInfo
-	s.Repositories.TotalCount += q.Account.Service.ServiceRepositories.TotalCount
+	s.Repositories.Nodes = append(s.Repositories.Nodes, q.Account.Service.Repositories.Nodes...)
+	s.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
+	s.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
 	for s.Repositories.PageInfo.HasNextPage {
 		(*variables)["after"] = s.Repositories.PageInfo.End
 		_, err := s.GetRepositories(client, variables)
