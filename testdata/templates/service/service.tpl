@@ -25,27 +25,7 @@
         },
         "totalCount": 0
     },
-    "tags": {
-        "nodes": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    },
-    "tier": null,
-    "tools": {
-        "nodes": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    }
+    "tier": null
 }
 {{ end }}
 {{- define "service_2" }}
@@ -75,26 +55,6 @@
         },
         "totalCount": 0
     },
-    "tags": {
-        "nodes": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    },
-    "tier": null,
-    "tools": {
-        "nodes": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    }
+    "tier": null
 }
 {{ end }}

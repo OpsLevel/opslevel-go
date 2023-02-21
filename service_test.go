@@ -73,6 +73,88 @@ func TestServiceTags(t *testing.T) {
 	autopilot.Equals(t, "true", result[1].Value)
 }
 
+func TestService_GetTools(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"service": {
+							"tools": {
+								"nodes": [
+									{
+									  "category": "incidents",
+									  "categoryAlias": null,
+									  "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC84MDYz",
+									  "displayName": "PagerDuty",
+									  "environment": "Production",
+									  "service": {
+										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+										"aliases": [
+										  "foo"
+										]
+									  },
+									  "url": "https://pagerduty.com"
+									}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+		{`{"query": "query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"service": {
+							"tools": {
+								"nodes": [
+									{
+									  "category": "continuous_integration",
+									  "categoryAlias": null,
+									  "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC84MDY0",
+									  "displayName": "Gitlab CI",
+									  "environment": "Production",
+									  "service": {
+										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+										"aliases": [
+										  "foo"
+										]
+									  },
+									  "url": "https://gitlab.com"
+									}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+	client := APaginatedTestClient(t, "service/tools", requests...)
+	// Act
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	resp, err := service.GetTools(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "PagerDuty", result[0].DisplayName)
+	autopilot.Equals(t, ol.ToolCategoryContinuousIntegration, result[1].Category)
+}
+
 func TestCreateService(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "service/create")
@@ -107,7 +189,6 @@ func TestGetServiceWithAlias(t *testing.T) {
 	autopilot.Equals(t, "alpha", result.Lifecycle.Alias)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
-	autopilot.Equals(t, 4, result.Tools.TotalCount)
 	autopilot.Equals(t, "API Docs", result.PreferredApiDocument.Source.Name)
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result.PreferredApiDocumentSource)
 }
@@ -125,9 +206,6 @@ func TestGetService(t *testing.T) {
 	autopilot.Equals(t, "alpha", result.Lifecycle.Alias)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
-	// TODO: Figure out how to get tags count here, probably a separate call after refactor
-	//autopilot.Equals(t, 3, result.Tags.TotalCount)
-	autopilot.Equals(t, 4, result.Tools.TotalCount)
 	autopilot.Equals(t, 1, len(docs))
 	autopilot.Equals(t, "", docs[0].HtmlURL)
 }
