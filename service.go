@@ -26,7 +26,7 @@ type Service struct {
 	PreferredApiDocumentSource *ApiDocumentSourceEnum `json:"preferredApiDocumentSource,omitempty"`
 	Product                    string                 `json:"product,omitempty"`
 	Repositories               *RepositoryConnection  `json:"repos,omitempty" graphql:"-"`
-	Tags                       *TagConnection         `json:"tags,omitempty" graphql:"-"`
+	Tags                       *TagConnection         `json:"tags,omitempty"`
 	Tier                       Tier                   `json:"tier,omitempty"`
 	Timestamps                 Timestamps             `json:"timestamps"`
 	Tools                      *ToolConnection        `json:"tools,omitempty" graphql:"-"`
@@ -97,23 +97,34 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 }
 
 func (s *Service) Hydrate(client *Client) error {
-	tags, err := s.GetTags(client, nil)
-	if err != nil {
-		return err
+	if s.Tags.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = s.Tags.PageInfo.End
+		_, err := s.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
 	}
-	s.Tags = tags
 
-	tools, err := s.GetTools(client, nil)
-	if err != nil {
-		return err
+	if s.Tools.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = s.Tools.PageInfo.End
+		resp, err := s.GetTools(client, variables)
+		if err != nil {
+			return err
+		}
+		s.Tools = resp
 	}
-	s.Tools = tools
 
-	repositories, err := s.GetRepositories(client, nil)
-	if err != nil {
-		return err
+	if s.Repositories.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = s.Repositories.PageInfo.End
+		resp, err := s.GetRepositories(client, variables)
+		if err != nil {
+			return err
+		}
+		s.Repositories = resp
 	}
-	s.Repositories = repositories
 	return nil
 }
 
@@ -135,17 +146,17 @@ func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	if err := client.Query(&q, *variables, WithName("ServiceTagsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Service.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Service.Tags.PageInfo.End
-		resp, err := s.GetTags(client, variables)
+	s.Tags.Nodes = append(s.Tags.Nodes, q.Account.Service.Tags.Nodes...)
+	s.Tags.PageInfo = q.Account.Service.Tags.PageInfo
+	s.Tags.TotalCount += q.Account.Service.Tags.TotalCount
+	for s.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = s.Tags.PageInfo.End
+		_, err := s.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
-		q.Account.Service.Tags.Nodes = append(q.Account.Service.Tags.Nodes, resp.Nodes...)
-		q.Account.Service.Tags.PageInfo = resp.PageInfo
-		q.Account.Service.Tags.TotalCount += resp.TotalCount
 	}
-	return &q.Account.Service.Tags, nil
+	return s.Tags, nil
 }
 
 func (s *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolConnection, error) {
@@ -261,10 +272,9 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	if err := client.Mutate(&m, v, WithName("ServiceCreate")); err != nil {
 		return nil, err
 	}
-	// TODO: Figure out why this is breaking TestCreateService
-	//if err := m.Payload.Service.Hydrate(client); err != nil {
-	//	return &m.Payload.Service, err
-	//}
+	if err := m.Payload.Service.Hydrate(client); err != nil {
+		return &m.Payload.Service, err
+	}
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
 
@@ -280,7 +290,7 @@ func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
 		}
 	}
 	v := PayloadVariables{
-		"service": graphql.String(alias),
+		"service": alias,
 	}
 	err := client.Query(&q, v, WithName("ServiceGet"))
 	return &q.Account.Service, HandleErrors(err, nil)
@@ -293,15 +303,14 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 		}
 	}
 	v := PayloadVariables{
-		"service": graphql.String(alias),
+		"service": alias,
 	}
 	if err := client.Query(&q, v, WithName("ServiceGet")); err != nil {
 		return nil, err
 	}
-	// TODO: Figure out why this is breaking test
-	//if err := q.Account.Service.Hydrate(client); err != nil {
-	//	return &q.Account.Service, err
-	//}
+	if err := q.Account.Service.Hydrate(client); err != nil {
+		return &q.Account.Service, err
+	}
 	return &q.Account.Service, nil
 }
 
@@ -322,10 +331,9 @@ func (client *Client) GetService(id ID) (*Service, error) {
 	if err := client.Query(&q, v, WithName("ServiceGet")); err != nil {
 		return nil, err
 	}
-	// TODO: Figure out why this is breaking all the get tests
-	//if err := q.Account.Service.Hydrate(client); err != nil {
-	//	return &q.Account.Service, err
-	//}
+	if err := q.Account.Service.Hydrate(client); err != nil {
+		return &q.Account.Service, err
+	}
 	return &q.Account.Service, nil
 }
 
@@ -394,7 +402,7 @@ func (client *Client) ListServicesWithFramework(framework string) ([]Service, er
 		}
 	}
 	v := client.InitialPageVariables()
-	v["framework"] = graphql.String(framework)
+	v["framework"] = framework
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -405,7 +413,7 @@ func (client *Client) ListServicesWithLanguage(language string) ([]Service, erro
 		}
 	}
 	v := client.InitialPageVariables()
-	v["language"] = graphql.String(language)
+	v["language"] = language
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -416,7 +424,7 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string) ([]Service, er
 		}
 	}
 	v := client.InitialPageVariables()
-	v["lifecycle"] = graphql.String(lifecycle)
+	v["lifecycle"] = lifecycle
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -427,7 +435,7 @@ func (client *Client) ListServicesWithOwner(owner string) ([]Service, error) {
 		}
 	}
 	v := client.InitialPageVariables()
-	v["owner"] = graphql.String(owner)
+	v["owner"] = owner
 	return q.Account.Services.Query(client, &q, v)
 }
 
@@ -438,7 +446,7 @@ func (client *Client) ListServicesWithProduct(product string) ([]Service, error)
 		}
 	}
 	v := client.InitialPageVariables()
-	v["product"] = graphql.String(product)
+	v["product"] = product
 	return q.Account.Services.Query(client, &q, v)
 }
 

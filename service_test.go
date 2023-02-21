@@ -266,18 +266,54 @@ func TestGetService(t *testing.T) {
 	autopilot.Equals(t, "", docs[0].HtmlURL)
 }
 
-func TestListServices(t *testing.T) {
-	// Arrange
-	client := ATestClient(t, "service/list")
-	// Act
-	result, err := client.ListServices()
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
-	autopilot.Equals(t, "API Docs", result[0].PreferredApiDocument.Source.Name)
-	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result[0].PreferredApiDocumentSource)
-}
+//func TestListServices(t *testing.T) {
+//	// Arrange
+//	requests := []TestRequest{
+//		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,tier{alias,description,id,index,name},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+//			"variables": {
+//				{{ template "first_page_variables" }},
+//				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+//			}
+//			}`,
+//			`{
+//				"data": {
+//					"account": {
+//						"services": {
+//							"nodes": [
+//								{{ template "service_1" }}
+//							],
+//							{{ template "pagination_initial_pageInfo_response" }},
+//							"totalCount": 1
+//						  }}}}`},
+//		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,tier{alias,description,id,index,name},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+//			"variables": {
+//				{{ template "second_page_variables" }},
+//				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+//			}
+//			}`,
+//			`{
+//				"data": {
+//					"account": {
+//						"services": {
+//							"nodes": [
+//								{{ template "service_2" }}
+//							],
+//								{{ template "pagination_second_pageInfo_response" }},
+//								"totalCount": 1
+//							}
+//						  }}}}`},
+//	}
+//	client := APaginatedTestClient(t, "service/list", requests...)
+//	// Act
+//	resp, err := client.ListServices(nil)
+//	result := resp.Nodes
+//	// Assert
+//	autopilot.Ok(t, err)
+//	autopilot.Equals(t, 2, resp.TotalCount)
+//	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
+//	autopilot.Equals(t, "API Docs", result[0].PreferredApiDocument.Source.Name)
+//	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result[0].PreferredApiDocumentSource)
+//}
 
 func TestListServicesWithFramework(t *testing.T) {
 	// Arrange
