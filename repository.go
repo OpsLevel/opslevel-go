@@ -34,7 +34,7 @@ type Repository struct {
 	Owner              TeamId
 	Private            bool
 	RepoKey            string
-	Services           RepositoryServiceConnection
+	Services           *RepositoryServiceConnection
 	Tags               RepositoryTagConnection
 	Tier               Tier
 	Type               string
@@ -75,7 +75,7 @@ type RepositoryServiceEdge struct {
 type RepositoryServiceConnection struct {
 	Edges      []RepositoryServiceEdge
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type ServiceRepositoryEdge struct {
@@ -120,6 +120,10 @@ func (r *Repository) GetService(service ID, directory string) *ServiceRepository
 }
 
 func (r *Repository) Hydrate(client *Client) error {
+	if r.Services == nil {
+		services := RepositoryServiceConnection{}
+		r.Services = &services
+	}
 	if err := r.Services.Hydrate(r.Id, client); err != nil {
 		return err
 	}
@@ -127,6 +131,41 @@ func (r *Repository) Hydrate(client *Client) error {
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) GetServices(client *Client, variables *PayloadVariables) (*RepositoryServiceConnection, error) {
+	var q struct {
+		Account struct {
+			Repository struct {
+				Services RepositoryServiceConnection `graphql:"services(after: $after, first: $first)"`
+			} `graphql:"repository(id: $id)"`
+		}
+	}
+	if r.Id == "" {
+		return nil, fmt.Errorf("Unable to get Services, invalid repository id: '%s'", r.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["id"] = r.Id
+	if err := client.Query(&q, *variables, WithName("RepositoryServicesList")); err != nil {
+		return nil, err
+	}
+	if r.Services == nil {
+		services := RepositoryServiceConnection{}
+		r.Services = &services
+	}
+	r.Services.Edges = append(r.Services.Edges, q.Account.Repository.Services.Edges...)
+	r.Services.PageInfo = q.Account.Repository.Services.PageInfo
+	r.Services.TotalCount += q.Account.Repository.Services.TotalCount
+	for r.Services.PageInfo.HasNextPage {
+		(*variables)["after"] = r.Services.PageInfo.End
+		_, err := r.GetServices(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r.Services, nil
 }
 
 //#region Create
@@ -166,7 +205,7 @@ func (client *Client) GetRepositoryWithAlias(alias string) (*Repository, error) 
 		}
 	}
 	v := PayloadVariables{
-		"repo": graphql.String(alias),
+		"repo": alias,
 	}
 	if err := client.Query(&q, v, WithName("RepositoryGet")); err != nil {
 		return nil, err

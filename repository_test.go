@@ -1,9 +1,9 @@
 package opslevel_test
 
 import (
+	ol "github.com/opslevel/opslevel-go/v2023"
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
 )
 
@@ -25,7 +25,7 @@ func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, &ol.Repository{}, result)
+	autopilot.Equals(t, *ol.NewID(), result.Id)
 }
 
 func TestGetRepositoryWithAlias(t *testing.T) {
@@ -109,4 +109,285 @@ func TestDeleteServiceRepository(t *testing.T) {
 	err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
 	// Assert
 	autopilot.Ok(t, err)
+}
+
+func TestGetServices(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
+			}
+			}`,
+			`{
+				  "data": {
+					"account": {
+					  "repository": {
+						"services": {
+						  "edges": [
+							{
+							  "atRoot": true,
+							  "node": {
+								"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xODc1",
+								"aliases": [
+								  "apple-running-app",
+								  "catalog_service_4"
+								]
+							  },
+							  "paths": [
+								{
+								  "href": "https://bitbucket.org/raptors-store/catalogue",
+								  "path": ""
+								}
+							  ],
+							  "serviceRepositories": [
+								{
+								  "baseDirectory": "",
+								  "displayName": "raptors-store/Catalogue",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjQ1Mg",
+								  "repository": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYx",
+									"defaultAlias": "bitbucket.org:raptors-store/Catalogue"
+								  },
+								  "service": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xODc1",
+									"aliases": [
+									  "apple-running-app",
+									  "catalog_service_4"
+									]
+								  }
+								}
+							  ]
+							},
+							{
+							  "atRoot": true,
+							  "node": {
+								"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS83NDc",
+								"aliases": [
+								  "Catalog_Shopping_test",
+								  "Catalog_test_service",
+								  "XYZ    DEF",
+								  "XYZ DEF",
+								  "catalog_service_2",
+								  "no_service_alias",
+								  "service_for_catalogue_repo",
+								  "xyz_service_2",
+								  "xyz_service_4"
+								]
+							  },
+							  "paths": [
+								{
+								  "href": "https://bitbucket.org/raptors-store/catalogue",
+								  "path": ""
+								}
+							  ],
+							  "serviceRepositories": [
+								{
+								  "baseDirectory": "",
+								  "displayName": "raptors-store/Catalogue",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMTg1",
+								  "repository": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYx",
+									"defaultAlias": "bitbucket.org:raptors-store/Catalogue"
+								  },
+								  "service": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS83NDc",
+									"aliases": [
+									  "Catalog_Shopping_test",
+									  "Catalog_test_service",
+									  "XYZ    DEF",
+									  "XYZ DEF",
+									  "catalog_service_2",
+									  "no_service_alias",
+									  "service_for_catalogue_repo",
+									  "xyz_service_2",
+									  "xyz_service_4"
+									]
+								  }
+								}
+							  ]
+							},
+							{
+							  "atRoot": true,
+							  "node": {
+								"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ",
+								"aliases": [
+								  "Back End",
+								  "Backend Service",
+								  "a/b/c",
+								  "back end testing",
+								  "back_end",
+								  "fs-prod:deployment/bolt-http",
+								  "shopping_barts",
+								  "shopping_cart_service",
+								  "testing_1",
+								  "testing_11",
+								  "testing_12",
+								  "testing_123",
+								  "testing_1234",
+								  "testing_15",
+								  "testing_2",
+								  "testing_3",
+								  "testing_4",
+								  "testing_5",
+								  "testing_6",
+								  "testing_8"
+								]
+							  },
+							  "paths": [
+								{
+								  "href": "https://bitbucket.org/raptors-store/catalogue",
+								  "path": ""
+								}
+							  ],
+							  "serviceRepositories": [
+								{
+								  "baseDirectory": "",
+								  "displayName": "raptors-store/Catalogue",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjYyMg",
+								  "repository": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYx",
+									"defaultAlias": "bitbucket.org:raptors-store/Catalogue"
+								  },
+								  "service": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ",
+									"aliases": [
+									  "Back End",
+									  "Backend Service",
+									  "a/b/c",
+									  "back end testing",
+									  "back_end",
+									  "fs-prod:deployment/bolt-http",
+									  "shopping_barts",
+									  "shopping_cart_service",
+									  "testing_1",
+									  "testing_11",
+									  "testing_12",
+									  "testing_123",
+									  "testing_1234",
+									  "testing_15",
+									  "testing_2",
+									  "testing_3",
+									  "testing_4",
+									  "testing_5",
+									  "testing_6",
+									  "testing_8"
+									]
+								  }
+								}
+							  ]
+							}
+						  ],
+						  {{ template "pagination_initial_pageInfo_response" }},
+						  "totalCount": 2
+						}
+					  }
+					}
+				  }
+				}`},
+		{`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
+			}
+			}`,
+			`{
+				  "data": {
+					"account": {
+					  "repository": {
+						"services": {
+						  "edges": [
+							{
+							  "atRoot": true,
+							  "node": {
+								"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ",
+								"aliases": [
+								  "Back End",
+								  "Backend Service",
+								  "a/b/c",
+								  "back end testing",
+								  "back_end",
+								  "fs-prod:deployment/bolt-http",
+								  "shopping_barts",
+								  "shopping_cart_service",
+								  "testing_1",
+								  "testing_11",
+								  "testing_12",
+								  "testing_123",
+								  "testing_1234",
+								  "testing_15",
+								  "testing_2",
+								  "testing_3",
+								  "testing_4",
+								  "testing_5",
+								  "testing_6",
+								  "testing_8"
+								]
+							  },
+							  "paths": [
+								{
+								  "href": "https://bitbucket.org/raptors-store/catalogue",
+								  "path": ""
+								}
+							  ],
+							  "serviceRepositories": [
+								{
+								  "baseDirectory": "",
+								  "displayName": "raptors-store/Catalogue",
+								  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjYyMg",
+								  "repository": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYx",
+									"defaultAlias": "bitbucket.org:raptors-store/Catalogue"
+								  },
+								  "service": {
+									"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ",
+									"aliases": [
+									  "Back End",
+									  "Backend Service",
+									  "a/b/c",
+									  "back end testing",
+									  "back_end",
+									  "fs-prod:deployment/bolt-http",
+									  "shopping_barts",
+									  "shopping_cart_service",
+									  "testing_1",
+									  "testing_11",
+									  "testing_12",
+									  "testing_123",
+									  "testing_1234",
+									  "testing_15",
+									  "testing_2",
+									  "testing_3",
+									  "testing_4",
+									  "testing_5",
+									  "testing_6",
+									  "testing_8"
+									]
+								  }
+								}
+							  ]
+							}
+						  ],
+						  {{ template "pagination_second_pageInfo_response" }},
+						  "totalCount": 1
+						}
+					  }
+					}
+				  }
+				}`},
+	}
+	client := APaginatedTestClient(t, "repository/services", requests...)
+	// Act
+	repository := ol.Repository{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
+	}
+	resp, err := repository.GetServices(client, nil)
+	result := resp.Edges
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xODc1"), result[0].Node.Id)
+	autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS83NDc"), result[1].Node.Id)
+	autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ"), result[2].Node.Id)
 }
