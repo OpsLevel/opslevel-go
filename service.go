@@ -220,7 +220,7 @@ func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (
 		repositories := ServiceRepositoryConnection{}
 		s.Repositories = &repositories
 	}
-	s.Repositories.Nodes = append(s.Repositories.Nodes, q.Account.Service.Repositories.Nodes...)
+	s.Repositories.Edges = append(s.Repositories.Edges, q.Account.Service.Repositories.Edges...)
 	s.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
 	s.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
 	for s.Repositories.PageInfo.HasNextPage {

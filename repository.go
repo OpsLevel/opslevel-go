@@ -85,7 +85,6 @@ type ServiceRepositoryEdge struct {
 
 type ServiceRepositoryConnection struct {
 	Edges      []ServiceRepositoryEdge
-	Nodes      []Repository
 	PageInfo   PageInfo
 	TotalCount int
 }
