@@ -184,12 +184,12 @@ func (c *Cacher) doCacheIntegrations(client *Client) {
 func (c *Cacher) doCacheRepositories(client *Client) {
 	log.Info().Msg("Caching 'Repository' lookup table from API ...")
 
-	data, dataErr := client.ListRepositories()
+	data, dataErr := client.ListRepositories(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Repository' from API - REASON: %s", dataErr.Error())
 	}
 
-	for _, item := range data {
+	for _, item := range data.Nodes {
 		c.Repositories[item.DefaultAlias] = item
 	}
 }

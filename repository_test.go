@@ -80,12 +80,106 @@ func TestGetRepository(t *testing.T) {
 
 func TestListRepositories(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "repository/list")
+	requests := []TestRequest{
+		{`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }}
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "repositories": {
+							"nodes": [
+							  {{ template "repository_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }}
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "repositories": {
+							"nodes": [
+							  {{ template "repository_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "repositories/list", requests...)
 	// Act
-	result, err := client.ListRepositories()
+	resp, err := client.ListRepositories(nil)
+	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 1, len(result))
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "autopilot", result[0].Name)
+	autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
+}
+
+func TestListRepositoriesWithTier(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"tier": "tier_1"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "repositories": {
+							"nodes": [
+							  {{ template "repository_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"tier": "tier_1"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "repositories": {
+							"nodes": [
+							  {{ template "repository_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "repositories/list_with_tier", requests...)
+	// Act
+	resp, err := client.ListRepositoriesWithTier("tier_1", nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "autopilot", result[0].Name)
+	autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
 }
 
 func TestDeleteServiceRepository(t *testing.T) {

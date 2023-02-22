@@ -2,8 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -373,43 +371,55 @@ func (conn *RepositoryTagConnection) Hydrate(id ID, client *Client) error {
 	return nil
 }
 
-func (client *Client) ListRepositories() ([]Repository, error) {
+func (client *Client) ListRepositories(variables *PayloadVariables) (*RepositoryConnection, error) {
 	var q struct {
 		Account struct {
 			Repositories RepositoryConnection `graphql:"repositories(after: $after, first: $first)"`
 		}
 	}
-	v := PayloadVariables{
-		"after": graphql.String(""),
-		"first": client.pageSize,
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, v, WithName("RepositoryList")); err != nil {
-		return q.Account.Repositories.Nodes, err
+	if err := client.Query(&q, *variables, WithName("RepositoryList")); err != nil {
+		return &q.Account.Repositories, err
 	}
-	if err := q.Account.Repositories.Hydrate(client); err != nil {
-		return q.Account.Repositories.Nodes, err
+	for q.Account.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Repositories.PageInfo.End
+		resp, err := client.ListRepositories(variables)
+		if err != nil {
+			return &RepositoryConnection{}, err
+		}
+		q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, resp.Nodes...)
+		q.Account.Repositories.PageInfo = resp.PageInfo
+		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
-	return q.Account.Repositories.Nodes, nil
+	return &q.Account.Repositories, nil
 }
 
-func (client *Client) ListRepositoriesWithTier(tier string) ([]Repository, error) {
+func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVariables) (*RepositoryConnection, error) {
 	var q struct {
 		Account struct {
 			Repositories RepositoryConnection `graphql:"repositories(tierAlias: $tier, after: $after, first: $first)"`
 		}
 	}
-	v := PayloadVariables{
-		"after": graphql.String(""),
-		"first": client.pageSize,
-		"tier":  graphql.String(tier),
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, v, WithName("RepositoryList")); err != nil {
-		return q.Account.Repositories.Nodes, err
+	(*variables)["tier"] = tier
+	if err := client.Query(&q, *variables, WithName("RepositoryListWithTier")); err != nil {
+		return &q.Account.Repositories, err
 	}
-	if err := q.Account.Repositories.Hydrate(client); err != nil {
-		return q.Account.Repositories.Nodes, err
+	for q.Account.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Repositories.PageInfo.End
+		resp, err := client.ListRepositoriesWithTier(tier, variables)
+		if err != nil {
+			return &RepositoryConnection{}, err
+		}
+		q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, resp.Nodes...)
+		q.Account.Repositories.PageInfo = resp.PageInfo
+		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
-	return q.Account.Repositories.Nodes, nil
+	return &q.Account.Repositories, nil
 }
 
 //#endregion
