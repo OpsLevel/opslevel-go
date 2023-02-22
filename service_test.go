@@ -338,97 +338,273 @@ func TestGetService(t *testing.T) {
 	autopilot.Equals(t, "", docs[0].HtmlURL)
 }
 
-//func TestListServices(t *testing.T) {
-//	// Arrange
-//	requests := []TestRequest{
-//		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,tier{alias,description,id,index,name},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-//			"variables": {
-//				{{ template "first_page_variables" }},
-//				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-//			}
-//			}`,
-//			`{
-//				"data": {
-//					"account": {
-//						"services": {
-//							"nodes": [
-//								{{ template "service_1" }}
-//							],
-//							{{ template "pagination_initial_pageInfo_response" }},
-//							"totalCount": 1
-//						  }}}}`},
-//		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,tier{alias,description,id,index,name},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-//			"variables": {
-//				{{ template "second_page_variables" }},
-//				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-//			}
-//			}`,
-//			`{
-//				"data": {
-//					"account": {
-//						"services": {
-//							"nodes": [
-//								{{ template "service_2" }}
-//							],
-//								{{ template "pagination_second_pageInfo_response" }},
-//								"totalCount": 1
-//							}
-//						  }}}}`},
-//	}
-//	client := APaginatedTestClient(t, "service/list", requests...)
-//	// Act
-//	resp, err := client.ListServices(nil)
-//	result := resp.Nodes
-//	// Assert
-//	autopilot.Ok(t, err)
-//	autopilot.Equals(t, 2, resp.TotalCount)
-//	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
-//	autopilot.Equals(t, "API Docs", result[0].PreferredApiDocument.Source.Name)
-//	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result[0].PreferredApiDocumentSource)
-//}
+func TestListServices(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }}
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }}
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list", requests...)
+	// Act
+	resp, err := client.ListServices(nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
+}
 
 func TestListServicesWithFramework(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/list", "service/list_with_framework")
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"framework": "postgres"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"framework": "postgres"
+				}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_framework", requests...)
 	// Act
-	result, err := client.ListServicesWithFramework("postgres")
+	response, err := client.ListServicesWithFramework("postgres", nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
 }
 
 func TestListServicesWithLanguage(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/list", "service/list_with_language")
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"language": "postgres"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"language": "postgres"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_language", requests...)
 	// Act
-	result, err := client.ListServicesWithLanguage("postgres")
+	response, err := client.ListServicesWithLanguage("postgres", nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
 }
 
 func TestListServicesWithOwner(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/list", "service/list_with_owner")
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"owner": "postgres"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"owner": "postgres"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_owner", requests...)
 	// Act
-	result, err := client.ListServicesWithOwner("postgres")
+	response, err := client.ListServicesWithOwner("postgres", nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
 }
 
 func TestListServicesWithTag(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/list", "service/list_with_tag")
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+			  {{ template "first_page_variables" }},
+			  "tag": {
+				"key": "app",
+				"value": "worker"
+			  }
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+			  {{ template "second_page_variables" }},
+			  "tag": {
+				"key": "app",
+				"value": "worker"
+			  }
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_tag", requests...)
 	// Act
-	result, err := client.ListServicesWithTag(ol.NewTagArgs("app:worker"))
+	response, err := client.ListServicesWithTag(ol.NewTagArgs("app:worker"), nil)
+	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, 2, len(result))
-	autopilot.Equals(t, "generally_available", result[0].Lifecycle.Alias)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
 }
 
 func TestDeleteService(t *testing.T) {
