@@ -35,7 +35,7 @@ type Repository struct {
 	Private            bool
 	RepoKey            string
 	Services           *RepositoryServiceConnection
-	Tags               RepositoryTagConnection
+	Tags               *RepositoryTagConnection
 	Tier               Tier
 	Type               string
 	Url                string
@@ -92,7 +92,7 @@ type ServiceRepositoryConnection struct {
 type RepositoryTagConnection struct {
 	Nodes      []Tag
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type ServiceRepositoryCreateInput struct {
@@ -166,6 +166,41 @@ func (r *Repository) GetServices(client *Client, variables *PayloadVariables) (*
 		}
 	}
 	return r.Services, nil
+}
+
+func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*RepositoryTagConnection, error) {
+	var q struct {
+		Account struct {
+			Repository struct {
+				Tags RepositoryTagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"repository(id: $id)"`
+		}
+	}
+	if r.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid repository id: '%s'", r.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["id"] = r.Id
+	if err := client.Query(&q, *variables, WithName("RepositoryTagsList")); err != nil {
+		return nil, err
+	}
+	if r.Tags == nil {
+		tags := RepositoryTagConnection{}
+		r.Tags = &tags
+	}
+	r.Tags.Nodes = append(r.Tags.Nodes, q.Account.Repository.Tags.Nodes...)
+	r.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
+	r.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
+	for r.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = r.Tags.PageInfo.End
+		_, err := r.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r.Tags, nil
 }
 
 //#region Create
