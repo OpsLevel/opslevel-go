@@ -7,26 +7,26 @@ import (
 	"github.com/rocktavious/autopilot/v2022"
 )
 
-//func TestGetRepositoryWithAliasNotFound(t *testing.T) {
-//	// Arrange
-//	request := `{
-//	"query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
-//	"variables":{
-//		"repo": "github.com:rocktavious/autopilot"
-//    }
-//}`
-//	response := `{"data": {
-//	"account": {
-//		"repository": null
-//	}
-//}}`
-//	client := ABetterTestClient(t, "repository/get_not_found", request, response)
-//	// Act
-//	_, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
-//	// Assert
-//	autopilot.Ok(t, err)
-//	//autopilot.Equals(t, *ol.NewID(), result.Id)
-//}
+func TestGetRepositoryWithAliasNotFound(t *testing.T) {
+	// Arrange
+	request := `{
+	"query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
+	"variables":{
+		"repo": "github.com:rocktavious/autopilot"
+   }
+}`
+	response := `{"data": {
+	"account": {
+		"repository": null
+	}
+}}`
+	client := ABetterTestClient(t, "repository/get_not_found", request, response)
+	// Act
+	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, *ol.NewID(), result.Id)
+}
 
 func TestGetRepositoryWithAlias(t *testing.T) {
 	// Arrange

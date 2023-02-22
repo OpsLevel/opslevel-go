@@ -127,6 +127,10 @@ func (r *Repository) Hydrate(client *Client) error {
 	if err := r.Services.Hydrate(r.Id, client); err != nil {
 		return err
 	}
+	if r.Tags == nil {
+		tags := RepositoryTagConnection{}
+		r.Tags = &tags
+	}
 	if err := r.Tags.Hydrate(r.Id, client); err != nil {
 		return err
 	}
