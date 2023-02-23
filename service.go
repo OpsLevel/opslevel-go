@@ -109,21 +109,19 @@ func (s *Service) Hydrate(client *Client) error {
 	if s.Tools.PageInfo.HasNextPage {
 		variables := &PayloadVariables{}
 		(*variables)["after"] = s.Tools.PageInfo.End
-		resp, err := s.GetTools(client, variables)
+		_, err := s.GetTools(client, variables)
 		if err != nil {
 			return err
 		}
-		s.Tools = resp
 	}
 
 	if s.Repositories.PageInfo.HasNextPage {
 		variables := &PayloadVariables{}
 		(*variables)["after"] = s.Repositories.PageInfo.End
-		resp, err := s.GetRepositories(client, variables)
+		_, err := s.GetRepositories(client, variables)
 		if err != nil {
 			return err
 		}
-		s.Repositories = resp
 	}
 	return nil
 }
@@ -250,7 +248,7 @@ func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {
 	v := PayloadVariables{
 		"id":    s.Id,
 		"first": client.pageSize,
-		"after": graphql.String(""),
+		"after": "",
 	}
 	var output []ServiceDocument
 	if err := client.Query(&q, v, WithName("ServiceDocumentsList")); err != nil {
@@ -381,7 +379,12 @@ func (client *Client) ListServices(variables *PayloadVariables) (ServiceConnecti
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -409,7 +412,12 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -437,7 +445,12 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -465,7 +478,12 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -493,7 +511,12 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -521,7 +544,12 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -573,7 +601,12 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
@@ -601,7 +634,12 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		for _, node := range q.Account.Services.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return ServiceConnection{}, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
