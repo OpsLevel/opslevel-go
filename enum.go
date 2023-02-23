@@ -20,6 +20,28 @@ func AllAlertSourceTypeEnum() []string {
 	}
 }
 
+// AlertSourceTypeEnum The monitor status level.
+type AlertSourceStatusTypeEnum string
+
+const (
+	AlertSourceTypeEnumAlert        AlertSourceStatusTypeEnum = "alert" // Monitor is reporting an alert.
+	AlertSourceTypeEnumWarn         AlertSourceStatusTypeEnum = "warn"   // Monitor is reporting a warning.
+	AlertSourceTypeEnumOK           AlertSourceStatusTypeEnum = "ok"  // Monitor is not reporting any warnings or alerts.
+	AlertSourceTypeEnumNoData       AlertSourceStatusTypeEnum = "no_data"  // No data received yet. Ensure your monitors are configured correctly.
+	AlertSourceTypeEnumFetchingData AlertSourceStatusTypeEnum = "fetching_data"  // Monitor currently being updated.
+)
+
+// All AlertSourceTypeEnum as []string
+func AllAlertSourceStatusTypeEnum() []string {
+	return []string{
+		string(AlertSourceTypeEnumAlert),
+		string(AlertSourceTypeEnumWarn),
+		string(AlertSourceTypeEnumOK),
+		string(AlertSourceTypeEnumNoData),
+		string(AlertSourceTypeEnumFetchingData),
+	}
+}
+
 // AliasOwnerTypeEnum represents the owner type an alias is assigned to.
 type AliasOwnerTypeEnum string
 
