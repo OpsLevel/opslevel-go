@@ -122,15 +122,26 @@ func (r *Repository) Hydrate(client *Client) error {
 		services := RepositoryServiceConnection{}
 		r.Services = &services
 	}
-	if err := r.Services.Hydrate(r.Id, client); err != nil {
-		return err
+	if r.Services.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = r.Services.PageInfo.End
+		_, err := r.GetServices(client, variables)
+		if err != nil {
+			return err
+		}
 	}
+
 	if r.Tags == nil {
 		tags := RepositoryTagConnection{}
 		r.Tags = &tags
 	}
-	if err := r.Tags.Hydrate(r.Id, client); err != nil {
-		return err
+	if r.Tags.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = r.Tags.PageInfo.End
+		_, err := r.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -389,7 +400,13 @@ func (client *Client) ListRepositories(variables *PayloadVariables) (*Repository
 		if err != nil {
 			return &RepositoryConnection{}, err
 		}
-		q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			err := node.Hydrate(client)
+			if err != nil {
+				return &RepositoryConnection{}, err
+			}
+			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
+		}
 		q.Account.Repositories.PageInfo = resp.PageInfo
 		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
@@ -415,7 +432,13 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 		if err != nil {
 			return &RepositoryConnection{}, err
 		}
-		q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			err := node.Hydrate(client)
+			if err != nil {
+				return &RepositoryConnection{}, err
+			}
+			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
+		}
 		q.Account.Repositories.PageInfo = resp.PageInfo
 		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
