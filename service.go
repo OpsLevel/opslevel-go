@@ -379,7 +379,7 @@ func (client *Client) ListServices(variables *PayloadVariables) (ServiceConnecti
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -412,7 +412,7 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -445,7 +445,7 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -478,7 +478,7 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -511,7 +511,7 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -544,7 +544,7 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -601,7 +601,7 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
@@ -634,7 +634,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 		if err != nil {
 			return ServiceConnection{}, err
 		}
-		for _, node := range q.Account.Services.Nodes {
+		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
 				return ServiceConnection{}, err
 			}
