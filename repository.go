@@ -2,8 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -34,8 +32,8 @@ type Repository struct {
 	Owner              TeamId
 	Private            bool
 	RepoKey            string
-	Services           RepositoryServiceConnection
-	Tags               RepositoryTagConnection
+	Services           *RepositoryServiceConnection
+	Tags               *RepositoryTagConnection
 	Tier               Tier
 	Type               string
 	Url                string
@@ -75,7 +73,7 @@ type RepositoryServiceEdge struct {
 type RepositoryServiceConnection struct {
 	Edges      []RepositoryServiceEdge
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type ServiceRepositoryEdge struct {
@@ -92,7 +90,7 @@ type ServiceRepositoryConnection struct {
 type RepositoryTagConnection struct {
 	Nodes      []Tag
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 type ServiceRepositoryCreateInput struct {
@@ -120,13 +118,102 @@ func (r *Repository) GetService(service ID, directory string) *ServiceRepository
 }
 
 func (r *Repository) Hydrate(client *Client) error {
-	if err := r.Services.Hydrate(r.Id, client); err != nil {
-		return err
+	if r.Services == nil {
+		services := RepositoryServiceConnection{}
+		r.Services = &services
 	}
-	if err := r.Tags.Hydrate(r.Id, client); err != nil {
-		return err
+	if r.Services.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = r.Services.PageInfo.End
+		_, err := r.GetServices(client, variables)
+		if err != nil {
+			return err
+		}
+	}
+
+	if r.Tags == nil {
+		tags := RepositoryTagConnection{}
+		r.Tags = &tags
+	}
+	if r.Tags.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = r.Tags.PageInfo.End
+		_, err := r.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
+}
+
+func (r *Repository) GetServices(client *Client, variables *PayloadVariables) (*RepositoryServiceConnection, error) {
+	var q struct {
+		Account struct {
+			Repository struct {
+				Services RepositoryServiceConnection `graphql:"services(after: $after, first: $first)"`
+			} `graphql:"repository(id: $id)"`
+		}
+	}
+	if r.Id == "" {
+		return nil, fmt.Errorf("Unable to get Services, invalid repository id: '%s'", r.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["id"] = r.Id
+	if err := client.Query(&q, *variables, WithName("RepositoryServicesList")); err != nil {
+		return nil, err
+	}
+	if r.Services == nil {
+		services := RepositoryServiceConnection{}
+		r.Services = &services
+	}
+	r.Services.Edges = append(r.Services.Edges, q.Account.Repository.Services.Edges...)
+	r.Services.PageInfo = q.Account.Repository.Services.PageInfo
+	r.Services.TotalCount += q.Account.Repository.Services.TotalCount
+	for r.Services.PageInfo.HasNextPage {
+		(*variables)["after"] = r.Services.PageInfo.End
+		_, err := r.GetServices(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r.Services, nil
+}
+
+func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*RepositoryTagConnection, error) {
+	var q struct {
+		Account struct {
+			Repository struct {
+				Tags RepositoryTagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"repository(id: $id)"`
+		}
+	}
+	if r.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid repository id: '%s'", r.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["id"] = r.Id
+	if err := client.Query(&q, *variables, WithName("RepositoryTagsList")); err != nil {
+		return nil, err
+	}
+	if r.Tags == nil {
+		tags := RepositoryTagConnection{}
+		r.Tags = &tags
+	}
+	r.Tags.Nodes = append(r.Tags.Nodes, q.Account.Repository.Tags.Nodes...)
+	r.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
+	r.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
+	for r.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = r.Tags.PageInfo.End
+		_, err := r.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return r.Tags, nil
 }
 
 //#region Create
@@ -166,7 +253,7 @@ func (client *Client) GetRepositoryWithAlias(alias string) (*Repository, error) 
 		}
 	}
 	v := PayloadVariables{
-		"repo": graphql.String(alias),
+		"repo": alias,
 	}
 	if err := client.Query(&q, v, WithName("RepositoryGet")); err != nil {
 		return nil, err
@@ -295,43 +382,67 @@ func (conn *RepositoryTagConnection) Hydrate(id ID, client *Client) error {
 	return nil
 }
 
-func (client *Client) ListRepositories() ([]Repository, error) {
+func (client *Client) ListRepositories(variables *PayloadVariables) (*RepositoryConnection, error) {
 	var q struct {
 		Account struct {
 			Repositories RepositoryConnection `graphql:"repositories(after: $after, first: $first)"`
 		}
 	}
-	v := PayloadVariables{
-		"after": graphql.String(""),
-		"first": client.pageSize,
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, v, WithName("RepositoryList")); err != nil {
-		return q.Account.Repositories.Nodes, err
+	if err := client.Query(&q, *variables, WithName("RepositoryList")); err != nil {
+		return &q.Account.Repositories, err
 	}
-	if err := q.Account.Repositories.Hydrate(client); err != nil {
-		return q.Account.Repositories.Nodes, err
+	for q.Account.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Repositories.PageInfo.End
+		resp, err := client.ListRepositories(variables)
+		if err != nil {
+			return &RepositoryConnection{}, err
+		}
+		for _, node := range resp.Nodes {
+			err := node.Hydrate(client)
+			if err != nil {
+				return &RepositoryConnection{}, err
+			}
+			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
+		}
+		q.Account.Repositories.PageInfo = resp.PageInfo
+		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
-	return q.Account.Repositories.Nodes, nil
+	return &q.Account.Repositories, nil
 }
 
-func (client *Client) ListRepositoriesWithTier(tier string) ([]Repository, error) {
+func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVariables) (*RepositoryConnection, error) {
 	var q struct {
 		Account struct {
 			Repositories RepositoryConnection `graphql:"repositories(tierAlias: $tier, after: $after, first: $first)"`
 		}
 	}
-	v := PayloadVariables{
-		"after": graphql.String(""),
-		"first": client.pageSize,
-		"tier":  graphql.String(tier),
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, v, WithName("RepositoryList")); err != nil {
-		return q.Account.Repositories.Nodes, err
+	(*variables)["tier"] = tier
+	if err := client.Query(&q, *variables, WithName("RepositoryListWithTier")); err != nil {
+		return &q.Account.Repositories, err
 	}
-	if err := q.Account.Repositories.Hydrate(client); err != nil {
-		return q.Account.Repositories.Nodes, err
+	for q.Account.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Repositories.PageInfo.End
+		resp, err := client.ListRepositoriesWithTier(tier, variables)
+		if err != nil {
+			return &RepositoryConnection{}, err
+		}
+		for _, node := range resp.Nodes {
+			err := node.Hydrate(client)
+			if err != nil {
+				return &RepositoryConnection{}, err
+			}
+			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
+		}
+		q.Account.Repositories.PageInfo = resp.PageInfo
+		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
-	return q.Account.Repositories.Nodes, nil
+	return &q.Account.Repositories, nil
 }
 
 //#endregion
