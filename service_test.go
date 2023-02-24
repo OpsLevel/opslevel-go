@@ -313,7 +313,11 @@ func TestGetServiceWithAlias(t *testing.T) {
 	autopilot.Equals(t, "API Docs", result.PreferredApiDocument.Source.Name)
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result.PreferredApiDocumentSource)
 	autopilot.Equals(t, true, result.HasAlias("coredns"))
-	autopilot.Equals(t, false, result.HasAlias("kube-dns"))
+	autopilot.Equals(t, false, result.HasAlias("opslevel-dns"))
+	autopilot.Equals(t, true, result.HasTag("hello", "world"))
+	autopilot.Equals(t, false, result.HasTag("provider", "opslevel"))
+	autopilot.Equals(t, true, result.HasTool("code", "GitHub", "prod"))
+	autopilot.Equals(t, false, result.HasTool("observability", "honeycomb", "certification"))
 }
 
 func TestGetService(t *testing.T) {
