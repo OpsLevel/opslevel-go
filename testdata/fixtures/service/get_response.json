@@ -111,7 +111,7 @@
               "category": "code",
               "categoryAlias": null,
               "displayName": "GitHub",
-              "environment": null,
+              "environment": "prod",
               "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNA",
               "url": "https://github.com/opslevel/coredns",
               "service": {
