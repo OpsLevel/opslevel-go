@@ -164,7 +164,6 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 func (client *Client) DeleteTool(id ID) error {
 	var m struct {
 		Payload struct {
-			Id     ID `graphql:"deletedToolId"`
 			Errors []OpsLevelErrors
 		} `graphql:"toolDelete(input: $input)"`
 	}

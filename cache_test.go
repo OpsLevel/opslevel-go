@@ -8,7 +8,7 @@ import (
 
 func TestCache(t *testing.T) {
     //Arrange
-    id := ol.ID("MTIzNDU2Nzg5MTIzNDU2Nzg5")
+    id := ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
     requests := []TestRequest{
         {`{"query": "query TierList{account{tiers{alias,description,id,index,name}}}",
 			"variables":{}}`,
@@ -82,7 +82,7 @@ func TestCache(t *testing.T) {
 
     client1 := APaginatedTestClient(t, "cache1", requests...)
     client2 := APaginatedTestClient(t, "cache2", requests...)
-	
+
     // Act
     ol.Cache.CacheAll(client1)
     ol.Cache.CacheTiers(client2)
