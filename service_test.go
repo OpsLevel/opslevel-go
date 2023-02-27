@@ -11,49 +11,49 @@ func TestServiceTags(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }},
+                "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
 			`{
-				"data": {
-					"account": {
-						"service": {
-							"tags": {
-								"nodes": [
-									{
-									  "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5",
-									  "key": "prod",
-									  "value": "false"
-									}
-								],
-								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 1
-							}
-						  }}}}`},
+                "data": {
+                    "account": {
+                        "service": {
+                            "tags": {
+                                "nodes": [
+                                    {
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5",
+                                      "key": "prod",
+                                      "value": "false"
+                                    }
+                                ],
+                                {{ template "pagination_initial_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
 		{`{"query": "query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-			}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }},
+                "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
 			`{
-				"data": {
-					"account": {
-						"service": {
-							"tags": {
-								"nodes": [
-									{
-									  "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4",
-									  "key": "test",
-									  "value": "true"
-									}
-								],
-								{{ template "pagination_second_pageInfo_response" }},
-								"totalCount": 1
-							}
-						  }}}}`},
+                "data": {
+                    "account": {
+                        "service": {
+                            "tags": {
+                                "nodes": [
+                                    {
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4",
+                                      "key": "test",
+                                      "value": "true"
+                                    }
+                                ],
+                                {{ template "pagination_second_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
 	}
 	client := APaginatedTestClient(t, "service/tags", requests...)
 	// Act
@@ -77,67 +77,67 @@ func TestServiceTools(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }},
+                "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
 			`{
-				"data": {
-					"account": {
-						"service": {
-							"tools": {
-								"nodes": [
-									{
-									  "category": "incidents",
-									  "categoryAlias": null,
-									  "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC84MDYz",
-									  "displayName": "PagerDuty",
-									  "environment": "Production",
-									  "service": {
-										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
-										"aliases": [
-										  "foo"
-										]
-									  },
-									  "url": "https://pagerduty.com"
-									}
-								],
-								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 1
-							}
-						  }}}}`},
+                "data": {
+                    "account": {
+                        "service": {
+                            "tools": {
+                                "nodes": [
+                                    {
+                                      "category": "incidents",
+                                      "categoryAlias": null,
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC84MDYz",
+                                      "displayName": "PagerDuty",
+                                      "environment": "Production",
+                                      "service": {
+                                        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+                                        "aliases": [
+                                          "foo"
+                                        ]
+                                      },
+                                      "url": "https://pagerduty.com"
+                                    }
+                                ],
+                                {{ template "pagination_initial_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
 		{`{"query": "query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-			}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }},
+                "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
 			`{
-				"data": {
-					"account": {
-						"service": {
-							"tools": {
-								"nodes": [
-									{
-									  "category": "continuous_integration",
-									  "categoryAlias": null,
-									  "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC84MDY0",
-									  "displayName": "Gitlab CI",
-									  "environment": "Production",
-									  "service": {
-										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
-										"aliases": [
-										  "foo"
-										]
-									  },
-									  "url": "https://gitlab.com"
-									}
-								],
-								{{ template "pagination_second_pageInfo_response" }},
-								"totalCount": 1
-							}
-						  }}}}`},
+                "data": {
+                    "account": {
+                        "service": {
+                            "tools": {
+                                "nodes": [
+                                    {
+                                      "category": "continuous_integration",
+                                      "categoryAlias": null,
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC84MDY0",
+                                      "displayName": "Gitlab CI",
+                                      "environment": "Production",
+                                      "service": {
+                                        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+                                        "aliases": [
+                                          "foo"
+                                        ]
+                                      },
+                                      "url": "https://gitlab.com"
+                                    }
+                                ],
+                                {{ template "pagination_second_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
 	}
 	client := APaginatedTestClient(t, "service/tools", requests...)
 	// Act
@@ -159,105 +159,105 @@ func TestServiceRepositories(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceRepositoriesList($after:String!$first:Int!$service:ID!){account{service(id: $service){repos(after: $after, first: $first){edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }},
+                "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
 			`{
-				"data": {
-					"account": {
-						"service": {
-							"repos": {
-							  "edges": [
-								{
-								  "node": {
-									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
-									"defaultAlias": "bitbucket.org:raptors-store/Store Front"
-								  },
-								  "serviceRepositories": [
-									{
-									  "baseDirectory": "shopping-cart",
-									  "displayName": "raptors-store/Store Front",
-									  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjc2Nw",
-									  "repository": {
-										"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
-										"defaultAlias": "bitbucket.org:raptors-store/Store Front"
-									  },
-									  "service": {
-										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xOTQy",
-										"aliases": [
-										  "dogfood",
-										  "opslevel-frontend",
-										  "opslevel_com",
-										  "service_alias",
-										  "shopping_cart",
-										  "shopping_cart 1",
-										  "shopping_cart_1235",
-										  "shopping_cart_2",
-										  "shopping_cart_service_2",
-										  "shopping_tart",
-										  "shopping_tarts"
-										]
-									  }
-									}
-								  ]
-								}
-							  ],
-								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 2
-							}
-						  }}}}`},
+                "data": {
+                    "account": {
+                        "service": {
+                            "repos": {
+                              "edges": [
+                                {
+                                  "node": {
+                                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+                                    "defaultAlias": "bitbucket.org:raptors-store/Store Front"
+                                  },
+                                  "serviceRepositories": [
+                                    {
+                                      "baseDirectory": "shopping-cart",
+                                      "displayName": "raptors-store/Store Front",
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjc2Nw",
+                                      "repository": {
+                                        "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+                                        "defaultAlias": "bitbucket.org:raptors-store/Store Front"
+                                      },
+                                      "service": {
+                                        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xOTQy",
+                                        "aliases": [
+                                          "dogfood",
+                                          "opslevel-frontend",
+                                          "opslevel_com",
+                                          "service_alias",
+                                          "shopping_cart",
+                                          "shopping_cart 1",
+                                          "shopping_cart_1235",
+                                          "shopping_cart_2",
+                                          "shopping_cart_service_2",
+                                          "shopping_tart",
+                                          "shopping_tarts"
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ],
+                                {{ template "pagination_initial_pageInfo_response" }},
+                                "totalCount": 2
+                            }
+                          }}}}`},
 		{`{"query": "query ServiceRepositoriesList($after:String!$first:Int!$service:ID!){account{service(id: $service){repos(after: $after, first: $first){edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-			}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }},
+                "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
 			`{
-				"data": {
-					"account": {
-						"service": {
-							"repos": {
-							  "edges": [
-								{
-								  "node": {
-									"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
-									"defaultAlias": "bitbucket.org:raptors-store/Store Front"
-								  },
-								  "serviceRepositories": [
-									{
-									  "baseDirectory": "shopping-cart",
-									  "displayName": "raptors-store/Store Front",
-									  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjc2Nw",
-									  "repository": {
-										"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
-										"defaultAlias": "bitbucket.org:raptors-store/Store Front"
-									  },
-									  "service": {
-										"id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xOTQy",
-										"aliases": [
-										  "dogfood",
-										  "opslevel-frontend",
-										  "opslevel_com",
-										  "service_alias",
-										  "shopping_cart",
-										  "shopping_cart 1",
-										  "shopping_cart_1235",
-										  "shopping_cart_2",
-										  "shopping_cart_service_2",
-										  "shopping_tart",
-										  "shopping_tarts"
-										]
-									  }
-									}
-								  ]
-								}
-							  ],
-								{{ template "pagination_second_pageInfo_response" }},
-								"totalCount": 1
-							}
-						  }}}}`},
+                "data": {
+                    "account": {
+                        "service": {
+                            "repos": {
+                              "edges": [
+                                {
+                                  "node": {
+                                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+                                    "defaultAlias": "bitbucket.org:raptors-store/Store Front"
+                                  },
+                                  "serviceRepositories": [
+                                    {
+                                      "baseDirectory": "shopping-cart",
+                                      "displayName": "raptors-store/Store Front",
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvMjc2Nw",
+                                      "repository": {
+                                        "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw",
+                                        "defaultAlias": "bitbucket.org:raptors-store/Store Front"
+                                      },
+                                      "service": {
+                                        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xOTQy",
+                                        "aliases": [
+                                          "dogfood",
+                                          "opslevel-frontend",
+                                          "opslevel_com",
+                                          "service_alias",
+                                          "shopping_cart",
+                                          "shopping_cart 1",
+                                          "shopping_cart_1235",
+                                          "shopping_cart_2",
+                                          "shopping_cart_service_2",
+                                          "shopping_tart",
+                                          "shopping_tarts"
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ],
+                                {{ template "pagination_second_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
 	}
 	client := APaginatedTestClient(t, "service/repositories", requests...)
 	// Act
@@ -323,59 +323,116 @@ func TestGetServiceWithAlias(t *testing.T) {
 func TestGetService(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "service/get")
-	client2 := ATestClient(t, "service/get_documents")
 	// Act
 	result, err := client.GetService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx")
-	docs, err := result.Documents(client2)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, len(result.Aliases))
 	autopilot.Equals(t, "alpha", result.Lifecycle.Alias)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
-	autopilot.Equals(t, 1, len(docs))
-	autopilot.Equals(t, "", docs[0].HtmlURL)
+}
+
+func TestGetServiceDocuments(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceDocumentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                "service": "{{ template "id1" }}",
+                {{ template "first_page_variables" }}
+            }
+            }`,
+			`{
+                      "data": {
+                        "account": {
+                            "service": {
+                                "documents": {
+                                    "nodes": [
+                                        {{ template "document_1" }}
+                                    ],
+                                    {{ template "pagination_initial_pageInfo_response" }},
+                                    "totalCount": 1
+                                }
+                            }
+                        }
+                      }
+                    }`},
+		{`{"query": "query ServiceDocumentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                "service": "{{ template "id1" }}",
+                {{ template "second_page_variables" }}
+            }
+            }`,
+			`{
+                      "data": {
+                        "account": {
+                            "service": {
+                                "documents": {
+                                    "nodes": [
+                                        {{ template "document_1" }}
+                                    ],
+                                    {{ template "pagination_second_pageInfo_response" }},
+                                    "totalCount": 1
+                                }
+                            }
+                        }
+                      }
+                    }`},
+	}
+	client := APaginatedTestClient(t, "service/get_documents", requests...)
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		},
+	}
+	// Act
+	resp, err := service.GetDocuments(client, nil)
+	//result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	//autopilot.Equals(t, "Foo", result[0].HtmlURL)
 }
 
 func TestListServices(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "first_page_variables" }}
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }}
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_1" }}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_1" }}
+                            ],
+                            {{ template "pagination_initial_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 		{`{"query": "query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "second_page_variables" }}
-			}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }}
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_2" }}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_2" }}
+                            ],
+                            {{ template "pagination_second_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 	}
 	client := APaginatedTestClient(t, "service/list", requests...)
 	// Act
@@ -392,43 +449,43 @@ func TestListServicesWithFramework(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"framework": "postgres"
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }},
+                "framework": "postgres"
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_1" }}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_1" }}
+                            ],
+                            {{ template "pagination_initial_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 		{`{"query": "query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"framework": "postgres"
-				}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }},
+                "framework": "postgres"
+                }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_2" }}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_2" }}
+                            ],
+                            {{ template "pagination_second_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 	}
 	client := APaginatedTestClient(t, "service/list_with_framework", requests...)
 	// Act
@@ -445,43 +502,43 @@ func TestListServicesWithLanguage(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"language": "postgres"
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }},
+                "language": "postgres"
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_1" }}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_1" }}
+                            ],
+                            {{ template "pagination_initial_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 		{`{"query": "query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"language": "postgres"
-			}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }},
+                "language": "postgres"
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_2" }}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_2" }}
+                            ],
+                            {{ template "pagination_second_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 	}
 	client := APaginatedTestClient(t, "service/list_with_language", requests...)
 	// Act
@@ -498,43 +555,43 @@ func TestListServicesWithOwner(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"owner": "postgres"
-			}
-			}`,
+            "variables": {
+                {{ template "first_page_variables" }},
+                "owner": "postgres"
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_1" }}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_1" }}
+                            ],
+                            {{ template "pagination_initial_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 		{`{"query": "query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"owner": "postgres"
-			}
-			}`,
+            "variables": {
+                {{ template "second_page_variables" }},
+                "owner": "postgres"
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_2" }}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_2" }}
+                            ],
+                            {{ template "pagination_second_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 	}
 	client := APaginatedTestClient(t, "service/list_with_owner", requests...)
 	// Act
@@ -551,49 +608,49 @@ func TestListServicesWithTag(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-			  {{ template "first_page_variables" }},
-			  "tag": {
-				"key": "app",
-				"value": "worker"
-			  }
-			}
-			}`,
+            "variables": {
+              {{ template "first_page_variables" }},
+              "tag": {
+                "key": "app",
+                "value": "worker"
+              }
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_1" }}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_1" }}
+                            ],
+                            {{ template "pagination_initial_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 		{`{"query": "query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			"variables": {
-			  {{ template "second_page_variables" }},
-			  "tag": {
-				"key": "app",
-				"value": "worker"
-			  }
-			}
-			}`,
+            "variables": {
+              {{ template "second_page_variables" }},
+              "tag": {
+                "key": "app",
+                "value": "worker"
+              }
+            }
+            }`,
 			`{
-					  "data": {
-						"account": {
-						  "services": {
-							"nodes": [
-							  {{ template "service_2" }}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }
-						}
-					  }
-					}`},
+                      "data": {
+                        "account": {
+                          "services": {
+                            "nodes": [
+                              {{ template "service_2" }}
+                            ],
+                            {{ template "pagination_second_pageInfo_response" }},
+                            "totalCount": 1
+                          }
+                        }
+                      }
+                    }`},
 	}
 	client := APaginatedTestClient(t, "service/list_with_tag", requests...)
 	// Act
