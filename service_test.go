@@ -302,13 +302,13 @@ func TestUpdateService(t *testing.T) {
 	client := ABetterTestClient(t, "service/update", request, response)
 
 	// Act
-	_, err := client.UpdateService(ol.ServiceUpdateInput{
+	result, err := client.UpdateService(ol.ServiceUpdateInput{
 		Id: "123456789",
 	})
 
 	// Assert
 	autopilot.Ok(t, err)
-	//autopilot.Equals(t, "Deploy Rollback", action.Name)
+	autopilot.Equals(t, "Foo", result.Name)
 }
 
 func TestGetServiceIdWithAlias(t *testing.T) {
