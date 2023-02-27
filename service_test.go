@@ -267,13 +267,12 @@ func TestServiceRepositories(t *testing.T) {
 		},
 	}
 	resp, err := service.GetRepositories(client, nil)
-	//result := resp.Edges
+	result := resp.Edges
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, resp.TotalCount)
-	//autopilot.Equals(t, "https://bitbucket.org/raptors-store/store-front", result[0])
-	//autopilot.Equals(t, "Store Front", result[1].Name)
-	//autopilot.Equals(t, "https://bitbucket.org/raptors-store/catalogue", result[2].Url)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpCaXRidWNrZXQvMjYw", string(result[0].Node.Id))
+	autopilot.Equals(t, "bitbucket.org:raptors-store/Store Front", result[1].Node.DefaultAlias)
 }
 
 func TestCreateService(t *testing.T) {
@@ -287,6 +286,29 @@ func TestCreateService(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result.Aliases))
+}
+
+func TestUpdateService(t *testing.T) {
+	//Arrange
+	request := `{"query":
+		"mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}",
+		"variables":{"input":{"id": "123456789"}}
+	}`
+	response := `{"data": {"serviceUpdate": {
+     "service": {{ template "service_1" }},
+     "errors": []
+ }}}`
+
+	client := ABetterTestClient(t, "service/update", request, response)
+
+	// Act
+	result, err := client.UpdateService(ol.ServiceUpdateInput{
+		Id: "123456789",
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Foo", result.Name)
 }
 
 func TestGetServiceIdWithAlias(t *testing.T) {
@@ -655,6 +677,165 @@ func TestListServicesWithTag(t *testing.T) {
 	client := APaginatedTestClient(t, "service/list_with_tag", requests...)
 	// Act
 	response, err := client.ListServicesWithTag(ol.NewTagArgs("app:worker"), nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
+}
+
+func TestListServicesWithTier(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithTier($after:String!$first:Int!$tier:String!){account{services(tierAlias: $tier, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"tier": "tier_1"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithTier($after:String!$first:Int!$tier:String!){account{services(tierAlias: $tier, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"tier": "tier_1"
+				}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_tier", requests...)
+	// Act
+	response, err := client.ListServicesWithTier("tier_1", nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
+}
+
+func TestListServicesWithLifecycle(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithLifecycle($after:String!$first:Int!$lifecycle:String!){account{services(lifecycleAlias: $lifecycle, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"lifecycle": "alpha"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithLifecycle($after:String!$first:Int!$lifecycle:String!){account{services(lifecycleAlias: $lifecycle, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"lifecycle": "alpha"
+				}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_lifecycle", requests...)
+	// Act
+	response, err := client.ListServicesWithLifecycle("alpha", nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, ol.ApiDocumentSourceEnumPull, *result[1].PreferredApiDocumentSource)
+}
+
+func TestListServicesWithProduct(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query ServiceListWithProduct($after:String!$first:Int!$product:String!){account{services(product: $product, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"product": "test"
+			}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_1" }}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+		{`{"query": "query ServiceListWithProduct($after:String!$first:Int!$product:String!){account{services(product: $product, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"product": "test"
+				}
+			}`,
+			`{
+					  "data": {
+						"account": {
+						  "services": {
+							"nodes": [
+							  {{ template "service_2" }}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }
+						}
+					  }
+					}`},
+	}
+	client := APaginatedTestClient(t, "service/list_with_product", requests...)
+	// Act
+	response, err := client.ListServicesWithProduct("test", nil)
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)
