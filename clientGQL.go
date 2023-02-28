@@ -16,18 +16,6 @@ type Client struct {
 	client   *graphql.Client
 }
 
-type customTransport struct {
-	apiVisibility       string
-	userAgent           string
-	underlyingTransport http.RoundTripper
-}
-
-func (t *customTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Set("GraphQL-Visibility", t.apiVisibility)
-	req.Header.Set("User-Agent", t.userAgent)
-	return t.underlyingTransport.RoundTrip(req)
-}
-
 // Deprecated: Use NewGQLClient instead
 func NewClient(apiToken string, options ...Option) *Client {
 	options = append(options, SetAPIToken(apiToken))
@@ -49,11 +37,7 @@ func NewGQLClient(options ...Option) *Client {
 	standardClient.Timeout = settings.timeout
 	standardClient.Transport = &oauth2.Transport{
 		Source: httpToken,
-		Base: &customTransport{
-			apiVisibility:       settings.apiVisibility,
-			userAgent:           buildUserAgent(settings.userAgentExtra),
-			underlyingTransport: standardClient.Transport,
-		},
+		Base:   standardClient.Transport,
 	}
 	var url string
 	if strings.Contains(settings.url, "/LOCAL_TESTING/") {
@@ -62,9 +46,16 @@ func NewGQLClient(options ...Option) *Client {
 		url = fmt.Sprintf("%s/graphql", settings.url)
 	}
 
+	modifier := graphql.RequestModifier(
+		func(r *http.Request) {
+			for key, value := range settings.headers {
+				r.Header.Add(key, value)
+			}
+		})
+
 	return &Client{
 		pageSize: graphql.Int(settings.pageSize),
-		client:   graphql.NewClient(url, standardClient),
+		client:   graphql.NewClient(url, standardClient).WithRequestModifier(modifier),
 	}
 }
 
@@ -97,6 +88,14 @@ func (client *Client) Mutate(m interface{}, variables map[string]interface{}, op
 
 func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables map[string]interface{}, options ...graphql.Option) error {
 	return client.client.Mutate(ctx, m, variables, options...)
+}
+
+func (client *Client) ExecRaw(q string, variables map[string]interface{}, options ...graphql.Option) ([]byte, error) {
+	return client.ExecRawCTX(context.Background(), q, variables, options...)
+}
+
+func (client *Client) ExecRawCTX(ctx context.Context, q string, variables map[string]interface{}, options ...graphql.Option) ([]byte, error) {
+	return client.client.ExecRaw(ctx, q, variables, options...)
 }
 
 func (client *Client) Validate() error {
