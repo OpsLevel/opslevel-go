@@ -58,29 +58,6 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 //#region Retrieve
 
-//// Deprecated: Use client.GetServiceWithAlias(alias).Tools instead
-//func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) {
-//    service, serviceErr := client.GetServiceWithAlias(alias)
-//    return service.Tools.Nodes, serviceErr
-//}
-//
-//// Deprecated: Use GetToolsForService instead
-//func (client *Client) GetToolsForServiceWithId(id ID) ([]Tool, error) {
-//    return client.GetToolsForService(id, nil)
-//}
-//
-//// Deprecated: Use client.GetService(id).Tools instead
-//func (client *Client) GetToolsForService(id ID, variables *PayloadVariables) ([]Tool, error) {
-//    service, serviceErr := client.GetService(id)
-//    return service.Tools.Nodes, serviceErr
-//}
-//
-//// Deprecated: Use client.GetService(id).Tools.TotalCount instead
-//func (client *Client) GetToolCount(id ID) (int, error) {
-//    service, serviceErr := client.GetService(id)
-//    return service.Tools.TotalCount, serviceErr
-//}
-
 //#endregion
 
 //#region Update
