@@ -3,8 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"html"
-
-	"github.com/hasura/go-graphql-client"
 )
 
 type Contact struct {
@@ -321,7 +319,7 @@ func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 		}
 	}
 	v := PayloadVariables{
-		"alias": graphql.String(alias),
+		"alias": alias,
 	}
 	if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
 		return nil, err
@@ -387,7 +385,12 @@ func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, er
 		if err != nil {
 			return TeamConnection{}, err
 		}
-		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return TeamConnection{}, err
+			}
+			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
+		}
 		q.Account.Teams.PageInfo = resp.PageInfo
 		q.Account.Teams.TotalCount += resp.TotalCount
 	}
@@ -415,7 +418,12 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 		if err != nil {
 			return TeamConnection{}, err
 		}
-		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return TeamConnection{}, err
+			}
+			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
+		}
 		q.Account.Teams.PageInfo = resp.PageInfo
 		q.Account.Teams.TotalCount += resp.TotalCount
 	}
@@ -477,7 +485,7 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
-			Alias  graphql.String   `graphql:"deletedTeamAlias"`
+			Alias  string           `graphql:"deletedTeamAlias"`
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"teamDelete(input: $input)"`
 	}
@@ -499,7 +507,7 @@ func (client *Client) DeleteTeam(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
-			Alias  graphql.String   `graphql:"deletedTeamAlias"`
+			Alias  string           `graphql:"deletedTeamAlias"`
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"teamDelete(input: $input)"`
 	}
