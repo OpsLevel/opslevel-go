@@ -52,7 +52,7 @@ type Team struct {
 	Group            GroupId
 	HTMLUrl          string
 	Manager          User
-	Members          UserConnection
+	Members          *UserConnection
 	Name             string
 	Responsibilities string
 	Tags             *TagConnection
@@ -102,35 +102,19 @@ type TeamMembershipDeleteInput struct {
 
 //#region Helpers
 
-func (conn *UserConnection) Hydrate(id ID, client *Client) error {
-	var q struct {
-		Account struct {
-			Team struct {
-				Members UserConnection `graphql:"members(after: $after, first: $first)"`
-			} `graphql:"team(id: $id)"`
-		}
-	}
-	v := PayloadVariables{
-		"id":    id,
-		"first": client.pageSize,
-	}
-	q.Account.Team.Members.PageInfo = conn.PageInfo
-	for q.Account.Team.Members.PageInfo.HasNextPage {
-		v["after"] = q.Account.Team.Members.PageInfo.End
-		if err := client.Query(&q, v, WithName("TeamMembersList")); err != nil {
-			return err
-		}
-		for _, item := range q.Account.Team.Members.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
-	}
-	return nil
-}
-
 func (self *Team) Hydrate(client *Client) error {
 	self.Responsibilities = html.UnescapeString(self.Responsibilities)
-	if err := self.Members.Hydrate(self.Id, client); err != nil {
-		return err
+
+	if self.Members == nil {
+		self.Members = &UserConnection{}
+	}
+	if self.Members.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = self.Members.PageInfo.End
+		_, err := self.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
 	}
 
 	if self.Tags == nil {
@@ -145,6 +129,41 @@ func (self *Team) Hydrate(client *Client) error {
 		}
 	}
 	return nil
+}
+
+func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*UserConnection, error) {
+	var q struct {
+		Account struct {
+			Team struct {
+				Members UserConnection `graphql:"members(after: $after, first: $first)"`
+			} `graphql:"team(id: $team)"`
+		}
+	}
+	if t.Id == "" {
+		return nil, fmt.Errorf("Unable to get Members, invalid team id: '%s'", t.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["team"] = t.Id
+	if err := client.Query(&q, *variables, WithName("TeamMembersList")); err != nil {
+		return nil, err
+	}
+	if t.Members == nil {
+		members := UserConnection{}
+		t.Members = &members
+	}
+	t.Members.Nodes = append(t.Members.Nodes, q.Account.Team.Members.Nodes...)
+	t.Members.PageInfo = q.Account.Team.Members.PageInfo
+	t.Members.TotalCount += q.Account.Team.Members.TotalCount
+	for t.Members.PageInfo.HasNextPage {
+		(*variables)["after"] = t.Members.PageInfo.End
+		_, err := t.GetMembers(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return t.Members, nil
 }
 
 func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
