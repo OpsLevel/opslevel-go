@@ -1,15 +1,15 @@
 package opslevel_test
 
 import (
-    ol "github.com/opslevel/opslevel-go/v2023"
-    "testing"
+	ol "github.com/opslevel/opslevel-go/v2023"
+	"testing"
 
-    "github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2022"
 )
 
 func TestConnectServiceRepository(t *testing.T) {
-    // Arrange
-    request := `{
+	// Arrange
+	request := `{
     "query": "mutation ServiceRepositoryCreate($input:ServiceRepositoryCreateInput!){serviceRepositoryCreate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}",
     "variables":{
         "input": {
@@ -24,7 +24,7 @@ func TestConnectServiceRepository(t *testing.T) {
         }
    }
 }`
-    response := `{"data": {
+	response := `{"data": {
     "serviceRepositoryCreate": {
         "serviceRepository": {
             "baseDirectory": "/",
@@ -45,102 +45,102 @@ func TestConnectServiceRepository(t *testing.T) {
         "errors": []
     }
 }}`
-    client := ABetterTestClient(t, "repository/connect", request, response)
-    service := ol.ServiceId{
-        Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-    }
-    repository := ol.Repository{
-        Id:           "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-        Name:         "opslevel",
-        Organization: "OpsLevel",
-    }
-    // Act
-    result, err := client.ConnectServiceRepository(&service, &repository)
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, "OpsLevel/opslevel", result.DisplayName)
+	client := ABetterTestClient(t, "repository/connect", request, response)
+	service := ol.ServiceId{
+		Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+	}
+	repository := ol.Repository{
+		Id:           "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Name:         "opslevel",
+		Organization: "OpsLevel",
+	}
+	// Act
+	result, err := client.ConnectServiceRepository(&service, &repository)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "OpsLevel/opslevel", result.DisplayName)
 }
 
 func TestGetRepositoryWithAliasNotFound(t *testing.T) {
-    // Arrange
-    request := `{
+	// Arrange
+	request := `{
     "query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
     "variables":{
         "repo": "github.com:rocktavious/autopilot"
    }
 }`
-    response := `{"data": {
+	response := `{"data": {
     "account": {
         "repository": null
     }
 }}`
-    client := ABetterTestClient(t, "repository/get_not_found", request, response)
-    // Act
-    result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, *ol.NewID(), result.Id)
+	client := ABetterTestClient(t, "repository/get_not_found", request, response)
+	// Act
+	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, *ol.NewID(), result.Id)
 }
 
 func TestGetRepositoryWithAlias(t *testing.T) {
-    // Arrange
-    request := `{
+	// Arrange
+	request := `{
     "query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
     "variables":{
         "repo": "github.com:rocktavious/autopilot"
     }
 }`
-    response := `{"data": {
+	response := `{"data": {
     "account": {
         "repository": {{ template "repository_1" }}
     }
 }}`
-    client := ABetterTestClient(t, "repository/get_with_alias", request, response)
-    // Act
-    result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, "main", result.DefaultBranch)
-    autopilot.Equals(t, "autopilot", result.Name)
-    autopilot.Equals(t, "359666903", result.RepoKey)
-    autopilot.Equals(t, "developers", result.Owner.Alias)
-    autopilot.Equals(t, "tier_2", result.Tier.Alias)
+	client := ABetterTestClient(t, "repository/get_with_alias", request, response)
+	// Act
+	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "main", result.DefaultBranch)
+	autopilot.Equals(t, "autopilot", result.Name)
+	autopilot.Equals(t, "359666903", result.RepoKey)
+	autopilot.Equals(t, "developers", result.Owner.Alias)
+	autopilot.Equals(t, "tier_2", result.Tier.Alias)
 }
 
 func TestGetRepository(t *testing.T) {
-    // Arrange
-    request := `{
+	// Arrange
+	request := `{
     "query": "query RepositoryGet($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
     "variables":{
         "repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
     }
 }`
-    response := `{"data": {
+	response := `{"data": {
     "account": {
         "repository": {{ template "repository_1" }}
     }
 }}`
-    client := ABetterTestClient(t, "repository/get", request, response)
-    // Act
-    result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, "main", result.DefaultBranch)
-    autopilot.Equals(t, "autopilot", result.Name)
-    autopilot.Equals(t, "359666903", result.RepoKey)
-    autopilot.Equals(t, "developers", result.Owner.Alias)
-    autopilot.Equals(t, "tier_2", result.Tier.Alias)
+	client := ABetterTestClient(t, "repository/get", request, response)
+	// Act
+	result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "main", result.DefaultBranch)
+	autopilot.Equals(t, "autopilot", result.Name)
+	autopilot.Equals(t, "359666903", result.RepoKey)
+	autopilot.Equals(t, "developers", result.Owner.Alias)
+	autopilot.Equals(t, "tier_2", result.Tier.Alias)
 }
 
 func TestListRepositories(t *testing.T) {
-    // Arrange
-    requests := []TestRequest{
-        {`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "first_page_variables" }}
             }
             }`,
-            `{
+			`{
                       "data": {
                         "account": {
                           "repositories": {
@@ -153,12 +153,12 @@ func TestListRepositories(t *testing.T) {
                         }
                       }
                     }`},
-        {`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+		{`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "second_page_variables" }}
             }
             }`,
-            `{
+			`{
                       "data": {
                         "account": {
                           "repositories": {
@@ -171,28 +171,28 @@ func TestListRepositories(t *testing.T) {
                         }
                       }
                     }`},
-    }
-    client := APaginatedTestClient(t, "repositories/list", requests...)
-    // Act
-    resp, err := client.ListRepositories(nil)
-    result := resp.Nodes
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, 2, resp.TotalCount)
-    autopilot.Equals(t, "autopilot", result[0].Name)
-    autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
+	}
+	client := APaginatedTestClient(t, "repositories/list", requests...)
+	// Act
+	resp, err := client.ListRepositories(nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "autopilot", result[0].Name)
+	autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
 }
 
 func TestListRepositoriesWithTier(t *testing.T) {
-    // Arrange
-    requests := []TestRequest{
-        {`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "tier": "tier_1"
             }
             }`,
-            `{
+			`{
                       "data": {
                         "account": {
                           "repositories": {
@@ -205,13 +205,13 @@ func TestListRepositoriesWithTier(t *testing.T) {
                         }
                       }
                     }`},
-        {`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+		{`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "tier": "tier_1"
             }
             }`,
-            `{
+			`{
                       "data": {
                         "account": {
                           "repositories": {
@@ -224,21 +224,21 @@ func TestListRepositoriesWithTier(t *testing.T) {
                         }
                       }
                     }`},
-    }
-    client := APaginatedTestClient(t, "repositories/list_with_tier", requests...)
-    // Act
-    resp, err := client.ListRepositoriesWithTier("tier_1", nil)
-    result := resp.Nodes
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, 2, resp.TotalCount)
-    autopilot.Equals(t, "autopilot", result[0].Name)
-    autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
+	}
+	client := APaginatedTestClient(t, "repositories/list_with_tier", requests...)
+	// Act
+	resp, err := client.ListRepositoriesWithTier("tier_1", nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "autopilot", result[0].Name)
+	autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
 }
 
 func TestUpdateServiceRepository(t *testing.T) {
-    // Arrange
-    request := `{
+	// Arrange
+	request := `{
     "query": "mutation ServiceRepositoryUpdate($input:ServiceRepositoryUpdateInput!){serviceRepositoryUpdate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}",
     "variables":{
         "input": {
@@ -247,7 +247,7 @@ func TestUpdateServiceRepository(t *testing.T) {
         }
     }
 }`
-    response := `{"data": {
+	response := `{"data": {
     "serviceRepositoryUpdate": {
         "serviceRepository": {
             "baseDirectory": "",
@@ -268,20 +268,20 @@ func TestUpdateServiceRepository(t *testing.T) {
         "errors": []
     }
 }}`
-    client := ABetterTestClient(t, "repository/service_update", request, response)
-    // Act
-    resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
-        Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-        DisplayName: "Foobar",
-    })
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, "Foobar", resp.DisplayName)
+	client := ABetterTestClient(t, "repository/service_update", request, response)
+	// Act
+	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
+		Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		DisplayName: "Foobar",
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Foobar", resp.DisplayName)
 }
 
 func TestDeleteServiceRepository(t *testing.T) {
-    // Arrange
-    request := `{
+	// Arrange
+	request := `{
     "query": "mutation ServiceRepositoryDelete($input:DeleteInput!){serviceRepositoryDelete(input: $input){deletedId,errors{message,path}}}",
     "variables":{
         "input": {
@@ -289,29 +289,29 @@ func TestDeleteServiceRepository(t *testing.T) {
         }
     }
 }`
-    response := `{"data": {
+	response := `{"data": {
     "serviceRepositoryDelete": {
         "deletedId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3",
         "errors": []
     }
 }}`
-    client := ABetterTestClient(t, "repository/service_delete", request, response)
-    // Act
-    err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
-    // Assert
-    autopilot.Ok(t, err)
+	client := ABetterTestClient(t, "repository/service_delete", request, response)
+	// Act
+	err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
+	// Assert
+	autopilot.Ok(t, err)
 }
 
 func TestGetServices(t *testing.T) {
-    // Arrange
-    requests := []TestRequest{
-        {`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
             }
             }`,
-            `{
+			`{
                   "data": {
                     "account": {
                       "repository": {
@@ -407,13 +407,13 @@ func TestGetServices(t *testing.T) {
                     }
                   }
                 }`},
-        {`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
             }
             }`,
-            `{
+			`{
                   "data": {
                     "account": {
                       "repository": {
@@ -497,32 +497,32 @@ func TestGetServices(t *testing.T) {
                     }
                   }
                 }`},
-    }
-    client := APaginatedTestClient(t, "repository/services", requests...)
-    // Act
-    repository := ol.Repository{
-        Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
-    }
-    resp, err := repository.GetServices(client, nil)
-    result := resp.Edges
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, 3, resp.TotalCount)
-    autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xODc1"), result[0].Node.Id)
-    autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS83NDc"), result[1].Node.Id)
-    autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ"), result[2].Node.Id)
+	}
+	client := APaginatedTestClient(t, "repository/services", requests...)
+	// Act
+	repository := ol.Repository{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
+	}
+	resp, err := repository.GetServices(client, nil)
+	result := resp.Edges
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8xODc1"), result[0].Node.Id)
+	autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS83NDc"), result[1].Node.Id)
+	autopilot.Equals(t, *ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8zMQ"), result[2].Node.Id)
 }
 
 func TestGetTags(t *testing.T) {
-    // Arrange
-    requests := []TestRequest{
-        {`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
             }
             }`,
-            `{
+			`{
                   "data": {
                     "account": {
                       "repository": {
@@ -551,13 +551,13 @@ func TestGetTags(t *testing.T) {
                     }
                   }
                 }`},
-        {`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
             }
             }`,
-            `{
+			`{
                   "data": {
                     "account": {
                       "repository": {
@@ -576,21 +576,21 @@ func TestGetTags(t *testing.T) {
                     }
                   }
                 }`},
-    }
-    client := APaginatedTestClient(t, "repository/tags", requests...)
-    // Act
-    repository := ol.Repository{
-        Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
-    }
-    resp, err := repository.GetTags(client, nil)
-    result := resp.Nodes
-    // Assert
-    autopilot.Ok(t, err)
-    autopilot.Equals(t, 4, resp.TotalCount)
-    autopilot.Equals(t, "abc", result[0].Key)
-    autopilot.Equals(t, "abc", result[0].Value)
-    autopilot.Equals(t, "db", result[2].Key)
-    autopilot.Equals(t, "prod", result[2].Value)
-    autopilot.Equals(t, "env", result[3].Key)
-    autopilot.Equals(t, "staging", result[3].Value)
+	}
+	client := APaginatedTestClient(t, "repository/tags", requests...)
+	// Act
+	repository := ol.Repository{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
+	}
+	resp, err := repository.GetTags(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 4, resp.TotalCount)
+	autopilot.Equals(t, "abc", result[0].Key)
+	autopilot.Equals(t, "abc", result[0].Value)
+	autopilot.Equals(t, "db", result[2].Key)
+	autopilot.Equals(t, "prod", result[2].Value)
+	autopilot.Equals(t, "env", result[3].Key)
+	autopilot.Equals(t, "staging", result[3].Value)
 }

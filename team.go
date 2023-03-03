@@ -1,225 +1,225 @@
 package opslevel
 
 import (
-    "fmt"
-    "html"
+	"fmt"
+	"html"
 
-    "github.com/hasura/go-graphql-client"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Contact struct {
-    Address     string
-    DisplayName string
-    Id          ID
-    Type        ContactType
+	Address     string
+	DisplayName string
+	Id          ID
+	Type        ContactType
 }
 
 type ContactInput struct {
-    Type        ContactType `json:"type"`
-    DisplayName string      `json:"displayName,omitEmpty"`
-    Address     string      `json:"address"`
+	Type        ContactType `json:"type"`
+	DisplayName string      `json:"displayName,omitEmpty"`
+	Address     string      `json:"address"`
 }
 
 type ContactCreateInput struct {
-    Type        ContactType `json:"type"`
-    DisplayName string      `json:"displayName,omitempty"`
-    Address     string      `json:"address"`
-    TeamId      *ID         `json:"teamId,omitempty"`
-    TeamAlias   string      `json:"teamAlias,omitempty"`
+	Type        ContactType `json:"type"`
+	DisplayName string      `json:"displayName,omitempty"`
+	Address     string      `json:"address"`
+	TeamId      *ID         `json:"teamId,omitempty"`
+	TeamAlias   string      `json:"teamAlias,omitempty"`
 }
 
 type ContactUpdateInput struct {
-    Id          ID           `json:"id"`
-    Type        *ContactType `json:"type,omitempty"`
-    DisplayName string       `json:"displayName,omitempty"`
-    Address     string       `json:"address,omitempty"`
+	Id          ID           `json:"id"`
+	Type        *ContactType `json:"type,omitempty"`
+	DisplayName string       `json:"displayName,omitempty"`
+	Address     string       `json:"address,omitempty"`
 }
 
 type ContactDeleteInput struct {
-    Id ID `json:"id"`
+	Id ID `json:"id"`
 }
 
 type TeamId struct {
-    Alias string
-    Id    ID
+	Alias string
+	Id    ID
 }
 
 type Team struct {
-    TeamId
+	TeamId
 
-    Aliases          []string
-    Contacts         []Contact
-    Group            GroupId
-    HTMLUrl          string
-    Manager          User
-    Members          UserConnection
-    Name             string
-    Responsibilities string
-    Tags             *TagConnection
+	Aliases          []string
+	Contacts         []Contact
+	Group            GroupId
+	HTMLUrl          string
+	Manager          User
+	Members          UserConnection
+	Name             string
+	Responsibilities string
+	Tags             *TagConnection
 }
 
 type TeamConnection struct {
-    Nodes      []Team
-    PageInfo   PageInfo
-    TotalCount int
+	Nodes      []Team
+	PageInfo   PageInfo
+	TotalCount int
 }
 
 type TeamCreateInput struct {
-    Name             string           `json:"name"`
-    ManagerEmail     string           `json:"managerEmail,omitempty"`
-    Responsibilities string           `json:"responsibilities,omitempty"`
-    Group            *IdentifierInput `json:"group"`
-    Contacts         []ContactInput   `json:"contacts,omitempty"`
+	Name             string           `json:"name"`
+	ManagerEmail     string           `json:"managerEmail,omitempty"`
+	Responsibilities string           `json:"responsibilities,omitempty"`
+	Group            *IdentifierInput `json:"group"`
+	Contacts         []ContactInput   `json:"contacts,omitempty"`
 }
 
 type TeamUpdateInput struct {
-    Id               ID               `json:"id"`
-    Alias            string           `json:"alias,omitempty"`
-    Name             string           `json:"name,omitempty"`
-    ManagerEmail     string           `json:"managerEmail,omitempty"`
-    Group            *IdentifierInput `json:"group"`
-    Responsibilities string           `json:"responsibilities,omitempty"`
+	Id               ID               `json:"id"`
+	Alias            string           `json:"alias,omitempty"`
+	Name             string           `json:"name,omitempty"`
+	ManagerEmail     string           `json:"managerEmail,omitempty"`
+	Group            *IdentifierInput `json:"group"`
+	Responsibilities string           `json:"responsibilities,omitempty"`
 }
 
 type TeamDeleteInput struct {
-    Id    ID     `json:"id,omitempty"`
-    Alias string `json:"alias,omitempty"`
+	Id    ID     `json:"id,omitempty"`
+	Alias string `json:"alias,omitempty"`
 }
 
 type TeamMembershipUserInput struct {
-    Email string `json:"email"`
+	Email string `json:"email"`
 }
 
 type TeamMembershipCreateInput struct {
-    TeamId  ID                        `json:"teamId"`
-    Members []TeamMembershipUserInput `json:"members"`
+	TeamId  ID                        `json:"teamId"`
+	Members []TeamMembershipUserInput `json:"members"`
 }
 
 type TeamMembershipDeleteInput struct {
-    TeamId  ID                        `json:"teamId"`
-    Members []TeamMembershipUserInput `json:"members"`
+	TeamId  ID                        `json:"teamId"`
+	Members []TeamMembershipUserInput `json:"members"`
 }
 
 //#region Helpers
 
 func (conn *UserConnection) Hydrate(id ID, client *Client) error {
-    var q struct {
-        Account struct {
-            Team struct {
-                Members UserConnection `graphql:"members(after: $after, first: $first)"`
-            } `graphql:"team(id: $id)"`
-        }
-    }
-    v := PayloadVariables{
-        "id":    id,
-        "first": client.pageSize,
-    }
-    q.Account.Team.Members.PageInfo = conn.PageInfo
-    for q.Account.Team.Members.PageInfo.HasNextPage {
-        v["after"] = q.Account.Team.Members.PageInfo.End
-        if err := client.Query(&q, v, WithName("TeamMembersList")); err != nil {
-            return err
-        }
-        for _, item := range q.Account.Team.Members.Nodes {
-            conn.Nodes = append(conn.Nodes, item)
-        }
-    }
-    return nil
+	var q struct {
+		Account struct {
+			Team struct {
+				Members UserConnection `graphql:"members(after: $after, first: $first)"`
+			} `graphql:"team(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id":    id,
+		"first": client.pageSize,
+	}
+	q.Account.Team.Members.PageInfo = conn.PageInfo
+	for q.Account.Team.Members.PageInfo.HasNextPage {
+		v["after"] = q.Account.Team.Members.PageInfo.End
+		if err := client.Query(&q, v, WithName("TeamMembersList")); err != nil {
+			return err
+		}
+		for _, item := range q.Account.Team.Members.Nodes {
+			conn.Nodes = append(conn.Nodes, item)
+		}
+	}
+	return nil
 }
 
 func (self *Team) Hydrate(client *Client) error {
-    self.Responsibilities = html.UnescapeString(self.Responsibilities)
-    if err := self.Members.Hydrate(self.Id, client); err != nil {
-        return err
-    }
+	self.Responsibilities = html.UnescapeString(self.Responsibilities)
+	if err := self.Members.Hydrate(self.Id, client); err != nil {
+		return err
+	}
 
-    if self.Tags == nil {
-        self.Tags = &TagConnection{}
-    }
-    if self.Tags.PageInfo.HasNextPage {
-        variables := &PayloadVariables{}
-        (*variables)["after"] = self.Tags.PageInfo.End
-        _, err := self.GetTags(client, variables)
-        if err != nil {
-            return err
-        }
-    }
-    return nil
+	if self.Tags == nil {
+		self.Tags = &TagConnection{}
+	}
+	if self.Tags.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = self.Tags.PageInfo.End
+		_, err := self.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-    var q struct {
-        Account struct {
-            Team struct {
-                Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
-            } `graphql:"team(id: $team)"`
-        }
-    }
-    if t.Id == "" {
-        return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", t.Id)
-    }
-    if variables == nil {
-        variables = client.InitialPageVariablesPointer()
-    }
-    (*variables)["team"] = t.Id
-    if err := client.Query(&q, *variables, WithName("TeamTagsList")); err != nil {
-        return nil, err
-    }
-    if t.Tags == nil {
-        tags := TagConnection{}
-        t.Tags = &tags
-    }
-    t.Tags.Nodes = append(t.Tags.Nodes, q.Account.Team.Tags.Nodes...)
-    t.Tags.PageInfo = q.Account.Team.Tags.PageInfo
-    t.Tags.TotalCount += q.Account.Team.Tags.TotalCount
-    for t.Tags.PageInfo.HasNextPage {
-        (*variables)["after"] = t.Tags.PageInfo.End
-        _, err := t.GetTags(client, variables)
-        if err != nil {
-            return nil, err
-        }
-    }
-    return t.Tags, nil
+	var q struct {
+		Account struct {
+			Team struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"team(id: $team)"`
+		}
+	}
+	if t.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", t.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["team"] = t.Id
+	if err := client.Query(&q, *variables, WithName("TeamTagsList")); err != nil {
+		return nil, err
+	}
+	if t.Tags == nil {
+		tags := TagConnection{}
+		t.Tags = &tags
+	}
+	t.Tags.Nodes = append(t.Tags.Nodes, q.Account.Team.Tags.Nodes...)
+	t.Tags.PageInfo = q.Account.Team.Tags.PageInfo
+	t.Tags.TotalCount += q.Account.Team.Tags.TotalCount
+	for t.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = t.Tags.PageInfo.End
+		_, err := t.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return t.Tags, nil
 }
 
 func BuildMembershipInput(members []string) (output []TeamMembershipUserInput) {
-    for _, email := range members {
-        output = append(output, TeamMembershipUserInput{Email: email})
-    }
-    return
+	for _, email := range members {
+		output = append(output, TeamMembershipUserInput{Email: email})
+	}
+	return
 }
 
 func CreateContactSlack(channel string, name string) ContactInput {
-    return ContactInput{
-        Type:        ContactTypeSlack,
-        DisplayName: name,
-        Address:     channel,
-    }
+	return ContactInput{
+		Type:        ContactTypeSlack,
+		DisplayName: name,
+		Address:     channel,
+	}
 }
 
 func CreateContactEmail(email string, name string) ContactInput {
-    return ContactInput{
-        Type:        ContactTypeEmail,
-        DisplayName: name,
-        Address:     email,
-    }
+	return ContactInput{
+		Type:        ContactTypeEmail,
+		DisplayName: name,
+		Address:     email,
+	}
 }
 
 func CreateContactWeb(address string, name string) ContactInput {
-    return ContactInput{
-        Type:        ContactTypeWeb,
-        DisplayName: name,
-        Address:     address,
-    }
+	return ContactInput{
+		Type:        ContactTypeWeb,
+		DisplayName: name,
+		Address:     address,
+	}
 }
 
 func (s *Team) HasTag(key string, value string) bool {
-    for _, tag := range s.Tags.Nodes {
-        if tag.Key == key && tag.Value == value {
-            return true
-        }
-    }
-    return false
+	for _, tag := range s.Tags.Nodes {
+		if tag.Key == key && tag.Value == value {
+			return true
+		}
+	}
+	return false
 }
 
 //#endregion
@@ -227,68 +227,68 @@ func (s *Team) HasTag(key string, value string) bool {
 //#region Create
 
 func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
-    var m struct {
-        Payload struct {
-            Team   Team
-            Errors []OpsLevelErrors
-        } `graphql:"teamCreate(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": input,
-    }
-    if err := client.Mutate(&m, v, WithName("TeamCreate")); err != nil {
-        return nil, err
-    }
-    if err := m.Payload.Team.Hydrate(client); err != nil {
-        return &m.Payload.Team, err
-    }
-    return &m.Payload.Team, FormatErrors(m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Team   Team
+			Errors []OpsLevelErrors
+		} `graphql:"teamCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v, WithName("TeamCreate")); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Team.Hydrate(client); err != nil {
+		return &m.Payload.Team, err
+	}
+	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
 }
 
 func (client *Client) AddMembers(team *TeamId, emails []string) ([]User, error) {
-    var m struct {
-        Payload struct {
-            Members []User
-            Errors  []OpsLevelErrors
-        } `graphql:"teamMembershipCreate(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": TeamMembershipCreateInput{
-            TeamId:  team.Id,
-            Members: BuildMembershipInput(emails),
-        },
-    }
-    err := client.Mutate(&m, v, WithName("TeamMembershipCreate"))
-    return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Members []User
+			Errors  []OpsLevelErrors
+		} `graphql:"teamMembershipCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": TeamMembershipCreateInput{
+			TeamId:  team.Id,
+			Members: BuildMembershipInput(emails),
+		},
+	}
+	err := client.Mutate(&m, v, WithName("TeamMembershipCreate"))
+	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) AddMember(team *TeamId, email string) ([]User, error) {
-    emails := []string{email}
-    return client.AddMembers(team, emails)
+	emails := []string{email}
+	return client.AddMembers(team, emails)
 }
 
 func (client *Client) AddContact(team string, contact ContactInput) (*Contact, error) {
-    var m struct {
-        Payload struct {
-            Contact Contact
-            Errors  []OpsLevelErrors
-        } `graphql:"contactCreate(input: $input)"`
-    }
-    contactInput := ContactCreateInput{
-        Type:        contact.Type,
-        DisplayName: contact.DisplayName,
-        Address:     contact.Address,
-    }
-    if IsID(team) {
-        contactInput.TeamId = NewID(team)
-    } else {
-        contactInput.TeamAlias = team
-    }
-    v := PayloadVariables{
-        "input": contactInput,
-    }
-    err := client.Mutate(&m, v, WithName("ContactCreate"))
-    return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Contact Contact
+			Errors  []OpsLevelErrors
+		} `graphql:"contactCreate(input: $input)"`
+	}
+	contactInput := ContactCreateInput{
+		Type:        contact.Type,
+		DisplayName: contact.DisplayName,
+		Address:     contact.Address,
+	}
+	if IsID(team) {
+		contactInput.TeamId = NewID(team)
+	} else {
+		contactInput.TeamAlias = team
+	}
+	v := PayloadVariables{
+		"input": contactInput,
+	}
+	err := client.Mutate(&m, v, WithName("ContactCreate"))
+	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -296,111 +296,111 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 //#region Retrieve
 
 func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
-    var q struct {
-        Account struct {
-            Team Team `graphql:"team(alias: $alias)"`
-        }
-    }
-    v := PayloadVariables{
-        "alias": graphql.String(alias),
-    }
-    if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
-        return nil, err
-    }
-    if err := q.Account.Team.Hydrate(client); err != nil {
-        return &q.Account.Team, err
-    }
-    return &q.Account.Team, nil
+	var q struct {
+		Account struct {
+			Team Team `graphql:"team(alias: $alias)"`
+		}
+	}
+	v := PayloadVariables{
+		"alias": graphql.String(alias),
+	}
+	if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
+		return nil, err
+	}
+	if err := q.Account.Team.Hydrate(client); err != nil {
+		return &q.Account.Team, err
+	}
+	return &q.Account.Team, nil
 }
 
 // Deprecated: use GetTeam instead
 func (client *Client) GetTeamWithId(id ID) (*Team, error) {
-    return client.GetTeam(id)
+	return client.GetTeam(id)
 }
 
 func (client *Client) GetTeam(id ID) (*Team, error) {
-    var q struct {
-        Account struct {
-            Team Team `graphql:"team(id: $id)"`
-        }
-    }
-    v := PayloadVariables{
-        "id": id,
-    }
-    if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
-        return nil, err
-    }
-    if err := q.Account.Team.Hydrate(client); err != nil {
-        return &q.Account.Team, err
-    }
-    return &q.Account.Team, nil
+	var q struct {
+		Account struct {
+			Team Team `graphql:"team(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
+		return nil, err
+	}
+	if err := q.Account.Team.Hydrate(client); err != nil {
+		return &q.Account.Team, err
+	}
+	return &q.Account.Team, nil
 }
 
 func (client *Client) GetTeamCount() (int, error) {
-    var q struct {
-        Account struct {
-            Teams struct {
-                TotalCount int
-            }
-        }
-    }
-    err := client.Query(&q, nil, WithName("TeamCount"))
-    return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
+	var q struct {
+		Account struct {
+			Teams struct {
+				TotalCount int
+			}
+		}
+	}
+	err := client.Query(&q, nil, WithName("TeamCount"))
+	return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
 }
 
 func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, error) {
-    var q struct {
-        Account struct {
-            Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
-        }
-    }
-    if variables == nil {
-        variables = client.InitialPageVariablesPointer()
-    }
+	var q struct {
+		Account struct {
+			Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
 
-    if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-        return TeamConnection{}, err
-    }
+	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
+		return TeamConnection{}, err
+	}
 
-    for q.Account.Teams.PageInfo.HasNextPage {
-        (*variables)["after"] = q.Account.Teams.PageInfo.End
-        resp, err := client.ListTeams(variables)
-        if err != nil {
-            return TeamConnection{}, err
-        }
-        q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
-        q.Account.Teams.PageInfo = resp.PageInfo
-        q.Account.Teams.TotalCount += resp.TotalCount
-    }
-    return q.Account.Teams, nil
+	for q.Account.Teams.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		resp, err := client.ListTeams(variables)
+		if err != nil {
+			return TeamConnection{}, err
+		}
+		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		q.Account.Teams.PageInfo = resp.PageInfo
+		q.Account.Teams.TotalCount += resp.TotalCount
+	}
+	return q.Account.Teams, nil
 }
 
 func (client *Client) ListTeamsWithManager(email string, variables *PayloadVariables) (TeamConnection, error) {
-    var q struct {
-        Account struct {
-            Teams TeamConnection `graphql:"teams(managerEmail: $email, after: $after, first: $first)"`
-        }
-    }
-    if variables == nil {
-        variables = client.InitialPageVariablesPointer()
-    }
-    (*variables)["email"] = email
+	var q struct {
+		Account struct {
+			Teams TeamConnection `graphql:"teams(managerEmail: $email, after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["email"] = email
 
-    if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-        return TeamConnection{}, err
-    }
+	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
+		return TeamConnection{}, err
+	}
 
-    for q.Account.Teams.PageInfo.HasNextPage {
-        (*variables)["after"] = q.Account.Teams.PageInfo.End
-        resp, err := client.ListTeamsWithManager(email, variables)
-        if err != nil {
-            return TeamConnection{}, err
-        }
-        q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
-        q.Account.Teams.PageInfo = resp.PageInfo
-        q.Account.Teams.TotalCount += resp.TotalCount
-    }
-    return q.Account.Teams, nil
+	for q.Account.Teams.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		resp, err := client.ListTeamsWithManager(email, variables)
+		if err != nil {
+			return TeamConnection{}, err
+		}
+		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		q.Account.Teams.PageInfo = resp.PageInfo
+		q.Account.Teams.TotalCount += resp.TotalCount
+	}
+	return q.Account.Teams, nil
 }
 
 //#endregion
@@ -408,46 +408,46 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 //#region Update
 
 func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
-    var m struct {
-        Payload struct {
-            Team   Team
-            Errors []OpsLevelErrors
-        } `graphql:"teamUpdate(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": input,
-    }
-    if err := client.Mutate(&m, v, WithName("TeamUpdate")); err != nil {
-        return nil, err
-    }
-    if err := m.Payload.Team.Hydrate(client); err != nil {
-        return &m.Payload.Team, err
-    }
-    return &m.Payload.Team, FormatErrors(m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Team   Team
+			Errors []OpsLevelErrors
+		} `graphql:"teamUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v, WithName("TeamUpdate")); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Team.Hydrate(client); err != nil {
+		return &m.Payload.Team, err
+	}
+	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
 }
 
 func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, error) {
-    var m struct {
-        Payload struct {
-            Contact Contact
-            Errors  []OpsLevelErrors
-        } `graphql:"contactUpdate(input: $input)"`
-    }
-    input := ContactUpdateInput{
-        Id:          id,
-        DisplayName: contact.DisplayName,
-        Address:     contact.Address,
-    }
-    if contact.Type == "" {
-        input.Type = nil
-    } else {
-        input.Type = &contact.Type
-    }
-    v := PayloadVariables{
-        "input": input,
-    }
-    err := client.Mutate(&m, v, WithName("ContactUpdate"))
-    return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Contact Contact
+			Errors  []OpsLevelErrors
+		} `graphql:"contactUpdate(input: $input)"`
+	}
+	input := ContactUpdateInput{
+		Id:          id,
+		DisplayName: contact.DisplayName,
+		Address:     contact.Address,
+	}
+	if contact.Type == "" {
+		input.Type = nil
+	} else {
+		input.Type = &contact.Type
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("ContactUpdate"))
+	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -455,80 +455,80 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 //#region Delete
 
 func (client *Client) DeleteTeamWithAlias(alias string) error {
-    var m struct {
-        Payload struct {
-            Id     ID               `graphql:"deletedTeamId"`
-            Alias  graphql.String   `graphql:"deletedTeamAlias"`
-            Errors []OpsLevelErrors `graphql:"errors"`
-        } `graphql:"teamDelete(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": TeamDeleteInput{
-            Alias: alias,
-        },
-    }
-    err := client.Mutate(&m, v, WithName("TeamDelete"))
-    return HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Id     ID               `graphql:"deletedTeamId"`
+			Alias  graphql.String   `graphql:"deletedTeamAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"teamDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": TeamDeleteInput{
+			Alias: alias,
+		},
+	}
+	err := client.Mutate(&m, v, WithName("TeamDelete"))
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 // Deprecated: use DeleteTeam instead
 func (client *Client) DeleteTeamWithId(id ID) error {
-    return client.DeleteTeam(id)
+	return client.DeleteTeam(id)
 }
 
 func (client *Client) DeleteTeam(id ID) error {
-    var m struct {
-        Payload struct {
-            Id     ID               `graphql:"deletedTeamId"`
-            Alias  graphql.String   `graphql:"deletedTeamAlias"`
-            Errors []OpsLevelErrors `graphql:"errors"`
-        } `graphql:"teamDelete(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": TeamDeleteInput{
-            Id: id,
-        },
-    }
-    err := client.Mutate(&m, v, WithName("TeamDelete"))
-    return HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Id     ID               `graphql:"deletedTeamId"`
+			Alias  graphql.String   `graphql:"deletedTeamAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"teamDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": TeamDeleteInput{
+			Id: id,
+		},
+	}
+	err := client.Mutate(&m, v, WithName("TeamDelete"))
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, error) {
-    var m struct {
-        Payload struct {
-            Members []User `graphql:"deletedMembers"`
-            Errors  []OpsLevelErrors
-        } `graphql:"teamMembershipDelete(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": TeamMembershipDeleteInput{
-            TeamId:  team.Id,
-            Members: BuildMembershipInput(emails),
-        },
-    }
-    err := client.Mutate(&m, v, WithName("TeamMembershipDelete"))
-    return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Members []User `graphql:"deletedMembers"`
+			Errors  []OpsLevelErrors
+		} `graphql:"teamMembershipDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": TeamMembershipDeleteInput{
+			TeamId:  team.Id,
+			Members: BuildMembershipInput(emails),
+		},
+	}
+	err := client.Mutate(&m, v, WithName("TeamMembershipDelete"))
+	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) RemoveMember(team *TeamId, email string) ([]User, error) {
-    emails := []string{email}
-    return client.RemoveMembers(team, emails)
+	emails := []string{email}
+	return client.RemoveMembers(team, emails)
 }
 
 func (client *Client) RemoveContact(contact ID) error {
-    var m struct {
-        Payload struct {
-            Contact ID `graphql:"deletedContactId"`
-            Errors  []OpsLevelErrors
-        } `graphql:"contactDelete(input: $input)"`
-    }
-    v := PayloadVariables{
-        "input": ContactDeleteInput{
-            Id: contact,
-        },
-    }
-    err := client.Mutate(&m, v, WithName("ContactDelete"))
-    return HandleErrors(err, m.Payload.Errors)
+	var m struct {
+		Payload struct {
+			Contact ID `graphql:"deletedContactId"`
+			Errors  []OpsLevelErrors
+		} `graphql:"contactDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": ContactDeleteInput{
+			Id: contact,
+		},
+	}
+	err := client.Mutate(&m, v, WithName("ContactDelete"))
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

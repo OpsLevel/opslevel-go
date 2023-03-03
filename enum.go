@@ -24,11 +24,11 @@ func AllAlertSourceTypeEnum() []string {
 type AlertSourceStatusTypeEnum string
 
 const (
-	AlertSourceTypeEnumAlert        AlertSourceStatusTypeEnum = "alert" // Monitor is reporting an alert.
-	AlertSourceTypeEnumWarn         AlertSourceStatusTypeEnum = "warn"   // Monitor is reporting a warning.
-	AlertSourceTypeEnumOK           AlertSourceStatusTypeEnum = "ok"  // Monitor is not reporting any warnings or alerts.
-	AlertSourceTypeEnumNoData       AlertSourceStatusTypeEnum = "no_data"  // No data received yet. Ensure your monitors are configured correctly.
-	AlertSourceTypeEnumFetchingData AlertSourceStatusTypeEnum = "fetching_data"  // Monitor currently being updated.
+	AlertSourceTypeEnumAlert        AlertSourceStatusTypeEnum = "alert"         // Monitor is reporting an alert.
+	AlertSourceTypeEnumWarn         AlertSourceStatusTypeEnum = "warn"          // Monitor is reporting a warning.
+	AlertSourceTypeEnumOK           AlertSourceStatusTypeEnum = "ok"            // Monitor is not reporting any warnings or alerts.
+	AlertSourceTypeEnumNoData       AlertSourceStatusTypeEnum = "no_data"       // No data received yet. Ensure your monitors are configured correctly.
+	AlertSourceTypeEnumFetchingData AlertSourceStatusTypeEnum = "fetching_data" // Monitor currently being updated.
 )
 
 // All AlertSourceTypeEnum as []string
@@ -143,8 +143,8 @@ func AllCheckType() []string {
 type CustomActionsHttpMethodEnum string
 
 const (
-	CustomActionsHttpMethodEnumPost   CustomActionsHttpMethodEnum = "POST" // An HTTP POST request
-	CustomActionsHttpMethodEnumPut    CustomActionsHttpMethodEnum = "PUT"  // An HTTP PUT request
+	CustomActionsHttpMethodEnumPost   CustomActionsHttpMethodEnum = "POST"   // An HTTP POST request
+	CustomActionsHttpMethodEnumPut    CustomActionsHttpMethodEnum = "PUT"    // An HTTP PUT request
 	CustomActionsHttpMethodEnumDELETE CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request
 )
 
@@ -161,8 +161,8 @@ func AllCustomActionsHttpMethodEnum() []string {
 type CustomActionsTriggerDefinitionAccessControlEnum string
 
 const (
-	CustomActionsTriggerDefinitionAccessControlEnumEveryone   CustomActionsTriggerDefinitionAccessControlEnum = "everyone" // All users of OpsLevel
-	CustomActionsTriggerDefinitionAccessControlEnumAdmins    CustomActionsTriggerDefinitionAccessControlEnum = "admins"  // Admin users
+	CustomActionsTriggerDefinitionAccessControlEnumEveryone      CustomActionsTriggerDefinitionAccessControlEnum = "everyone"       // All users of OpsLevel
+	CustomActionsTriggerDefinitionAccessControlEnumAdmins        CustomActionsTriggerDefinitionAccessControlEnum = "admins"         // Admin users
 	CustomActionsTriggerDefinitionAccessControlEnumServiceOwners CustomActionsTriggerDefinitionAccessControlEnum = "service_owners" // The owners of a service
 )
 
