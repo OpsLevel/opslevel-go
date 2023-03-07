@@ -14,14 +14,12 @@ const (
 )
 
 // All AlertSourceStatusTypeEnum as []string
-func AllAlertSourceStatusTypeEnum() []string {
-	return []string{
-		string(AlertSourceStatusTypeEnumAlert),
-		string(AlertSourceStatusTypeEnumFetchingData),
-		string(AlertSourceStatusTypeEnumNoData),
-		string(AlertSourceStatusTypeEnumOk),
-		string(AlertSourceStatusTypeEnumWarn),
-	}
+var AllAlertSourceStatusTypeEnum = []string{
+	string(AlertSourceStatusTypeEnumAlert),
+	string(AlertSourceStatusTypeEnumFetchingData),
+	string(AlertSourceStatusTypeEnumNoData),
+	string(AlertSourceStatusTypeEnumOk),
+	string(AlertSourceStatusTypeEnumWarn),
 }
 
 // AlertSourceTypeEnum represents the type of the alert source.
@@ -34,12 +32,10 @@ const (
 )
 
 // All AlertSourceTypeEnum as []string
-func AllAlertSourceTypeEnum() []string {
-	return []string{
-		string(AlertSourceTypeEnumDatadog),
-		string(AlertSourceTypeEnumOpsgenie),
-		string(AlertSourceTypeEnumPagerduty),
-	}
+var AllAlertSourceTypeEnum = []string{
+	string(AlertSourceTypeEnumDatadog),
+	string(AlertSourceTypeEnumOpsgenie),
+	string(AlertSourceTypeEnumPagerduty),
 }
 
 // AliasOwnerTypeEnum represents the owner type an alias is assigned to.
@@ -51,11 +47,9 @@ const (
 )
 
 // All AliasOwnerTypeEnum as []string
-func AllAliasOwnerTypeEnum() []string {
-	return []string{
-		string(AliasOwnerTypeEnumService),
-		string(AliasOwnerTypeEnumTeam),
-	}
+var AllAliasOwnerTypeEnum = []string{
+	string(AliasOwnerTypeEnumService),
+	string(AliasOwnerTypeEnumTeam),
 }
 
 // ApiDocumentSourceEnum represents the source used to determine the preferred API document.
@@ -67,11 +61,9 @@ const (
 )
 
 // All ApiDocumentSourceEnum as []string
-func AllApiDocumentSourceEnum() []string {
-	return []string{
-		string(ApiDocumentSourceEnumPull),
-		string(ApiDocumentSourceEnumPush),
-	}
+var AllApiDocumentSourceEnum = []string{
+	string(ApiDocumentSourceEnumPull),
+	string(ApiDocumentSourceEnumPush),
 }
 
 // BasicTypeEnum
@@ -83,11 +75,9 @@ const (
 )
 
 // All BasicTypeEnum as []string
-func AllBasicTypeEnum() []string {
-	return []string{
-		string(BasicTypeEnumDoesNotEqual),
-		string(BasicTypeEnumEquals),
-	}
+var AllBasicTypeEnum = []string{
+	string(BasicTypeEnumDoesNotEqual),
+	string(BasicTypeEnumEquals),
 }
 
 // CampaignFilterEnum
@@ -100,12 +90,10 @@ const (
 )
 
 // All CampaignFilterEnum as []string
-func AllCampaignFilterEnum() []string {
-	return []string{
-		string(CampaignFilterEnumID),
-		string(CampaignFilterEnumOwner),
-		string(CampaignFilterEnumStatus),
-	}
+var AllCampaignFilterEnum = []string{
+	string(CampaignFilterEnumID),
+	string(CampaignFilterEnumOwner),
+	string(CampaignFilterEnumStatus),
 }
 
 // CampaignReminderTypeEnum
@@ -117,11 +105,9 @@ const (
 )
 
 // All CampaignReminderTypeEnum as []string
-func AllCampaignReminderTypeEnum() []string {
-	return []string{
-		string(CampaignReminderTypeEnumEmail),
-		string(CampaignReminderTypeEnumSlack),
-	}
+var AllCampaignReminderTypeEnum = []string{
+	string(CampaignReminderTypeEnumEmail),
+	string(CampaignReminderTypeEnumSlack),
 }
 
 // CampaignServiceStatusEnum
@@ -133,11 +119,9 @@ const (
 )
 
 // All CampaignServiceStatusEnum as []string
-func AllCampaignServiceStatusEnum() []string {
-	return []string{
-		string(CampaignServiceStatusEnumFailing),
-		string(CampaignServiceStatusEnumPassing),
-	}
+var AllCampaignServiceStatusEnum = []string{
+	string(CampaignServiceStatusEnumFailing),
+	string(CampaignServiceStatusEnumPassing),
 }
 
 // CampaignSortEnum
@@ -165,27 +149,25 @@ const (
 )
 
 // All CampaignSortEnum as []string
-func AllCampaignSortEnum() []string {
-	return []string{
-		string(CampaignSortEnumChecksPassingAsc),
-		string(CampaignSortEnumChecksPassingDesc),
-		string(CampaignSortEnumEndedDateAsc),
-		string(CampaignSortEnumEndedDateDesc),
-		string(CampaignSortEnumFilterAsc),
-		string(CampaignSortEnumFilterDesc),
-		string(CampaignSortEnumNameAsc),
-		string(CampaignSortEnumNameDesc),
-		string(CampaignSortEnumOwnerAsc),
-		string(CampaignSortEnumOwnerDesc),
-		string(CampaignSortEnumServicesCompleteAsc),
-		string(CampaignSortEnumServicesCompleteDesc),
-		string(CampaignSortEnumStartDateAsc),
-		string(CampaignSortEnumStartDateDesc),
-		string(CampaignSortEnumStatusAsc),
-		string(CampaignSortEnumStatusDesc),
-		string(CampaignSortEnumTargetDateAsc),
-		string(CampaignSortEnumTargetDateDesc),
-	}
+var AllCampaignSortEnum = []string{
+	string(CampaignSortEnumChecksPassingAsc),
+	string(CampaignSortEnumChecksPassingDesc),
+	string(CampaignSortEnumEndedDateAsc),
+	string(CampaignSortEnumEndedDateDesc),
+	string(CampaignSortEnumFilterAsc),
+	string(CampaignSortEnumFilterDesc),
+	string(CampaignSortEnumNameAsc),
+	string(CampaignSortEnumNameDesc),
+	string(CampaignSortEnumOwnerAsc),
+	string(CampaignSortEnumOwnerDesc),
+	string(CampaignSortEnumServicesCompleteAsc),
+	string(CampaignSortEnumServicesCompleteDesc),
+	string(CampaignSortEnumStartDateAsc),
+	string(CampaignSortEnumStartDateDesc),
+	string(CampaignSortEnumStatusAsc),
+	string(CampaignSortEnumStatusDesc),
+	string(CampaignSortEnumTargetDateAsc),
+	string(CampaignSortEnumTargetDateDesc),
 }
 
 // CampaignStatusEnum
@@ -200,14 +182,12 @@ const (
 )
 
 // All CampaignStatusEnum as []string
-func AllCampaignStatusEnum() []string {
-	return []string{
-		string(CampaignStatusEnumDelayed),
-		string(CampaignStatusEnumDraft),
-		string(CampaignStatusEnumEnded),
-		string(CampaignStatusEnumInProgress),
-		string(CampaignStatusEnumScheduled),
-	}
+var AllCampaignStatusEnum = []string{
+	string(CampaignStatusEnumDelayed),
+	string(CampaignStatusEnumDraft),
+	string(CampaignStatusEnumEnded),
+	string(CampaignStatusEnumInProgress),
+	string(CampaignStatusEnumScheduled),
 }
 
 // CheckStatus represents the evaluation status of the check.
@@ -220,12 +200,10 @@ const (
 )
 
 // All CheckStatus as []string
-func AllCheckStatus() []string {
-	return []string{
-		string(CheckStatusFailed),
-		string(CheckStatusPassed),
-		string(CheckStatusPending),
-	}
+var AllCheckStatus = []string{
+	string(CheckStatusFailed),
+	string(CheckStatusPassed),
+	string(CheckStatusPending),
 }
 
 // CheckType represents the type of check.
@@ -253,27 +231,25 @@ const (
 )
 
 // All CheckType as []string
-func AllCheckType() []string {
-	return []string{
-		string(CheckTypeAlertSourceUsage),
-		string(CheckTypeCustom),
-		string(CheckTypeGeneric),
-		string(CheckTypeGitBranchProtection),
-		string(CheckTypeHasDocumentation),
-		string(CheckTypeHasOwner),
-		string(CheckTypeHasRecentDeploy),
-		string(CheckTypeHasRepository),
-		string(CheckTypeHasServiceConfig),
-		string(CheckTypeManual),
-		string(CheckTypePayload),
-		string(CheckTypeRepoFile),
-		string(CheckTypeRepoGrep),
-		string(CheckTypeRepoSearch),
-		string(CheckTypeServiceDependency),
-		string(CheckTypeServiceProperty),
-		string(CheckTypeTagDefined),
-		string(CheckTypeToolUsage),
-	}
+var AllCheckType = []string{
+	string(CheckTypeAlertSourceUsage),
+	string(CheckTypeCustom),
+	string(CheckTypeGeneric),
+	string(CheckTypeGitBranchProtection),
+	string(CheckTypeHasDocumentation),
+	string(CheckTypeHasOwner),
+	string(CheckTypeHasRecentDeploy),
+	string(CheckTypeHasRepository),
+	string(CheckTypeHasServiceConfig),
+	string(CheckTypeManual),
+	string(CheckTypePayload),
+	string(CheckTypeRepoFile),
+	string(CheckTypeRepoGrep),
+	string(CheckTypeRepoSearch),
+	string(CheckTypeServiceDependency),
+	string(CheckTypeServiceProperty),
+	string(CheckTypeTagDefined),
+	string(CheckTypeToolUsage),
 }
 
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
@@ -285,11 +261,9 @@ const (
 )
 
 // All ConnectiveEnum as []string
-func AllConnectiveEnum() []string {
-	return []string{
-		string(ConnectiveEnumAnd),
-		string(ConnectiveEnumOr),
-	}
+var AllConnectiveEnum = []string{
+	string(ConnectiveEnumAnd),
+	string(ConnectiveEnumOr),
 }
 
 // ContactType represents the method of contact.
@@ -304,14 +278,12 @@ const (
 )
 
 // All ContactType as []string
-func AllContactType() []string {
-	return []string{
-		string(ContactTypeEmail),
-		string(ContactTypeGitHub),
-		string(ContactTypeSlack),
-		string(ContactTypeSlackHandle),
-		string(ContactTypeWeb),
-	}
+var AllContactType = []string{
+	string(ContactTypeEmail),
+	string(ContactTypeGitHub),
+	string(ContactTypeSlack),
+	string(ContactTypeSlackHandle),
+	string(ContactTypeWeb),
 }
 
 // TODO: This appears to be duplicative of the above and i'm not sure why we need it
@@ -326,15 +298,13 @@ const (
 	ServiceOwnershipCheckContactTypeWeb         ServiceOwnershipCheckContactType = "web"          // A website contact method.
 )
 
-// All ContactType as []string
-func AllServiceOwnershipCheckContactType() []string {
-	return []string{
-		string(ServiceOwnershipCheckContactTypeAny),
-		string(ServiceOwnershipCheckContactTypeSlack),
-		string(ServiceOwnershipCheckContactTypeSlackHandle),
-		string(ServiceOwnershipCheckContactTypeEmail),
-		string(ServiceOwnershipCheckContactTypeWeb),
-	}
+// All ServiceOwnershipContactType as []string
+var AllServiceOwnershipCheckContactType = []string {
+	string(ServiceOwnershipCheckContactTypeAny),
+	string(ServiceOwnershipCheckContactTypeSlack),
+	string(ServiceOwnershipCheckContactTypeSlackHandle),
+	string(ServiceOwnershipCheckContactTypeEmail),
+	string(ServiceOwnershipCheckContactTypeWeb),
 }
 
 // CustomActionsEntityTypeEnum
@@ -346,11 +316,9 @@ const (
 )
 
 // All CustomActionsEntityTypeEnum as []string
-func AllCustomActionsEntityTypeEnum() []string {
-	return []string{
-		string(CustomActionsEntityTypeEnumGlobal),
-		string(CustomActionsEntityTypeEnumService),
-	}
+var AllCustomActionsEntityTypeEnum = []string{
+	string(CustomActionsEntityTypeEnumGlobal),
+	string(CustomActionsEntityTypeEnumService),
 }
 
 // CustomActionsHttpMethodEnum An HTTP request method
@@ -365,14 +333,12 @@ const (
 )
 
 // All CustomActionsHttpMethodEnum as []string
-func AllCustomActionsHttpMethodEnum() []string {
-	return []string{
-		string(CustomActionsHttpMethodEnumDelete),
-		string(CustomActionsHttpMethodEnumGet),
-		string(CustomActionsHttpMethodEnumPatch),
-		string(CustomActionsHttpMethodEnumPost),
-		string(CustomActionsHttpMethodEnumPut),
-	}
+var AllCustomActionsHttpMethodEnum = []string{
+	string(CustomActionsHttpMethodEnumDelete),
+	string(CustomActionsHttpMethodEnumGet),
+	string(CustomActionsHttpMethodEnumPatch),
+	string(CustomActionsHttpMethodEnumPost),
+	string(CustomActionsHttpMethodEnumPut),
 }
 
 // CustomActionsTriggerDefinitionAccessControlEnum Who can see and use the trigger definition
@@ -385,12 +351,10 @@ const (
 )
 
 // All CustomActionsTriggerDefinitionAccessControlEnum as []string
-func AllCustomActionsTriggerDefinitionAccessControlEnum() []string {
-	return []string{
-		string(CustomActionsTriggerDefinitionAccessControlEnumAdmins),
-		string(CustomActionsTriggerDefinitionAccessControlEnumEveryone),
-		string(CustomActionsTriggerDefinitionAccessControlEnumServiceOwners),
-	}
+var AllCustomActionsTriggerDefinitionAccessControlEnum = []string{
+	string(CustomActionsTriggerDefinitionAccessControlEnumAdmins),
+	string(CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+	string(CustomActionsTriggerDefinitionAccessControlEnumServiceOwners),
 }
 
 // CustomActionsTriggerEventStatusEnum
@@ -403,12 +367,10 @@ const (
 )
 
 // All CustomActionsTriggerEventStatusEnum as []string
-func AllCustomActionsTriggerEventStatusEnum() []string {
-	return []string{
-		string(CustomActionsTriggerEventStatusEnumFailure),
-		string(CustomActionsTriggerEventStatusEnumPending),
-		string(CustomActionsTriggerEventStatusEnumSuccess),
-	}
+var AllCustomActionsTriggerEventStatusEnum = []string{
+	string(CustomActionsTriggerEventStatusEnumFailure),
+	string(CustomActionsTriggerEventStatusEnumPending),
+	string(CustomActionsTriggerEventStatusEnumSuccess),
 }
 
 // FrequencyTimeScale represents the time scale type for the frequency.
@@ -422,13 +384,11 @@ const (
 )
 
 // All FrequencyTimeScale as []string
-func AllFrequencyTimeScale() []string {
-	return []string{
-		string(FrequencyTimeScaleDay),
-		string(FrequencyTimeScaleMonth),
-		string(FrequencyTimeScaleWeek),
-		string(FrequencyTimeScaleYear),
-	}
+var AllFrequencyTimeScale = []string{
+	string(FrequencyTimeScaleDay),
+	string(FrequencyTimeScaleMonth),
+	string(FrequencyTimeScaleWeek),
+	string(FrequencyTimeScaleYear),
 }
 
 // HasDocumentationSubtypeEnum represents the subtype of the document.
@@ -439,10 +399,8 @@ const (
 )
 
 // All HasDocumentationSubtypeEnum as []string
-func AllHasDocumentationSubtypeEnum() []string {
-	return []string{
-		string(HasDocumentationSubtypeEnumOpenapi),
-	}
+var AllHasDocumentationSubtypeEnum = []string{
+	string(HasDocumentationSubtypeEnumOpenapi),
 }
 
 // HasDocumentationTypeEnum represents the type of the document.
@@ -454,11 +412,9 @@ const (
 )
 
 // All HasDocumentationTypeEnum as []string
-func AllHasDocumentationTypeEnum() []string {
-	return []string{
-		string(HasDocumentationTypeEnumAPI),
-		string(HasDocumentationTypeEnumTech),
-	}
+var AllHasDocumentationTypeEnum = []string{
+	string(HasDocumentationTypeEnumAPI),
+	string(HasDocumentationTypeEnumTech),
 }
 
 // PayloadSortEnum
@@ -472,13 +428,11 @@ const (
 )
 
 // All PayloadSortEnum as []string
-func AllPayloadSortEnum() []string {
-	return []string{
-		string(PayloadSortEnumCreatedAtAsc),
-		string(PayloadSortEnumCreatedAtDesc),
-		string(PayloadSortEnumProcessedAtAsc),
-		string(PayloadSortEnumProcessedAtDesc),
-	}
+var AllPayloadSortEnum = []string{
+	string(PayloadSortEnumCreatedAtAsc),
+	string(PayloadSortEnumCreatedAtDesc),
+	string(PayloadSortEnumProcessedAtAsc),
+	string(PayloadSortEnumProcessedAtDesc),
 }
 
 // PredicateKeyEnum represents fields that can be used as part of filter for services.
@@ -498,19 +452,17 @@ const (
 )
 
 // All PredicateKeyEnum as []string
-func AllPredicateKeyEnum() []string {
-	return []string{
-		string(PredicateKeyEnumCreationSource),
-		string(PredicateKeyEnumFramework),
-		string(PredicateKeyEnumGroupIDs),
-		string(PredicateKeyEnumLanguage),
-		string(PredicateKeyEnumLifecycleIndex),
-		string(PredicateKeyEnumName),
-		string(PredicateKeyEnumOwnerID),
-		string(PredicateKeyEnumProduct),
-		string(PredicateKeyEnumTags),
-		string(PredicateKeyEnumTierIndex),
-	}
+var AllPredicateKeyEnum = []string{
+	string(PredicateKeyEnumCreationSource),
+	string(PredicateKeyEnumFramework),
+	string(PredicateKeyEnumGroupIDs),
+	string(PredicateKeyEnumLanguage),
+	string(PredicateKeyEnumLifecycleIndex),
+	string(PredicateKeyEnumName),
+	string(PredicateKeyEnumOwnerID),
+	string(PredicateKeyEnumProduct),
+	string(PredicateKeyEnumTags),
+	string(PredicateKeyEnumTierIndex),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
@@ -534,23 +486,21 @@ const (
 )
 
 // All PredicateTypeEnum as []string
-func AllPredicateTypeEnum() []string {
-	return []string{
-		string(PredicateTypeEnumBelongsTo),
-		string(PredicateTypeEnumContains),
-		string(PredicateTypeEnumDoesNotContain),
-		string(PredicateTypeEnumDoesNotEqual),
-		string(PredicateTypeEnumDoesNotExist),
-		string(PredicateTypeEnumEndsWith),
-		string(PredicateTypeEnumEquals),
-		string(PredicateTypeEnumExists),
-		string(PredicateTypeEnumGreaterThanOrEqualTo),
-		string(PredicateTypeEnumLessThanOrEqualTo),
-		string(PredicateTypeEnumMatchesRegex),
-		string(PredicateTypeEnumSatisfiesJqExpression),
-		string(PredicateTypeEnumSatisfiesVersionConstraint),
-		string(PredicateTypeEnumStartsWith),
-	}
+var AllPredicateTypeEnum = []string{
+	string(PredicateTypeEnumBelongsTo),
+	string(PredicateTypeEnumContains),
+	string(PredicateTypeEnumDoesNotContain),
+	string(PredicateTypeEnumDoesNotEqual),
+	string(PredicateTypeEnumDoesNotExist),
+	string(PredicateTypeEnumEndsWith),
+	string(PredicateTypeEnumEquals),
+	string(PredicateTypeEnumExists),
+	string(PredicateTypeEnumGreaterThanOrEqualTo),
+	string(PredicateTypeEnumLessThanOrEqualTo),
+	string(PredicateTypeEnumMatchesRegex),
+	string(PredicateTypeEnumSatisfiesJqExpression),
+	string(PredicateTypeEnumSatisfiesVersionConstraint),
+	string(PredicateTypeEnumStartsWith),
 }
 
 // RepositoryVisibilityEnum
@@ -563,12 +513,10 @@ const (
 )
 
 // All RepositoryVisibilityEnum as []string
-func AllRepositoryVisibilityEnum() []string {
-	return []string{
-		string(RepositoryVisibilityEnumInternal),
-		string(RepositoryVisibilityEnumPrivate),
-		string(RepositoryVisibilityEnumPublic),
-	}
+var AllRepositoryVisibilityEnum = []string{
+	string(RepositoryVisibilityEnumInternal),
+	string(RepositoryVisibilityEnumPrivate),
+	string(RepositoryVisibilityEnumPublic),
 }
 
 // ResourceDocumentStatusTypeEnum
@@ -581,12 +529,10 @@ const (
 )
 
 // All ResourceDocumentStatusTypeEnum as []string
-func AllResourceDocumentStatusTypeEnum() []string {
-	return []string{
-		string(ResourceDocumentStatusTypeEnumHidden),
-		string(ResourceDocumentStatusTypeEnumPinned),
-		string(ResourceDocumentStatusTypeEnumVisible),
-	}
+var AllResourceDocumentStatusTypeEnum = []string{
+	string(ResourceDocumentStatusTypeEnumHidden),
+	string(ResourceDocumentStatusTypeEnumPinned),
+	string(ResourceDocumentStatusTypeEnumVisible),
 }
 
 // ServicePropertyTypeEnum represents properties of services that can be validated.
@@ -604,17 +550,15 @@ const (
 )
 
 // All ServicePropertyTypeEnum as []string
-func AllServicePropertyTypeEnum() []string {
-	return []string{
-		string(ServicePropertyTypeEnumDescription),
-		string(ServicePropertyTypeEnumFramework),
-		string(ServicePropertyTypeEnumLanguage),
-		string(ServicePropertyTypeEnumLifecycleIndex),
-		string(ServicePropertyTypeEnumName),
-		string(ServicePropertyTypeEnumNote),
-		string(ServicePropertyTypeEnumProduct),
-		string(ServicePropertyTypeEnumTierIndex),
-	}
+var AllServicePropertyTypeEnum = []string{
+	string(ServicePropertyTypeEnumDescription),
+	string(ServicePropertyTypeEnumFramework),
+	string(ServicePropertyTypeEnumLanguage),
+	string(ServicePropertyTypeEnumLifecycleIndex),
+	string(ServicePropertyTypeEnumName),
+	string(ServicePropertyTypeEnumNote),
+	string(ServicePropertyTypeEnumProduct),
+	string(ServicePropertyTypeEnumTierIndex),
 }
 
 // ServiceSortEnum
@@ -644,29 +588,27 @@ const (
 )
 
 // All ServiceSortEnum as []string
-func AllServiceSortEnum() []string {
-	return []string{
-		string(ServiceSortEnumAlertStatusAsc),
-		string(ServiceSortEnumAlertStatusDesc),
-		string(ServiceSortEnumChecksPassingAsc),
-		string(ServiceSortEnumChecksPassingDesc),
-		string(ServiceSortEnumLastDeployAsc),
-		string(ServiceSortEnumLastDeployDesc),
-		string(ServiceSortEnumLevelIndexAsc),
-		string(ServiceSortEnumLevelIndexDesc),
-		string(ServiceSortEnumLifecycleAsc),
-		string(ServiceSortEnumLifecycleDesc),
-		string(ServiceSortEnumNameAsc),
-		string(ServiceSortEnumNameDesc),
-		string(ServiceSortEnumOwnerAsc),
-		string(ServiceSortEnumOwnerDesc),
-		string(ServiceSortEnumProductAsc),
-		string(ServiceSortEnumProductDesc),
-		string(ServiceSortEnumServiceStatAsc),
-		string(ServiceSortEnumServiceStatDesc),
-		string(ServiceSortEnumTierAsc),
-		string(ServiceSortEnumTierDesc),
-	}
+var AllServiceSortEnum = []string{
+	string(ServiceSortEnumAlertStatusAsc),
+	string(ServiceSortEnumAlertStatusDesc),
+	string(ServiceSortEnumChecksPassingAsc),
+	string(ServiceSortEnumChecksPassingDesc),
+	string(ServiceSortEnumLastDeployAsc),
+	string(ServiceSortEnumLastDeployDesc),
+	string(ServiceSortEnumLevelIndexAsc),
+	string(ServiceSortEnumLevelIndexDesc),
+	string(ServiceSortEnumLifecycleAsc),
+	string(ServiceSortEnumLifecycleDesc),
+	string(ServiceSortEnumNameAsc),
+	string(ServiceSortEnumNameDesc),
+	string(ServiceSortEnumOwnerAsc),
+	string(ServiceSortEnumOwnerDesc),
+	string(ServiceSortEnumProductAsc),
+	string(ServiceSortEnumProductDesc),
+	string(ServiceSortEnumServiceStatAsc),
+	string(ServiceSortEnumServiceStatDesc),
+	string(ServiceSortEnumTierAsc),
+	string(ServiceSortEnumTierDesc),
 }
 
 // TaggableResource represents possible types to apply tags to.
@@ -679,12 +621,10 @@ const (
 )
 
 // All TaggableResource as []string
-func AllTaggableResource() []string {
-	return []string{
-		string(TaggableResourceRepository),
-		string(TaggableResourceService),
-		string(TaggableResourceTeam),
-	}
+var AllTaggableResource = []string{
+	string(TaggableResourceRepository),
+	string(TaggableResourceService),
+	string(TaggableResourceTeam),
 }
 
 // ToolCategory represents the specific categories that a tool can belong to.
@@ -714,29 +654,27 @@ const (
 )
 
 // All ToolCategory as []string
-func AllToolCategory() []string {
-	return []string{
-		string(ToolCategoryAdmin),
-		string(ToolCategoryAPIDocumentation),
-		string(ToolCategoryBacklog),
-		string(ToolCategoryCode),
-		string(ToolCategoryContinuousIntegration),
-		string(ToolCategoryDeployment),
-		string(ToolCategoryErrors),
-		string(ToolCategoryFeatureFlag),
-		string(ToolCategoryHealthChecks),
-		string(ToolCategoryIncidents),
-		string(ToolCategoryIssueTracking),
-		string(ToolCategoryLogs),
-		string(ToolCategoryMetrics),
-		string(ToolCategoryOrchestrator),
-		string(ToolCategoryOther),
-		string(ToolCategoryResiliency),
-		string(ToolCategoryRunbooks),
-		string(ToolCategorySecurityScans),
-		string(ToolCategoryStatusPage),
-		string(ToolCategoryWiki),
-	}
+var AllToolCategory = []string{
+	string(ToolCategoryAdmin),
+	string(ToolCategoryAPIDocumentation),
+	string(ToolCategoryBacklog),
+	string(ToolCategoryCode),
+	string(ToolCategoryContinuousIntegration),
+	string(ToolCategoryDeployment),
+	string(ToolCategoryErrors),
+	string(ToolCategoryFeatureFlag),
+	string(ToolCategoryHealthChecks),
+	string(ToolCategoryIncidents),
+	string(ToolCategoryIssueTracking),
+	string(ToolCategoryLogs),
+	string(ToolCategoryMetrics),
+	string(ToolCategoryOrchestrator),
+	string(ToolCategoryOther),
+	string(ToolCategoryResiliency),
+	string(ToolCategoryRunbooks),
+	string(ToolCategorySecurityScans),
+	string(ToolCategoryStatusPage),
+	string(ToolCategoryWiki),
 }
 
 // UserRole represents a role that can be assigned to a user.
@@ -748,9 +686,7 @@ const (
 )
 
 // All UserRole as []string
-func AllUserRole() []string {
-	return []string{
-		string(UserRoleAdmin),
-		string(UserRoleUser),
-	}
+var AllUserRole = []string{
+	string(UserRoleAdmin),
+	string(UserRoleUser),
 }
