@@ -109,7 +109,7 @@ func (self *Team) Hydrate(client *Client) error {
 	if self.Members.PageInfo.HasNextPage {
 		variables := &PayloadVariables{}
 		(*variables)["after"] = self.Members.PageInfo.End
-		_, err := self.GetTags(client, variables)
+		_, err := self.GetMembers(client, variables)
 		if err != nil {
 			return err
 		}
