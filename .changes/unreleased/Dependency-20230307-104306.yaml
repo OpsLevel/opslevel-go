@@ -1,0 +1,4 @@
+kind: "Dependency"
+body: "Bump github.com/hasura/go-graphql-client from 0.9.0 to 0.9.1"
+time: 2023-03-07T10:43:06.00000Z
+
