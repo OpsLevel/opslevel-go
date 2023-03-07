@@ -3,8 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"html"
-
-	"github.com/hasura/go-graphql-client"
 )
 
 type Contact struct {
@@ -52,7 +50,7 @@ type Team struct {
 	Group            GroupId
 	HTMLUrl          string
 	Manager          User
-	Members          UserConnection
+	Members          *UserConnection
 	Name             string
 	Responsibilities string
 	Tags             *TagConnection
@@ -102,35 +100,19 @@ type TeamMembershipDeleteInput struct {
 
 //#region Helpers
 
-func (conn *UserConnection) Hydrate(id ID, client *Client) error {
-	var q struct {
-		Account struct {
-			Team struct {
-				Members UserConnection `graphql:"members(after: $after, first: $first)"`
-			} `graphql:"team(id: $id)"`
-		}
-	}
-	v := PayloadVariables{
-		"id":    id,
-		"first": client.pageSize,
-	}
-	q.Account.Team.Members.PageInfo = conn.PageInfo
-	for q.Account.Team.Members.PageInfo.HasNextPage {
-		v["after"] = q.Account.Team.Members.PageInfo.End
-		if err := client.Query(&q, v, WithName("TeamMembersList")); err != nil {
-			return err
-		}
-		for _, item := range q.Account.Team.Members.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
-	}
-	return nil
-}
-
 func (self *Team) Hydrate(client *Client) error {
 	self.Responsibilities = html.UnescapeString(self.Responsibilities)
-	if err := self.Members.Hydrate(self.Id, client); err != nil {
-		return err
+
+	if self.Members == nil {
+		self.Members = &UserConnection{}
+	}
+	if self.Members.PageInfo.HasNextPage {
+		variables := &PayloadVariables{}
+		(*variables)["after"] = self.Members.PageInfo.End
+		_, err := self.GetMembers(client, variables)
+		if err != nil {
+			return err
+		}
 	}
 
 	if self.Tags == nil {
@@ -145,6 +127,41 @@ func (self *Team) Hydrate(client *Client) error {
 		}
 	}
 	return nil
+}
+
+func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*UserConnection, error) {
+	var q struct {
+		Account struct {
+			Team struct {
+				Members UserConnection `graphql:"members(after: $after, first: $first)"`
+			} `graphql:"team(id: $team)"`
+		}
+	}
+	if t.Id == "" {
+		return nil, fmt.Errorf("Unable to get Members, invalid team id: '%s'", t.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["team"] = t.Id
+	if err := client.Query(&q, *variables, WithName("TeamMembersList")); err != nil {
+		return nil, err
+	}
+	if t.Members == nil {
+		members := UserConnection{}
+		t.Members = &members
+	}
+	t.Members.Nodes = append(t.Members.Nodes, q.Account.Team.Members.Nodes...)
+	t.Members.PageInfo = q.Account.Team.Members.PageInfo
+	t.Members.TotalCount += q.Account.Team.Members.TotalCount
+	for t.Members.PageInfo.HasNextPage {
+		(*variables)["after"] = t.Members.PageInfo.End
+		_, err := t.GetMembers(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return t.Members, nil
 }
 
 func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -302,7 +319,7 @@ func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 		}
 	}
 	v := PayloadVariables{
-		"alias": graphql.String(alias),
+		"alias": alias,
 	}
 	if err := client.Query(&q, v, WithName("TeamGet")); err != nil {
 		return nil, err
@@ -368,7 +385,12 @@ func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, er
 		if err != nil {
 			return TeamConnection{}, err
 		}
-		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return TeamConnection{}, err
+			}
+			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
+		}
 		q.Account.Teams.PageInfo = resp.PageInfo
 		q.Account.Teams.TotalCount += resp.TotalCount
 	}
@@ -396,7 +418,12 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 		if err != nil {
 			return TeamConnection{}, err
 		}
-		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return TeamConnection{}, err
+			}
+			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
+		}
 		q.Account.Teams.PageInfo = resp.PageInfo
 		q.Account.Teams.TotalCount += resp.TotalCount
 	}
@@ -458,7 +485,7 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
-			Alias  graphql.String   `graphql:"deletedTeamAlias"`
+			Alias  string           `graphql:"deletedTeamAlias"`
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"teamDelete(input: $input)"`
 	}
@@ -480,7 +507,7 @@ func (client *Client) DeleteTeam(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
-			Alias  graphql.String   `graphql:"deletedTeamAlias"`
+			Alias  string           `graphql:"deletedTeamAlias"`
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"teamDelete(input: $input)"`
 	}

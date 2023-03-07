@@ -54,6 +54,129 @@ func TestGetTeam(t *testing.T) {
 	autopilot.Equals(t, 3, result.Tags.TotalCount)
 }
 
+func TestTeamMembers(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "first_page_variables" }},
+                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
+			`{
+                "data": {
+                    "account": {
+                        "team": {
+                            "members": {
+                                "nodes": [
+									{{ template "user_1"}},
+									{{ template "user_2"}}
+                                ],
+                                {{ template "pagination_initial_pageInfo_response" }},
+                                "totalCount": 2
+                            }
+                          }}}}`},
+		{`{"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "second_page_variables" }},
+                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
+			`{
+                "data": {
+                    "account": {
+                        "team": {
+                            "members": {
+                                "nodes": [
+									{{ template "user_3"}}
+                                ],
+                                {{ template "pagination_second_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
+	}
+	client := APaginatedTestClient(t, "team/members", requests...)
+	// Act
+	team := ol.Team{
+		TeamId: ol.TeamId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	resp, err := team.GetMembers(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "kyle@opslevel.com", result[0].Email)
+	autopilot.Equals(t, "Matthew Brahms", result[2].Name)
+}
+
+func TestTeamTags(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "first_page_variables" }},
+                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
+			`{
+                "data": {
+                    "account": {
+                        "team": {
+                            "tags": {
+                                "nodes": [
+                                    {
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5",
+                                      "key": "prod",
+                                      "value": "false"
+                                    }
+                                ],
+                                {{ template "pagination_initial_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
+		{`{"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "second_page_variables" }},
+                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
+            }
+            }`,
+			`{
+                "data": {
+                    "account": {
+                        "team": {
+                            "tags": {
+                                "nodes": [
+                                    {
+                                      "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4",
+                                      "key": "test",
+                                      "value": "true"
+                                    }
+                                ],
+                                {{ template "pagination_second_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
+	}
+	client := APaginatedTestClient(t, "team/tags", requests...)
+	// Act
+	team := ol.Team{
+		TeamId: ol.TeamId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	resp, err := team.GetTags(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "prod", result[0].Key)
+	autopilot.Equals(t, "false", result[0].Value)
+	autopilot.Equals(t, "test", result[1].Key)
+	autopilot.Equals(t, "true", result[1].Value)
+}
+
 func TestGetTeamWithAlias(t *testing.T) {
 	// Arrange
 	client := getWithAliasTestClient(t)
