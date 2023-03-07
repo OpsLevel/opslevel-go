@@ -101,8 +101,28 @@ func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {
 
 func TestClientQuery(t *testing.T) {
 	// Arrange
-	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/account", autopilot.FixtureResponse("account_response.json"), autopilot.GraphQLQueryValidation(t, "{account{id}}"))
-	client := ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
+	headers := map[string]string{"x": "x"}
+	request := `{
+    "query": "{account{id}}",
+	"variables":{}
+}`
+	response := `{"data": {
+	"account": {
+		"id": "1234"
+	}
+}}`
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/account",
+		TemplatedResponse(response),
+		GraphQLQueryTemplatedValidation(t, request))
+	client := ol.NewGQLClient(
+		ol.SetAPIToken("x"),
+		ol.SetMaxRetries(0),
+		ol.SetURL(url),
+		ol.SetHeaders(headers),
+		ol.SetUserAgentExtra("x"),
+		ol.SetTimeout(0),
+		ol.SetAPIVisibility("internal"),
+		ol.SetPageSize(100))
 	var q struct {
 		Account struct {
 			Id ol.ID
