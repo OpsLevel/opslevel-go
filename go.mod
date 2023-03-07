@@ -6,7 +6,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.13.1
 	github.com/hashicorp/go-retryablehttp v0.7.2
-	github.com/hasura/go-graphql-client v0.9.0
+	github.com/hasura/go-graphql-client v0.9.1
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2022 v2022.11.9
 	github.com/rs/zerolog v1.29.0
@@ -30,7 +30,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
+	golang.org/x/crypto v0.0.0-20220314234659-1baeb1ce4c0b // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
