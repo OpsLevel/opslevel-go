@@ -2,7 +2,7 @@ package opslevel
 
 import (
 	"errors"
-	"github.com/hasura/go-graphql-client"
+	"fmt"
 )
 
 type MemberInput struct {
@@ -50,10 +50,11 @@ func NewUserIdentifier(value string) UserIdentifierInput {
 	}
 }
 
-func (u *User) Teams(client *Client) ([]Team, error) {
+func (u *User) Teams(client *Client, variables *PayloadVariables) ([]Team, error) { // not sure what to refactor []Team to?  a pointer to something new?
 	var q struct {
 		Account struct {
 			User struct {
+				// can I collapse this to something flat like Members in Edgar's example?  where is that created/derived from?
 				Teams struct {
 					Nodes    []Team
 					PageInfo PageInfo
@@ -62,13 +63,27 @@ func (u *User) Teams(client *Client) ([]Team, error) {
 		}
 	}
 	if u.Id == "" {
-		return nil, errors.New("unable to get teams, nil user id")
+		return nil, fmt.Errorf("unable to get teams, nil user id")  // do I need to have a u.ID here for the error to return?
 	}
-	v := PayloadVariables{
-		"user":  u.Id,
-		"first": client.pageSize,
-		"after": graphql.String(""),
+
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
+	(*variables)[""] = u.Id // what goes in the "" here?
+	if err := client.Query(&q, *variables, WithName("")); err != nil { // what goes in "" here and how is it derived?
+		return nil, err
+	}
+	if t.ID == nil {
+		team :=  // whatever we turn the []Team into from line 53 goes here
+		t.ID = &team
+	}
+	// pausing here to hand-off to Kyle
+	//v := PayloadVariables{
+	//	"user":  u.Id,
+	//	"first": client.pageSize,
+	//	"after": "",
+	//}
+
 	var output []Team
 	if err := client.Query(&q, v); err != nil {
 		return output, err
