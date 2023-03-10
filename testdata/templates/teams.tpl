@@ -1,3 +1,24 @@
+{{- define "teamId_1" }}
+{
+"alias": "{{ template "alias1" }}",
+"id": "{{ template "id1" }}"
+}
+{{ end }}
+{{- define "teamId_2" }}
+{
+"alias": "{{ template "alias2" }}",
+"id": "{{ template "id2" }}"
+}
+{{ end }}
+{{- define "teamId_3" }}
+{
+"alias": "{{ template "alias3" }}",
+"id": "{{ template "id3" }}"
+}
+{{ end }}
+
+
+
 {{- define "team_1" }}
 {
 "alias": "{{ template "alias1" }}",

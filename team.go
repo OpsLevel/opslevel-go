@@ -56,6 +56,13 @@ type Team struct {
 	Tags             *TagConnection
 }
 
+// Had to create this to prevent circular references on User because Team has UserConnection
+type TeamIdConnection struct {
+	Nodes      []TeamId
+	PageInfo   PageInfo
+	TotalCount int
+}
+
 type TeamConnection struct {
 	Nodes      []Team
 	PageInfo   PageInfo

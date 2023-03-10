@@ -1,8 +1,8 @@
 package opslevel
 
 import (
-	"errors"
 	"fmt"
+	"github.com/hasura/go-graphql-client"
 )
 
 type MemberInput struct {
@@ -19,6 +19,8 @@ type User struct {
 	HTMLUrl string
 	Name    string
 	Role    UserRole
+	// We cannot have this here because its breaks a TON of queries
+	//Teams   *TeamIdConnection
 }
 
 type UserConnection struct {
@@ -28,8 +30,8 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    ID             `graphql:"id" json:"id,omitempty"`
-	Email graphql.String `graphql:"email" json:"email,omitempty"`
+	Id    ID     `graphql:"id" json:"id,omitempty"`
+	Email string `graphql:"email" json:"email,omitempty"`
 }
 
 type UserInput struct {
@@ -46,57 +48,39 @@ func NewUserIdentifier(value string) UserIdentifierInput {
 		}
 	}
 	return UserIdentifierInput{
-		Email: graphql.String(value),
+		Email: value,
 	}
 }
 
-func (u *User) Teams(client *Client, variables *PayloadVariables) ([]Team, error) { // not sure what to refactor []Team to?  a pointer to something new?
+func (u *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
 	var q struct {
 		Account struct {
 			User struct {
-				// can I collapse this to something flat like Members in Edgar's example?  where is that created/derived from?
-				Teams struct {
-					Nodes    []Team
-					PageInfo PageInfo
-				} `graphql:"teams(after: $after, first: $first)"`
+				Teams TeamIdConnection `graphql:"teams(after: $after, first: $first)"`
 			} `graphql:"user(id: $user)"`
 		}
 	}
 	if u.Id == "" {
-		return nil, fmt.Errorf("unable to get teams, nil user id")  // do I need to have a u.ID here for the error to return?
+		return nil, fmt.Errorf("unable to get teams, nil user id")
 	}
-
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)[""] = u.Id // what goes in the "" here?
-	if err := client.Query(&q, *variables, WithName("")); err != nil { // what goes in "" here and how is it derived?
+	(*variables)["user"] = u.Id
+	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil { // what goes in "" here and how is it derived?
 		return nil, err
 	}
-	if t.ID == nil {
-		team :=  // whatever we turn the []Team into from line 53 goes here
-		t.ID = &team
-	}
-	// pausing here to hand-off to Kyle
-	//v := PayloadVariables{
-	//	"user":  u.Id,
-	//	"first": client.pageSize,
-	//	"after": "",
-	//}
-
-	var output []Team
-	if err := client.Query(&q, v); err != nil {
-		return output, err
-	}
-	output = append(output, q.Account.User.Teams.Nodes...)
 	for q.Account.User.Teams.PageInfo.HasNextPage {
-		v["after"] = q.Account.User.Teams.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return output, err
+		(*variables)["after"] = q.Account.User.Teams.PageInfo.End
+		conn, err := u.Teams(client, variables)
+		if err != nil {
+			return nil, err
 		}
-		output = append(output, q.Account.User.Teams.Nodes...)
+		q.Account.User.Teams.Nodes = append(q.Account.User.Teams.Nodes, conn.Nodes...)
+		q.Account.User.Teams.PageInfo = conn.PageInfo
+		q.Account.User.Teams.TotalCount += conn.TotalCount
 	}
-	return output, nil
+	return &q.Account.User.Teams, nil
 }
 
 //#endregion
@@ -148,7 +132,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, er
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
 		return UserConnection{}, err
 	}
-	//output = append(output, q.Account.Users.Nodes...)
+
 	for q.Account.Users.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Users.PageInfo.End
 		resp, err := client.ListUsers(variables)

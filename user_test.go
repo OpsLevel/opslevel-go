@@ -57,6 +57,63 @@ func TestGetUser(t *testing.T) {
 	autopilot.Equals(t, ol.UserRoleUser, result.Role)
 }
 
+func TestGetUserTeams(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "first_page_variables" }},
+                "user": "{{ template "id1"}}"
+            }
+            }`,
+			`{
+                "data": {
+                    "account": {
+                        "user": {
+                            "teams": {
+                                "nodes": [
+									{{ template "teamId_1"}},
+									{{ template "teamId_2"}}
+                                ],
+                                {{ template "pagination_initial_pageInfo_response" }},
+                                "totalCount": 2
+                            }
+                          }}}}`},
+		{`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "second_page_variables" }},
+                "user": "{{ template "id1"}}"
+            }
+            }`,
+			`{
+                "data": {
+                    "account": {
+                        "user": {
+                            "teams": {
+                                "nodes": [
+									{{ template "teamId_3"}}
+                                ],
+                                {{ template "pagination_second_pageInfo_response" }},
+                                "totalCount": 1
+                            }
+                          }}}}`},
+	}
+	client := APaginatedTestClient(t, "user/teams", requests...)
+	// Act
+	user := ol.User{
+		UserId: ol.UserId{
+			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		},
+	}
+	resp, err := user.Teams(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "example", result[0].Alias)
+	autopilot.Equals(t, "example_3", result[2].Alias)
+}
+
 func TestListUser(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
