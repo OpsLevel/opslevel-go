@@ -1,11 +1,11 @@
 package opslevel
 
 type Lifecycle struct {
-	Alias       string
-	Description string
-	Id          ID
-	Index       int
-	Name        string
+	Alias       string `json:"alias"`
+	Description string `json:"description"`
+	Id          ID     `json:"id"`
+	Index       int    `json:"index"`
+	Name        string `json:"name"`
 }
 
 func (client *Client) ListLifecycles() ([]Lifecycle, error) {
