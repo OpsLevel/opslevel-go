@@ -372,7 +372,7 @@ func (client *Client) GetTeamCount() (int, error) {
 	return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
 }
 
-func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, error) {
+func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
 			Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
@@ -383,28 +383,28 @@ func (client *Client) ListTeams(variables *PayloadVariables) (TeamConnection, er
 	}
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-		return TeamConnection{}, err
+		return &TeamConnection{}, err
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeams(variables)
 		if err != nil {
-			return TeamConnection{}, err
+			return &TeamConnection{}, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return TeamConnection{}, err
+				return &TeamConnection{}, err
 			}
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
 		q.Account.Teams.PageInfo = resp.PageInfo
 		q.Account.Teams.TotalCount += resp.TotalCount
 	}
-	return q.Account.Teams, nil
+	return &q.Account.Teams, nil
 }
 
-func (client *Client) ListTeamsWithManager(email string, variables *PayloadVariables) (TeamConnection, error) {
+func (client *Client) ListTeamsWithManager(email string, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
 			Teams TeamConnection `graphql:"teams(managerEmail: $email, after: $after, first: $first)"`
@@ -416,25 +416,25 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	(*variables)["email"] = email
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-		return TeamConnection{}, err
+		return &TeamConnection{}, err
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeamsWithManager(email, variables)
 		if err != nil {
-			return TeamConnection{}, err
+			return &TeamConnection{}, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return TeamConnection{}, err
+				return &TeamConnection{}, err
 			}
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
 		q.Account.Teams.PageInfo = resp.PageInfo
 		q.Account.Teams.TotalCount += resp.TotalCount
 	}
-	return q.Account.Teams, nil
+	return &q.Account.Teams, nil
 }
 
 //#endregion

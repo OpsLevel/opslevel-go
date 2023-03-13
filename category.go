@@ -70,7 +70,7 @@ func (client *Client) GetCategory(id ID) (*Category, error) {
 	return &q.Account.Category, HandleErrors(err, nil)
 }
 
-func (client *Client) ListCategories(variables *PayloadVariables) (CategoryConnection, error) {
+func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConnection, error) {
 	var q struct {
 		Account struct {
 			Rubric struct {
@@ -82,19 +82,19 @@ func (client *Client) ListCategories(variables *PayloadVariables) (CategoryConne
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("CategoryList")); err != nil {
-		return CategoryConnection{}, err
+		return &CategoryConnection{}, err
 	}
 	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Rubric.Categories.PageInfo.End
 		resp, err := client.ListCategories(variables)
 		if err != nil {
-			return CategoryConnection{}, err
+			return &CategoryConnection{}, err
 		}
 		q.Account.Rubric.Categories.Nodes = append(q.Account.Rubric.Categories.Nodes, resp.Nodes...)
 		q.Account.Rubric.Categories.PageInfo = resp.PageInfo
 		q.Account.Rubric.Categories.TotalCount += resp.TotalCount
 	}
-	return q.Account.Rubric.Categories, nil
+	return &q.Account.Rubric.Categories, nil
 }
 
 //#endregion
