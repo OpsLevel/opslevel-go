@@ -128,10 +128,10 @@ func TestSystemGetTags(t *testing.T) {
 	autopilot.Equals(t, 3, result.TotalCount)
 }
 
-func TestSystemList(t *testing.T) {
+func TestListSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "",
+		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -149,7 +149,7 @@ func TestSystemList(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 						  }}}}`},
-		{`{"query": "",
+		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -173,8 +173,9 @@ func TestSystemList(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, response.TotalCount)
-	autopilot.Equals(t, "My System 2", result[1].Name)
-	autopilot.Equals(t, "My System 3", result[2].Name)
+	autopilot.Equals(t, "PlatformSystem1", result[0].Name)
+	autopilot.Equals(t, "PlatformSystem2", result[1].Name)
+	autopilot.Equals(t, "PlatformSystem3", result[2].Name)
 }
 
 func TestSystemUpdate(t *testing.T) {
