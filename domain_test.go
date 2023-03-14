@@ -131,7 +131,7 @@ func TestDomainGetTags(t *testing.T) {
 func TestDomainList(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "",
+		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -145,7 +145,7 @@ func TestDomainList(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 						  }}}}`},
-		{`{"query": "",
+		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -167,8 +167,9 @@ func TestDomainList(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, response.TotalCount)
-	autopilot.Equals(t, "My Domain 2", result[1].Name)
-	autopilot.Equals(t, "My Domain 3", result[2].Name)
+	autopilot.Equals(t, "PlatformDomain1", result[0].Name)
+	autopilot.Equals(t, "PlatformDomain2", result[1].Name)
+	autopilot.Equals(t, "PlatformDomain3", result[2].Name)
 }
 
 func TestDomainUpdate(t *testing.T) {
