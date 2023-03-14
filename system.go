@@ -45,7 +45,28 @@ func (c *Client) GetSystem(identifier string) (*System, error) {
 }
 
 func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, error) {
-	return &SystemConnection{}, nil
+	var q struct {
+		Account struct {
+			Systems SystemConnection `graphql:"systems(after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = c.InitialPageVariablesPointer()
+	}
+	if err := c.Query(&q, *variables, WithName("SystemsList")); err != nil {
+		return &SystemConnection{}, err
+	}
+	for q.Account.Systems.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Systems.PageInfo.End
+		resp, err := c.ListSystems(variables)
+		if err != nil {
+			return &SystemConnection{}, err
+		}
+		q.Account.Systems.Nodes = append(q.Account.Systems.Nodes, resp.Nodes...)
+		q.Account.Systems.PageInfo = resp.PageInfo
+		q.Account.Systems.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Systems, nil
 }
 
 func (c *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
