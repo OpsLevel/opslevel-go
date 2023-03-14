@@ -1,3 +1,0 @@
-kind: Refactor
-body: Refactor list teams and list groups functions to handle pagination correctly.
-time: 2023-02-10T19:38:27.555633-06:00

@@ -1,3 +1,0 @@
-kind: Refactor
-body: Refactor all enum functions to just be static global variables
-time: 2023-03-07T05:55:55.201849-06:00
