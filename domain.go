@@ -48,7 +48,28 @@ func (c *Client) GetDomain(identifier string) (*Domain, error) {
 }
 
 func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, error) {
-	return &DomainConnection{}, nil
+	var q struct {
+		Account struct {
+			Domains DomainConnection `graphql:"domains(after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = c.InitialPageVariablesPointer()
+	}
+	if err := c.Query(&q, *variables, WithName("DomainsList")); err != nil {
+		return &DomainConnection{}, err
+	}
+	for q.Account.Domains.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Domains.PageInfo.End
+		resp, err := c.ListDomains(variables)
+		if err != nil {
+			return &DomainConnection{}, err
+		}
+		q.Account.Domains.Nodes = append(q.Account.Domains.Nodes, resp.Nodes...)
+		q.Account.Domains.PageInfo = resp.PageInfo
+		q.Account.Domains.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Domains, nil
 }
 
 func (c *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, error) {
