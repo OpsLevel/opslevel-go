@@ -114,7 +114,7 @@ func (self *Team) Hydrate(client *Client) error {
 		self.Members = &UserConnection{}
 	}
 	if self.Members.PageInfo.HasNextPage {
-		variables := &PayloadVariables{}
+		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = self.Members.PageInfo.End
 		_, err := self.GetMembers(client, variables)
 		if err != nil {
@@ -126,7 +126,7 @@ func (self *Team) Hydrate(client *Client) error {
 		self.Tags = &TagConnection{}
 	}
 	if self.Tags.PageInfo.HasNextPage {
-		variables := &PayloadVariables{}
+		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = self.Tags.PageInfo.End
 		_, err := self.GetTags(client, variables)
 		if err != nil {
