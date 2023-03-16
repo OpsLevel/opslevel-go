@@ -194,17 +194,17 @@ func TestDomainUpdate(t *testing.T) {
 func TestDomainDelete(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
+    "query": "mutation DomainDelete($input:IdentifierInput!){domainDelete(resource: $input){errors{message,path}}}",
+	"variables":{"input":{"alias":"platformdomain3"}}
+	}`
 	response := `{"data": {
-
+		"domainDelete": {
+      "errors": []
+    }
 }}`
 	client := ABetterTestClient(t, "domain/delete", request, response)
 	// Act
-	err := client.DeleteDomain("123456789")
+	err := client.DeleteDomain("platformdomain3")
 	// Assert
 	autopilot.Ok(t, err)
 }
