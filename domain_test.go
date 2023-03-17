@@ -166,18 +166,30 @@ func TestDomainTags(t *testing.T) {
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},errors{message,path}}}",
 	"variables":{
-}
+		"domain":{
+			"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+	  	},
+	  	"childSystems": [
+			{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"}
+	  	]
+	}
 }`
 	response := `{"data": {
+		"domainChildAssign": {
+			"domain": {{ template "domain1_response" }}
+		}
 }}`
 	client := ABetterTestClient(t, "domain/assign_system", request, response)
-	domain := ol.DomainId{
-		Id: "",
-	}
 	// Act
-	err := domain.AssignSystem(client, "", "")
+	domain := ol.Domain{
+		DomainId: ol.DomainId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+		},
+	}
+	childSystems := "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"
+	err := domain.AssignSystem(client, childSystems)
 	// Assert
 	autopilot.Ok(t, err)
 }
