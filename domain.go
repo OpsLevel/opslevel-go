@@ -77,5 +77,14 @@ func (c *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, er
 }
 
 func (c *Client) DeleteDomain(identifier string) error {
-	return nil
+	var d struct {
+		Payload struct {
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"domainDelete(resource: $input)"`
+	}
+	v := PayloadVariables{
+		"input": *NewIdentifier(identifier),
+	}
+	err := c.Mutate(&d, v, WithName("DomainDelete"))
+	return HandleErrors(err, d.Payload.Errors)
 }
