@@ -22,7 +22,7 @@ type DomainConnection struct {
 }
 
 type DomainCreateInput struct {
-	Name        string `json:"name,omitempty"`
+	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
 	Owner       *ID    `json:"ownerId,omitempty"`
 	Note        string `json:"note,omitempty"`
