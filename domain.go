@@ -44,7 +44,16 @@ func (c *Client) CreateDomain(input DomainInput) (*Domain, error) {
 }
 
 func (c *Client) GetDomain(identifier string) (*Domain, error) {
-	return &Domain{}, nil
+	var q struct {
+		Account struct {
+			Domain Domain `graphql:"domain(input: $input)"`
+		}
+	}
+	v := PayloadVariables{
+		"input": NewIdentifier(identifier),
+	}
+	err := c.Query(&q, v, WithName("DomainGet"))
+	return &q.Account.Domain, HandleErrors(err, nil)
 }
 
 func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, error) {
