@@ -38,6 +38,67 @@ func TestDomainCreate(t *testing.T) {
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
 }
 
+func TestChildSystems(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"domain": {
+					"id": "123456789"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"childSystems": {
+								"nodes": [
+									{{ template "system1_response" }},
+									{{ template "system2_response" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"domain": {
+					"id": "123456789"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"childSystems": {
+								"nodes": [
+									{{ template "system3_response" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "domain/child_systems", requests...)
+	domain := ol.DomainId{
+		Id: "123456789",
+	}
+	// Act
+	resp, err := domain.ChildSystems(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "PlatformSystem1", result[0].Name)
+	autopilot.Equals(t, "PlatformSystem2", result[1].Name)
+	autopilot.Equals(t, "PlatformSystem3", result[2].Name)
+}
+
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
 	request := `{

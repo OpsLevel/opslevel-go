@@ -1,5 +1,7 @@
 package opslevel
 
+import "fmt"
+
 type EntityOwner struct {
 	GroupId `graphql:"... on Group"`
 	TeamId  `graphql:"... on Team"`
@@ -36,7 +38,37 @@ type DomainUpdateInput struct {
 }
 
 func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
-	return &SystemConnection{}, nil
+	var q struct {
+		Account struct {
+			Domain struct {
+				ChildSystems SystemConnection `graphql:"childSystems(after: $after, first: $first)"`
+			} `graphql:"domain(input: $domain)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Systems, invalid domain id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["domain"] = IdentifierInput{
+		Id: s.Id,
+	}
+
+	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.Domain.ChildSystems.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Domain.ChildSystems.PageInfo.End
+		resp, err := s.ChildSystems(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Domain.ChildSystems.Nodes = append(q.Account.Domain.ChildSystems.Nodes, resp.Nodes...)
+		q.Account.Domain.ChildSystems.PageInfo = resp.PageInfo
+		q.Account.Domain.ChildSystems.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Domain.ChildSystems, nil
 }
 
 func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
