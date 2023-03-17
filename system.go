@@ -37,11 +37,30 @@ func (s *SystemId) AssignService(client *Client, services ...string) error {
 }
 
 func (c *Client) CreateSystem(input SystemInput) (*System, error) {
-	return &System{}, nil
+	var m struct {
+		Payload struct {
+			System System
+			Errors []OpsLevelErrors
+		} `graphql:"systemCreate(input:$input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := c.Mutate(&m, v, WithName("SystemCreate"))
+	return &m.Payload.System, HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) GetSystem(identifier string) (*System, error) {
-	return &System{}, nil
+	var q struct {
+		Account struct {
+			System System `graphql:"system(input: $input)"`
+		}
+	}
+	v := PayloadVariables{
+		"input": NewIdentifier(identifier),
+	}
+	err := c.Query(&q, v, WithName("SystemGet"))
+	return &q.Account.System, HandleErrors(err, nil)
 }
 
 func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, error) {
@@ -70,7 +89,18 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 }
 
 func (c *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
-	return &System{}, nil
+	var s struct {
+		Payload struct {
+			System System
+			Errors []OpsLevelErrors
+		} `graphql:"systemUpdate(system:$system,input:$input)"`
+	}
+	v := PayloadVariables{
+		"system": *NewIdentifier(identifier),
+		"input":  input,
+	}
+	err := c.Mutate(&s, v, WithName("SystemUpdate"))
+	return &s.Payload.System, HandleErrors(err, s.Payload.Errors)
 }
 
 func (c *Client) DeleteSystem(identifier string) error {
