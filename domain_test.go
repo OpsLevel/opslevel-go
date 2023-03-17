@@ -38,7 +38,7 @@ func TestDomainCreate(t *testing.T) {
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
 }
 
-func TestChildSystems(t *testing.T) {
+func TestDomainGetSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
@@ -99,7 +99,7 @@ func TestChildSystems(t *testing.T) {
 	autopilot.Equals(t, "PlatformSystem3", result[2].Name)
 }
 
-func TestDomainTags(t *testing.T) {
+func TestDomainGetTags(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
@@ -237,50 +237,6 @@ func TestDomainGetAlias(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
-}
-
-func TestDomainGetSystems(t *testing.T) {
-	// Arrange
-	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
-	response := `{"data": {
-
-}}`
-	client := ABetterTestClient(t, "domain/get_systems", request, response)
-	domain := ol.DomainId{
-		Id: "",
-	}
-	// Act
-	result, err := domain.ChildSystems(client, nil)
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, result.TotalCount)
-}
-
-func TestDomainGetTags(t *testing.T) {
-	// Arrange
-	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
-	response := `{"data": {
-
-}}`
-	client := ABetterTestClient(t, "domain/get_tags", request, response)
-	domain := ol.DomainId{
-		Id: "",
-	}
-	// Act
-	result, err := domain.Tags(client, nil)
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, result.TotalCount)
 }
 
 func TestDomainList(t *testing.T) {
