@@ -9,20 +9,33 @@ import (
 func TestDomainCreate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation DomainCreate($input:DomainCreateInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},errors{message,path}}}",
 	"variables":{
-
+		"input": {
+			"name": "platform-test",
+			"description": "Domain created for testing.",
+			"ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU",
+			"note": "additional note about platform-test domain"
+		}
     }
 }`
 	response := `{"data": {
-
+		"domainCreate": {
+			"domain": {{ template "domain1_response" }}
+		}
 }}`
 	client := ABetterTestClient(t, "domain/create", request, response)
 	// Act
-	result, err := client.CreateDomain(ol.DomainInput{})
+	input := ol.DomainCreateInput{
+		Name:        "platform-test",
+		Description: "Domain created for testing.",
+		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
+		Note:        "additional note about platform-test domain",
+	}
+	result, err := client.CreateDomain(input)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
 }
 
 func TestDomainAssignSystem(t *testing.T) {
@@ -51,8 +64,9 @@ func TestDomainGetId(t *testing.T) {
 	"variables":{
 		"input": {
 			"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"
-    }
-}}`
+    	}
+	}
+}`
 	response := `{"data": {
 		"account": {
 			"domain": {{ template "domain1_response" }}
@@ -189,7 +203,7 @@ func TestDomainUpdate(t *testing.T) {
 }}`
 	client := ABetterTestClient(t, "domain/update", request, response)
 	// Act
-	result, err := client.UpdateDomain("", ol.DomainInput{})
+	result, err := client.UpdateDomain("", ol.DomainUpdateInput{})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
