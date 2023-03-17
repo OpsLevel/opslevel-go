@@ -106,7 +106,24 @@ func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 }
 
 func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
-	return nil
+	var m struct {
+		Payload struct {
+			Domain Domain
+			Errors []OpsLevelErrors
+		} `graphql:"domainChildAssign(domain:$domain, childSystems:$childSystems)"`
+	}
+	childSystems := []IdentifierInput{}
+	for _, system := range systems {
+		childSystems = append(childSystems, IdentifierInput{Id: ID(system)})
+	}
+	v := PayloadVariables{
+		"domain": IdentifierInput{
+			Id: s.Id,
+		},
+		"childSystems": childSystems,
+	}
+	err := client.Mutate(&m, v, WithName("DomainAssignSystem"))
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) CreateDomain(input DomainCreateInput) (*Domain, error) {
