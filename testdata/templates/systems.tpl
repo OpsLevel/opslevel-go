@@ -1,4 +1,5 @@
 {{- define "system1_response" }}
+{
     "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy",
     "aliases": [
       "platformsystem1"
@@ -10,8 +11,10 @@
       "alias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     }
+}
 {{end}}
 {{- define "system2_response" }}
+{
     "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMz",
     "aliases": [
       "platformsystem2"
@@ -23,8 +26,10 @@
       "alias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     }
+}
 {{end}}
 {{- define "system3_response" }}
+{
     "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzM0",
     "aliases": [
       "platformsystem3"
@@ -36,4 +41,5 @@
       "alias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     }
+}
 {{end}}
