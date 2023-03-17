@@ -200,17 +200,17 @@ func TestSystemUpdate(t *testing.T) {
 func TestSystemDelete(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
-	"variables":{
-
-    }
+    "query": "mutation SystemDelete($input:IdentifierInput!){systemDelete(resource: $input){errors{message,path}}}",
+	"variables":{"input":{"alias":"PlatformSystem3"}}
 }`
 	response := `{"data": {
-
+	"systemDelete": {
+      "errors": []
+    }
 }}`
 	client := ABetterTestClient(t, "system/delete", request, response)
 	// Act
-	err := client.DeleteSystem("123456789")
+	err := client.DeleteSystem("PlatformSystem3")
 	// Assert
 	autopilot.Ok(t, err)
 }
