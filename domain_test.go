@@ -193,20 +193,36 @@ func TestDomainList(t *testing.T) {
 func TestDomainUpdate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation DomainUpdate($domain:IdentifierInput!$input:DomainUpdateInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},errors{message,path}}}",
 	"variables":{
-
+	   "domain":{
+		    "id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"
+	    },
+		"input":{
+			"name": "platform-test-4",
+			"description":"Domain created for testing.",
+			"ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU",
+			"note": "Please delete me"
+		}
     }
 }`
 	response := `{"data": {
-
+		"domainUpdate": {
+			"domain": {{ template "domain1_response" }}
+		}
 }}`
 	client := ABetterTestClient(t, "domain/update", request, response)
+	input := ol.DomainUpdateInput{
+		Name:        "platform-test-4",
+		Description: "Domain created for testing.",
+		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
+		Note:        "Please delete me",
+	}
 	// Act
-	result, err := client.UpdateDomain("", ol.DomainUpdateInput{})
+	result, err := client.UpdateDomain("Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", input)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
 }
 
 func TestDomainDelete(t *testing.T) {
