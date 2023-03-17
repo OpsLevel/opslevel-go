@@ -99,6 +99,70 @@ func TestChildSystems(t *testing.T) {
 	autopilot.Equals(t, "PlatformSystem3", result[2].Name)
 }
 
+func TestDomainTags(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"domain": {
+					"id": "123456789"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"tags": {
+								"nodes": [
+									{{ template "tag1" }},
+									{{ template "tag2" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"domain": {
+					"id": "123456789"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"tags": {
+								"nodes": [
+									{{ template "tag3" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "domain/tags", requests...)
+	domain := ol.DomainId{
+		Id: "123456789",
+	}
+	// Act
+	resp, err := domain.Tags(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "dev", result[0].Key)
+	autopilot.Equals(t, "true", result[0].Value)
+	autopilot.Equals(t, "foo", result[1].Key)
+	autopilot.Equals(t, "bar", result[1].Value)
+	autopilot.Equals(t, "prod", result[2].Key)
+	autopilot.Equals(t, "true", result[2].Value)
+}
+
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
 	request := `{

@@ -72,7 +72,37 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 }
 
 func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return &TagConnection{}, nil
+	var q struct {
+		Account struct {
+			Domain struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"domain(input: $domain)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["domain"] = IdentifierInput{
+		Id: s.Id,
+	}
+
+	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.Domain.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.End
+		resp, err := s.Tags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp.Nodes...)
+		q.Account.Domain.Tags.PageInfo = resp.PageInfo
+		q.Account.Domain.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Domain.Tags, nil
 }
 
 func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
