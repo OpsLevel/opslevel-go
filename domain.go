@@ -21,10 +21,18 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount"`
 }
 
-type DomainInput struct {
+type DomainCreateInput struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Owner       *ID    `json:"ownerId,omitempty"`
+	Note        string `json:"note,omitempty"`
+}
+
+type DomainUpdateInput struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Owner       *ID    `json:"ownerId,omitempty"`
+	Note        string `json:"note,omitempty"`
 }
 
 func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
@@ -39,8 +47,18 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 	return nil
 }
 
-func (c *Client) CreateDomain(input DomainInput) (*Domain, error) {
-	return &Domain{}, nil
+func (c *Client) CreateDomain(input DomainCreateInput) (*Domain, error) {
+	var m struct {
+		Payload struct {
+			Domain Domain
+			Errors []OpsLevelErrors
+		} `graphql:"domainCreate(input:$input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := c.Mutate(&m, v, WithName("DomainCreate"))
+	return &m.Payload.Domain, HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) GetDomain(identifier string) (*Domain, error) {
@@ -81,7 +99,7 @@ func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, er
 	return &q.Account.Domains, nil
 }
 
-func (c *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, error) {
+func (c *Client) UpdateDomain(identifier string, input DomainUpdateInput) (*Domain, error) {
 	return &Domain{}, nil
 }
 
