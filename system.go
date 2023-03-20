@@ -74,5 +74,14 @@ func (c *Client) UpdateSystem(identifier string, input SystemInput) (*System, er
 }
 
 func (c *Client) DeleteSystem(identifier string) error {
-	return nil
+	var s struct {
+		Payload struct {
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"systemDelete(resource: $input)"`
+	}
+	v := PayloadVariables{
+		"input": *NewIdentifier(identifier),
+	}
+	err := c.Mutate(&s, v, WithName("SystemDelete"))
+	return HandleErrors(err, s.Payload.Errors)
 }
