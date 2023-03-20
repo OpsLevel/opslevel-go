@@ -175,20 +175,31 @@ func TestListSystems(t *testing.T) {
 func TestSystemUpdate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},errors{message,path}}}",
 	"variables":{
-
-    }
-}`
+		"system":{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"},
+		"input":{
+			"name": "PlatformSystem4",
+			"description":"System entry created for testing",
+			"ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU",
+			"note": "Please delete me"
+		}
+	}}`
 	response := `{"data": {
-
-}}`
+		{{ template "systemUpdate_response" }}
+	}}`
 	client := ABetterTestClient(t, "system/update", request, response)
+	input := ol.SystemInput{
+		Name:        "PlatformSystem4",
+		Description: "System entry created for testing",
+		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
+		Note:        "Please delete me",
+	}
 	// Act
-	result, err := client.UpdateSystem("", ol.SystemInput{})
+	result, err := client.UpdateSystem("Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy", input)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy", string(result.Id))
 }
 
 func TestSystemDelete(t *testing.T) {
