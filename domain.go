@@ -114,7 +114,7 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 		childSystems = append(childSystems, ConvertToIdentifier(system))
 	}
 	v := PayloadVariables{
-		"domain":       IdentifierInput{Id: s.Id},
+		"domain":       ConvertToIdentifier(string(s.Id)),
 		"childSystems": childSystems,
 	}
 	err := client.Mutate(&m, v, WithName("DomainAssignSystem"))
