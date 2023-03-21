@@ -43,3 +43,22 @@
     }
 }
 {{end}}
+{{- define "system_create_response" }}
+"systemCreate": {
+  "system": {
+    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUz",
+    "aliases": [
+      "platformsystem3"
+    ],
+    "name": "PlatformSystem3",
+    "description": "creating this for testing purposes",
+    "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem3",
+    "owner": {
+      "alias": "kyle_team",
+      "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
+    },
+    "parent": null
+  },
+  "errors": []
+}
+{{end}}
