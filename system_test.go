@@ -59,39 +59,41 @@ func TestSystemAssignService(t *testing.T) {
 func TestSystemGetId(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "query SystemGet($input:IdentifierInput){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}}}}",
 	"variables":{
-
-    }
-}`
+		"input": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"
+    	}
+    }}`
 	response := `{"data": {
-
-}}`
+		{{ template "system_getalias_response" }}
+	}}`
 	client := ABetterTestClient(t, "system/get_id", request, response)
 	// Act
-	result, err := client.GetSystem("MTIzNDU2Nzg5MTIzNDU2Nzg5")
+	result, err := client.GetSystem("Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy", string(result.Id))
 }
 
 func TestSystemGetAlias(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "query SystemGet($input:IdentifierInput){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}}}}",
 	"variables":{
-
-    }
-}`
+		"input": {
+			"alias": "platformsystem1"
+		}
+    }}`
 	response := `{"data": {
-
-}}`
+		{{ template "system_getalias_response" }}
+	}}`
 	client := ABetterTestClient(t, "system/get_alias", request, response)
 	// Act
-	result, err := client.GetSystem("my-system")
+	result, err := client.GetSystem("platformsystem1")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy", string(result.Id))
 }
 
 func TestSystemGetServices(t *testing.T) {
