@@ -46,6 +46,11 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
+func ConvertToIdentifier(value string) IdentifierInput {
+	identifier := NewIdentifier(value)
+	return *identifier
+}
+
 func IsID(value string) bool {
 	decoded, err := base64.RawURLEncoding.DecodeString(value)
 	if err != nil {

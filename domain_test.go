@@ -45,7 +45,7 @@ func TestDomainGetSystems(t *testing.T) {
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
-					"id": "123456789"
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
 				}
 			}
 			}`,
@@ -66,7 +66,7 @@ func TestDomainGetSystems(t *testing.T) {
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
-					"id": "123456789"
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
 				}
 			}
 			}`,
@@ -86,7 +86,7 @@ func TestDomainGetSystems(t *testing.T) {
 
 	client := APaginatedTestClient(t, "domain/child_systems", requests...)
 	domain := ol.DomainId{
-		Id: "123456789",
+		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
 	// Act
 	resp, err := domain.ChildSystems(client, nil)
@@ -106,7 +106,7 @@ func TestDomainGetTags(t *testing.T) {
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
-					"id": "123456789"
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
 				}
 			}
 			}`,
@@ -127,7 +127,7 @@ func TestDomainGetTags(t *testing.T) {
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
-					"id": "123456789"
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
 				}
 			}
 			}`,
@@ -147,7 +147,7 @@ func TestDomainGetTags(t *testing.T) {
 
 	client := APaginatedTestClient(t, "domain/tags", requests...)
 	domain := ol.DomainId{
-		Id: "123456789",
+		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
 	// Act
 	resp, err := domain.Tags(client, nil)
