@@ -439,7 +439,7 @@ var AllPayloadSortEnum = []string{
 type PredicateKeyEnum string
 
 const (
-	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" //
+	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" // Filter by the creation source.
 	PredicateKeyEnumFramework      PredicateKeyEnum = "framework"       // Filter by `framework` field.
 	PredicateKeyEnumGroupIDs       PredicateKeyEnum = "group_ids"       // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain.
 	PredicateKeyEnumLanguage       PredicateKeyEnum = "language"        // Filter by `language` field.
@@ -449,6 +449,8 @@ const (
 	PredicateKeyEnumProduct        PredicateKeyEnum = "product"         // Filter by `product` field.
 	PredicateKeyEnumTags           PredicateKeyEnum = "tags"            // Filter by `tags` field.
 	PredicateKeyEnumTierIndex      PredicateKeyEnum = "tier_index"      // Filter by `tier` field.
+	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
+	PredicateKeyEnumSystemID       PredicateKeyEnum = "system_id"       // Filter by System that this service is assigned to, if any.
 )
 
 // All PredicateKeyEnum as []string
@@ -463,6 +465,8 @@ var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumProduct),
 	string(PredicateKeyEnumTags),
 	string(PredicateKeyEnumTierIndex),
+	string(PredicateKeyEnumDomainID),
+	string(PredicateKeyEnumSystemID),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
