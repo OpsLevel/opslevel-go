@@ -52,7 +52,7 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	(*variables)["domain"] = ConvertToIdentifier(string(s.Id))
+	(*variables)["domain"] = *NewIdentifier(string(s.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["domain"] = ConvertToIdentifier(string(s.Id))
+	(*variables)["domain"] = *NewIdentifier(string(s.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
 		return nil, err
@@ -109,13 +109,9 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 			Errors []OpsLevelErrors
 		} `graphql:"domainChildAssign(domain:$domain, childSystems:$childSystems)"`
 	}
-	childSystems := []IdentifierInput{}
-	for _, system := range systems {
-		childSystems = append(childSystems, ConvertToIdentifier(system))
-	}
 	v := PayloadVariables{
-		"domain":       ConvertToIdentifier(string(s.Id)),
-		"childSystems": childSystems,
+		"domain":       *NewIdentifier(string(s.Id)),
+		"childSystems": NewIdentifierList(systems),
 	}
 	err := client.Mutate(&m, v, WithName("DomainAssignSystem"))
 	return HandleErrors(err, m.Payload.Errors)
@@ -181,7 +177,7 @@ func (c *Client) UpdateDomain(identifier string, input DomainUpdateInput) (*Doma
 		} `graphql:"domainUpdate(domain:$domain,input:$input)"`
 	}
 	v := PayloadVariables{
-		"domain": ConvertToIdentifier(identifier),
+		"domain": *NewIdentifier(identifier),
 		"input":  input,
 	}
 	err := c.Mutate(&m, v, WithName("DomainUpdate"))
@@ -195,7 +191,7 @@ func (c *Client) DeleteDomain(identifier string) error {
 		} `graphql:"domainDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": ConvertToIdentifier(identifier),
+		"input": *NewIdentifier(identifier),
 	}
 	err := c.Mutate(&d, v, WithName("DomainDelete"))
 	return HandleErrors(err, d.Payload.Errors)

@@ -46,9 +46,12 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
-func ConvertToIdentifier(value string) IdentifierInput {
-	identifier := NewIdentifier(value)
-	return *identifier
+func NewIdentifierList(values []string) []IdentifierInput {
+	output := []IdentifierInput{}
+	for _, value := range values {
+		output = append(output, *NewIdentifier(value))
+	}
+	return output
 }
 
 func IsID(value string) bool {
