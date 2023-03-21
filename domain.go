@@ -51,9 +51,8 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["domain"] = IdentifierInput{
-		Id: s.Id,
-	}
+
+	(*variables)["domain"] = ConvertToIdentifier(string(s.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
 		return nil, err
@@ -85,9 +84,7 @@ func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["domain"] = IdentifierInput{
-		Id: s.Id,
-	}
+	(*variables)["domain"] = ConvertToIdentifier(string(s.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
 		return nil, err
@@ -114,8 +111,7 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 	}
 	childSystems := []IdentifierInput{}
 	for _, system := range systems {
-		systemIdentifier := NewIdentifier(system)
-		childSystems = append(childSystems, *systemIdentifier)
+		childSystems = append(childSystems, ConvertToIdentifier(system))
 	}
 	v := PayloadVariables{
 		"domain":       IdentifierInput{Id: s.Id},
@@ -185,7 +181,7 @@ func (c *Client) UpdateDomain(identifier string, input DomainUpdateInput) (*Doma
 		} `graphql:"domainUpdate(domain:$domain,input:$input)"`
 	}
 	v := PayloadVariables{
-		"domain": *NewIdentifier(identifier),
+		"domain": ConvertToIdentifier(identifier),
 		"input":  input,
 	}
 	err := c.Mutate(&m, v, WithName("DomainUpdate"))
@@ -199,7 +195,7 @@ func (c *Client) DeleteDomain(identifier string) error {
 		} `graphql:"domainDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": *NewIdentifier(identifier),
+		"input": ConvertToIdentifier(identifier),
 	}
 	err := c.Mutate(&d, v, WithName("DomainDelete"))
 	return HandleErrors(err, d.Payload.Errors)
