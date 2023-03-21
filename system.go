@@ -114,11 +114,15 @@ func (s *SystemId) AssignService(client *Client, services ...string) error {
 		Payload struct {
 			System System
 			Errors []OpsLevelErrors
-		} `graphql:"domainChildAssign(system:$system, childServices:$childServices)"`
+		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
+	}
+	childServices := []IdentifierInput{}
+	for _, service := range services {
+		childServices = append(childServices, *NewIdentifier(service))
 	}
 	v := PayloadVariables{
-		"domain":       *NewIdentifier(string(s.Id)),
-		"childSystems": NewIdentifierList(services),
+		"system":        *NewIdentifier(string(s.Id)),
+		"childServices": childServices,
 	}
 	err := client.Mutate(&m, v, WithName("SystemAssignService"))
 	return HandleErrors(err, m.Payload.Errors)
