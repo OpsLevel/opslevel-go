@@ -9,20 +9,30 @@ import (
 func TestSystemCreate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation SystemCreate($input:SystemCreateInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},errors{message,path}}}",
 	"variables":{
-
-    }
-}`
+		"input": {
+			"name": "PlatformSystem3",
+			"description": "creating this for testing purposes",
+			"ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU",
+			"note": "hello world"
+		  }
+    }}`
 	response := `{"data": {
-
-}}`
+		{{ template "system_create_response" }}
+	}}`
 	client := ABetterTestClient(t, "system/create", request, response)
+	input := ol.SystemCreateInput{
+		Name:        "PlatformSystem3",
+		Description: "creating this for testing purposes",
+		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
+		Note:        "hello world",
+	}
 	// Act
-	result, err := client.CreateSystem(ol.SystemInput{})
+	result, err := client.CreateSystem(input)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "MTIzNDU2Nzg5MTIzNDU2Nzg5", string(result.Id))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUz", string(result.Id))
 }
 
 func TestSystemAssignService(t *testing.T) {
@@ -189,7 +199,7 @@ func TestSystemUpdate(t *testing.T) {
 		{{ template "systemUpdate_response" }}
 	}}`
 	client := ABetterTestClient(t, "system/update", request, response)
-	input := ol.SystemInput{
+	input := ol.SystemUpdateInput{
 		Name:        "PlatformSystem4",
 		Description: "System entry created for testing",
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),

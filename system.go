@@ -17,7 +17,24 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount"`
 }
 
-type SystemInput struct {
+// TODO: enable this once API is corrected to use a single entity
+//type SystemInput struct {
+//	Name        string           `json:"name"`
+//	Description string           `json:"description,omitempty"`
+//	Owner       *ID              `json:"ownerId,omitempty"`
+//	Parent      *IdentifierInput `json:"parent,omitempty"`
+//	Note        string           `json:"note,omitempty"`
+//}
+
+type SystemCreateInput struct {
+	Name        string           `json:"name"`
+	Description string           `json:"description,omitempty"`
+	Owner       *ID              `json:"ownerId,omitempty"`
+	Parent      *IdentifierInput `json:"parent,omitempty"`
+	Note        string           `json:"note,omitempty"`
+}
+
+type SystemUpdateInput struct {
 	Name        string           `json:"name,omitempty"`
 	Description string           `json:"description,omitempty"`
 	Owner       *ID              `json:"ownerId,omitempty"`
@@ -37,7 +54,7 @@ func (s *SystemId) AssignService(client *Client, services ...string) error {
 	return nil
 }
 
-func (c *Client) CreateSystem(input SystemInput) (*System, error) {
+func (c *Client) CreateSystem(input SystemCreateInput) (*System, error) {
 	var m struct {
 		Payload struct {
 			System System
@@ -89,7 +106,7 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 	return &q.Account.Systems, nil
 }
 
-func (c *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
+func (c *Client) UpdateSystem(identifier string, input SystemUpdateInput) (*System, error) {
 	var s struct {
 		Payload struct {
 			System System
