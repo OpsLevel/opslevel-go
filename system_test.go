@@ -37,23 +37,158 @@ func TestSystemCreate(t *testing.T) {
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy", string(result.Id))
 }
 
+func TestSystemGetServices(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"system": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"system": {
+							"childServices": {
+								"nodes": [
+									{{ template "service_1" }},
+									{{ template "service_2" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"system": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"system": {
+							"childServices": {
+								"nodes": [
+									{{ template "service_2" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "system/child_services", requests...)
+	system := ol.SystemId{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+	}
+	// Act
+	resp, err := system.ChildServices(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "Foo", result[0].Name)
+	autopilot.Equals(t, "Bar", result[1].Name)
+	autopilot.Equals(t, "Bar", result[2].Name)
+}
+
+func TestSystemGetTags(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"system": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"system": {
+							"tags": {
+								"nodes": [
+									{{ template "tag1" }},
+									{{ template "tag2" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"system": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"system": {
+							"tags": {
+								"nodes": [
+									{{ template "tag3" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "system/tags", requests...)
+	system := ol.SystemId{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+	}
+	// Act
+	resp, err := system.Tags(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "dev", result[0].Key)
+	autopilot.Equals(t, "true", result[0].Value)
+	autopilot.Equals(t, "foo", result[1].Key)
+	autopilot.Equals(t, "bar", result[1].Value)
+	autopilot.Equals(t, "prod", result[2].Key)
+	autopilot.Equals(t, "true", result[2].Value)
+}
+
 func TestSystemAssignService(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},errors{message,path}}}",
 	"variables":{
-
-    }
+		"system":{
+			"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+	  	},
+	  	"childServices": [
+			{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"}
+	  	]
+	}
 }`
 	response := `{"data": {
-
+		"systemChildAssign": {
+			"system": {{ template "system1_response" }}
+		}
 }}`
 	client := ABetterTestClient(t, "system/assign_service", request, response)
-	system := ol.SystemId{
-		Id: "",
-	}
 	// Act
-	err := system.AssignService(client, "", "")
+	system := ol.System{
+		SystemId: ol.SystemId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+		},
+	}
+	childServices := "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"
+	err := system.AssignService(client, childServices)
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -103,54 +238,10 @@ func TestSystemGetAlias(t *testing.T) {
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy", string(result.Id))
 }
 
-func TestSystemGetServices(t *testing.T) {
-	// Arrange
-	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
-	response := `{"data": {
-
-}}`
-	client := ABetterTestClient(t, "system/get_services", request, response)
-	system := ol.SystemId{
-		Id: "",
-	}
-	// Act
-	result, err := system.ChildServices(client, nil)
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, result.TotalCount)
-}
-
-func TestSystemGetTags(t *testing.T) {
-	// Arrange
-	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
-	response := `{"data": {
-
-}}`
-	client := ABetterTestClient(t, "system/get_tags", request, response)
-	system := ol.SystemId{
-		Id: "",
-	}
-	// Act
-	result, err := system.Tags(client, nil)
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, result.TotalCount)
-}
-
 func TestListSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -161,10 +252,9 @@ func TestListSystems(t *testing.T) {
 								{{ template "system1_response" }},
 								{{ template "system2_response" }}
 							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 2
+							{{ template "pagination_initial_pageInfo_response" }}
 						  }}}}`},
-		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -174,8 +264,7 @@ func TestListSystems(t *testing.T) {
 							"nodes": [
 								{{ template "system3_response" }}
 							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
+							{{ template "pagination_second_pageInfo_response" }}
 						  }}}}`},
 	}
 

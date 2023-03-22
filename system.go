@@ -1,5 +1,7 @@
 package opslevel
 
+import "fmt"
+
 type SystemId Identifier
 
 type System struct {
@@ -14,7 +16,7 @@ type System struct {
 type SystemConnection struct {
 	Nodes      []System `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
-	TotalCount int      `json:"totalCount"`
+	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
 // TODO: enable this once API is corrected to use a single entity
@@ -43,15 +45,83 @@ type SystemUpdateInput struct {
 }
 
 func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
-	return &ServiceConnection{}, nil
+	var q struct {
+		Account struct {
+			System struct {
+				ChildServices ServiceConnection `graphql:"childServices(after: $after, first: $first)"`
+			} `graphql:"system(input: $system)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Services, invalid system id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+
+	(*variables)["system"] = *NewIdentifier(string(s.Id))
+
+	if err := client.Query(&q, *variables, WithName("SystemChildServicesList")); err != nil {
+		return nil, err
+	}
+	for q.Account.System.ChildServices.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.System.ChildServices.PageInfo.End
+		resp, err := s.ChildServices(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.System.ChildServices.Nodes = append(q.Account.System.ChildServices.Nodes, resp.Nodes...)
+		q.Account.System.ChildServices.PageInfo = resp.PageInfo
+		q.Account.System.ChildServices.TotalCount += resp.TotalCount
+	}
+	return &q.Account.System.ChildServices, nil
 }
 
 func (s *SystemId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return &TagConnection{}, nil
+	var q struct {
+		Account struct {
+			System struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"system(input: $system)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid system id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["system"] = *NewIdentifier(string(s.Id))
+
+	if err := client.Query(&q, *variables, WithName("SystemTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.System.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.System.Tags.PageInfo.End
+		resp, err := s.Tags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.System.Tags.Nodes = append(q.Account.System.Tags.Nodes, resp.Nodes...)
+		q.Account.System.Tags.PageInfo = resp.PageInfo
+		q.Account.System.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.System.Tags, nil
 }
 
 func (s *SystemId) AssignService(client *Client, services ...string) error {
-	return nil
+	var m struct {
+		Payload struct {
+			System System
+			Errors []OpsLevelErrors
+		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
+	}
+	v := PayloadVariables{
+		"system":        *NewIdentifier(string(s.Id)),
+		"childServices": NewIdentifierArray(services),
+	}
+	err := client.Mutate(&m, v, WithName("SystemAssignService"))
+	return HandleErrors(err, m.Payload.Errors)
 }
 
 func (c *Client) CreateSystem(input SystemCreateInput) (*System, error) {
@@ -101,8 +171,8 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 		}
 		q.Account.Systems.Nodes = append(q.Account.Systems.Nodes, resp.Nodes...)
 		q.Account.Systems.PageInfo = resp.PageInfo
-		q.Account.Systems.TotalCount += resp.TotalCount
 	}
+	q.Account.Systems.TotalCount = len(q.Account.Systems.Nodes)
 	return &q.Account.Systems, nil
 }
 
