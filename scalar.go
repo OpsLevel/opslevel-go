@@ -46,7 +46,7 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
-func NewIdentifierList(values []string) []IdentifierInput {
+func NewIdentifierArray(values []string) []IdentifierInput {
 	output := []IdentifierInput{}
 	for _, value := range values {
 		output = append(output, *NewIdentifier(value))

@@ -20,7 +20,7 @@ type Domain struct {
 type DomainConnection struct {
 	Nodes      []Domain `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
-	TotalCount int      `json:"totalCount",graphql:"-"`
+	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
 type DomainCreateInput struct {
@@ -65,8 +65,8 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 		}
 		q.Account.Domain.ChildSystems.Nodes = append(q.Account.Domain.ChildSystems.Nodes, resp.Nodes...)
 		q.Account.Domain.ChildSystems.PageInfo = resp.PageInfo
+		q.Account.Domain.ChildSystems.TotalCount += resp.TotalCount
 	}
-	q.Account.Domain.ChildSystems.TotalCount = len(q.Account.Domain.ChildSystems.Nodes)
 	return &q.Account.Domain.ChildSystems, nil
 }
 
@@ -97,8 +97,8 @@ func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 		}
 		q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp.Nodes...)
 		q.Account.Domain.Tags.PageInfo = resp.PageInfo
+		q.Account.Domain.Tags.TotalCount += resp.TotalCount
 	}
-	q.Account.Domain.Tags.TotalCount = len(q.Account.Domain.Tags.Nodes)
 	return &q.Account.Domain.Tags, nil
 }
 
@@ -111,7 +111,7 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 	}
 	v := PayloadVariables{
 		"domain":       *NewIdentifier(string(s.Id)),
-		"childSystems": NewIdentifierList(systems),
+		"childSystems": NewIdentifierArray(systems),
 	}
 	err := client.Mutate(&m, v, WithName("DomainAssignSystem"))
 	return HandleErrors(err, m.Payload.Errors)
