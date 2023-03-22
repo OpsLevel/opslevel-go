@@ -177,3 +177,12 @@ func TestConstructMutationIdentifier(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `mutation MyMutation($id1:IdentifierInput!$id2:IdentifierInput!$id3:IdentifierInput$id4:IdentifierInput){account{myMutation(id1: $id1 id2: $id2 id3: $id3 id4: $id4){id,aliases}}}`, query)
 }
+
+func TestNewIdentifierArray(t *testing.T) {
+	// Arrange
+	s := []string{"my-service", "Z2lkOi8vMTIzNDU2Nzg5"}
+	result := ol.NewIdentifierArray(s)
+	// Assert
+	autopilot.Equals(t, "my-service", result[0].Alias)
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), result[1].Id)
+}

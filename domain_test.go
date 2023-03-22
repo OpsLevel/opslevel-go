@@ -38,21 +38,158 @@ func TestDomainCreate(t *testing.T) {
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
 }
 
+func TestDomainGetSystems(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"domain": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"childSystems": {
+								"nodes": [
+									{{ template "system1_response" }},
+									{{ template "system2_response" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"domain": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"childSystems": {
+								"nodes": [
+									{{ template "system3_response" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "domain/child_systems", requests...)
+	domain := ol.DomainId{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+	}
+	// Act
+	resp, err := domain.ChildSystems(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "PlatformSystem1", result[0].Name)
+	autopilot.Equals(t, "PlatformSystem2", result[1].Name)
+	autopilot.Equals(t, "PlatformSystem3", result[2].Name)
+}
+
+func TestDomainGetTags(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "first_page_variables" }},
+				"domain": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"tags": {
+								"nodes": [
+									{{ template "tag1" }},
+									{{ template "tag2" }}
+								],
+								{{ template "pagination_initial_pageInfo_response" }},
+								"totalCount": 2
+							}
+						  }}}}`},
+		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			"variables": {
+				{{ template "second_page_variables" }},
+				"domain": {
+					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+				}
+			}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"domain": {
+							"tags": {
+								"nodes": [
+									{{ template "tag3" }}
+								],
+								{{ template "pagination_second_pageInfo_response" }},
+								"totalCount": 1
+							}
+						  }}}}`},
+	}
+
+	client := APaginatedTestClient(t, "domain/tags", requests...)
+	domain := ol.DomainId{
+		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+	}
+	// Act
+	resp, err := domain.Tags(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, resp.TotalCount)
+	autopilot.Equals(t, "dev", result[0].Key)
+	autopilot.Equals(t, "true", result[0].Value)
+	autopilot.Equals(t, "foo", result[1].Key)
+	autopilot.Equals(t, "bar", result[1].Value)
+	autopilot.Equals(t, "prod", result[2].Key)
+	autopilot.Equals(t, "true", result[2].Value)
+}
+
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "",
+    "query": "mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},errors{message,path}}}",
 	"variables":{
-}
+		"domain":{
+			"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
+	  	},
+	  	"childSystems": [
+			{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"}
+	  	]
+	}
 }`
 	response := `{"data": {
+		"domainChildAssign": {
+			"domain": {{ template "domain1_response" }}
+		}
 }}`
 	client := ABetterTestClient(t, "domain/assign_system", request, response)
-	domain := ol.DomainId{
-		Id: "",
-	}
 	// Act
-	err := domain.AssignSystem(client, "", "")
+	domain := ol.Domain{
+		DomainId: ol.DomainId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
+		},
+	}
+	childSystems := "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"
+	err := domain.AssignSystem(client, childSystems)
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -102,54 +239,10 @@ func TestDomainGetAlias(t *testing.T) {
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", string(result.Id))
 }
 
-func TestDomainGetSystems(t *testing.T) {
-	// Arrange
-	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
-	response := `{"data": {
-
-}}`
-	client := ABetterTestClient(t, "domain/get_systems", request, response)
-	domain := ol.DomainId{
-		Id: "",
-	}
-	// Act
-	result, err := domain.ChildSystems(client, nil)
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, result.TotalCount)
-}
-
-func TestDomainGetTags(t *testing.T) {
-	// Arrange
-	request := `{
-    "query": "",
-	"variables":{
-
-    }
-}`
-	response := `{"data": {
-
-}}`
-	client := ABetterTestClient(t, "domain/get_tags", request, response)
-	domain := ol.DomainId{
-		Id: "",
-	}
-	// Act
-	result, err := domain.Tags(client, nil)
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, 3, result.TotalCount)
-}
-
 func TestDomainList(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -160,10 +253,9 @@ func TestDomainList(t *testing.T) {
 								{{ template "domain1_response" }},
 								{{ template "domain2_response" }}
 							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 2
+							{{ template "pagination_initial_pageInfo_response" }}
 						  }}}}`},
-		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -173,8 +265,7 @@ func TestDomainList(t *testing.T) {
 							"nodes": [
 								{{ template "domain3_response" }}
 							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
+							{{ template "pagination_second_pageInfo_response" }}
 						  }}}}`},
 	}
 
