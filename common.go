@@ -71,10 +71,13 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	var errstrings []string
 	errstrings = append(errstrings, "OpsLevel API Errors:")
 	for _, err := range errs {
-		errstrings = append(errstrings, fmt.Sprintf("\t* %s", string(err.Message)))
+		if len(err.Path) > 0 && err.Path[0] == "base" {
+			err.Path[0] = ""
+		}
+		errstrings = append(errstrings, fmt.Sprintf("\t- '%s' %s", strings.Join(err.Path, "."), string(err.Message)))
 	}
 
-	return fmt.Errorf(strings.Join(errstrings, "\n"))
+	return fmt.Errorf("%s\n", strings.Join(errstrings, "\n"))
 }
 
 func NewInt(i int) *int {
