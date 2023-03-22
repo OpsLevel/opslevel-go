@@ -139,12 +139,8 @@ func TestListSystems(t *testing.T) {
 					"account": {
 						"systems": {
 							"nodes": [
-								{
-									{{ template "system1_response" }}
-								},
-								{
-									{{ template "system2_response" }} 
-								}
+								{{ template "system1_response" }},
+								{{ template "system2_response" }}
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
@@ -157,9 +153,7 @@ func TestListSystems(t *testing.T) {
 					"account": {
 						"systems": {
 							"nodes": [
-								{
-									{{ template "system3_response" }}
-								}
+								{{ template "system3_response" }}
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
