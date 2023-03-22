@@ -72,8 +72,8 @@ func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*
 		}
 		q.Account.System.ChildServices.Nodes = append(q.Account.System.ChildServices.Nodes, resp.Nodes...)
 		q.Account.System.ChildServices.PageInfo = resp.PageInfo
+		q.Account.System.ChildServices.TotalCount += resp.TotalCount
 	}
-	q.Account.System.ChildServices.TotalCount = len(q.Account.System.ChildServices.Nodes)
 	return &q.Account.System.ChildServices, nil
 }
 
@@ -104,8 +104,8 @@ func (s *SystemId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 		}
 		q.Account.System.Tags.Nodes = append(q.Account.System.Tags.Nodes, resp.Nodes...)
 		q.Account.System.Tags.PageInfo = resp.PageInfo
+		q.Account.System.Tags.TotalCount += resp.TotalCount
 	}
-	q.Account.System.Tags.TotalCount = len(q.Account.System.Tags.Nodes)
 	return &q.Account.System.Tags, nil
 }
 
