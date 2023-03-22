@@ -65,8 +65,8 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 		}
 		q.Account.Domain.ChildSystems.Nodes = append(q.Account.Domain.ChildSystems.Nodes, resp.Nodes...)
 		q.Account.Domain.ChildSystems.PageInfo = resp.PageInfo
-		q.Account.Domain.ChildSystems.TotalCount += resp.TotalCount
 	}
+	q.Account.Domain.ChildSystems.TotalCount = len(q.Account.Domain.ChildSystems.Nodes)
 	return &q.Account.Domain.ChildSystems, nil
 }
 
