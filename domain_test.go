@@ -41,7 +41,7 @@ func TestDomainCreate(t *testing.T) {
 func TestDomainGetSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
@@ -58,11 +58,10 @@ func TestDomainGetSystems(t *testing.T) {
 									{{ template "system1_response" }},
 									{{ template "system2_response" }}
 								],
-								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 2
+								{{ template "pagination_initial_pageInfo_response" }}
 							}
 						  }}}}`},
-		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
@@ -78,8 +77,7 @@ func TestDomainGetSystems(t *testing.T) {
 								"nodes": [
 									{{ template "system3_response" }}
 								],
-								{{ template "pagination_second_pageInfo_response" }},
-								"totalCount": 1
+								{{ template "pagination_second_pageInfo_response" }}
 							}
 						  }}}}`},
 	}

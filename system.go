@@ -16,7 +16,7 @@ type System struct {
 type SystemConnection struct {
 	Nodes      []System `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
-	TotalCount int      `json:"totalCount",graphql:"-"`
+	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
 // TODO: enable this once API is corrected to use a single entity
@@ -116,13 +116,9 @@ func (s *SystemId) AssignService(client *Client, services ...string) error {
 			Errors []OpsLevelErrors
 		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
 	}
-	childServices := []IdentifierInput{}
-	for _, service := range services {
-		childServices = append(childServices, *NewIdentifier(service))
-	}
 	v := PayloadVariables{
 		"system":        *NewIdentifier(string(s.Id)),
-		"childServices": childServices,
+		"childServices": NewIdentifierArray(services),
 	}
 	err := client.Mutate(&m, v, WithName("SystemAssignService"))
 	return HandleErrors(err, m.Payload.Errors)
@@ -175,8 +171,8 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 		}
 		q.Account.Systems.Nodes = append(q.Account.Systems.Nodes, resp.Nodes...)
 		q.Account.Systems.PageInfo = resp.PageInfo
-		q.Account.Systems.TotalCount += resp.TotalCount
 	}
+	q.Account.Systems.TotalCount = len(q.Account.Systems.Nodes)
 	return &q.Account.Systems, nil
 }
 
