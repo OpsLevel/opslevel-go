@@ -196,7 +196,7 @@ func TestDomainAssignSystem(t *testing.T) {
 func TestDomainGetId(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query DomainGet($input:IdentifierInput){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note}}}",
+    "query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note}}}",
 	"variables":{
 		"input": {
 			"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"
@@ -219,7 +219,7 @@ func TestDomainGetId(t *testing.T) {
 func TestDomainGetAlias(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query DomainGet($input:IdentifierInput){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note}}}",
+    "query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note}}}",
 	"variables":{
 		"input": {
 			"alias": "my-domain"
