@@ -2,11 +2,6 @@ package opslevel
 
 import "fmt"
 
-type EntityOwner struct {
-	GroupId `graphql:"... on Group"`
-	TeamId  `graphql:"... on Team"`
-}
-
 type DomainId Identifier
 
 type Domain struct {
