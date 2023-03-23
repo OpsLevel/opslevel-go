@@ -68,16 +68,16 @@ func FormatErrors(errs []OpsLevelErrors) error {
 		return nil
 	}
 
-	var errstrings []string
-	errstrings = append(errstrings, "OpsLevel API Errors:")
+	var sb strings.Builder
+	sb.WriteString("OpsLevel API Errors:\n")
 	for _, err := range errs {
-		if len(err.Path) > 0 && err.Path[0] == "base" {
+		if len(err.Path) == 1 && err.Path[0] == "base" {
 			err.Path[0] = ""
 		}
-		errstrings = append(errstrings, fmt.Sprintf("\t- '%s' %s", strings.Join(err.Path, "."), string(err.Message)))
+		sb.WriteString(fmt.Sprintf("\t- '%s' %s\n", strings.Join(err.Path, "."), err.Message))
 	}
 
-	return fmt.Errorf("%s\n", strings.Join(errstrings, "\n"))
+	return fmt.Errorf(sb.String())
 }
 
 func NewInt(i int) *int {
