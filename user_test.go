@@ -1,7 +1,6 @@
 package opslevel_test
 
 import (
-	"errors"
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
 	"testing"
@@ -235,5 +234,7 @@ func TestDeleteUserDoesNotExist(t *testing.T) {
 	// Act
 	err := client.DeleteUser("not-found@opslevel.com")
 	// Assert
-	autopilot.Equals(t, errors.New("OpsLevel API Errors:\n\t* User with email 'not-found@opslevel.com' does not exist on this account"), err)
+	autopilot.Equals(t, `OpsLevel API Errors:
+	- 'user' User with email 'not-found@opslevel.com' does not exist on this account
+`, err.Error())
 }
