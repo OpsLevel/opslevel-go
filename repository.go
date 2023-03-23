@@ -122,7 +122,7 @@ func (r *Repository) Hydrate(client *Client) error {
 		r.Services = &RepositoryServiceConnection{}
 	}
 	if r.Services.PageInfo.HasNextPage {
-		variables := &PayloadVariables{}
+		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = r.Services.PageInfo.End
 		_, err := r.GetServices(client, variables)
 		if err != nil {
@@ -134,7 +134,7 @@ func (r *Repository) Hydrate(client *Client) error {
 		r.Tags = &RepositoryTagConnection{}
 	}
 	if r.Tags.PageInfo.HasNextPage {
-		variables := &PayloadVariables{}
+		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = r.Tags.PageInfo.End
 		_, err := r.GetTags(client, variables)
 		if err != nil {
