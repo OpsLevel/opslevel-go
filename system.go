@@ -11,6 +11,7 @@ type System struct {
 	HTMLUrl     string      `graphql:"htmlUrl"`
 	Owner       EntityOwner `graphql:"owner"`
 	Parent      Domain      `graphql:"parent"`
+	Note        string      `graphql:"note"`
 }
 
 type SystemConnection struct {

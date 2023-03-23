@@ -10,7 +10,8 @@
     "owner": {
       "alias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
-    }
+    },
+    "note": "{{ template "description" }}"
 }
 {{end}}
 {{- define "domain2_response" }}
@@ -25,7 +26,8 @@
     "owner": {
       "alias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
-    }
+    },
+    "note": "{{ template "description" }}"
 }
 {{end}}
 {{- define "domain3_response" }}
@@ -40,6 +42,7 @@
     "owner": {
       "alias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83AbC"
-    }
+    },
+    "note": "{{ template "description" }}"
   }
 {{end}}

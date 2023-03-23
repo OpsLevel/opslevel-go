@@ -10,6 +10,7 @@ type Domain struct {
 	Description string      `graphql:"description"`
 	HTMLUrl     string      `graphql:"htmlUrl"`
 	Owner       EntityOwner `graphql:"owner"`
+	Note        string      `graphql:"note"`
 }
 
 type DomainConnection struct {
