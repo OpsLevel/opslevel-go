@@ -146,7 +146,7 @@ func (c *Client) GetSystem(identifier string) (*System, error) {
 		}
 	}
 	v := PayloadVariables{
-		"input": NewIdentifier(identifier),
+		"input": *NewIdentifier(identifier),
 	}
 	err := c.Query(&q, v, WithName("SystemGet"))
 	return &q.Account.System, HandleErrors(err, nil)

@@ -134,7 +134,7 @@ func (c *Client) GetDomain(identifier string) (*Domain, error) {
 		}
 	}
 	v := PayloadVariables{
-		"input": NewIdentifier(identifier),
+		"input": *NewIdentifier(identifier),
 	}
 	err := c.Query(&q, v, WithName("DomainGet"))
 	return &q.Account.Domain, HandleErrors(err, nil)
