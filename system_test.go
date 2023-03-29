@@ -198,7 +198,7 @@ func TestSystemAssignService(t *testing.T) {
 func TestSystemGetId(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query SystemGet($input:IdentifierInput){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note}}}",
+    "query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note}}}",
 	"variables":{
 		"input": {
 			"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"
@@ -221,7 +221,7 @@ func TestSystemGetId(t *testing.T) {
 func TestSystemGetAlias(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query SystemGet($input:IdentifierInput){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note}}}",
+    "query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note}}}",
 	"variables":{
 		"input": {
 			"alias": "platformsystem1"
