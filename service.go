@@ -31,8 +31,8 @@ type Service struct {
 	Timestamps                 Timestamps                   `json:"timestamps"`
 	Tools                      *ToolConnection              `json:"tools,omitempty"`
 
-	Dependencies *ServiceDependenciesConnection `json:"dependencies"`
-	Dependents   *ServiceDependentsConnection   `json"dependents"`
+	Dependencies *ServiceDependenciesConnection `graphql:"-"`
+	Dependents   *ServiceDependentsConnection   `graphql:"-"`
 }
 
 type ServiceConnection struct {
@@ -133,23 +133,6 @@ func (s *Service) Hydrate(client *Client) error {
 		}
 	}
 
-	if s.Dependencies.PageInfo.HasNextPage {
-		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Dependencies.PageInfo.End
-		_, err := s.GetDependencies(client, variables)
-		if err != nil {
-			return err
-		}
-	}
-
-	if s.Dependents.PageInfo.HasNextPage {
-		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Dependents.PageInfo.End
-		_, err := s.GetDependents(client, variables)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 

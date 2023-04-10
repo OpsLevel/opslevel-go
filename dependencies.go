@@ -5,13 +5,8 @@ import "fmt"
 type ServiceDependency struct {
 	Id     ID        `graphql:"id"`
 	Parent ServiceId `graphql:"sourceService"`
-	Child  ServiceId `graphql:"destinationIdentifier"`
+	Child  ServiceId `graphql:"destinationService"`
 	Notes  string    `graphql:"notes"`
-}
-
-type ServiceDependencyKey struct {
-	Parent IdentifierInput `graphql:"sourceIdentifier"`
-	Child  IdentifierInput `graphql:"destinationIdentifier"`
 }
 
 type ServiceDependenciesEdge struct {
@@ -38,9 +33,14 @@ type ServiceDependentsConnection struct {
 	PageInfo PageInfo
 }
 
+type ServiceDependencyKey struct {
+	Parent IdentifierInput `json:"sourceIdentifier"`
+	Child  IdentifierInput `json:"destinationIdentifier"`
+}
+
 type ServiceDependencyCreateInput struct {
-	Key   ServiceDependencyKey `graphql:"dependencyKey"`
-	Notes string               `graphql:"notes,omitempty"`
+	Key   ServiceDependencyKey `json:"dependencyKey"`
+	Notes string               `json:"notes,omitempty"`
 }
 
 //#region Create
@@ -50,7 +50,7 @@ func (client *Client) CreateServiceDependency(input ServiceDependencyCreateInput
 		Payload struct {
 			ServiceDependency *ServiceDependency
 			Errors            []OpsLevelErrors
-		} `graphql:"serviceDependencyCreate(input: $input)"`
+		} `graphql:"serviceDependencyCreate(inputV2: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
