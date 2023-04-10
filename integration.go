@@ -49,7 +49,7 @@ func (client *Client) CreateAWSIntegration(input AWSIntegrationInput) (*Integrat
 		Payload struct {
 			Integration *Integration
 			Errors      []OpsLevelErrors
-		} `graphql:"awsIntegrationCreate(identifier: $identifier input: $input)"`
+		} `graphql:"awsIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
