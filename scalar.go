@@ -46,6 +46,14 @@ func NewIdentifier(value string) *IdentifierInput {
 	}
 }
 
+func NewIdentifierArray(values []string) []IdentifierInput {
+	output := []IdentifierInput{}
+	for _, value := range values {
+		output = append(output, *NewIdentifier(value))
+	}
+	return output
+}
+
 func IsID(value string) bool {
 	decoded, err := base64.RawURLEncoding.DecodeString(value)
 	if err != nil {
