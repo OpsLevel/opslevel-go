@@ -19,14 +19,7 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-type DomainCreateInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-	Owner       *ID    `json:"ownerId,omitempty"`
-	Note        string `json:"note,omitempty"`
-}
-
-type DomainUpdateInput struct {
+type DomainInput struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Owner       *ID    `json:"ownerId,omitempty"`
@@ -113,7 +106,7 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) CreateDomain(input DomainCreateInput) (*Domain, error) {
+func (c *Client) CreateDomain(input DomainInput) (*Domain, error) {
 	var m struct {
 		Payload struct {
 			Domain Domain
@@ -165,7 +158,7 @@ func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, er
 	return &q.Account.Domains, nil
 }
 
-func (c *Client) UpdateDomain(identifier string, input DomainUpdateInput) (*Domain, error) {
+func (c *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, error) {
 	var m struct {
 		Payload struct {
 			Domain Domain
