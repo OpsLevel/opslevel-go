@@ -9,7 +9,7 @@ import (
 func TestSystemCreate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation SystemCreate($input:SystemCreateInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
+    "query": "mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
 	"variables":{
 		"input": {
 			"name": "PlatformSystem3",
@@ -24,7 +24,7 @@ func TestSystemCreate(t *testing.T) {
 			"errors": []
 	}}}`
 	client := ABetterTestClient(t, "system/create", request, response)
-	input := ol.SystemCreateInput{
+	input := ol.SystemInput{
 		Name:        "PlatformSystem3",
 		Description: "creating this for testing purposes",
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
@@ -286,7 +286,7 @@ func TestListSystems(t *testing.T) {
 func TestSystemUpdate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation SystemUpdate($input:SystemUpdateInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
+    "query": "mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
 	"variables":{
 		"system":{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"},
 		"input":{
@@ -302,7 +302,7 @@ func TestSystemUpdate(t *testing.T) {
 			"errors": []
 	}}}`
 	client := ABetterTestClient(t, "system/update", request, response)
-	input := ol.SystemUpdateInput{
+	input := ol.SystemInput{
 		Name:        "PlatformSystem1",
 		Description: "Yolo!",
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),

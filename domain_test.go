@@ -9,7 +9,7 @@ import (
 func TestDomainCreate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation DomainCreate($input:DomainCreateInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},errors{message,path}}}",
+    "query": "mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},errors{message,path}}}",
 	"variables":{
 		"input": {
 			"name": "platform-test",
@@ -26,7 +26,7 @@ func TestDomainCreate(t *testing.T) {
 }}`
 	client := ABetterTestClient(t, "domain/create", request, response)
 	// Act
-	input := ol.DomainCreateInput{
+	input := ol.DomainInput{
 		Name:        "platform-test",
 		Description: "Domain created for testing.",
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
@@ -283,7 +283,7 @@ func TestDomainList(t *testing.T) {
 func TestDomainUpdate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation DomainUpdate($domain:IdentifierInput!$input:DomainUpdateInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},errors{message,path}}}",
+    "query": "mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},errors{message,path}}}",
 	"variables":{
 	   "domain":{
 		    "id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"
@@ -302,7 +302,7 @@ func TestDomainUpdate(t *testing.T) {
 		}
 }}`
 	client := ABetterTestClient(t, "domain/update", request, response)
-	input := ol.DomainUpdateInput{
+	input := ol.DomainInput{
 		Name:        "platform-test-4",
 		Description: "Domain created for testing.",
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
