@@ -7,10 +7,14 @@ import (
 	"github.com/gosimple/slug"
 )
 
-type Integration struct {
+type IntegrationId struct {
 	Id   ID     `json:"id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
+}
+
+type Integration struct {
+	IntegrationId
 
 	CreatedAt   iso8601.Time `graphql:"createdAt"`
 	InstalledAt iso8601.Time `graphql:"installedAt"`
@@ -38,7 +42,7 @@ type AWSIntegrationInput struct {
 	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
 }
 
-func (self *Integration) Alias() string {
+func (self *IntegrationId) Alias() string {
 	return fmt.Sprintf("%s-%s", slug.Make(self.Type), slug.Make(self.Name))
 }
 

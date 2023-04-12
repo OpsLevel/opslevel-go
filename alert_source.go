@@ -11,7 +11,7 @@ type AlertSource struct {
 	Id          ID                  `graphql:"id"`
 	Type        AlertSourceTypeEnum `graphql:"type"`
 	ExternalId  string              `graphql:"externalId"`
-	Integration Integration         `graphql:"integration"`
+	Integration IntegrationId       `graphql:"integration"`
 	Url         string              `graphql:"url"`
 }
 

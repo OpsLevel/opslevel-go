@@ -1,7 +1,7 @@
 package opslevel
 
 type ServiceDocumentSource struct {
-	Integration       `graphql:"... on ApiDocIntegration"`
+	IntegrationId     `graphql:"... on ApiDocIntegration"`
 	ServiceRepository `graphql:"... on ServiceRepository"`
 }
 

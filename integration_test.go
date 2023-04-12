@@ -9,7 +9,7 @@ import (
 func TestGetIntegration(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type}}}",
+	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}}}}",
 	"variables":{
 		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
     }
@@ -35,7 +35,7 @@ func TestGetIntegration(t *testing.T) {
 func TestGetMissingIntegraion(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type}}}",
+	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}}}}",
 	"variables":{
 		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
     }
@@ -55,7 +55,7 @@ func TestGetMissingIntegraion(t *testing.T) {
 func TestListIntegrations(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -73,7 +73,7 @@ func TestListIntegrations(t *testing.T) {
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
 					}}}}`},
-		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -99,6 +99,4 @@ func TestListIntegrations(t *testing.T) {
 	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Payload", result[1].Name)
 	autopilot.Equals(t, "Kubernetes", result[2].Name)
-	//fmt.Println(Templated(requests[1].Request))
-	//panic(true)
 }
