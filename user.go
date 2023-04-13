@@ -2,7 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-	"github.com/hasura/go-graphql-client"
 )
 
 type MemberInput struct {
@@ -95,7 +94,7 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 		} `graphql:"userInvite(email: $email input: $input)"`
 	}
 	v := PayloadVariables{
-		"email": graphql.String(email),
+		"email": email,
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("UserInvite"))

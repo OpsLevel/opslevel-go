@@ -61,14 +61,14 @@ func NewGQLClient(options ...Option) *Client {
 
 func (client *Client) InitialPageVariables() PayloadVariables {
 	return PayloadVariables{
-		"after": graphql.String(""),
+		"after": "",
 		"first": client.pageSize,
 	}
 }
 
 func (client *Client) InitialPageVariablesPointer() *PayloadVariables {
 	v := PayloadVariables{
-		"after": graphql.String(""),
+		"after": "",
 		"first": client.pageSize,
 	}
 	return &v

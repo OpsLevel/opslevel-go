@@ -27,10 +27,10 @@ func TestDomainCreate(t *testing.T) {
 	client := ABetterTestClient(t, "domain/create", request, response)
 	// Act
 	input := ol.DomainInput{
-		Name:        "platform-test",
-		Description: "Domain created for testing.",
+		Name:        ol.NewString("platform-test"),
+		Description: ol.NewString("Domain created for testing."),
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
-		Note:        "additional note about platform-test domain",
+		Note:        ol.NewString("additional note about platform-test domain"),
 	}
 	result, err := client.CreateDomain(input)
 	// Assert
@@ -303,10 +303,10 @@ func TestDomainUpdate(t *testing.T) {
 }}`
 	client := ABetterTestClient(t, "domain/update", request, response)
 	input := ol.DomainInput{
-		Name:        "platform-test-4",
-		Description: "Domain created for testing.",
+		Name:        ol.NewString("platform-test-4"),
+		Description: ol.NewString("Domain created for testing."),
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
-		Note:        "Please delete me",
+		Note:        ol.NewString("Please delete me"),
 	}
 	// Act
 	result, err := client.UpdateDomain("Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw", input)

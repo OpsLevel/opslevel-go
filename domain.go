@@ -20,10 +20,10 @@ type DomainConnection struct {
 }
 
 type DomainInput struct {
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Owner       *ID    `json:"ownerId,omitempty"`
-	Note        string `json:"note,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Owner       *ID     `json:"ownerId,omitempty"`
+	Note        *string `json:"note,omitempty"`
 }
 
 func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {

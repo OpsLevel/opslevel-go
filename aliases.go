@@ -3,8 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"strings"
-
-	"github.com/hasura/go-graphql-client"
 )
 
 type AliasCreateInput struct {
@@ -46,8 +44,8 @@ func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, err
 func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 	var m struct {
 		Payload struct {
-			Aliases []graphql.String
-			OwnerId graphql.String
+			Aliases []string
+			OwnerId string
 			Errors  []OpsLevelErrors
 		} `graphql:"aliasCreate(input: $input)"`
 	}
@@ -83,7 +81,7 @@ func (client *Client) DeleteTeamAlias(alias string) error {
 func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	var m struct {
 		Payload struct {
-			Alias  graphql.String `graphql:"deletedAlias"`
+			Alias  string `graphql:"deletedAlias"`
 			Errors []OpsLevelErrors
 		} `graphql:"aliasDelete(input: $input)"`
 	}
