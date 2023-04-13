@@ -2,7 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-	"github.com/hasura/go-graphql-client"
 )
 
 type CustomActionsId struct {
@@ -55,7 +54,7 @@ type CustomActionsTriggerDefinitionsConnection struct {
 
 type CustomActionsWebhookActionCreateInput struct {
 	Name           string                      `json:"name"`
-	Description    *graphql.String             `json:"description,omitempty"`
+	Description    *string                     `json:"description,omitempty"`
 	LiquidTemplate string                      `json:"liquidTemplate"`
 	WebhookURL     string                      `json:"webhookUrl"`
 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod"`
@@ -64,18 +63,18 @@ type CustomActionsWebhookActionCreateInput struct {
 
 type CustomActionsWebhookActionUpdateInput struct {
 	Id             ID                          `json:"id"`
-	Name           *graphql.String             `json:"name,omitempty"`
-	Description    *graphql.String             `json:"description,omitempty"`
-	LiquidTemplate *graphql.String             `json:"liquidTemplate,omitempty"`
-	WebhookURL     *graphql.String             `json:"webhookUrl,omitempty"`
+	Name           *string                     `json:"name,omitempty"`
+	Description    *string                     `json:"description,omitempty"`
+	LiquidTemplate *string                     `json:"liquidTemplate,omitempty"`
+	WebhookURL     *string                     `json:"webhookUrl,omitempty"`
 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
 	Headers        *JSON                       `json:"headers,omitempty"`
 }
 
 type CustomActionsTriggerDefinitionCreateInput struct {
-	Name        string          `json:"name"`
-	Description *graphql.String `json:"description,omitempty"`
-	Owner       ID              `json:"ownerId"`
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Owner       ID      `json:"ownerId"`
 	// In the API actionID is `ID!` but that's because of the CustomActionsWebhookActionCreateInput
 	// But we are not implementing that because it is used for the UI, so we need to enforce an actionId is given
 	Action ID  `json:"actionId"`
@@ -89,12 +88,12 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
-	Id          ID              `json:"id"`
-	Name        *graphql.String `json:"name,omitempty"`
-	Description *graphql.String `json:"description,omitempty"`
-	Owner       *ID             `json:"ownerId,omitempty"`
-	Action      *ID             `json:"actionId,omitempty"`
-	Filter      *ID             `json:"filterId,omitempty"`
+	Id          ID      `json:"id"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Owner       *ID     `json:"ownerId,omitempty"`
+	Action      *ID     `json:"actionId,omitempty"`
+	Filter      *ID     `json:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
 	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty"`

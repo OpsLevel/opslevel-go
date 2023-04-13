@@ -2,16 +2,14 @@ package opslevel_example
 
 import (
 	"fmt"
-	"github.com/hasura/go-graphql-client"
-
 	"github.com/opslevel/opslevel-go/v2023"
 )
 
 func init() {
 	var mutation struct {
 		Payload struct {
-			Aliases []graphql.String
-			OwnerId graphql.String
+			Aliases []string
+			OwnerId string
 			Errors  []opslevel.OpsLevelErrors
 		} `graphql:"aliasCreate(input: $input)"`
 	}

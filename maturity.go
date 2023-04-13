@@ -1,7 +1,5 @@
 package opslevel
 
-import "github.com/hasura/go-graphql-client"
-
 type CategoryBreakdown struct {
 	Category Category
 	Level    Level
@@ -34,7 +32,7 @@ func (c *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturity, er
 		}
 	}
 	v := PayloadVariables{
-		"service": graphql.String(alias),
+		"service": alias,
 	}
 	err := c.Query(&q, v)
 	return &q.Account.Service, HandleErrors(err, nil)

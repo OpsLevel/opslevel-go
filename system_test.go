@@ -25,10 +25,10 @@ func TestSystemCreate(t *testing.T) {
 	}}}`
 	client := ABetterTestClient(t, "system/create", request, response)
 	input := ol.SystemInput{
-		Name:        "PlatformSystem3",
-		Description: "creating this for testing purposes",
+		Name:        ol.NewString("PlatformSystem3"),
+		Description: ol.NewString("creating this for testing purposes"),
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
-		Note:        "hello world",
+		Note:        ol.NewString("hello world"),
 	}
 	// Act
 	result, err := client.CreateSystem(input)
@@ -303,10 +303,10 @@ func TestSystemUpdate(t *testing.T) {
 	}}}`
 	client := ABetterTestClient(t, "system/update", request, response)
 	input := ol.SystemInput{
-		Name:        "PlatformSystem1",
-		Description: "Yolo!",
+		Name:        ol.NewString("PlatformSystem1"),
+		Description: ol.NewString("Yolo!"),
 		Owner:       ol.NewID("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"),
-		Note:        "Please delete me",
+		Note:        ol.NewString("Please delete me"),
 	}
 	// Act
 	result, err := client.UpdateSystem("Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy", input)

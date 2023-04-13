@@ -5,15 +5,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
 type PageInfo struct {
-	HasNextPage     graphql.Boolean `graphql:"hasNextPage"`
-	HasPreviousPage graphql.Boolean `graphql:"hasPreviousPage"`
-	Start           graphql.String  `graphql:"startCursor"`
-	End             graphql.String  `graphql:"endCursor"`
+	HasNextPage     bool   `graphql:"hasNextPage"`
+	HasPreviousPage bool   `graphql:"hasPreviousPage"`
+	Start           string `graphql:"startCursor"`
+	End             string `graphql:"endCursor"`
 }
 
 type PayloadVariables map[string]interface{}
@@ -37,15 +36,8 @@ func NullString() *string {
 	return output
 }
 
-// TODO: this can be replaced with NewString when its no longer a graphql.String type
-func EmptyString() *string {
-	output := ""
-	return &output
-}
-
-func NewString(value string) *graphql.String {
-	output := graphql.String(value)
-	return &output
+func NewString(value string) *string {
+	return &value
 }
 
 // Bool is a helper routine that allocates a new bool value

@@ -688,7 +688,7 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedServiceId"`
-			Alias  graphql.String   `graphql:"deletedServiceAlias"`
+			Alias  string           `graphql:"deletedServiceAlias"`
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"serviceDelete(input: $input)"`
 	}
