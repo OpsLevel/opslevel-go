@@ -29,16 +29,16 @@ func TestCreateServiceDependency(t *testing.T) {
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
 		Key: ol.ServiceDependencyKey{
-			Parent: *ol.NewIdentifier("example_2"),
-			Child:  *ol.NewIdentifier("example_3"),
+			Service:   *ol.NewIdentifier("example_2"),
+			DependsOn: *ol.NewIdentifier("example_3"),
 		},
 		Notes: "An example description",
 	})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), result.Id)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5"), result.Parent.Id)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx"), result.Child.Id)
+	autopilot.Equals(t, ol.ID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5"), result.Service.Id)
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx"), result.DependsOn.Id)
 	autopilot.Equals(t, "An example description", result.Notes)
 }
 

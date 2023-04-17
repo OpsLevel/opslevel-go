@@ -3,10 +3,10 @@ package opslevel
 import "fmt"
 
 type ServiceDependency struct {
-	Id     ID        `graphql:"id"`
-	Parent ServiceId `graphql:"sourceService"`
-	Child  ServiceId `graphql:"destinationService"`
-	Notes  string    `graphql:"notes"`
+	Id        ID        `graphql:"id"`
+	Service   ServiceId `graphql:"sourceService"`
+	DependsOn ServiceId `graphql:"destinationService"`
+	Notes     string    `graphql:"notes"`
 }
 
 type ServiceDependenciesEdge struct {
@@ -34,8 +34,8 @@ type ServiceDependentsConnection struct {
 }
 
 type ServiceDependencyKey struct {
-	Parent IdentifierInput `json:"sourceIdentifier"`
-	Child  IdentifierInput `json:"destinationIdentifier"`
+	Service   IdentifierInput `json:"sourceIdentifier"`
+	DependsOn IdentifierInput `json:"destinationIdentifier"`
 }
 
 type ServiceDependencyCreateInput struct {
