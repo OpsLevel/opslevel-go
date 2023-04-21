@@ -263,16 +263,16 @@ type CheckRepositoryFileCreateInput struct {
 	DirectorySearch       bool            `json:"directorySearch"`
 	Filepaths             []string        `json:"filePaths"`
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
-	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty"`
+	UseAbsoluteRoot       bool            `json:"useAbsoluteRoot"`
 }
 
 type CheckRepositoryFileUpdateInput struct {
 	CheckUpdateInput
 
-	DirectorySearch       *bool           `json:"directorySearch,omitempty"`
+	DirectorySearch       bool            `json:"directorySearch"`
 	Filepaths             []string        `json:"filePaths,omitempty"`
 	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
-	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty"`
+	UseAbsoluteRoot       bool            `json:"useAbsoluteRoot"`
 }
 
 type CheckRepositoryGrepCreateInput struct {

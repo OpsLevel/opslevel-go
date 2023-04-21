@@ -184,7 +184,7 @@ var testcases = map[string]struct {
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
-				UseAbsoluteRoot: ol.Bool(true),
+				UseAbsoluteRoot: true,
 			})
 		},
 	},
@@ -193,13 +193,13 @@ var testcases = map[string]struct {
 		body: func(c *ol.Client) (*ol.Check, error) {
 			return c.UpdateCheckRepositoryFile(ol.CheckRepositoryFileUpdateInput{
 				CheckUpdateInput: checkUpdateInput,
-				DirectorySearch:  ol.Bool(true),
+				DirectorySearch:  true,
 				Filepaths:        []string{"/src", "/test"},
 				FileContentsPredicate: &ol.PredicateInput{
 					Type:  ol.PredicateTypeEnumEquals,
 					Value: "postgres",
 				},
-				UseAbsoluteRoot: ol.Bool(false),
+				UseAbsoluteRoot: false,
 			})
 		},
 	},
