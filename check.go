@@ -44,11 +44,11 @@ type AlertSourceUsageCheckFragment struct {
 }
 
 type CustomEventCheckFragment struct {
-	Integration      Integration `graphql:"integration"`
-	PassPending      bool        `graphql:"passPending"`
-	ResultMessage    string      `graphql:"resultMessage"`
-	ServiceSelector  string      `graphql:"serviceSelector"`
-	SuccessCondition string      `graphql:"successCondition"`
+	Integration      IntegrationId `graphql:"integration"`
+	PassPending      bool          `graphql:"passPending"`
+	ResultMessage    string        `graphql:"resultMessage"`
+	ServiceSelector  string        `graphql:"serviceSelector"`
+	SuccessCondition string        `graphql:"successCondition"`
 }
 
 type ServiceOwnershipCheckFragment struct {
