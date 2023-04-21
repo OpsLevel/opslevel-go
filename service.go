@@ -30,6 +30,9 @@ type Service struct {
 	Tier                       Tier                         `json:"tier,omitempty"`
 	Timestamps                 Timestamps                   `json:"timestamps"`
 	Tools                      *ToolConnection              `json:"tools,omitempty"`
+
+	Dependencies *ServiceDependenciesConnection `graphql:"-"`
+	Dependents   *ServiceDependentsConnection   `graphql:"-"`
 }
 
 type ServiceConnection struct {
@@ -129,6 +132,7 @@ func (s *Service) Hydrate(client *Client) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
