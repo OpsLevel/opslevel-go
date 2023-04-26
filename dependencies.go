@@ -34,12 +34,12 @@ type ServiceDependentsConnection struct {
 }
 
 type ServiceDependencyKey struct {
-	Service   IdentifierInput `json:"sourceIdentifier"`
-	DependsOn IdentifierInput `json:"destinationIdentifier"`
+	Service   IdentifierInput `json:"sourceIdentifier" yaml:"service"`
+	DependsOn IdentifierInput `json:"destinationIdentifier" yaml:"depends_on"`
 }
 
 type ServiceDependencyCreateInput struct {
-	Key   ServiceDependencyKey `json:"dependencyKey"`
+	Key   ServiceDependencyKey `json:"dependencyKey" yaml:"key"`
 	Notes string               `json:"notes,omitempty"`
 }
 
