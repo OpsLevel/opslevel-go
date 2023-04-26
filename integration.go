@@ -36,11 +36,14 @@ type IntegrationConnection struct {
 }
 
 type AWSIntegrationInput struct {
-	IAMRole              string   `json:"iamRole"`
-	ExternalID           string   `json:"externalId"`
-	OwnershipTagOverride bool     `json:"awsTagsOverrideOwnership"`
-	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
+	Name                 *string  `json:"name,omitempty"`
+	IAMRole              *string  `json:"iamRole,omitempty"`
+	ExternalID           *string  `json:"externalId,omitempty"`
+	OwnershipTagOverride *bool    `json:"awsTagsOverrideOwnership,omitempty"`
+	OwnershipTagKeys     []string `json:"ownershipTagKeys,omitempty"`
 }
+
+func (s AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
 
 func (self *IntegrationId) Alias() string {
 	return fmt.Sprintf("%s-%s", slug.Make(self.Type), slug.Make(self.Name))
@@ -48,7 +51,7 @@ func (self *IntegrationId) Alias() string {
 
 //#region Create
 
-func (client *Client) CreateAWSIntegration(input AWSIntegrationInput) (*Integration, error) {
+func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload struct {
 			Integration *Integration
@@ -111,16 +114,16 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (Integration
 
 //#region Update
 
-func (client *Client) UpdateAWSIntegration(identifier string, input AWSIntegrationInput) (*Integration, error) {
+func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload struct {
 			Integration *Integration
 			Errors      []OpsLevelErrors
-		} `graphql:"awsIntegrationUpdate(identifier: $identifier input: $input)"`
+		} `graphql:"awsIntegrationUpdate(integration: integration input: $input)"`
 	}
 	v := PayloadVariables{
-		"identifier": *NewIdentifier(identifier),
-		"input":      input,
+		"integration": *NewIdentifier(identifier),
+		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
@@ -130,16 +133,16 @@ func (client *Client) UpdateAWSIntegration(identifier string, input AWSIntegrati
 
 //#region Delete
 
-func (client *Client) DeleteAWSIntegration(identifier string) error {
+func (client *Client) DeleteIntegration(identifier string) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"awsIntegrationDelete(resource: $input)"`
+		} `graphql:"integrationDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := client.Mutate(&m, v, WithName("AWSIntegrationDelete"))
+	err := client.Mutate(&m, v, WithName("IntegrationDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 

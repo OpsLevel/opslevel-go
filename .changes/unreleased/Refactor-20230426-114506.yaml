@@ -1,0 +1,4 @@
+kind: Refactor
+body: Integration structures were refactored to support some of the upcoming API changes
+  around integration management via the API
+time: 2023-04-26T11:45:06.069014-05:00
