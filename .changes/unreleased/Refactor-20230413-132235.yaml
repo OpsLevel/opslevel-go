@@ -1,3 +1,0 @@
-kind: Refactor
-body: Remove usages of deprecated types `graphql.Boolean` and `graphql.String`
-time: 2023-04-13T13:22:35.046998-05:00
