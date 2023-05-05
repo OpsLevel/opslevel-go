@@ -14,7 +14,8 @@ func TestCreateAWSIntegration(t *testing.T) {
 	"variables":{
 		"input": {
 			"iamRole": "arn:aws:iam::XXXX:role/aws-integration-role",
-			"externalId": "123456789"
+			"externalId": "123456789",
+			"ownershipTagKeys": ["owner"]
 		}
     }
 }`
@@ -153,7 +154,8 @@ func TestUpdateAWSIntegration(t *testing.T) {
 		},
 		"input": {
 			"name": "Dev2",
-			"externalId": "123456789"
+			"externalId": "123456789",
+			"ownershipTagKeys": null
 		}
 	}
 }`

@@ -58,6 +58,10 @@ func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integrat
 			Errors      []OpsLevelErrors
 		} `graphql:"awsIntegrationCreate(input: $input)"`
 	}
+	// This is a default in the UI, so we must maintain it
+	if len(input.OwnershipTagKeys) == 0 {
+		input.OwnershipTagKeys = append(input.OwnershipTagKeys, "owner")
+	}
 	v := PayloadVariables{
 		"input": input,
 	}
