@@ -119,7 +119,7 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 		Payload struct {
 			Integration *Integration
 			Errors      []OpsLevelErrors
-		} `graphql:"awsIntegrationUpdate(integration: integration input: $input)"`
+		} `graphql:"awsIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),

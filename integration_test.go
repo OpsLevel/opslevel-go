@@ -146,7 +146,7 @@ func TestListIntegrations(t *testing.T) {
 func TestUpdateAWSIntegration(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}},errors{message,path}}}",
+	"query": "mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}},errors{message,path}}}",
 	"variables":{
 		"integration": {
 			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
