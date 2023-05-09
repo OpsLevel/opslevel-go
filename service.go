@@ -106,6 +106,9 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 }
 
 func (s *Service) Hydrate(client *Client) error {
+	if s.Tags == nil {
+		s.Tags = &TagConnection{}
+	}
 	if s.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = s.Tags.PageInfo.End
@@ -115,6 +118,9 @@ func (s *Service) Hydrate(client *Client) error {
 		}
 	}
 
+	if s.Tools == nil {
+		s.Tools = &ToolConnection{}
+	}
 	if s.Tools.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = s.Tools.PageInfo.End
@@ -124,6 +130,9 @@ func (s *Service) Hydrate(client *Client) error {
 		}
 	}
 
+	if s.Repositories == nil {
+		s.Repositories = &ServiceRepositoryConnection{}
+	}
 	if s.Repositories.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = s.Repositories.PageInfo.End
