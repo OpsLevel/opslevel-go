@@ -41,7 +41,7 @@ jobs:
       - name: Set Release Version
         id: version
         run: |
-          echo "::set-output name=RELEASE_VERSION::$(date +v%Y.%-m.%-d)"
+          echo "RELEASE_VERSION=$(date +v%Y.%-m.%-d)" >> $GITHUB_OUTPUT
       - name: Ensure Release Does Not Exist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
