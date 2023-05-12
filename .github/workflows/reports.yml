@@ -30,5 +30,6 @@ jobs:
     steps:
       - name: Report Coverage To OpsLevel
         run: |-
-          export DATA=$(curl -s -X GET -H "Authorization: ${CODECOV_TOKEN}" https://codecov.io/api/gh/${GITHUB_REPOSITORY}/branch/main)
+          export REPOSITORY=${GITHUB_REPOSITORY/"${GITHUB_REPOSITORY_OWNER}\/"/""}
+          export DATA=$(curl -s -L -X GET -H "Authorization: bearer ${CODECOV_TOKEN}" -H "Accept: application/json" https://codecov.io/api/v2/github/${GITHUB_REPOSITORY_OWNER}/repos/${REPOSITORY}/totals/)
           echo ${DATA} | curl -s -X POST ${{ secrets.OL_COVERAGE_INTEGRATION_URL }} -H 'content-type: application/json' -d @-
