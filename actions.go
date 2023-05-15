@@ -38,6 +38,7 @@ type CustomActionsTriggerDefinition struct {
 	Timestamps             Timestamps                                      `graphql:"timestamps"`
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `graphql:"accessControl"`
 	ResponseTemplate       string                                          `graphql:"responseTemplate"`
+	EntityType             CustomActionsEntityTypeEnum                     `graphql:"entityType"`
 }
 
 type CustomActionsExternalActionsConnection struct {
@@ -85,6 +86,7 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	Published              *bool                                           `json:"published,omitempty"`
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
 	ResponseTemplate       string                                          `json:"responseTemplate"`
+	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType"`
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
@@ -100,6 +102,7 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	Published              *bool                                           `json:"published,omitempty"`
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty"`
 	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty"`
+	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
@@ -192,6 +195,9 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	}
 	if input.AccessControl == "" {
 		input.AccessControl = CustomActionsTriggerDefinitionAccessControlEnumEveryone
+	}
+	if input.EntityType == "" {
+		input.EntityType = CustomActionsEntityTypeEnumService
 	}
 	v := PayloadVariables{
 		"input": input,
