@@ -34,8 +34,9 @@ type UserIdentifierInput struct {
 }
 
 type UserInput struct {
-	Name string   `json:"name,omitempty"`
-	Role UserRole `json:"role,omitempty"`
+	Name             string   `json:"name,omitempty"`
+	Role             UserRole `json:"role,omitempty"`
+	SkipWelcomeEmail bool     `json:"skipWelcomeEmail"`
 }
 
 //#region Helpers
