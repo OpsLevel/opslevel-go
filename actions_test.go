@@ -192,6 +192,32 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	autopilot.Equals(t, "Release", trigger.Name)
 }
 
+func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
+	//Arrange
+	request := `{"query":
+		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
+		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
+	}`
+	response := `{"data": {"customActionsTriggerDefinitionCreate": {
+     "triggerDefinition": {{ template "custom_action_trigger1" }},
+     "errors": []
+ }}}`
+
+	client := ABetterTestClient(t, "custom_actions/create_trigger_with_global_entity", request, response)
+	// Act
+	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
+		Name:        "Deploy Rollback",
+		Description: ol.NewString("Disables the Deploy Freeze"),
+		Action:      "123456789",
+		Owner:       "123456789",
+		Filter:      ol.NewID("987654321"),
+		EntityType:  "GLOBAL",
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Release", trigger.Name)
+}
+
 func TestGetTriggerDefinition(t *testing.T) {
 	//Arrange
 	request := `{"query":
