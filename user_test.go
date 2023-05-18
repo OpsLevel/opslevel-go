@@ -172,7 +172,7 @@ func TestUpdateUser(t *testing.T) {
 	"variables":{
 		"input": {
 			"role": "admin",
-      "skipWelcomeEmail": false
+			"skipWelcomeEmail": false
 		},
 		"user": {
 			"email": "kyle@opslevel.com"
