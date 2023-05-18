@@ -40,6 +40,11 @@ type Repository struct {
 	Visible            bool
 }
 
+type RepositoryUpdateInput struct {
+	Id    ID  `json:"id"`
+	Owner *ID `json:"ownerId,omitempty"`
+}
+
 type RepositoryPath struct {
 	Href string
 	Path string
@@ -344,6 +349,20 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 //#endregion
 
 //#region Update
+
+func (client *Client) UpdateRepository(input RepositoryUpdateInput) (*Repository, error) {
+	var m struct {
+		Payload struct {
+			Repository Repository
+			Errors     []OpsLevelErrors
+		} `graphql:"repositoryUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("RepositoryUpdate"))
+	return &m.Payload.Repository, HandleErrors(err, m.Payload.Errors)
+}
 
 func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput) (*ServiceRepository, error) {
 	var m struct {

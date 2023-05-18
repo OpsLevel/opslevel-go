@@ -236,6 +236,85 @@ func TestListRepositoriesWithTier(t *testing.T) {
 	autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
 }
 
+func TestUpdateRepository(t *testing.T) {
+	// Arrange
+	request := `{"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}",
+	"variables": {
+		"input": {
+			"id": "{{ template "id1" }}",
+			"ownerId": "{{ template "id1" }}"
+		}
+	}
+}`
+	response := `{"data": {
+	"repositoryUpdate": {
+		"repository": {{ template "repository_1" }},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "repositories/update", request, response)
+	// Act
+	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
+		Id:    *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Owner: ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "developers", resp.Owner.Alias)
+}
+
+func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
+	// Arrange
+	request := `{"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}",
+	"variables": {
+		"input": {
+			"id": "{{ template "id1" }}"
+		}
+	}
+}`
+	response := `{"data": {
+	"repositoryUpdate": {
+		"repository": {{ template "repository_2" }},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "repositories/update_owner_not_present", request, response)
+	// Act
+	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
+		Id: *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "platform", resp.Owner.Alias)
+}
+
+func TestRepositoryUpdateOwnerNull(t *testing.T) {
+	// Arrange
+	request := `{"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}",
+	"variables": {
+		"input": {
+			"id": "{{ template "id1" }}",
+			"ownerId": null
+		}
+	}
+}`
+	response := `{"data": {
+	"repositoryUpdate": {
+		"repository": {{ template "repository_3" }},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "repositories/update_owner_null", request, response)
+	// Act
+	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
+		Id:    *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Owner: ol.NewID(""),
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "", string(resp.Owner.Id))
+}
+
 func TestUpdateServiceRepository(t *testing.T) {
 	// Arrange
 	request := `{
