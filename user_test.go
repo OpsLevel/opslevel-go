@@ -12,7 +12,8 @@ func TestInviteUser(t *testing.T) {
 	"variables":{
 		"email": "kyle@opslevel.com",
 		"input": {
-			"name": "Kyle Rockman"
+			"name": "Kyle Rockman",
+			"skipWelcomeEmail": false
 		}
 	}}`
 	response := `{"data": {
@@ -170,7 +171,8 @@ func TestUpdateUser(t *testing.T) {
 	request := `{"query":"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}",
 	"variables":{
 		"input": {
-			"role": "admin"
+			"role": "admin",
+			"skipWelcomeEmail": false
 		},
 		"user": {
 			"email": "kyle@opslevel.com"
