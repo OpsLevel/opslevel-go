@@ -8,4 +8,4 @@ service:
   owner: platform
   language: Go
   framework: GraphQL
-  description: Packages provide an OpsLevel API client implementation.
+  description: Provides a golang implementation of an OpsLevel API client.
