@@ -1,7 +1,7 @@
 ---
 version: 1
 service:
-  name: Opslevel API Clients
+  name: Opslevel Golang API Client
   lifecycle: generally_available
   tier: tier_2
   product: API Clients
