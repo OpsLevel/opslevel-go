@@ -5,6 +5,7 @@ service:
   lifecycle: generally_available
   tier: tier_2
   product: API Clients
+  system: opslevel_api_clients
   owner: platform
   language: Go
   framework: GraphQL
