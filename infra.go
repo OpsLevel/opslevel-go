@@ -115,6 +115,7 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
+		(*variables)["all"] = true
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
 		return InfrastructureResourceConnection{}, err
@@ -143,6 +144,7 @@ func (client *Client) UpdateInfrastructure(identifier string, input Infrastructu
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),
 		"input":       input,
+		"all":         true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
 	// TODO: handle m.Payload.Warnings somehow
