@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
 	"testing"
 )
@@ -18,7 +19,7 @@ func TestCreateInfra(t *testing.T) {
 }}`
 	client := ABetterTestClient(t, "infra/create", request, response)
 	// Act
-	result, err := client.CreateInfrastructure()
+	result, err := client.CreateInfrastructure(opslevel.InfrastructureResourceInput{})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
@@ -44,6 +45,55 @@ func TestGetInfra(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf", string(result.Id))
 	autopilot.Equals(t, "", result.Name)
+}
+
+func TestListInfraSchemas(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{`{"query": "",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"infrastructures": {
+							"nodes": [
+								{
+									{{ template "" }}
+								},
+								{
+									{{ template "" }} 
+								}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 2
+					}}}}`},
+		{`{"query": "",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"infrastructures": {
+							"nodes": [
+								{
+									{{ template "" }}
+								}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+					}}}}`},
+	}
+
+	client := APaginatedTestClient(t, "infra/list_schemas", requests...)
+	// Act
+	response, err := client.ListInfrastructureSchemas(nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, response.TotalCount)
+	autopilot.Equals(t, "", result[1].Type)
+	autopilot.Equals(t, "", result[2].Type)
 }
 
 func TestListInfra(t *testing.T) {
@@ -108,7 +158,7 @@ func TestUpdateInfra(t *testing.T) {
 }}`
 	client := ABetterTestClient(t, "infra/update", request, response)
 	// Act
-	result, err := client.UpdateInfrastructure()
+	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfrastructureResourceInput{})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
