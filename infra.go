@@ -1,5 +1,7 @@
 package opslevel
 
+import "fmt"
+
 type InfrastructureResourceSchema struct {
 	Type   string `json:"type"`
 	Schema JSON   `json:"schema"`
@@ -8,7 +10,7 @@ type InfrastructureResourceSchema struct {
 type InfrastructureResourceSchemaConnection struct {
 	Nodes      []InfrastructureResourceSchema
 	PageInfo   PageInfo
-	TotalCount int
+	TotalCount int `graphql:"-"`
 }
 
 type InfrastructureResource struct {
@@ -24,7 +26,7 @@ type InfrastructureResource struct {
 type InfrastructureResourceConnection struct {
 	Nodes      []InfrastructureResource
 	PageInfo   PageInfo
-	TotalCount int
+	TotalCount int `graphql:"-"`
 }
 
 type InfrastructureResourceSchemaInput struct {
@@ -54,8 +56,13 @@ func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*
 			Errors                 []OpsLevelErrors
 		} `graphql:"infrastructureResourceCreate(input: $input)"`
 	}
-
-	return &InfrastructureResource{}, nil
+	v := PayloadVariables{
+		"input": input,
+		"all":   true,
+	}
+	err := client.Mutate(&m, v, WithName("InfrastructureResourceCreate"))
+	// TODO: handle m.Payload.Warnings somehow
+	return m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) GetInfrastructure(identifier string) (*InfrastructureResource, error) {
@@ -66,8 +73,13 @@ func (client *Client) GetInfrastructure(identifier string) (*InfrastructureResou
 	}
 	v := PayloadVariables{
 		"input": NewIdentifier(identifier),
+		"all":   true,
 	}
-	return &InfrastructureResource{}, nil
+	err := client.Query(&q, v, WithName("InfrastructureResourceGet"))
+	if q.Account.InfrastructureResource.Id == "" {
+		err = fmt.Errorf("InfrastructureResource with identifier '%s' not found", identifier)
+	}
+	return &q.Account.InfrastructureResource, HandleErrors(err, nil)
 }
 
 func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (InfrastructureResourceSchemaConnection, error) {
@@ -76,7 +88,23 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (In
 			InfrastructureResourceSchemas InfrastructureResourceSchemaConnection `graphql:"infrastructureResourceSchemas(after: $after, first: $first)"`
 		}
 	}
-	return InfrastructureResourceSchemaConnection{}, nil
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
+		return InfrastructureResourceSchemaConnection{}, err
+	}
+	for q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.InfrastructureResourceSchemas.PageInfo.End
+		resp, err := client.ListInfrastructureSchemas(variables)
+		if err != nil {
+			return InfrastructureResourceSchemaConnection{}, err
+		}
+		q.Account.InfrastructureResourceSchemas.Nodes = append(q.Account.InfrastructureResourceSchemas.Nodes, resp.Nodes...)
+		q.Account.InfrastructureResourceSchemas.PageInfo = resp.PageInfo
+		q.Account.InfrastructureResourceSchemas.TotalCount += resp.TotalCount
+	}
+	return q.Account.InfrastructureResourceSchemas, nil
 }
 
 func (client *Client) ListInfrastructure(variables *PayloadVariables) (InfrastructureResourceConnection, error) {
@@ -85,7 +113,23 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 			InfrastructureResource InfrastructureResourceConnection `graphql:"infrastructureResource(after: $after, first: $first)"`
 		}
 	}
-	return InfrastructureResourceConnection{}, nil
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
+		return InfrastructureResourceConnection{}, err
+	}
+	for q.Account.InfrastructureResource.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.InfrastructureResource.PageInfo.End
+		resp, err := client.ListInfrastructure(variables)
+		if err != nil {
+			return InfrastructureResourceConnection{}, err
+		}
+		q.Account.InfrastructureResource.Nodes = append(q.Account.InfrastructureResource.Nodes, resp.Nodes...)
+		q.Account.InfrastructureResource.PageInfo = resp.PageInfo
+		q.Account.InfrastructureResource.TotalCount += resp.TotalCount
+	}
+	return q.Account.InfrastructureResource, nil
 }
 
 func (client *Client) UpdateInfrastructure(identifier string, input InfrastructureResourceInput) (*InfrastructureResource, error) {
@@ -96,8 +140,13 @@ func (client *Client) UpdateInfrastructure(identifier string, input Infrastructu
 			Errors                 []OpsLevelErrors
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
-
-	return &InfrastructureResource{}, nil
+	v := PayloadVariables{
+		"integration": *NewIdentifier(identifier),
+		"input":       input,
+	}
+	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
+	// TODO: handle m.Payload.Warnings somehow
+	return m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) DeleteInfrastructure(identifier string) error {
@@ -109,5 +158,6 @@ func (client *Client) DeleteInfrastructure(identifier string) error {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	return nil
+	err := client.Mutate(&m, v, WithName("InfrastructureResourceDelete"))
+	return HandleErrors(err, m.Payload.Errors)
 }
