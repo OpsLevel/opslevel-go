@@ -1,12 +1,21 @@
 ---
 version: 1
 service:
-  name: Opslevel Golang API Client
+  name: Opslevel API Clients
   lifecycle: generally_available
   tier: tier_2
   product: API Clients
-  system: opslevel_api_clients
-  owner: platform
+  owner:
   language: Go
   framework: GraphQL
-  description: Provides a golang implementation of an OpsLevel API client.
+  description: Packages provide an OpsLevel API client implementation.
+  aliases:
+  tags:
+  repositories:
+  - name: OpsLevel/opslevel-go
+    path: "/"
+    provider: github
+  tools:
+  dependencies:
+  alert_sources:
+
