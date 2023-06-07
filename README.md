@@ -27,8 +27,6 @@
 
 Package `opslevel` provides an OpsLevel API client implementation.
 
-*NOTE: this library is still a WIP and does not match the API 100% yet*
-
 
 # Installation
 
