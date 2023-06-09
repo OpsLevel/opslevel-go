@@ -12,14 +12,31 @@ func TestCreateInfra(t *testing.T) {
 	"query": "",
 	"variables":{
 
-    }
+   }
 }`
 	response := `{"data": {
 
 }}`
 	client := ABetterTestClient(t, "infra/create", request, response)
 	// Act
-	result, err := client.CreateInfrastructure(opslevel.InfrastructureResourceInput{})
+	result, err := client.CreateInfrastructure(opslevel.InfrastructureResourceInput{
+		Type: opslevel.NewString("BigQuery"),
+		Schema: &opslevel.InfrastructureResourceSchemaInput{
+			Type: "Database",
+		},
+		ProviderData: &opslevel.InfrastructureResourceProviderInput{
+			AccountName:  "Dev - 123456789",
+			ExternalURL:  "https://google.com",
+			ProviderName: "Google",
+		},
+		OwnerId: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Data: opslevel.JSON{
+			"name":     "my-big-query",
+			"engine":   "BigQuery",
+			"endpoint": "https://google.com",
+			"replica":  false,
+		},
+	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
@@ -32,7 +49,7 @@ func TestGetInfra(t *testing.T) {
 	"query": "",
 	"variables":{
 		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
-    }
+  }
 }`
 	response := `{"data": {
 	"account": {
@@ -62,7 +79,7 @@ func TestListInfraSchemas(t *testing.T) {
 									{{ template "" }}
 								},
 								{
-									{{ template "" }} 
+									{{ template "" }}
 								}
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
@@ -111,7 +128,7 @@ func TestListInfra(t *testing.T) {
 									{{ template "" }}
 								},
 								{
-									{{ template "" }} 
+									{{ template "" }}
 								}
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
@@ -151,14 +168,22 @@ func TestUpdateInfra(t *testing.T) {
 	"query": "",
 	"variables":{
 
-    }
+  }
 }`
 	response := `{"data": {
 
 }}`
 	client := ABetterTestClient(t, "infra/update", request, response)
 	// Act
-	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfrastructureResourceInput{})
+	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfrastructureResourceInput{
+		OwnerId: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Data: opslevel.JSON{
+			"name":     "my-big-query",
+			"engine":   "BigQuery",
+			"endpoint": "https://google.com",
+			"replica":  false,
+		},
+	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
@@ -171,7 +196,7 @@ func TestDeleteInfra(t *testing.T) {
 	"query": "",
 	"variables":{
 
-   }
+  }
 }`
 	response := `{"data": {
 	"infrastructureDelete": {
