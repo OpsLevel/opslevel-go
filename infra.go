@@ -4,7 +4,7 @@ import "fmt"
 
 type InfrastructureResourceSchema struct {
 	Type   string `json:"type"`
-	Schema JSON   `json:"schema"`
+	Schema JSON   `json:"schema" scalar:"true"`
 }
 
 type InfrastructureResourceSchemaConnection struct {
@@ -17,10 +17,10 @@ type InfrastructureResource struct {
 	Id          string      `json:"id"`
 	Aliases     []string    `json:"aliases"`
 	Name        string      `json:"name"`
-	Type        string      `json:"type" graphql:"@include(if: $all)"`
-	Owner       EntityOwner `json:"owner" graphql:"@include(if: $all)"`
-	OwnerLocked bool        `json:"ownerLocked" graphql:"@include(if: $all)"`
-	Data        JSON        `json:"data" graphql:"@include(if: $all)"`
+	Type        string      `json:"type" graphql:"type @include(if: $all)"`
+	Owner       EntityOwner `json:"owner" graphql:"owner @include(if: $all)"`
+	OwnerLocked bool        `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
+	Data        JSON        `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
 }
 
 type InfrastructureResourceConnection struct {
@@ -40,18 +40,17 @@ type InfrastructureResourceProviderInput struct {
 }
 
 type InfrastructureResourceInput struct {
-	Name         *string                              `json:"name,omitempty"`
 	Type         *string                              `json:"providerResourceType,omitempty"`
 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty"`
 	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty"`
 	OwnerId      *ID                                  `json:"ownerId,omitempty"`
-	Data         JSON                                 `json:"data,omitempty"`
+	Data         JSON                                 `json:"data,omitempty" scalar:"true"`
 }
 
 func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*InfrastructureResource, error) {
 	var m struct {
 		Payload struct {
-			InfrastructureResource *InfrastructureResource
+			InfrastructureResource InfrastructureResource
 			Warnings               []OpsLevelWarnings
 			Errors                 []OpsLevelErrors
 		} `graphql:"infrastructureResourceCreate(input: $input)"`
@@ -62,7 +61,7 @@ func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceCreate"))
 	// TODO: handle m.Payload.Warnings somehow
-	return m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) GetInfrastructure(identifier string) (*InfrastructureResource, error) {
@@ -110,7 +109,7 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (In
 func (client *Client) ListInfrastructure(variables *PayloadVariables) (InfrastructureResourceConnection, error) {
 	var q struct {
 		Account struct {
-			InfrastructureResource InfrastructureResourceConnection `graphql:"infrastructureResource(after: $after, first: $first)"`
+			InfrastructureResource InfrastructureResourceConnection `graphql:"infrastructureResources(after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {
@@ -136,19 +135,19 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 func (client *Client) UpdateInfrastructure(identifier string, input InfrastructureResourceInput) (*InfrastructureResource, error) {
 	var m struct {
 		Payload struct {
-			InfrastructureResource *InfrastructureResource
+			InfrastructureResource InfrastructureResource
 			Warnings               []OpsLevelWarnings
 			Errors                 []OpsLevelErrors
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
 	v := PayloadVariables{
-		"integration": *NewIdentifier(identifier),
+		"$identifier": *NewIdentifier(identifier),
 		"input":       input,
 		"all":         true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
 	// TODO: handle m.Payload.Warnings somehow
-	return m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) DeleteInfrastructure(identifier string) error {

@@ -6,12 +6,12 @@ import (
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
-type JSON map[string]string
+type JSON map[string]any
 
 func (s JSON) GetGraphQLType() string { return "JSON" }
 
 func (s JSON) MarshalJSON() ([]byte, error) {
-	dto := map[string]string{}
+	dto := map[string]any{}
 	for k, v := range s {
 		dto[k] = v
 	}
