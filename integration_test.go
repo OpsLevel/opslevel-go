@@ -49,6 +49,46 @@ func TestCreateAWSIntegration(t *testing.T) {
 	autopilot.Equals(t, "AWS - XXXX", result.Name)
 }
 
+func TestCreateNewRelicIntegration(t *testing.T) {
+	// Arrange
+	request := `{
+	"query": "mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			"apiKey": "123456789",
+			"baseUrl": "https://api.newrelic.com/graphql",
+			"accountKey": "XXXX"
+		}
+    }
+}`
+	response := `{"data": {
+	"newRelicIntegrationCreate": {
+		"integration": {
+			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			"name": "New Relic - XXXX",
+			"type": "new_relic",
+			"createdAt": "2023-04-26T16:25:29.574450Z",
+			"installedAt": "2023-04-26T16:25:28.541124Z",
+			"apiKey": "123456789",
+			"accountKey": "XXXX",
+			"baseUrl": "https://api.newrelic.com/graphql"
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "integration/create_new_relic", request, response)
+	// Act
+	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
+		ApiKey:    opslevel.NewString("123456789"),
+		BaseUrl: opslevel.NewString("https://api.newrelic.com/graphql"),
+		AccountKey: opslevel.NewString("XXXX"),
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, "New Relic - XXXX", result.Name)
+}
+
 func TestGetIntegration(t *testing.T) {
 	// Arrange
 	request := `{
@@ -187,6 +227,44 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
 	autopilot.Equals(t, "Dev2", result.Name)
+}
+
+func TestUpdateNewRelicIntegration(t *testing.T) {
+	// Arrange
+	request := `{
+	"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$integration:IdentifierInput!){newRelicIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
+		"integration": {
+			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+		},
+		"input": {
+			"baseUrl": "https://api-test.newrelic.com/graphql"
+		}
+	}
+}`
+	response := `{"data": {
+		"newRelicIntegrationUpdate": {
+			"integration": {
+			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			"name": "New Relic - XXXX",
+			"type": "new_relic",
+			"createdAt": "2023-04-26T16:25:29.574450Z",
+			"installedAt": "2023-04-26T16:25:28.541124Z",
+			"apiKey": "123456789",
+			"accountKey": "XXXX",
+			"baseUrl": "https://api-test.newrelic.com/graphql"
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "integration/update_new_relic", request, response)
+	// Act
+	result, err := client.UpdateIntegrationNewRelic("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.NewRelicIntegrationInput{
+		BaseUrl:       opslevel.NewString("https://api-test.newrelic.com/graphql"),
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, "https://api-test.newrelic.com/graphql", result.BaseUrl)
 }
 
 func TestDeleteIntegration(t *testing.T) {
