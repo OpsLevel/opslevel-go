@@ -51,7 +51,7 @@ type AWSIntegrationInput struct {
 }
 
 type NewRelicIntegrationInput struct {
-	Id   								*string 	`json:"id,omitempty"`
+	Id   								ID     		`json:"id,omitempty"`
 	Alias   						*string		`json:"alias,omitempty"`
 	ApiKey							*string		`json:"apiKey,omitempty"`
 	BaseUrl							*string		`json:"baseUrl,omitempty"`

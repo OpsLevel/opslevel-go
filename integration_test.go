@@ -261,7 +261,7 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
 		BaseUrl:	opslevel.NewString("https://api-test.newrelic.com/graphql"),
-		Id: opslevel.NewString("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Id: opslevel.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
