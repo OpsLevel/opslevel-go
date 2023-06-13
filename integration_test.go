@@ -55,7 +55,6 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 		"query": "mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
 		"variables": {
 			"input": {
-				"integration": {},
 				"apiKey": "123456789",
 				"baseUrl": "https://api.newrelic.com/graphql",
 				"accountKey": "XXXX"
@@ -232,18 +231,15 @@ func TestUpdateAWSIntegration(t *testing.T) {
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
-
 	request := `{
-	"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!){newRelicIntegrationUpdate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"integration": {
-				"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-			},
-			"baseUrl": "https://api-test.newrelic.com/graphql"
+		"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!){newRelicIntegrationUpdate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
+		"variables":{
+			"input": {
+				"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+				"baseUrl": "https://api-test.newrelic.com/graphql"
+			}
 		}
-	}
-}`
+	}`
 
 	response := `{"data": {
 		"newRelicIntegrationUpdate": {
@@ -263,12 +259,9 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 
 	client := ABetterTestClient(t, "integration/update_new_relic", request, response)
 	// Act
-	integrationInput := opslevel.IntegrationInput{
-		Id: opslevel.NewString("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
-	}
 	result, err := client.UpdateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
 		BaseUrl:	opslevel.NewString("https://api-test.newrelic.com/graphql"),
-		Integration: integrationInput,
+		Id: opslevel.NewString("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
