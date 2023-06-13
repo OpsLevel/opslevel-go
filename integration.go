@@ -33,7 +33,7 @@ type AWSIntegrationFragment struct {
 type NewRelicIntegrationFragment struct {
 	ApiKey              string   `graphql:"apiKey"`
 	BaseUrl           	string   `graphql:"baseUrl"`
-	AccountKey     		string 	 `graphql:"accountKey"`
+	AccountKey     		  string 	 `graphql:"accountKey"`
 }
 
 type IntegrationConnection struct {
@@ -50,10 +50,16 @@ type AWSIntegrationInput struct {
 	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
 }
 
+type IntegrationInput struct {
+	Id   								*string     `json:"id,omitempty"`
+	Alias   						*string     `json:"alias,omitempty"`
+}
+
 type NewRelicIntegrationInput struct {
-	ApiKey           	*string  `json:"apiKey,omitempty"`
-	BaseUrl 			*string  `json:"baseUrl,omitempty"`
-	AccountKey     		*string  `json:"accountKey,omitempty"`
+	Integration 			IntegrationInput  `graphql:"integration"`
+	ApiKey           	*string  					`json:"apiKey,omitempty"`
+	BaseUrl 					*string  					`json:"baseUrl,omitempty"`
+	AccountKey     		*string  					`json:"accountKey,omitempty"`
 }
 
 func (s AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
@@ -90,6 +96,7 @@ func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) 
 			Errors      []OpsLevelErrors
 		} `graphql:"newRelicIntegrationCreate(input: $input)"`
 	}
+
 	v := PayloadVariables{
 		"input": input,
 	}
@@ -161,15 +168,14 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewRelicIntegrationInput) (*Integration, error) {
+func (client *Client) UpdateIntegrationNewRelic(input NewRelicIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload struct {
 			Integration *Integration
 			Errors      []OpsLevelErrors
-		} `graphql:"newRelicIntegrationUpdate(integration: $integration input: $input)"`
+		} `graphql:"newRelicIntegrationUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
-		"integration": *NewIdentifier(identifier),
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
