@@ -79,8 +79,8 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	client := ABetterTestClient(t, "integration/create_new_relic", request, response)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
-		ApiKey:		opslevel.NewString("123456789"),
-		BaseUrl: 	opslevel.NewString("https://api.newrelic.com/graphql"),
+		ApiKey:     opslevel.NewString("123456789"),
+		BaseUrl:    opslevel.NewString("https://api.newrelic.com/graphql"),
 		AccountKey: opslevel.NewString("XXXX"),
 	})
 	// Assert
@@ -260,8 +260,8 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	client := ABetterTestClient(t, "integration/update_new_relic", request, response)
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
-		BaseUrl:	opslevel.NewString("https://api-test.newrelic.com/graphql"),
-		Id: opslevel.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		BaseUrl: opslevel.NewString("https://api-test.newrelic.com/graphql"),
+		Id:      opslevel.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)

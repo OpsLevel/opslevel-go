@@ -19,7 +19,7 @@ type Integration struct {
 	CreatedAt   iso8601.Time `graphql:"createdAt"`
 	InstalledAt iso8601.Time `graphql:"installedAt"`
 
-	AWSIntegrationFragment `graphql:"... on AwsIntegration"`
+	AWSIntegrationFragment      `graphql:"... on AwsIntegration"`
 	NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
 }
 
@@ -31,34 +31,34 @@ type AWSIntegrationFragment struct {
 }
 
 type NewRelicIntegrationFragment struct {
-	ApiKey							string   `graphql:"apiKey"`
-	BaseUrl							string   `graphql:"baseUrl"`
-	AccountKey					string 	 `graphql:"accountKey"`
+	ApiKey     string `graphql:"apiKey"`
+	BaseUrl    string `graphql:"baseUrl"`
+	AccountKey string `graphql:"accountKey"`
 }
 
 type IntegrationConnection struct {
-	Nodes								[]Integration
-	PageInfo						PageInfo
-	TotalCount					int
+	Nodes      []Integration
+	PageInfo   PageInfo
+	TotalCount int
 }
 
 type AWSIntegrationInput struct {
-	Name                 *string	`json:"name,omitempty"`
-	IAMRole              *string	`json:"iamRole,omitempty"`
-	ExternalID           *string	`json:"externalId,omitempty"`
-	OwnershipTagOverride *bool		`json:"awsTagsOverrideOwnership,omitempty"`
-	OwnershipTagKeys     []string	`json:"ownershipTagKeys"`
+	Name                 *string  `json:"name,omitempty"`
+	IAMRole              *string  `json:"iamRole,omitempty"`
+	ExternalID           *string  `json:"externalId,omitempty"`
+	OwnershipTagOverride *bool    `json:"awsTagsOverrideOwnership,omitempty"`
+	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
 }
 
 type NewRelicIntegrationInput struct {
-	Id   								ID     		`json:"id,omitempty"`
-	Alias   						*string		`json:"alias,omitempty"`
-	ApiKey							*string		`json:"apiKey,omitempty"`
-	BaseUrl							*string		`json:"baseUrl,omitempty"`
-	AccountKey					*string		`json:"accountKey,omitempty"`
+	Id         ID      `json:"id,omitempty"`
+	Alias      *string `json:"alias,omitempty"`
+	ApiKey     *string `json:"apiKey,omitempty"`
+	BaseUrl    *string `json:"baseUrl,omitempty"`
+	AccountKey *string `json:"accountKey,omitempty"`
 }
 
-func (s AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
+func (s AWSIntegrationInput) GetGraphQLType() string      { return "AwsIntegrationInput" }
 func (s NewRelicIntegrationInput) GetGraphQLType() string { return "NewRelicIntegrationInput" }
 
 func (self *IntegrationId) Alias() string {
@@ -172,7 +172,7 @@ func (client *Client) UpdateIntegrationNewRelic(input NewRelicIntegrationInput) 
 		} `graphql:"newRelicIntegrationUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input":       input,
+		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
