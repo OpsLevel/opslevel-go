@@ -51,8 +51,6 @@ type AWSIntegrationInput struct {
 }
 
 type NewRelicIntegrationInput struct {
-	Id         ID      `json:"id,omitempty"`
-	Alias      *string `json:"alias,omitempty"`
 	ApiKey     *string `json:"apiKey,omitempty"`
 	BaseUrl    *string `json:"baseUrl,omitempty"`
 	AccountKey *string `json:"accountKey,omitempty"`
@@ -164,15 +162,16 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) UpdateIntegrationNewRelic(input NewRelicIntegrationInput) (*Integration, error) {
+func (client *Client) UpdateIntegrationNewRelic(resource IdentifierInput, input NewRelicIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload struct {
 			Integration *Integration
 			Errors      []OpsLevelErrors
-		} `graphql:"newRelicIntegrationUpdate(input: $input)"`
+		} `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"resource": resource,
+		"input":    input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)

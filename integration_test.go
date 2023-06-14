@@ -232,14 +232,16 @@ func TestUpdateAWSIntegration(t *testing.T) {
 func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	request := `{
-		"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!){newRelicIntegrationUpdate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
-		"variables":{
-			"input": {
-				"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-				"baseUrl": "https://api-test.newrelic.com/graphql"
-			}
+	"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{apiKey,baseUrl,accountKey}},errors{message,path}}}",
+	"variables":{
+		"resource": {
+			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+		},
+		"input": {
+			"baseUrl": "https://api-test.newrelic.com/graphql"
 		}
-	}`
+	}
+}`
 
 	response := `{"data": {
 		"newRelicIntegrationUpdate": {
@@ -259,10 +261,12 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 
 	client := ABetterTestClient(t, "integration/update_new_relic", request, response)
 	// Act
-	result, err := client.UpdateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
-		BaseUrl: opslevel.NewString("https://api-test.newrelic.com/graphql"),
-		Id:      opslevel.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
-	})
+	result, err := client.UpdateIntegrationNewRelic(
+		opslevel.IdentifierInput{Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},
+		opslevel.NewRelicIntegrationInput{
+			BaseUrl: opslevel.NewString("https://api-test.newrelic.com/graphql"),
+		},
+	)
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
