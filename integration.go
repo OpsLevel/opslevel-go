@@ -19,7 +19,8 @@ type Integration struct {
 	CreatedAt   iso8601.Time `graphql:"createdAt"`
 	InstalledAt iso8601.Time `graphql:"installedAt"`
 
-	AWSIntegrationFragment `graphql:"... on AwsIntegration"`
+	AWSIntegrationFragment      `graphql:"... on AwsIntegration"`
+	NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
 }
 
 type AWSIntegrationFragment struct {
@@ -27,6 +28,12 @@ type AWSIntegrationFragment struct {
 	ExternalID           string   `graphql:"externalId"`
 	OwnershipTagOverride bool     `graphql:"awsTagsOverrideOwnership"`
 	OwnershipTagKeys     []string `graphql:"ownershipTagKeys"`
+}
+
+type NewRelicIntegrationFragment struct {
+	ApiKey     string `graphql:"apiKey"`
+	BaseUrl    string `graphql:"baseUrl"`
+	AccountKey string `graphql:"accountKey"`
 }
 
 type IntegrationConnection struct {
@@ -43,7 +50,14 @@ type AWSIntegrationInput struct {
 	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
 }
 
-func (s AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
+type NewRelicIntegrationInput struct {
+	ApiKey     *string `json:"apiKey,omitempty"`
+	BaseUrl    *string `json:"baseUrl,omitempty"`
+	AccountKey *string `json:"accountKey,omitempty"`
+}
+
+func (s AWSIntegrationInput) GetGraphQLType() string      { return "AwsIntegrationInput" }
+func (s NewRelicIntegrationInput) GetGraphQLType() string { return "NewRelicIntegrationInput" }
 
 func (self *IntegrationId) Alias() string {
 	return fmt.Sprintf("%s-%s", slug.Make(self.Type), slug.Make(self.Name))
@@ -66,6 +80,21 @@ func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integrat
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationCreate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"newRelicIntegrationCreate(input: $input)"`
+	}
+
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("NewRelicIntegrationCreate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -130,6 +159,21 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationUpdate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewRelicIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
+	}
+	v := PayloadVariables{
+		"resource":  *NewIdentifier(identifier),
+		"input":    input,
+	}
+	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
