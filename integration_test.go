@@ -262,7 +262,7 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	client := ABetterTestClient(t, "integration/update_new_relic", request, response)
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(
-		opslevel.IdentifierInput{Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},
+		"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
 		opslevel.NewRelicIntegrationInput{
 			BaseUrl: opslevel.NewString("https://api-test.newrelic.com/graphql"),
 		},

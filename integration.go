@@ -162,7 +162,7 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) UpdateIntegrationNewRelic(resource IdentifierInput, input NewRelicIntegrationInput) (*Integration, error) {
+func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewRelicIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload struct {
 			Integration *Integration
@@ -170,7 +170,7 @@ func (client *Client) UpdateIntegrationNewRelic(resource IdentifierInput, input 
 		} `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
 	}
 	v := PayloadVariables{
-		"resource": resource,
+		"resource":  *NewIdentifier(identifier),
 		"input":    input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
