@@ -43,7 +43,7 @@ type InfrastructureResourceInput struct {
 	Type         *string                              `json:"providerResourceType,omitempty"`
 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty"`
 	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty"`
-	OwnerId      *ID                                  `json:"ownerId,omitempty"`
+	Owner        *ID                                  `json:"ownerId,omitempty"`
 	Data         JSON                                 `json:"data,omitempty" scalar:"true"`
 }
 

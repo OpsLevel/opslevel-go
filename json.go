@@ -10,6 +10,12 @@ type JSON map[string]any
 
 func (s JSON) GetGraphQLType() string { return "JSON" }
 
+func NewJSON(data string) JSON {
+	result := make(JSON)
+	json.Unmarshal([]byte(data), &result)
+	return result
+}
+
 func (s JSON) MarshalJSON() ([]byte, error) {
 	dto := map[string]any{}
 	for k, v := range s {
