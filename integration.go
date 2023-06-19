@@ -31,7 +31,6 @@ type AWSIntegrationFragment struct {
 }
 
 type NewRelicIntegrationFragment struct {
-	ApiKey     string `graphql:"apiKey"`
 	BaseUrl    string `graphql:"baseUrl"`
 	AccountKey string `graphql:"accountKey"`
 }
