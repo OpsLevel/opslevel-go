@@ -20,7 +20,7 @@ type Check struct {
 	Id          ID           `graphql:"id"`
 	Level       Level        `graphql:"level"`
 	Name        string       `graphql:"name"`
-	Notes       string       `graphql:"notes"`
+	Notes       string       `graphql:"notes: rawNotes"`
 	Owner       CheckOwner   `graphql:"owner"`
 	Type        CheckType    `graphql:"type"`
 
