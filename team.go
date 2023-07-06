@@ -14,7 +14,7 @@ type Contact struct {
 
 type ContactInput struct {
 	Type        ContactType `json:"type"`
-	DisplayName string      `json:"displayName,omitEmpty"`
+	DisplayName string      `json:"displayName,omitempty"`
 	Address     string      `json:"address"`
 }
 

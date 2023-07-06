@@ -29,7 +29,7 @@ const (
 	AlertSourceTypeEnumDatadog   AlertSourceTypeEnum = "datadog"   // A Datadog alert source (aka monitor).
 	AlertSourceTypeEnumOpsgenie  AlertSourceTypeEnum = "opsgenie"  // An Opsgenie alert source (aka service).
 	AlertSourceTypeEnumPagerduty AlertSourceTypeEnum = "pagerduty" // A PagerDuty alert source (aka service).
-	AlertSourceTypeEnumNewRelic   AlertSourceTypeEnum = "new_relic"   // A New Relic alert source (aka monitor).
+	AlertSourceTypeEnumNewRelic  AlertSourceTypeEnum = "new_relic" // A New Relic alert source (aka monitor).
 )
 
 // All AlertSourceTypeEnum as []string
@@ -301,7 +301,7 @@ const (
 )
 
 // All ServiceOwnershipContactType as []string
-var AllServiceOwnershipCheckContactType = []string {
+var AllServiceOwnershipCheckContactType = []string{
 	string(ServiceOwnershipCheckContactTypeAny),
 	string(ServiceOwnershipCheckContactTypeSlack),
 	string(ServiceOwnershipCheckContactTypeSlackHandle),

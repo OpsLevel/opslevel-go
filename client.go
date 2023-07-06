@@ -44,7 +44,7 @@ func SetAPIToken(apiToken string) Option {
 
 func SetURL(url string) Option {
 	return func(c *ClientSettings) {
-		c.url = fmt.Sprintf("%s", strings.TrimRight(url, "/"))
+		c.url = strings.TrimRight(url, "/")
 	}
 }
 

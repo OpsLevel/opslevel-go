@@ -44,7 +44,9 @@ func GraphQLQueryTemplate(request string) autopilot.GraphqlQuery {
 	exp := autopilot.GraphqlQuery{
 		Variables: nil,
 	}
-	json.Unmarshal([]byte(Templated(request)), &exp)
+	if err := json.Unmarshal([]byte(Templated(request)), &exp); err != nil {
+		panic(err)
+	}
 	return exp
 }
 

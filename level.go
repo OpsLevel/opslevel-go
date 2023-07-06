@@ -53,9 +53,7 @@ func (conn *LevelConnection) Hydrate(client *Client) error {
 		if err := client.Query(&q, v); err != nil {
 			return err
 		}
-		for _, item := range q.Account.Rubric.Levels.Nodes {
-			conn.Nodes = append(conn.Nodes, item)
-		}
+		conn.Nodes = append(conn.Nodes, q.Account.Rubric.Levels.Nodes...)
 	}
 	return nil
 }
