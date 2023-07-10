@@ -1,22 +1,57 @@
 package opslevel_test
 
 import (
+	"testing"
+
 	"github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
-	"testing"
 )
 
 func TestCreateInfra(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "",
-	"variables":{
-
-   }
+	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{alias,id},... on Team{alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},warnings{message},errors{message,path}}}",
+  "variables":{
+    "all": true,
+    "input": {
+      "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
+      "providerData": {
+        "accountName": "Dev - 123456789",
+        "externalUrl": "https://google.com",
+        "providerName": "Google"
+      },
+      "providerResourceType": "BigQuery",
+      "schema": {
+        "type": "Database"
+      }
+    }
+  }}`
+	response := `{
+  "data": {
+    "infrastructureResourceCreate": {
+      "infrastructureResource": {
+        "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+        "aliases": [],
+        "name": "my-big-query",
+        "type": "Database",
+        "owner": {
+          "alias": "test_team",
+          "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+        },
+        "ownerLocked": false,
+        "data": {
+          "name": "my-big-query",
+          "engine": "BigQuery",
+          "replica": false,
+          "endpoint": "https://google.com"
+        }
+      },
+      "warnings": [],
+      "errors": []
+    }
+  }
 }`
-	response := `{"data": {
-
-}}`
 	client := ABetterTestClient(t, "infra/create", request, response)
 	// Act
 	result, err := client.CreateInfrastructure(opslevel.InfrastructureResourceInput{
@@ -29,7 +64,7 @@ func TestCreateInfra(t *testing.T) {
 			ExternalURL:  "https://google.com",
 			ProviderName: "Google",
 		},
-		OwnerId: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Owner: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
 		Data: opslevel.JSON{
 			"name":     "my-big-query",
 			"engine":   "BigQuery",
@@ -40,7 +75,7 @@ func TestCreateInfra(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
-	autopilot.Equals(t, "", result.Name)
+	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
 func TestGetInfra(t *testing.T) {
@@ -67,7 +102,8 @@ func TestGetInfra(t *testing.T) {
 func TestListInfraSchemas(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "",
+		{
+			`{"query": "",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -84,8 +120,10 @@ func TestListInfraSchemas(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
-					}}}}`},
-		{`{"query": "",
+					}}}}`,
+		},
+		{
+			`{"query": "",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -99,7 +137,8 @@ func TestListInfraSchemas(t *testing.T) {
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
-					}}}}`},
+					}}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "infra/list_schemas", requests...)
@@ -116,7 +155,8 @@ func TestListInfraSchemas(t *testing.T) {
 func TestListInfra(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "",
+		{
+			`{"query": "",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -133,8 +173,10 @@ func TestListInfra(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
-					}}}}`},
-		{`{"query": "",
+					}}}}`,
+		},
+		{
+			`{"query": "",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -148,7 +190,8 @@ func TestListInfra(t *testing.T) {
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
-					}}}}`},
+					}}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "infra/list", requests...)
@@ -176,7 +219,7 @@ func TestUpdateInfra(t *testing.T) {
 	client := ABetterTestClient(t, "infra/update", request, response)
 	// Act
 	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfrastructureResourceInput{
-		OwnerId: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Owner: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
 		Data: opslevel.JSON{
 			"name":     "my-big-query",
 			"engine":   "BigQuery",
@@ -193,16 +236,17 @@ func TestUpdateInfra(t *testing.T) {
 func TestDeleteInfra(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "",
+	"query": "mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}",
 	"variables":{
-
-  }
-}`
+    "input": {
+      "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+    }
+  }}`
 	response := `{"data": {
-	"infrastructureDelete": {
-		"errors": []
-	}
-}}`
+		"infrastructureResourceDelete": {
+			"errors": []
+		}
+	}}`
 	client := ABetterTestClient(t, "infra/delete", request, response)
 	// Act
 	err := client.DeleteInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
