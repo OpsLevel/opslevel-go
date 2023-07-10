@@ -35,7 +35,7 @@ type InfrastructureResourceSchemaInput struct {
 
 type InfrastructureResourceProviderInput struct {
 	AccountName  string `json:"accountName"`
-	ExternalURL  string `json:"external_url"`
+	ExternalURL  string `json:"externalUrl"`
 	ProviderName string `json:"providerName"`
 }
 
