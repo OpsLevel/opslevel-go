@@ -14,7 +14,7 @@ type Contact struct {
 
 type ContactInput struct {
 	Type        ContactType `json:"type"`
-	DisplayName string      `json:"displayName,omitEmpty"`
+	DisplayName string      `json:"displayName,omitempty"`
 	Address     string      `json:"address"`
 }
 
@@ -74,7 +74,7 @@ type TeamCreateInput struct {
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
 	Group            *IdentifierInput `json:"group"`
-	Contacts         []ContactInput   `json:"contacts,omitempty"`
+	Contacts         *[]ContactInput  `json:"contacts,omitempty"`
 }
 
 type TeamUpdateInput struct {

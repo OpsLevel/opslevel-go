@@ -30,7 +30,7 @@ func TestCreateTeam(t *testing.T) {
 		Name:             "Example",
 		ManagerEmail:     "john@example.com",
 		Responsibilities: "Foo & bar",
-		Contacts:         contacts,
+		Contacts:         &contacts,
 		Group:            ol.NewIdentifier("test_group"),
 	})
 	// Assert
