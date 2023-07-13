@@ -10,7 +10,12 @@
           },
           "contacts":[
               {
+                  "type":"slack_handle",
+                  "address":"@mozzie"
+              },
+              {
                   "type":"slack",
+                  "displayName":"",
                   "address":"#general"
               },
               {

@@ -23,8 +23,9 @@ func TestCreateTeam(t *testing.T) {
 	client := ATestClient(t, "team/create")
 	// Act
 	contacts := []ol.ContactInput{
-		ol.CreateContactSlack("#general", ""),
-		ol.CreateContactWeb("https://example.com", "Homepage"),
+		ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
+		ol.CreateContactSlack("#general", ol.NewString("")),
+		ol.CreateContactWeb("https://example.com", ol.NewString("Homepage")),
 	}
 	result, err := client.CreateTeam(ol.TeamCreateInput{
 		Name:             "Example",
@@ -614,7 +615,7 @@ func TestTeamAddContact(t *testing.T) {
 	client2 := ATestClient(t, "team/add_contact")
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", ""))
+	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", ol.NewString("")))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "#general", result.Address)
@@ -624,7 +625,7 @@ func TestTeamUpdateContact(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/update_contact")
 	// Act
-	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.CreateContactSlack("#general", "Main Channel"))
+	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.CreateContactSlack("#general", ol.NewString("Main Channel")))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
@@ -634,7 +635,7 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	// Arrange
 	client := ATestClientAlt(t, "team/update_contact", "team/update_contact_nil_type")
 	// Act
-	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.ContactInput{Address: "#general", DisplayName: "Main Channel"})
+	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.ContactInput{Address: "#general", DisplayName: ol.NewString("Main Channel")})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)

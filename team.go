@@ -14,7 +14,7 @@ type Contact struct {
 
 type ContactInput struct {
 	Type        ContactType `json:"type"`
-	DisplayName string      `json:"displayName,omitempty"`
+	DisplayName *string     `json:"displayName,omitempty"`
 	Address     string      `json:"address"`
 }
 
@@ -213,7 +213,7 @@ func BuildMembershipInput(members []string) (output []TeamMembershipUserInput) {
 	return
 }
 
-func CreateContactSlack(channel string, name string) ContactInput {
+func CreateContactSlack(channel string, name *string) ContactInput {
 	return ContactInput{
 		Type:        ContactTypeSlack,
 		DisplayName: name,
@@ -221,7 +221,15 @@ func CreateContactSlack(channel string, name string) ContactInput {
 	}
 }
 
-func CreateContactEmail(email string, name string) ContactInput {
+func CreateContactSlackHandle(channel string, name *string) ContactInput {
+	return ContactInput{
+		Type:        ContactTypeSlackHandle,
+		DisplayName: name,
+		Address:     channel,
+	}
+}
+
+func CreateContactEmail(email string, name *string) ContactInput {
 	return ContactInput{
 		Type:        ContactTypeEmail,
 		DisplayName: name,
@@ -229,7 +237,7 @@ func CreateContactEmail(email string, name string) ContactInput {
 	}
 }
 
-func CreateContactWeb(address string, name string) ContactInput {
+func CreateContactWeb(address string, name *string) ContactInput {
 	return ContactInput{
 		Type:        ContactTypeWeb,
 		DisplayName: name,
@@ -300,7 +308,7 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 	}
 	contactInput := ContactCreateInput{
 		Type:        contact.Type,
-		DisplayName: contact.DisplayName,
+		DisplayName: *contact.DisplayName,
 		Address:     contact.Address,
 	}
 	if IsID(team) {
@@ -469,7 +477,7 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	}
 	input := ContactUpdateInput{
 		Id:          id,
-		DisplayName: contact.DisplayName,
+		DisplayName: *contact.DisplayName,
 		Address:     contact.Address,
 	}
 	if contact.Type == "" {
