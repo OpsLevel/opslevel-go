@@ -1,0 +1,4 @@
+kind: "Dependency"
+body: "Bump golang.org/x/oauth2 from 0.8.0 to 0.10.0"
+time: 2023-07-13T21:30:02.00000Z
+
