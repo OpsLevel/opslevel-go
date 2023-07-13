@@ -9,23 +9,27 @@ import (
 func TestEntityOwnerGroupReturnsCorrectId(t *testing.T) {
 	// Arrange
 	owner := ol.EntityOwner{
-		OnGroup: ol.GroupId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		OnGroup: ol.EntityOwnerGroup{
+			Id:    "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Alias: "Example",
 		},
 	}
 	// Act
 	// Assert
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.Id())
+	autopilot.Equals(t, "Example", owner.OnGroup.AsGroup().Alias)
 }
 
 func TestEntityOwnerTeamReturnsCorrectId(t *testing.T) {
 	// Arrange
 	owner := ol.EntityOwner{
-		OnTeam: ol.TeamId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		OnTeam: ol.EntityOwnerTeam{
+			Id:    "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Alias: "Example",
 		},
 	}
 	// Act
 	// Assert
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.Id())
+	autopilot.Equals(t, "Example", owner.OnTeam.AsTeam().Alias)
 }

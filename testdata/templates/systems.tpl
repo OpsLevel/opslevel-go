@@ -8,7 +8,7 @@
     "description": "Yolo!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem1",
     "owner": {
-      "alias": "kyle_team",
+      "groupAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     },
     "parent": {{ template "domain1_response" }},
@@ -25,7 +25,7 @@
     "description": "Yolo2!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem2",
     "owner": {
-      "alias": "kyle_team",
+      "groupAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     },
     "note": "{{ template "description" }}"
@@ -41,7 +41,7 @@
     "description": "Yolo3!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem3",
     "owner": {
-      "alias": "kyle_team",
+      "teamAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     },
     "parent": {{ template "domain1_response" }},
