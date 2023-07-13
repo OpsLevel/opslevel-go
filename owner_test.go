@@ -17,6 +17,8 @@ func TestEntityOwnerGroupReturnsCorrectId(t *testing.T) {
 	// Act
 	// Assert
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.Id())
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.OnGroup.AsGroup().Id)
+	autopilot.Equals(t, "Example", owner.Alias())
 	autopilot.Equals(t, "Example", owner.OnGroup.AsGroup().Alias)
 }
 
@@ -31,5 +33,7 @@ func TestEntityOwnerTeamReturnsCorrectId(t *testing.T) {
 	// Act
 	// Assert
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.Id())
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.OnTeam.AsTeam().Id)
+	autopilot.Equals(t, "Example", owner.Alias())
 	autopilot.Equals(t, "Example", owner.OnTeam.AsTeam().Alias)
 }
