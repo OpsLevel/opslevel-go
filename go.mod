@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.13.1
-	github.com/hashicorp/go-retryablehttp v0.7.2
+	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/hasura/go-graphql-client v0.9.3
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2022 v2022.11.9
