@@ -9,7 +9,7 @@ import (
 func TestSystemCreate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
+    "query": "mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}",
 	"variables":{
 		"input": {
 			"name": "PlatformSystem3",
@@ -167,7 +167,7 @@ func TestSystemGetTags(t *testing.T) {
 func TestSystemAssignService(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
+    "query": "mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}",
 	"variables":{
 		"system":{
 			"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
@@ -198,7 +198,7 @@ func TestSystemAssignService(t *testing.T) {
 func TestSystemGetId(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note}}}",
+    "query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note}}}",
 	"variables":{
 		"input": {
 			"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"
@@ -221,7 +221,7 @@ func TestSystemGetId(t *testing.T) {
 func TestSystemGetAlias(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note}}}",
+    "query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note}}}",
 	"variables":{
 		"input": {
 			"alias": "platformsystem1"
@@ -243,7 +243,7 @@ func TestSystemGetAlias(t *testing.T) {
 func TestListSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -256,7 +256,7 @@ func TestListSystems(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }}
 						  }}}}`},
-		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+		{`{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -286,7 +286,7 @@ func TestListSystems(t *testing.T) {
 func TestSystemUpdate(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{alias,id},... on Team{alias,id}},note},note},errors{message,path}}}",
+    "query": "mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}",
 	"variables":{
 		"system":{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"},
 		"input":{
