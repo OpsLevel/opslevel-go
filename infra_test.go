@@ -9,13 +9,15 @@ import (
 
 func TestCreateInfra(t *testing.T) {
 	// Arrange
+	// TODO: the data field is broken it should be like this - JSON type is not implemented properly in the API
+	// "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
 	request := `{
-	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{alias,id},... on Team{alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},warnings{message},errors{message,path}}}",
+	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},warnings{message},errors{message,path}}}",
   "variables":{
     "all": true,
     "input": {
       "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
+      "data": {"endpoint":"https://google.com","engine":"BigQuery","name":"my-big-query","replica":false},
       "providerData": {
         "accountName": "Dev - 123456789",
         "externalUrl": "https://google.com",
@@ -30,23 +32,7 @@ func TestCreateInfra(t *testing.T) {
 	response := `{
   "data": {
     "infrastructureResourceCreate": {
-      "infrastructureResource": {
-        "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-        "aliases": [],
-        "name": "my-big-query",
-        "type": "Database",
-        "owner": {
-          "alias": "test_team",
-          "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-        },
-        "ownerLocked": false,
-        "data": {
-          "name": "my-big-query",
-          "engine": "BigQuery",
-          "replica": false,
-          "endpoint": "https://google.com"
-        }
-      },
+      "infrastructureResource": {{ template "infra_1" }},
       "warnings": [],
       "errors": []
     }
@@ -81,62 +67,58 @@ func TestCreateInfra(t *testing.T) {
 func TestGetInfra(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "",
+	"query": "query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)}}}",
 	"variables":{
-		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
-  }
+		"all": true,
+		"input":{
+			"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+		}
+	}
 }`
 	response := `{"data": {
 	"account": {
+		"infrastructureResource": {{ template "infra_1" }}
 	}
 }}`
 	client := ABetterTestClient(t, "infra/get", request, response)
 	// Act
-	result, err := client.GetInfrastructure("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
+	result, err := client.GetInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf", string(result.Id))
-	autopilot.Equals(t, "", result.Name)
+	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
 func TestListInfraSchemas(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "",
-			{{ template "pagination_initial_query_variables" }}
+			`{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+				{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
 				"data": {
 					"account": {
-						"infrastructures": {
+						"infrastructureResourceSchemas": {
 							"nodes": [
-								{
-									{{ template "" }}
-								},
-								{
-									{{ template "" }}
-								}
+								{{ template "infra_schema_1" }},
+								{{ template "infra_schema_2" }}
 							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 2
+							{{ template "pagination_initial_pageInfo_response" }}
 					}}}}`,
 		},
 		{
-			`{"query": "",
-			{{ template "pagination_second_query_variables" }}
+			`{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+				{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
 				"data": {
 					"account": {
-						"infrastructures": {
+						"infrastructureResourceSchemas": {
 							"nodes": [
-								{
-									{{ template "" }}
-								}
+								{{ template "infra_schema_3" }}
 							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
+							{{ template "pagination_second_pageInfo_response" }}
 					}}}}`,
 		},
 	}
@@ -148,48 +130,49 @@ func TestListInfraSchemas(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, response.TotalCount)
-	autopilot.Equals(t, "", result[1].Type)
-	autopilot.Equals(t, "", result[2].Type)
+	autopilot.Equals(t, "Database", result[0].Type)
+	autopilot.Equals(t, "Compute", result[1].Type)
+	autopilot.Equals(t, "Queue", result[2].Type)
 }
 
 func TestListInfra(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "",
-			{{ template "pagination_initial_query_variables" }}
+			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+				"variables": {
+					"after": "",
+					"all": true,
+					"first": 100
+				}
 			}`,
 			`{
 				"data": {
 					"account": {
-						"infrastructures": {
+						"infrastructureResources": {
 							"nodes": [
-								{
-									{{ template "" }}
-								},
-								{
-									{{ template "" }}
-								}
+								{{ template "infra_1" }},
+								{{ template "infra_2" }}
 							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 2
+							{{ template "pagination_initial_pageInfo_response" }}
 					}}}}`,
 		},
 		{
-			`{"query": "",
-			{{ template "pagination_second_query_variables" }}
+			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+				"variables": {
+					"after": "OA",
+					"all": true,
+					"first": 100
+				}
 			}`,
 			`{
 				"data": {
 					"account": {
-						"infrastructures": {
+						"infrastructureResources": {
 							"nodes": [
-								{
-									{{ template "" }}
-								}
+								{{ template "infra_3" }}
 							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
+							{{ template "pagination_second_pageInfo_response" }}
 					}}}}`,
 		},
 	}
@@ -201,20 +184,31 @@ func TestListInfra(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, response.TotalCount)
-	autopilot.Equals(t, "", result[1].Name)
-	autopilot.Equals(t, "", result[2].Name)
+	autopilot.Equals(t, "vpc-XXXXXXXXXX", result[1].Name)
+	autopilot.Equals(t, "production-demo", result[2].Name)
 }
 
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
+	// TODO: the data field is broken it should be like this - JSON type is not implemented properly in the API
+	// "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
 	request := `{
-	"query": "",
-	"variables":{
-
-  }
+	"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},warnings{message},errors{message,path}}}",
+  "variables":{
+    "all": true,
+    "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},
+    "input": {
+      "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+      "data": {"endpoint":"https://google.com","engine":"BigQuery","name":"my-big-query","replica":false}
+    }
+}
 }`
 	response := `{"data": {
-
+    "infrastructureResourceUpdate": {
+      "infrastructureResource": {{ template "infra_1" }},
+      "warnings": [],
+      "errors": []
+    }
 }}`
 	client := ABetterTestClient(t, "infra/update", request, response)
 	// Act
@@ -230,7 +224,7 @@ func TestUpdateInfra(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
-	autopilot.Equals(t, "", result.Name)
+	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
 func TestDeleteInfra(t *testing.T) {

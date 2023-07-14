@@ -14,13 +14,13 @@ type InfrastructureResourceSchemaConnection struct {
 }
 
 type InfrastructureResource struct {
-	Id          string      `json:"id"`
-	Aliases     []string    `json:"aliases"`
-	Name        string      `json:"name"`
-	Type        string      `json:"type" graphql:"type @include(if: $all)"`
-	Owner       EntityOwner `json:"owner" graphql:"owner @include(if: $all)"`
-	OwnerLocked bool        `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
-	Data        JSON        `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
+	Id          string         `json:"id"`
+	Aliases     []string       `json:"aliases"`
+	Name        string         `json:"name"`
+	Type        string         `json:"type" graphql:"type @include(if: $all)"`
+	Owner       EntityOwner    `json:"owner" graphql:"owner @include(if: $all)"`
+	OwnerLocked bool           `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
+	Data        map[string]any `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
 }
 
 type InfrastructureResourceConnection struct {
@@ -30,21 +30,21 @@ type InfrastructureResourceConnection struct {
 }
 
 type InfrastructureResourceSchemaInput struct {
-	Type string `json:"type"`
+	Type string `json:"type" yaml:"type"`
 }
 
 type InfrastructureResourceProviderInput struct {
-	AccountName  string `json:"accountName"`
-	ExternalURL  string `json:"externalUrl"`
-	ProviderName string `json:"providerName"`
+	AccountName  string `json:"accountName" yaml:"accountName"`
+	ExternalURL  string `json:"externalUrl" yaml:"externalUrl"`
+	ProviderName string `json:"providerName" yaml:"providerName"`
 }
 
 type InfrastructureResourceInput struct {
-	Type         *string                              `json:"providerResourceType,omitempty"`
+	Type         *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType"`
 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty"`
-	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty"`
-	Owner        *ID                                  `json:"ownerId,omitempty"`
-	Data         JSON                                 `json:"data,omitempty" scalar:"true"`
+	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData"`
+	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"owner"`
+	Data         map[string]any                       `json:"data,omitempty" yaml:"data"`
 }
 
 func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*InfrastructureResource, error) {
@@ -71,7 +71,7 @@ func (client *Client) GetInfrastructure(identifier string) (*InfrastructureResou
 		}
 	}
 	v := PayloadVariables{
-		"input": NewIdentifier(identifier),
+		"input": *NewIdentifier(identifier),
 		"all":   true,
 	}
 	err := client.Query(&q, v, WithName("InfrastructureResourceGet"))
@@ -101,8 +101,8 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (In
 		}
 		q.Account.InfrastructureResourceSchemas.Nodes = append(q.Account.InfrastructureResourceSchemas.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResourceSchemas.PageInfo = resp.PageInfo
-		q.Account.InfrastructureResourceSchemas.TotalCount += resp.TotalCount
 	}
+	q.Account.InfrastructureResourceSchemas.TotalCount = len(q.Account.InfrastructureResourceSchemas.Nodes)
 	return q.Account.InfrastructureResourceSchemas, nil
 }
 
@@ -127,8 +127,8 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 		}
 		q.Account.InfrastructureResource.Nodes = append(q.Account.InfrastructureResource.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResource.PageInfo = resp.PageInfo
-		q.Account.InfrastructureResource.TotalCount += resp.TotalCount
 	}
+	q.Account.InfrastructureResource.TotalCount = len(q.Account.InfrastructureResource.Nodes)
 	return q.Account.InfrastructureResource, nil
 }
 
@@ -141,9 +141,9 @@ func (client *Client) UpdateInfrastructure(identifier string, input Infrastructu
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
 	v := PayloadVariables{
-		"$identifier": *NewIdentifier(identifier),
-		"input":       input,
-		"all":         true,
+		"identifier": *NewIdentifier(identifier),
+		"input":      input,
+		"all":        true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
 	// TODO: handle m.Payload.Warnings somehow

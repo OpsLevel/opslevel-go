@@ -78,6 +78,18 @@ func TestCache(t *testing.T) {
                     "nodes":[{{ template "repository_1" }}]
                 }
             }}}`},
+		{`{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			"variables":{
+                "after": "",
+                "first": 100
+			}}`,
+			`{"data":{"account":{
+                "infrastructureResourceSchemas":{
+                    "nodes":[
+						{{ template "infra_schema_1" }}
+					]
+                }
+            }}}`},
 	}
 
 	client1 := APaginatedTestClient(t, "cache1", requests...)
@@ -85,6 +97,7 @@ func TestCache(t *testing.T) {
 
 	// Act
 	ol.Cache.CacheAll(client1)
+
 	ol.Cache.CacheTiers(client2)
 	ol.Cache.CacheLifecycles(client2)
 	ol.Cache.CacheTeams(client2)
@@ -93,6 +106,7 @@ func TestCache(t *testing.T) {
 	ol.Cache.CacheFilters(client2)
 	ol.Cache.CacheIntegrations(client2)
 	ol.Cache.CacheRepositories(client2)
+	ol.Cache.CacheInfraSchemas(client2)
 
 	tier1, tier1Ok := ol.Cache.TryGetTier("example")
 	tier2, tier2Ok := ol.Cache.TryGetTier("does_not_exist")
@@ -117,6 +131,9 @@ func TestCache(t *testing.T) {
 
 	repository1, repository1Ok := ol.Cache.TryGetRepository("github.com:rocktavious/autopilot")
 	repository2, repository2Ok := ol.Cache.TryGetRepository("does_not_exist")
+
+	infraSchema1, infraSchema1OK := ol.Cache.TryGetInfrastructureSchema("Database")
+	infraSchema2, infraSchema2Ok := ol.Cache.TryGetInfrastructureSchema("does_not_exist")
 
 	// Assert
 	autopilot.Equals(t, true, tier1Ok)
@@ -158,4 +175,9 @@ func TestCache(t *testing.T) {
 	autopilot.Equals(t, id, repository1.Id)
 	autopilot.Equals(t, false, repository2Ok)
 	autopilot.Equals(t, true, repository2 == nil)
+
+	autopilot.Equals(t, true, infraSchema1OK)
+	autopilot.Equals(t, "Database", infraSchema1.Type)
+	autopilot.Equals(t, false, infraSchema2Ok)
+	autopilot.Equals(t, true, infraSchema2 == nil)
 }
