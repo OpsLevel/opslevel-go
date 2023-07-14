@@ -44,6 +44,14 @@
 {{ end }}
 {{- define "next_page_false" }}
 {
+  "hasNextPage": false,
+  "hasPreviousPage": true,
+  "startCursor": "OA",
+  "endCursor": "EOf"
+}
+{{ end }}
+{{- define "next_page_true" }}
+{
   "hasNextPage": true,
   "hasPreviousPage": false,
   "startCursor": "MQ",
@@ -51,15 +59,10 @@
 }
 {{ end }}
 {{- define "pagination_initial_pageInfo_response" }}
-"pageInfo": {{ template "next_page_false" }}
+"pageInfo": {{ template "next_page_true" }}
 {{ end }}
 {{- define "pagination_second_pageInfo_response" }}
-"pageInfo": {
-  "hasNextPage": false,
-  "hasPreviousPage": true,
-  "startCursor": "OA",
-  "endCursor": "EOf"
-}
+"pageInfo": {{ template "next_page_false" }}
 {{ end }}
 {{- define "error1" }}{
     "message": "Example Error",

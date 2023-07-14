@@ -71,7 +71,7 @@ func (client *Client) GetInfrastructure(identifier string) (*InfrastructureResou
 		}
 	}
 	v := PayloadVariables{
-		"input": NewIdentifier(identifier),
+		"input": *NewIdentifier(identifier),
 		"all":   true,
 	}
 	err := client.Query(&q, v, WithName("InfrastructureResourceGet"))
@@ -101,8 +101,8 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (In
 		}
 		q.Account.InfrastructureResourceSchemas.Nodes = append(q.Account.InfrastructureResourceSchemas.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResourceSchemas.PageInfo = resp.PageInfo
-		q.Account.InfrastructureResourceSchemas.TotalCount += resp.TotalCount
 	}
+	q.Account.InfrastructureResourceSchemas.TotalCount = len(q.Account.InfrastructureResourceSchemas.Nodes)
 	return q.Account.InfrastructureResourceSchemas, nil
 }
 
@@ -127,8 +127,8 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 		}
 		q.Account.InfrastructureResource.Nodes = append(q.Account.InfrastructureResource.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResource.PageInfo = resp.PageInfo
-		q.Account.InfrastructureResource.TotalCount += resp.TotalCount
 	}
+	q.Account.InfrastructureResource.TotalCount = len(q.Account.InfrastructureResource.Nodes)
 	return q.Account.InfrastructureResource, nil
 }
 
@@ -141,9 +141,9 @@ func (client *Client) UpdateInfrastructure(identifier string, input Infrastructu
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
 	v := PayloadVariables{
-		"$identifier": *NewIdentifier(identifier),
-		"input":       input,
-		"all":         true,
+		"identifier": *NewIdentifier(identifier),
+		"input":      input,
+		"all":        true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
 	// TODO: handle m.Payload.Warnings somehow
