@@ -46,12 +46,18 @@ type AliasOwnerTypeEnum string
 const (
 	AliasOwnerTypeEnumService AliasOwnerTypeEnum = "service" // Aliases that are assigned to services.
 	AliasOwnerTypeEnumTeam    AliasOwnerTypeEnum = "team"    // Aliases that are assigned to teams.
+	AliasOwnerTypeEnumSystem  AliasOwnerTypeEnum = "system"  // Aliases that are assigned to systems.
+	AliasOwnerTypeEnumDomain  AliasOwnerTypeEnum = "domain"  // Aliases that are assigned to domains.
+	AliasOwnerTypeEnumGroup   AliasOwnerTypeEnum = "group"   // Aliases that are assigned to groups.
 )
 
 // All AliasOwnerTypeEnum as []string
 var AllAliasOwnerTypeEnum = []string{
 	string(AliasOwnerTypeEnumService),
 	string(AliasOwnerTypeEnumTeam),
+	string(AliasOwnerTypeEnumSystem),
+	string(AliasOwnerTypeEnumDomain),
+	string(AliasOwnerTypeEnumGroup),
 }
 
 // ApiDocumentSourceEnum represents the source used to determine the preferred API document.
