@@ -16,6 +16,7 @@ type Cacher struct {
 	Filters      map[string]Filter
 	Integrations map[string]Integration
 	Repositories map[string]Repository
+	InfraSchemas map[string]InfrastructureResourceSchema
 }
 
 func (c *Cacher) TryGetTier(alias string) (*Tier, bool) {
@@ -85,6 +86,15 @@ func (c *Cacher) TryGetRepository(alias string) (*Repository, bool) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if v, ok := c.Repositories[alias]; ok {
+		return &v, ok
+	}
+	return nil, false
+}
+
+func (c *Cacher) TryGetInfrastructureSchema(alias string) (*InfrastructureResourceSchema, bool) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	if v, ok := c.InfraSchemas[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
@@ -194,6 +204,19 @@ func (c *Cacher) doCacheRepositories(client *Client) {
 	}
 }
 
+func (c *Cacher) doCacheInfraSchemas(client *Client) {
+	log.Info().Msg("Caching 'InfrastructureSchema' lookup table from API ...")
+
+	data, dataErr := client.ListInfrastructureSchemas(nil)
+	if dataErr != nil {
+		log.Warn().Msgf("===> Failed to list all 'InfrastructureSchema' from API - REASON: %s", dataErr.Error())
+	}
+	for _, item := range data.Nodes {
+		//log.Info().Msgf("Caching 'InfrastructureSchema' '%s' ...", item.Type)
+		c.InfraSchemas[item.Type] = item
+	}
+}
+
 func (c *Cacher) CacheTiers(client *Client) {
 	c.mutex.Lock()
 	c.doCacheTiers(client)
@@ -242,6 +265,12 @@ func (c *Cacher) CacheRepositories(client *Client) {
 	c.mutex.Unlock()
 }
 
+func (c *Cacher) CacheInfraSchemas(client *Client) {
+	c.mutex.Lock()
+	c.doCacheInfraSchemas(client)
+	c.mutex.Unlock()
+}
+
 func (c *Cacher) CacheAll(client *Client) {
 	c.mutex.Lock()
 	c.doCacheTiers(client)
@@ -252,6 +281,7 @@ func (c *Cacher) CacheAll(client *Client) {
 	c.doCacheFilters(client)
 	c.doCacheIntegrations(client)
 	c.doCacheRepositories(client)
+	c.doCacheInfraSchemas(client)
 	c.mutex.Unlock()
 }
 
@@ -265,4 +295,5 @@ var Cache = &Cacher{
 	Filters:      make(map[string]Filter),
 	Integrations: make(map[string]Integration),
 	Repositories: make(map[string]Repository),
+	InfraSchemas: make(map[string]InfrastructureResourceSchema),
 }
