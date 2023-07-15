@@ -56,7 +56,36 @@ type InfrastructureResourceInput struct {
 	Data         JSON                                 `json:"data,omitempty" yaml:"data" scalar:"true"`
 }
 
-func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*InfrastructureResource, error) {
+type InfraProviderInput struct {
+	Account string `json:"account" yaml:"account"`
+	Name    string `json:"name" yaml:"name"`
+	Type    string `json:"type" yaml:"type"`
+	URL     string `json:"url" yaml:"url"`
+}
+
+type InfraInput struct {
+	Schema   string              `json:"schema" yaml:"schema"`
+	Owner    *ID                 `json:"owner" yaml:"owner"`
+	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
+	Data     JSON                `json:"data" yaml:"data" scalar:"true"`
+}
+
+func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {
+	i := InfrastructureResourceInput{
+		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
+		Data:   input.Data,
+	}
+	if input.Owner != nil {
+		i.Owner = input.Owner
+	}
+	if input.Provider != nil {
+		i.ProviderType = &input.Provider.Type
+		i.ProviderData = &InfrastructureResourceProviderInput{
+			AccountName:  input.Provider.Account,
+			ExternalURL:  input.Provider.URL,
+			ProviderName: input.Provider.Name,
+		}
+	}
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
@@ -65,7 +94,7 @@ func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*
 		} `graphql:"infrastructureResourceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": i,
 		"all":   true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceCreate"))
@@ -141,7 +170,22 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 	return q.Account.InfrastructureResource, nil
 }
 
-func (client *Client) UpdateInfrastructure(identifier string, input InfrastructureResourceInput) (*InfrastructureResource, error) {
+func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) (*InfrastructureResource, error) {
+	i := InfrastructureResourceInput{
+		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
+		Data:   input.Data,
+	}
+	if input.Owner != nil {
+		i.Owner = input.Owner
+	}
+	if input.Provider != nil {
+		i.ProviderType = &input.Provider.Type
+		i.ProviderData = &InfrastructureResourceProviderInput{
+			AccountName:  input.Provider.Account,
+			ExternalURL:  input.Provider.URL,
+			ProviderName: input.Provider.Name,
+		}
+	}
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
@@ -151,7 +195,7 @@ func (client *Client) UpdateInfrastructure(identifier string, input Infrastructu
 	}
 	v := PayloadVariables{
 		"identifier": *NewIdentifier(identifier),
-		"input":      input,
+		"input":      i,
 		"all":        true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
