@@ -15,6 +15,21 @@ type JSONTester struct {
 	Key4 *ol.JSON `json:"key4,omitempty"`
 }
 
+func TestNewJSON(t *testing.T) {
+	// Arrange
+	data1 := ol.JSON{"foo": "bar"}
+	data2 := ol.NewJSON(`{"foo":"bar"}`)
+	// Act
+	result1, err1 := json.Marshal(data1)
+	result2, err2 := json.Marshal(data2)
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Ok(t, err2)
+	autopilot.Equals(t, data1, data2)
+	autopilot.Assert(t, &data1 != &data2, "The JSON objects have the same memory address")
+	autopilot.Equals(t, result1, result2)
+}
+
 func TestMarshalJSON(t *testing.T) {
 	// Arrange
 	id1 := ol.JSON{}
