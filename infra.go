@@ -13,14 +13,23 @@ type InfrastructureResourceSchemaConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
+type InfrastructureResourceProviderData struct {
+	AccountName  string `json:"accountName" graphql:"accountName"`
+	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
+	ProviderName string `json:"providerName" graphql:"providerName"`
+}
+
 type InfrastructureResource struct {
-	Id          string         `json:"id"`
-	Aliases     []string       `json:"aliases"`
-	Name        string         `json:"name"`
-	Type        string         `json:"type" graphql:"type @include(if: $all)"`
-	Owner       EntityOwner    `json:"owner" graphql:"owner @include(if: $all)"`
-	OwnerLocked bool           `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
-	Data        JSON           `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
+	Id           string                             `json:"id"`
+	Aliases      []string                           `json:"aliases"`
+	Name         string                             `json:"name"`
+	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
+	ProviderType string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
+	ProviderData InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`
+	Owner        EntityOwner                        `json:"owner" graphql:"owner @include(if: $all)"`
+	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
+	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
+	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
 }
 
 type InfrastructureResourceConnection struct {
@@ -40,8 +49,8 @@ type InfrastructureResourceProviderInput struct {
 }
 
 type InfrastructureResourceInput struct {
-	Type         *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType"`
 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty"`
+	ProviderType *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType"`
 	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData"`
 	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"owner"`
 	Data         JSON                                 `json:"data,omitempty" yaml:"data" scalar:"true"`

@@ -16,6 +16,15 @@ func NewJSON(data string) JSON {
 	return result
 }
 
+func (s JSON) ToJSON() string {
+	dto := map[string]any{}
+	for k, v := range s {
+		dto[k] = v
+	}
+	b, _ := json.Marshal(dto)
+	return string(b)
+}
+
 func (s JSON) MarshalJSON() ([]byte, error) {
 	dto := map[string]any{}
 	for k, v := range s {
