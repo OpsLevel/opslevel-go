@@ -9,15 +9,13 @@ import (
 
 func TestCreateInfra(t *testing.T) {
 	// Arrange
-	// TODO: the data field is broken it should be like this - JSON type is not implemented properly in the API
-	// "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
 	request := `{
 	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},warnings{message},errors{message,path}}}",
   "variables":{
     "all": true,
     "input": {
       "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-      "data": {"endpoint":"https://google.com","engine":"BigQuery","name":"my-big-query","replica":false},
+      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
       "providerData": {
         "accountName": "Dev - 123456789",
         "externalUrl": "https://google.com",
@@ -190,8 +188,6 @@ func TestListInfra(t *testing.T) {
 
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
-	// TODO: the data field is broken it should be like this - JSON type is not implemented properly in the API
-	// "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
 	request := `{
 	"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all)},warnings{message},errors{message,path}}}",
   "variables":{
@@ -199,7 +195,7 @@ func TestUpdateInfra(t *testing.T) {
     "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},
     "input": {
       "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-      "data": {"endpoint":"https://google.com","engine":"BigQuery","name":"my-big-query","replica":false}
+      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}"
     }
 }
 }`

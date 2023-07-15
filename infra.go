@@ -20,7 +20,7 @@ type InfrastructureResource struct {
 	Type        string         `json:"type" graphql:"type @include(if: $all)"`
 	Owner       EntityOwner    `json:"owner" graphql:"owner @include(if: $all)"`
 	OwnerLocked bool           `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
-	Data        map[string]any `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
+	Data        JSON           `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
 }
 
 type InfrastructureResourceConnection struct {
@@ -44,7 +44,7 @@ type InfrastructureResourceInput struct {
 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty"`
 	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData"`
 	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"owner"`
-	Data         map[string]any                       `json:"data,omitempty" yaml:"data"`
+	Data         JSON                                 `json:"data,omitempty" yaml:"data" scalar:"true"`
 }
 
 func (client *Client) CreateInfrastructure(input InfrastructureResourceInput) (*InfrastructureResource, error) {
