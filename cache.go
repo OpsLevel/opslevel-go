@@ -101,7 +101,7 @@ func (c *Cacher) TryGetInfrastructureSchema(alias string) (*InfrastructureResour
 }
 
 func (c *Cacher) doCacheTiers(client *Client) {
-	log.Info().Msg("Caching 'Tier' lookup table from API ...")
+	log.Debug().Msg("Caching 'Tier' lookup table from API ...")
 
 	data, dataErr := client.ListTiers()
 	if dataErr != nil {
@@ -113,7 +113,7 @@ func (c *Cacher) doCacheTiers(client *Client) {
 }
 
 func (c *Cacher) doCacheLifecycles(client *Client) {
-	log.Info().Msg("Caching 'Lifecycle' lookup table from API ...")
+	log.Debug().Msg("Caching 'Lifecycle' lookup table from API ...")
 
 	data, dataErr := client.ListLifecycles()
 	if dataErr != nil {
@@ -125,7 +125,7 @@ func (c *Cacher) doCacheLifecycles(client *Client) {
 }
 
 func (c *Cacher) doCacheTeams(client *Client) {
-	log.Info().Msg("Caching 'Team' lookup table from API ...")
+	log.Debug().Msg("Caching 'Team' lookup table from API ...")
 
 	data, dataErr := client.ListTeams(nil)
 	if dataErr != nil {
@@ -140,7 +140,7 @@ func (c *Cacher) doCacheTeams(client *Client) {
 }
 
 func (c *Cacher) doCacheCategories(client *Client) {
-	log.Info().Msg("Caching 'Category' lookup table from API ...")
+	log.Debug().Msg("Caching 'Category' lookup table from API ...")
 
 	data, dataErr := client.ListCategories(nil)
 	if dataErr != nil {
@@ -153,7 +153,7 @@ func (c *Cacher) doCacheCategories(client *Client) {
 }
 
 func (c *Cacher) doCacheLevels(client *Client) {
-	log.Info().Msg("Caching 'Level' lookup table from API ...")
+	log.Debug().Msg("Caching 'Level' lookup table from API ...")
 
 	data, dataErr := client.ListLevels()
 	if dataErr != nil {
@@ -166,7 +166,7 @@ func (c *Cacher) doCacheLevels(client *Client) {
 }
 
 func (c *Cacher) doCacheFilters(client *Client) {
-	log.Info().Msg("Caching 'Filter' lookup table from API ...")
+	log.Debug().Msg("Caching 'Filter' lookup table from API ...")
 
 	data, dataErr := client.ListFilters(nil)
 	if dataErr != nil {
@@ -179,7 +179,7 @@ func (c *Cacher) doCacheFilters(client *Client) {
 }
 
 func (c *Cacher) doCacheIntegrations(client *Client) {
-	log.Info().Msg("Caching 'Integration' lookup table from API ...")
+	log.Debug().Msg("Caching 'Integration' lookup table from API ...")
 
 	data, dataErr := client.ListIntegrations(nil)
 	if dataErr != nil {
@@ -192,7 +192,7 @@ func (c *Cacher) doCacheIntegrations(client *Client) {
 }
 
 func (c *Cacher) doCacheRepositories(client *Client) {
-	log.Info().Msg("Caching 'Repository' lookup table from API ...")
+	log.Debug().Msg("Caching 'Repository' lookup table from API ...")
 
 	data, dataErr := client.ListRepositories(nil)
 	if dataErr != nil {
@@ -205,7 +205,7 @@ func (c *Cacher) doCacheRepositories(client *Client) {
 }
 
 func (c *Cacher) doCacheInfraSchemas(client *Client) {
-	log.Info().Msg("Caching 'InfrastructureSchema' lookup table from API ...")
+	log.Debug().Msg("Caching 'InfrastructureSchema' lookup table from API ...")
 
 	data, dataErr := client.ListInfrastructureSchemas(nil)
 	if dataErr != nil {
