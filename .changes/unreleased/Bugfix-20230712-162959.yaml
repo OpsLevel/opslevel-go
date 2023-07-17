@@ -1,3 +1,0 @@
-kind: Bugfix
-body: Change type of DisplayName field in ContactInput struct
-time: 2023-07-12T16:29:59.007071-05:00

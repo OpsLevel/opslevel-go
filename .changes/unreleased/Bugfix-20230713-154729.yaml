@@ -1,4 +1,0 @@
-kind: Bugfix
-body: Fix EntityOwner to work properly with our API because the union type was not
-  implemented correctly
-time: 2023-07-13T15:47:29.466755-05:00
