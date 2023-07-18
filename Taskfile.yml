@@ -3,6 +3,11 @@
 version: '3'
 
 tasks:
+  generate:
+    desc: Generate code based on public GraphQL Interface
+    cmds:
+      - go generate
+      - gofmt -w .
   lint:
     desc: Formatting and linting
     cmds:
@@ -14,7 +19,7 @@ tasks:
     desc: Fix formatting and linting
     cmds:
       - gofmt -w .
-      - go vet ./...
+      - go mod tidy
       - golangci-lint run --fix
 
   test:

@@ -44,12 +44,12 @@ var AllAlertSourceTypeEnum = []string{
 type AliasOwnerTypeEnum string
 
 const (
-	AliasOwnerTypeEnumService                 AliasOwnerTypeEnum = "service" // Aliases that are assigned to services.
-	AliasOwnerTypeEnumTeam                    AliasOwnerTypeEnum = "team"    // Aliases that are assigned to teams.
-	AliasOwnerTypeEnumSystem                  AliasOwnerTypeEnum = "system"  // Aliases that are assigned to systems.
-	AliasOwnerTypeEnumDomain                  AliasOwnerTypeEnum = "domain"  // Aliases that are assigned to domains.
-	AliasOwnerTypeEnumGroup                   AliasOwnerTypeEnum = "group"   // Aliases that are assigned to groups.
-	AliasOwnerTypeEnumInfrastructureResource  AliasOwnerTypeEnum = "infrastructure_resource"   // Aliases that are assigned to infrastructure resources
+	AliasOwnerTypeEnumService                AliasOwnerTypeEnum = "service"                 // Aliases that are assigned to services.
+	AliasOwnerTypeEnumTeam                   AliasOwnerTypeEnum = "team"                    // Aliases that are assigned to teams.
+	AliasOwnerTypeEnumSystem                 AliasOwnerTypeEnum = "system"                  // Aliases that are assigned to systems.
+	AliasOwnerTypeEnumDomain                 AliasOwnerTypeEnum = "domain"                  // Aliases that are assigned to domains.
+	AliasOwnerTypeEnumGroup                  AliasOwnerTypeEnum = "group"                   // Aliases that are assigned to groups.
+	AliasOwnerTypeEnumInfrastructureResource AliasOwnerTypeEnum = "infrastructure_resource" // Aliases that are assigned to infrastructure resources
 )
 
 // All AliasOwnerTypeEnum as []string

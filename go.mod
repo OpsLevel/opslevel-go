@@ -29,6 +29,7 @@ require (
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/shurcooL/graphql v0.0.0-20230714182844-3e04114ae69a // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/net v0.12.0 // indirect
