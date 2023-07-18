@@ -449,41 +449,44 @@ var AllPayloadSortEnum = []string{
 type PredicateKeyEnum string
 
 const (
-	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" // Filter by the creation source.
-	PredicateKeyEnumFramework      PredicateKeyEnum = "framework"       // Filter by `framework` field.
-	PredicateKeyEnumGroupIDs       PredicateKeyEnum = "group_ids"       // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain.
-	PredicateKeyEnumLanguage       PredicateKeyEnum = "language"        // Filter by `language` field.
-	PredicateKeyEnumLifecycleIndex PredicateKeyEnum = "lifecycle_index" // Filter by `lifecycle` field.
-	PredicateKeyEnumName           PredicateKeyEnum = "name"            // Filter by `name` field.
-	PredicateKeyEnumOwnerID        PredicateKeyEnum = "owner_id"        // Filter by `owner` field.
-	PredicateKeyEnumProduct        PredicateKeyEnum = "product"         // Filter by `product` field.
-	PredicateKeyEnumTags           PredicateKeyEnum = "tags"            // Filter by `tags` field.
 	PredicateKeyEnumTierIndex      PredicateKeyEnum = "tier_index"      // Filter by `tier` field.
+	PredicateKeyEnumLifecycleIndex PredicateKeyEnum = "lifecycle_index" // Filter by `lifecycle` field.
+	PredicateKeyEnumLanguage       PredicateKeyEnum = "language"        // Filter by `language` field.
+	PredicateKeyEnumFramework      PredicateKeyEnum = "framework"       // Filter by `framework` field.
+	PredicateKeyEnumProduct        PredicateKeyEnum = "product"         // Filter by `product` field.
+	PredicateKeyEnumName           PredicateKeyEnum = "name"            // Filter by `name` field.
+	PredicateKeyEnumTags           PredicateKeyEnum = "tags"            // Filter by `tags` field.
+	PredicateKeyEnumOwnerID        PredicateKeyEnum = "owner_id"        // Filter by `owner` field.
+	PredicateKeyEnumGroupIDs       PredicateKeyEnum = "group_ids"       // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain.
+	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" // Filter by the creation source.
+	PredicateKeyEnumRepositoryIDs  PredicateKeyEnum = "repository_ids"  // Filter by Repository that this service is attached to, if any.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
 	PredicateKeyEnumSystemID       PredicateKeyEnum = "system_id"       // Filter by System that this service is assigned to, if any.
+	PredicateKeyEnumFilterID       PredicateKeyEnum = "filter_id"       // Filter by another filter.
 )
 
 // All PredicateKeyEnum as []string
 var AllPredicateKeyEnum = []string{
-	string(PredicateKeyEnumCreationSource),
-	string(PredicateKeyEnumFramework),
-	string(PredicateKeyEnumGroupIDs),
-	string(PredicateKeyEnumLanguage),
-	string(PredicateKeyEnumLifecycleIndex),
-	string(PredicateKeyEnumName),
-	string(PredicateKeyEnumOwnerID),
-	string(PredicateKeyEnumProduct),
-	string(PredicateKeyEnumTags),
 	string(PredicateKeyEnumTierIndex),
+	string(PredicateKeyEnumLifecycleIndex),
+	string(PredicateKeyEnumLanguage),
+	string(PredicateKeyEnumFramework),
+	string(PredicateKeyEnumProduct),
+	string(PredicateKeyEnumName),
+	string(PredicateKeyEnumTags),
+	string(PredicateKeyEnumOwnerID),
+	string(PredicateKeyEnumGroupIDs),
+	string(PredicateKeyEnumCreationSource),
+	string(PredicateKeyEnumRepositoryIDs),
 	string(PredicateKeyEnumDomainID),
 	string(PredicateKeyEnumSystemID),
+	string(PredicateKeyEnumFilterID),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
 type PredicateTypeEnum string
 
 const (
-	PredicateTypeEnumBelongsTo                  PredicateTypeEnum = "belongs_to"                   // Belongs to a group's hierarchy.
 	PredicateTypeEnumContains                   PredicateTypeEnum = "contains"                     // Contains a specific value.
 	PredicateTypeEnumDoesNotContain             PredicateTypeEnum = "does_not_contain"             // Does not contain a specific value.
 	PredicateTypeEnumDoesNotEqual               PredicateTypeEnum = "does_not_equal"               // Does not equal a specific value.
@@ -493,15 +496,18 @@ const (
 	PredicateTypeEnumExists                     PredicateTypeEnum = "exists"                       // Specific attribute exists.
 	PredicateTypeEnumGreaterThanOrEqualTo       PredicateTypeEnum = "greater_than_or_equal_to"     // Greater than or equal to a specific value (numeric only).
 	PredicateTypeEnumLessThanOrEqualTo          PredicateTypeEnum = "less_than_or_equal_to"        // Less than or equal to a specific value (numeric only).
-	PredicateTypeEnumMatchesRegex               PredicateTypeEnum = "matches_regex"                // Matches a value using a regular expression.
-	PredicateTypeEnumSatisfiesJqExpression      PredicateTypeEnum = "satisfies_jq_expression"      // Satisfies an expression defined in jq.
-	PredicateTypeEnumSatisfiesVersionConstraint PredicateTypeEnum = "satisfies_version_constraint" // Satisfies version constraint (tag value only).
 	PredicateTypeEnumStartsWith                 PredicateTypeEnum = "starts_with"                  // Starts with a specific value.
+	PredicateTypeEnumSatisfiesVersionConstraint PredicateTypeEnum = "satisfies_version_constraint" // Satisfies version constraint (tag value only).
+	PredicateTypeEnumMatchesRegex               PredicateTypeEnum = "matches_regex"                // Matches a value using a regular expression.
+	PredicateTypeEnumDoesNotMatchRegex          PredicateTypeEnum = "does_not_match_regex"         // Does not match a value using a regular expression.
+	PredicateTypeEnumBelongsTo                  PredicateTypeEnum = "belongs_to"                   // Belongs to a group's hierarchy.
+	PredicateTypeEnumMatches                    PredicateTypeEnum = "matches"                      // A certain filter is matched.
+	PredicateTypeEnumDoesNotMatch               PredicateTypeEnum = "does_not_match"               // A certain filter is not matched.
+	PredicateTypeEnumSatisfiesJqExpression      PredicateTypeEnum = "satisfies_jq_expression"      // Satisfies an expression defined in jq.
 )
 
 // All PredicateTypeEnum as []string
 var AllPredicateTypeEnum = []string{
-	string(PredicateTypeEnumBelongsTo),
 	string(PredicateTypeEnumContains),
 	string(PredicateTypeEnumDoesNotContain),
 	string(PredicateTypeEnumDoesNotEqual),
@@ -511,13 +517,16 @@ var AllPredicateTypeEnum = []string{
 	string(PredicateTypeEnumExists),
 	string(PredicateTypeEnumGreaterThanOrEqualTo),
 	string(PredicateTypeEnumLessThanOrEqualTo),
-	string(PredicateTypeEnumMatchesRegex),
-	string(PredicateTypeEnumSatisfiesJqExpression),
-	string(PredicateTypeEnumSatisfiesVersionConstraint),
 	string(PredicateTypeEnumStartsWith),
+	string(PredicateTypeEnumSatisfiesVersionConstraint),
+	string(PredicateTypeEnumMatchesRegex),
+	string(PredicateTypeEnumDoesNotMatchRegex),
+	string(PredicateTypeEnumBelongsTo),
+	string(PredicateTypeEnumMatches),
+	string(PredicateTypeEnumDoesNotMatch),
+	string(PredicateTypeEnumSatisfiesJqExpression),
 }
 
-// RepositoryVisibilityEnum
 type RepositoryVisibilityEnum string
 
 const (
@@ -629,16 +638,24 @@ var AllServiceSortEnum = []string{
 type TaggableResource string
 
 const (
-	TaggableResourceRepository TaggableResource = "Repository" // Used to identify a Repository.
-	TaggableResourceService    TaggableResource = "Service"    // Used to identify a Service.
-	TaggableResourceTeam       TaggableResource = "Team"       // Used to identify a Team.
+	TaggableResourceService                TaggableResource = "Service"                // Used to identify a Service.
+	TaggableResourceRepository             TaggableResource = "Repository"             // Used to identify a Repository.
+	TaggableResourceTeam                   TaggableResource = "Team"                   // Used to identify a Team.
+	TaggableResourceUser                   TaggableResource = "User"                   // Used to identify a User.
+	TaggableResourceDomain                 TaggableResource = "Domain"                 // Used to identify a Domain.
+	TaggableResourceSystem                 TaggableResource = "System"                 // Used to identify a System.
+	TaggableResourceInfrastructureresource TaggableResource = "InfrastructureResource" // Translation missing: en.graphql.types.taggable_resource.InfrastructureResource.
 )
 
 // All TaggableResource as []string
 var AllTaggableResource = []string{
-	string(TaggableResourceRepository),
 	string(TaggableResourceService),
+	string(TaggableResourceRepository),
 	string(TaggableResourceTeam),
+	string(TaggableResourceUser),
+	string(TaggableResourceDomain),
+	string(TaggableResourceSystem),
+	string(TaggableResourceInfrastructureresource),
 }
 
 // ToolCategory represents the specific categories that a tool can belong to.
@@ -647,7 +664,7 @@ type ToolCategory string
 const (
 	ToolCategoryAdmin                 ToolCategory = "admin"                  // Tools used for administrative purposes.
 	ToolCategoryAPIDocumentation      ToolCategory = "api_documentation"      // Tools used as API documentation for this service.
-	ToolCategoryBacklog               ToolCategory = "backlog"                //
+	ToolCategoryBacklog               ToolCategory = "backlog"                // Tools used for tracking issues.
 	ToolCategoryCode                  ToolCategory = "code"                   // Tools used for source code.
 	ToolCategoryContinuousIntegration ToolCategory = "continuous_integration" // Tools used for building/unit testing a service.
 	ToolCategoryDeployment            ToolCategory = "deployment"             // Tools used for deploying changes to a service.
@@ -695,12 +712,12 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleAdmin UserRole = "admin" // An administrator on the account.
 	UserRoleUser  UserRole = "user"  // A regular user on the account.
+	UserRoleAdmin UserRole = "admin" // An administrator on the account.
 )
 
 // All UserRole as []string
 var AllUserRole = []string{
-	string(UserRoleAdmin),
 	string(UserRoleUser),
+	string(UserRoleAdmin),
 }
