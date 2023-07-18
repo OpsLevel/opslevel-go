@@ -8,7 +8,7 @@
     "description": "Our first Platform Domain!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain",
     "owner": {
-      "alias": "kyle_team",
+      "groupAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     },
     "note": "{{ template "description" }}"
@@ -24,7 +24,7 @@
     "description": "Our second domain!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain2",
     "owner": {
-      "alias": "kyle_team",
+      "groupAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
     },
     "note": "{{ template "description" }}"
@@ -40,7 +40,7 @@
     "description": "Our third domain!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain3",
     "owner": {
-      "alias": "kyle_team",
+      "teamAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83AbC"
     },
     "note": "{{ template "description" }}"

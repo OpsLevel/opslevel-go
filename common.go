@@ -21,6 +21,10 @@ type DeleteInput struct {
 	Id ID `json:"id"`
 }
 
+type OpsLevelWarnings struct {
+	Message string
+}
+
 type OpsLevelErrors struct {
 	Message string
 	Path    []string
