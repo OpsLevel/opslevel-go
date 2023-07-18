@@ -169,7 +169,7 @@ func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewReli
 		} `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
 	}
 	v := PayloadVariables{
-		"resource":  *NewIdentifier(identifier),
+		"resource": *NewIdentifier(identifier),
 		"input":    input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
