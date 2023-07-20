@@ -8,7 +8,7 @@ import (
 )
 
 func TestCreateWebhookAction(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
 		"variables":{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST","liquidTemplate":"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}","name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}
@@ -18,9 +18,9 @@ func TestCreateWebhookAction(t *testing.T) {
       "errors": []
   }}}`
 
-	//fmt.Print(Templated(request))
-	//fmt.Print(Templated(response))
-	//panic(1)
+	// fmt.Print(Templated(request))
+	// fmt.Print(Templated(response))
+	// panic(1)
 
 	client := ABetterTestClient(t, "custom_actions/create_action", request, response)
 
@@ -41,9 +41,10 @@ func TestCreateWebhookAction(t *testing.T) {
 }
 
 func TestListCustomActions(t *testing.T) {
-	//Arrange
+	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{
+			`{"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -60,8 +61,10 @@ func TestListCustomActions(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
-						  }}}}`},
-		{`{"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+						  }}}}`,
+		},
+		{
+			`{"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -75,12 +78,13 @@ func TestListCustomActions(t *testing.T) {
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
-						  }}}}`},
+						  }}}}`,
+		},
 	}
 	// An easy way to see the results of templating is by uncommenting this
-	//fmt.Print(Templated(request))
-	//fmt.Print(Templated(response))
-	//panic(1)
+	// fmt.Print(Templated(request))
+	// fmt.Print(Templated(response))
+	// panic(1)
 
 	client := APaginatedTestClient(t, "custom_actions/list_actions", requests...)
 	// Act
@@ -95,7 +99,7 @@ func TestListCustomActions(t *testing.T) {
 }
 
 func TestUpdateWebhookAction(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
 		"variables":{"input":{"id": "123456789", "httpMethod":"PUT"}}
@@ -119,7 +123,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 }
 
 func TestUpdateWebhookAction2(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
 		"variables":{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}
@@ -147,7 +151,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 }
 
 func TestDeleteWebhookAction(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation WebhookActionDelete($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){errors{message,path}}}",
 		"variables":{"input":{"id": "123456789"}}
@@ -168,7 +172,7 @@ func TestDeleteWebhookAction(t *testing.T) {
 }
 
 func TestCreateTriggerDefinition(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
@@ -193,7 +197,7 @@ func TestCreateTriggerDefinition(t *testing.T) {
 }
 
 func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
@@ -219,7 +223,7 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 }
 
 func TestGetTriggerDefinition(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"query TriggerDefinitionGet($input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){{ template "custom_actions_trigger_request" }}}}",
 		"variables":{"input":{"id":"123456789"}}
@@ -239,9 +243,10 @@ func TestGetTriggerDefinition(t *testing.T) {
 }
 
 func TestListTriggerDefinitions(t *testing.T) {
-	//Arrange
+	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{
+			`{"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -258,8 +263,10 @@ func TestListTriggerDefinitions(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
-						  }}}}`},
-		{`{"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+						  }}}}`,
+		},
+		{
+			`{"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -273,12 +280,13 @@ func TestListTriggerDefinitions(t *testing.T) {
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
-						  }}}}`},
+						  }}}}`,
+		},
 	}
 
 	// An easy way to see the results of templating is by uncommenting this
-	//fmt.Println(Templated(requests[0].Response))
-	//panic(true)
+	// fmt.Println(Templated(requests[0].Response))
+	// panic(true)
 
 	//"{account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate}}}}",
 
@@ -298,7 +306,7 @@ func TestListTriggerDefinitions(t *testing.T) {
 }
 
 func TestUpdateTriggerDefinition(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"id":"123456789", "filterId":null}}
@@ -320,7 +328,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 }
 
 func TestUpdateTriggerDefinition2(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
 		"variables":{"input":{"id":"123456789", "name":"test", "description": ""}}
@@ -343,7 +351,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 }
 
 func TestDeleteTriggerDefinition(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
 		"variables":{"input":{"id":"123456789"}}

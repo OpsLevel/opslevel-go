@@ -1,9 +1,10 @@
 package opslevel_test
 
 import (
+	"testing"
+
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
-	"testing"
 )
 
 func TestInviteUser(t *testing.T) {
@@ -60,7 +61,8 @@ func TestGetUser(t *testing.T) {
 func TestGetUserTeams(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{
+			`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "user": "{{ template "id1"}}"
@@ -78,8 +80,10 @@ func TestGetUserTeams(t *testing.T) {
                                 {{ template "pagination_initial_pageInfo_response" }},
                                 "totalCount": 2
                             }
-                          }}}}`},
-		{`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+                          }}}}`,
+		},
+		{
+			`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "user": "{{ template "id1"}}"
@@ -96,7 +100,8 @@ func TestGetUserTeams(t *testing.T) {
                                 {{ template "pagination_second_pageInfo_response" }},
                                 "totalCount": 1
                             }
-                          }}}}`},
+                          }}}}`,
+		},
 	}
 	client := APaginatedTestClient(t, "user/teams", requests...)
 	// Act
@@ -117,7 +122,8 @@ func TestGetUserTeams(t *testing.T) {
 func TestListUser(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{
+		{
+			`{
   "query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
   {{ template "pagination_initial_query_variables" }}
 }`,
@@ -134,8 +140,10 @@ func TestListUser(t *testing.T) {
       }
     }
   }
-}`},
-		{`{
+}`,
+		},
+		{
+			`{
   "query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
   {{ template "pagination_second_query_variables" }}
 }`,
@@ -151,7 +159,8 @@ func TestListUser(t *testing.T) {
       }
     }
   }
-}`},
+}`,
+		},
 	}
 	client := APaginatedTestClient(t, "user/list", requests...)
 	// Act

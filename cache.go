@@ -212,7 +212,7 @@ func (c *Cacher) doCacheInfraSchemas(client *Client) {
 		log.Warn().Msgf("===> Failed to list all 'InfrastructureSchema' from API - REASON: %s", dataErr.Error())
 	}
 	for _, item := range data.Nodes {
-		//log.Info().Msgf("Caching 'InfrastructureSchema' '%s' ...", item.Type)
+		// log.Info().Msgf("Caching 'InfrastructureSchema' '%s' ...", item.Type)
 		c.InfraSchemas[item.Type] = item
 	}
 }

@@ -82,7 +82,8 @@ func TestGetMissingRubricCategory(t *testing.T) {
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{
+			`{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -100,8 +101,10 @@ func TestListRubricCategories(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 2
-						  }}}}}`},
-		{`{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+						  }}}}}`,
+		},
+		{
+			`{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -116,7 +119,8 @@ func TestListRubricCategories(t *testing.T) {
 								],
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
-						  }}}}}`},
+						  }}}}}`,
+		},
 	}
 	client := APaginatedTestClient(t, "rubric/category_list", requests...)
 	// Act
@@ -128,8 +132,8 @@ func TestListRubricCategories(t *testing.T) {
 	autopilot.Equals(t, "🟢 Reliability", result[1].Name)
 	autopilot.Equals(t, "🔍 Observability", result[2].Name)
 
-	//fmt.Println(Templated(requests[0].Request))
-	//panic(true)
+	// fmt.Println(Templated(requests[0].Request))
+	// panic(true)
 }
 
 func TestUpdateRubricCategory(t *testing.T) {

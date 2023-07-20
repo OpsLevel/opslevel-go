@@ -1,8 +1,9 @@
 package opslevel_test
 
 import (
-	ol "github.com/opslevel/opslevel-go/v2023"
 	"testing"
+
+	ol "github.com/opslevel/opslevel-go/v2023"
 
 	"github.com/rocktavious/autopilot/v2022"
 )

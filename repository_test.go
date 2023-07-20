@@ -1,8 +1,9 @@
 package opslevel_test
 
 import (
-	ol "github.com/opslevel/opslevel-go/v2023"
 	"testing"
+
+	ol "github.com/opslevel/opslevel-go/v2023"
 
 	"github.com/rocktavious/autopilot/v2022"
 )
@@ -135,7 +136,8 @@ func TestGetRepository(t *testing.T) {
 func TestListRepositories(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+		{
+			`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "first_page_variables" }}
             }
@@ -152,8 +154,10 @@ func TestListRepositories(t *testing.T) {
                           }
                         }
                       }
-                    }`},
-		{`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+                    }`,
+		},
+		{
+			`{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "second_page_variables" }}
             }
@@ -170,7 +174,8 @@ func TestListRepositories(t *testing.T) {
                           }
                         }
                       }
-                    }`},
+                    }`,
+		},
 	}
 	client := APaginatedTestClient(t, "repositories/list", requests...)
 	// Act
@@ -186,7 +191,8 @@ func TestListRepositories(t *testing.T) {
 func TestListRepositoriesWithTier(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+		{
+			`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "tier": "tier_1"
@@ -204,8 +210,10 @@ func TestListRepositoriesWithTier(t *testing.T) {
                           }
                         }
                       }
-                    }`},
-		{`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
+                    }`,
+		},
+		{
+			`{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "tier": "tier_1"
@@ -223,7 +231,8 @@ func TestListRepositoriesWithTier(t *testing.T) {
                           }
                         }
                       }
-                    }`},
+                    }`,
+		},
 	}
 	client := APaginatedTestClient(t, "repositories/list_with_tier", requests...)
 	// Act
@@ -384,7 +393,8 @@ func TestDeleteServiceRepository(t *testing.T) {
 func TestGetServices(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{
+			`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
@@ -485,8 +495,10 @@ func TestGetServices(t *testing.T) {
                       }
                     }
                   }
-                }`},
-		{`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+                }`,
+		},
+		{
+			`{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
@@ -575,7 +587,8 @@ func TestGetServices(t *testing.T) {
                       }
                     }
                   }
-                }`},
+                }`,
+		},
 	}
 	client := APaginatedTestClient(t, "repository/services", requests...)
 	// Act
@@ -595,7 +608,8 @@ func TestGetServices(t *testing.T) {
 func TestGetTags(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{
+			`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
@@ -629,8 +643,10 @@ func TestGetTags(t *testing.T) {
                       }
                     }
                   }
-                }`},
-		{`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+                }`,
+		},
+		{
+			`{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
@@ -654,7 +670,8 @@ func TestGetTags(t *testing.T) {
                       }
                     }
                   }
-                }`},
+                }`,
+		},
 	}
 	client := APaginatedTestClient(t, "repository/tags", requests...)
 	// Act

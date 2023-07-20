@@ -99,7 +99,8 @@ func TestGetMissingFilter(t *testing.T) {
 func TestListFilters(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{
+			`{"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -116,8 +117,10 @@ func TestListFilters(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
-						  }}}}`},
-		{`{"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+						  }}}}`,
+		},
+		{
+			`{"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -131,7 +134,8 @@ func TestListFilters(t *testing.T) {
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
-						  }}}}`},
+						  }}}}`,
+		},
 	}
 	client := APaginatedTestClient(t, "filter/list", requests...)
 	// Act
@@ -142,8 +146,8 @@ func TestListFilters(t *testing.T) {
 	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Tier 1 Services", result[1].Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result[2].Predicates[0].Key)
-	//fmt.Println(Templated(requests[0].Request))
-	//panic(true)
+	// fmt.Println(Templated(requests[0].Request))
+	// panic(true)
 }
 
 func TestUpdateFilter(t *testing.T) {

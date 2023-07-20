@@ -3,12 +3,13 @@ package opslevel
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/go-retryablehttp"
-	"github.com/hasura/go-graphql-client"
-	"golang.org/x/oauth2"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/hasura/go-graphql-client"
+	"golang.org/x/oauth2"
 )
 
 type Client struct {

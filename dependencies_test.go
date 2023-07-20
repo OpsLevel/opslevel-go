@@ -1,9 +1,10 @@
 package opslevel_test
 
 import (
+	"testing"
+
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
-	"testing"
 )
 
 func TestCreateServiceDependency(t *testing.T) {
@@ -45,7 +46,8 @@ func TestCreateServiceDependency(t *testing.T) {
 func TestGetServiceDependencies(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+		{
+			`{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
@@ -60,8 +62,10 @@ func TestGetServiceDependencies(t *testing.T) {
 						{{ template "pagination_initial_pageInfo_response" }}
 					}
 				}
-			}}}`},
-		{`{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			}}}`,
+		},
+		{
+			`{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
@@ -75,7 +79,8 @@ func TestGetServiceDependencies(t *testing.T) {
 						{{ template "pagination_second_pageInfo_response" }}
 					}
 				}
-			}}}`},
+			}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "service/get_dependencies", requests...)
@@ -96,7 +101,8 @@ func TestGetServiceDependencies(t *testing.T) {
 func TestGetServiceDependents(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+		{
+			`{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
@@ -111,8 +117,10 @@ func TestGetServiceDependents(t *testing.T) {
 						{{ template "pagination_initial_pageInfo_response" }}
 					}
 				}
-			}}}`},
-		{`{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			}}}`,
+		},
+		{
+			`{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
@@ -126,7 +134,8 @@ func TestGetServiceDependents(t *testing.T) {
 						{{ template "pagination_second_pageInfo_response" }}
 					}
 				}
-			}}}`},
+			}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "service/get_dependents", requests...)

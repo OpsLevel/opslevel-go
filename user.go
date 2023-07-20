@@ -19,7 +19,7 @@ type User struct {
 	Name    string
 	Role    UserRole
 	// We cannot have this here because its breaks a TON of queries
-	//Teams   *TeamIdConnection
+	// Teams   *TeamIdConnection
 }
 
 type UserConnection struct {

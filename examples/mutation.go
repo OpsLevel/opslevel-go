@@ -2,6 +2,7 @@ package opslevel_example
 
 import (
 	"fmt"
+
 	"github.com/opslevel/opslevel-go/v2023"
 )
 

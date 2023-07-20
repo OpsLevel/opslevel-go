@@ -29,8 +29,8 @@ type GraphQLTypes struct {
 	Kind          string                `graphql:"kind" json:"kind"`
 	Description   string                `graphql:"description" json:"description"`
 	PossibleTypes []GraphQLPossibleType `graphql:"possibleTypes"`
-	//Fields ?
-	//InputFields ?
+	// Fields ?
+	// InputFields ?
 	EnumValues []GraphQLEnumValues `graphql:"enumValues" json:"enumValues"`
 }
 
@@ -92,7 +92,7 @@ func run() error {
 			out = []byte("// gofmt error: " + err.Error() + "\n\n" + buf.String())
 		}
 		fmt.Println("writing", filename)
-		err = ioutil.WriteFile(filename, out, 0644)
+		err = ioutil.WriteFile(filename, out, 0o644)
 		if err != nil {
 			return err
 		}

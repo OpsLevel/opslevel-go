@@ -2,9 +2,10 @@ package opslevel
 
 import (
 	"encoding/base64"
+	"strings"
+
 	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
-	"strings"
 )
 
 // RunnerJobOutcomeEnum represents the runner job outcome.
