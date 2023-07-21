@@ -1,9 +1,10 @@
 package opslevel_test
 
 import (
+	"testing"
+
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
-	"testing"
 )
 
 func TestCreateAlertSourceService(t *testing.T) {
@@ -42,7 +43,7 @@ func TestCreateAlertSourceService(t *testing.T) {
 }
 
 func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":"query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}",
 	"variables":{
 		"externalIdentifier": {
@@ -81,7 +82,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 }
 
 func TestGetAlertSource(t *testing.T) {
-	//Arrange
+	// Arrange
 	request := `{"query":"query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}",
 	"variables":{
 		"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE"

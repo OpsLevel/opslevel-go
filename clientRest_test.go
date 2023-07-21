@@ -2,10 +2,11 @@ package opslevel_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/go-resty/resty/v2"
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
-	"testing"
 )
 
 func ATestRestClient(t *testing.T, endpoint string) *resty.Client {

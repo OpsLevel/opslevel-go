@@ -55,7 +55,7 @@ type FilterCreateInput struct {
 type FilterUpdateInput struct {
 	Id         ID                `json:"id"`
 	Name       string            `json:"name,omitempty"`
-	Predicates []FilterPredicate `json:"predicates"` //The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
+	Predicates []FilterPredicate `json:"predicates"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
 	Connective ConnectiveEnum    `json:"connective,omitempty"`
 }
 

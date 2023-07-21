@@ -58,8 +58,7 @@ type ServiceOwnershipCheckFragment struct {
 	TeamTagPredicate     *Predicate                        `graphql:"tagPredicate"`
 }
 
-type GitBranchProtectionCheckFragment struct {
-}
+type GitBranchProtectionCheckFragment struct{}
 
 type HasRecentDeployCheckFragment struct {
 	Days int `graphql:"days"`
@@ -591,6 +590,7 @@ func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryInteg
 	err := client.Mutate(&m, v, WithName("CheckRepositoryIntegratedCreate"))
 	return &m.Payload.Check, HandleErrors(err, m.Payload.Errors)
 }
+
 func (client *Client) UpdateCheckRepositoryIntegrated(input CheckRepositoryIntegratedUpdateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositoryIntegratedUpdate(input: $input)"`

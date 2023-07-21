@@ -1,8 +1,9 @@
 package opslevel_test
 
 import (
-	"github.com/opslevel/opslevel-go/v2023"
 	"testing"
+
+	"github.com/opslevel/opslevel-go/v2023"
 
 	"github.com/rocktavious/autopilot/v2022"
 )
@@ -137,7 +138,8 @@ func TestGetMissingIntegraion(t *testing.T) {
 func TestListIntegrations(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+		{
+			`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -154,8 +156,10 @@ func TestListIntegrations(t *testing.T) {
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
 							"totalCount": 2
-					}}}}`},
-		{`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+					}}}}`,
+		},
+		{
+			`{"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -169,7 +173,8 @@ func TestListIntegrations(t *testing.T) {
 							],
 							{{ template "pagination_second_pageInfo_response" }},
 							"totalCount": 1
-					}}}}`},
+					}}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "integration/list", requests...)

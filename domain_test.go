@@ -1,9 +1,10 @@
 package opslevel_test
 
 import (
+	"testing"
+
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2022"
-	"testing"
 )
 
 func TestDomainCreate(t *testing.T) {
@@ -42,7 +43,8 @@ func TestDomainCreate(t *testing.T) {
 func TestDomainGetSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+		{
+			`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
@@ -61,8 +63,10 @@ func TestDomainGetSystems(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }}
 							}
-						  }}}}`},
-		{`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+						  }}}}`,
+		},
+		{
+			`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
@@ -80,7 +84,8 @@ func TestDomainGetSystems(t *testing.T) {
 								],
 								{{ template "pagination_second_pageInfo_response" }}
 							}
-						  }}}}`},
+						  }}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "domain/child_systems", requests...)
@@ -101,7 +106,8 @@ func TestDomainGetSystems(t *testing.T) {
 func TestDomainGetTags(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+		{
+			`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
@@ -121,8 +127,10 @@ func TestDomainGetTags(t *testing.T) {
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 2
 							}
-						  }}}}`},
-		{`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+						  }}}}`,
+		},
+		{
+			`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
@@ -141,7 +149,8 @@ func TestDomainGetTags(t *testing.T) {
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
 							}
-						  }}}}`},
+						  }}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "domain/tags", requests...)
@@ -241,7 +250,8 @@ func TestDomainGetAlias(t *testing.T) {
 func TestDomainList(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
-		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+		{
+			`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -253,8 +263,10 @@ func TestDomainList(t *testing.T) {
 								{{ template "domain2_response" }}
 							],
 							{{ template "pagination_initial_pageInfo_response" }}
-						  }}}}`},
-		{`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+						  }}}}`,
+		},
+		{
+			`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{
@@ -265,7 +277,8 @@ func TestDomainList(t *testing.T) {
 								{{ template "domain3_response" }}
 							],
 							{{ template "pagination_second_pageInfo_response" }}
-						  }}}}`},
+						  }}}}`,
+		},
 	}
 
 	client := APaginatedTestClient(t, "domain/list", requests...)

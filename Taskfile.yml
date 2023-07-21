@@ -7,18 +7,18 @@ tasks:
     desc: Generate code based on public GraphQL Interface
     cmds:
       - go generate
-      - gofmt -w .
+      - gofumpt -w .
   lint:
     desc: Formatting and linting
     cmds:
-      - gofmt -d .
+      - gofumpt -d .
       - go vet ./...
       - golangci-lint run
 
   lintfix:
     desc: Fix formatting and linting
     cmds:
-      - gofmt -w .
+      - gofumpt -w .
       - go mod tidy
       - golangci-lint run --fix
 
