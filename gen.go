@@ -119,11 +119,9 @@ const ({{range .EnumValues}}
 	{{$.Name}}{{.Name | enumIdentifier}} {{$.Name}} = {{.Name | quote}} // {{.Description | clean | fullSentence}}{{end}}
 )
 // All {{$.Name}} as []string
-func All{{$.Name}}() []string {
-	return []string{
-		{{range .EnumValues}}string({{$.Name}}{{.Name | enumIdentifier}}),
-		{{end}}
-	}
+var All{{$.Name}} = []string {
+	{{range .EnumValues}}string({{$.Name}}{{.Name | enumIdentifier}}),
+	{{end}}
 }
 {{- end -}}
 `),
