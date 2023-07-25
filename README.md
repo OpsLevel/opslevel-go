@@ -125,4 +125,4 @@ func GetTeams(client *opslevel.Client) (map[string]opslevel.Team, error) {
 
 # Advanced Usage
 
-The client also exposes functions `Query` and `Mutate` for doing custom query or mutations.  We are running ontop of this [go graphql library](https://github.com/shurcooL/graphql) so you can read up on how to define go structures that represent a query or mutation there but examples of each can be found [here](examples/).
+The client also exposes functions `Query` and `Mutate` for doing custom query or mutations.  We are running ontop of this [go graphql library](https://github.com/hasura/go-graphql-client) so you can read up on how to define go structures that represent a query or mutation there but examples of each can be found [here](examples/).
