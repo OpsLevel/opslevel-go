@@ -70,3 +70,77 @@
     }
   ]
 {{ end }}
+
+{{- define "create_filter_nested_input" }}
+"name": "Self deployed or Rails",
+"predicates": [
+  {
+    "key": "filter_id",
+    "type": "matches",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"
+  },
+  {
+    "key": "filter_id",
+    "type": "matches",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"
+  }
+],
+"connective": "or"
+{{ end }}
+{{- define "create_filter_nested_response" }}
+"connective": "or",
+"htmlUrl": "https://app.opslevel.com/filters/2346",
+"id": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
+"name": "Self deployed or Rails",
+"predicates": [
+  {
+    "key": "filter_id",
+    "keyData": null,
+    "type": "matches",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"
+  },
+  {
+    "key": "filter_id",
+    "keyData": null,
+    "type": "matches",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"
+  }
+]
+{{ end }}
+{{- define "update_filter_nested_input" }}
+"id": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
+"name": "Tier 1-2 not deployed by us",
+"predicates": [
+  {
+    "key": "filter_id",
+    "type": "does_not_match",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"
+  },
+  {
+    "key": "filter_id",
+    "type": "matches",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"
+  }
+],
+"connective": "and"
+{{ end }}
+{{- define "update_filter_nested_response" }}
+"connective": "and",
+"htmlUrl": "https://app.opslevel.com/filters/2346",
+"id": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
+"name": "Tier 1-2 not deployed by us",
+"predicates": [
+  {
+    "key": "filter_id",
+    "keyData": null,
+    "type": "does_not_match",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"
+  },
+  {
+    "key": "filter_id",
+    "keyData": null,
+    "type": "matches",
+    "value": "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"
+  }
+]
+{{ end }}

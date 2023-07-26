@@ -52,6 +52,55 @@ func TestCreateFilter(t *testing.T) {
 	autopilot.Equals(t, ol.PredicateTypeEnumEquals, result.Predicates[0].Type)
 }
 
+func TestCreateFilterNested(t *testing.T) {
+	// Arrange
+	request := `{
+    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			{{ template "create_filter_nested_input" }}
+		}
+    }
+}`
+	response := `{"data": {
+	"filterCreate": {
+		"filter": {
+			{{ template "create_filter_nested_response" }}
+		},
+		"errors": []
+	}
+}}`
+
+	client := ABetterTestClient(t, "filter/create_nested", request, response)
+	// Act
+	result, err := client.CreateFilter(ol.FilterCreateInput{
+		Name:       "Self deployed or Rails",
+		Connective: ol.ConnectiveEnumOr,
+		Predicates: []ol.FilterPredicate{
+			{
+				Key:   ol.PredicateKeyEnumFilterID,
+				Type:  ol.PredicateTypeEnumMatches,
+				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg",
+			},
+			{
+				Key:   ol.PredicateKeyEnumFilterID,
+				Type:  ol.PredicateTypeEnumMatches,
+				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ",
+			},
+		},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Self deployed or Rails", result.Name)
+	autopilot.Equals(t, ol.ConnectiveEnumOr, result.Connective)
+	autopilot.Equals(t, ol.PredicateKeyEnumFilterID, result.Predicates[0].Key)
+	autopilot.Equals(t, ol.PredicateTypeEnumMatches, result.Predicates[0].Type)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg", result.Predicates[0].Value)
+	autopilot.Equals(t, ol.PredicateKeyEnumFilterID, result.Predicates[1].Key)
+	autopilot.Equals(t, ol.PredicateTypeEnumMatches, result.Predicates[1].Type)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ", result.Predicates[1].Value)
+}
+
 func TestGetFilter(t *testing.T) {
 	// Arrange
 	request := `{
@@ -191,6 +240,55 @@ func TestUpdateFilter(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
+}
+
+func TestUpdateFilterNested(t *testing.T) {
+	// Arrange
+	request := `{
+    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			{{ template "update_filter_nested_input" }}
+		}
+    }
+}`
+	response := `{"data": {
+	"filterUpdate": {
+		"filter": {
+			{{ template "update_filter_nested_response" }}
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "filter/update_nested", request, response)
+	// Act
+	result, err := client.UpdateFilter(ol.FilterUpdateInput{
+		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
+		Name:       "Tier 1-2 not deployed by us",
+		Connective: ol.ConnectiveEnumAnd,
+		Predicates: []ol.FilterPredicate{
+			{
+				Key:   ol.PredicateKeyEnumFilterID,
+				Type:  ol.PredicateTypeEnumDoesNotMatch,
+				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg",
+			},
+			{
+				Key:   ol.PredicateKeyEnumFilterID,
+				Type:  ol.PredicateTypeEnumMatches,
+				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY",
+			},
+		},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Tier 1-2 not deployed by us", result.Name)
+	autopilot.Equals(t, ol.ConnectiveEnumAnd, result.Connective)
+	autopilot.Equals(t, ol.PredicateKeyEnumFilterID, result.Predicates[0].Key)
+	autopilot.Equals(t, ol.PredicateTypeEnumDoesNotMatch, result.Predicates[0].Type)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg", result.Predicates[0].Value)
+	autopilot.Equals(t, ol.PredicateKeyEnumFilterID, result.Predicates[1].Key)
+	autopilot.Equals(t, ol.PredicateTypeEnumMatches, result.Predicates[1].Type)
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY", result.Predicates[1].Value)
 }
 
 func TestDeleteFilter(t *testing.T) {

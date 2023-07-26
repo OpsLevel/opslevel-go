@@ -16,8 +16,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
-	"github.com/shurcooL/graphql/ident"
 )
 
 type GraphQLSchema struct {
