@@ -9,7 +9,7 @@ require (
 	github.com/hasura/go-graphql-client v0.9.3
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2022 v2022.11.9
-	github.com/rs/zerolog v1.29.1
+	github.com/rs/zerolog v1.30.0
 	golang.org/x/oauth2 v0.10.0
 )
 
