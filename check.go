@@ -25,6 +25,7 @@ type Check struct {
 	Owner       CheckOwner   `graphql:"owner"`
 	Type        CheckType    `graphql:"type"`
 
+	// TODO: resort these alphabetically - It will require fixing all the test fixtures
 	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
 	CustomEventCheckFragment      `graphql:"... on CustomEventCheck"`
 	HasRecentDeployCheckFragment  `graphql:"... on HasRecentDeployCheck"`
@@ -153,6 +154,12 @@ type CheckResponsePayload struct {
 	Check  Check
 	Errors []OpsLevelErrors
 }
+
+//#region Create
+
+// See files check_*.go
+
+//#endregion
 
 //#region Retrieve
 
