@@ -157,6 +157,44 @@ type CheckResponsePayload struct {
 
 //#region Create
 
+func (client *Client) CreateCheck(input any) (*Check, error) {
+	switch v := input.(type) {
+	case *CheckAlertSourceUsageCreateInput:
+		return client.CreateCheckAlertSourceUsage(*v)
+	case *CheckCustomEventCreateInput:
+		return client.CreateCheckCustomEvent(*v)
+	case *CheckGitBranchProtectionCreateInput:
+		return client.CreateCheckGitBranchProtection(*v)
+	case *CheckHasDocumentationCreateInput:
+		return client.CreateCheckHasDocumentation(*v)
+	case *CheckServiceOwnershipCreateInput:
+		return client.CreateCheckServiceOwnership(*v)
+	case *CheckHasRecentDeployCreateInput:
+		return client.CreateCheckHasRecentDeploy(*v)
+	case *CheckRepositoryIntegratedCreateInput:
+		return client.CreateCheckRepositoryIntegrated(*v)
+	case *CheckServiceConfigurationCreateInput:
+		return client.CreateCheckServiceConfiguration(*v)
+	case *CheckManualCreateInput:
+		return client.CreateCheckManual(*v)
+	case *CheckRepositoryFileCreateInput:
+		return client.CreateCheckRepositoryFile(*v)
+	case *CheckRepositoryGrepCreateInput:
+		return client.CreateCheckRepositoryGrep(*v)
+	case *CheckRepositorySearchCreateInput:
+		return client.CreateCheckRepositorySearch(*v)
+	case *CheckServiceDependencyCreateInput:
+		return client.CreateCheckServiceDependency(*v)
+	case *CheckServicePropertyCreateInput:
+		return client.CreateCheckServiceProperty(*v)
+	case *CheckTagDefinedCreateInput:
+		return client.CreateCheckTagDefined(*v)
+	case *CheckToolUsageCreateInput:
+		return client.CreateCheckToolUsage(*v)
+	}
+	return nil, fmt.Errorf("unknown input type %T", input)
+}
+
 // See files check_*.go
 
 //#endregion
@@ -204,6 +242,48 @@ func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, 
 		q.Account.Rubric.Checks.TotalCount += resp.TotalCount
 	}
 	return q.Account.Rubric.Checks, nil
+}
+
+//#endregion
+
+//#region Update
+
+func (client *Client) UpdateCheck(input any) (*Check, error) {
+	switch v := input.(type) {
+	case *CheckAlertSourceUsageUpdateInput:
+		return client.UpdateCheckAlertSourceUsage(*v)
+	case *CheckCustomEventUpdateInput:
+		return client.UpdateCheckCustomEvent(*v)
+	case *CheckGitBranchProtectionUpdateInput:
+		return client.UpdateCheckGitBranchProtection(*v)
+	case *CheckHasDocumentationUpdateInput:
+		return client.UpdateCheckHasDocumentation(*v)
+	case *CheckServiceOwnershipUpdateInput:
+		return client.UpdateCheckServiceOwnership(*v)
+	case *CheckHasRecentDeployUpdateInput:
+		return client.UpdateCheckHasRecentDeploy(*v)
+	case *CheckRepositoryIntegratedUpdateInput:
+		return client.UpdateCheckRepositoryIntegrated(*v)
+	case *CheckServiceConfigurationUpdateInput:
+		return client.UpdateCheckServiceConfiguration(*v)
+	case *CheckManualUpdateInput:
+		return client.UpdateCheckManual(*v)
+	case *CheckRepositoryFileUpdateInput:
+		return client.UpdateCheckRepositoryFile(*v)
+	case *CheckRepositoryGrepUpdateInput:
+		return client.UpdateCheckRepositoryGrep(*v)
+	case *CheckRepositorySearchUpdateInput:
+		return client.UpdateCheckRepositorySearch(*v)
+	case *CheckServiceDependencyUpdateInput:
+		return client.UpdateCheckServiceDependency(*v)
+	case *CheckServicePropertyUpdateInput:
+		return client.UpdateCheckServiceProperty(*v)
+	case *CheckTagDefinedUpdateInput:
+		return client.UpdateCheckTagDefined(*v)
+	case *CheckToolUsageUpdateInput:
+		return client.UpdateCheckToolUsage(*v)
+	}
+	return nil, fmt.Errorf("unknown input type %T", input)
 }
 
 //#endregion
