@@ -638,3 +638,45 @@ func TestDeleteCheck(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 }
+
+func TestJsonUnmarshalCreateCheck(t *testing.T) {
+	// Arrange
+	data := `{
+	"name": "Example",
+	"notes": "Example Notes",
+	"updateRequiresComment": false
+}`
+	output := ol.CheckManualCreateInput{
+		CheckCreateInput: ol.CheckCreateInput{
+			Name:  "Example",
+			Notes: "Example Notes",
+		},
+		UpdateRequiresComment: false,
+	}
+	// Act
+	buf1, err1 := ol.UnmarshalCheckCreateInput(ol.CheckTypeManual, []byte(data))
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, &output, buf1.(*ol.CheckManualCreateInput))
+}
+
+func TestJsonUnmarshalUpdateCheck(t *testing.T) {
+	// Arrange
+	data := `{
+	"name": "Example",
+	"notes": "Example Notes",
+	"updateRequiresComment": true
+}`
+	output := ol.CheckManualUpdateInput{
+		CheckUpdateInput: ol.CheckUpdateInput{
+			Name:  "Example",
+			Notes: ol.NewString("Example Notes"),
+		},
+		UpdateRequiresComment: true,
+	}
+	// Act
+	buf1, err1 := ol.UnmarshalCheckUpdateInput(ol.CheckTypeManual, []byte(data))
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, &output, buf1.(*ol.CheckManualUpdateInput))
+}
