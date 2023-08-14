@@ -10,7 +10,7 @@ require (
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2022 v2022.11.9
 	github.com/rs/zerolog v1.30.0
-	golang.org/x/oauth2 v0.10.0
+	golang.org/x/oauth2 v0.11.0
 )
 
 require (
@@ -30,9 +30,9 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
-	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/crypto v0.12.0 // indirect
+	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
