@@ -1,0 +1,4 @@
+kind: "Dependency"
+body: "Bump github.com/rs/zerolog from 1.29.1 to 1.30.0"
+time: 2023-08-11T22:10:13.00000Z
+
