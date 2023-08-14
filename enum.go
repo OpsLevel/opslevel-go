@@ -46,20 +46,22 @@ type AliasOwnerTypeEnum string
 const (
 	AliasOwnerTypeEnumService                AliasOwnerTypeEnum = "service"                 // Aliases that are assigned to services.
 	AliasOwnerTypeEnumTeam                   AliasOwnerTypeEnum = "team"                    // Aliases that are assigned to teams.
+	AliasOwnerTypeEnumGroup                  AliasOwnerTypeEnum = "group"                   // Aliases that are assigned to groups.
 	AliasOwnerTypeEnumSystem                 AliasOwnerTypeEnum = "system"                  // Aliases that are assigned to systems.
 	AliasOwnerTypeEnumDomain                 AliasOwnerTypeEnum = "domain"                  // Aliases that are assigned to domains.
-	AliasOwnerTypeEnumGroup                  AliasOwnerTypeEnum = "group"                   // Aliases that are assigned to groups.
-	AliasOwnerTypeEnumInfrastructureResource AliasOwnerTypeEnum = "infrastructure_resource" // Aliases that are assigned to infrastructure resources
+	AliasOwnerTypeEnumInfrastructureResource AliasOwnerTypeEnum = "infrastructure_resource" // Aliases that are assigned to infrastructure resources.
+	AliasOwnerTypeEnumScorecard              AliasOwnerTypeEnum = "scorecard"               // Aliases that are assigned to scorecards.
 )
 
 // All AliasOwnerTypeEnum as []string
 var AllAliasOwnerTypeEnum = []string{
 	string(AliasOwnerTypeEnumService),
 	string(AliasOwnerTypeEnumTeam),
+	string(AliasOwnerTypeEnumGroup),
 	string(AliasOwnerTypeEnumSystem),
 	string(AliasOwnerTypeEnumDomain),
-	string(AliasOwnerTypeEnumGroup),
 	string(AliasOwnerTypeEnumInfrastructureResource),
+	string(AliasOwnerTypeEnumScorecard),
 }
 
 // ApiDocumentSourceEnum represents the source used to determine the preferred API document.
@@ -556,6 +558,36 @@ var AllResourceDocumentStatusTypeEnum = []string{
 	string(ResourceDocumentStatusTypeEnumHidden),
 	string(ResourceDocumentStatusTypeEnumPinned),
 	string(ResourceDocumentStatusTypeEnumVisible),
+}
+
+// ScorecardSortEnum represents the possible options to sort the resulting list of scorecards.
+type ScorecardSortEnum string
+
+const (
+	ScorecardSortEnumNameAsc                  ScorecardSortEnum = "name_ASC"                  // Order by the scorecard's name, in ascending order.
+	ScorecardSortEnumNameDesc                 ScorecardSortEnum = "name_DESC"                 // Order by the scorecard's name, in descending order.
+	ScorecardSortEnumOwnerAsc                 ScorecardSortEnum = "owner_ASC"                 // Order by the scorecard owner's name, in ascending order.
+	ScorecardSortEnumOwnerDesc                ScorecardSortEnum = "owner_DESC"                // Order by the scorecard owner's name, in descending order.
+	ScorecardSortEnumFilterAsc                ScorecardSortEnum = "filter_ASC"                // Order by the associated filter's name, in ascending order.
+	ScorecardSortEnumFilterDesc               ScorecardSortEnum = "filter_DESC"               // Order by the associated filter's name, in descending order.
+	ScorecardSortEnumServicecountAsc          ScorecardSortEnum = "serviceCount_ASC"          // Order by the number of services covered by the scorecard, in ascending order.
+	ScorecardSortEnumServicecountDesc         ScorecardSortEnum = "serviceCount_DESC"         // Order by the number of services covered by the scorecard, in descending order.
+	ScorecardSortEnumPassingcheckfractionAsc  ScorecardSortEnum = "passingCheckFraction_ASC"  // Order by the fraction of passing checks on the scorecard, in ascending order.
+	ScorecardSortEnumPassingcheckfractionDesc ScorecardSortEnum = "passingCheckFraction_DESC" // Order by the fraction of passing checks on the scorecard, in descending order.
+)
+
+// All ScorecardSortEnum as []string
+var AllScorecardSortEnum = []string{
+	string(ScorecardSortEnumNameAsc),
+	string(ScorecardSortEnumNameDesc),
+	string(ScorecardSortEnumOwnerAsc),
+	string(ScorecardSortEnumOwnerDesc),
+	string(ScorecardSortEnumFilterAsc),
+	string(ScorecardSortEnumFilterDesc),
+	string(ScorecardSortEnumServicecountAsc),
+	string(ScorecardSortEnumServicecountDesc),
+	string(ScorecardSortEnumPassingcheckfractionAsc),
+	string(ScorecardSortEnumPassingcheckfractionDesc),
 }
 
 // ServicePropertyTypeEnum represents properties of services that can be validated.
