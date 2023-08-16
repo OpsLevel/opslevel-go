@@ -15,7 +15,7 @@ func TestCreateInfra(t *testing.T) {
     "all": true,
     "input": {
       "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}",
+      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false,\"storage_size\":{\"unit\":\"GB\",\"value\":1024}}",
       "providerData": {
         "accountName": "Dev - 123456789",
         "externalUrl": "https://google.com",
@@ -52,6 +52,10 @@ func TestCreateInfra(t *testing.T) {
 			"engine":   "BigQuery",
 			"endpoint": "https://google.com",
 			"replica":  false,
+			"storage_size": map[string]any{
+				"value": 1024,
+				"unit":  "GB",
+			},
 		},
 	})
 	// Assert
