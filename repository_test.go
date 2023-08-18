@@ -5,7 +5,7 @@ import (
 
 	ol "github.com/opslevel/opslevel-go/v2023"
 
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestConnectServiceRepository(t *testing.T) {

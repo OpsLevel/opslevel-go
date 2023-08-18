@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestCreateRubricCategory(t *testing.T) {
@@ -96,7 +96,7 @@ func TestListRubricCategories(t *testing.T) {
 										{{ template "rubric_categories_response1" }}
 									},
 									{
-										{{ template "rubric_categories_response2" }} 
+										{{ template "rubric_categories_response2" }}
 									}
 								],
 								{{ template "pagination_initial_pageInfo_response" }},

@@ -5,7 +5,7 @@ import (
 
 	ol "github.com/opslevel/opslevel-go/v2023"
 
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestAssignTagForAlias(t *testing.T) {
@@ -95,7 +95,7 @@ func TestCreateTag(t *testing.T) {
 }}`
 	response := `{"data": {
 		"tagCreate": {
-			"tag": 
+			"tag":
 			{
 			"id": "{{ template "id1" }}",
 			"key": "hello",
@@ -127,7 +127,7 @@ func TestUpdateTag(t *testing.T) {
 }}`
 	response := `{"data": {
 		"tagUpdate": {
-			"tag": 
+			"tag":
 			{
 			"id": "{{ template "id1" }}",
 			"key": "hello",

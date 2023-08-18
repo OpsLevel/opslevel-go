@@ -39,5 +39,5 @@ tasks:
   test:
     desc: Run tests
     cmds:
-      - go test -v ./... {{ .CLI_ARGS }}
+      - go test -v -cover -race ./... {{ .CLI_ARGS }}
     silent: true
