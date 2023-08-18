@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestSystemCreate(t *testing.T) {
@@ -239,7 +239,7 @@ func TestSystemGetAlias(t *testing.T) {
 	response := `{"data": {
 		"account": {
 			"system": {{ template "system1_response" }}
-		}	
+		}
 	}}`
 	client := ABetterTestClient(t, "system/get_alias", request, response)
 	// Act
@@ -309,8 +309,8 @@ func TestSystemUpdate(t *testing.T) {
 			"note": "Please delete me"
 		}
 	}}`
-	response := `{"data": { 
-		"systemUpdate": { 
+	response := `{"data": {
+		"systemUpdate": {
 			"system": {{ template "system1_response" }},
 			"errors": []
 	}}}`

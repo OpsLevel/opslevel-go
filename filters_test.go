@@ -5,7 +5,7 @@ import (
 
 	ol "github.com/opslevel/opslevel-go/v2023"
 
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestCreateFilter(t *testing.T) {
@@ -161,7 +161,7 @@ func TestListFilters(t *testing.T) {
 									{{ template "filter_kubernetes_response" }}
 								},
 								{
-									{{ template "filter_tier1service_response" }} 
+									{{ template "filter_tier1service_response" }}
 								}
 							],
 							{{ template "pagination_initial_pageInfo_response" }},

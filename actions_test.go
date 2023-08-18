@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestCreateWebhookAction(t *testing.T) {
@@ -56,7 +56,7 @@ func TestListCustomActions(t *testing.T) {
 									{{ template "custom_action1_response" }}
 								},
 								{
-									{{ template "custom_action2_response" }} 
+									{{ template "custom_action2_response" }}
 								}
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
@@ -258,7 +258,7 @@ func TestListTriggerDefinitions(t *testing.T) {
 									{{ template "custom_action_trigger1_response" }}
 								},
 								{
-									{{ template "custom_action_trigger2_response" }} 
+									{{ template "custom_action_trigger2_response" }}
 								}
 							],
 							{{ template "pagination_initial_pageInfo_response" }},
