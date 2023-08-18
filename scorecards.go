@@ -18,7 +18,7 @@ type Scorecard struct {
 	Owner         EntityOwner `graphql:"owner"`
 	PassingChecks int         `graphql:"passingChecks"`
 	ServiceCount  int         `graphql:"serviceCount"`
-	TotalChecks   int         `graphql:"totalChecks"`
+	ChecksCount   int         `graphql:"totalChecks"`
 }
 
 type ScorecardConnection struct {
@@ -27,23 +27,11 @@ type ScorecardConnection struct {
 	TotalCount int         `graphql:"totalCount"`
 }
 
-type ScorecardCheckConnection struct {
-	Nodes      []Check  `graphql:"nodes"`
-	PageInfo   PageInfo `graphql:"pageInfo"`
-	TotalCount int      `graphql:"totalCount"`
-}
-
 type ScorecardInput struct {
 	Name        string  `graphql:"name" json:"name"`
 	Description *string `graphql:"description" json:"description,omitempty"`
-	// TODO: API shouldn't use IdentifierInput for Owner if we support groups and teams
-	// if an alias is passed, is that for a Group or a Team?
-	// on Domain and System objects, they only support ID type as the owner, not InputIdentifier
-	// if this is changed, update the GetScorecard test
-	// TODO: a way to get linked checks from a scorecard
-	// requires a change in API and structs
-	Owner    IdentifierInput `graphql:"owner" json:"owner"`
-	FilterId *ID             `graphql:"filterId" json:"filterId,omitempty"`
+	OwnerId     *ID     `graphql:"ownerId" json:"ownerId"`
+	FilterId    *ID     `graphql:"filterId" json:"filterId,omitempty"`
 }
 
 func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) {
@@ -60,12 +48,13 @@ func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) 
 	return &m.Payload.Scorecard, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetScorecard(input IdentifierInput) (*Scorecard, error) {
+func (client *Client) GetScorecard(identifier string) (*Scorecard, error) {
 	var q struct {
 		Account struct {
 			Scorecard Scorecard `graphql:"scorecard(input: $input)"`
 		}
 	}
+	input := *NewIdentifier(identifier)
 	v := PayloadVariables{
 		"input": input,
 	}
@@ -100,13 +89,14 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (ScorecardConn
 	return q.Account.Scorecards, nil
 }
 
-func (client *Client) UpdateScorecard(scorecard IdentifierInput, input ScorecardInput) (*Scorecard, error) {
+func (client *Client) UpdateScorecard(identifier string, input ScorecardInput) (*Scorecard, error) {
 	var m struct {
 		Payload struct {
 			Scorecard Scorecard        `graphql:"scorecard"`
 			Errors    []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"scorecardUpdate(scorecard: $scorecard, input: $input)"`
 	}
+	scorecard := *NewIdentifier(identifier)
 	v := PayloadVariables{
 		"scorecard": scorecard,
 		"input":     input,
@@ -115,13 +105,14 @@ func (client *Client) UpdateScorecard(scorecard IdentifierInput, input Scorecard
 	return &m.Payload.Scorecard, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteScorecard(input IdentifierInput) (ID, error) {
+func (client *Client) DeleteScorecard(identifier string) (ID, error) {
 	var m struct {
 		Payload struct {
 			DeletedScorecardId ID               `graphql:"deletedScorecardId"`
 			Errors             []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"scorecardDelete(input: $input)"`
 	}
+	input := *NewIdentifier(identifier)
 	v := PayloadVariables{
 		"input": input,
 	}
