@@ -6,7 +6,7 @@ import (
 
 	"github.com/hasura/go-graphql-client"
 	ol "github.com/opslevel/opslevel-go/v2023"
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 type JSONTester struct {
@@ -36,6 +36,10 @@ func TestMarshalJSON(t *testing.T) {
 	id1 := ol.JSON{}
 	id2 := ol.JSON{
 		"foo": "bar",
+		"nested": map[string]any{
+			"one": 1,
+			"two": "two",
+		},
 	}
 	case1 := JSONTester{}
 	case2 := JSONTester{
@@ -60,7 +64,7 @@ func TestMarshalJSON(t *testing.T) {
 	autopilot.Ok(t, err2)
 	autopilot.Equals(t, `{"key1":"{}","key3":"{}","key4":"{}"}`, string(buf2))
 	autopilot.Ok(t, err3)
-	autopilot.Equals(t, `{"key1":"{\"foo\":\"bar\"}","key2":"{\"foo\":\"bar\"}","key3":"{\"foo\":\"bar\"}","key4":"{\"foo\":\"bar\"}"}`, string(buf3))
+	autopilot.Equals(t, `{"key1":"{\"foo\":\"bar\",\"nested\":{\"one\":1,\"two\":\"two\"}}","key2":"{\"foo\":\"bar\",\"nested\":{\"one\":1,\"two\":\"two\"}}","key3":"{\"foo\":\"bar\",\"nested\":{\"one\":1,\"two\":\"two\"}}","key4":"{\"foo\":\"bar\",\"nested\":{\"one\":1,\"two\":\"two\"}}"}`, string(buf3))
 }
 
 func TestConstructQueryJSON(t *testing.T) {

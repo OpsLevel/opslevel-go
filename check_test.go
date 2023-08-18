@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 var checkCreateInput = ol.CheckCreateInput{
@@ -637,4 +637,46 @@ func TestDeleteCheck(t *testing.T) {
 	err := client.DeleteCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzIxNzI")
 	// Assert
 	autopilot.Equals(t, nil, err)
+}
+
+func TestJsonUnmarshalCreateCheck(t *testing.T) {
+	// Arrange
+	data := `{
+	"name": "Example",
+	"notes": "Example Notes",
+	"updateRequiresComment": false
+}`
+	output := ol.CheckManualCreateInput{
+		CheckCreateInput: ol.CheckCreateInput{
+			Name:  "Example",
+			Notes: "Example Notes",
+		},
+		UpdateRequiresComment: false,
+	}
+	// Act
+	buf1, err1 := ol.UnmarshalCheckCreateInput(ol.CheckTypeManual, []byte(data))
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, &output, buf1.(*ol.CheckManualCreateInput))
+}
+
+func TestJsonUnmarshalUpdateCheck(t *testing.T) {
+	// Arrange
+	data := `{
+	"name": "Example",
+	"notes": "Example Notes",
+	"updateRequiresComment": true
+}`
+	output := ol.CheckManualUpdateInput{
+		CheckUpdateInput: ol.CheckUpdateInput{
+			Name:  "Example",
+			Notes: ol.NewString("Example Notes"),
+		},
+		UpdateRequiresComment: true,
+	}
+	// Act
+	buf1, err1 := ol.UnmarshalCheckUpdateInput(ol.CheckTypeManual, []byte(data))
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, &output, buf1.(*ol.CheckManualUpdateInput))
 }

@@ -67,7 +67,7 @@ type InfraInput struct {
 	Schema   string              `json:"schema" yaml:"schema"`
 	Owner    *ID                 `json:"owner" yaml:"owner"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
-	Data     JSON                `json:"data" yaml:"data" scalar:"true"`
+	Data     map[string]any      `json:"data" yaml:"data"`
 }
 
 func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {

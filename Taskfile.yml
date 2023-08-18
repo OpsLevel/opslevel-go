@@ -8,8 +8,21 @@ tasks:
     cmds:
       - go generate
       - gofumpt -w .
+
+  install-gofumpt:
+    desc: go install "gofumpt" and set GOBIN if not set
+    silent: true
+    vars:
+      IS_GOFUMPT_INSTALLED:
+        sh: which gofumpt > /dev/null || echo "1"
+    cmds:
+      - test -z "{{.IS_GOFUMPT_INSTALLED}}" || echo "Installing gofumpt..."
+      - test -z "{{.IS_GOFUMPT_INSTALLED}}" || go install mvdan.cc/gofumpt@latest
+      - test -n $(go env GOBIN) || go env -w GOBIN=$(go env GOPATH)/bin
+
   lint:
     desc: Formatting and linting
+    deps: [install-gofumpt]
     cmds:
       - gofumpt -d .
       - go vet ./...
@@ -17,6 +30,7 @@ tasks:
 
   lintfix:
     desc: Fix formatting and linting
+    deps: [install-gofumpt]
     cmds:
       - gofumpt -w .
       - go mod tidy
@@ -25,5 +39,5 @@ tasks:
   test:
     desc: Run tests
     cmds:
-      - go test -v ./... {{ .CLI_ARGS }}
+      - go test -v -cover -race ./... {{ .CLI_ARGS }}
     silent: true
