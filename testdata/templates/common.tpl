@@ -67,9 +67,9 @@
 {{- define "error1" }}{
     "message": "Example Error",
     "path": [
-      "one",
-      "two",
-      "three"
+        "one",
+        "two",
+        "three"
     ]
 }{{ end }}
 
