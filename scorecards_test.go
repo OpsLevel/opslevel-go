@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
-	"github.com/rocktavious/autopilot/v2022"
+	"github.com/rocktavious/autopilot/v2023"
 )
 
 var fakeOwnerId = ol.NewID("Z2lkOi8vMTIzNDU2Nzg5Cg==")
@@ -60,4 +60,62 @@ func TestGetScorecard(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5MTAK"), scorecard.Id)
 	autopilot.Equals(t, *fakeOwnerId, scorecard.Owner.Id())
+}
+
+func TestListScorecards(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{
+			`{"query": "query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_initial_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"scorecards": {
+							"nodes": [
+								{
+									{{ template "scorecard_1_response" }}
+								},
+								{
+									{{ template "scorecard_2_response" }}
+								}
+							],
+							{{ template "pagination_initial_pageInfo_response" }},
+							"totalCount": 2
+						  }}}}`,
+		},
+		{
+			`{"query": "query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			{{ template "pagination_second_query_variables" }}
+			}`,
+			`{
+				"data": {
+					"account": {
+						"scorecards": {
+							"nodes": [
+								{
+									{{ template "scorecard_3_response" }}
+								}
+							],
+							{{ template "pagination_second_pageInfo_response" }},
+							"totalCount": 1
+						  }}}}`,
+		},
+	}
+	// An easy way to see the results of templating is by uncommenting this
+	// fmt.Print(Templated(request))
+	// fmt.Print(Templated(response))
+	// panic(1)
+
+	client := APaginatedTestClient(t, "scorecards/list_scorecards", requests...)
+	// Act
+	response, err := client.ListScorecards(nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, "first scorecard", result[0].Name)
+	autopilot.Equals(t, "second scorecard", result[1].Name)
+	autopilot.Equals(t, "third scorecard", result[2].Name)
 }
