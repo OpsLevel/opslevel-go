@@ -34,11 +34,6 @@
     "data": {"account":{"scorecard":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK", "name":"existing scorecard","owner":{"id":"Z2lkOi8vMTIzNDU2Nzg5Cg=="}}}}
 }{{ end }}
 
-{{- define "scorecard_list_request" }}{
-    "query": "query {account {scorecards {nodes {aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}}",
-    {{ template "pagination_second_query_variables" }}
-}{{ end }}
-
 {{- define "scorecard_1_response" }}
     "id":"Z2lkOi8vMTIzNDU2Nzg5MTAK",
     "name":"first scorecard",
