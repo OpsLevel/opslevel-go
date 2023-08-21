@@ -16,7 +16,7 @@ func TestCreateScorecard(t *testing.T) {
 	client := ABetterTestClient(t, "scorecards/create_scorecard", request, response)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:    "new scorecard",
-		OwnerId: fakeOwnerId,
+		OwnerId: *fakeOwnerId,
 	})
 
 	autopilot.Ok(t, err)
@@ -31,7 +31,7 @@ func TestUpdateScorecard(t *testing.T) {
 	client := ABetterTestClient(t, "scorecards/update_scorecard", request, response)
 	sc, err := client.UpdateScorecard("Z2lkOi8vMTIzNDU2Nzg5MTAK", ol.ScorecardInput{
 		Name:    "updated scorecard",
-		OwnerId: fakeOwnerId,
+		OwnerId: *fakeOwnerId,
 	})
 
 	autopilot.Ok(t, err)

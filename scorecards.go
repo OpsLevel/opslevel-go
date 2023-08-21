@@ -30,7 +30,7 @@ type ScorecardConnection struct {
 type ScorecardInput struct {
 	Name        string  `graphql:"name" json:"name"`
 	Description *string `graphql:"description" json:"description,omitempty"`
-	OwnerId     *ID     `graphql:"ownerId" json:"ownerId"`
+	OwnerId     ID      `graphql:"ownerId" json:"ownerId"`
 	FilterId    *ID     `graphql:"filterId" json:"filterId,omitempty"`
 }
 
