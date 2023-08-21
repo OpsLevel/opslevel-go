@@ -66,7 +66,7 @@ func TestListScorecards(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			`{"query": "{{ template "scorecard_list_query" }}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
 			`{
@@ -86,7 +86,7 @@ func TestListScorecards(t *testing.T) {
 						  }}}}`,
 		},
 		{
-			`{"query": "query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+			`{"query": "{{ template "scorecard_list_query" }}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
 			`{

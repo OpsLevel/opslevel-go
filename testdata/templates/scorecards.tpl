@@ -34,6 +34,8 @@
     "data": {"account":{"scorecard":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK", "name":"existing scorecard","owner":{"id":"Z2lkOi8vMTIzNDU2Nzg5Cg=="}}}}
 }{{ end }}
 
+{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}{{ end }}
+
 {{- define "scorecard_1_response" }}
     "id":"Z2lkOi8vMTIzNDU2Nzg5MTAK",
     "name":"first scorecard",
