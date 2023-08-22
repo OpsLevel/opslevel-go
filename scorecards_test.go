@@ -7,21 +7,46 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var fakeOwnerId = ol.NewID("Z2lkOi8vMTIzNDU2Nzg5Cg==")
+var fakeOwnerId = ol.NewID("Z2lkOi8vMTIzNDU2Nzg5Cg==")  // 123456789
+var fakeFilterId = ol.NewID("Z2lkOi8vMTIzNDU2MTIzCg==") // 123456123
 
 func TestCreateScorecard(t *testing.T) {
 	request := `{{ template "scorecard_create_request" }}`
 	response := `{{ template "scorecard_create_response" }}`
+	description := "a basic scorecard"
 
 	client := ABetterTestClient(t, "scorecards/create_scorecard", request, response)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
-		Name:    "new scorecard",
-		OwnerId: *fakeOwnerId,
+		Name:        "new scorecard",
+		Description: &description,
+		OwnerId:     *fakeOwnerId,
 	})
 
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "new scorecard", sc.Name)
+	autopilot.Equals(t, "a basic scorecard", sc.Description)
 	autopilot.Equals(t, *fakeOwnerId, sc.Owner.Id())
+	autopilot.Equals(t, ol.Filter{}, sc.Filter)
+}
+
+func TestCreateScorecardWithFilter(t *testing.T) {
+	request := `{{ template "scorecard_create_with_filter_request" }}`
+	response := `{{ template "scorecard_create_with_filter_response" }}`
+	description := "a filtered scorecard"
+
+	client := ABetterTestClient(t, "scorecards/create_scorecard_with_filter", request, response)
+	sc, err := client.CreateScorecard(ol.ScorecardInput{
+		Name:        "new scorecard with filter",
+		Description: &description,
+		OwnerId:     *fakeOwnerId,
+		FilterId:    fakeFilterId,
+	})
+
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "new scorecard with filter", sc.Name)
+	autopilot.Equals(t, "a filtered scorecard", sc.Description)
+	autopilot.Equals(t, *fakeOwnerId, sc.Owner.Id())
+	autopilot.Equals(t, *fakeFilterId, sc.Filter.Id)
 }
 
 func TestUpdateScorecard(t *testing.T) {

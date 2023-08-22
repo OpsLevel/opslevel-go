@@ -1,10 +1,19 @@
 {{- define "scorecard_create_request" }}{
     "query": "mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}",
-    "variables": {"input":{"name":"new scorecard","ownerId":"Z2lkOi8vMTIzNDU2Nzg5Cg=="}}
+    "variables": {"input":{"description":"a basic scorecard","name":"new scorecard","ownerId":"Z2lkOi8vMTIzNDU2Nzg5Cg=="}}
 }{{ end }}
 
 {{- define "scorecard_create_response" }}{
-    "data": {"scorecardCreate":{"scorecard":{"name":"new scorecard","owner":{"id": "Z2lkOi8vMTIzNDU2Nzg5Cg=="}},"errors":[]}}
+    "data": {"scorecardCreate":{"scorecard":{"description":"a basic scorecard","filter":null,"name":"new scorecard","owner":{"id": "Z2lkOi8vMTIzNDU2Nzg5Cg=="}},"errors":[]}}
+}{{ end }}
+
+{{- define "scorecard_create_with_filter_request" }}{
+    "query": "mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}",
+    "variables": {"input":{"description": "a filtered scorecard","name":"new scorecard with filter","ownerId":"Z2lkOi8vMTIzNDU2Nzg5Cg==","filterId":"Z2lkOi8vMTIzNDU2MTIzCg=="}}
+}{{ end }}
+
+{{- define "scorecard_create_with_filter_response" }}{
+    "data": {"scorecardCreate":{"scorecard":{"description":"a filtered scorecard","filter":{"connective":null,"htmlUrl":"https://app.opslevel.com/filters/123456123","id":"Z2lkOi8vMTIzNDU2MTIzCg==","name":"some filter","predicates":[]},"name":"new scorecard with filter","owner":{"id": "Z2lkOi8vMTIzNDU2Nzg5Cg=="}},"errors":[]}}
 }{{ end }}
 
 {{- define "scorecard_update_request" }}{
