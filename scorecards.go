@@ -12,8 +12,8 @@ type ScorecardId struct {
 type Scorecard struct {
 	ScorecardId
 
-	Description   string      `graphql:"description"`
-	Filter        Filter      `graphql:"filter"`
+	Description   string      `graphql:"description"` // optional
+	Filter        Filter      `graphql:"filter"`      // optional
 	Name          string      `graphql:"name"`
 	Owner         EntityOwner `graphql:"owner"`
 	PassingChecks int         `graphql:"passingChecks"`
