@@ -85,7 +85,7 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (ScorecardConn
 		}
 		q.Account.Scorecards.Nodes = append(q.Account.Scorecards.Nodes, resp.Nodes...)
 		q.Account.Scorecards.PageInfo = resp.PageInfo
-		// TODO: pre-calculate the TotalCount so that it's more correct, see domains.go/systems.go
+		q.Account.Scorecards.TotalCount = len(q.Account.Scorecards.Nodes)
 	}
 	return q.Account.Scorecards, nil
 }
