@@ -19,7 +19,7 @@
         <img src="https://pkg.go.dev/badge/github.com/opslevel/opslevel.svg" /></a>
 </p>
 
-<img align="right" src="https://user-images.githubusercontent.com/735015/118144171-c2a40d00-b3d1-11eb-9b8c-a1cdd687cb36.png" width="320" height="160">
+<img align="right" src="logo.png" width="320" height="160">
 
 [![Overall](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fapp.opslevel.com%2Fapi%2Fservice_level%2FOrfRqpiglK-WdxPAHJrUWzwYaweF_gDsmkSKWFYw9LU)](https://app.opslevel.com/services/opslevel_api_clients/maturity-report)
 	
