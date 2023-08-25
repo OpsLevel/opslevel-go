@@ -60,9 +60,6 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (Secr
 }
 
 func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (*Secret, error) {
-	identifierInput := IdentifierInput{
-		Id: *NewID(identifier),
-	}
 	var m struct {
 		Payload struct {
 			Secret Secret
@@ -71,22 +68,19 @@ func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (
 	}
 	v := PayloadVariables{
 		"input":  secretInput,
-		"secret": identifierInput,
+		"secret": *NewIdentifier(identifier),
 	}
 	err := client.Mutate(&m, v, WithName("SecretsVaultsSecretUpdate"))
 	return &m.Payload.Secret, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) DeleteSecret(identifier string) error {
-	identifierInput := IdentifierInput{
-		Id: *NewID(identifier),
-	}
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"secretsVaultsSecretDelete(resource: $input)"`
 	}
-	v := PayloadVariables{"input": identifierInput}
+	v := PayloadVariables{"input": *NewIdentifier(identifier)}
 	err := client.Mutate(&m, v, WithName("SecretsVaultsSecretDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
