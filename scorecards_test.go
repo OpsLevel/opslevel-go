@@ -7,11 +7,13 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var scorecardId = "Z2lkOi8vMTIzNDU2Nzg5MTAK"            // 12345678910
-var fakeOwnerId = ol.NewID("Z2lkOi8vMTIzNDU2Nzg5Cg==")  // 123456789
-var newOwnerId = ol.NewID("Z2lkOi8vMTIzNDU2Nzc3Cg==")   // 123456777
-var fakeFilterId = ol.NewID("Z2lkOi8vMTIzNDU2MTIzCg==") // 123456123
-var newFilterId = ol.NewID("Z2lkOi8vMTIzNDU2NDU2Cg==")  // 123456456
+var (
+	scorecardId  = "Z2lkOi8vMTIzNDU2Nzg5MTAK"           // 12345678910
+	fakeOwnerId  = ol.NewID("Z2lkOi8vMTIzNDU2Nzg5Cg==") // 123456789
+	newOwnerId   = ol.NewID("Z2lkOi8vMTIzNDU2Nzc3Cg==") // 123456777
+	fakeFilterId = ol.NewID("Z2lkOi8vMTIzNDU2MTIzCg==") // 123456123
+	newFilterId  = ol.NewID("Z2lkOi8vMTIzNDU2NDU2Cg==") // 123456456
+)
 
 func TestCreateScorecard(t *testing.T) {
 	request := `{{ template "scorecard_create_request" }}`
