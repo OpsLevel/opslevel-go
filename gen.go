@@ -216,6 +216,11 @@ func t(text string) *template.Template {
 		"type":           typeString,
 		"clean":          func(s string) string { return strings.Join(strings.Fields(s), " ") },
 		"endSentence": func(s string) string {
+			if len(s) == 0 {
+				// Do nothing.
+				return ""
+			}
+
 			s = strings.ToLower(s[0:1]) + s[1:]
 			switch {
 			default:
