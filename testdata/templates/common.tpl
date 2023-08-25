@@ -14,6 +14,12 @@
 {{- define "id3" }}Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx{{ end }}
 {{- define "id4" }}Z2lkOi8vMTkyODM3NDY1{{ end }}
 {{- define "eid1" }}NzQxODUyOTYzNzQxODUyOTYz{{ end }}
+{{- define "timestamps" }}
+{
+    "createdAt": "2022-12-15T01:34:00.289687Z",
+    "updatedAt": "2022-12-15T15:01:08.832770Z"
+}
+{{ end }}
 {{- define "description" }}An example description{{ end }}
 {{- define "pagination_request" }}pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount{{ end }}
 {{- define "no_pagination_response" }}"pageInfo": {
