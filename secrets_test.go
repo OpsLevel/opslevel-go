@@ -30,6 +30,21 @@ func TestCreateSecret(t *testing.T) {
 	autopilot.Equals(t, *id2, result.Owner.Id)
 }
 
+func TestGetSecret(t *testing.T) {
+	// Arrange
+	request := `{
+	"query": "query SecretsVaultsSecret($input:IdentifierInput!){account{secretsVaultsSecret(input: $input){alias,id,owner{alias,id},timestamps{createdAt,updatedAt}}}}",
+  "variables": {{ template "secret_get_vars" }}
+  }`
+	response := `{{ template "secret_get_response" }}`
+	client := ABetterTestClient(t, "secret/get", request, response)
+	// Act
+	result, err := client.GetSecret("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5", string(result.ID))
+}
+
 func TestListSecrets(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{

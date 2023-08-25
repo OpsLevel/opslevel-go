@@ -47,7 +47,14 @@
   }
 }
 {{end}}
+{{- define "secret_get_vars" }}
+{
+  "input":{
+    "id": "{{ template "id2" }}"
+  }
+}
 
+{{end}}
 {{- define "secret_update_vars" }}
 {
   "input": {
@@ -61,7 +68,6 @@
   }
 }
 {{end}}
-
 {{- define "secret_create_response" }}
 {
   "data": {
@@ -78,6 +84,15 @@
 		"secretsVaultsSecretDelete": {
 			"errors": []
 		}
+  }
+}
+{{end}}
+{{- define "secret_get_response" }}
+{
+  "data": {
+    "account": {
+      "secretsVaultsSecret": {{ template "secrets_2" }}
+    }
   }
 }
 {{end}}
