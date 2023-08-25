@@ -59,9 +59,9 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (Secr
 	return q.Account.SecretsVaultsSecrets, nil
 }
 
-func (client *Client) UpdateSecret(identifier ID, secretInput SecretInput) (*Secret, error) {
+func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (*Secret, error) {
 	identifierInput := IdentifierInput{
-		Id: identifier,
+		Id: *NewID(identifier),
 	}
 	var m struct {
 		Payload struct {
@@ -77,9 +77,9 @@ func (client *Client) UpdateSecret(identifier ID, secretInput SecretInput) (*Sec
 	return &m.Payload.Secret, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteSecret(identifier ID) error {
+func (client *Client) DeleteSecret(identifier string) error {
 	identifierInput := IdentifierInput{
-		Id: identifier,
+		Id: *NewID(identifier),
 	}
 	var m struct {
 		Payload struct {

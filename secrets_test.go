@@ -72,7 +72,7 @@ func TestUpdateSecret(t *testing.T) {
 		Owner: opslevel.IdentifierInput{Id: *id2},
 		Value: "secret_value_2",
 	}
-	result, err := client.UpdateSecret(*id2, secretInput)
+	result, err := client.UpdateSecret(string(*id2), secretInput)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, *id2, result.ID)
@@ -89,7 +89,7 @@ func TestDeleteSecrets(t *testing.T) {
 	id1 := opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	client := ABetterTestClient(t, "secrets/delete", request, response)
 	// Act
-	err := client.DeleteSecret(*id1)
+	err := client.DeleteSecret(string(*id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
 }
