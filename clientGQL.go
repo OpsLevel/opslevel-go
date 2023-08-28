@@ -3,13 +3,10 @@ package opslevel
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"os"
-	"strings"
-
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hasura/go-graphql-client"
-	"golang.org/x/oauth2"
+	"net/http"
+	"strings"
 )
 
 type Client struct {
@@ -26,20 +23,11 @@ func NewClient(apiToken string, options ...Option) *Client {
 func NewGQLClient(options ...Option) *Client {
 	settings := newClientSettings(options...)
 
-	httpToken := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("OPSLEVEL_API_TOKEN"), TokenType: "Bearer"},
-	)
-
 	retryClient := retryablehttp.NewClient()
 	retryClient.RetryMax = settings.retries
 	retryClient.Logger = nil
 
 	standardClient := retryClient.StandardClient()
-	standardClient.Timeout = settings.timeout
-	standardClient.Transport = &oauth2.Transport{
-		Source: httpToken,
-		Base:   standardClient.Transport,
-	}
 	var url string
 	if strings.Contains(settings.url, "/LOCAL_TESTING/") {
 		url = settings.url
@@ -47,8 +35,10 @@ func NewGQLClient(options ...Option) *Client {
 		url = fmt.Sprintf("%s/graphql", settings.url)
 	}
 
+	auth := fmt.Sprintf("Bearer %s", settings.token)
 	modifier := graphql.RequestModifier(
 		func(r *http.Request) {
+			r.Header.Add("Authorization", auth)
 			for key, value := range settings.headers {
 				r.Header.Add(key, value)
 			}
