@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/hasura/go-graphql-client"
 	"net/http"
-	"os"
 	"strings"
 )
 
