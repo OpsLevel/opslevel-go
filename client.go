@@ -10,6 +10,7 @@ import (
 
 type ClientSettings struct {
 	url      string
+	token    string
 	timeout  time.Duration
 	retries  int
 	headers  map[string]string
@@ -21,6 +22,7 @@ type Option func(*ClientSettings)
 func newClientSettings(options ...Option) *ClientSettings {
 	settings := &ClientSettings{
 		url:     "https://app.opslevel.com",
+		token:   os.Getenv("OPSLEVEL_API_TOKEN"),
 		timeout: time.Second * 10,
 		retries: 10,
 
@@ -38,7 +40,7 @@ func newClientSettings(options ...Option) *ClientSettings {
 
 func SetAPIToken(apiToken string) Option {
 	return func(c *ClientSettings) {
-		os.Setenv("OPSLEVEL_API_TOKEN", apiToken)
+		c.token = apiToken
 	}
 }
 
