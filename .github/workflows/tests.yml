@@ -29,7 +29,6 @@ jobs:
           task setup
           task lint
           task test
-          grep -v "/enum.go" coverage.out > coverage.txt
       - name: Upload Coverage
         run: |-
           bash <(curl -s https://codecov.io/bash)

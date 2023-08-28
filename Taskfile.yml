@@ -35,6 +35,7 @@ tasks:
     desc: Run tests
     cmds:
       - go test -race -coverprofile=coverage.out -covermode=atomic -v ./... {{ .CLI_ARGS }}
+      - grep -v "/enum.go" coverage.out > coverage.txt
     silent: true
 
   # internal (not directly called) tasks
