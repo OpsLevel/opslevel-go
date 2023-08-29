@@ -29,7 +29,7 @@ tasks:
     desc: Setup linter, formatter, etc. for local testing and CI
     cmds:
       - task: install-gofumpt
-      - task: install-golangci
+      - task: install-golangci-lint
 
   test:
     desc: Run tests
@@ -60,7 +60,7 @@ tasks:
       - task: install-go-tool
         vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
 
-  install-golangci:
+  install-golangci-lint:
     desc: go install "golangci-lint" and set GOBIN if not set
     silent: true
     cmds:
