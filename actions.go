@@ -41,6 +41,39 @@ type CustomActionsTriggerDefinition struct {
 	EntityType             CustomActionsEntityTypeEnum                     `graphql:"entityType"`
 }
 
+func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
+	var q struct {
+		Account struct {
+			CustomActionsTriggerDefinition struct {
+				ExtendedTeamAccess TeamConnection `graphql:"extendedTeamAccess(after: $after, first: $first)"`
+			} `graphql:"customActionsTriggerDefinition(input: $input)"`
+		}
+	}
+	if c.Id == "" {
+		return nil, fmt.Errorf("Unable to get teams with ExtendedTeamAccess, invalid CustomActionsTriggerDefinition id: '%s'", c.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["input"] = NewIdentifier(string(c.Id))
+
+	if err := client.Query(&q, *variables, WithName("ExtendedTeamAccessList")); err != nil {
+		return nil, err
+	}
+
+	for q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.End
+		resp, err := c.ExtendedTeamAccess(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.Nodes = append(q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.Nodes, resp.Nodes...)
+		q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo = resp.PageInfo
+		q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.TotalCount += resp.TotalCount
+	}
+	return &q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess, nil
+}
+
 type CustomActionsExternalActionsConnection struct {
 	Nodes      []CustomActionsExternalAction
 	PageInfo   PageInfo
@@ -87,6 +120,7 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
 	ResponseTemplate       string                                          `json:"responseTemplate"`
 	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType"`
+	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty"`
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
@@ -103,6 +137,7 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty"`
 	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty"`
 	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty"`
+	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
