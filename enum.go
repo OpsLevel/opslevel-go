@@ -298,6 +298,27 @@ var AllContactType = []string{
 	string(ContactTypeGitHub),
 }
 
+// TODO: This appears to be duplicative of the above and i'm not sure why we need it
+// ContactType represents the method of contact.
+type ServiceOwnershipCheckContactType string
+
+const (
+       ServiceOwnershipCheckContactTypeAny         ServiceOwnershipCheckContactType = "any"          // Any contact method.
+       ServiceOwnershipCheckContactTypeSlack       ServiceOwnershipCheckContactType = "slack"        // A Slack channel contact method.
+       ServiceOwnershipCheckContactTypeSlackHandle ServiceOwnershipCheckContactType = "slack_handle" // A Slack handle contact method.
+       ServiceOwnershipCheckContactTypeEmail       ServiceOwnershipCheckContactType = "email"        // An email contact method.
+       ServiceOwnershipCheckContactTypeWeb         ServiceOwnershipCheckContactType = "web"          // A website contact method.
+)
+
+// All ServiceOwnershipContactType as []string
+var AllServiceOwnershipCheckContactType = []string{
+       string(ServiceOwnershipCheckContactTypeAny),
+       string(ServiceOwnershipCheckContactTypeSlack),
+       string(ServiceOwnershipCheckContactTypeSlackHandle),
+       string(ServiceOwnershipCheckContactTypeEmail),
+       string(ServiceOwnershipCheckContactTypeWeb),
+}
+
 // CustomActionsEntityTypeEnum represents the entity types a custom action can be associated with.
 type CustomActionsEntityTypeEnum string
 
