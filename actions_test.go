@@ -1,7 +1,6 @@
 package opslevel_test
 
 import (
-	"encoding/json"
 	"testing"
 
 	// "github.com/golangci/golangci-lint/pkg/result"
@@ -202,7 +201,7 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
+		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","extendedTeamAccess":[{"alias":"example_1"},{"alias":"example_1"}],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionCreate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},
@@ -218,6 +217,36 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 		Owner:       "123456789",
 		Filter:      ol.NewID("987654321"),
 		EntityType:  "GLOBAL",
+		ExtendedTeamAccess: &[]ol.IdentifierInput{
+			*ol.NewIdentifier("example_1"),
+			*ol.NewIdentifier("example_1"),
+		},
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Release", trigger.Name)
+}
+
+func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
+	// Arrange
+	request := `{"query":
+		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
+		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","extendedTeamAccess":[],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
+	}`
+	response := `{"data": {"customActionsTriggerDefinitionCreate": {
+     "triggerDefinition": {{ template "custom_action_trigger1" }},
+     "errors": []
+ }}}`
+
+	client := ABetterTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", request, response)
+	// Act
+	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
+		Name:               "Deploy Rollback",
+		Description:        ol.NewString("Disables the Deploy Freeze"),
+		Action:             "123456789",
+		Owner:              "123456789",
+		Filter:             ol.NewID("987654321"),
+		ExtendedTeamAccess: &[]ol.IdentifierInput{},
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -307,104 +336,6 @@ func TestListTriggerDefinitions(t *testing.T) {
 	autopilot.Equals(t, "123456781", string(result[2].Owner.Id))
 }
 
-func TestTriggerDefinitionCreateInputHasExtendedTeamAccess(t *testing.T) {
-	// Arrange
-	createInput := ol.CustomActionsTriggerDefinitionCreateInput{
-		Name:               "test",
-		Action:             "123456789",
-		Owner:              "123456789",
-		ExtendedTeamAccess: &[]ol.IdentifierInput{},
-	}
-
-	// Act
-	resp, err := json.Marshal(createInput)
-	result := ol.NewJSON(string(resp))
-
-	// Assert
-	_, ok := result["extendedTeamAccess"]
-	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionCreateInput")
-	autopilot.Ok(t, err)
-}
-
-func TestTriggerDefinitionCreateInputHasExtendedTeamAccessWithValue(t *testing.T) {
-	// Arrange
-	createInput := ol.CustomActionsTriggerDefinitionCreateInput{
-		Name:               "test",
-		Action:             "123456789",
-		Owner:              "123456789",
-		ExtendedTeamAccess: &[]ol.IdentifierInput{{Id: *ol.NewID("abc123")}},
-	}
-
-	// Act
-	resp, err := json.Marshal(createInput)
-	result := ol.NewJSON(string(resp))
-
-	// Assert
-	_, ok := result["extendedTeamAccess"]
-	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionCreateInput")
-	autopilot.Ok(t, err)
-}
-
-func TestTriggerDefinitionCreateInputHasNoExtendedTeamAccess(t *testing.T) {
-	// Arrange
-	createInput := ol.CustomActionsTriggerDefinitionCreateInput{
-		Name:   "test",
-		Action: "123456789",
-		Owner:  "123456789",
-	}
-
-	// Act
-	resp, err := json.Marshal(createInput)
-	result := ol.NewJSON(string(resp))
-
-	// Assert
-	_, ok := result["extendedTeamAccess"]
-	autopilot.Ok(t, err)
-	autopilot.Assert(t, !ok, "ERROR: unexpected to 'extendedTeamAccess' found in CustomActionsTriggerDefinitionCreateInput")
-}
-
-func TestTriggerDefinitionUpdateInputHasExtendedTeamAccess(t *testing.T) {
-	// Arrange
-	updateInput := ol.CustomActionsTriggerDefinitionUpdateInput{Id: "123456789", ExtendedTeamAccess: &[]ol.IdentifierInput{}}
-
-	// Act
-	resp, err := json.Marshal(updateInput)
-	result := ol.NewJSON(string(resp))
-
-	// Assert
-	_, ok := result["extendedTeamAccess"]
-	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionUpdateInput")
-	autopilot.Ok(t, err)
-}
-
-func TestTriggerDefinitionUpdateInputHasExtendedTeamAccessWithValue(t *testing.T) {
-	// Arrange
-	updateInput := ol.CustomActionsTriggerDefinitionUpdateInput{Id: "123456789", ExtendedTeamAccess: &[]ol.IdentifierInput{{Id: *ol.NewID("abc123")}}}
-
-	// Act
-	resp, err := json.Marshal(updateInput)
-	result := ol.NewJSON(string(resp))
-
-	// Assert
-	_, ok := result["extendedTeamAccess"]
-	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionUpdateInput")
-	autopilot.Ok(t, err)
-}
-
-func TestTriggerDefinitionUpdateInputHasNoExtendedTeamAccess(t *testing.T) {
-	// Arrange
-	updateInput := ol.CustomActionsTriggerDefinitionUpdateInput{Id: "123456789"}
-
-	// Act
-	resp, err := json.Marshal(updateInput)
-	result := ol.NewJSON(string(resp))
-
-	// Assert
-	_, ok := result["extendedTeamAccess"]
-	autopilot.Ok(t, err)
-	autopilot.Assert(t, !ok, "ERROR: unexpected to 'extendedTeamAccess' found in CustomActionsTriggerDefinitionUpdateInput")
-}
-
 func TestUpdateTriggerDefinition(t *testing.T) {
 	// Arrange
 	request := `{"query":
@@ -431,7 +362,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "name":"test", "description": ""}}
+		"variables":{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": []}}
 	}`
 	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
      "triggerDefinition": {{ template "custom_action_trigger1" }},
@@ -441,9 +372,37 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 	client := ABetterTestClient(t, "custom_actions/update_trigger2", request, response)
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
+		Id:                 "123456789",
+		Name:               ol.NewString("test"),
+		Description:        ol.NewString(""),
+		ExtendedTeamAccess: &[]ol.IdentifierInput{},
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Release", trigger.Name)
+}
+
+func TestUpdateTriggerDefinition3(t *testing.T) {
+	// Arrange
+	request := `{"query":
+		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
+		"variables":{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}]}}
+	}`
+	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
+     "triggerDefinition": {{ template "custom_action_trigger1" }},
+     "errors": []
+ }}}`
+
+	client := ABetterTestClient(t, "custom_actions/update_trigger3", request, response)
+	// Act
+	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:          "123456789",
 		Name:        ol.NewString("test"),
 		Description: ol.NewString(""),
+		ExtendedTeamAccess: &[]ol.IdentifierInput{
+			*ol.NewIdentifier("123456789"),
+			*ol.NewIdentifier("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		},
 	})
 	// Assert
 	autopilot.Ok(t, err)
