@@ -174,3 +174,43 @@
       "updatedAt": "2022-12-15T15:01:08.832770Z"
     }
 }{{ end }}
+{{- define "extended_team_access_response_1" }}
+{
+  "data": {
+    "account": {
+      "customActionsTriggerDefinition": {
+        "extendedTeamAccess": {
+          "nodes": [ {{ template "team_1" }} ],
+          {{ template "pagination_initial_pageInfo_response" }}
+        }
+      }
+    }
+  }
+}
+{{ end }}
+{{- define "extended_team_access_response_2" }}
+{
+  "data": {
+    "account": {
+      "customActionsTriggerDefinition": {
+        "extendedTeamAccess": {
+          "nodes": [ {{ template "team_2" }} ],
+          {{ template "pagination_second_pageInfo_response" }}
+        }
+      }
+    }
+  }
+}
+{{ end }}
+{{- define "extended_team_access_get_vars_1" }}
+{
+  "input": { "id": "{{ template "id1" }}" },
+  {{ template "first_page_variables" }}
+}
+{{ end }}
+{{- define "extended_team_access_get_vars_2" }}
+{
+  "input": { "id": "{{ template "id1" }}" },
+  {{ template "second_page_variables" }}
+}
+{{ end }}

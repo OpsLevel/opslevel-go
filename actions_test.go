@@ -1,8 +1,10 @@
 package opslevel_test
 
 import (
+	"encoding/json"
 	"testing"
 
+	// "github.com/golangci/golangci-lint/pkg/result"
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2023"
 )
@@ -305,6 +307,104 @@ func TestListTriggerDefinitions(t *testing.T) {
 	autopilot.Equals(t, "123456781", string(result[2].Owner.Id))
 }
 
+func TestTriggerDefinitionCreateInputHasExtendedTeamAccess(t *testing.T) {
+	// Arrange
+	createInput := ol.CustomActionsTriggerDefinitionCreateInput{
+		Name:               "test",
+		Action:             "123456789",
+		Owner:              "123456789",
+		ExtendedTeamAccess: &[]ol.IdentifierInput{},
+	}
+
+	// Act
+	resp, err := json.Marshal(createInput)
+	result := ol.NewJSON(string(resp))
+
+	// Assert
+	_, ok := result["extendedTeamAccess"]
+	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionCreateInput")
+	autopilot.Ok(t, err)
+}
+
+func TestTriggerDefinitionCreateInputHasExtendedTeamAccessWithValue(t *testing.T) {
+	// Arrange
+	createInput := ol.CustomActionsTriggerDefinitionCreateInput{
+		Name:               "test",
+		Action:             "123456789",
+		Owner:              "123456789",
+		ExtendedTeamAccess: &[]ol.IdentifierInput{{Id: *ol.NewID("abc123")}},
+	}
+
+	// Act
+	resp, err := json.Marshal(createInput)
+	result := ol.NewJSON(string(resp))
+
+	// Assert
+	_, ok := result["extendedTeamAccess"]
+	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionCreateInput")
+	autopilot.Ok(t, err)
+}
+
+func TestTriggerDefinitionCreateInputHasNoExtendedTeamAccess(t *testing.T) {
+	// Arrange
+	createInput := ol.CustomActionsTriggerDefinitionCreateInput{
+		Name:   "test",
+		Action: "123456789",
+		Owner:  "123456789",
+	}
+
+	// Act
+	resp, err := json.Marshal(createInput)
+	result := ol.NewJSON(string(resp))
+
+	// Assert
+	_, ok := result["extendedTeamAccess"]
+	autopilot.Ok(t, err)
+	autopilot.Assert(t, !ok, "ERROR: unexpected to 'extendedTeamAccess' found in CustomActionsTriggerDefinitionCreateInput")
+}
+
+func TestTriggerDefinitionUpdateInputHasExtendedTeamAccess(t *testing.T) {
+	// Arrange
+	updateInput := ol.CustomActionsTriggerDefinitionUpdateInput{Id: "123456789", ExtendedTeamAccess: &[]ol.IdentifierInput{}}
+
+	// Act
+	resp, err := json.Marshal(updateInput)
+	result := ol.NewJSON(string(resp))
+
+	// Assert
+	_, ok := result["extendedTeamAccess"]
+	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionUpdateInput")
+	autopilot.Ok(t, err)
+}
+
+func TestTriggerDefinitionUpdateInputHasExtendedTeamAccessWithValue(t *testing.T) {
+	// Arrange
+	updateInput := ol.CustomActionsTriggerDefinitionUpdateInput{Id: "123456789", ExtendedTeamAccess: &[]ol.IdentifierInput{{Id: *ol.NewID("abc123")}}}
+
+	// Act
+	resp, err := json.Marshal(updateInput)
+	result := ol.NewJSON(string(resp))
+
+	// Assert
+	_, ok := result["extendedTeamAccess"]
+	autopilot.Assert(t, ok, "ERROR: expected to 'extendedTeamAccess' not found in CustomActionsTriggerDefinitionUpdateInput")
+	autopilot.Ok(t, err)
+}
+
+func TestTriggerDefinitionUpdateInputHasNoExtendedTeamAccess(t *testing.T) {
+	// Arrange
+	updateInput := ol.CustomActionsTriggerDefinitionUpdateInput{Id: "123456789"}
+
+	// Act
+	resp, err := json.Marshal(updateInput)
+	result := ol.NewJSON(string(resp))
+
+	// Assert
+	_, ok := result["extendedTeamAccess"]
+	autopilot.Ok(t, err)
+	autopilot.Assert(t, !ok, "ERROR: unexpected to 'extendedTeamAccess' found in CustomActionsTriggerDefinitionUpdateInput")
+}
+
 func TestUpdateTriggerDefinition(t *testing.T) {
 	// Arrange
 	request := `{"query":
@@ -382,4 +482,33 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	- 'one.two.three' Example Error
 `, err2.Error())
 	autopilot.Assert(t, err3 != nil, "Expected error was not thrown")
+}
+
+func TestListExtendedTeamAccess(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{
+			`{"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+      "variables": {{ template "extended_team_access_get_vars_1" }} }`,
+			`{{ template "extended_team_access_response_1" }}`,
+		},
+		{
+			`{"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+      "variables": {{ template "extended_team_access_get_vars_2" }} }`,
+			`{{ template "extended_team_access_response_2" }}`,
+		},
+	}
+
+	client := APaginatedTestClient(t, "custom_actions/list_extended_team_access", requests...)
+	id1 := *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
+
+	// Act
+	resp, err := trigger.ExtendedTeamAccess(client, nil)
+	result := resp.Nodes
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "example", result[0].Alias)
+	autopilot.Equals(t, id1, result[0].TeamId.Id)
 }
