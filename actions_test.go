@@ -414,5 +414,5 @@ func TestListExtendedTeamAccess(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "example", result[0].Alias)
-	// autopilot.Equals(t, "Release", trigger.Name)
+	autopilot.Equals(t, id1, result[0].TeamId.Id)
 }

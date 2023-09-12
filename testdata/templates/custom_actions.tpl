@@ -210,7 +210,7 @@
 {{ end }}
 {{- define "extended_team_access_get_vars_2" }}
 {
-  "input": { "id": "{{ template "id2" }}" },
+  "input": { "id": "{{ template "id1" }}" },
   {{ template "second_page_variables" }}
 }
 {{ end }}
