@@ -55,7 +55,7 @@ func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, vari
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["input"] = NewIdentifier(string(c.Id))
+	(*variables)["input"] = *NewIdentifier(string(c.Id))
 
 	if err := client.Query(&q, *variables, WithName("ExtendedTeamAccessList")); err != nil {
 		return nil, err
