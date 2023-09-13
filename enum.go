@@ -2,41 +2,41 @@
 
 package opslevel
 
-// AlertSourceTypeEnum The monitor status level.
+// AlertSourceStatusTypeEnum represents the monitor status level.
 type AlertSourceStatusTypeEnum string
 
 const (
 	AlertSourceStatusTypeEnumAlert        AlertSourceStatusTypeEnum = "alert"         // Monitor is reporting an alert.
-	AlertSourceStatusTypeEnumFetchingData AlertSourceStatusTypeEnum = "fetching_data" // Monitor currently being updated.
-	AlertSourceStatusTypeEnumNoData       AlertSourceStatusTypeEnum = "no_data"       // No data received yet. Ensure your monitors are configured correctly.
-	AlertSourceStatusTypeEnumOk           AlertSourceStatusTypeEnum = "ok"            // Monitor is not reporting any warnings or alerts.
 	AlertSourceStatusTypeEnumWarn         AlertSourceStatusTypeEnum = "warn"          // Monitor is reporting a warning.
+	AlertSourceStatusTypeEnumOk           AlertSourceStatusTypeEnum = "ok"            // Monitor is not reporting any warnings or alerts.
+	AlertSourceStatusTypeEnumNoData       AlertSourceStatusTypeEnum = "no_data"       // No data received yet. Ensure your monitors are configured correctly.
+	AlertSourceStatusTypeEnumFetchingData AlertSourceStatusTypeEnum = "fetching_data" // Monitor currently being updated.
 )
 
 // All AlertSourceStatusTypeEnum as []string
 var AllAlertSourceStatusTypeEnum = []string{
 	string(AlertSourceStatusTypeEnumAlert),
-	string(AlertSourceStatusTypeEnumFetchingData),
-	string(AlertSourceStatusTypeEnumNoData),
-	string(AlertSourceStatusTypeEnumOk),
 	string(AlertSourceStatusTypeEnumWarn),
+	string(AlertSourceStatusTypeEnumOk),
+	string(AlertSourceStatusTypeEnumNoData),
+	string(AlertSourceStatusTypeEnumFetchingData),
 }
 
 // AlertSourceTypeEnum represents the type of the alert source.
 type AlertSourceTypeEnum string
 
 const (
+	AlertSourceTypeEnumPagerduty AlertSourceTypeEnum = "pagerduty" // A PagerDuty alert source (aka service).
 	AlertSourceTypeEnumDatadog   AlertSourceTypeEnum = "datadog"   // A Datadog alert source (aka monitor).
 	AlertSourceTypeEnumOpsgenie  AlertSourceTypeEnum = "opsgenie"  // An Opsgenie alert source (aka service).
-	AlertSourceTypeEnumPagerduty AlertSourceTypeEnum = "pagerduty" // A PagerDuty alert source (aka service).
-	AlertSourceTypeEnumNewRelic  AlertSourceTypeEnum = "new_relic" // A New Relic alert source (aka monitor).
+	AlertSourceTypeEnumNewRelic  AlertSourceTypeEnum = "new_relic" // A New Relic alert source (aka service).
 )
 
 // All AlertSourceTypeEnum as []string
 var AllAlertSourceTypeEnum = []string{
+	string(AlertSourceTypeEnumPagerduty),
 	string(AlertSourceTypeEnumDatadog),
 	string(AlertSourceTypeEnumOpsgenie),
-	string(AlertSourceTypeEnumPagerduty),
 	string(AlertSourceTypeEnumNewRelic),
 }
 
@@ -68,37 +68,37 @@ var AllAliasOwnerTypeEnum = []string{
 type ApiDocumentSourceEnum string
 
 const (
-	ApiDocumentSourceEnumPull ApiDocumentSourceEnum = "PULL" // Use the document that was pulled by OpsLevel via a repo.
 	ApiDocumentSourceEnumPush ApiDocumentSourceEnum = "PUSH" // Use the document that was pushed to OpsLevel via an API Docs integration.
+	ApiDocumentSourceEnumPull ApiDocumentSourceEnum = "PULL" // Use the document that was pulled by OpsLevel via a repo.
 )
 
 // All ApiDocumentSourceEnum as []string
 var AllApiDocumentSourceEnum = []string{
-	string(ApiDocumentSourceEnumPull),
 	string(ApiDocumentSourceEnumPush),
+	string(ApiDocumentSourceEnumPull),
 }
 
-// BasicTypeEnum
+// BasicTypeEnum represents operations that can be used on filters.
 type BasicTypeEnum string
 
 const (
-	BasicTypeEnumDoesNotEqual BasicTypeEnum = "does_not_equal" //
-	BasicTypeEnumEquals       BasicTypeEnum = "equals"         //
+	BasicTypeEnumEquals       BasicTypeEnum = "equals"         // Equals a specific value.
+	BasicTypeEnumDoesNotEqual BasicTypeEnum = "does_not_equal" // Does not equal a specific value.
 )
 
 // All BasicTypeEnum as []string
 var AllBasicTypeEnum = []string{
-	string(BasicTypeEnumDoesNotEqual),
 	string(BasicTypeEnumEquals),
+	string(BasicTypeEnumDoesNotEqual),
 }
 
-// CampaignFilterEnum
+// CampaignFilterEnum represents fields that can be used as part of filter for campaigns.
 type CampaignFilterEnum string
 
 const (
-	CampaignFilterEnumID     CampaignFilterEnum = "id"     //
-	CampaignFilterEnumOwner  CampaignFilterEnum = "owner"  //
-	CampaignFilterEnumStatus CampaignFilterEnum = "status" //
+	CampaignFilterEnumID     CampaignFilterEnum = "id"     // Filter by `id` of campaign.
+	CampaignFilterEnumOwner  CampaignFilterEnum = "owner"  // Filter by campaign owner.
+	CampaignFilterEnumStatus CampaignFilterEnum = "status" // Filter by campaign status.
 )
 
 // All CampaignFilterEnum as []string
@@ -108,12 +108,12 @@ var AllCampaignFilterEnum = []string{
 	string(CampaignFilterEnumStatus),
 }
 
-// CampaignReminderTypeEnum
+// CampaignReminderTypeEnum represents type/Format of the notification.
 type CampaignReminderTypeEnum string
 
 const (
-	CampaignReminderTypeEnumEmail CampaignReminderTypeEnum = "email" //
-	CampaignReminderTypeEnumSlack CampaignReminderTypeEnum = "slack" //
+	CampaignReminderTypeEnumEmail CampaignReminderTypeEnum = "email" // Notification will be sent via email.
+	CampaignReminderTypeEnumSlack CampaignReminderTypeEnum = "slack" // Notification will be sent by slack.
 )
 
 // All CampaignReminderTypeEnum as []string
@@ -122,99 +122,99 @@ var AllCampaignReminderTypeEnum = []string{
 	string(CampaignReminderTypeEnumSlack),
 }
 
-// CampaignServiceStatusEnum
+// CampaignServiceStatusEnum represents status of whether a service is passing all checks for a campaign or not.
 type CampaignServiceStatusEnum string
 
 const (
-	CampaignServiceStatusEnumFailing CampaignServiceStatusEnum = "failing" //
-	CampaignServiceStatusEnumPassing CampaignServiceStatusEnum = "passing" //
+	CampaignServiceStatusEnumPassing CampaignServiceStatusEnum = "passing" // Service is passing all the checks in the campaign.
+	CampaignServiceStatusEnumFailing CampaignServiceStatusEnum = "failing" // Service is failing one or more checks in the campaign.
 )
 
 // All CampaignServiceStatusEnum as []string
 var AllCampaignServiceStatusEnum = []string{
-	string(CampaignServiceStatusEnumFailing),
 	string(CampaignServiceStatusEnumPassing),
+	string(CampaignServiceStatusEnumFailing),
 }
 
-// CampaignSortEnum
+// CampaignSortEnum represents sort possibilities for campaigns.
 type CampaignSortEnum string
 
 const (
-	CampaignSortEnumChecksPassingAsc     CampaignSortEnum = "checks_passing_ASC"     //
-	CampaignSortEnumChecksPassingDesc    CampaignSortEnum = "checks_passing_DESC"    //
-	CampaignSortEnumEndedDateAsc         CampaignSortEnum = "ended_date_ASC"         //
-	CampaignSortEnumEndedDateDesc        CampaignSortEnum = "ended_date_DESC"        //
-	CampaignSortEnumFilterAsc            CampaignSortEnum = "filter_ASC"             //
-	CampaignSortEnumFilterDesc           CampaignSortEnum = "filter_DESC"            //
-	CampaignSortEnumNameAsc              CampaignSortEnum = "name_ASC"               //
-	CampaignSortEnumNameDesc             CampaignSortEnum = "name_DESC"              //
-	CampaignSortEnumOwnerAsc             CampaignSortEnum = "owner_ASC"              //
-	CampaignSortEnumOwnerDesc            CampaignSortEnum = "owner_DESC"             //
-	CampaignSortEnumServicesCompleteAsc  CampaignSortEnum = "services_complete_ASC"  //
-	CampaignSortEnumServicesCompleteDesc CampaignSortEnum = "services_complete_DESC" //
-	CampaignSortEnumStartDateAsc         CampaignSortEnum = "start_date_ASC"         //
-	CampaignSortEnumStartDateDesc        CampaignSortEnum = "start_date_DESC"        //
-	CampaignSortEnumStatusAsc            CampaignSortEnum = "status_ASC"             //
-	CampaignSortEnumStatusDesc           CampaignSortEnum = "status_DESC"            //
-	CampaignSortEnumTargetDateAsc        CampaignSortEnum = "target_date_ASC"        //
-	CampaignSortEnumTargetDateDesc       CampaignSortEnum = "target_date_DESC"       //
+	CampaignSortEnumNameAsc              CampaignSortEnum = "name_ASC"               // Sort by `name` ascending.
+	CampaignSortEnumNameDesc             CampaignSortEnum = "name_DESC"              // Sort by `name` descending.
+	CampaignSortEnumOwnerAsc             CampaignSortEnum = "owner_ASC"              // Sort by `owner` ascending.
+	CampaignSortEnumOwnerDesc            CampaignSortEnum = "owner_DESC"             // Sort by `owner` descending.
+	CampaignSortEnumFilterAsc            CampaignSortEnum = "filter_ASC"             // Sort by `filter` ascending.
+	CampaignSortEnumFilterDesc           CampaignSortEnum = "filter_DESC"            // Sort by `filter` descending.
+	CampaignSortEnumStartDateAsc         CampaignSortEnum = "start_date_ASC"         // Sort by `startDate` ascending.
+	CampaignSortEnumStartDateDesc        CampaignSortEnum = "start_date_DESC"        // Sort by `startDate` descending.
+	CampaignSortEnumTargetDateAsc        CampaignSortEnum = "target_date_ASC"        // Sort by `targetDate` ascending.
+	CampaignSortEnumTargetDateDesc       CampaignSortEnum = "target_date_DESC"       // Sort by `targetDate` descending.
+	CampaignSortEnumEndedDateAsc         CampaignSortEnum = "ended_date_ASC"         // Sort by `endedDate` ascending.
+	CampaignSortEnumEndedDateDesc        CampaignSortEnum = "ended_date_DESC"        // Sort by `endedDate` descending.
+	CampaignSortEnumStatusAsc            CampaignSortEnum = "status_ASC"             // Sort by `status` ascending.
+	CampaignSortEnumStatusDesc           CampaignSortEnum = "status_DESC"            // Sort by `status` descending.
+	CampaignSortEnumServicesCompleteAsc  CampaignSortEnum = "services_complete_ASC"  // Sort by number of `services complete` ascending.
+	CampaignSortEnumServicesCompleteDesc CampaignSortEnum = "services_complete_DESC" // Sort by number of `services complete` descending.
+	CampaignSortEnumChecksPassingAsc     CampaignSortEnum = "checks_passing_ASC"     // Sort by number of `checks passing` ascending.
+	CampaignSortEnumChecksPassingDesc    CampaignSortEnum = "checks_passing_DESC"    // Sort by number of `checks passing` descending.
 )
 
 // All CampaignSortEnum as []string
 var AllCampaignSortEnum = []string{
-	string(CampaignSortEnumChecksPassingAsc),
-	string(CampaignSortEnumChecksPassingDesc),
-	string(CampaignSortEnumEndedDateAsc),
-	string(CampaignSortEnumEndedDateDesc),
-	string(CampaignSortEnumFilterAsc),
-	string(CampaignSortEnumFilterDesc),
 	string(CampaignSortEnumNameAsc),
 	string(CampaignSortEnumNameDesc),
 	string(CampaignSortEnumOwnerAsc),
 	string(CampaignSortEnumOwnerDesc),
-	string(CampaignSortEnumServicesCompleteAsc),
-	string(CampaignSortEnumServicesCompleteDesc),
+	string(CampaignSortEnumFilterAsc),
+	string(CampaignSortEnumFilterDesc),
 	string(CampaignSortEnumStartDateAsc),
 	string(CampaignSortEnumStartDateDesc),
-	string(CampaignSortEnumStatusAsc),
-	string(CampaignSortEnumStatusDesc),
 	string(CampaignSortEnumTargetDateAsc),
 	string(CampaignSortEnumTargetDateDesc),
+	string(CampaignSortEnumEndedDateAsc),
+	string(CampaignSortEnumEndedDateDesc),
+	string(CampaignSortEnumStatusAsc),
+	string(CampaignSortEnumStatusDesc),
+	string(CampaignSortEnumServicesCompleteAsc),
+	string(CampaignSortEnumServicesCompleteDesc),
+	string(CampaignSortEnumChecksPassingAsc),
+	string(CampaignSortEnumChecksPassingDesc),
 }
 
-// CampaignStatusEnum
+// CampaignStatusEnum represents the campaign status.
 type CampaignStatusEnum string
 
 const (
-	CampaignStatusEnumDelayed    CampaignStatusEnum = "delayed"     //
-	CampaignStatusEnumDraft      CampaignStatusEnum = "draft"       //
-	CampaignStatusEnumEnded      CampaignStatusEnum = "ended"       //
-	CampaignStatusEnumInProgress CampaignStatusEnum = "in_progress" //
-	CampaignStatusEnumScheduled  CampaignStatusEnum = "scheduled"   //
+	CampaignStatusEnumDraft      CampaignStatusEnum = "draft"       // Campaign has been created but is not yet active.
+	CampaignStatusEnumScheduled  CampaignStatusEnum = "scheduled"   // Campaign has been scheduled to begin in the future.
+	CampaignStatusEnumInProgress CampaignStatusEnum = "in_progress" // Campaign is in progress.
+	CampaignStatusEnumDelayed    CampaignStatusEnum = "delayed"     // Campaign is delayed.
+	CampaignStatusEnumEnded      CampaignStatusEnum = "ended"       // Campaign ended.
 )
 
 // All CampaignStatusEnum as []string
 var AllCampaignStatusEnum = []string{
-	string(CampaignStatusEnumDelayed),
 	string(CampaignStatusEnumDraft),
-	string(CampaignStatusEnumEnded),
-	string(CampaignStatusEnumInProgress),
 	string(CampaignStatusEnumScheduled),
+	string(CampaignStatusEnumInProgress),
+	string(CampaignStatusEnumDelayed),
+	string(CampaignStatusEnumEnded),
 }
 
 // CheckStatus represents the evaluation status of the check.
 type CheckStatus string
 
 const (
-	CheckStatusFailed  CheckStatus = "failed"  // The check evaluated to a falsy value based on some conditions.
 	CheckStatusPassed  CheckStatus = "passed"  // The check evaluated to a truthy value based on some conditions.
+	CheckStatusFailed  CheckStatus = "failed"  // The check evaluated to a falsy value based on some conditions.
 	CheckStatusPending CheckStatus = "pending" // The check has not been evaluated yet..
 )
 
 // All CheckStatus as []string
 var AllCheckStatus = []string{
-	string(CheckStatusFailed),
 	string(CheckStatusPassed),
+	string(CheckStatusFailed),
 	string(CheckStatusPending),
 }
 
@@ -222,46 +222,46 @@ var AllCheckStatus = []string{
 type CheckType string
 
 const (
-	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name.
-	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing.
-	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services.
-	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
-	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype.
 	CheckTypeHasOwner            CheckType = "has_owner"             // Verifies that the service has an owner defined.
 	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verified that the services has received a deploy within a specified number of days.
-	CheckTypeHasRepository       CheckType = "has_repository"        // Verifies that the service has a repository integrated.
-	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config.
-	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service.
-	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service.
-	CheckTypeRepoFile            CheckType = "repo_file"             // Verifies that the service's repository contains a file with a certain path. (Optional: Can also be used to check for specific file contents).
-	CheckTypeRepoGrep            CheckType = "repo_grep"             // Runs a comprehensive search across the service's repository with advanced search parameters.
-	CheckTypeRepoSearch          CheckType = "repo_search"           // Searches the service's repository and verifies if any file matches the given contents.
-	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
 	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format.
-	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined.
+	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config.
+	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype.
+	CheckTypeHasRepository       CheckType = "has_repository"        // Verifies that the service has a repository integrated.
 	CheckTypeToolUsage           CheckType = "tool_usage"            // Verifies that the service is using a tool of a particular category or name.
+	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined.
+	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service’s repository for the existence or contents of a specific file.
+	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service’s repository for specific contents in any file.
+	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing.
+	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service.
+	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service.
+	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services.
+	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name.
+	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
+	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
+	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters.
 )
 
 // All CheckType as []string
 var AllCheckType = []string{
-	string(CheckTypeAlertSourceUsage),
-	string(CheckTypeCustom),
-	string(CheckTypeGeneric),
-	string(CheckTypeGitBranchProtection),
-	string(CheckTypeHasDocumentation),
 	string(CheckTypeHasOwner),
 	string(CheckTypeHasRecentDeploy),
-	string(CheckTypeHasRepository),
-	string(CheckTypeHasServiceConfig),
-	string(CheckTypeManual),
-	string(CheckTypePayload),
-	string(CheckTypeRepoFile),
-	string(CheckTypeRepoGrep),
-	string(CheckTypeRepoSearch),
-	string(CheckTypeServiceDependency),
 	string(CheckTypeServiceProperty),
-	string(CheckTypeTagDefined),
+	string(CheckTypeHasServiceConfig),
+	string(CheckTypeHasDocumentation),
+	string(CheckTypeHasRepository),
 	string(CheckTypeToolUsage),
+	string(CheckTypeTagDefined),
+	string(CheckTypeRepoFile),
+	string(CheckTypeRepoSearch),
+	string(CheckTypeCustom),
+	string(CheckTypePayload),
+	string(CheckTypeManual),
+	string(CheckTypeGeneric),
+	string(CheckTypeAlertSourceUsage),
+	string(CheckTypeGitBranchProtection),
+	string(CheckTypeServiceDependency),
+	string(CheckTypeRepoGrep),
 }
 
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
@@ -282,20 +282,20 @@ var AllConnectiveEnum = []string{
 type ContactType string
 
 const (
-	ContactTypeEmail       ContactType = "email"        // An email contact method.
-	ContactTypeGitHub      ContactType = "github"       //
 	ContactTypeSlack       ContactType = "slack"        // A Slack channel contact method.
 	ContactTypeSlackHandle ContactType = "slack_handle" // A Slack handle contact method.
+	ContactTypeEmail       ContactType = "email"        // An email contact method.
 	ContactTypeWeb         ContactType = "web"          // A website contact method.
+	ContactTypeGitHub      ContactType = "github"       // A GitHub handle.
 )
 
 // All ContactType as []string
 var AllContactType = []string{
-	string(ContactTypeEmail),
-	string(ContactTypeGitHub),
 	string(ContactTypeSlack),
 	string(ContactTypeSlackHandle),
+	string(ContactTypeEmail),
 	string(ContactTypeWeb),
+	string(ContactTypeGitHub),
 }
 
 // TODO: This appears to be duplicative of the above and i'm not sure why we need it
@@ -303,86 +303,86 @@ var AllContactType = []string{
 type ServiceOwnershipCheckContactType string
 
 const (
-	ServiceOwnershipCheckContactTypeAny         ServiceOwnershipCheckContactType = "any"          // Any contact method.
-	ServiceOwnershipCheckContactTypeSlack       ServiceOwnershipCheckContactType = "slack"        // A Slack channel contact method.
-	ServiceOwnershipCheckContactTypeSlackHandle ServiceOwnershipCheckContactType = "slack_handle" // A Slack handle contact method.
-	ServiceOwnershipCheckContactTypeEmail       ServiceOwnershipCheckContactType = "email"        // An email contact method.
-	ServiceOwnershipCheckContactTypeWeb         ServiceOwnershipCheckContactType = "web"          // A website contact method.
+       ServiceOwnershipCheckContactTypeAny         ServiceOwnershipCheckContactType = "any"          // Any contact method.
+       ServiceOwnershipCheckContactTypeSlack       ServiceOwnershipCheckContactType = "slack"        // A Slack channel contact method.
+       ServiceOwnershipCheckContactTypeSlackHandle ServiceOwnershipCheckContactType = "slack_handle" // A Slack handle contact method.
+       ServiceOwnershipCheckContactTypeEmail       ServiceOwnershipCheckContactType = "email"        // An email contact method.
+       ServiceOwnershipCheckContactTypeWeb         ServiceOwnershipCheckContactType = "web"          // A website contact method.
 )
 
 // All ServiceOwnershipContactType as []string
 var AllServiceOwnershipCheckContactType = []string{
-	string(ServiceOwnershipCheckContactTypeAny),
-	string(ServiceOwnershipCheckContactTypeSlack),
-	string(ServiceOwnershipCheckContactTypeSlackHandle),
-	string(ServiceOwnershipCheckContactTypeEmail),
-	string(ServiceOwnershipCheckContactTypeWeb),
+       string(ServiceOwnershipCheckContactTypeAny),
+       string(ServiceOwnershipCheckContactTypeSlack),
+       string(ServiceOwnershipCheckContactTypeSlackHandle),
+       string(ServiceOwnershipCheckContactTypeEmail),
+       string(ServiceOwnershipCheckContactTypeWeb),
 }
 
-// CustomActionsEntityTypeEnum
+// CustomActionsEntityTypeEnum represents the entity types a custom action can be associated with.
 type CustomActionsEntityTypeEnum string
 
 const (
-	CustomActionsEntityTypeEnumGlobal  CustomActionsEntityTypeEnum = "GLOBAL"  //
-	CustomActionsEntityTypeEnumService CustomActionsEntityTypeEnum = "SERVICE" //
+	CustomActionsEntityTypeEnumService CustomActionsEntityTypeEnum = "SERVICE" // A custom action associated with services.
+	CustomActionsEntityTypeEnumGlobal  CustomActionsEntityTypeEnum = "GLOBAL"  // A custom action associated with the global scope (no particular entity type).
 )
 
 // All CustomActionsEntityTypeEnum as []string
 var AllCustomActionsEntityTypeEnum = []string{
-	string(CustomActionsEntityTypeEnumGlobal),
 	string(CustomActionsEntityTypeEnumService),
+	string(CustomActionsEntityTypeEnumGlobal),
 }
 
-// CustomActionsHttpMethodEnum An HTTP request method
+// CustomActionsHttpMethodEnum represents an HTTP request method.
 type CustomActionsHttpMethodEnum string
 
 const (
-	CustomActionsHttpMethodEnumDelete CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request
-	CustomActionsHttpMethodEnumGet    CustomActionsHttpMethodEnum = "GET"    //
-	CustomActionsHttpMethodEnumPatch  CustomActionsHttpMethodEnum = "PATCH"  //
-	CustomActionsHttpMethodEnumPost   CustomActionsHttpMethodEnum = "POST"   // An HTTP POST request
-	CustomActionsHttpMethodEnumPut    CustomActionsHttpMethodEnum = "PUT"    // An HTTP PUT request
+	CustomActionsHttpMethodEnumGet    CustomActionsHttpMethodEnum = "GET"    // An HTTP GET request.
+	CustomActionsHttpMethodEnumPatch  CustomActionsHttpMethodEnum = "PATCH"  // An HTTP PATCH request.
+	CustomActionsHttpMethodEnumPost   CustomActionsHttpMethodEnum = "POST"   // An HTTP POST request.
+	CustomActionsHttpMethodEnumPut    CustomActionsHttpMethodEnum = "PUT"    // An HTTP PUT request.
+	CustomActionsHttpMethodEnumDelete CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request.
 )
 
 // All CustomActionsHttpMethodEnum as []string
 var AllCustomActionsHttpMethodEnum = []string{
-	string(CustomActionsHttpMethodEnumDelete),
 	string(CustomActionsHttpMethodEnumGet),
 	string(CustomActionsHttpMethodEnumPatch),
 	string(CustomActionsHttpMethodEnumPost),
 	string(CustomActionsHttpMethodEnumPut),
+	string(CustomActionsHttpMethodEnumDelete),
 }
 
-// CustomActionsTriggerDefinitionAccessControlEnum Who can see and use the trigger definition
+// CustomActionsTriggerDefinitionAccessControlEnum represents who can see and use the trigger definition.
 type CustomActionsTriggerDefinitionAccessControlEnum string
 
 const (
-	CustomActionsTriggerDefinitionAccessControlEnumAdmins        CustomActionsTriggerDefinitionAccessControlEnum = "admins"         // Admin users
-	CustomActionsTriggerDefinitionAccessControlEnumEveryone      CustomActionsTriggerDefinitionAccessControlEnum = "everyone"       // All users of OpsLevel
-	CustomActionsTriggerDefinitionAccessControlEnumServiceOwners CustomActionsTriggerDefinitionAccessControlEnum = "service_owners" // The owners of a service
+	CustomActionsTriggerDefinitionAccessControlEnumEveryone      CustomActionsTriggerDefinitionAccessControlEnum = "everyone"       // All users of OpsLevel.
+	CustomActionsTriggerDefinitionAccessControlEnumAdmins        CustomActionsTriggerDefinitionAccessControlEnum = "admins"         // Admin users.
+	CustomActionsTriggerDefinitionAccessControlEnumServiceOwners CustomActionsTriggerDefinitionAccessControlEnum = "service_owners" // The owners of a service.
 )
 
 // All CustomActionsTriggerDefinitionAccessControlEnum as []string
 var AllCustomActionsTriggerDefinitionAccessControlEnum = []string{
-	string(CustomActionsTriggerDefinitionAccessControlEnumAdmins),
 	string(CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+	string(CustomActionsTriggerDefinitionAccessControlEnumAdmins),
 	string(CustomActionsTriggerDefinitionAccessControlEnumServiceOwners),
 }
 
-// CustomActionsTriggerEventStatusEnum
+// CustomActionsTriggerEventStatusEnum represents the status of the custom action trigger event.
 type CustomActionsTriggerEventStatusEnum string
 
 const (
-	CustomActionsTriggerEventStatusEnumFailure CustomActionsTriggerEventStatusEnum = "FAILURE" //
-	CustomActionsTriggerEventStatusEnumPending CustomActionsTriggerEventStatusEnum = "PENDING" //
-	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" //
+	CustomActionsTriggerEventStatusEnumPending CustomActionsTriggerEventStatusEnum = "PENDING" // A result has not been determined.
+	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed succesfully.
+	CustomActionsTriggerEventStatusEnumFailure CustomActionsTriggerEventStatusEnum = "FAILURE" // The action failed to complete.
 )
 
 // All CustomActionsTriggerEventStatusEnum as []string
 var AllCustomActionsTriggerEventStatusEnum = []string{
-	string(CustomActionsTriggerEventStatusEnumFailure),
 	string(CustomActionsTriggerEventStatusEnumPending),
 	string(CustomActionsTriggerEventStatusEnumSuccess),
+	string(CustomActionsTriggerEventStatusEnumFailure),
 }
 
 // FrequencyTimeScale represents the time scale type for the frequency.
@@ -390,16 +390,16 @@ type FrequencyTimeScale string
 
 const (
 	FrequencyTimeScaleDay   FrequencyTimeScale = "day"   // Consider the time scale of days.
-	FrequencyTimeScaleMonth FrequencyTimeScale = "month" // Consider the time scale of months.
 	FrequencyTimeScaleWeek  FrequencyTimeScale = "week"  // Consider the time scale of weeks.
+	FrequencyTimeScaleMonth FrequencyTimeScale = "month" // Consider the time scale of months.
 	FrequencyTimeScaleYear  FrequencyTimeScale = "year"  // Consider the time scale of years.
 )
 
 // All FrequencyTimeScale as []string
 var AllFrequencyTimeScale = []string{
 	string(FrequencyTimeScaleDay),
-	string(FrequencyTimeScaleMonth),
 	string(FrequencyTimeScaleWeek),
+	string(FrequencyTimeScaleMonth),
 	string(FrequencyTimeScaleYear),
 }
 
@@ -419,24 +419,24 @@ var AllHasDocumentationSubtypeEnum = []string{
 type HasDocumentationTypeEnum string
 
 const (
+	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" // Document is an Tech document.
 	HasDocumentationTypeEnumAPI  HasDocumentationTypeEnum = "api"  // Document is an API document.
-	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" //
 )
 
 // All HasDocumentationTypeEnum as []string
 var AllHasDocumentationTypeEnum = []string{
-	string(HasDocumentationTypeEnumAPI),
 	string(HasDocumentationTypeEnumTech),
+	string(HasDocumentationTypeEnumAPI),
 }
 
-// PayloadSortEnum
+// PayloadSortEnum represents sort possibilities for payloads.
 type PayloadSortEnum string
 
 const (
-	PayloadSortEnumCreatedAtAsc    PayloadSortEnum = "created_at_ASC"    //
-	PayloadSortEnumCreatedAtDesc   PayloadSortEnum = "created_at_DESC"   //
-	PayloadSortEnumProcessedAtAsc  PayloadSortEnum = "processed_at_ASC"  //
-	PayloadSortEnumProcessedAtDesc PayloadSortEnum = "processed_at_DESC" //
+	PayloadSortEnumCreatedAtAsc    PayloadSortEnum = "created_at_ASC"    // Order by `created_at` ascending.
+	PayloadSortEnumCreatedAtDesc   PayloadSortEnum = "created_at_DESC"   // Order by `created_at` descending.
+	PayloadSortEnumProcessedAtAsc  PayloadSortEnum = "processed_at_ASC"  // Order by `processed_at` ascending.
+	PayloadSortEnumProcessedAtDesc PayloadSortEnum = "processed_at_DESC" // Order by `processed_at` descending.
 )
 
 // All PayloadSortEnum as []string
@@ -529,51 +529,86 @@ var AllPredicateTypeEnum = []string{
 	string(PredicateTypeEnumSatisfiesJqExpression),
 }
 
+// RelatedResourceRelationshipTypeEnum represents the type of the relationship between two resources.
+type RelatedResourceRelationshipTypeEnum string
+
+const (
+	RelatedResourceRelationshipTypeEnumBelongsTo    RelatedResourceRelationshipTypeEnum = "belongs_to"    // The resource belongs to the node on the edge.
+	RelatedResourceRelationshipTypeEnumContains     RelatedResourceRelationshipTypeEnum = "contains"      // The resource contains the node on the edge.
+	RelatedResourceRelationshipTypeEnumDependsOn    RelatedResourceRelationshipTypeEnum = "depends_on"    // The resource depends on the node on the edge.
+	RelatedResourceRelationshipTypeEnumDependencyOf RelatedResourceRelationshipTypeEnum = "dependency_of" // The resource is a dependency of the node on the edge.
+)
+
+// All RelatedResourceRelationshipTypeEnum as []string
+var AllRelatedResourceRelationshipTypeEnum = []string{
+	string(RelatedResourceRelationshipTypeEnumBelongsTo),
+	string(RelatedResourceRelationshipTypeEnumContains),
+	string(RelatedResourceRelationshipTypeEnumDependsOn),
+	string(RelatedResourceRelationshipTypeEnumDependencyOf),
+}
+
+// RelationshipTypeEnum represents the type of relationship between two resources.
+type RelationshipTypeEnum string
+
+const (
+	RelationshipTypeEnumBelongsTo RelationshipTypeEnum = "belongs_to" // The source resource belongs to the target resource.
+	RelationshipTypeEnumDependsOn RelationshipTypeEnum = "depends_on" // The source resource depends on the target resource.
+)
+
+// All RelationshipTypeEnum as []string
+var AllRelationshipTypeEnum = []string{
+	string(RelationshipTypeEnumBelongsTo),
+	string(RelationshipTypeEnumDependsOn),
+}
+
+// RepositoryVisibilityEnum represents possible visibility levels for repositories.
 type RepositoryVisibilityEnum string
 
 const (
-	RepositoryVisibilityEnumInternal RepositoryVisibilityEnum = "INTERNAL" //
-	RepositoryVisibilityEnumPrivate  RepositoryVisibilityEnum = "PRIVATE"  //
-	RepositoryVisibilityEnumPublic   RepositoryVisibilityEnum = "PUBLIC"   //
+	RepositoryVisibilityEnumPrivate  RepositoryVisibilityEnum = "PRIVATE"  // Repositories that are private to the user.
+	RepositoryVisibilityEnumInternal RepositoryVisibilityEnum = "INTERNAL" // Repositories that are only accessible to organization users.
+	RepositoryVisibilityEnumPublic   RepositoryVisibilityEnum = "PUBLIC"   // Repositories that are publically accessible.
 )
 
 // All RepositoryVisibilityEnum as []string
 var AllRepositoryVisibilityEnum = []string{
-	string(RepositoryVisibilityEnumInternal),
 	string(RepositoryVisibilityEnumPrivate),
+	string(RepositoryVisibilityEnumInternal),
 	string(RepositoryVisibilityEnumPublic),
 }
 
-// ResourceDocumentStatusTypeEnum
+// ResourceDocumentStatusTypeEnum represents status of a document on a resource.
 type ResourceDocumentStatusTypeEnum string
 
 const (
-	ResourceDocumentStatusTypeEnumHidden  ResourceDocumentStatusTypeEnum = "hidden"  //
-	ResourceDocumentStatusTypeEnumPinned  ResourceDocumentStatusTypeEnum = "pinned"  //
-	ResourceDocumentStatusTypeEnumVisible ResourceDocumentStatusTypeEnum = "visible" //
+	ResourceDocumentStatusTypeEnumPinned  ResourceDocumentStatusTypeEnum = "pinned"  // Document is pinned.
+	ResourceDocumentStatusTypeEnumVisible ResourceDocumentStatusTypeEnum = "visible" // Document is visible.
+	ResourceDocumentStatusTypeEnumHidden  ResourceDocumentStatusTypeEnum = "hidden"  // Document is hidden.
 )
 
 // All ResourceDocumentStatusTypeEnum as []string
 var AllResourceDocumentStatusTypeEnum = []string{
-	string(ResourceDocumentStatusTypeEnumHidden),
 	string(ResourceDocumentStatusTypeEnumPinned),
 	string(ResourceDocumentStatusTypeEnumVisible),
+	string(ResourceDocumentStatusTypeEnumHidden),
 }
 
 // ScorecardSortEnum represents the possible options to sort the resulting list of scorecards.
 type ScorecardSortEnum string
 
 const (
-	ScorecardSortEnumNameAsc                  ScorecardSortEnum = "name_ASC"                  // Order by the scorecard's name, in ascending order.
-	ScorecardSortEnumNameDesc                 ScorecardSortEnum = "name_DESC"                 // Order by the scorecard's name, in descending order.
-	ScorecardSortEnumOwnerAsc                 ScorecardSortEnum = "owner_ASC"                 // Order by the scorecard owner's name, in ascending order.
-	ScorecardSortEnumOwnerDesc                ScorecardSortEnum = "owner_DESC"                // Order by the scorecard owner's name, in descending order.
-	ScorecardSortEnumFilterAsc                ScorecardSortEnum = "filter_ASC"                // Order by the associated filter's name, in ascending order.
-	ScorecardSortEnumFilterDesc               ScorecardSortEnum = "filter_DESC"               // Order by the associated filter's name, in descending order.
-	ScorecardSortEnumServicecountAsc          ScorecardSortEnum = "serviceCount_ASC"          // Order by the number of services covered by the scorecard, in ascending order.
-	ScorecardSortEnumServicecountDesc         ScorecardSortEnum = "serviceCount_DESC"         // Order by the number of services covered by the scorecard, in descending order.
-	ScorecardSortEnumPassingcheckfractionAsc  ScorecardSortEnum = "passingCheckFraction_ASC"  // Order by the fraction of passing checks on the scorecard, in ascending order.
-	ScorecardSortEnumPassingcheckfractionDesc ScorecardSortEnum = "passingCheckFraction_DESC" // Order by the fraction of passing checks on the scorecard, in descending order.
+	ScorecardSortEnumNameAsc                         ScorecardSortEnum = "name_ASC"                         // Order by the scorecard's name, in ascending order.
+	ScorecardSortEnumNameDesc                        ScorecardSortEnum = "name_DESC"                        // Order by the scorecard's name, in descending order.
+	ScorecardSortEnumOwnerAsc                        ScorecardSortEnum = "owner_ASC"                        // Order by the scorecard owner's name, in ascending order.
+	ScorecardSortEnumOwnerDesc                       ScorecardSortEnum = "owner_DESC"                       // Order by the scorecard owner's name, in descending order.
+	ScorecardSortEnumFilterAsc                       ScorecardSortEnum = "filter_ASC"                       // Order by the associated filter's name, in ascending order.
+	ScorecardSortEnumFilterDesc                      ScorecardSortEnum = "filter_DESC"                      // Order by the associated filter's name, in descending order.
+	ScorecardSortEnumServicecountAsc                 ScorecardSortEnum = "serviceCount_ASC"                 // Order by the number of services covered by the scorecard, in ascending order.
+	ScorecardSortEnumServicecountDesc                ScorecardSortEnum = "serviceCount_DESC"                // Order by the number of services covered by the scorecard, in descending order.
+	ScorecardSortEnumPassingcheckfractionAsc         ScorecardSortEnum = "passingCheckFraction_ASC"         // Order by the fraction of passing checks on the scorecard, in ascending order.
+	ScorecardSortEnumPassingcheckfractionDesc        ScorecardSortEnum = "passingCheckFraction_DESC"        // Order by the fraction of passing checks on the scorecard, in descending order.
+	ScorecardSortEnumAffectsoverallservicelevelsAsc  ScorecardSortEnum = "affectsOverallServiceLevels_ASC"  // Order by whether or not the checks on the scorecard affect the overall maturity, in ascending order.
+	ScorecardSortEnumAffectsoverallservicelevelsDesc ScorecardSortEnum = "affectsOverallServiceLevels_DESC" // Order by whether or not the checks on the scorecard affect the overall maturity, in descending order.
 )
 
 // All ScorecardSortEnum as []string
@@ -588,6 +623,8 @@ var AllScorecardSortEnum = []string{
 	string(ScorecardSortEnumServicecountDesc),
 	string(ScorecardSortEnumPassingcheckfractionAsc),
 	string(ScorecardSortEnumPassingcheckfractionDesc),
+	string(ScorecardSortEnumAffectsoverallservicelevelsAsc),
+	string(ScorecardSortEnumAffectsoverallservicelevelsDesc),
 }
 
 // ServicePropertyTypeEnum represents properties of services that can be validated.
@@ -595,75 +632,75 @@ type ServicePropertyTypeEnum string
 
 const (
 	ServicePropertyTypeEnumDescription    ServicePropertyTypeEnum = "description"     // The description of a service.
-	ServicePropertyTypeEnumFramework      ServicePropertyTypeEnum = "framework"       // The primary software development framework of a service.
-	ServicePropertyTypeEnumLanguage       ServicePropertyTypeEnum = "language"        // The primary programming language of a service.
-	ServicePropertyTypeEnumLifecycleIndex ServicePropertyTypeEnum = "lifecycle_index" // The index of the lifecycle a service belongs to.
 	ServicePropertyTypeEnumName           ServicePropertyTypeEnum = "name"            // The name of a service.
-	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            //
+	ServicePropertyTypeEnumLanguage       ServicePropertyTypeEnum = "language"        // The primary programming language of a service.
+	ServicePropertyTypeEnumFramework      ServicePropertyTypeEnum = "framework"       // The primary software development framework of a service.
 	ServicePropertyTypeEnumProduct        ServicePropertyTypeEnum = "product"         // The product that is associated with a service.
+	ServicePropertyTypeEnumLifecycleIndex ServicePropertyTypeEnum = "lifecycle_index" // The index of the lifecycle a service belongs to.
 	ServicePropertyTypeEnumTierIndex      ServicePropertyTypeEnum = "tier_index"      // The index of the tier a service belongs to.
+	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            // Additional information about the service.
 )
 
 // All ServicePropertyTypeEnum as []string
 var AllServicePropertyTypeEnum = []string{
 	string(ServicePropertyTypeEnumDescription),
-	string(ServicePropertyTypeEnumFramework),
-	string(ServicePropertyTypeEnumLanguage),
-	string(ServicePropertyTypeEnumLifecycleIndex),
 	string(ServicePropertyTypeEnumName),
-	string(ServicePropertyTypeEnumNote),
+	string(ServicePropertyTypeEnumLanguage),
+	string(ServicePropertyTypeEnumFramework),
 	string(ServicePropertyTypeEnumProduct),
+	string(ServicePropertyTypeEnumLifecycleIndex),
 	string(ServicePropertyTypeEnumTierIndex),
+	string(ServicePropertyTypeEnumNote),
 }
 
-// ServiceSortEnum
+// ServiceSortEnum represents sort possibilities for services.
 type ServiceSortEnum string
 
 const (
-	ServiceSortEnumAlertStatusAsc    ServiceSortEnum = "alert_status_ASC"    //
-	ServiceSortEnumAlertStatusDesc   ServiceSortEnum = "alert_status_DESC"   //
-	ServiceSortEnumChecksPassingAsc  ServiceSortEnum = "checks_passing_ASC"  //
-	ServiceSortEnumChecksPassingDesc ServiceSortEnum = "checks_passing_DESC" //
-	ServiceSortEnumLastDeployAsc     ServiceSortEnum = "last_deploy_ASC"     //
-	ServiceSortEnumLastDeployDesc    ServiceSortEnum = "last_deploy_DESC"    //
-	ServiceSortEnumLevelIndexAsc     ServiceSortEnum = "level_index_ASC"     //
-	ServiceSortEnumLevelIndexDesc    ServiceSortEnum = "level_index_DESC"    //
-	ServiceSortEnumLifecycleAsc      ServiceSortEnum = "lifecycle_ASC"       //
-	ServiceSortEnumLifecycleDesc     ServiceSortEnum = "lifecycle_DESC"      //
-	ServiceSortEnumNameAsc           ServiceSortEnum = "name_ASC"            //
-	ServiceSortEnumNameDesc          ServiceSortEnum = "name_DESC"           //
-	ServiceSortEnumOwnerAsc          ServiceSortEnum = "owner_ASC"           //
-	ServiceSortEnumOwnerDesc         ServiceSortEnum = "owner_DESC"          //
-	ServiceSortEnumProductAsc        ServiceSortEnum = "product_ASC"         //
-	ServiceSortEnumProductDesc       ServiceSortEnum = "product_DESC"        //
-	ServiceSortEnumServiceStatAsc    ServiceSortEnum = "service_stat_ASC"    //
-	ServiceSortEnumServiceStatDesc   ServiceSortEnum = "service_stat_DESC"   //
-	ServiceSortEnumTierAsc           ServiceSortEnum = "tier_ASC"            //
-	ServiceSortEnumTierDesc          ServiceSortEnum = "tier_DESC"           //
+	ServiceSortEnumNameAsc           ServiceSortEnum = "name_ASC"            // Sort by `name` ascending.
+	ServiceSortEnumNameDesc          ServiceSortEnum = "name_DESC"           // Sort by `name` descending.
+	ServiceSortEnumProductAsc        ServiceSortEnum = "product_ASC"         // Sort by `product` ascending.
+	ServiceSortEnumProductDesc       ServiceSortEnum = "product_DESC"        // Sort by `product` descending.
+	ServiceSortEnumTierAsc           ServiceSortEnum = "tier_ASC"            // Sort by `tier` ascending.
+	ServiceSortEnumTierDesc          ServiceSortEnum = "tier_DESC"           // Sort by `tier` descending.
+	ServiceSortEnumLifecycleAsc      ServiceSortEnum = "lifecycle_ASC"       // Sort by lifecycle ascending.
+	ServiceSortEnumLifecycleDesc     ServiceSortEnum = "lifecycle_DESC"      // Sort by lifecycle descending.
+	ServiceSortEnumLevelIndexAsc     ServiceSortEnum = "level_index_ASC"     // Sort by level ascending.
+	ServiceSortEnumLevelIndexDesc    ServiceSortEnum = "level_index_DESC"    // Sort by level descending.
+	ServiceSortEnumOwnerAsc          ServiceSortEnum = "owner_ASC"           // Sort by `owner` ascending.
+	ServiceSortEnumOwnerDesc         ServiceSortEnum = "owner_DESC"          // Sort by `owner` descending.
+	ServiceSortEnumChecksPassingAsc  ServiceSortEnum = "checks_passing_ASC"  // Sort by `checks_passing` ascending.
+	ServiceSortEnumChecksPassingDesc ServiceSortEnum = "checks_passing_DESC" // Sort by `checks_passing` descending.
+	ServiceSortEnumServiceStatAsc    ServiceSortEnum = "service_stat_ASC"    // Alias to sort by `checks_passing` ascending.
+	ServiceSortEnumServiceStatDesc   ServiceSortEnum = "service_stat_DESC"   // Alias to sort by `checks_passing` descending.
+	ServiceSortEnumLastDeployAsc     ServiceSortEnum = "last_deploy_ASC"     // Sort by last deploy time ascending.
+	ServiceSortEnumLastDeployDesc    ServiceSortEnum = "last_deploy_DESC"    // Sort by last deploy time descending.
+	ServiceSortEnumAlertStatusAsc    ServiceSortEnum = "alert_status_ASC"    // Sort by alert status ascending.
+	ServiceSortEnumAlertStatusDesc   ServiceSortEnum = "alert_status_DESC"   // Sort by alert status descending.
 )
 
 // All ServiceSortEnum as []string
 var AllServiceSortEnum = []string{
-	string(ServiceSortEnumAlertStatusAsc),
-	string(ServiceSortEnumAlertStatusDesc),
-	string(ServiceSortEnumChecksPassingAsc),
-	string(ServiceSortEnumChecksPassingDesc),
-	string(ServiceSortEnumLastDeployAsc),
-	string(ServiceSortEnumLastDeployDesc),
-	string(ServiceSortEnumLevelIndexAsc),
-	string(ServiceSortEnumLevelIndexDesc),
-	string(ServiceSortEnumLifecycleAsc),
-	string(ServiceSortEnumLifecycleDesc),
 	string(ServiceSortEnumNameAsc),
 	string(ServiceSortEnumNameDesc),
-	string(ServiceSortEnumOwnerAsc),
-	string(ServiceSortEnumOwnerDesc),
 	string(ServiceSortEnumProductAsc),
 	string(ServiceSortEnumProductDesc),
-	string(ServiceSortEnumServiceStatAsc),
-	string(ServiceSortEnumServiceStatDesc),
 	string(ServiceSortEnumTierAsc),
 	string(ServiceSortEnumTierDesc),
+	string(ServiceSortEnumLifecycleAsc),
+	string(ServiceSortEnumLifecycleDesc),
+	string(ServiceSortEnumLevelIndexAsc),
+	string(ServiceSortEnumLevelIndexDesc),
+	string(ServiceSortEnumOwnerAsc),
+	string(ServiceSortEnumOwnerDesc),
+	string(ServiceSortEnumChecksPassingAsc),
+	string(ServiceSortEnumChecksPassingDesc),
+	string(ServiceSortEnumServiceStatAsc),
+	string(ServiceSortEnumServiceStatDesc),
+	string(ServiceSortEnumLastDeployAsc),
+	string(ServiceSortEnumLastDeployDesc),
+	string(ServiceSortEnumAlertStatusAsc),
+	string(ServiceSortEnumAlertStatusDesc),
 }
 
 // TaggableResource represents possible types to apply tags to.
@@ -676,7 +713,7 @@ const (
 	TaggableResourceUser                   TaggableResource = "User"                   // Used to identify a User.
 	TaggableResourceDomain                 TaggableResource = "Domain"                 // Used to identify a Domain.
 	TaggableResourceSystem                 TaggableResource = "System"                 // Used to identify a System.
-	TaggableResourceInfrastructureresource TaggableResource = "InfrastructureResource" // Translation missing: en.graphql.types.taggable_resource.InfrastructureResource.
+	TaggableResourceInfrastructureresource TaggableResource = "InfrastructureResource" // Used to identify an Infrastructure Resource.
 )
 
 // All TaggableResource as []string
@@ -696,10 +733,12 @@ type ToolCategory string
 const (
 	ToolCategoryAdmin                 ToolCategory = "admin"                  // Tools used for administrative purposes.
 	ToolCategoryAPIDocumentation      ToolCategory = "api_documentation"      // Tools used as API documentation for this service.
+	ToolCategoryArchitectureDiagram   ToolCategory = "architecture_diagram"   // Tools used for diagramming architecture.
 	ToolCategoryBacklog               ToolCategory = "backlog"                // Tools used for tracking issues.
 	ToolCategoryCode                  ToolCategory = "code"                   // Tools used for source code.
 	ToolCategoryContinuousIntegration ToolCategory = "continuous_integration" // Tools used for building/unit testing a service.
 	ToolCategoryDeployment            ToolCategory = "deployment"             // Tools used for deploying changes to a service.
+	ToolCategoryDesignDocumentation   ToolCategory = "design_documentation"   // Tools used for documenting design.
 	ToolCategoryErrors                ToolCategory = "errors"                 // Tools used for tracking/reporting errors.
 	ToolCategoryFeatureFlag           ToolCategory = "feature_flag"           // Tools used for managing feature flags.
 	ToolCategoryHealthChecks          ToolCategory = "health_checks"          // Tools used for tracking/reporting the health of a service.
@@ -707,6 +746,7 @@ const (
 	ToolCategoryIssueTracking         ToolCategory = "issue_tracking"         // Tools used for tracking issues.
 	ToolCategoryLogs                  ToolCategory = "logs"                   // Tools used for displaying logs from services.
 	ToolCategoryMetrics               ToolCategory = "metrics"                // Tools used for tracking/reporting service metrics.
+	ToolCategoryObservability         ToolCategory = "observability"          // Tools used for observability.
 	ToolCategoryOrchestrator          ToolCategory = "orchestrator"           // Tools used for orchestrating a service.
 	ToolCategoryOther                 ToolCategory = "other"                  // Tools that do not fit into the available categories.
 	ToolCategoryResiliency            ToolCategory = "resiliency"             // Tools used for testing the resiliency of a service.
@@ -720,10 +760,12 @@ const (
 var AllToolCategory = []string{
 	string(ToolCategoryAdmin),
 	string(ToolCategoryAPIDocumentation),
+	string(ToolCategoryArchitectureDiagram),
 	string(ToolCategoryBacklog),
 	string(ToolCategoryCode),
 	string(ToolCategoryContinuousIntegration),
 	string(ToolCategoryDeployment),
+	string(ToolCategoryDesignDocumentation),
 	string(ToolCategoryErrors),
 	string(ToolCategoryFeatureFlag),
 	string(ToolCategoryHealthChecks),
@@ -731,6 +773,7 @@ var AllToolCategory = []string{
 	string(ToolCategoryIssueTracking),
 	string(ToolCategoryLogs),
 	string(ToolCategoryMetrics),
+	string(ToolCategoryObservability),
 	string(ToolCategoryOrchestrator),
 	string(ToolCategoryOther),
 	string(ToolCategoryResiliency),
@@ -752,4 +795,44 @@ const (
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
+}
+
+// UsersFilterEnum represents fields that can be used as part of filter for users.
+type UsersFilterEnum string
+
+const (
+	UsersFilterEnumName          UsersFilterEnum = "name"            // Filter by `name` field.
+	UsersFilterEnumEmail         UsersFilterEnum = "email"           // Filter by `email` field.
+	UsersFilterEnumRole          UsersFilterEnum = "role"            // Filter by `role` field. (user or admin).
+	UsersFilterEnumTag           UsersFilterEnum = "tag"             // Filter by `tags` belonging to user.
+	UsersFilterEnumDeactivatedAt UsersFilterEnum = "deactivated_at"  // Filter by the `deactivated_at` field.
+	UsersFilterEnumLastSignInAt  UsersFilterEnum = "last_sign_in_at" // Filter by the `last_sign_in_at` field.
+)
+
+// All UsersFilterEnum as []string
+var AllUsersFilterEnum = []string{
+	string(UsersFilterEnumName),
+	string(UsersFilterEnumEmail),
+	string(UsersFilterEnumRole),
+	string(UsersFilterEnumTag),
+	string(UsersFilterEnumDeactivatedAt),
+	string(UsersFilterEnumLastSignInAt),
+}
+
+// VaultSecretsSortEnum represents sort possibilities for secrets.
+type VaultSecretsSortEnum string
+
+const (
+	VaultSecretsSortEnumSlugAsc       VaultSecretsSortEnum = "slug_ASC"        // Sort by slug ascending.
+	VaultSecretsSortEnumSlugDesc      VaultSecretsSortEnum = "slug_DESC"       // Sort by slug descending.
+	VaultSecretsSortEnumUpdatedAtAsc  VaultSecretsSortEnum = "updated_at_ASC"  // Sort by updated_at ascending.
+	VaultSecretsSortEnumUpdatedAtDesc VaultSecretsSortEnum = "updated_at_DESC" // Sort by updated_at descending.
+)
+
+// All VaultSecretsSortEnum as []string
+var AllVaultSecretsSortEnum = []string{
+	string(VaultSecretsSortEnumSlugAsc),
+	string(VaultSecretsSortEnumSlugDesc),
+	string(VaultSecretsSortEnumUpdatedAtAsc),
+	string(VaultSecretsSortEnumUpdatedAtDesc),
 }
