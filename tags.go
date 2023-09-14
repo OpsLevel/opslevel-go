@@ -1,5 +1,17 @@
 package opslevel
 
+type TaggableResourceConstructor func() any
+
+var TaggableResourceConstructors = map[TaggableResource]TaggableResourceConstructor{
+	TaggableResourceService:                func() any { return &Service{} },
+	TaggableResourceRepository:             func() any { return &Repository{} },
+	TaggableResourceTeam:                   func() any { return &Team{} },
+	TaggableResourceUser:                   func() any { return &User{} },
+	TaggableResourceDomain:                 func() any { return &Domain{} },
+	TaggableResourceSystem:                 func() any { return &System{} },
+	TaggableResourceInfrastructureresource: func() any { return &InfrastructureResource{} },
+}
+
 type TagOwner string
 
 const (
