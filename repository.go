@@ -34,7 +34,7 @@ type Repository struct {
 	Private            bool
 	RepoKey            string
 	Services           *RepositoryServiceConnection
-	Tags               *RepositoryTagConnection
+	Tags               *TagConnection
 	Tier               Tier
 	Type               string
 	Url                string
@@ -93,12 +93,6 @@ type ServiceRepositoryConnection struct {
 	TotalCount int
 }
 
-type RepositoryTagConnection struct {
-	Nodes      []Tag
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 type ServiceRepositoryCreateInput struct {
 	Service       IdentifierInput `json:"service"`
 	Repository    IdentifierInput `json:"repository"`
@@ -137,7 +131,7 @@ func (r *Repository) Hydrate(client *Client) error {
 	}
 
 	if r.Tags == nil {
-		r.Tags = &RepositoryTagConnection{}
+		r.Tags = &TagConnection{}
 	}
 	if r.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
@@ -184,11 +178,11 @@ func (r *Repository) GetServices(client *Client, variables *PayloadVariables) (*
 	return r.Services, nil
 }
 
-func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*RepositoryTagConnection, error) {
+func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			Repository struct {
-				Tags RepositoryTagConnection `graphql:"tags(after: $after, first: $first)"`
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
 			} `graphql:"repository(id: $id)"`
 		}
 	}
@@ -203,7 +197,7 @@ func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*Repo
 		return nil, err
 	}
 	if r.Tags == nil {
-		r.Tags = &RepositoryTagConnection{}
+		r.Tags = &TagConnection{}
 	}
 	r.Tags.Nodes = append(r.Tags.Nodes, q.Account.Repository.Tags.Nodes...)
 	r.Tags.PageInfo = q.Account.Repository.Tags.PageInfo

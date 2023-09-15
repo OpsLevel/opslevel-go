@@ -32,7 +32,7 @@ type TagAssignInput struct {
 }
 
 type TagCreateInput struct {
-	Id    ID               `json:"id"`
+	Id    ID               `json:"id,omitempty"`
 	Alias string           `json:"alias,omitempty"`
 	Type  TaggableResource `json:"type,omitempty"`
 	Key   string           `json:"key"`
