@@ -28,6 +28,32 @@ type SystemInput struct {
 	Note        *string          `json:"note,omitempty"`
 }
 
+func (s *System) GetTag(tagId ID, client *Client) *Tag {
+	if s == nil {
+		return nil
+	}
+	tags, err := s.SystemId.Tags(client, nil)
+	if err != nil {
+		fmt.Println(fmt.Errorf("Error getting tags: %s", err))
+		return nil
+	}
+	for _, tag := range tags.Nodes {
+		if tag.Id == tagId {
+			return &tag
+		}
+	}
+	fmt.Println(fmt.Errorf("Error getting tags: %s", err))
+	return nil
+}
+
+func (s *System) ResourceId() ID {
+	return s.Id
+}
+
+func (s *System) ResourceType() TaggableResource {
+	return TaggableResourceDomain
+}
+
 func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {

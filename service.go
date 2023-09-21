@@ -76,6 +76,32 @@ type ServiceDeleteInput struct {
 	Alias string `json:"alias,omitempty"`
 }
 
+func (s *Service) GetTag(tagId ID, client *Client) *Tag {
+	if s == nil {
+		return nil
+	}
+	tags, err := s.GetTags(client, nil)
+	if err != nil {
+		fmt.Println(fmt.Errorf("Error getting tags: %s", err))
+		return nil
+	}
+	for _, tag := range tags.Nodes {
+		if tag.Id == tagId {
+			return &tag
+		}
+	}
+	fmt.Println(fmt.Errorf("Error getting tags: %s", err))
+	return nil
+}
+
+func (s *Service) ResourceId() ID {
+	return s.Id
+}
+
+func (s *Service) ResourceType() TaggableResource {
+	return TaggableResourceService
+}
+
 //#region ServiceHelpers
 
 func (s *Service) HasAlias(alias string) bool {

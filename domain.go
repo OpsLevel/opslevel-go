@@ -26,6 +26,32 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty"`
 }
 
+func (d *Domain) GetTag(tagId ID, client *Client) *Tag {
+	if d == nil {
+		return nil
+	}
+	tags, err := d.DomainId.Tags(client, nil)
+	if err != nil {
+		fmt.Println(fmt.Errorf("Error getting tags: %s", err))
+		return nil
+	}
+	for _, tag := range tags.Nodes {
+		if tag.Id == tagId {
+			return &tag
+		}
+	}
+	fmt.Println(fmt.Errorf("Error getting tags: %s", err))
+	return nil
+}
+
+func (d *Domain) ResourceId() ID {
+	return d.Id
+}
+
+func (d *Domain) ResourceType() TaggableResource {
+	return TaggableResourceDomain
+}
+
 func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
 	var q struct {
 		Account struct {
