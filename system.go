@@ -36,12 +36,11 @@ func (s *System) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
-	for _, tag := range tags.Nodes {
-		if tag.Id == tagId {
-			return &tag, nil
-		}
+	tag, err := tags.GetTagById(tagId)
+	if err != nil {
+		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
-	return nil, fmt.Errorf("Error getting tags: %s", err)
+	return tag, nil
 }
 
 func (s *System) ResourceId() ID {

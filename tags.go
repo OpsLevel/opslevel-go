@@ -1,5 +1,7 @@
 package opslevel
 
+import "fmt"
+
 type TagOwner string
 
 const (
@@ -53,6 +55,15 @@ type TagUpdateInput struct {
 
 type TagDeleteInput struct {
 	Id ID `json:"id"`
+}
+
+func (t *TagConnection) GetTagById(tagId ID) (*Tag, error) {
+	for _, tag := range t.Nodes {
+		if tag.Id == tagId {
+			return &tag, nil
+		}
+	}
+	return nil, fmt.Errorf("Tag with ID '%s' not found.", tagId)
 }
 
 //#region Assign
