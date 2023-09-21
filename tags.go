@@ -7,6 +7,12 @@ const (
 	TagOwnerRepository TagOwner = "Repository"
 )
 
+type TaggableResourceInterface interface {
+	GetTag(ID) (*Tag, *Client)
+	ResourceId() ID
+	ResourceType() TaggableResource
+}
+
 type Tag struct {
 	Id    ID     `json:"id"`
 	Key   string `json:"key"`
