@@ -26,7 +26,7 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty"`
 }
 
-func (d *Domain) GetTag(tagId ID, client *Client) (*Tag, error) {
+func (d *Domain) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if d == nil {
 		return nil, fmt.Errorf("Unable to GetTag() with nil Domain pointer")
 	}

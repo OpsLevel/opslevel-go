@@ -106,7 +106,7 @@ type ServiceRepositoryUpdateInput struct {
 	DisplayName   string `json:"displayName,omitempty"`
 }
 
-func (r *Repository) GetTag(tagId ID, client *Client) (*Tag, error) {
+func (r *Repository) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if r == nil {
 		return nil, fmt.Errorf("Unable to GetTag() with nil Repository pointer")
 	}

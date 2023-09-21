@@ -76,7 +76,7 @@ type ServiceDeleteInput struct {
 	Alias string `json:"alias,omitempty"`
 }
 
-func (s *Service) GetTag(tagId ID, client *Client) (*Tag, error) {
+func (s *Service) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if s == nil {
 		return nil, fmt.Errorf("Unable to GetTag() with nil Service pointer")
 	}

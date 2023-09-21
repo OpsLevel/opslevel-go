@@ -105,7 +105,7 @@ type TeamMembershipDeleteInput struct {
 	Members []TeamMembershipUserInput `json:"members"`
 }
 
-func (t *Team) GetTag(tagId ID, client *Client) (*Tag, error) {
+func (t *Team) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if t == nil {
 		return nil, fmt.Errorf("Unable to GetTag() with nil Team pointer")
 	}

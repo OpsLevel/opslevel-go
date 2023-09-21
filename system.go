@@ -28,7 +28,7 @@ type SystemInput struct {
 	Note        *string          `json:"note,omitempty"`
 }
 
-func (s *System) GetTag(tagId ID, client *Client) (*Tag, error) {
+func (s *System) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if s == nil {
 		return nil, fmt.Errorf("Unable to GetTag() with nil System pointer")
 	}

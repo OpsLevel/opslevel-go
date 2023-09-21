@@ -8,7 +8,7 @@ const (
 )
 
 type TaggableResourceInterface interface {
-	GetTag(ID, *Client) (*Tag, error)
+	GetTag(*Client, ID) (*Tag, error)
 	ResourceId() ID
 	ResourceType() TaggableResource
 }
