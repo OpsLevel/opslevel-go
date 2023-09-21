@@ -26,22 +26,20 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty"`
 }
 
-func (d *Domain) GetTag(tagId ID, client *Client) *Tag {
+func (d *Domain) GetTag(tagId ID, client *Client) (*Tag, error) {
 	if d == nil {
-		return nil
+		return nil, fmt.Errorf("Unable to GetTag() with nil Domain pointer")
 	}
 	tags, err := d.DomainId.Tags(client, nil)
 	if err != nil {
-		fmt.Println(fmt.Errorf("Error getting tags: %s", err))
-		return nil
+		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
 	for _, tag := range tags.Nodes {
 		if tag.Id == tagId {
-			return &tag
+			return &tag, nil
 		}
 	}
-	fmt.Println(fmt.Errorf("Error getting tags: %s", err))
-	return nil
+	return nil, fmt.Errorf("Error getting tags: %s", err)
 }
 
 func (d *Domain) ResourceId() ID {

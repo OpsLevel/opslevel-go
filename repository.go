@@ -106,22 +106,20 @@ type ServiceRepositoryUpdateInput struct {
 	DisplayName   string `json:"displayName,omitempty"`
 }
 
-func (r *Repository) GetTag(tagId ID, client *Client) *Tag {
+func (r *Repository) GetTag(tagId ID, client *Client) (*Tag, error) {
 	if r == nil {
-		return nil
+		return nil, fmt.Errorf("Unable to GetTag() with nil Repository pointer")
 	}
 	tags, err := r.GetTags(client, nil)
 	if err != nil {
-		fmt.Println(fmt.Errorf("Error getting tags: %s", err))
-		return nil
+		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
 	for _, tag := range tags.Nodes {
 		if tag.Id == tagId {
-			return &tag
+			return &tag, nil
 		}
 	}
-	fmt.Println(fmt.Errorf("Error getting tags: %s", err))
-	return nil
+	return nil, fmt.Errorf("Error getting tags: %s", err)
 }
 
 func (r *Repository) ResourceId() ID {

@@ -76,22 +76,20 @@ type ServiceDeleteInput struct {
 	Alias string `json:"alias,omitempty"`
 }
 
-func (s *Service) GetTag(tagId ID, client *Client) *Tag {
+func (s *Service) GetTag(tagId ID, client *Client) (*Tag, error) {
 	if s == nil {
-		return nil
+		return nil, fmt.Errorf("Unable to GetTag() with nil Service pointer")
 	}
 	tags, err := s.GetTags(client, nil)
 	if err != nil {
-		fmt.Println(fmt.Errorf("Error getting tags: %s", err))
-		return nil
+		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
 	for _, tag := range tags.Nodes {
 		if tag.Id == tagId {
-			return &tag
+			return &tag, nil
 		}
 	}
-	fmt.Println(fmt.Errorf("Error getting tags: %s", err))
-	return nil
+	return nil, fmt.Errorf("Error getting tags: %s", err)
 }
 
 func (s *Service) ResourceId() ID {
