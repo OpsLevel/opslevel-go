@@ -10,7 +10,7 @@ import (
 func TestCreateInfra(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}",
+	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all),tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},warnings{message},errors{message,path}}}",
   "variables":{
     "all": true,
     "input": {
@@ -67,7 +67,7 @@ func TestCreateInfra(t *testing.T) {
 func TestGetInfra(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}",
+	"query": "query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all),tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 	"variables":{
 		"all": true,
 		"input":{
@@ -139,7 +139,7 @@ func TestListInfra(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all),tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				"variables": {
 					"after": "",
 					"all": true,
@@ -158,7 +158,7 @@ func TestListInfra(t *testing.T) {
 					}}}}`,
 		},
 		{
-			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all),tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				"variables": {
 					"after": "OA",
 					"all": true,
@@ -191,7 +191,7 @@ func TestListInfra(t *testing.T) {
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
 	request := `{
-	"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}",
+	"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all),tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},warnings{message},errors{message,path}}}",
   "variables":{
     "all": true,
     "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},

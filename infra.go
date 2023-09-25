@@ -30,6 +30,7 @@ type InfrastructureResource struct {
 	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
 	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
 	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
+	Tags         *TagConnection                     `json:"tags"`
 }
 
 type InfrastructureResourceConnection struct {
