@@ -27,18 +27,14 @@ type DomainInput struct {
 }
 
 func (d *Domain) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if d == nil {
-		return nil, fmt.Errorf("Unable to GetTag() with nil Domain pointer")
+	if d == nil || d.Id == "" {
+		return nil, fmt.Errorf("Domain has no Id. Unable to GetTag()")
 	}
 	tags, err := d.DomainId.Tags(client, nil)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
-	tag, err := tags.GetTagById(tagId)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	return tag, nil
+	return tags.GetTagById(tagId)
 }
 
 func (d *Domain) ResourceId() ID {

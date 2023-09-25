@@ -77,18 +77,14 @@ type ServiceDeleteInput struct {
 }
 
 func (s *Service) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if s == nil {
-		return nil, fmt.Errorf("Unable to GetTag() with nil Service pointer")
+	if s == nil || s.Id == "" {
+		return nil, fmt.Errorf("Service has no Id. Unable to GetTag()")
 	}
 	tags, err := s.GetTags(client, nil)
 	if err != nil {
 		return nil, fmt.Errorf("Error getting tags: %s", err)
 	}
-	tag, err := tags.GetTagById(tagId)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	return tag, nil
+	return tags.GetTagById(tagId)
 }
 
 func (s *Service) ResourceId() ID {
