@@ -6,12 +6,13 @@ type SystemId Identifier
 
 type System struct {
 	SystemId
-	Name        string      `graphql:"name"`
-	Description string      `graphql:"description"`
-	HTMLUrl     string      `graphql:"htmlUrl"`
-	Owner       EntityOwner `graphql:"owner"`
-	Parent      Domain      `graphql:"parent"`
-	Note        string      `graphql:"note"`
+	Name        string         `graphql:"name"`
+	Description string         `graphql:"description"`
+	HTMLUrl     string         `graphql:"htmlUrl"`
+	Owner       EntityOwner    `graphql:"owner"`
+	Parent      Domain         `graphql:"parent"`
+	Note        string         `graphql:"note"`
+	Tags        *TagConnection `graphql:"tags"`
 }
 
 type SystemConnection struct {
