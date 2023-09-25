@@ -20,6 +20,7 @@ type User struct {
 	Role    UserRole
 	// We cannot have this here because its breaks a TON of queries
 	// Teams   *TeamIdConnection
+	Tags *TagConnection
 }
 
 type UserConnection struct {
