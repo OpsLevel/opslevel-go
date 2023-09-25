@@ -29,8 +29,8 @@ type SystemInput struct {
 }
 
 func (s *System) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if s == nil {
-		return nil, fmt.Errorf("Unable to GetTag() with nil System pointer")
+	if s == nil || s.Id == "" {
+		return nil, fmt.Errorf("System has no Id. Unable to GetTag()")
 	}
 	tags, err := s.SystemId.Tags(client, nil)
 	if err != nil {
