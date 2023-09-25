@@ -1,6 +1,9 @@
 package opslevel
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+)
 
 type TagOwner string
 
@@ -14,6 +17,11 @@ type TaggableResourceInterface interface {
 	ResourceId() ID
 	ResourceType() TaggableResource
 }
+
+var (
+	TagKeyRegex    = regexp.MustCompile(`\A[a-z][0-9a-z_\.\/\\-]*\z`)
+	TagKeyErrorMsg = "tag key name '%s' must start with a letter and be only lowercase alphanumerics, underscores, hyphens, periods, and slashes"
+)
 
 type Tag struct {
 	Id    ID     `json:"id"`
@@ -66,6 +74,15 @@ func (t *TagConnection) GetTagById(tagId ID) (*Tag, error) {
 	return nil, fmt.Errorf("Tag with ID '%s' not found.", tagId)
 }
 
+//#region Helpers
+
+func ValidateTagKey(key string) error {
+	if !TagKeyRegex.MatchString(key) {
+		return fmt.Errorf(TagKeyErrorMsg, key)
+	}
+	return nil
+}
+
 //#region Assign
 
 // Deprecated: Use AssignTagsFor instead
@@ -93,6 +110,9 @@ func (client *Client) AssignTags(identifier string, tags map[string]string) ([]T
 		Tags: []TagInput{},
 	}
 	for key, value := range tags {
+		if err := ValidateTagKey(key); err != nil {
+			return nil, err
+		}
 		input.Tags = append(input.Tags, TagInput{
 			Key:   key,
 			Value: value,
@@ -127,6 +147,9 @@ func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
 func (client *Client) CreateTags(identifier string, tags map[string]string) ([]Tag, error) {
 	var output []Tag
 	for key, value := range tags {
+		if err := ValidateTagKey(key); err != nil {
+			return nil, err
+		}
 		input := TagCreateInput{
 			Key:   key,
 			Value: value,
@@ -157,6 +180,9 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 			Tag    Tag `json:"tag"`
 			Errors []OpsLevelErrors
 		} `graphql:"tagCreate(input: $input)"`
+	}
+	if err := ValidateTagKey(input.Key); err != nil {
+		return nil, err
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -203,6 +229,9 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 			Tag    Tag
 			Errors []OpsLevelErrors
 		} `graphql:"tagUpdate(input: $input)"`
+	}
+	if err := ValidateTagKey(input.Key); err != nil {
+		return nil, err
 	}
 	v := PayloadVariables{
 		"input": input,
