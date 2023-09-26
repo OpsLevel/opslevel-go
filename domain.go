@@ -26,15 +26,15 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty"`
 }
 
-func (d *Domain) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return d.DomainId.Tags(client, variables)
+func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	return d.Tags(client, variables)
 }
 
-func (d *Domain) ResourceId() ID {
+func (d *DomainId) ResourceId() ID {
 	return d.Id
 }
 
-func (d *Domain) ResourceType() TaggableResource {
+func (d *DomainId) ResourceType() TaggableResource {
 	return TaggableResourceDomain
 }
 

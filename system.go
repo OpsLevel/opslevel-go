@@ -28,15 +28,15 @@ type SystemInput struct {
 	Note        *string          `json:"note,omitempty"`
 }
 
-func (s *System) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return s.SystemId.Tags(client, variables)
+func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	return s.Tags(client, variables)
 }
 
-func (s *System) ResourceId() ID {
+func (s *SystemId) ResourceId() ID {
 	return s.Id
 }
 
-func (s *System) ResourceType() TaggableResource {
+func (s *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceDomain
 }
 
