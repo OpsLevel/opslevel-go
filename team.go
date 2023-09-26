@@ -105,24 +105,6 @@ type TeamMembershipDeleteInput struct {
 	Members []TeamMembershipUserInput `json:"members"`
 }
 
-func (t *Team) GetAllTags(client *Client) (*TagConnection, error) {
-	if t == nil || t.Id == "" {
-		return nil, fmt.Errorf("Team has no Id. Unable to GetAllTags()")
-	}
-	return t.GetTags(client, nil)
-}
-
-func (t *Team) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if t == nil || t.Id == "" {
-		return nil, fmt.Errorf("Team has no Id. Unable to GetTag()")
-	}
-	tags, err := t.GetTags(client, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	return tags.GetTagById(tagId)
-}
-
 func (t *Team) ResourceId() ID {
 	return t.Id
 }

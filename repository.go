@@ -106,24 +106,6 @@ type ServiceRepositoryUpdateInput struct {
 	DisplayName   string `json:"displayName,omitempty"`
 }
 
-func (r *Repository) GetAllTags(client *Client) (*TagConnection, error) {
-	if r == nil || r.Id == "" {
-		return nil, fmt.Errorf("Repository has no Id. Unable to GetAllTags()")
-	}
-	return r.GetTags(client, nil)
-}
-
-func (r *Repository) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if r == nil || r.Id == "" {
-		return nil, fmt.Errorf("Repository has no Id. Unable to GetTag()")
-	}
-	tags, err := r.GetTags(client, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	return tags.GetTagById(tagId)
-}
-
 func (r *Repository) ResourceId() ID {
 	return r.Id
 }

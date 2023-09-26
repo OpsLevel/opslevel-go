@@ -14,8 +14,7 @@ const (
 )
 
 type TaggableResourceInterface interface {
-	GetTag(*Client, ID) (*Tag, error)
-	GetAllTags(*Client) (*TagConnection, error)
+	GetTags(*Client, *PayloadVariables) (*TagConnection, error)
 	ResourceId() ID
 	ResourceType() TaggableResource
 }

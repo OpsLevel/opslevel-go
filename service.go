@@ -76,24 +76,6 @@ type ServiceDeleteInput struct {
 	Alias string `json:"alias,omitempty"`
 }
 
-func (s *Service) GetAllTags(client *Client) (*TagConnection, error) {
-	if s == nil || s.Id == "" {
-		return nil, fmt.Errorf("Service has no Id. Unable to GetAllTags()")
-	}
-	return s.GetTags(client, nil)
-}
-
-func (s *Service) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if s == nil || s.Id == "" {
-		return nil, fmt.Errorf("Service has no Id. Unable to GetTag()")
-	}
-	tags, err := s.GetTags(client, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	return tags.GetTagById(tagId)
-}
-
 func (s *Service) ResourceId() ID {
 	return s.Id
 }

@@ -28,26 +28,8 @@ type SystemInput struct {
 	Note        *string          `json:"note,omitempty"`
 }
 
-func (s *System) GetAllTags(client *Client) (*TagConnection, error) {
-	if s == nil || s.Id == "" {
-		return nil, fmt.Errorf("System has no Id. Unable to GetAllTags()")
-	}
+func (s *System) GetTags(client *Client) (*TagConnection, error) {
 	return s.SystemId.Tags(client, nil)
-}
-
-func (s *System) GetTag(client *Client, tagId ID) (*Tag, error) {
-	if s == nil || s.Id == "" {
-		return nil, fmt.Errorf("System has no Id. Unable to GetTag()")
-	}
-	tags, err := s.SystemId.Tags(client, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	tag, err := tags.GetTagById(tagId)
-	if err != nil {
-		return nil, fmt.Errorf("Error getting tags: %s", err)
-	}
-	return tag, nil
 }
 
 func (s *System) ResourceId() ID {
