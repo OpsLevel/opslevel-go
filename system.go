@@ -37,7 +37,7 @@ func (s *SystemId) ResourceId() ID {
 }
 
 func (s *SystemId) ResourceType() TaggableResource {
-	return TaggableResourceDomain
+	return TaggableResourceSystem
 }
 
 func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
