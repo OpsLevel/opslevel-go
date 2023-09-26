@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 	"regexp"
+	"slices"
 )
 
 type TagOwner string
@@ -14,6 +15,7 @@ const (
 
 type TaggableResourceInterface interface {
 	GetTag(*Client, ID) (*Tag, error)
+	GetAllTags(*Client) (*TagConnection, error)
 	ResourceId() ID
 	ResourceType() TaggableResource
 }
@@ -63,6 +65,45 @@ type TagUpdateInput struct {
 
 type TagDeleteInput struct {
 	Id ID `json:"id"`
+}
+
+func GetTaggableResource(resourceType TaggableResource, identifier string, client *Client) (TaggableResourceInterface, error) {
+	var err error
+	var taggableResource TaggableResourceInterface
+
+	if !slices.Contains(AllTaggableResource, string(resourceType)) {
+		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
+	}
+
+	switch resourceType {
+	case TaggableResourceService:
+		if IsID(identifier) {
+			taggableResource, err = client.GetService(ID(identifier))
+		} else {
+			taggableResource, err = client.GetServiceWithAlias(identifier)
+		}
+	case TaggableResourceRepository:
+		if IsID(identifier) {
+			taggableResource, err = client.GetRepository(ID(identifier))
+		} else {
+			taggableResource, err = client.GetRepositoryWithAlias(identifier)
+		}
+	case TaggableResourceTeam:
+		if IsID(identifier) {
+			taggableResource, err = client.GetTeam(ID(identifier))
+		} else {
+			taggableResource, err = client.GetTeamWithAlias(identifier)
+		}
+	case TaggableResourceDomain:
+		taggableResource, err = client.GetDomain(identifier)
+	case TaggableResourceSystem:
+		taggableResource, err = client.GetSystem(identifier)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	return taggableResource, nil
 }
 
 func (t *TagConnection) GetTagById(tagId ID) (*Tag, error) {

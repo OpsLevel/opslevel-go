@@ -26,6 +26,13 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty"`
 }
 
+func (d *Domain) GetAllTags(client *Client) (*TagConnection, error) {
+	if d == nil || d.Id == "" {
+		return nil, fmt.Errorf("Domain has no Id. Unable to GetAllTags()")
+	}
+	return d.DomainId.Tags(client, nil)
+}
+
 func (d *Domain) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if d == nil || d.Id == "" {
 		return nil, fmt.Errorf("Domain has no Id. Unable to GetTag()")

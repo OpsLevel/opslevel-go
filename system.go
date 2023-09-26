@@ -28,6 +28,13 @@ type SystemInput struct {
 	Note        *string          `json:"note,omitempty"`
 }
 
+func (s *System) GetAllTags(client *Client) (*TagConnection, error) {
+	if s == nil || s.Id == "" {
+		return nil, fmt.Errorf("System has no Id. Unable to GetAllTags()")
+	}
+	return s.SystemId.Tags(client, nil)
+}
+
 func (s *System) GetTag(client *Client, tagId ID) (*Tag, error) {
 	if s == nil || s.Id == "" {
 		return nil, fmt.Errorf("System has no Id. Unable to GetTag()")
