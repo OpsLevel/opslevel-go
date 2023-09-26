@@ -66,7 +66,7 @@ type TagDeleteInput struct {
 	Id ID `json:"id"`
 }
 
-func GetTaggableResource(resourceType TaggableResource, identifier string, client *Client) (TaggableResourceInterface, error) {
+func (client *Client) GetTaggableResource(resourceType TaggableResource, identifier string) (TaggableResourceInterface, error) {
 	var err error
 	var taggableResource TaggableResourceInterface
 
