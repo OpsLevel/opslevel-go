@@ -3,7 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"regexp"
-	"slices"
 )
 
 type TagOwner string
@@ -70,10 +69,6 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	var err error
 	var taggableResource TaggableResourceInterface
 
-	if !slices.Contains(AllTaggableResource, string(resourceType)) {
-		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
-	}
-
 	switch resourceType {
 	case TaggableResourceService:
 		if IsID(identifier) {
@@ -97,6 +92,8 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 		taggableResource, err = client.GetDomain(identifier)
 	case TaggableResourceSystem:
 		taggableResource, err = client.GetSystem(identifier)
+	default:
+		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
 	}
 
 	if err != nil {
