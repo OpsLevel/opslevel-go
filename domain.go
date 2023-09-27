@@ -1,6 +1,9 @@
 package opslevel
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type DomainId Identifier
 
@@ -97,7 +100,12 @@ func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 		if err != nil {
 			return nil, err
 		}
-		q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp.Nodes...)
+		// Add unique tags only
+		for _, resp := range resp.Nodes {
+			if !slices.Contains[[]Tag, Tag](q.Account.Domain.Tags.Nodes, resp) {
+				q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp)
+			}
+		}
 		q.Account.Domain.Tags.PageInfo = resp.PageInfo
 		q.Account.Domain.Tags.TotalCount += resp.TotalCount
 	}

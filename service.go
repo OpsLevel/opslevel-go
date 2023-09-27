@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/hasura/go-graphql-client"
@@ -172,10 +173,14 @@ func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 		return nil, err
 	}
 	if s.Tags == nil {
-		tags := TagConnection{}
-		s.Tags = &tags
+		s.Tags = &TagConnection{}
 	}
-	s.Tags.Nodes = append(s.Tags.Nodes, q.Account.Service.Tags.Nodes...)
+	// Add unique tags only
+	for _, resp := range q.Account.Service.Tags.Nodes {
+		if !slices.Contains[[]Tag, Tag](s.Tags.Nodes, resp) {
+			s.Tags.Nodes = append(s.Tags.Nodes, resp)
+		}
+	}
 	s.Tags.PageInfo = q.Account.Service.Tags.PageInfo
 	s.Tags.TotalCount += q.Account.Service.Tags.TotalCount
 	for s.Tags.PageInfo.HasNextPage {
