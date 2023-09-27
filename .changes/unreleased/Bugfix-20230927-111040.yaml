@@ -1,0 +1,3 @@
+kind: Bugfix
+body: filter duplicate tags in query response
+time: 2023-09-27T11:10:40.940673-05:00
