@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 	"html"
+	"slices"
 )
 
 type Contact struct {
@@ -198,10 +199,14 @@ func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnect
 		return nil, err
 	}
 	if t.Tags == nil {
-		tags := TagConnection{}
-		t.Tags = &tags
+		t.Tags = &TagConnection{}
 	}
-	t.Tags.Nodes = append(t.Tags.Nodes, q.Account.Team.Tags.Nodes...)
+	// Add unique tags only
+	for _, tagNode := range q.Account.Team.Tags.Nodes {
+		if !slices.Contains[[]Tag, Tag](t.Tags.Nodes, tagNode) {
+			t.Tags.Nodes = append(t.Tags.Nodes, tagNode)
+		}
+	}
 	t.Tags.PageInfo = q.Account.Team.Tags.PageInfo
 	t.Tags.TotalCount += q.Account.Team.Tags.TotalCount
 	for t.Tags.PageInfo.HasNextPage {

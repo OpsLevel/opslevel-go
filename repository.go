@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/relvacode/iso8601"
 )
@@ -207,7 +208,12 @@ func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagC
 	if r.Tags == nil {
 		r.Tags = &TagConnection{}
 	}
-	r.Tags.Nodes = append(r.Tags.Nodes, q.Account.Repository.Tags.Nodes...)
+	// Add unique tags only
+	for _, tagNode := range q.Account.Repository.Tags.Nodes {
+		if !slices.Contains[[]Tag, Tag](r.Tags.Nodes, tagNode) {
+			r.Tags.Nodes = append(r.Tags.Nodes, tagNode)
+		}
+	}
 	r.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
 	r.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
 	for r.Tags.PageInfo.HasNextPage {
