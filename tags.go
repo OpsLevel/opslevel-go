@@ -65,35 +65,35 @@ type TagDeleteInput struct {
 	Id ID `json:"id"`
 }
 
-func (client *Client) GetTaggableResource(resourceType TaggableResource, identifier string) (TaggableResourceInterface, error) {
+func (client *Client) GetTaggableResource(resourceType string, identifier string) (TaggableResourceInterface, error) {
 	var err error
 	var taggableResource TaggableResourceInterface
 
 	switch resourceType {
-	case TaggableResourceService:
+	case string(TaggableResourceService):
 		if IsID(identifier) {
 			taggableResource, err = client.GetService(ID(identifier))
 		} else {
 			taggableResource, err = client.GetServiceWithAlias(identifier)
 		}
-	case TaggableResourceRepository:
+	case string(TaggableResourceRepository):
 		if IsID(identifier) {
 			taggableResource, err = client.GetRepository(ID(identifier))
 		} else {
 			taggableResource, err = client.GetRepositoryWithAlias(identifier)
 		}
-	case TaggableResourceTeam:
+	case string(TaggableResourceTeam):
 		if IsID(identifier) {
 			taggableResource, err = client.GetTeam(ID(identifier))
 		} else {
 			taggableResource, err = client.GetTeamWithAlias(identifier)
 		}
-	case TaggableResourceDomain:
+	case string(TaggableResourceDomain):
 		taggableResource, err = client.GetDomain(identifier)
-	case TaggableResourceSystem:
+	case string(TaggableResourceSystem):
 		taggableResource, err = client.GetSystem(identifier)
 	default:
-		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
+		return nil, fmt.Errorf("not a taggable resource type: %s" + resourceType)
 	}
 
 	if err != nil {
