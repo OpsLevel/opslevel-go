@@ -76,6 +76,14 @@ type ServiceDeleteInput struct {
 	Alias string `json:"alias,omitempty"`
 }
 
+func (s *Service) ResourceId() ID {
+	return s.Id
+}
+
+func (s *Service) ResourceType() TaggableResource {
+	return TaggableResourceService
+}
+
 //#region ServiceHelpers
 
 func (s *Service) HasAlias(alias string) bool {

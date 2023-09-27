@@ -105,6 +105,14 @@ type TeamMembershipDeleteInput struct {
 	Members []TeamMembershipUserInput `json:"members"`
 }
 
+func (t *Team) ResourceId() ID {
+	return t.Id
+}
+
+func (t *Team) ResourceType() TaggableResource {
+	return TaggableResourceTeam
+}
+
 //#region Helpers
 
 func (self *Team) Hydrate(client *Client) error {

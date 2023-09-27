@@ -26,7 +26,19 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty"`
 }
 
-func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
+func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	return d.Tags(client, variables)
+}
+
+func (d *DomainId) ResourceId() ID {
+	return d.Id
+}
+
+func (d *DomainId) ResourceType() TaggableResource {
+	return TaggableResourceDomain
+}
+
+func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
 	var q struct {
 		Account struct {
 			Domain struct {
@@ -34,21 +46,21 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 			} `graphql:"domain(input: $domain)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Systems, invalid domain id: '%s'", s.Id)
+	if d.Id == "" {
+		return nil, fmt.Errorf("Unable to get Systems, invalid domain id: '%s'", d.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	(*variables)["domain"] = *NewIdentifier(string(s.Id))
+	(*variables)["domain"] = *NewIdentifier(string(d.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.Domain.ChildSystems.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domain.ChildSystems.PageInfo.End
-		resp, err := s.ChildSystems(client, variables)
+		resp, err := d.ChildSystems(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -59,6 +71,7 @@ func (s *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 	return &q.Account.Domain.ChildSystems, nil
 }
 
+// Deprecated: Please use GetTags instead
 func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {

@@ -106,6 +106,14 @@ type ServiceRepositoryUpdateInput struct {
 	DisplayName   string `json:"displayName,omitempty"`
 }
 
+func (r *Repository) ResourceId() ID {
+	return r.Id
+}
+
+func (r *Repository) ResourceType() TaggableResource {
+	return TaggableResourceRepository
+}
+
 func (r *Repository) GetService(service ID, directory string) *ServiceRepository {
 	for _, edge := range r.Services.Edges {
 		for _, connection := range edge.ServiceRepositories {

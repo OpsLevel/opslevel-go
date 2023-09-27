@@ -12,6 +12,12 @@ const (
 	TagOwnerRepository TagOwner = "Repository"
 )
 
+type TaggableResourceInterface interface {
+	GetTags(*Client, *PayloadVariables) (*TagConnection, error)
+	ResourceId() ID
+	ResourceType() TaggableResource
+}
+
 var (
 	TagKeyRegex    = regexp.MustCompile(`\A[a-z][0-9a-z_\.\/\\-]*\z`)
 	TagKeyErrorMsg = "tag key name '%s' must start with a letter and be only lowercase alphanumerics, underscores, hyphens, periods, and slashes"
@@ -57,6 +63,52 @@ type TagUpdateInput struct {
 
 type TagDeleteInput struct {
 	Id ID `json:"id"`
+}
+
+func (client *Client) GetTaggableResource(resourceType TaggableResource, identifier string) (TaggableResourceInterface, error) {
+	var err error
+	var taggableResource TaggableResourceInterface
+
+	switch resourceType {
+	case TaggableResourceService:
+		if IsID(identifier) {
+			taggableResource, err = client.GetService(ID(identifier))
+		} else {
+			taggableResource, err = client.GetServiceWithAlias(identifier)
+		}
+	case TaggableResourceRepository:
+		if IsID(identifier) {
+			taggableResource, err = client.GetRepository(ID(identifier))
+		} else {
+			taggableResource, err = client.GetRepositoryWithAlias(identifier)
+		}
+	case TaggableResourceTeam:
+		if IsID(identifier) {
+			taggableResource, err = client.GetTeam(ID(identifier))
+		} else {
+			taggableResource, err = client.GetTeamWithAlias(identifier)
+		}
+	case TaggableResourceDomain:
+		taggableResource, err = client.GetDomain(identifier)
+	case TaggableResourceSystem:
+		taggableResource, err = client.GetSystem(identifier)
+	default:
+		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	return taggableResource, nil
+}
+
+func (t *TagConnection) GetTagById(tagId ID) (*Tag, error) {
+	for _, tag := range t.Nodes {
+		if tag.Id == tagId {
+			return &tag, nil
+		}
+	}
+	return nil, fmt.Errorf("Tag with ID '%s' not found.", tagId)
 }
 
 //#region Helpers

@@ -28,6 +28,18 @@ type SystemInput struct {
 	Note        *string          `json:"note,omitempty"`
 }
 
+func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	return s.Tags(client, variables)
+}
+
+func (s *SystemId) ResourceId() ID {
+	return s.Id
+}
+
+func (s *SystemId) ResourceType() TaggableResource {
+	return TaggableResourceSystem
+}
+
 func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
@@ -61,6 +73,7 @@ func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*
 	return &q.Account.System.ChildServices, nil
 }
 
+// Deprecated: Please use GetTags instead
 func (s *SystemId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
