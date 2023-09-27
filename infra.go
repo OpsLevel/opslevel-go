@@ -1,6 +1,9 @@
 package opslevel
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 type InfrastructureResourceSchema struct {
 	Type   string `json:"type"`
@@ -68,6 +71,51 @@ type InfraInput struct {
 	Owner    *ID                 `json:"owner" yaml:"owner"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
 	Data     map[string]any      `json:"data" yaml:"data"`
+}
+
+func (s *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	var q struct {
+		Account struct {
+			InfrastructureResource struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"infrastructureResource(input: $infrastructureResource)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid infrastructure resource id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["infrastructureResource"] = *NewIdentifier(string(s.Id))
+
+	if err := client.Query(&q, *variables, WithName("InfrastructureTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.InfrastructureResource.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.InfrastructureResource.Tags.PageInfo.End
+		resp, err := s.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		// Add unique tags only
+		for _, resp := range resp.Nodes {
+			if !slices.Contains[[]Tag, Tag](q.Account.InfrastructureResource.Tags.Nodes, resp) {
+				q.Account.InfrastructureResource.Tags.Nodes = append(q.Account.InfrastructureResource.Tags.Nodes, resp)
+			}
+		}
+		q.Account.InfrastructureResource.Tags.PageInfo = resp.PageInfo
+		q.Account.InfrastructureResource.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.InfrastructureResource.Tags, nil
+}
+
+func (s *InfrastructureResource) ResourceId() ID {
+	return ID(s.Id)
+}
+
+func (s *InfrastructureResource) ResourceType() TaggableResource {
+	return TaggableResourceInfrastructureresource
 }
 
 func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {
