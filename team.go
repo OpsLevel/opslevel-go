@@ -3,7 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"html"
-	"slices"
 )
 
 type Contact struct {
@@ -54,7 +53,6 @@ type Team struct {
 	Members          *UserConnection
 	Name             string
 	Responsibilities string
-	Tags             *TagConnection
 }
 
 // Had to create this to prevent circular references on User because Team has UserConnection
@@ -116,31 +114,23 @@ func (t *Team) ResourceType() TaggableResource {
 
 //#region Helpers
 
-func (self *Team) Hydrate(client *Client) error {
-	self.Responsibilities = html.UnescapeString(self.Responsibilities)
+func (t *Team) Hydrate(client *Client) error {
+	t.Responsibilities = html.UnescapeString(t.Responsibilities)
 
-	if self.Members == nil {
-		self.Members = &UserConnection{}
+	if t.Members == nil {
+		t.Members = &UserConnection{}
 	}
-	if self.Members.PageInfo.HasNextPage {
+	if t.Members.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Members.PageInfo.End
-		_, err := self.GetMembers(client, variables)
+		(*variables)["after"] = t.Members.PageInfo.End
+		_, err := t.GetMembers(client, variables)
 		if err != nil {
 			return err
 		}
 	}
 
-	if self.Tags == nil {
-		self.Tags = &TagConnection{}
-	}
-	if self.Tags.PageInfo.HasNextPage {
-		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Tags.PageInfo.End
-		_, err := self.GetTags(client, variables)
-		if err != nil {
-			return err
-		}
+	if _, err := t.Tags(client, nil); err != nil {
+		return err
 	}
 	return nil
 }
@@ -180,16 +170,17 @@ func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*UserCon
 	return t.Members, nil
 }
 
-func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (t *TeamId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	if t.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", t.Id)
+	}
+
 	var q struct {
 		Account struct {
 			Team struct {
 				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
 			} `graphql:"team(id: $team)"`
 		}
-	}
-	if t.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", t.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
@@ -198,25 +189,18 @@ func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnect
 	if err := client.Query(&q, *variables, WithName("TeamTagsList")); err != nil {
 		return nil, err
 	}
-	if t.Tags == nil {
-		t.Tags = &TagConnection{}
-	}
-	// Add unique tags only
-	for _, tagNode := range q.Account.Team.Tags.Nodes {
-		if !slices.Contains[[]Tag, Tag](t.Tags.Nodes, tagNode) {
-			t.Tags.Nodes = append(t.Tags.Nodes, tagNode)
-		}
-	}
-	t.Tags.PageInfo = q.Account.Team.Tags.PageInfo
-	t.Tags.TotalCount += q.Account.Team.Tags.TotalCount
-	for t.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = t.Tags.PageInfo.End
-		_, err := t.GetTags(client, variables)
+
+	for q.Account.Team.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Team.Tags.PageInfo.End
+		resp, err := t.Tags(client, variables)
 		if err != nil {
 			return nil, err
 		}
+		q.Account.Team.Tags.Nodes = append(q.Account.Team.Tags.Nodes, resp.Nodes...)
+		q.Account.Team.Tags.PageInfo = resp.PageInfo
+		q.Account.Team.Tags.TotalCount += resp.TotalCount
 	}
-	return t.Tags, nil
+	return &q.Account.Team.Tags, nil
 }
 
 func BuildMembershipInput(members []string) (output []TeamMembershipUserInput) {
@@ -258,8 +242,12 @@ func CreateContactWeb(address string, name *string) ContactInput {
 	}
 }
 
-func (s *Team) HasTag(key string, value string) bool {
-	for _, tag := range s.Tags.Nodes {
+func (t *Team) HasTag(key string, value string) bool {
+	tags, err := t.Tags(NewGQLClient(), nil)
+	if err != nil {
+		return false
+	}
+	for _, tag := range tags.Nodes {
 		if tag.Key == key && tag.Value == value {
 			return true
 		}

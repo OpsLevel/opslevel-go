@@ -678,7 +678,7 @@ func TestGetTags(t *testing.T) {
 	repository := ol.Repository{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
 	}
-	resp, err := repository.GetTags(client, nil)
+	resp, err := repository.Tags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)

@@ -180,7 +180,6 @@
     "account": {
       "customActionsTriggerDefinition": {
         "extendedTeamAccess": {
-          "nodes": [ {{ template "team_1" }} ],
           {{ template "pagination_initial_pageInfo_response" }}
         }
       }
@@ -194,7 +193,6 @@
     "account": {
       "customActionsTriggerDefinition": {
         "extendedTeamAccess": {
-          "nodes": [ {{ template "team_2" }} ],
           {{ template "pagination_second_pageInfo_response" }}
         }
       }

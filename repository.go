@@ -2,7 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/relvacode/iso8601"
 )
@@ -35,7 +34,6 @@ type Repository struct {
 	Private            bool
 	RepoKey            string
 	Services           *RepositoryServiceConnection
-	Tags               *TagConnection
 	Tier               Tier
 	Type               string
 	Url                string
@@ -139,16 +137,8 @@ func (r *Repository) Hydrate(client *Client) error {
 		}
 	}
 
-	if r.Tags == nil {
-		r.Tags = &TagConnection{}
-	}
-	if r.Tags.PageInfo.HasNextPage {
-		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = r.Tags.PageInfo.End
-		_, err := r.GetTags(client, variables)
-		if err != nil {
-			return err
-		}
+	if _, err := r.Tags(client, nil); err != nil {
+		return err
 	}
 	return nil
 }
@@ -187,16 +177,17 @@ func (r *Repository) GetServices(client *Client, variables *PayloadVariables) (*
 	return r.Services, nil
 }
 
-func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (r *Repository) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	if r.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid repository id: '%s'", r.Id)
+	}
+
 	var q struct {
 		Account struct {
 			Repository struct {
 				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
 			} `graphql:"repository(id: $id)"`
 		}
-	}
-	if r.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid repository id: '%s'", r.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
@@ -205,25 +196,18 @@ func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagC
 	if err := client.Query(&q, *variables, WithName("RepositoryTagsList")); err != nil {
 		return nil, err
 	}
-	if r.Tags == nil {
-		r.Tags = &TagConnection{}
-	}
-	// Add unique tags only
-	for _, tagNode := range q.Account.Repository.Tags.Nodes {
-		if !slices.Contains[[]Tag, Tag](r.Tags.Nodes, tagNode) {
-			r.Tags.Nodes = append(r.Tags.Nodes, tagNode)
-		}
-	}
-	r.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
-	r.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
-	for r.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = r.Tags.PageInfo.End
-		_, err := r.GetTags(client, variables)
+
+	for q.Account.Repository.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Repository.Tags.PageInfo.End
+		resp, err := r.Tags(client, variables)
 		if err != nil {
 			return nil, err
 		}
+		q.Account.Repository.Tags.Nodes = append(q.Account.Repository.Tags.Nodes, resp.Nodes...)
+		q.Account.Repository.Tags.PageInfo = resp.PageInfo
+		q.Account.Repository.Tags.TotalCount += resp.TotalCount
 	}
-	return r.Tags, nil
+	return &q.Account.Repository.Tags, nil
 }
 
 //#region Create

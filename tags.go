@@ -13,7 +13,7 @@ const (
 )
 
 type TaggableResourceInterface interface {
-	GetTags(*Client, *PayloadVariables) (*TagConnection, error)
+	Tags(*Client, *PayloadVariables) (*TagConnection, error)
 	ResourceId() ID
 	ResourceType() TaggableResource
 }
@@ -226,34 +226,6 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	}
 	err := client.Mutate(&m, v, WithName("TagCreate"))
 	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
-}
-
-//#endregion
-
-//#region Retrieve
-
-// Deprecated: use client.GetServiceWithAlias(alias).Tags instead
-func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
-	service, err := client.GetServiceWithAlias(alias)
-	return service.Tags.Nodes, err
-}
-
-// Deprecated: use client.GetService(id).Tags instead
-func (client *Client) GetTagsForServiceWithId(id ID) ([]Tag, error) {
-	service, err := client.GetService(id)
-	return service.Tags.Nodes, err
-}
-
-// Deprecated: use client.GetService(id).Tags instead
-func (client *Client) GetTagsForService(id ID) ([]Tag, error) {
-	service, err := client.GetService(id)
-	return service.Tags.Nodes, err
-}
-
-// Deprecated: use client.GetService(id).Tags.TotalCount instead
-func (client *Client) GetTagCount(id ID) (int, error) {
-	service, err := client.GetService(id)
-	return service.Tags.TotalCount, err
 }
 
 //#endregion

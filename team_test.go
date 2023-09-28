@@ -46,13 +46,15 @@ func TestGetTeam(t *testing.T) {
 	// Arrange
 	client := ATestClient(t, "team/get")
 	// Act
-	result, err := client.GetTeam("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ")
+	result, errTeam := client.GetTeam("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ")
+	tags, errTags := result.Tags(client, nil)
 	// Assert
-	autopilot.Ok(t, err)
+	autopilot.Ok(t, errTeam)
+	autopilot.Ok(t, errTags)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
-	autopilot.Equals(t, 3, result.Tags.TotalCount)
+	autopilot.Equals(t, 3, tags.TotalCount)
 }
 
 func TestTeamMembers(t *testing.T) {
@@ -175,7 +177,7 @@ func TestTeamTags(t *testing.T) {
 			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
 		},
 	}
-	resp, err := team.GetTags(client, nil)
+	resp, err := team.Tags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
@@ -190,13 +192,15 @@ func TestGetTeamWithAlias(t *testing.T) {
 	// Arrange
 	client := getWithAliasTestClient(t)
 	// Act
-	result, err := client.GetTeamWithAlias("example")
+	result, errTeam := client.GetTeamWithAlias("example")
+	tags, errTags := result.Tags(client, nil)
 	// Assert
-	autopilot.Ok(t, err)
+	autopilot.Ok(t, errTeam)
+	autopilot.Ok(t, errTags)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
-	autopilot.Equals(t, 3, result.Tags.TotalCount)
+	autopilot.Equals(t, 3, tags.TotalCount)
 }
 
 func TestListTeams(t *testing.T) {

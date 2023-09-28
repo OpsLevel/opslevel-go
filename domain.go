@@ -1,9 +1,6 @@
 package opslevel
 
-import (
-	"fmt"
-	"slices"
-)
+import "fmt"
 
 type DomainId Identifier
 
@@ -27,10 +24,6 @@ type DomainInput struct {
 	Description *string `json:"description,omitempty"`
 	Owner       *ID     `json:"ownerId,omitempty"`
 	Note        *string `json:"note,omitempty"`
-}
-
-func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return d.Tags(client, variables)
 }
 
 func (d *DomainId) ResourceId() ID {
@@ -74,17 +67,17 @@ func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 	return &q.Account.Domain.ChildSystems, nil
 }
 
-// Deprecated: Please use GetTags instead
 func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", s.Id)
+	}
+
 	var q struct {
 		Account struct {
 			Domain struct {
 				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
 			} `graphql:"domain(input: $domain)"`
 		}
-	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", s.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
@@ -100,12 +93,7 @@ func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnec
 		if err != nil {
 			return nil, err
 		}
-		// Add unique tags only
-		for _, resp := range resp.Nodes {
-			if !slices.Contains[[]Tag, Tag](q.Account.Domain.Tags.Nodes, resp) {
-				q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp)
-			}
-		}
+		q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp.Nodes...)
 		q.Account.Domain.Tags.PageInfo = resp.PageInfo
 		q.Account.Domain.Tags.TotalCount += resp.TotalCount
 	}

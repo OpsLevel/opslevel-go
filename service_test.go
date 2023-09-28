@@ -66,7 +66,7 @@ func TestServiceTags(t *testing.T) {
 			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
 		},
 	}
-	resp, err := service.GetTags(client, nil)
+	resp, err := service.Tags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
