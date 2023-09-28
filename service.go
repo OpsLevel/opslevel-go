@@ -94,19 +94,6 @@ func (s *Service) HasAlias(alias string) bool {
 	return false
 }
 
-func (s *Service) HasTag(key string, value string) bool {
-	tags, err := s.Tags(NewGQLClient(), nil)
-	if err != nil {
-		return false
-	}
-	for _, tag := range tags.Nodes {
-		if tag.Key == key && tag.Value == value {
-			return true
-		}
-	}
-	return false
-}
-
 func (s *Service) HasTool(category ToolCategory, name string, environment string) bool {
 	for _, tool := range s.Tools.Nodes {
 		if tool.Category == category && tool.DisplayName == name && tool.Environment == environment {

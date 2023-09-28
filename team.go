@@ -242,19 +242,6 @@ func CreateContactWeb(address string, name *string) ContactInput {
 	}
 }
 
-func (t *Team) HasTag(key string, value string) bool {
-	tags, err := t.Tags(NewGQLClient(), nil)
-	if err != nil {
-		return false
-	}
-	for _, tag := range tags.Nodes {
-		if tag.Key == key && tag.Value == value {
-			return true
-		}
-	}
-	return false
-}
-
 //#endregion
 
 //#region Create

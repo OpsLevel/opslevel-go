@@ -338,6 +338,8 @@ func TestGetServiceWithAlias(t *testing.T) {
 	client := ATestClientAlt(t, "service/get", "service/get_with_alias")
 	// Act
 	result, err := client.GetServiceWithAlias("coredns")
+	autopilot.Ok(t, err)
+	tags, err := result.Tags(client, nil)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, len(result.Aliases))
@@ -348,8 +350,8 @@ func TestGetServiceWithAlias(t *testing.T) {
 	autopilot.Equals(t, ol.ApiDocumentSourceEnumPush, *result.PreferredApiDocumentSource)
 	autopilot.Equals(t, true, result.HasAlias("coredns"))
 	autopilot.Equals(t, false, result.HasAlias("opslevel-dns"))
-	autopilot.Equals(t, true, result.HasTag("hello", "world"))
-	autopilot.Equals(t, false, result.HasTag("provider", "opslevel"))
+	autopilot.Equals(t, true, tags.HasTag("hello", "world"))
+	autopilot.Equals(t, false, tags.HasTag("provider", "opslevel"))
 	autopilot.Equals(t, true, result.HasTool("code", "GitHub", "prod"))
 	autopilot.Equals(t, false, result.HasTool("observability", "honeycomb", "certification"))
 }

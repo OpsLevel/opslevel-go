@@ -111,6 +111,15 @@ func (t *TagConnection) GetTagById(tagId ID) (*Tag, error) {
 	return nil, fmt.Errorf("Tag with ID '%s' not found.", tagId)
 }
 
+func (t *TagConnection) HasTag(key string, value string) bool {
+	for _, tag := range t.Nodes {
+		if tag.Key == key && tag.Value == value {
+			return true
+		}
+	}
+	return false
+}
+
 //#region Helpers
 
 func ValidateTagKey(key string) error {
