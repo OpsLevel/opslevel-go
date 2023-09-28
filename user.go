@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 )
 
 type MemberInput struct {
@@ -37,6 +38,51 @@ type UserInput struct {
 	Name             string   `json:"name,omitempty"`
 	Role             UserRole `json:"role,omitempty"`
 	SkipWelcomeEmail bool     `json:"skipWelcomeEmail"`
+}
+
+func (s *User) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	var q struct {
+		Account struct {
+			User struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"user(input: $user)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid user resource id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["user"] = *NewIdentifier(string(s.Id))
+
+	if err := client.Query(&q, *variables, WithName("UserTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.User.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.User.Tags.PageInfo.End
+		resp, err := s.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		// Add unique tags only
+		for _, resp := range resp.Nodes {
+			if !slices.Contains[[]Tag, Tag](q.Account.User.Tags.Nodes, resp) {
+				q.Account.User.Tags.Nodes = append(q.Account.User.Tags.Nodes, resp)
+			}
+		}
+		q.Account.User.Tags.PageInfo = resp.PageInfo
+		q.Account.User.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.User.Tags, nil
+}
+
+func (s *User) ResourceId() ID {
+	return ID(s.Id)
+}
+
+func (s *User) ResourceType() TaggableResource {
+	return TaggableResourceUser
 }
 
 //#region Helpers
