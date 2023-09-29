@@ -179,6 +179,7 @@
   "data": {
     "account": {
       "customActionsTriggerDefinition": {
+        "nodes": [ {{ template "team_1" }} ],
         "extendedTeamAccess": {
           {{ template "pagination_initial_pageInfo_response" }}
         }
@@ -192,6 +193,7 @@
   "data": {
     "account": {
       "customActionsTriggerDefinition": {
+        "nodes": [ {{ template "team_2" }} ],
         "extendedTeamAccess": {
           {{ template "pagination_second_pageInfo_response" }}
         }
