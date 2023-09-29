@@ -104,6 +104,10 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 }
 
 func (s *Service) Hydrate(client *Client) error {
+	if s == nil || s.Id == "" {
+		return nil
+	}
+
 	if _, err := s.Tags(client, nil); err != nil {
 		return err
 	}

@@ -24,7 +24,6 @@
 "private": false,
 "repoKey": "359666903",
 "services": {},
-"tags": {},
 "tier": {
     "alias": "tier_2",
     "description": "Customer-facing service or repository. Failure results in degraded experience for customers, although without significant impact to revenue or reputation.",
@@ -63,7 +62,6 @@
 "private": false,
 "repoKey": "359666903",
 "services": {},
-"tags": {},
 "tier": {
     "alias": "tier_2",
     "description": "Customer-facing service or repository. Failure results in degraded experience for customers, although without significant impact to revenue or reputation.",
@@ -99,7 +97,6 @@
 "private": false,
 "repoKey": "359666903",
 "services": {},
-"tags": {},
 "tier": {
     "alias": "tier_2",
     "description": "Customer-facing service or repository. Failure results in degraded experience for customers, although without significant impact to revenue or reputation.",

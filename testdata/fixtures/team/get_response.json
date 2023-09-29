@@ -60,32 +60,6 @@
             "endCursor": "MQ"
           }
         },
-        "tags": {
-          "nodes": [
-            {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
-              "key": "k8s-app",
-              "value": "kube-dns"
-            },
-            {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
-              "key": "imported",
-              "value": "kubectl-opslevel"
-            },
-            {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
-              "key": "hello",
-              "value": "world"
-            }
-          ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "Mw"
-          },
-          "totalCount": 3
-        },
         "name": "Example",
         "responsibilities": "Foo &amp; bar"
       }

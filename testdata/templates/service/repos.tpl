@@ -180,16 +180,6 @@
     },
     "totalCount": 3
   },
-  "tags": {
-    "nodes": [],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": null,
-      "endCursor": null
-    },
-    "totalCount": 0
-  },
   "tier": null,
   "type": "Bitbucket",
   "url": "https://bitbucket.org/raptors-store/store-front",
@@ -378,16 +368,6 @@
     },
     "totalCount": 3
   },
-  "tags": {
-    "nodes": [],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": null,
-      "endCursor": null
-    },
-    "totalCount": 0
-  },
   "tier": null,
   "type": "Bitbucket",
   "url": "https://bitbucket.org/raptors-store/store-front",
@@ -573,22 +553,6 @@
       "endCursor": "Mw"
     },
     "totalCount": 3
-  },
-  "tags": {
-    "nodes": [
-      {
-        "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzYxNjI",
-        "key": "repo",
-        "value": "test"
-      }
-    ],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": "MQ",
-      "endCursor": "MQ"
-    },
-    "totalCount": 1
   },
   "tier": {
     "alias": "tier_1",

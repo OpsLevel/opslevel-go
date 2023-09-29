@@ -115,6 +115,10 @@ func (t *Team) ResourceType() TaggableResource {
 //#region Helpers
 
 func (t *Team) Hydrate(client *Client) error {
+	if t == nil || t.Id == "" {
+		return nil
+	}
+
 	t.Responsibilities = html.UnescapeString(t.Responsibilities)
 
 	if t.Members == nil {
@@ -240,6 +244,19 @@ func CreateContactWeb(address string, name *string) ContactInput {
 		DisplayName: name,
 		Address:     address,
 	}
+}
+
+func (t *Team) HasTag(key string, value string) bool {
+	tags, err := t.Tags(NewGQLClient(), nil)
+	if err != nil {
+		return false
+	}
+	for _, tag := range tags.Nodes {
+		if tag.Key == key && tag.Value == value {
+			return true
+		}
+	}
+	return false
 }
 
 //#endregion

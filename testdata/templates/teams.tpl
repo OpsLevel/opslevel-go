@@ -41,12 +41,7 @@
   "totalCount": 2
 },
 "name": "{{ template "name1" }}",
-"responsibilities": null,
-"tags": {
-  "nodes": [],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 0
-}
+"responsibilities": null
 }
 {{ end }}
 {{- define "team_2" }}
@@ -71,12 +66,7 @@
   "totalCount": 2
 },
 "name": "{{ template "name2" }}",
-"responsibilities": null,
-"tags": {
-  "nodes": [],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 0
-}
+"responsibilities": null
 }
 {{ end }}
 {{- define "team_3" }}
@@ -101,11 +91,6 @@
   "totalCount": 2
 },
 "name": "{{ template "name3" }}",
-"responsibilities": null,
-"tags": {
-  "nodes": [],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 0
-}
+"responsibilities": null
 }
 {{ end }}

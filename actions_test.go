@@ -464,10 +464,10 @@ func TestListExtendedTeamAccess(t *testing.T) {
 
 	// Act
 	resp, err := trigger.ExtendedTeamAccess(client, nil)
-	result := resp.Nodes
 
 	// Assert
 	autopilot.Ok(t, err)
+	result := resp.Nodes
 	autopilot.Equals(t, "example", result[0].Alias)
 	autopilot.Equals(t, id1, result[0].TeamId.Id)
 }

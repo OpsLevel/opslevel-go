@@ -125,6 +125,10 @@ func (r *Repository) GetService(service ID, directory string) *ServiceRepository
 }
 
 func (r *Repository) Hydrate(client *Client) error {
+	if r == nil || r.Id == "" {
+		return nil
+	}
+
 	if r.Services == nil {
 		r.Services = &RepositoryServiceConnection{}
 	}

@@ -25,16 +25,6 @@
         },
         "totalCount": 0
     },
-    "tags": {
-        "nodes": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    },
     "tier": null,
     "tools": {
         "nodes": [],
@@ -67,16 +57,6 @@
     "product": null,
     "repos": {
         "edges": [],
-        "pageInfo": {
-        "hasNextPage": false,
-        "hasPreviousPage": false,
-        "startCursor": null,
-        "endCursor": null
-        },
-        "totalCount": 0
-    },
-    "tags": {
-        "nodes": [],
         "pageInfo": {
         "hasNextPage": false,
         "hasPreviousPage": false,
