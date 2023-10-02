@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 )
 
 type MemberInput struct {
@@ -39,6 +40,14 @@ type UserInput struct {
 	SkipWelcomeEmail bool     `json:"skipWelcomeEmail"`
 }
 
+func (u *User) ResourceId() ID {
+	return u.Id
+}
+
+func (u *User) ResourceType() TaggableResource {
+	return TaggableResourceUser
+}
+
 //#region Helpers
 
 func NewUserIdentifier(value string) UserIdentifierInput {
@@ -50,6 +59,43 @@ func NewUserIdentifier(value string) UserIdentifierInput {
 	return UserIdentifierInput{
 		Email: value,
 	}
+}
+
+func (u *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+	var q struct {
+		Account struct {
+			User struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"user(id: $user)"`
+		}
+	}
+	if u.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", u.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["user"] = u.Id
+	if err := client.Query(&q, *variables, WithName("UserTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.User.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.User.Tags.PageInfo.End
+		resp, err := u.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		// Add unique tags only
+		for _, resp := range resp.Nodes {
+			if !slices.Contains[[]Tag, Tag](q.Account.User.Tags.Nodes, resp) {
+				q.Account.User.Tags.Nodes = append(q.Account.User.Tags.Nodes, resp)
+			}
+		}
+		q.Account.User.Tags.PageInfo = resp.PageInfo
+		q.Account.User.Tags.TotalCount += resp.TotalCount
+	}
+
+	return &q.Account.User.Tags, nil
 }
 
 func (u *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
