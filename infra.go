@@ -89,7 +89,7 @@ func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVaria
 	}
 	(*variables)["infrastructureResource"] = *NewIdentifier(string(i.Id))
 
-	if err := client.Query(&q, *variables, WithName("InfrastructureResourceTagsList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("InfrastructureResourceTags")); err != nil {
 		return nil, err
 	}
 	for q.Account.InfrastructureResource.Tags.PageInfo.HasNextPage {
