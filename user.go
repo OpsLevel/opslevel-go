@@ -70,7 +70,7 @@ func (u *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConne
 		}
 	}
 	if u.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", u.Id)
+		return nil, fmt.Errorf("Unable to get Tags, invalid User id: '%s'", u.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()

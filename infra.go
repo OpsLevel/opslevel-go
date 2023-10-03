@@ -82,7 +82,7 @@ func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVaria
 		}
 	}
 	if i.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", i.Id)
+		return nil, fmt.Errorf("Unable to get Tags, invalid InfrastructureResource id: '%s'", i.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
