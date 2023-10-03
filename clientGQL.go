@@ -3,10 +3,11 @@ package opslevel
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/go-retryablehttp"
-	"github.com/hasura/go-graphql-client"
 	"net/http"
 	"strings"
+
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Client struct {

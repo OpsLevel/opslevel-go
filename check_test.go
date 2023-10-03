@@ -321,7 +321,7 @@ var testcases = map[string]struct {
 	"CreateServiceOwnership": {
 		fixture: "check/create_service_ownership",
 		body: func(c *ol.Client) (*ol.Check, error) {
-			slackType := ol.ServiceOwnershipCheckContactTypeSlack
+			slackType := ol.ContactTypeSlack
 			return c.CreateCheckServiceOwnership(ol.CheckServiceOwnershipCreateInput{
 				CheckCreateInput:     checkCreateInput,
 				RequireContactMethod: ol.Bool(true),
@@ -337,7 +337,7 @@ var testcases = map[string]struct {
 	"UpdateServiceOwnership": {
 		fixture: "check/update_service_ownership",
 		body: func(c *ol.Client) (*ol.Check, error) {
-			emailType := ol.ServiceOwnershipCheckContactTypeEmail
+			emailType := ol.ContactTypeEmail
 			return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
 				CheckUpdateInput:     checkUpdateInput,
 				RequireContactMethod: ol.Bool(true),

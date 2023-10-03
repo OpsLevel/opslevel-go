@@ -254,12 +254,12 @@ func TestGetUserTags(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
               {{ template "first_page_variables" }},
               "user": "{{ template "id1"}}"
             }}`,
-			`{
+			Response: `{
         "data": {
           "account": {
             "user": {
@@ -290,13 +290,13 @@ func TestGetUserTags(t *testing.T) {
       }`,
 		},
 		{
-			`{"query": "query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "user": "{{ template "id1"}}"
             }
             }`,
-			`{
+			Response: `{
         "data": {
           "account": {
             "user": {
