@@ -298,27 +298,6 @@ var AllContactType = []string{
 	string(ContactTypeGitHub),
 }
 
-// TODO: This appears to be duplicative of the above and i'm not sure why we need it
-// ContactType represents the method of contact.
-type ServiceOwnershipCheckContactType string
-
-const (
-       ServiceOwnershipCheckContactTypeAny         ServiceOwnershipCheckContactType = "any"          // Any contact method.
-       ServiceOwnershipCheckContactTypeSlack       ServiceOwnershipCheckContactType = "slack"        // A Slack channel contact method.
-       ServiceOwnershipCheckContactTypeSlackHandle ServiceOwnershipCheckContactType = "slack_handle" // A Slack handle contact method.
-       ServiceOwnershipCheckContactTypeEmail       ServiceOwnershipCheckContactType = "email"        // An email contact method.
-       ServiceOwnershipCheckContactTypeWeb         ServiceOwnershipCheckContactType = "web"          // A website contact method.
-)
-
-// All ServiceOwnershipContactType as []string
-var AllServiceOwnershipCheckContactType = []string{
-       string(ServiceOwnershipCheckContactTypeAny),
-       string(ServiceOwnershipCheckContactTypeSlack),
-       string(ServiceOwnershipCheckContactTypeSlackHandle),
-       string(ServiceOwnershipCheckContactTypeEmail),
-       string(ServiceOwnershipCheckContactTypeWeb),
-}
-
 // CustomActionsEntityTypeEnum represents the entity types a custom action can be associated with.
 type CustomActionsEntityTypeEnum string
 
@@ -460,6 +439,7 @@ const (
 	PredicateKeyEnumTags           PredicateKeyEnum = "tags"            // Filter by `tags` field.
 	PredicateKeyEnumOwnerID        PredicateKeyEnum = "owner_id"        // Filter by `owner` field.
 	PredicateKeyEnumGroupIDs       PredicateKeyEnum = "group_ids"       // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain.
+	PredicateKeyEnumOwnerIDs       PredicateKeyEnum = "owner_ids"       // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain.
 	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" // Filter by the creation source.
 	PredicateKeyEnumRepositoryIDs  PredicateKeyEnum = "repository_ids"  // Filter by Repository that this service is attached to, if any.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
@@ -478,6 +458,7 @@ var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumTags),
 	string(PredicateKeyEnumOwnerID),
 	string(PredicateKeyEnumGroupIDs),
+	string(PredicateKeyEnumOwnerIDs),
 	string(PredicateKeyEnumCreationSource),
 	string(PredicateKeyEnumRepositoryIDs),
 	string(PredicateKeyEnumDomainID),
@@ -787,14 +768,16 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleUser  UserRole = "user"  // A regular user on the account.
-	UserRoleAdmin UserRole = "admin" // An administrator on the account.
+	UserRoleUser      UserRole = "user"       // A regular user on the account.
+	UserRoleAdmin     UserRole = "admin"      // An administrator on the account.
+	UserRoleBasicUser UserRole = "basic_user" // A basic user on the account with limited access.
 )
 
 // All UserRole as []string
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
+	string(UserRoleBasicUser),
 }
 
 // UsersFilterEnum represents fields that can be used as part of filter for users.
