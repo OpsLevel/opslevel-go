@@ -1,0 +1,36 @@
+name: "Enum Gen"
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch all tags
+        run: git fetch --force --tags
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Tests
+        run: |-
+          task setup
+          task generate
+      - name: Ensure Changelog
+        run: |
+          git config user.name "OpsLevel Bots"
+          git config user.email "bots@opslevel.com"
+          git add enum.go
+          git commit -m "Regenerate enum.go"
+          git push origin HEAD:bot/enum-gen
+          gh pr create --title "Regenerate enum.go" --body "Regenerate enum.go"
