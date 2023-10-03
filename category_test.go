@@ -83,10 +83,10 @@ func TestListRubricCategories(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"rubric": {
@@ -104,10 +104,10 @@ func TestListRubricCategories(t *testing.T) {
 						  }}}}}`,
 		},
 		{
-			`{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"rubric": {

@@ -44,7 +44,7 @@ func TestDomainGetSystems(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			Request: `{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
@@ -52,7 +52,7 @@ func TestDomainGetSystems(t *testing.T) {
 				}
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"domain": {
@@ -66,7 +66,7 @@ func TestDomainGetSystems(t *testing.T) {
 						  }}}}`,
 		},
 		{
-			`{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			Request: `{"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
@@ -74,7 +74,7 @@ func TestDomainGetSystems(t *testing.T) {
 				}
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"domain": {
@@ -107,7 +107,7 @@ func TestDomainGetTags(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"domain": {
@@ -115,7 +115,7 @@ func TestDomainGetTags(t *testing.T) {
 				}
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"domain": {
@@ -130,7 +130,7 @@ func TestDomainGetTags(t *testing.T) {
 						  }}}}`,
 		},
 		{
-			`{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"domain": {
@@ -138,7 +138,7 @@ func TestDomainGetTags(t *testing.T) {
 				}
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"domain": {
@@ -251,10 +251,10 @@ func TestDomainList(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"domains": {
@@ -266,10 +266,10 @@ func TestDomainList(t *testing.T) {
 						  }}}}`,
 		},
 		{
-			`{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"domains": {
