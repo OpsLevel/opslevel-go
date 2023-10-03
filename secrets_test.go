@@ -49,16 +49,16 @@ func TestListSecrets(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				{{ template "pagination_initial_query_variables" }}
       }`,
-			`{{ template "secret_list_response_1" }}`,
+			Response: `{{ template "secret_list_response_1" }}`,
 		},
 		{
-			`{"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				{{ template "pagination_second_query_variables" }}
 		    }`,
-			`{{ template "secret_list_response_2" }}`,
+			Response: `{{ template "secret_list_response_2" }}`,
 		},
 	}
 

@@ -93,10 +93,10 @@ func TestListInfraSchemas(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				{{ template "pagination_initial_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"infrastructureResourceSchemas": {
@@ -108,10 +108,10 @@ func TestListInfraSchemas(t *testing.T) {
 					}}}}`,
 		},
 		{
-			`{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				{{ template "pagination_second_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"infrastructureResourceSchemas": {
@@ -139,14 +139,14 @@ func TestListInfra(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				"variables": {
 					"after": "",
 					"all": true,
 					"first": 100
 				}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"infrastructureResources": {
@@ -158,14 +158,14 @@ func TestListInfra(t *testing.T) {
 					}}}}`,
 		},
 		{
-			`{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
+			Request: `{"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
 				"variables": {
 					"after": "OA",
 					"all": true,
 					"first": 100
 				}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"infrastructureResources": {

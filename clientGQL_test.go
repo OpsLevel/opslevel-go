@@ -67,8 +67,9 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 }
 
 type TestRequest struct {
-	Request  string
-	Response string
+	Request   string
+	Variables string
+	Response  string
 }
 
 func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {

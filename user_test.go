@@ -62,13 +62,13 @@ func TestGetUserTeams(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "first_page_variables" }},
                 "user": "{{ template "id1"}}"
             }
             }`,
-			`{
+			Response: `{
                 "data": {
                     "account": {
                         "user": {
@@ -83,13 +83,13 @@ func TestGetUserTeams(t *testing.T) {
                           }}}}`,
 		},
 		{
-			`{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
             "variables": {
                 {{ template "second_page_variables" }},
                 "user": "{{ template "id1"}}"
             }
             }`,
-			`{
+			Response: `{
                 "data": {
                     "account": {
                         "user": {
@@ -123,11 +123,11 @@ func TestListUser(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{
+			Request: `{
   "query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
   {{ template "pagination_initial_query_variables" }}
 }`,
-			`{
+			Response: `{
   "data": {
     "account": {
       "users": {
@@ -143,11 +143,11 @@ func TestListUser(t *testing.T) {
 }`,
 		},
 		{
-			`{
+			Request: `{
   "query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
   {{ template "pagination_second_query_variables" }}
 }`,
-			`{
+			Response: `{
   "data": {
     "account": {
       "users": {

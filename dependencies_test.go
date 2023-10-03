@@ -47,12 +47,12 @@ func TestGetServiceDependencies(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			Request: `{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
 			}}`,
-			`{"data": {"account": {
+			Response: `{"data": {"account": {
 				"service": {
 					"dependencies": {
 						"edges": [
@@ -65,12 +65,12 @@ func TestGetServiceDependencies(t *testing.T) {
 			}}}`,
 		},
 		{
-			`{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			Request: `{"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
 			}}`,
-			`{"data": {"account": {
+			Response: `{"data": {"account": {
 				"service": {
 					"dependencies": {
 						"edges": [
@@ -102,12 +102,12 @@ func TestGetServiceDependents(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			Request: `{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
 			}}`,
-			`{"data": {"account": {
+			Response: `{"data": {"account": {
 				"service": {
 					"dependents": {
 						"edges": [
@@ -120,12 +120,12 @@ func TestGetServiceDependents(t *testing.T) {
 			}}}`,
 		},
 		{
-			`{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
+			Request: `{"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
 			}}`,
-			`{"data": {"account": {
+			Response: `{"data": {"account": {
 				"service": {
 					"dependents": {
 						"edges": [

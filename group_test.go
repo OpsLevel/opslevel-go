@@ -65,12 +65,12 @@ func TestChildTeams(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
-				{{ template "first_page_variables" }},"group": "123456789"
-			}
-			}`,
-			`{
+				{{ template "first_page_variables" }},
+        "group": "123456789"
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -81,16 +81,15 @@ func TestChildTeams(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 2
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 		{
-			`{"query": "query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
-				{{ template "second_page_variables" }},"group": "123456789"
-			}
-			}`,
-			`{
+				{{ template "second_page_variables" }},
+        "group": "123456789"
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -100,8 +99,7 @@ func TestChildTeams(t *testing.T) {
 								],
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 	}
 
@@ -125,13 +123,12 @@ func TestDescendantTeams(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -142,17 +139,15 @@ func TestDescendantTeams(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 2
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 		{
-			`{"query": "query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -162,8 +157,7 @@ func TestDescendantTeams(t *testing.T) {
 								],
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 	}
 
@@ -187,13 +181,12 @@ func TestDescendantRepositories(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}}",
+			Request: `{"query": "query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -203,17 +196,16 @@ func TestDescendantRepositories(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 		{
-			`{"query": "query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}}",
+			Request: `{"query": "query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -248,13 +240,12 @@ func TestDescendantServices(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			} }`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -264,17 +255,15 @@ func TestDescendantServices(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 		{
-			`{"query": "query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -284,8 +273,7 @@ func TestDescendantServices(t *testing.T) {
 								],
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 	}
 	client := APaginatedTestClient(t, "group/descendant_services", requests...)
@@ -308,13 +296,12 @@ func TestDescendantSubgroups(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -324,17 +311,15 @@ func TestDescendantSubgroups(t *testing.T) {
 								],
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 		{
-			`{"query": "query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-			}
-			}`,
-			`{
+			}}`,
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -344,8 +329,7 @@ func TestDescendantSubgroups(t *testing.T) {
 								],
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
-							}
-						  }}}}`,
+							}}}}}`,
 		},
 	}
 	client := APaginatedTestClient(t, "group/descendant_subgroups", requests...)
@@ -390,11 +374,10 @@ func TestListGroups(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{
-    "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-{{ template "pagination_initial_query_variables" }}
-  }`,
-			`{
+			Request: `{"query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
+      {{ template "pagination_initial_query_variables" }}
+      }`,
+			Response: `{
   "data": {
     "account": {
       "groups": {
@@ -427,11 +410,11 @@ func TestListGroups(t *testing.T) {
 }`,
 		},
 		{
-			`{
+			Request: `{
     "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
 {{ template "pagination_second_query_variables" }}
   }`,
-			`{
+			Response: `{
   "data": {
     "account": {
       "groups": {
@@ -472,13 +455,13 @@ func TestMembers(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "first_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"group": {
@@ -493,13 +476,13 @@ func TestMembers(t *testing.T) {
 						  }}}}`,
 		},
 		{
-			`{"query": "query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+			Request: `{"query": "query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
 			"variables": {
 				{{ template "second_page_variables" }},
 				"group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
 			}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"group": {

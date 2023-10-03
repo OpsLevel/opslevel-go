@@ -93,10 +93,10 @@ func TestListScorecards(t *testing.T) {
 	// Arrange
 	requests := []TestRequest{
 		{
-			`{"query": "{{ template "scorecard_list_query" }}",
+			Request: `{"query": "{{ template "scorecard_list_query" }}",
 			{{ template "pagination_initial_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"scorecards": {
@@ -113,10 +113,10 @@ func TestListScorecards(t *testing.T) {
 						  }}}}`,
 		},
 		{
-			`{"query": "{{ template "scorecard_list_query" }}",
+			Request: `{"query": "{{ template "scorecard_list_query" }}",
 			{{ template "pagination_second_query_variables" }}
 			}`,
-			`{
+			Response: `{
 				"data": {
 					"account": {
 						"scorecards": {
