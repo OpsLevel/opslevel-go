@@ -245,3 +245,88 @@ func TestDeleteInfra(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 }
+
+func TestGetInfrastructureResourceTags(t *testing.T) {
+	// Arrange
+	requests := []TestRequest{
+		{
+			`{"query": "query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "first_page_variables" }},
+                "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
+            }
+            }`,
+			`{
+                  "data": {
+                    "account": {
+                      "infrastructureResource": {
+                        "tags": {
+                          "nodes": [
+                            {
+                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIw",
+                              "key": "abc",
+                              "value": "abc"
+                            },
+                            {
+                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIx",
+                              "key": "db",
+                              "value": "mongoqqqq"
+                            },
+                            {
+                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIy",
+                              "key": "db",
+                              "value": "prod"
+                            }
+                          ],
+                          {{ template "pagination_initial_pageInfo_response" }},
+                          "totalCount": 3
+                        }
+                      }
+                    }
+                  }
+                }`,
+		},
+		{
+			`{"query": "query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
+            "variables": {
+                {{ template "second_page_variables" }},
+                "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
+            }
+            }`,
+			`{
+                  "data": {
+                    "account": {
+                      "infrastructureResource": {
+                        "tags": {
+                          "nodes": [
+                            {
+                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIz",
+                              "key": "env",
+                              "value": "staging"
+                            }
+                          ],
+                          {{ template "pagination_second_pageInfo_response" }},
+                          "totalCount": 1
+                        }
+                      }
+                    }
+                  }
+                }`,
+		},
+	}
+	client := APaginatedTestClient(t, "infrastructureResource/tags", requests...)
+	// Act
+	infra := opslevel.InfrastructureResource{Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
+	resp, err := infra.GetTags(client, nil)
+	autopilot.Ok(t, err)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 4, resp.TotalCount)
+	autopilot.Equals(t, "abc", result[0].Key)
+	autopilot.Equals(t, "abc", result[0].Value)
+	autopilot.Equals(t, "db", result[2].Key)
+	autopilot.Equals(t, "prod", result[2].Value)
+	autopilot.Equals(t, "env", result[3].Key)
+	autopilot.Equals(t, "staging", result[3].Value)
+}

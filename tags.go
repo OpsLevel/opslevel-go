@@ -90,8 +90,12 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 		}
 	case TaggableResourceDomain:
 		taggableResource, err = client.GetDomain(identifier)
+	case TaggableResourceInfrastructureresource:
+		taggableResource, err = client.GetInfrastructure(identifier)
 	case TaggableResourceSystem:
 		taggableResource, err = client.GetSystem(identifier)
+	case TaggableResourceUser:
+		taggableResource, err = client.GetUser(identifier)
 	default:
 		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
 	}
