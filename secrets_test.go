@@ -47,20 +47,17 @@ func TestGetSecret(t *testing.T) {
 
 func TestListSecrets(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-				{{ template "pagination_initial_query_variables" }}
-      }`,
-			Response: `{{ template "secret_list_response_1" }}`,
-		},
-		{
-			Request: `{"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-				{{ template "pagination_second_query_variables" }}
-		    }`,
-			Response: `{{ template "secret_list_response_2" }}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response:  `{{ template "secret_list_response_1" }}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response:  `{{ template "secret_list_response_2" }}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
 	client := TmpPaginatedTestClient(t, "secrets/list", requests...)
 	// Act

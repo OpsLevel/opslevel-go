@@ -135,48 +135,18 @@ func TestGetRepository(t *testing.T) {
 
 func TestListRepositories(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
-            "variables": {
-                {{ template "first_page_variables" }}
-            }
-            }`,
-			Response: `{
-                      "data": {
-                        "account": {
-                          "repositories": {
-                            "nodes": [
-                              {{ template "repository_1" }}
-                            ],
-                            {{ template "pagination_initial_pageInfo_response" }},
-                            "totalCount": 1
-                          }
-                        }
-                      }
-                    }`,
-		},
-		{
-			Request: `{"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
-            "variables": {
-                {{ template "second_page_variables" }}
-            }
-            }`,
-			Response: `{
-                      "data": {
-                        "account": {
-                          "repositories": {
-                            "nodes": [
-                              {{ template "repository_2" }}
-                            ],
-                            {{ template "pagination_second_pageInfo_response" }},
-                            "totalCount": 1
-                          }
-                        }
-                      }
-                    }`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }} }`,
+		Response:  `{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_1" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }} }`,
+		Response:  `{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
 	client := TmpPaginatedTestClient(t, "repositories/list", requests...)
 	// Act
 	resp, err := client.ListRepositories(nil)
@@ -190,50 +160,18 @@ func TestListRepositories(t *testing.T) {
 
 func TestListRepositoriesWithTier(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
-            "variables": {
-                {{ template "first_page_variables" }},
-                "tier": "tier_1"
-            }
-            }`,
-			Response: `{
-                      "data": {
-                        "account": {
-                          "repositories": {
-                            "nodes": [
-                              {{ template "repository_1" }}
-                            ],
-                            {{ template "pagination_initial_pageInfo_response" }},
-                            "totalCount": 1
-                          }
-                        }
-                      }
-                    }`,
-		},
-		{
-			Request: `{"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}",
-            "variables": {
-                {{ template "second_page_variables" }},
-                "tier": "tier_1"
-            }
-            }`,
-			Response: `{
-                      "data": {
-                        "account": {
-                          "repositories": {
-                            "nodes": [
-                              {{ template "repository_2" }}
-                            ],
-                            {{ template "pagination_second_pageInfo_response" }},
-                            "totalCount": 1
-                          }
-                        }
-                      }
-                    }`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "tier": "tier_1" }`,
+		Response:  `{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_1" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "tier": "tier_1" }`,
+		Response:  `{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
 	client := TmpPaginatedTestClient(t, "repositories/list_with_tier", requests...)
 	// Act
 	resp, err := client.ListRepositoriesWithTier("tier_1", nil)

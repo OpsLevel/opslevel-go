@@ -235,13 +235,10 @@ func TestGetGroupWithAlias(t *testing.T) {
 
 func TestListGroups(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-      {{ template "pagination_initial_query_variables" }}
-      }`,
-			Response: `{
-  "data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response: `{ "data": {
     "account": {
       "groups": {
         "nodes": [
@@ -265,20 +262,14 @@ func TestListGroups(t *testing.T) {
             "parent": null
           }
         ],
-{{ template "pagination_initial_pageInfo_response" }},
+        {{ template "pagination_initial_pageInfo_response" }},
         "totalCount": 2
-      }
-    }
-  }
-}`,
-		},
-		{
-			Request: `{
-    "query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-{{ template "pagination_second_query_variables" }}
-  }`,
-			Response: `{
-  "data": {
+      }}}}`,
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response: `{"data": {
     "account": {
       "groups": {
         "nodes": [
@@ -294,14 +285,12 @@ func TestListGroups(t *testing.T) {
             }
           }
         ],
-{{ template "pagination_second_pageInfo_response" }},
+        {{ template "pagination_second_pageInfo_response" }},
         "totalCount": 1
-      }
-    }
-  }
-}`,
-		},
+      }}}}`,
 	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
 	client := TmpPaginatedTestClient(t, "group/list", requests...)
 	// Act
 	response, err := client.ListGroups(nil)
