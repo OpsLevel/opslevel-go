@@ -62,7 +62,7 @@ func TestListSecrets(t *testing.T) {
 		},
 	}
 
-	client := APaginatedTestClient(t, "secrets/list", requests...)
+	client := TmpPaginatedTestClient(t, "secrets/list", requests...)
 	// Act
 	secretsVaultsSecretConnection, err := client.ListSecretsVaultsSecret(nil)
 	secretNode := secretsVaultsSecretConnection.Nodes

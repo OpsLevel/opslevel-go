@@ -186,7 +186,7 @@ func TestListFilters(t *testing.T) {
 						  }}}}`,
 		},
 	}
-	client := APaginatedTestClient(t, "filter/list", requests...)
+	client := TmpPaginatedTestClient(t, "filter/list", requests...)
 	// Act
 	response, err := client.ListFilters(nil)
 	result := response.Nodes

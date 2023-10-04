@@ -122,7 +122,7 @@ func TestListRubricCategories(t *testing.T) {
 						  }}}}}`,
 		},
 	}
-	client := APaginatedTestClient(t, "rubric/category_list", requests...)
+	client := TmpPaginatedTestClient(t, "rubric/category_list", requests...)
 	// Act
 	response, err := client.ListCategories(nil)
 	result := response.Nodes

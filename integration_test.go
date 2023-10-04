@@ -177,7 +177,7 @@ func TestListIntegrations(t *testing.T) {
 		},
 	}
 
-	client := APaginatedTestClient(t, "integration/list", requests...)
+	client := TmpPaginatedTestClient(t, "integration/list", requests...)
 	// Act
 	response, err := client.ListIntegrations(nil)
 	result := response.Nodes

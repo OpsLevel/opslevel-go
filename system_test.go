@@ -42,16 +42,10 @@ func TestSystemCreate(t *testing.T) {
 
 func TestSystemGetServices(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"system": {
-					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
-				}}}`,
-			Response: `{
-				"data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
+		Response: `{ "data": {
 					"account": {
 						"system": {
 							"childServices": {
@@ -62,16 +56,11 @@ func TestSystemGetServices(t *testing.T) {
 								{{ template "pagination_initial_pageInfo_response" }},
 								"totalCount": 2
 							}}}}}`,
-		},
-		{
-			Request: `{"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"system": {
-					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
-				}}}`,
-			Response: `{
-				"data": {
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
+		Response: `{ "data": {
 					"account": {
 						"system": {
 							"childServices": {
@@ -81,10 +70,10 @@ func TestSystemGetServices(t *testing.T) {
 								{{ template "pagination_second_pageInfo_response" }},
 								"totalCount": 1
 							}}}}}`,
-		},
 	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "system/child_services", requests...)
+	client := TmpPaginatedTestClient(t, "system/child_services", requests...)
 	system := ol.SystemId{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
@@ -101,52 +90,19 @@ func TestSystemGetServices(t *testing.T) {
 
 func TestSystemGetTags(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "first_page_variables" }},
-				"system": {
-					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
-				}
-			}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"system": {
-							"tags": {
-								"nodes": [
-									{{ template "tag1" }},
-									{{ template "tag2" }}
-								],
-								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 2
-							}
-						  }}}}`,
-		},
-		{
-			Request: `{"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			"variables": {
-				{{ template "second_page_variables" }},
-				"system": {
-					"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
-				}}}`,
-			Response: `{
-				"data": {
-					"account": {
-						"system": {
-							"tags": {
-								"nodes": [
-									{{ template "tag3" }}
-								],
-								{{ template "pagination_second_pageInfo_response" }},
-								"totalCount": 1
-							}}}}}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
+		Response:  `{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
+		Response:  `{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "system/tags", requests...)
+	client := TmpPaginatedTestClient(t, "system/tags", requests...)
 	system := ol.SystemId{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
@@ -242,39 +198,19 @@ func TestSystemGetAlias(t *testing.T) {
 
 func TestListSystems(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-			{{ template "pagination_initial_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"systems": {
-							"nodes": [
-								{{ template "system1_response" }},
-								{{ template "system2_response" }}
-							],
-							{{ template "pagination_initial_pageInfo_response" }}
-						  }}}}`,
-		},
-		{
-			Request: `{"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}",
-			{{ template "pagination_second_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"systems": {
-							"nodes": [
-								{{ template "system3_response" }}
-							],
-							{{ template "pagination_second_pageInfo_response" }}
-						  }}}}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response:  `{ "data": { "account": { "systems": { "nodes": [ {{ template "system1_response" }}, {{ template "system2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response:  `{ "data": { "account": { "systems": { "nodes": [ {{ template "system3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "system/list", requests...)
+	client := TmpPaginatedTestClient(t, "system/list", requests...)
 	// Act
 	response, err := client.ListSystems(nil)
 	result := response.Nodes

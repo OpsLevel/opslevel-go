@@ -123,7 +123,7 @@ func TestListInfraSchemas(t *testing.T) {
 		},
 	}
 
-	client := APaginatedTestClient(t, "infra/list_schemas", requests...)
+	client := TmpPaginatedTestClient(t, "infra/list_schemas", requests...)
 	// Act
 	response, err := client.ListInfrastructureSchemas(nil)
 	result := response.Nodes
@@ -177,7 +177,7 @@ func TestListInfra(t *testing.T) {
 		},
 	}
 
-	client := APaginatedTestClient(t, "infra/list", requests...)
+	client := TmpPaginatedTestClient(t, "infra/list", requests...)
 	// Act
 	response, err := client.ListInfrastructure(nil)
 	result := response.Nodes

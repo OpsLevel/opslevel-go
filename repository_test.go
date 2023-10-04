@@ -177,7 +177,7 @@ func TestListRepositories(t *testing.T) {
                     }`,
 		},
 	}
-	client := APaginatedTestClient(t, "repositories/list", requests...)
+	client := TmpPaginatedTestClient(t, "repositories/list", requests...)
 	// Act
 	resp, err := client.ListRepositories(nil)
 	result := resp.Nodes
@@ -234,7 +234,7 @@ func TestListRepositoriesWithTier(t *testing.T) {
                     }`,
 		},
 	}
-	client := APaginatedTestClient(t, "repositories/list_with_tier", requests...)
+	client := TmpPaginatedTestClient(t, "repositories/list_with_tier", requests...)
 	// Act
 	resp, err := client.ListRepositoriesWithTier("tier_1", nil)
 	result := resp.Nodes
@@ -392,16 +392,10 @@ func TestDeleteServiceRepository(t *testing.T) {
 
 func TestGetServices(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "first_page_variables" }},
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
-            }
-            }`,
-			Response: `{
-                  "data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc" }`,
+		Response: `{ "data": {
                     "account": {
                       "repository": {
                         "services": {
@@ -496,15 +490,11 @@ func TestGetServices(t *testing.T) {
                     }
                   }
                 }`,
-		},
-		{
-			Request: `{"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "second_page_variables" }},
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
-            }
-            }`,
-			Response: `{
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query RepositoryServicesList($after:String!$first:Int!$id:ID!){account{repository(id: $id){services(after: $after, first: $first){edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc" }`,
+		Response: `{
                   "data": {
                     "account": {
                       "repository": {
@@ -588,9 +578,10 @@ func TestGetServices(t *testing.T) {
                     }
                   }
                 }`,
-		},
 	}
-	client := APaginatedTestClient(t, "repository/services", requests...)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "repository/services", requests...)
 	// Act
 	repository := ol.Repository{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
@@ -607,14 +598,10 @@ func TestGetServices(t *testing.T) {
 
 func TestGetTags(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "first_page_variables" }},
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
-            }}`,
-			Response: `{
+	testRequestOne := TestRequest{
+		Request:   `"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc" }`,
+		Response: `{
                   "data": {
                     "account": {
                       "repository": {
@@ -643,15 +630,11 @@ func TestGetTags(t *testing.T) {
                     }
                   }
                 }`,
-		},
-		{
-			Request: `{"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "second_page_variables" }},
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"
-            }
-            }`,
-			Response: `{
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query RepositoryTagsList($after:String!$first:Int!$id:ID!){account{repository(id: $id){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc" }`,
+		Response: `{
                   "data": {
                     "account": {
                       "repository": {
@@ -670,9 +653,10 @@ func TestGetTags(t *testing.T) {
                     }
                   }
                 }`,
-		},
 	}
-	client := APaginatedTestClient(t, "repository/tags", requests...)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "repository/tags", requests...)
 	// Act
 	repository := ol.Repository{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",

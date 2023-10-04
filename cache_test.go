@@ -111,8 +111,8 @@ func TestCache(t *testing.T) {
 		},
 	}
 
-	client1 := APaginatedTestClient(t, "cache1", requests...)
-	client2 := APaginatedTestClient(t, "cache2", requests...)
+	client1 := TmpPaginatedTestClient(t, "cache1", requests...)
+	client2 := TmpPaginatedTestClient(t, "cache2", requests...)
 
 	// Act
 	ol.Cache.CacheAll(client1)

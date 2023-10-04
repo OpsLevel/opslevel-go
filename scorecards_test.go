@@ -135,7 +135,7 @@ func TestListScorecards(t *testing.T) {
 	// fmt.Print(Templated(response))
 	// panic(1)
 
-	client := APaginatedTestClient(t, "scorecards/list_scorecards", requests...)
+	client := TmpPaginatedTestClient(t, "scorecards/list_scorecards", requests...)
 	// Act
 	response, err := client.ListScorecards(nil)
 	result := response.Nodes
