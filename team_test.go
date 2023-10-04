@@ -57,16 +57,10 @@ func TestGetTeam(t *testing.T) {
 
 func TestTeamMembers(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "first_page_variables" }},
-                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-            }
-            }`,
-			Response: `{
-                "data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		Response: `{ "data": {
                     "account": {
                         "team": {
                             "members": {
@@ -76,18 +70,12 @@ func TestTeamMembers(t *testing.T) {
                                 ],
                                 {{ template "pagination_initial_pageInfo_response" }},
                                 "totalCount": 2
-                            }
-                          }}}}`,
-		},
-		{
-			Request: `{"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "second_page_variables" }},
-                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-            }
-            }`,
-			Response: `{
-                "data": {
+                  }}}}}`,
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		Response: `{ "data": {
                     "account": {
                         "team": {
                             "members": {
@@ -96,11 +84,11 @@ func TestTeamMembers(t *testing.T) {
                                 ],
                                 {{ template "pagination_second_pageInfo_response" }},
                                 "totalCount": 1
-                            }
-                          }}}}`,
-		},
+                  }}}}}`,
 	}
-	client := APaginatedTestClient(t, "team/members", requests...)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "team/members", requests...)
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
@@ -118,16 +106,10 @@ func TestTeamMembers(t *testing.T) {
 
 func TestTeamTags(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "first_page_variables" }},
-                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-            }
-            }`,
-			Response: `{
-                "data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		Response: `{ "data": {
                     "account": {
                         "team": {
                             "tags": {
@@ -140,18 +122,12 @@ func TestTeamTags(t *testing.T) {
                                 ],
                                 {{ template "pagination_initial_pageInfo_response" }},
                                 "totalCount": 1
-                            }
-                          }}}}`,
-		},
-		{
-			Request: `{"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "second_page_variables" }},
-                "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4"
-            }
-            }`,
-			Response: `{
-                "data": {
+                }}}}}`,
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": { {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		Response: `{ "data": {
                     "account": {
                         "team": {
                             "tags": {
@@ -165,10 +141,11 @@ func TestTeamTags(t *testing.T) {
                                 {{ template "pagination_second_pageInfo_response" }},
                                 "totalCount": 1
                             }
-                          }}}}`,
-		},
+                }}}}`,
 	}
-	client := APaginatedTestClient(t, "team/tags", requests...)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "team/tags", requests...)
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
@@ -201,14 +178,10 @@ func TestGetTeamWithAlias(t *testing.T) {
 
 func TestListTeams(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{
-    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-{{ template "pagination_initial_query_variables" }}
-  }`,
-			Response: `{
-    "data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response: `{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -288,20 +261,14 @@ func TestListTeams(t *testing.T) {
               "responsibilities": null
             }
           ],
-{{ template "pagination_initial_pageInfo_response" }},
-			"totalCount": 3
-        }
-      }
-    }
-  }`,
-		},
-		{
-			Request: `{
-    "query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-{{ template "pagination_second_query_variables" }}
-  }`,
-			Response: `{
-    "data": {
+        {{ template "pagination_initial_pageInfo_response" }},
+        "totalCount": 3
+        }}}}`,
+	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response: `{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -358,13 +325,11 @@ func TestListTeams(t *testing.T) {
           ],
 {{ template "pagination_second_pageInfo_response" }},
 			"totalCount": 2
-        }
-      }
-    }
-  }`,
-		},
+        }}}}`,
 	}
-	client := APaginatedTestClient(t, "team/list", requests...)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "team/list", requests...)
 	// Act
 	response, err := client.ListTeams(nil)
 	result := response.Nodes
@@ -380,18 +345,10 @@ func TestListTeams(t *testing.T) {
 
 func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{
-    "query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-	"variables": {
-		"after": "",
-		"first": 100,
-		"email": "kyle@opslevel.com"
-	}
-  }`,
-			Response: `{
-    "data": {
+	testRequestOne := TestRequest{
+		Request:   `"query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `"variables": { "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
+		Response: `{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -471,24 +428,14 @@ func TestListTeamsWithManager(t *testing.T) {
               "responsibilities": null
             }
           ],
-{{ template "pagination_initial_pageInfo_response" }},
-			"totalCount": 3
-        }
-      }
-    }
-  }`,
-		},
-		{
-			Request: `{
-    "query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-	"variables": {
-		"after": "OA",
-		"first": 100,
-		"email": "kyle@opslevel.com"
+        {{ template "pagination_initial_pageInfo_response" }},
+        "totalCount": 3
+        }}}}`,
 	}
-  }`,
-			Response: `{
-    "data": {
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `"variables": { "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
+		Response: `{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -543,15 +490,13 @@ func TestListTeamsWithManager(t *testing.T) {
               "responsibilities": null
             }
           ],
-{{ template "pagination_second_pageInfo_response" }},
-			"totalCount": 2
-        }
-      }
-    }
-  }`,
-		},
+        {{ template "pagination_second_pageInfo_response" }},
+        "totalCount": 2
+        }}}}`,
 	}
-	client := APaginatedTestClient(t, "team/list_with_manager", requests...)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "team/list_with_manager", requests...)
 	// Act
 	response, err := client.ListTeamsWithManager("kyle@opslevel.com", nil)
 	result := response.Nodes

@@ -19,10 +19,6 @@ func TestCreateWebhookAction(t *testing.T) {
       "errors": []
   }}}`
 
-	// fmt.Print(Templated(request))
-	// fmt.Print(Templated(response))
-	// panic(1)
-
 	client := ABetterTestClient(t, "custom_actions/create_action", request, response)
 
 	// Act
@@ -43,51 +39,19 @@ func TestCreateWebhookAction(t *testing.T) {
 
 func TestListCustomActions(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			{{ template "pagination_initial_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"customActionsExternalActions": {
-							"nodes": [
-								{
-									{{ template "custom_action1_response" }}
-								},
-								{
-									{{ template "custom_action2_response" }}
-								}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 2
-						  }}}}`,
-		},
-		{
-			Request: `{"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			{{ template "pagination_second_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"customActionsExternalActions": {
-							"nodes": [
-								{
-									{{ template "custom_action3_response" }}
-								}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }}}}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response:  `{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	}
-	// An easy way to see the results of templating is by uncommenting this
-	// fmt.Print(Templated(request))
-	// fmt.Print(Templated(response))
-	// panic(1)
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response:  `{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "custom_actions/list_actions", requests...)
+	client := TmpPaginatedTestClient(t, "custom_actions/list_actions", requests...)
 	// Act
 	response, err := client.ListCustomActions(nil)
 	result := response.Nodes
@@ -275,53 +239,19 @@ func TestGetTriggerDefinition(t *testing.T) {
 
 func TestListTriggerDefinitions(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			{{ template "pagination_initial_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"customActionsTriggerDefinitions": {
-							"nodes": [
-								{
-									{{ template "custom_action_trigger1_response" }}
-								},
-								{
-									{{ template "custom_action_trigger2_response" }}
-								}
-							],
-							{{ template "pagination_initial_pageInfo_response" }},
-							"totalCount": 2
-						  }}}}`,
-		},
-		{
-			Request: `{"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}",
-			{{ template "pagination_second_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"customActionsTriggerDefinitions": {
-							"nodes": [
-								{
-									{{ template "custom_action_trigger3_response" }}
-								}
-							],
-							{{ template "pagination_second_pageInfo_response" }},
-							"totalCount": 1
-						  }}}}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response:  `{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger1_response" }} }, { {{ template "custom_action_trigger2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response:  `{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	// An easy way to see the results of templating is by uncommenting this
-	// fmt.Println(Templated(requests[0].Response))
-	// panic(true)
-
-	//"{account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate}}}}",
-
-	client := APaginatedTestClient(t, "custom_actions/list_triggers", requests...)
+	client := TmpPaginatedTestClient(t, "custom_actions/list_triggers", requests...)
 	// Act
 	triggers, err := client.ListTriggerDefinitions(nil)
 	result := triggers.Nodes
@@ -445,20 +375,19 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 
 func TestListExtendedTeamAccess(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-      "variables": {{ template "extended_team_access_get_vars_1" }} }`,
-			Response: `{{ template "extended_team_access_response_1" }}`,
-		},
-		{
-			Request: `{"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-      "variables": {{ template "extended_team_access_get_vars_2" }} }`,
-			Response: `{{ template "extended_team_access_response_2" }}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": {{ template "extended_team_access_get_vars_1" }}`,
+		Response:  `{{ template "extended_team_access_response_1" }}`,
 	}
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `"variables": {{ template "extended_team_access_get_vars_2" }}`,
+		Response:  `{{ template "extended_team_access_response_2" }}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "custom_actions/list_extended_team_access", requests...)
+	client := TmpPaginatedTestClient(t, "custom_actions/list_extended_team_access", requests...)
 	id1 := *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
 

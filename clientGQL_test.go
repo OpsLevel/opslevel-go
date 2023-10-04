@@ -83,6 +83,18 @@ func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRe
 	return autopilot.Server.URL + url
 }
 
+func TmpPaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
+	oldStyleRequests := []TestRequest{}
+	for _, request := range requests {
+		oldStyleRequest := TestRequest{
+			Request:  fmt.Sprintf(`{%s, %s}`, request.Request, request.Variables),
+			Response: request.Response,
+		}
+		oldStyleRequests = append(oldStyleRequests, oldStyleRequest)
+	}
+	return APaginatedTestClient(t, endpoint, oldStyleRequests...)
+}
+
 func APaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
 	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))

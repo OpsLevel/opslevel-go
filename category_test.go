@@ -81,48 +81,19 @@ func TestGetMissingRubricCategory(t *testing.T) {
 
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			{{ template "pagination_initial_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"rubric": {
-							"categories": {
-								"nodes": [
-									{
-										{{ template "rubric_categories_response1" }}
-									},
-									{
-										{{ template "rubric_categories_response2" }}
-									}
-								],
-								{{ template "pagination_initial_pageInfo_response" }},
-								"totalCount": 2
-						  }}}}}`,
-		},
-		{
-			Request: `{"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-			{{ template "pagination_second_query_variables" }}
-			}`,
-			Response: `{
-				"data": {
-					"account": {
-						"rubric": {
-							"categories": {
-								"nodes": [
-									{
-										{{ template "rubric_categories_response3" }}
-									}
-								],
-								{{ template "pagination_second_pageInfo_response" }},
-								"totalCount": 1
-						  }}}}}`,
-		},
+	testRequestOne := TestRequest{
+		Request:   `"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `{{ template "pagination_initial_query_variables" }}`,
+		Response:  `{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response1" }} }, { {{ template "rubric_categories_response2" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	}
-	client := APaginatedTestClient(t, "rubric/category_list", requests...)
+	testRequestTwo := TestRequest{
+		Request:   `"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		Variables: `{{ template "pagination_second_query_variables" }}`,
+		Response:  `{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response3" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+	}
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+
+	client := TmpPaginatedTestClient(t, "rubric/category_list", requests...)
 	// Act
 	response, err := client.ListCategories(nil)
 	result := response.Nodes
