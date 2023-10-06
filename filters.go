@@ -34,10 +34,11 @@ type Filter struct {
 }
 
 type FilterPredicate struct {
-	Key     PredicateKeyEnum  `json:"key"`
-	KeyData string            `json:"keyData,omitempty"`
-	Type    PredicateTypeEnum `json:"type"`
-	Value   string            `json:"value,omitempty"`
+	Key           PredicateKeyEnum  `json:"key"`
+	KeyData       string            `json:"keyData,omitempty"`
+	Type          PredicateTypeEnum `json:"type"`
+	Value         string            `json:"value,omitempty"`
+	CaseSensitive *bool             `json:"caseSensitive,omitempty"`
 }
 
 type FilterConnection struct {

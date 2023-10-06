@@ -1,5 +1,5 @@
 {{- define "scorecard_create_request" }}{
-    "query":"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}",
+    "query":"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}",
     "variables":{"input":{"description":"a new scorecard with an attached filter id","name":"new scorecard","ownerId":"Z2lkOi8vMTIzNDU2Nzg5Cg==","filterId":"Z2lkOi8vMTIzNDU2MTIzCg=="}}
 }{{ end }}
 
@@ -8,7 +8,7 @@
 }{{ end }}
 
 {{- define "scorecard_update_request" }}{
-    "query":"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}",
+    "query":"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}",
     "variables":{"input":{"description":"this scorecard was updated","filterId":"Z2lkOi8vMTIzNDU2NDU2Cg==","name":"updated scorecard","ownerId":"Z2lkOi8vMTIzNDU2Nzc3Cg=="},"scorecard":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK"}}
 }{{ end }}
 
@@ -26,7 +26,7 @@
 }{{ end }}
 
 {{- define "scorecard_get_request" }}{
-    "query":"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}",
+    "query":"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}",
     "variables":{"input":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK"}}
 }{{ end }}
 
@@ -34,7 +34,7 @@
     "data":{"account":{"scorecard":{"aliases":["existing_scorecard"],"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK","description":"hello there!","filter":{"connective":null,"htmlUrl":"https://app.opslevel.com/filters/123456123","id":"Z2lkOi8vMTIzNDU2MTIzCg==","name":"some filter","predicates":[]},"name":"fetched scorecard","owner":{"id":"Z2lkOi8vMTIzNDU2Nzg5Cg=="},"passingChecks":10,"serviceCount":20,"totalChecks":30}}}
 }{{ end }}
 
-{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}{{ end }}
+{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}{{ end }}
 
 {{- define "scorecard_1_response" }}
     "id":"Z2lkOi8vMTExMTExMTEK",
