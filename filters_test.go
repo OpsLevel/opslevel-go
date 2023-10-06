@@ -11,7 +11,7 @@ import (
 func TestCreateFilter(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
 	"variables":{
 		"input": {
 			"name": "Kubernetes",
@@ -55,7 +55,7 @@ func TestCreateFilter(t *testing.T) {
 func TestCreateFilterNested(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
 	"variables":{
 		"input": {
 			{{ template "create_filter_nested_input" }}
@@ -104,7 +104,7 @@ func TestCreateFilterNested(t *testing.T) {
 func TestGetFilter(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value}}}}",
+    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}",
 	"variables":{
 		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
     }
@@ -128,7 +128,7 @@ func TestGetFilter(t *testing.T) {
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value}}}}",
+    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}",
 	"variables":{
 		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"
     }
@@ -148,12 +148,12 @@ func TestGetMissingFilter(t *testing.T) {
 func TestListFilters(t *testing.T) {
 	// Arrange
 	testRequestOne := TestRequest{
-		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		Variables: `{{ template "pagination_initial_query_variables" }}`,
 		Response:  `{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	}
 	testRequestTwo := TestRequest{
-		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		Variables: `{{ template "pagination_second_query_variables" }}`,
 		Response:  `{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	}
@@ -175,7 +175,7 @@ func TestListFilters(t *testing.T) {
 func TestUpdateFilter(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
 	"variables":{
 		"input": {
 			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -218,7 +218,7 @@ func TestUpdateFilter(t *testing.T) {
 func TestUpdateFilterNested(t *testing.T) {
 	// Arrange
 	request := `{
-    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},errors{message,path}}}",
+    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
 	"variables":{
 		"input": {
 			{{ template "update_filter_nested_input" }}
@@ -262,6 +262,122 @@ func TestUpdateFilterNested(t *testing.T) {
 	autopilot.Equals(t, ol.PredicateKeyEnumFilterID, result.Predicates[1].Key)
 	autopilot.Equals(t, ol.PredicateTypeEnumMatches, result.Predicates[1].Type)
 	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY", result.Predicates[1].Value)
+}
+
+func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
+	// Arrange
+	request := `{
+    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+			"name": "Test Updated",
+			"predicates": [
+				{
+				"key": "tier_index",
+				"type": "equals",
+				"value": "1",
+				"caseSensitive": true
+				}
+			]
+		}
+    }
+}`
+	response := `{"data": {
+	"filterUpdate": {
+		"filter": {
+		  "connective": null,
+		  "htmlUrl": "https://app.opslevel.com/filters/401",
+		  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
+		  "name": "Tier 1 Services",
+		  "predicates": [
+			{
+			  "key": "tier_index",
+			  "keyData": null,
+			  "type": "equals",
+			  "value": "1",
+			  "caseSensitive": true
+			}
+		  ]
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "filter/update_case_sensitive_true", request, response)
+	// Act
+	result, err := client.UpdateFilter(ol.FilterUpdateInput{
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+		Name: "Test Updated",
+		Predicates: []ol.FilterPredicate{{
+			Key:           ol.PredicateKeyEnumTierIndex,
+			Type:          ol.PredicateTypeEnumEquals,
+			Value:         "1",
+			CaseSensitive: ol.Bool(true),
+		}},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Tier 1 Services", result.Name)
+	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
+	autopilot.Equals(t, ol.Bool(true), result.Predicates[0].CaseSensitive)
+}
+
+func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
+	// Arrange
+	request := `{
+    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
+	"variables":{
+		"input": {
+			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+			"name": "Test Updated",
+			"predicates": [
+				{
+				"key": "tier_index",
+				"type": "equals",
+				"value": "1",
+				"caseSensitive": false
+				}
+			]
+		}
+    }
+}`
+	response := `{"data": {
+	"filterUpdate": {
+		"filter": {
+		  "connective": null,
+		  "htmlUrl": "https://app.opslevel.com/filters/401",
+		  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
+		  "name": "Tier 1 Services",
+		  "predicates": [
+			{
+			  "key": "tier_index",
+			  "keyData": null,
+			  "type": "equals",
+			  "value": "1",
+			  "caseSensitive": false
+			}
+		  ]
+		},
+		"errors": []
+	}
+}}`
+	client := ABetterTestClient(t, "filter/update_case_sensitive_false", request, response)
+	// Act
+	result, err := client.UpdateFilter(ol.FilterUpdateInput{
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
+		Name: "Test Updated",
+		Predicates: []ol.FilterPredicate{{
+			Key:           ol.PredicateKeyEnumTierIndex,
+			Type:          ol.PredicateTypeEnumEquals,
+			Value:         "1",
+			CaseSensitive: ol.Bool(false),
+		}},
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, "Tier 1 Services", result.Name)
+	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
+	autopilot.Equals(t, ol.Bool(false), result.Predicates[0].CaseSensitive)
 }
 
 func TestDeleteFilter(t *testing.T) {

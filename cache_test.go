@@ -35,7 +35,7 @@ func TestCache(t *testing.T) {
 		Response:  `{"data":{"account":{"rubric":{ "levels":{ "nodes":[{{ template "level_1" }}] } }}}}`,
 	}
 	testRequestSix := TestRequest{
-		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		Variables: `"variables":{ "after": "", "first": 100 }`,
 		Response:  `{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	}
