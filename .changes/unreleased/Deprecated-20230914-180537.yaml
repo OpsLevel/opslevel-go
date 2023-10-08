@@ -1,3 +1,0 @@
-kind: Deprecated
-body: removed RepositoryTagConnection since TagConnection already exists
-time: 2023-09-14T18:05:37.573959-04:00
