@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
@@ -13,6 +14,11 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+)
+
+const (
+	queryPrefix string = `"query":`
+	varPrefix   string = `"variables":`
 )
 
 func TestMain(m *testing.M) {
@@ -66,10 +72,69 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
+func NewTestRequest(request string, variables string, response string) TestRequest {
+	testRequest := TestRequest{templater: autopilot.NewFixtureTemplater()}
+	if err := testRequest.ParseRequest(request); err != nil {
+		panic(err)
+	}
+	if err := testRequest.ParseVariables(variables); err != nil {
+		panic(err)
+	}
+	if err := testRequest.ParseResponse(response); err != nil {
+		panic(err)
+	}
+	return testRequest
+}
+
 type TestRequest struct {
+	templater *autopilot.FixtureTemplater
 	Request   string
 	Variables string
 	Response  string
+}
+
+func (t *TestRequest) IsValidJson(data string) bool {
+	return json.Valid([]byte(data))
+}
+
+func (t *TestRequest) ParseRequest(rawRequest string) error {
+	queryValue, _ := strings.CutPrefix(rawRequest, queryPrefix)
+	parsedRequest, err := t.templater.Use(fmt.Sprintf("{%s %s}", queryPrefix, queryValue))
+	if err != nil {
+		return err
+	}
+
+	if !t.IsValidJson(parsedRequest) {
+		return fmt.Errorf("invalid json: %s", parsedRequest)
+	}
+	t.Request = strings.Trim(parsedRequest, "{}")
+	return nil
+}
+
+func (t *TestRequest) ParseVariables(rawVariables string) error {
+	variables, _ := strings.CutPrefix(rawVariables, varPrefix)
+	parsedVariables, err := t.templater.Use(variables)
+	if err != nil {
+		return err
+	}
+
+	if !t.IsValidJson(fmt.Sprintf("{%s %s}", varPrefix, parsedVariables)) {
+		return fmt.Errorf("invalid json: %s", parsedVariables)
+	}
+	t.Variables = fmt.Sprintf("%s %s", varPrefix, parsedVariables)
+	return nil
+}
+
+func (t *TestRequest) ParseResponse(rawResponse string) error {
+	parsedResponse, err := t.templater.Use(rawResponse)
+	if err != nil {
+		return err
+	}
+	if !t.IsValidJson(parsedResponse) {
+		return fmt.Errorf("invalid json: %s", parsedResponse)
+	}
+	t.Response = parsedResponse
+	return nil
 }
 
 func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
@@ -81,6 +146,11 @@ func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRe
 		requestCount += 1
 	})
 	return autopilot.Server.URL + url
+}
+
+func TmpBetterTestClient(t *testing.T, endpoint string, testRequest TestRequest) *ol.Client {
+	oldStyleRequest := fmt.Sprintf(`{%s, %s}`, testRequest.Request, testRequest.Variables)
+	return ABetterTestClient(t, endpoint, oldStyleRequest, testRequest.Response)
 }
 
 func TmpPaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {

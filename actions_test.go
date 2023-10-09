@@ -10,16 +10,13 @@ import (
 
 func TestCreateWebhookAction(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
-		"variables":{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST","liquidTemplate":"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}","name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}
-	}`
-	response := `{"data": {"customActionsWebhookActionCreate": {
-      "webhookAction": {{ template "custom_action1" }},
-      "errors": []
-  }}}`
+	testRequest := NewTestRequest(
+		`"query": "mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}"`,
+		`"variables":{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST","liquidTemplate":"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}","name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
+		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
+	)
 
-	client := ABetterTestClient(t, "custom_actions/create_action", request, response)
+	client := TmpBetterTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
