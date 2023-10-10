@@ -40,7 +40,7 @@ func TestCache(t *testing.T) {
 		Response:  `{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	}
 	testRequestSeven := TestRequest{
-		Request:   `"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		Request:   `"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		Variables: `"variables":{ "after": "", "first": 100 }`,
 		Response:  `{"data":{"account":{ "integrations":{ "nodes":[{{ template "integration_1" }}] } }}}`,
 	}

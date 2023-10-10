@@ -20,8 +20,8 @@ type Integration struct {
 	CreatedAt   iso8601.Time `graphql:"createdAt"`
 	InstalledAt iso8601.Time `graphql:"installedAt"`
 
-	AWSIntegrationFragment      `graphql:"... on AwsIntegration"`
-	NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
+	AWSIntegrationFragment `graphql:"... on AwsIntegration"`
+	//NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
 }
 
 type AWSIntegrationFragment struct {
