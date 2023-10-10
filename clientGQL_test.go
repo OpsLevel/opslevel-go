@@ -74,15 +74,9 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 
 func NewTestRequest(request string, variables string, response string) TestRequest {
 	testRequest := TestRequest{templater: autopilot.NewFixtureTemplater()}
-	if err := testRequest.ParseRequest(request); err != nil {
-		panic(err)
-	}
-	if err := testRequest.ParseVariables(variables); err != nil {
-		panic(err)
-	}
-	if err := testRequest.ParseResponse(response); err != nil {
-		panic(err)
-	}
+	testRequest.ParseRequest(request)
+	testRequest.ParseVariables(variables)
+	testRequest.ParseResponse(response)
 	return testRequest
 }
 
@@ -97,44 +91,42 @@ func (t *TestRequest) IsValidJson(data string) bool {
 	return json.Valid([]byte(data))
 }
 
-func (t *TestRequest) ParseRequest(rawRequest string) error {
+func (t *TestRequest) ParseRequest(rawRequest string) {
 	queryValue, _ := strings.CutPrefix(rawRequest, queryPrefix)
 	parsedRequest, err := t.templater.Use(fmt.Sprintf("{%s %s}", queryPrefix, queryValue))
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	if !t.IsValidJson(parsedRequest) {
-		return fmt.Errorf("invalid json: %s", parsedRequest)
+		panic(fmt.Errorf("invalid json: %s", parsedRequest))
 	}
 	t.Request = strings.Trim(parsedRequest, "{}")
-	return nil
 }
 
-func (t *TestRequest) ParseVariables(rawVariables string) error {
-	variables, _ := strings.CutPrefix(rawVariables, varPrefix)
-	parsedVariables, err := t.templater.Use(variables)
+func (t *TestRequest) ParseVariables(rawVariables string) {
+	parsedVariables, err := t.templater.Use(rawVariables)
 	if err != nil {
-		return err
+		panic(err)
 	}
+	parsedVariables = strings.Trim(parsedVariables, "\n")
+	parsedVariables, _ = strings.CutPrefix(parsedVariables, varPrefix)
 
 	if !t.IsValidJson(fmt.Sprintf("{%s %s}", varPrefix, parsedVariables)) {
-		return fmt.Errorf("invalid json: %s", parsedVariables)
+		panic(fmt.Errorf("invalid json: %s", parsedVariables))
 	}
 	t.Variables = fmt.Sprintf("%s %s", varPrefix, parsedVariables)
-	return nil
 }
 
-func (t *TestRequest) ParseResponse(rawResponse string) error {
+func (t *TestRequest) ParseResponse(rawResponse string) {
 	parsedResponse, err := t.templater.Use(rawResponse)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	if !t.IsValidJson(parsedResponse) {
-		return fmt.Errorf("invalid json: %s", parsedResponse)
+		panic(fmt.Errorf("invalid json: %s", parsedResponse))
 	}
 	t.Response = parsedResponse
-	return nil
 }
 
 func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
