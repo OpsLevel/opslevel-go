@@ -147,19 +147,19 @@ func TestGetMissingFilter(t *testing.T) {
 
 func TestListFilters(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		Variables: `{{ template "pagination_initial_query_variables" }}`,
-		Response:  `{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		Variables: `{{ template "pagination_second_query_variables" }}`,
-		Response:  `{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "filter/list", requests...)
+	client := APaginatedTestClient(t, "filter/list", requests...)
 	// Act
 	response, err := client.ListFilters(nil)
 	result := response.Nodes

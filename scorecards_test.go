@@ -91,19 +91,19 @@ func TestGetScorecard(t *testing.T) {
 
 func TestListScorecards(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "{{ template "scorecard_list_query" }}"`,
-		Variables: `{{ template "pagination_initial_query_variables" }}`,
-		Response:  `{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_1_response" }} }, { {{ template "scorecard_2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "{{ template "scorecard_list_query" }}"`,
-		Variables: `{{ template "pagination_second_query_variables" }}`,
-		Response:  `{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query": "{{ template "scorecard_list_query" }}"`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_1_response" }} }, { {{ template "scorecard_2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query": "{{ template "scorecard_list_query" }}"`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "scorecards/list_scorecards", requests...)
+	client := APaginatedTestClient(t, "scorecards/list_scorecards", requests...)
 	// Act
 	response, err := client.ListScorecards(nil)
 	result := response.Nodes

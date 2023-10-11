@@ -15,7 +15,7 @@ func TestCreateWebhookAction(t *testing.T) {
 		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
-	client := TmpBetterTestClient(t, "custom_actions/create_action", testRequest)
+	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
@@ -47,7 +47,7 @@ func TestListCustomActions(t *testing.T) {
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "custom_actions/list_actions", requests...)
+	client := BestTestClient(t, "custom_actions/list_actions", requests...)
 	// Act
 	response, err := client.ListCustomActions(nil)
 	result := response.Nodes
@@ -66,7 +66,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 		`"variables":{"input":{"id": "123456789", "httpMethod":"PUT"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/update_action", testRequest)
+	client := BestTestClient(t, "custom_actions/update_action", testRequest)
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
@@ -87,7 +87,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
-	client := TmpBetterTestClient(t, "custom_actions/update_action2", testRequest)
+	client := BestTestClient(t, "custom_actions/update_action2", testRequest)
 	headers := ol.JSON{
 		"Accept": "application/json",
 	}
@@ -112,7 +112,7 @@ func TestDeleteWebhookAction(t *testing.T) {
 		`{"data": {"customActionsWebhookActionDelete": { "errors": [] }}}`,
 	)
 
-	client := TmpBetterTestClient(t, "custom_actions/delete_action", testRequest)
+	client := BestTestClient(t, "custom_actions/delete_action", testRequest)
 
 	// Act
 	err := client.DeleteWebhookAction(ol.IdentifierInput{
@@ -130,7 +130,7 @@ func TestCreateTriggerDefinition(t *testing.T) {
 		`"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
 		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/create_trigger", testRequest)
+	client := BestTestClient(t, "custom_actions/create_trigger", testRequest)
 
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
@@ -152,7 +152,7 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 		`"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","extendedTeamAccess":[{"alias":"example_1"},{"alias":"example_1"}],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
 		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/create_trigger_with_global_entity", testRequest)
+	client := BestTestClient(t, "custom_actions/create_trigger_with_global_entity", testRequest)
 
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
@@ -180,7 +180,7 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 
-	client := TmpBetterTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", testRequest)
+	client := BestTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", testRequest)
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:               "Deploy Rollback",
@@ -202,7 +202,7 @@ func TestGetTriggerDefinition(t *testing.T) {
 		`"variables":{"input":{"id":"123456789"}}`,
 		`{"data": {"account": { "customActionsTriggerDefinition": {{ template "custom_action_trigger2" }} }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/get_trigger", testRequest)
+	client := BestTestClient(t, "custom_actions/get_trigger", testRequest)
 
 	// Act
 	trigger, err := client.GetTriggerDefinition(ol.IdentifierInput{Id: "123456789"})
@@ -227,7 +227,7 @@ func TestListTriggerDefinitions(t *testing.T) {
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "custom_actions/list_triggers", requests...)
+	client := APaginatedTestClient(t, "custom_actions/list_triggers", requests...)
 	// Act
 	triggers, err := client.ListTriggerDefinitions(nil)
 	result := triggers.Nodes
@@ -249,7 +249,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 		`"variables":{"input":{"id":"123456789", "filterId":null}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/update_trigger", testRequest)
+	client := BestTestClient(t, "custom_actions/update_trigger", testRequest)
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
@@ -268,7 +268,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 		`"variables":{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": []}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/update_trigger2", testRequest)
+	client := BestTestClient(t, "custom_actions/update_trigger2", testRequest)
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
@@ -289,7 +289,7 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 		`"variables":{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}]}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
-	client := TmpBetterTestClient(t, "custom_actions/update_trigger3", testRequest)
+	client := BestTestClient(t, "custom_actions/update_trigger3", testRequest)
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
@@ -354,7 +354,7 @@ func TestListExtendedTeamAccess(t *testing.T) {
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "custom_actions/list_extended_team_access", requests...)
+	client := APaginatedTestClient(t, "custom_actions/list_extended_team_access", requests...)
 	id1 := *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
 

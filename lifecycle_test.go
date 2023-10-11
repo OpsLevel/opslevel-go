@@ -8,12 +8,10 @@ import (
 
 func TestListLifecycles(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query LifecycleList{account{lifecycles{alias,description,id,index,name}}}",
-	"variables":{}
-}`
-	response := `{"data": {
-	"account": {
+	testRequest := NewTestRequest(
+		`"query": "query LifecycleList{account{lifecycles{alias,description,id,index,name}}}"`,
+		`"variables":{}`,
+		`{"data": { "account": {
 		"lifecycles": [
 			{{ template "lifecycle-pre-alpha" }},
 			{{ template "lifecycle-alpha" }},
@@ -21,9 +19,9 @@ func TestListLifecycles(t *testing.T) {
 			{{ template "lifecycle-ga" }},
 			{{ template "lifecycle-eol" }}
 		]
-	}
-}}`
-	client := ABetterTestClient(t, "lifecycles", request, response)
+    }}}`,
+	)
+	client := BestTestClient(t, "lifecycles", testRequest)
 	// Act
 	result, err := client.ListLifecycles()
 	// Assert
