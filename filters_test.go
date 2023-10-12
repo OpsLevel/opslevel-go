@@ -10,31 +10,13 @@ import (
 
 func TestCreateFilter(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"name": "Kubernetes",
-			"predicates": [
-				{
-				"key": "tier_index",
-				"type": "equals",
-				"value": "1"
-				}
-			],
-			"connective": "and"
-		}
-    }
-}`
-	response := `{"data": {
-	"filterCreate": {
-		"filter": {
-			{{ template "filter_tier1service_response" }}
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "filter/create", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+		`"variables": {"input": {"name": "Kubernetes", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1" } ], "connective": "and" }}`,
+		`{"data": {"filterCreate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
@@ -54,24 +36,13 @@ func TestCreateFilter(t *testing.T) {
 
 func TestCreateFilterNested(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			{{ template "create_filter_nested_input" }}
-		}
-    }
-}`
-	response := `{"data": {
-	"filterCreate": {
-		"filter": {
-			{{ template "create_filter_nested_response" }}
-		},
-		"errors": []
-	}
-}}`
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+		`"variables": {"input": { {{ template "create_filter_nested_input" }} }}`,
+		`{"data": {"filterCreate": {"filter": { {{ template "create_filter_nested_response" }} }, "errors": [] }}}`,
+	)
 
-	client := ABetterTestClient(t, "filter/create_nested", request, response)
+	client := BestTestClient(t, "filter/create_nested", testRequest)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
@@ -103,20 +74,13 @@ func TestCreateFilterNested(t *testing.T) {
 
 func TestGetFilter(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}",
-	"variables":{
-		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"
-    }
-}`
-	response := `{"data": {
-	"account": {
-		"filter": {
-			{{ template "filter_tier1service_response" }}
-		}
-	}
-}}`
-	client := ABetterTestClient(t, "filter/get", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}"`,
+		`"variables": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
+		`{"data": {"account": {"filter": { {{ template "filter_tier1service_response" }} }}}}`,
+	)
+
+	client := BestTestClient(t, "filter/get", testRequest)
 	// Act
 	result, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -127,18 +91,13 @@ func TestGetFilter(t *testing.T) {
 
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}",
-	"variables":{
-		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"
-    }
-}`
-	response := `{"data": {
-	"account": {
-		"filter": null
-	}
-}}`
-	client := ABetterTestClient(t, "filter/get_missing", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}"`,
+		`"variables": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"}`,
+		`{"data": {"account": {"filter": null }}}`,
+	)
+
+	client := BestTestClient(t, "filter/get_missing", testRequest)
 	// Act
 	_, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf")
 	// Assert
@@ -174,31 +133,13 @@ func TestListFilters(t *testing.T) {
 
 func TestUpdateFilter(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-			"name": "Test Updated",
-			"predicates": [
-				{
-				"key": "tier_index",
-				"type": "equals",
-				"value": "1"
-				}
-			]
-		}
-    }
-}`
-	response := `{"data": {
-	"filterUpdate": {
-		"filter": {
-			{{ template "filter_tier1service_response" }}
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "filter/update", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+		`"variables": {"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1" } ] }}`,
+		`{"data": {"filterUpdate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "filter/update", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -217,23 +158,13 @@ func TestUpdateFilter(t *testing.T) {
 
 func TestUpdateFilterNested(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			{{ template "update_filter_nested_input" }}
-		}
-    }
-}`
-	response := `{"data": {
-	"filterUpdate": {
-		"filter": {
-			{{ template "update_filter_nested_response" }}
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "filter/update_nested", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+		`"variables": {"input": { {{ template "update_filter_nested_input" }} }}`,
+		`{"data": {"filterUpdate": {"filter": { {{ template "update_filter_nested_response" }} }, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
@@ -266,44 +197,31 @@ func TestUpdateFilterNested(t *testing.T) {
 
 func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-			"name": "Test Updated",
-			"predicates": [
-				{
-				"key": "tier_index",
-				"type": "equals",
-				"value": "1",
-				"caseSensitive": true
-				}
-			]
-		}
-    }
-}`
-	response := `{"data": {
-	"filterUpdate": {
-		"filter": {
-		  "connective": null,
-		  "htmlUrl": "https://app.opslevel.com/filters/401",
-		  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
-		  "name": "Tier 1 Services",
-		  "predicates": [
-			{
-			  "key": "tier_index",
-			  "keyData": null,
-			  "type": "equals",
-			  "value": "1",
-			  "caseSensitive": true
-			}
-		  ]
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "filter/update_case_sensitive_true", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+		`"variables": {"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1", "caseSensitive": true } ] }}`,
+		`{"data": {
+      "filterUpdate": {
+        "filter": {
+          "connective": null,
+          "htmlUrl": "https://app.opslevel.com/filters/401",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
+          "name": "Tier 1 Services",
+          "predicates": [
+          {
+            "key": "tier_index",
+            "keyData": null,
+            "type": "equals",
+            "value": "1",
+            "caseSensitive": true
+          }
+          ]
+        },
+        "errors": []
+      }}}`,
+	)
+
+	client := BestTestClient(t, "filter/update_case_sensitive_true", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -324,44 +242,31 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 
 func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-			"name": "Test Updated",
-			"predicates": [
-				{
-				"key": "tier_index",
-				"type": "equals",
-				"value": "1",
-				"caseSensitive": false
-				}
-			]
-		}
-    }
-}`
-	response := `{"data": {
-	"filterUpdate": {
-		"filter": {
-		  "connective": null,
-		  "htmlUrl": "https://app.opslevel.com/filters/401",
-		  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
-		  "name": "Tier 1 Services",
-		  "predicates": [
-			{
-			  "key": "tier_index",
-			  "keyData": null,
-			  "type": "equals",
-			  "value": "1",
-			  "caseSensitive": false
-			}
-		  ]
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "filter/update_case_sensitive_false", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+		`"variables": {"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1", "caseSensitive": false } ] }}`,
+		`{"data": {
+      "filterUpdate": {
+        "filter": {
+          "connective": null,
+          "htmlUrl": "https://app.opslevel.com/filters/401",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
+          "name": "Tier 1 Services",
+          "predicates": [
+          {
+            "key": "tier_index",
+            "keyData": null,
+            "type": "equals",
+            "value": "1",
+            "caseSensitive": false
+          }
+          ]
+        },
+        "errors": []
+      }}}`,
+	)
+
+	client := BestTestClient(t, "filter/update_case_sensitive_false", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -382,21 +287,13 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 
 func TestDeleteFilter(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation FilterDelete($input:DeleteInput!){filterDelete(input: $input){deletedId,errors{message,path}}}",
-	"variables":{
-		"input": {
-			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz"
-		}
-    }
-}`
-	response := `{"data": {
-	"filterDelete": {
-		"deletedId": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyNQ",
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "filter/delete", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation FilterDelete($input:DeleteInput!){filterDelete(input: $input){deletedId,errors{message,path}}}"`,
+		`"variables": {"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
+		`{"data": {"filterDelete": {"deletedId": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyNQ", "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "filter/delete", testRequest)
 	// Act
 	err := client.DeleteFilter("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert

@@ -9,23 +9,13 @@ import (
 
 func TestDomainCreate(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"name": "platform-test",
-			"description": "Domain created for testing.",
-			"ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU",
-			"note": "additional note about platform-test domain"
-		}
-    }
-}`
-	response := `{"data": {
-		"domainCreate": {
-			"domain": {{ template "domain1_response" }}
-		}
-}}`
-	client := ABetterTestClient(t, "domain/create", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`"variables": {"input": { "name": "platform-test", "description": "Domain created for testing.", "ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "additional note about platform-test domain" }}`,
+		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/create", testRequest)
 	// Act
 	input := ol.DomainInput{
 		Name:        ol.NewString("platform-test"),
@@ -103,23 +93,13 @@ func TestDomainGetTags(t *testing.T) {
 
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}",
-	"variables":{
-		"domain":{
-			"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx"
-	  	},
-	  	"childSystems": [
-			{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"}
-	  	]
-	}
-}`
-	response := `{"data": {
-		"domainChildAssign": {
-			"domain": {{ template "domain1_response" }}
-		}
-}}`
-	client := ABetterTestClient(t, "domain/assign_system", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`"variables": {"domain":{ "id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }, "childSystems": [ {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"} ] }`,
+		`{"data": {"domainChildAssign": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/assign_system", testRequest)
 	// Act
 	domain := ol.Domain{
 		DomainId: ol.DomainId{
@@ -134,20 +114,13 @@ func TestDomainAssignSystem(t *testing.T) {
 
 func TestDomainGetId(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}",
-	"variables":{
-		"input": {
-			"id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"
-    	}
-	}
-}`
-	response := `{"data": {
-		"account": {
-			"domain": {{ template "domain1_response" }}
-		}
-}}`
-	client := ABetterTestClient(t, "domain/get_id", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}"`,
+		`"variables": {"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw" }}`,
+		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/get_id", testRequest)
 	// Act
 	result, err := client.GetDomain("Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw")
 	// Assert
@@ -157,19 +130,13 @@ func TestDomainGetId(t *testing.T) {
 
 func TestDomainGetAlias(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}",
-	"variables":{
-		"input": {
-			"alias": "my-domain"
-    }
-}}`
-	response := `{"data": {
-		"account": {
-			"domain": {{ template "domain1_response" }}
-		}
-}}`
-	client := ABetterTestClient(t, "domain/get_alias", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}"`,
+		`"variables": {"input": {"alias": "my-domain" }}`,
+		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/get_alias", testRequest)
 	// Act
 	result, err := client.GetDomain("my-domain")
 	// Assert
@@ -205,26 +172,13 @@ func TestDomainList(t *testing.T) {
 
 func TestDomainUpdate(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}",
-	"variables":{
-	   "domain":{
-		    "id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"
-	    },
-		"input":{
-			"name": "platform-test-4",
-			"description":"Domain created for testing.",
-			"ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU",
-			"note": "Please delete me"
-		}
-    }
-}`
-	response := `{"data": {
-		"domainUpdate": {
-			"domain": {{ template "domain1_response" }}
-		}
-}}`
-	client := ABetterTestClient(t, "domain/update", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`"variables": {"domain": {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"}, "input": {"name": "platform-test-4", "description":"Domain created for testing.", "ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "Please delete me" }}`,
+		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/update", testRequest)
 	input := ol.DomainInput{
 		Name:        ol.NewString("platform-test-4"),
 		Description: ol.NewString("Domain created for testing."),
@@ -241,16 +195,13 @@ func TestDomainUpdate(t *testing.T) {
 
 func TestDomainDelete(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation DomainDelete($input:IdentifierInput!){domainDelete(resource: $input){errors{message,path}}}",
-	"variables":{"input":{"alias":"platformdomain3"}}
-	}`
-	response := `{"data": {
-		"domainDelete": {
-      "errors": []
-    }
-}}`
-	client := ABetterTestClient(t, "domain/delete", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation DomainDelete($input:IdentifierInput!){domainDelete(resource: $input){errors{message,path}}}"`,
+		`"variables":{"input":{"alias":"platformdomain3"}}`,
+		`{"data": {"domainDelete": {"errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "domain/delete", testRequest)
 	// Act
 	err := client.DeleteDomain("platformdomain3")
 	// Assert

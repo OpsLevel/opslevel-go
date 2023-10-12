@@ -10,13 +10,13 @@ import (
 
 func TestCreateSecret(t *testing.T) {
 	// Arrange
-	request := `{
-  "query": "mutation SecretsVaultsSecretCreate($alias:String!$input:SecretInput!){secretsVaultsSecretCreate(alias: $alias, input: $input){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}",
-  "variables": {{ template "secret_create_vars" }}
-  }`
-	response := `{{ template "secret_create_response" }}`
+	testRequest := NewTestRequest(
+		`"query": "mutation SecretsVaultsSecretCreate($alias:String!$input:SecretInput!){secretsVaultsSecretCreate(alias: $alias, input: $input){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}"`,
+		`"variables": {{ template "secret_create_vars" }}`,
+		`{{ template "secret_create_response" }}`,
+	)
 	id2 := opslevel.NewID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
-	client := ABetterTestClient(t, "secrets/create", request, response)
+	client := BestTestClient(t, "secrets/create", testRequest)
 	fmt.Println(client)
 	// Act
 	secretInput := opslevel.SecretInput{
@@ -32,12 +32,12 @@ func TestCreateSecret(t *testing.T) {
 
 func TestGetSecret(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "query SecretsVaultsSecret($input:IdentifierInput!){account{secretsVaultsSecret(input: $input){alias,id,owner{alias,id},timestamps{createdAt,updatedAt}}}}",
-  "variables": {{ template "secret_get_vars" }}
-  }`
-	response := `{{ template "secret_get_response" }}`
-	client := ABetterTestClient(t, "secret/get", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query SecretsVaultsSecret($input:IdentifierInput!){account{secretsVaultsSecret(input: $input){alias,id,owner{alias,id},timestamps{createdAt,updatedAt}}}}"`,
+		`"variables": {{ template "secret_get_vars" }}`,
+		`{{ template "secret_get_response" }}`,
+	)
+	client := BestTestClient(t, "secret/get", testRequest)
 	// Act
 	result, err := client.GetSecret("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
 	// Assert
@@ -72,12 +72,17 @@ func TestListSecrets(t *testing.T) {
 
 func TestUpdateSecret(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation SecretsVaultsSecretUpdate($input:SecretInput!$secret:IdentifierInput!){secretsVaultsSecretUpdate(input: $input, secret: $secret){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}",
-    "variables": {{ template "secret_update_vars" }}
-  }`
-	response := `{{ template "secret_update_response" }}`
-	client := ABetterTestClient(t, "secrets/update", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation SecretsVaultsSecretUpdate($input:SecretInput!$secret:IdentifierInput!){secretsVaultsSecretUpdate(input: $input, secret: $secret){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}"`,
+		`"variables": {{ template "secret_update_vars" }}`,
+		`{{ template "secret_update_response" }}`,
+	)
+	// request := `{
+	//    "query": "mutation SecretsVaultsSecretUpdate($input:SecretInput!$secret:IdentifierInput!){secretsVaultsSecretUpdate(input: $input, secret: $secret){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}",
+	//    "variables": {{ template "secret_update_vars" }}
+	//  }`
+	// response := `{{ template "secret_update_response" }}`
+	client := BestTestClient(t, "secrets/update", testRequest)
 	// Act
 	id2 := opslevel.NewID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
 	secretInput := opslevel.SecretInput{
@@ -93,13 +98,14 @@ func TestUpdateSecret(t *testing.T) {
 
 func TestDeleteSecrets(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation SecretsVaultsSecretDelete($input:IdentifierInput!){secretsVaultsSecretDelete(resource: $input){errors{message,path}}}",
-    "variables": {{ template "secret_delete_vars" }}
-  }`
-	response := `{{ template "secret_delete_response" }}`
+	testRequest := NewTestRequest(
+		`"query": "mutation SecretsVaultsSecretDelete($input:IdentifierInput!){secretsVaultsSecretDelete(resource: $input){errors{message,path}}}"`,
+		`"variables": {{ template "secret_delete_vars" }}`,
+		`{{ template "secret_delete_response" }}`,
+	)
+
 	id1 := opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
-	client := ABetterTestClient(t, "secrets/delete", request, response)
+	client := BestTestClient(t, "secrets/delete", testRequest)
 	// Act
 	err := client.DeleteSecret(string(*id1))
 	// Assert

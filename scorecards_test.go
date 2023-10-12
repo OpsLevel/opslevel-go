@@ -16,12 +16,15 @@ var (
 )
 
 func TestCreateScorecard(t *testing.T) {
-	request := `{{ template "scorecard_create_request" }}`
-	response := `{{ template "scorecard_create_response" }}`
+	testRequest := NewTestRequest(
+		`{{ template "scorecard_create_request" }}`,
+		`{{ template "scorecard_create_request_vars" }}`,
+		`{{ template "scorecard_create_response" }}`,
+	)
 	name := "new scorecard"
 	description := "a new scorecard with an attached filter id"
 
-	client := ABetterTestClient(t, "scorecards/create_scorecard", request, response)
+	client := BestTestClient(t, "scorecards/create_scorecard", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:        name,
 		Description: &description,
@@ -37,12 +40,16 @@ func TestCreateScorecard(t *testing.T) {
 }
 
 func TestUpdateScorecard(t *testing.T) {
-	request := `{{ template "scorecard_update_request" }}`
-	response := `{{ template "scorecard_update_response" }}`
+	testRequest := NewTestRequest(
+		`{{ template "scorecard_update_request" }}`,
+		`{{ template "scorecard_update_request_vars" }}`,
+		`{{ template "scorecard_update_response" }}`,
+	)
+
 	name := "updated scorecard"
 	description := "this scorecard was updated"
 
-	client := ABetterTestClient(t, "scorecards/update_scorecard", request, response)
+	client := BestTestClient(t, "scorecards/update_scorecard", testRequest)
 	sc, err := client.UpdateScorecard(scorecardId, ol.ScorecardInput{
 		Description: &description,
 		Name:        name,
@@ -59,10 +66,12 @@ func TestUpdateScorecard(t *testing.T) {
 }
 
 func TestDeleteScorecard(t *testing.T) {
-	request := `{{ template "scorecard_delete_request" }}`
-	response := `{{ template "scorecard_delete_response" }}`
-
-	client := ABetterTestClient(t, "scorecards/delete_scorecard", request, response)
+	testRequest := NewTestRequest(
+		`{{ template "scorecard_delete_request" }}`,
+		`{{ template "scorecard_delete_request_vars" }}`,
+		`{{ template "scorecard_delete_response" }}`,
+	)
+	client := BestTestClient(t, "scorecards/delete_scorecard", testRequest)
 	deletedScorecardId, err := client.DeleteScorecard(scorecardId)
 
 	autopilot.Ok(t, err)
@@ -70,12 +79,15 @@ func TestDeleteScorecard(t *testing.T) {
 }
 
 func TestGetScorecard(t *testing.T) {
-	request := `{{ template "scorecard_get_request" }}`
-	response := `{{ template "scorecard_get_response" }}`
+	testRequest := NewTestRequest(
+		`{{ template "scorecard_get_request" }}`,
+		`{{ template "scorecard_get_request_vars" }}`,
+		`{{ template "scorecard_get_response" }}`,
+	)
 	name := "fetched scorecard"
 	description := "hello there!"
 
-	client := ABetterTestClient(t, "scorecards/get_scorecard", request, response)
+	client := BestTestClient(t, "scorecards/get_scorecard", testRequest)
 	sc, err := client.GetScorecard(scorecardId)
 
 	autopilot.Ok(t, err)

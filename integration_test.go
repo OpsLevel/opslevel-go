@@ -10,35 +10,28 @@ import (
 
 func TestCreateAWSIntegration(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"iamRole": "arn:aws:iam::XXXX:role/aws-integration-role",
-			"externalId": "123456789",
-			"ownershipTagKeys": ["owner"]
-		}
-    }
-}`
-	response := `{"data": {
-	"awsIntegrationCreate": {
-		"integration": {
-			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-			"name": "AWS - XXXX",
-			"type": "aws",
-			"createdAt": "2023-04-26T16:25:29.574450Z",
-			"installedAt": "2023-04-26T16:25:28.541124Z",
-			"iamRole": "arn:aws:iam::XXXX:role/aws-integration-role",
-			"externalId": "123456789",
-			"awsTagsOverrideOwnership": true,
-			"ownershipTagKeys": [
-				"owner"
-			]
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "integration/create_aws", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+		`"variables": {"input": { "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role", "externalId": "123456789", "ownershipTagKeys": ["owner"] }}`,
+		`{"data": {
+      "awsIntegrationCreate": {
+        "integration": {
+          "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+          "name": "AWS - XXXX",
+          "type": "aws",
+          "createdAt": "2023-04-26T16:25:29.574450Z",
+          "installedAt": "2023-04-26T16:25:28.541124Z",
+          "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role",
+          "externalId": "123456789",
+          "awsTagsOverrideOwnership": true,
+          "ownershipTagKeys": [
+            "owner"
+          ]
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/create_aws", testRequest)
 	// Act
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
 		IAMRole:    opslevel.NewString("arn:aws:iam::XXXX:role/aws-integration-role"),
@@ -52,31 +45,24 @@ func TestCreateAWSIntegration(t *testing.T) {
 
 func TestCreateNewRelicIntegration(t *testing.T) {
 	// Arrange
-	request := `{
-		"query": "mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}",
-		"variables": {
-			"input": {
-				"apiKey": "123456789",
-				"baseUrl": "https://api.newrelic.com/graphql",
-				"accountKey": "XXXX"
-			}
-		}
-	}`
-	response := `{"data": {
-	"newRelicIntegrationCreate": {
-		"integration": {
-			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-			"name": "New Relic - XXXX",
-			"type": "new_relic",
-			"createdAt": "2023-04-26T16:25:29.574450Z",
-			"installedAt": "2023-04-26T16:25:28.541124Z",
-			"accountKey": "XXXX",
-			"baseUrl": "https://api.newrelic.com/graphql"
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "integration/create_new_relic", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+		`"variables": { "input": { "apiKey": "123456789", "baseUrl": "https://api.newrelic.com/graphql", "accountKey": "XXXX" }}`,
+		`{"data": {
+      "newRelicIntegrationCreate": {
+        "integration": {
+          "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+          "name": "New Relic - XXXX",
+          "type": "new_relic",
+          "createdAt": "2023-04-26T16:25:29.574450Z",
+          "installedAt": "2023-04-26T16:25:28.541124Z",
+          "accountKey": "XXXX",
+          "baseUrl": "https://api.newrelic.com/graphql"
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/create_new_relic", testRequest)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
 		ApiKey:     opslevel.NewString("123456789"),
@@ -91,22 +77,19 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 
 func TestGetIntegration(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}",
-	"variables":{
-		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
-    }
-}`
-	response := `{"data": {
-	"account": {
-		"integration": {
-			"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf",
-			"name": "Deploy",
-			"type": "deploy"
-		}
-	}
-}}`
-	client := ABetterTestClient(t, "integration/get", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}"`,
+		`"variables": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
+		`{"data": {
+      "account": {
+        "integration": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf",
+          "name": "Deploy",
+          "type": "deploy"
+        }
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/get", testRequest)
 	// Act
 	result, err := client.GetIntegration("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
 	// Assert
@@ -117,18 +100,12 @@ func TestGetIntegration(t *testing.T) {
 
 func TestGetMissingIntegraion(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}",
-	"variables":{
-		"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf"
-    }
-}`
-	response := `{"data": {
-	"account": {
-		"integration": null
-	}
-}}`
-	client := ABetterTestClient(t, "integration/get_missing", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}"`,
+		`"variables":{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
+		`{"data": { "account": { "integration": null }}}`,
+	)
+	client := BestTestClient(t, "integration/get_missing", testRequest)
 	// Act
 	_, err := client.GetIntegration("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
 	// Assert
@@ -162,38 +139,28 @@ func TestListIntegrations(t *testing.T) {
 
 func TestUpdateAWSIntegration(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}",
-	"variables":{
-		"integration": {
-			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-		},
-		"input": {
-			"name": "Dev2",
-			"externalId": "123456789",
-			"ownershipTagKeys": null
-		}
-	}
-}`
-	response := `{"data": {
-		"awsIntegrationUpdate": {
-			"integration": {
-			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-			"name": "Dev2",
-			"type": "aws",
-			"createdAt": "2023-04-26T16:25:29.574450Z",
-			"installedAt": "2023-04-26T16:25:28.541124Z",
-			"iamRole": "arn:aws:iam::XXXX:role/aws-integration-role",
-			"externalId": "123456789",
-			"awsTagsOverrideOwnership": true,
-			"ownershipTagKeys": [
-				"owner"
-			]
-		},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "integration/update_aws", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+		`"variables": {"integration": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
+		`{"data": {
+      "awsIntegrationUpdate": {
+        "integration": {
+        "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+        "name": "Dev2",
+        "type": "aws",
+        "createdAt": "2023-04-26T16:25:29.574450Z",
+        "installedAt": "2023-04-26T16:25:28.541124Z",
+        "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role",
+        "externalId": "123456789",
+        "awsTagsOverrideOwnership": true,
+        "ownershipTagKeys": [
+          "owner"
+        ]
+      },
+      "errors": []
+    }}}`,
+	)
+	client := BestTestClient(t, "integration/update_aws", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationAWS("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.AWSIntegrationInput{
 		Name:       opslevel.NewString("Dev2"),
@@ -207,34 +174,25 @@ func TestUpdateAWSIntegration(t *testing.T) {
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}",
-	"variables":{
-		"resource": {
-			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-		},
-		"input": {
-			"baseUrl": "https://api-test.newrelic.com/graphql"
-		}
-	}
-}`
+	testRequest := NewTestRequest(
+		`"query": "mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+		`"variables": {"resource": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
+		`{"data": {
+      "newRelicIntegrationUpdate": {
+        "integration": {
+        "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+        "name": "New Relic - XXXX",
+        "type": "new_relic",
+        "createdAt": "2023-04-26T16:25:29.574450Z",
+        "installedAt": "2023-04-26T16:25:28.541124Z",
+        "accountKey": "XXXX",
+        "baseUrl": "https://api-test.newrelic.com/graphql"
+      },
+      "errors": []
+    }}}`,
+	)
 
-	response := `{"data": {
-		"newRelicIntegrationUpdate": {
-			"integration": {
-			"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-			"name": "New Relic - XXXX",
-			"type": "new_relic",
-			"createdAt": "2023-04-26T16:25:29.574450Z",
-			"installedAt": "2023-04-26T16:25:28.541124Z",
-			"accountKey": "XXXX",
-			"baseUrl": "https://api-test.newrelic.com/graphql"
-		},
-		"errors": []
-	}
-}}`
-
-	client := ABetterTestClient(t, "integration/update_new_relic", request, response)
+	client := BestTestClient(t, "integration/update_new_relic", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(
 		"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
@@ -250,20 +208,12 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 
 func TestDeleteIntegration(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation IntegrationDelete($input:IdentifierInput!){integrationDelete(resource: $input){errors{message,path}}}",
-	"variables":{
-       "input": {
-           "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-       }
-   }
-}`
-	response := `{"data": {
-	"integrationDelete": {
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "integration/delete", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation IntegrationDelete($input:IdentifierInput!){integrationDelete(resource: $input){errors{message,path}}}"`,
+		`"variables": {"input": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }}`,
+		`{"data": { "integrationDelete": { "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "integration/delete", testRequest)
 	// Act
 	err := client.DeleteIntegration("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert

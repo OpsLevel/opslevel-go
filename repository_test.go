@@ -67,18 +67,13 @@ func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 
 func TestGetRepositoryWithAlias(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
-    "variables":{
-        "repo": "github.com:rocktavious/autopilot"
-    }
-}`
-	response := `{"data": {
-    "account": {
-        "repository": {{ template "repository_1" }}
-    }
-}}`
-	client := ABetterTestClient(t, "repository/get_with_alias", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}"`,
+		`"variables": {"repo": "github.com:rocktavious/autopilot" }`,
+		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
+	)
+
+	client := BestTestClient(t, "repository/get_with_alias", testRequest)
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -92,18 +87,13 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 
 func TestGetRepository(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "query RepositoryGet($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}",
-    "variables":{
-        "repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk"
-    }
-}`
-	response := `{"data": {
-    "account": {
-        "repository": {{ template "repository_1" }}
-    }
-}}`
-	client := ABetterTestClient(t, "repository/get", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query RepositoryGet($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible}}}"`,
+		`"variables": {"repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk" }`,
+		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
+	)
+
+	client := BestTestClient(t, "repository/get", testRequest)
 	// Act
 	result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
 	// Assert
@@ -167,21 +157,13 @@ func TestListRepositoriesWithTier(t *testing.T) {
 
 func TestUpdateRepository(t *testing.T) {
 	// Arrange
-	request := `{"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}",
-	"variables": {
-		"input": {
-			"id": "{{ template "id1" }}",
-			"ownerId": "{{ template "id1" }}"
-		}
-	}
-}`
-	response := `{"data": {
-	"repositoryUpdate": {
-		"repository": {{ template "repository_1" }},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "repositories/update", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}"`,
+		`"variables": { "input": { "id": "{{ template "id1" }}", "ownerId": "{{ template "id1" }}" }}`,
+		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "repositories/update", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:    *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
@@ -194,20 +176,13 @@ func TestUpdateRepository(t *testing.T) {
 
 func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 	// Arrange
-	request := `{"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}",
-	"variables": {
-		"input": {
-			"id": "{{ template "id1" }}"
-		}
-	}
-}`
-	response := `{"data": {
-	"repositoryUpdate": {
-		"repository": {{ template "repository_2" }},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "repositories/update_owner_not_present", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}"`,
+		`"variables": {"input": { "id": "{{ template "id1" }}" }}`,
+		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_2" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "repositories/update_owner_not_present", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id: *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
@@ -219,21 +194,13 @@ func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 
 func TestRepositoryUpdateOwnerNull(t *testing.T) {
 	// Arrange
-	request := `{"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}",
-	"variables": {
-		"input": {
-			"id": "{{ template "id1" }}",
-			"ownerId": null
-		}
-	}
-}`
-	response := `{"data": {
-	"repositoryUpdate": {
-		"repository": {{ template "repository_3" }},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "repositories/update_owner_null", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}"`,
+		`"variables": {"input": { "id": "{{ template "id1" }}", "ownerId": null }}`,
+		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_3" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "repositories/update_owner_null", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:    *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
@@ -246,16 +213,10 @@ func TestRepositoryUpdateOwnerNull(t *testing.T) {
 
 func TestUpdateServiceRepository(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation ServiceRepositoryUpdate($input:ServiceRepositoryUpdateInput!){serviceRepositoryUpdate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}",
-    "variables":{
-        "input": {
-            "id": "{{ template "id1" }}",
-            "displayName": "Foobar"
-        }
-    }
-}`
-	response := `{"data": {
+	testRequest := NewTestRequest(
+		`"query": "mutation ServiceRepositoryUpdate($input:ServiceRepositoryUpdateInput!){serviceRepositoryUpdate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}"`,
+		`"variables":{ "input": { "id": "{{ template "id1" }}", "displayName": "Foobar" }}`,
+		`{"data": {
     "serviceRepositoryUpdate": {
         "serviceRepository": {
             "baseDirectory": "",
@@ -274,9 +235,10 @@ func TestUpdateServiceRepository(t *testing.T) {
             }
         },
         "errors": []
-    }
-}}`
-	client := ABetterTestClient(t, "repository/service_update", request, response)
+    }}}`,
+	)
+
+	client := BestTestClient(t, "repository/service_update", testRequest)
 	// Act
 	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
 		Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
@@ -289,21 +251,13 @@ func TestUpdateServiceRepository(t *testing.T) {
 
 func TestDeleteServiceRepository(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation ServiceRepositoryDelete($input:DeleteInput!){serviceRepositoryDelete(input: $input){deletedId,errors{message,path}}}",
-    "variables":{
-        "input": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"
-        }
-    }
-}`
-	response := `{"data": {
-    "serviceRepositoryDelete": {
-        "deletedId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3",
-        "errors": []
-    }
-}}`
-	client := ABetterTestClient(t, "repository/service_delete", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation ServiceRepositoryDelete($input:DeleteInput!){serviceRepositoryDelete(input: $input){deletedId,errors{message,path}}}"`,
+		`"variables": {"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3" }}`,
+		`{"data": { "serviceRepositoryDelete": { "deletedId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3", "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "repository/service_delete", testRequest)
 	// Act
 	err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
 	// Assert

@@ -9,21 +9,13 @@ import (
 
 func TestInviteUser(t *testing.T) {
 	// Arrange
-	request := `{"query":"mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}",
-	"variables":{
-		"email": "kyle@opslevel.com",
-		"input": {
-			"name": "Kyle Rockman",
-			"skipWelcomeEmail": false
-		}
-	}}`
-	response := `{"data": {
-	"userInvite": {
-		"user": {{ template "user_1" }},
-		"errors": []
-	}
-	}}`
-	client := ABetterTestClient(t, "user/invite", request, response)
+	testRequest := NewTestRequest(
+		`"query":"mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+		`"variables": {"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "skipWelcomeEmail": false }}`,
+		`{"data": { "userInvite": { "user": {{ template "user_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/invite", testRequest)
 	// Act
 	result, err := client.InviteUser("kyle@opslevel.com", ol.UserInput{
 		Name: "Kyle Rockman",
@@ -37,18 +29,13 @@ func TestInviteUser(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	// Arrange
-	request := `{"query":"query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}",
-	"variables":{
-		"input": {
-			"email": "kyle@opslevel.com"
-		}
-	}}`
-	response := `{"data": {
-	"account": {
-		"user": {{ template "user_1" }}
-	}
-	}}`
-	client := ABetterTestClient(t, "user/get", request, response)
+	testRequest := NewTestRequest(
+		`"query":"query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}"`,
+		`"variables": {"input": { "email": "kyle@opslevel.com" }}`,
+		`{"data": {"account": {"user": {{ template "user_1" }} }}}`,
+	)
+
+	client := BestTestClient(t, "user/get", testRequest)
 	// Act
 	result, err := client.GetUser("kyle@opslevel.com")
 	// Assert
@@ -117,23 +104,13 @@ func TestListUser(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	// Arrange
-	request := `{"query":"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}",
-	"variables":{
-		"input": {
-			"role": "admin",
-			"skipWelcomeEmail": false
-		},
-		"user": {
-			"email": "kyle@opslevel.com"
-		}
-	}}`
-	response := `{"data": {
-	"userUpdate": {
-		"user": {{ template "user_1_update" }},
-		"errors": []
-	}
-	}}`
-	client := ABetterTestClient(t, "user/update", request, response)
+	testRequest := NewTestRequest(
+		`"query":"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+		`"variables": {"input": {"role": "admin", "skipWelcomeEmail": false }, "user": {"email": "kyle@opslevel.com" }}`,
+		`{"data": {"userUpdate": {"user": {{ template "user_1_update" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/update", testRequest)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
 		Role: ol.UserRoleAdmin,
@@ -147,18 +124,13 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	// Arrange
-	request := `{"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}",
-	"variables":{
-		"user": {
-			"email": "kyle@opslevel.com"
-		}
-	}}`
-	response := `{"data": {
-	"userDelete": {
-		"errors": []
-	}
-	}}`
-	client := ABetterTestClient(t, "user/delete", request, response)
+	testRequest := NewTestRequest(
+		`"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
+		`"variables": {"user": {"email": "kyle@opslevel.com" }}`,
+		`{"data": {"userDelete": {"errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/delete", testRequest)
 	// Act
 	err := client.DeleteUser("kyle@opslevel.com")
 	// Assert
@@ -167,21 +139,13 @@ func TestDeleteUser(t *testing.T) {
 
 func TestDeleteUserDoesNotExist(t *testing.T) {
 	// Arrange
-	request := `{"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}",
-	"variables":{
-		"user": {
-			"email": "not-found@opslevel.com"
-		}
-	}}`
-	response := `{"data": {
-	"userDelete": {
-		"errors": [{
-			"message": "User with email 'not-found@opslevel.com' does not exist on this account",
-			"path": ["user"]
-		}]
-	}
-	}}`
-	client := ABetterTestClient(t, "user/delete_not_found", request, response)
+	testRequest := NewTestRequest(
+		`"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
+		`"variables": {"user": {"email": "not-found@opslevel.com" }}`,
+		`{"data": {"userDelete": {"errors": [{"message": "User with email 'not-found@opslevel.com' does not exist on this account", "path": ["user"] }] }}}`,
+	)
+
+	client := BestTestClient(t, "user/delete_not_found", testRequest)
 	// Act
 	err := client.DeleteUser("not-found@opslevel.com")
 	// Assert

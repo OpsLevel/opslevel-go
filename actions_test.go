@@ -312,15 +312,20 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
 		"variables":{"input":{"id":"123456789"}}
 	}`
-	response := `{"data": {"customActionsTriggerDefinitionDelete": {
-     "errors": []
- }}}`
-	responseErr := `{"data": {"customActionsTriggerDefinitionDelete": {
-     "errors": [{{ template "error1" }}]
- }}}`
 
-	client := ABetterTestClient(t, "custom_actions/delete_trigger", request, response)
-	clientErr := ABetterTestClient(t, "custom_actions/delete_trigger_err", request, responseErr)
+	testRequest := NewTestRequest(
+		`"query": "mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}"`,
+		`"variables":{"input":{"id":"123456789"}}`,
+		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [] }}}`,
+	)
+	testRequestError := NewTestRequest(
+		testRequest.Request,
+		testRequest.Variables,
+		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [{{ template "error1" }}] }}}`,
+	)
+
+	client := BestTestClient(t, "custom_actions/delete_trigger", testRequest)
+	clientErr := BestTestClient(t, "custom_actions/delete_trigger_err", testRequestError)
 	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
 	// Act
 	err := client.DeleteTriggerDefinition(ol.IdentifierInput{

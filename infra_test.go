@@ -9,9 +9,9 @@ import (
 
 func TestCreateInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}",
-  "variables":{
+	testRequest := NewTestRequest(
+		`"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}"`,
+		`"variables":{
     "all": true,
     "input": {
       "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
@@ -24,19 +24,11 @@ func TestCreateInfra(t *testing.T) {
       "providerResourceType": "BigQuery",
       "schema": {
         "type": "Database"
-      }
-    }
-  }}`
-	response := `{
-  "data": {
-    "infrastructureResourceCreate": {
-      "infrastructureResource": {{ template "infra_1" }},
-      "warnings": [],
-      "errors": []
-    }
-  }
-}`
-	client := ABetterTestClient(t, "infra/create", request, response)
+       }
+    }}`,
+		`{ "data": { "infrastructureResourceCreate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "infra/create", testRequest)
 	// Act
 	result, err := client.CreateInfrastructure(opslevel.InfraInput{
 		Schema: "Database",
@@ -66,21 +58,12 @@ func TestCreateInfra(t *testing.T) {
 
 func TestGetInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}",
-	"variables":{
-		"all": true,
-		"input":{
-			"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-		}
-	}
-}`
-	response := `{"data": {
-	"account": {
-		"infrastructureResource": {{ template "infra_1" }}
-	}
-}}`
-	client := ABetterTestClient(t, "infra/get", request, response)
+	testRequest := NewTestRequest(
+		`"query": "query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}"`,
+		`"variables": {"all": true, "input":{ "id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }}`,
+		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
+	)
+	client := BestTestClient(t, "infra/get", testRequest)
 	// Act
 	result, err := client.GetInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert
@@ -142,25 +125,12 @@ func TestListInfra(t *testing.T) {
 
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}",
-  "variables":{
-    "all": true,
-    "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},
-    "input": {
-      "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}"
-    }
-}
-}`
-	response := `{"data": {
-    "infrastructureResourceUpdate": {
-      "infrastructureResource": {{ template "infra_1" }},
-      "warnings": [],
-      "errors": []
-    }
-}}`
-	client := ABetterTestClient(t, "infra/update", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}"`,
+		`"variables": {"all": true, "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}, "input": { "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
+		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "infra/update", testRequest)
 	// Act
 	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfraInput{
 		Owner: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
@@ -179,19 +149,12 @@ func TestUpdateInfra(t *testing.T) {
 
 func TestDeleteInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}",
-	"variables":{
-    "input": {
-      "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-    }
-  }}`
-	response := `{"data": {
-		"infrastructureResourceDelete": {
-			"errors": []
-		}
-	}}`
-	client := ABetterTestClient(t, "infra/delete", request, response)
+	testRequest := NewTestRequest(
+		`"query": "mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}"`,
+		`"variables":{ "input": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" } }`,
+		`{"data": { "infrastructureResourceDelete": { "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "infra/delete", testRequest)
 	// Act
 	err := client.DeleteInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert

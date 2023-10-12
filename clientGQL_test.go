@@ -188,7 +188,7 @@ func (t *TestRequest) ParseVariables(rawVariables string) {
 	jsonFormattedVariableObject := strings.TrimSpace(parsedVariables)
 	jsonFormattedVariableObject, _ = strings.CutPrefix(jsonFormattedVariableObject, varPrefix)
 	if !t.IsValidJson(jsonFormattedVariableObject) {
-		panic(fmt.Errorf("test request could not be JSON formatted: %s", parsedVariables))
+		panic(fmt.Errorf("test variables could not be JSON formatted: %s", parsedVariables))
 	}
 	t.Variables = fmt.Sprintf("%s %s", varPrefix, jsonFormattedVariableObject)
 }
@@ -199,7 +199,7 @@ func (t *TestRequest) ParseResponse(rawResponse string) {
 		panic(err)
 	}
 	if !t.IsValidJson(parsedResponse) {
-		panic(fmt.Errorf("invalid json: %s", parsedResponse))
+		panic(fmt.Errorf("test response could not be JSON formatted: %s", parsedResponse))
 	}
 	t.Response = parsedResponse
 }
