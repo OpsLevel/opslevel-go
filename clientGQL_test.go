@@ -73,23 +73,18 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 
 func NewTestRequest(request string, variables string, response string) TestRequest {
 	testRequest := TestRequest{}
-	testRequest.templater = NewFancyTemplater()
+	testRequest.templater = NewTestDataTemplater()
 	testRequest.ParseRequest(request)
 	testRequest.ParseVariables(variables)
 	testRequest.ParseResponse(response)
 	return testRequest
 }
 
-type FancyTemplater struct {
+type TestDataTemplater struct {
 	rootTemplate *template.Template
 }
 
-func (t *FancyTemplater) ParseTemplatedString(contents string) (string, error) {
-	// clone, err := t.rootTemplate.Clone()
-	// if err != nil {
-	// 	return "", fmt.Errorf("error cloning core template: %s", err)
-	// }
-	// target, err := clone.Parse(contents)
+func (t *TestDataTemplater) ParseTemplatedString(contents string) (string, error) {
 	target, err := t.rootTemplate.Parse(contents)
 	if err != nil {
 		return "", fmt.Errorf("error parsing template: %s", err)
@@ -102,7 +97,7 @@ func (t *FancyTemplater) ParseTemplatedString(contents string) (string, error) {
 	return data.String(), nil
 }
 
-func (t *FancyTemplater) JsonIndent(contents string) (string, error) {
+func (t *TestDataTemplater) JsonIndent(contents string) (string, error) {
 	output := bytes.NewBuffer([]byte{})
 	output.WriteString(contents)
 	contentsAsBytes := output.Bytes()
@@ -115,7 +110,7 @@ func (t *FancyTemplater) JsonIndent(contents string) (string, error) {
 	return output.String(), nil
 }
 
-func NewFancyTemplater(templateDirs ...string) *FancyTemplater {
+func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
 	var templateFiles []string
 	for _, dir := range []string{"./testdata/templates"} {
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -132,7 +127,7 @@ func NewFancyTemplater(templateDirs ...string) *FancyTemplater {
 		}
 	}
 
-	output := FancyTemplater{}
+	output := TestDataTemplater{}
 	tmpl, err := template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(templateFiles...)
 	if err != nil {
 		panic(fmt.Errorf("error during template initialization: %s", err))
@@ -142,7 +137,7 @@ func NewFancyTemplater(templateDirs ...string) *FancyTemplater {
 }
 
 type TestRequest struct {
-	templater *FancyTemplater
+	templater *TestDataTemplater
 	Request   string
 	Variables string
 	Response  string
@@ -153,7 +148,7 @@ func (t *TestRequest) RequestWithVariables() string {
 	if t.IsValidJson(jsonRequestWithVariables) {
 		return jsonRequestWithVariables
 	}
-	return ""
+	panic(fmt.Errorf("test request+variables could not be JSON formatted: %s", jsonRequestWithVariables))
 }
 
 func (t *TestRequest) IsValidJson(data string) bool {
@@ -210,7 +205,6 @@ func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRe
 	return autopilot.Server.URL + url
 }
 
-// APaginatedTestClient, TmpPaginatedTestClient, ATestClient(uses *.json, do later)
 func BestTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
 	if len(requests) > 1 {
 		return APaginatedTestClient(t, endpoint, requests...)
