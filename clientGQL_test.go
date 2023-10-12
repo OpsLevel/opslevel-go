@@ -20,11 +20,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const (
-	queryPrefix string = `"query":`
-	varPrefix   string = `"variables":`
-)
-
 func TestMain(m *testing.M) {
 	output := zerolog.ConsoleWriter{Out: os.Stderr}
 	log.Logger = log.Output(output)
@@ -167,7 +162,6 @@ func (t *TestRequest) IsValidJson(data string) bool {
 
 func (t *TestRequest) ParseRequest(rawRequest string) {
 	parsedRequest, _ := t.templater.ParseTemplatedString(rawRequest)
-	// queryValue, _ := strings.CutPrefix(rawRequest, queryPrefix)
 	jsonFormattedRequest := fmt.Sprintf("{%s}", parsedRequest)
 	if !t.IsValidJson(jsonFormattedRequest) {
 		panic(fmt.Errorf("test request could not be JSON formatted: %s", parsedRequest))
@@ -185,6 +179,7 @@ func (t *TestRequest) ParseVariables(rawVariables string) {
 		panic(err)
 	}
 
+	varPrefix := `"variables":`
 	jsonFormattedVariableObject := strings.TrimSpace(parsedVariables)
 	jsonFormattedVariableObject, _ = strings.CutPrefix(jsonFormattedVariableObject, varPrefix)
 	if !t.IsValidJson(jsonFormattedVariableObject) {
