@@ -79,10 +79,10 @@ func NewTestRequest(request string, variables string, response string) TestReque
 		Response:  templater.ParseTemplatedString(response),
 	}
 	if !IsValidJson(testRequest.Variables) {
-		panic(fmt.Errorf("testRequest Variables during json indenting: %s", testRequest.Variables))
+		panic(fmt.Errorf("testRequest Variables is not valid json: %s", testRequest.Variables))
 	}
 	if !IsValidJson(testRequest.Response) {
-		panic(fmt.Errorf("testRequest Response during json indenting: %s", testRequest.Response))
+		panic(fmt.Errorf("testRequest Response is not json: %s", testRequest.Response))
 	}
 	return testRequest
 }
