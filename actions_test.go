@@ -3,23 +3,19 @@ package opslevel_test
 import (
 	"testing"
 
-	// "github.com/golangci/golangci-lint/pkg/result"
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestCreateWebhookAction(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
-		"variables":{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST","liquidTemplate":"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}","name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}
-	}`
-	response := `{"data": {"customActionsWebhookActionCreate": {
-      "webhookAction": {{ template "custom_action1" }},
-      "errors": []
-  }}}`
+	testRequest := NewTestRequest(
+		`"mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}"`,
+		`{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST","liquidTemplate":"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}","name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
+		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
+	)
 
-	client := ABetterTestClient(t, "custom_actions/create_action", request, response)
+	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
@@ -39,19 +35,19 @@ func TestCreateWebhookAction(t *testing.T) {
 
 func TestListCustomActions(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		Variables: `{{ template "pagination_initial_query_variables" }}`,
-		Response:  `{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		Variables: `{{ template "pagination_second_query_variables" }}`,
-		Response:  `{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "custom_actions/list_actions", requests...)
+	client := BestTestClient(t, "custom_actions/list_actions", requests...)
 	// Act
 	response, err := client.ListCustomActions(nil)
 	result := response.Nodes
@@ -65,16 +61,12 @@ func TestListCustomActions(t *testing.T) {
 
 func TestUpdateWebhookAction(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
-		"variables":{"input":{"id": "123456789", "httpMethod":"PUT"}}
-	}`
-	response := `{"data": {"customActionsWebhookActionUpdate": {
-     "webhookAction": {{ template "custom_action1" }},
-     "errors": []
- }}}`
-
-	client := ABetterTestClient(t, "custom_actions/update_action", request, response)
+	testRequest := NewTestRequest(
+		`"mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}"`,
+		`{"input":{"id": "123456789", "httpMethod":"PUT"}}`,
+		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/update_action", testRequest)
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
@@ -89,16 +81,13 @@ func TestUpdateWebhookAction(t *testing.T) {
 
 func TestUpdateWebhookAction2(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}",
-		"variables":{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}
-	}`
-	response := `{"data": {"customActionsWebhookActionUpdate": {
-     "webhookAction": {{ template "custom_action1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}"`,
+		`{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}`,
+		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
+	)
 
-	client := ABetterTestClient(t, "custom_actions/update_action2", request, response)
+	client := BestTestClient(t, "custom_actions/update_action2", testRequest)
 	headers := ol.JSON{
 		"Accept": "application/json",
 	}
@@ -117,15 +106,13 @@ func TestUpdateWebhookAction2(t *testing.T) {
 
 func TestDeleteWebhookAction(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation WebhookActionDelete($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){errors{message,path}}}",
-		"variables":{"input":{"id": "123456789"}}
-	}`
-	response := `{"data": {"customActionsWebhookActionDelete": {
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation WebhookActionDelete($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){errors{message,path}}}"`,
+		`{"input":{"id": "123456789"}}`,
+		`{"data": {"customActionsWebhookActionDelete": { "errors": [] }}}`,
+	)
 
-	client := ABetterTestClient(t, "custom_actions/delete_action", request, response)
+	client := BestTestClient(t, "custom_actions/delete_action", testRequest)
 
 	// Act
 	err := client.DeleteWebhookAction(ol.IdentifierInput{
@@ -138,16 +125,13 @@ func TestDeleteWebhookAction(t *testing.T) {
 
 func TestCreateTriggerDefinition(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
-	}`
-	response := `{"data": {"customActionsTriggerDefinitionCreate": {
-     "triggerDefinition": {{ template "custom_action_trigger1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
+		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
+		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/create_trigger", testRequest)
 
-	client := ABetterTestClient(t, "custom_actions/create_trigger", request, response)
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:        "Deploy Rollback",
@@ -163,16 +147,13 @@ func TestCreateTriggerDefinition(t *testing.T) {
 
 func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","extendedTeamAccess":[{"alias":"example_1"},{"alias":"example_1"}],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
-	}`
-	response := `{"data": {"customActionsTriggerDefinitionCreate": {
-     "triggerDefinition": {{ template "custom_action_trigger1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
+		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","extendedTeamAccess":[{"alias":"example_1"},{"alias":"example_1"}],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
+		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/create_trigger_with_global_entity", testRequest)
 
-	client := ABetterTestClient(t, "custom_actions/create_trigger_with_global_entity", request, response)
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:        "Deploy Rollback",
@@ -193,16 +174,13 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 
 func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","extendedTeamAccess":[],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}
-	}`
-	response := `{"data": {"customActionsTriggerDefinitionCreate": {
-     "triggerDefinition": {{ template "custom_action_trigger1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
+		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","extendedTeamAccess":[],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
+		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
+	)
 
-	client := ABetterTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", request, response)
+	client := BestTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", testRequest)
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:               "Deploy Rollback",
@@ -219,15 +197,13 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 
 func TestGetTriggerDefinition(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"query TriggerDefinitionGet($input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){{ template "custom_actions_trigger_request" }}}}",
-		"variables":{"input":{"id":"123456789"}}
-	}`
-	response := `{"data": {"account": {
-      "customActionsTriggerDefinition": {{ template "custom_action_trigger2" }}
-  }}}`
+	testRequest := NewTestRequest(
+		`"query TriggerDefinitionGet($input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){{ template "custom_actions_trigger_request" }}}}"`,
+		`{"input":{"id":"123456789"}}`,
+		`{"data": {"account": { "customActionsTriggerDefinition": {{ template "custom_action_trigger2" }} }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/get_trigger", testRequest)
 
-	client := ABetterTestClient(t, "custom_actions/get_trigger", request, response)
 	// Act
 	trigger, err := client.GetTriggerDefinition(ol.IdentifierInput{Id: "123456789"})
 	// Assert
@@ -239,19 +215,19 @@ func TestGetTriggerDefinition(t *testing.T) {
 
 func TestListTriggerDefinitions(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		Variables: `{{ template "pagination_initial_query_variables" }}`,
-		Response:  `{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger1_response" }} }, { {{ template "custom_action_trigger2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		Variables: `{{ template "pagination_second_query_variables" }}`,
-		Response:  `{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger1_response" }} }, { {{ template "custom_action_trigger2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "custom_actions/list_triggers", requests...)
+	client := BestTestClient(t, "custom_actions/list_triggers", requests...)
 	// Act
 	triggers, err := client.ListTriggerDefinitions(nil)
 	result := triggers.Nodes
@@ -268,16 +244,13 @@ func TestListTriggerDefinitions(t *testing.T) {
 
 func TestUpdateTriggerDefinition(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "filterId":null}}
-	}`
-	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
-     "triggerDefinition": {{ template "custom_action_trigger1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
+		`{"input":{"id":"123456789", "filterId":null}}`,
+		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/update_trigger", testRequest)
 
-	client := ABetterTestClient(t, "custom_actions/update_trigger", request, response)
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:     "123456789",
@@ -290,16 +263,13 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 
 func TestUpdateTriggerDefinition2(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": []}}
-	}`
-	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
-     "triggerDefinition": {{ template "custom_action_trigger1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
+		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": []}}`,
+		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/update_trigger2", testRequest)
 
-	client := ABetterTestClient(t, "custom_actions/update_trigger2", request, response)
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:                 "123456789",
@@ -314,16 +284,13 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 
 func TestUpdateTriggerDefinition3(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}",
-		"variables":{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}]}}
-	}`
-	response := `{"data": {"customActionsTriggerDefinitionUpdate": {
-     "triggerDefinition": {{ template "custom_action_trigger1" }},
-     "errors": []
- }}}`
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
+		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}]}}`,
+		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "custom_actions/update_trigger3", testRequest)
 
-	client := ABetterTestClient(t, "custom_actions/update_trigger3", request, response)
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:          "123456789",
@@ -343,17 +310,22 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
-		"variables":{"input":{"id":"123456789"}}
+		{"input":{"id":"123456789"}}
 	}`
-	response := `{"data": {"customActionsTriggerDefinitionDelete": {
-     "errors": []
- }}}`
-	responseErr := `{"data": {"customActionsTriggerDefinitionDelete": {
-     "errors": [{{ template "error1" }}]
- }}}`
 
-	client := ABetterTestClient(t, "custom_actions/delete_trigger", request, response)
-	clientErr := ABetterTestClient(t, "custom_actions/delete_trigger_err", request, responseErr)
+	testRequest := NewTestRequest(
+		`"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}"`,
+		`{"input":{"id":"123456789"}}`,
+		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [] }}}`,
+	)
+	testRequestError := NewTestRequest(
+		testRequest.Request,
+		testRequest.Variables,
+		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [{{ template "error1" }}] }}}`,
+	)
+
+	client := BestTestClient(t, "custom_actions/delete_trigger", testRequest)
+	clientErr := BestTestClient(t, "custom_actions/delete_trigger_err", testRequestError)
 	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
 	// Act
 	err := client.DeleteTriggerDefinition(ol.IdentifierInput{
@@ -375,19 +347,19 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 
 func TestListExtendedTeamAccess(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		Variables: `"variables": {{ template "extended_team_access_get_vars_1" }}`,
-		Response:  `{{ template "extended_team_access_response_1" }}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		Variables: `"variables": {{ template "extended_team_access_get_vars_2" }}`,
-		Response:  `{{ template "extended_team_access_response_2" }}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{{ template "extended_team_access_get_vars_1" }}`,
+		`{{ template "extended_team_access_response_1" }}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{{ template "extended_team_access_get_vars_2" }}`,
+		`{{ template "extended_team_access_response_2" }}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "custom_actions/list_extended_team_access", requests...)
+	client := BestTestClient(t, "custom_actions/list_extended_team_access", requests...)
 	id1 := *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
 

@@ -9,9 +9,9 @@ import (
 
 func TestCreateInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}",
-  "variables":{
+	testRequest := NewTestRequest(
+		`"mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}"`,
+		`{
     "all": true,
     "input": {
       "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
@@ -24,19 +24,11 @@ func TestCreateInfra(t *testing.T) {
       "providerResourceType": "BigQuery",
       "schema": {
         "type": "Database"
-      }
-    }
-  }}`
-	response := `{
-  "data": {
-    "infrastructureResourceCreate": {
-      "infrastructureResource": {{ template "infra_1" }},
-      "warnings": [],
-      "errors": []
-    }
-  }
-}`
-	client := ABetterTestClient(t, "infra/create", request, response)
+       }
+    }}`,
+		`{ "data": { "infrastructureResourceCreate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "infra/create", testRequest)
 	// Act
 	result, err := client.CreateInfrastructure(opslevel.InfraInput{
 		Schema: "Database",
@@ -66,21 +58,12 @@ func TestCreateInfra(t *testing.T) {
 
 func TestGetInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}",
-	"variables":{
-		"all": true,
-		"input":{
-			"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-		}
-	}
-}`
-	response := `{"data": {
-	"account": {
-		"infrastructureResource": {{ template "infra_1" }}
-	}
-}}`
-	client := ABetterTestClient(t, "infra/get", request, response)
+	testRequest := NewTestRequest(
+		`"query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}"`,
+		`{"all": true, "input":{ "id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }}`,
+		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
+	)
+	client := BestTestClient(t, "infra/get", testRequest)
 	// Act
 	result, err := client.GetInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert
@@ -91,19 +74,19 @@ func TestGetInfra(t *testing.T) {
 
 func TestListInfraSchemas(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
-		Variables: `{{ template "pagination_initial_query_variables" }}`,
-		Response:  `{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_1" }}, {{ template "infra_schema_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
-		Variables: `{{ template "pagination_second_query_variables" }}`,
-		Response:  `{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_1" }}, {{ template "infra_schema_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "infra/list_schemas", requests...)
+	client := BestTestClient(t, "infra/list_schemas", requests...)
 	// Act
 	response, err := client.ListInfrastructureSchemas(nil)
 	result := response.Nodes
@@ -117,19 +100,19 @@ func TestListInfraSchemas(t *testing.T) {
 
 func TestListInfra(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
-		Variables: `"variables": { "after": "", "all": true, "first": 100 }`,
-		Response:  `{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_1" }}, {{ template "infra_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
-		Variables: `"variables": { "after": "OA", "all": true, "first": 100 }`,
-		Response:  `{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`{ "after": "", "all": true, "first": 100 }`,
+		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_1" }}, {{ template "infra_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`{ "after": "OA", "all": true, "first": 100 }`,
+		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "infra/list", requests...)
+	client := BestTestClient(t, "infra/list", requests...)
 	// Act
 	response, err := client.ListInfrastructure(nil)
 	result := response.Nodes
@@ -142,25 +125,12 @@ func TestListInfra(t *testing.T) {
 
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}",
-  "variables":{
-    "all": true,
-    "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"},
-    "input": {
-      "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
-      "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}"
-    }
-}
-}`
-	response := `{"data": {
-    "infrastructureResourceUpdate": {
-      "infrastructureResource": {{ template "infra_1" }},
-      "warnings": [],
-      "errors": []
-    }
-}}`
-	client := ABetterTestClient(t, "infra/update", request, response)
+	testRequest := NewTestRequest(
+		`"mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}"`,
+		`{"all": true, "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}, "input": { "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
+		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "infra/update", testRequest)
 	// Act
 	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfraInput{
 		Owner: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
@@ -179,19 +149,12 @@ func TestUpdateInfra(t *testing.T) {
 
 func TestDeleteInfra(t *testing.T) {
 	// Arrange
-	request := `{
-	"query": "mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}",
-	"variables":{
-    "input": {
-      "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
-    }
-  }}`
-	response := `{"data": {
-		"infrastructureResourceDelete": {
-			"errors": []
-		}
-	}}`
-	client := ABetterTestClient(t, "infra/delete", request, response)
+	testRequest := NewTestRequest(
+		`"mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}"`,
+		`{ "input": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" } }`,
+		`{"data": { "infrastructureResourceDelete": { "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "infra/delete", testRequest)
 	// Act
 	err := client.DeleteInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert
@@ -200,15 +163,10 @@ func TestDeleteInfra(t *testing.T) {
 
 func TestGetInfrastructureResourceTags(t *testing.T) {
 	// Arrange
-	requests := []TestRequest{
-		{
-			Request: `{"query": "query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "first_page_variables" }},
-                "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
-            }
-            }`,
-			Response: `{
+	testRequestOne := NewTestRequest(
+		`"query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"} }`,
+		`{
                   "data": {
                     "account": {
                       "infrastructureResource": {
@@ -237,15 +195,11 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                     }
                   }
                 }`,
-		},
-		{
-			Request: `{"query": "query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}",
-            "variables": {
-                {{ template "second_page_variables" }},
-                "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
-            }
-            }`,
-			Response: `{
+	)
+	testRequestTwo := NewTestRequest(
+		`"query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"} }`,
+		`{
                   "data": {
                     "account": {
                       "infrastructureResource": {
@@ -264,9 +218,9 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                     }
                   }
                 }`,
-		},
-	}
-	client := APaginatedTestClient(t, "infrastructureResource/tags", requests...)
+	)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "infrastructureResource/tags", requests...)
 	// Act
 	infra := opslevel.InfrastructureResource{Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
 	resp, err := infra.GetTags(client, nil)

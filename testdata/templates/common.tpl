@@ -37,13 +37,13 @@
 "first": 100
 {{ end }}
 {{- define "pagination_initial_query_variables" }}
-"variables": {
+{
     "after": "",
     "first": 100
 }
 {{ end }}
 {{- define "pagination_second_query_variables" }}
-"variables": {
+{
 	"after": "OA",
 	"first": 100
 }

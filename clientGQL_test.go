@@ -1,13 +1,18 @@
 package opslevel_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
+	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2023"
 
@@ -66,36 +71,94 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
 }
 
+func NewTestRequest(request string, variables string, response string) TestRequest {
+	templater := NewTestDataTemplater()
+	testRequest := TestRequest{
+		Request:   templater.ParseTemplatedString(request),
+		Variables: templater.ParseTemplatedString(variables),
+		Response:  templater.ParseTemplatedString(response),
+	}
+	if !IsValidJson(testRequest.Variables) {
+		panic(fmt.Errorf("testRequest Variables is not valid json: %s", testRequest.Variables))
+	}
+	if !IsValidJson(testRequest.Response) {
+		panic(fmt.Errorf("testRequest Response is not json: %s", testRequest.Response))
+	}
+	return testRequest
+}
+
+func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
+	var templateFiles []string
+	for _, dir := range []string{"./testdata/templates"} {
+		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() {
+				templateFiles = append(templateFiles, path)
+			}
+			return nil
+		})
+		if err != nil {
+			panic(fmt.Errorf("error during loading template files: %s", err))
+		}
+	}
+
+	output := TestDataTemplater{}
+	tmpl, err := template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(templateFiles...)
+	if err != nil {
+		panic(fmt.Errorf("error during template initialization: %s", err))
+	}
+	output.rootTemplate = tmpl
+	return &output
+}
+
+type TestDataTemplater struct {
+	rootTemplate *template.Template
+}
+
+func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
+	target, err := t.rootTemplate.Parse(contents)
+	if err != nil {
+		panic(fmt.Errorf("error parsing template: %s", err))
+	}
+	data := bytes.NewBuffer([]byte{})
+	if err = target.Execute(data, nil); err != nil {
+		panic(err)
+	}
+	return strings.TrimSpace(data.String())
+}
+
 type TestRequest struct {
 	Request   string
 	Variables string
 	Response  string
 }
 
+func (t *TestRequest) RequestWithVariables() string {
+	jsonRequestWithVariables := fmt.Sprintf(`{"query": %s, "variables": %s}`, t.Request, t.Variables)
+	if !IsValidJson(jsonRequestWithVariables) {
+		panic(fmt.Errorf("test request with variables could not be JSON formatted: %s", jsonRequestWithVariables))
+	}
+	return jsonRequestWithVariables
+}
+
+func IsValidJson(data string) bool {
+	return json.Valid([]byte(data))
+}
+
 func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
 	url := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
 	requestCount := 0
 	autopilot.Mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
-		GraphQLQueryTemplatedValidation(t, requests[requestCount].Request)(r)
+		GraphQLQueryTemplatedValidation(t, requests[requestCount].RequestWithVariables())(r)
 		TemplatedResponse(requests[requestCount].Response)(w)
 		requestCount += 1
 	})
 	return autopilot.Server.URL + url
 }
 
-func TmpPaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
-	oldStyleRequests := []TestRequest{}
-	for _, request := range requests {
-		oldStyleRequest := TestRequest{
-			Request:  fmt.Sprintf(`{%s, %s}`, request.Request, request.Variables),
-			Response: request.Response,
-		}
-		oldStyleRequests = append(oldStyleRequests, oldStyleRequest)
-	}
-	return APaginatedTestClient(t, endpoint, oldStyleRequests...)
-}
-
-func APaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
+func BestTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
 	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
 }

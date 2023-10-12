@@ -10,23 +10,13 @@ import (
 
 func TestServiceApiDocSettingsUpdate(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation ServiceApiDocSettingsUpdate($docPath:String$docSource:ApiDocumentSourceEnum$service:IdentifierInput!){serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}",
-	"variables":{
-		"docPath":"/src/swagger.json",
-		"docSource":"PULL",
-		"service":{
-			"alias":"service_alias"
-		}
-    }
-}`
-	response := `{"data": {
-	"serviceApiDocSettingsUpdate": {
-		"service": {{ template "service_1" }},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "service/api_doc_settings_update", request, response)
+	testRequest := NewTestRequest(
+		`"mutation ServiceApiDocSettingsUpdate($docPath:String$docSource:ApiDocumentSourceEnum$service:IdentifierInput!){serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`{"docPath":"/src/swagger.json", "docSource":"PULL", "service": {"alias":"service_alias" }}`,
+		`{"data": {"serviceApiDocSettingsUpdate": {"service": {{ template "service_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "service/api_doc_settings_update", testRequest)
 	// Act
 	docSource := ol.ApiDocumentSourceEnumPull
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", &docSource)
@@ -39,23 +29,13 @@ func TestServiceApiDocSettingsUpdate(t *testing.T) {
 
 func TestServiceApiDocSettingsUpdateDocSourceNull(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation ServiceApiDocSettingsUpdate($docPath:String$docSource:ApiDocumentSourceEnum$service:IdentifierInput!){serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}",
-	"variables":{
-		"docPath":"/src/swagger.json",
-		"docSource": null,
-		"service":{
-			"alias":"service_alias"
-		}
-    }
-}`
-	response := `{"data": {
-	"serviceApiDocSettingsUpdate": {
-		"service": {{ template "service_1" }},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "service/api_doc_settings_update_doc_source_null", request, response)
+	testRequest := NewTestRequest(
+		`"mutation ServiceApiDocSettingsUpdate($docPath:String$docSource:ApiDocumentSourceEnum$service:IdentifierInput!){serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`{"docPath":"/src/swagger.json", "docSource": null, "service": {"alias":"service_alias" }}`,
+		`{"data": { "serviceApiDocSettingsUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "service/api_doc_settings_update_doc_source_null", testRequest)
 	// Act
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", nil)
 	// Assert
@@ -67,23 +47,13 @@ func TestServiceApiDocSettingsUpdateDocSourceNull(t *testing.T) {
 
 func TestServiceApiDocSettingsUpdateDocPathNull(t *testing.T) {
 	// Arrange
-	request := `{
-    "query": "mutation ServiceApiDocSettingsUpdate($docPath:String$docSource:ApiDocumentSourceEnum$service:IdentifierInput!){serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}",
-	"variables":{
-		"docPath":null,
-		"docSource":"PULL",
-		"service":{
-			"alias":"service_alias"
-		}
-    }
-}`
-	response := `{"data": {
-	"serviceApiDocSettingsUpdate": {
-		"service": {{ template "service_1" }},
-		"errors": []
-	}
-}}`
-	client := ABetterTestClient(t, "service/api_doc_settings_update_doc_path_null", request, response)
+	testRequest := NewTestRequest(
+		`"mutation ServiceApiDocSettingsUpdate($docPath:String$docSource:ApiDocumentSourceEnum$service:IdentifierInput!){serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`{"docPath":null, "docSource":"PULL", "service": {"alias":"service_alias" }}`,
+		`{"data": { "serviceApiDocSettingsUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "service/api_doc_settings_update_doc_path_null", testRequest)
 	// Act
 	docSource := ol.ApiDocumentSourceEnumPull
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "", &docSource)

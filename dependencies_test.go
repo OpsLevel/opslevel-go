@@ -9,24 +9,12 @@ import (
 
 func TestCreateServiceDependency(t *testing.T) {
 	// Arrange
-	request := `{
-   "query": "mutation ServiceDependencyCreate($input:ServiceDependencyCreateInput!){serviceDependencyCreate(inputV2: $input){serviceDependency{id,sourceService{id,aliases},destinationService{id,aliases},notes},errors{message,path}}}",
-   "variables": {
-		"input": {
-			"dependencyKey": {
-				"destinationIdentifier": {"alias": "example_3"},
-				"sourceIdentifier": {"alias": "example_2"}
-			},
-			"notes": "An example description"
-		}
-}}`
-	response := `{"data": {
-		"serviceDependencyCreate": {
-			"serviceDependency": {{ template "serviceDependency" }},
-			"errors": []
-		}
-}}`
-	client := ABetterTestClient(t, "serviceDependencyCreate", request, response)
+	testRequest := NewTestRequest(
+		`"mutation ServiceDependencyCreate($input:ServiceDependencyCreateInput!){serviceDependencyCreate(inputV2: $input){serviceDependency{id,sourceService{id,aliases},destinationService{id,aliases},notes},errors{message,path}}}"`,
+		`{ "input": { "dependencyKey": { "destinationIdentifier": {"alias": "example_3"}, "sourceIdentifier": {"alias": "example_2"} }, "notes": "An example description" }}`,
+		`{"data": { "serviceDependencyCreate": { "serviceDependency": {{ template "serviceDependency" }}, "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "serviceDependencyCreate", testRequest)
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
 		Key: ol.ServiceDependencyKey{
@@ -45,19 +33,19 @@ func TestCreateServiceDependency(t *testing.T) {
 
 func TestGetServiceDependencies(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		Variables: `"variables": { {{ template "first_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
-		Response:  `{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		Variables: `"variables": { {{ template "second_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
-		Response:  `{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
+		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
+		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "service/get_dependencies", requests...)
+	client := BestTestClient(t, "service/get_dependencies", requests...)
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -74,19 +62,19 @@ func TestGetServiceDependencies(t *testing.T) {
 
 func TestGetServiceDependents(t *testing.T) {
 	// Arrange
-	testRequestOne := TestRequest{
-		Request:   `"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		Variables: `"variables": { {{ template "first_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
-		Response:  `{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
-	}
-	testRequestTwo := TestRequest{
-		Request:   `"query": "query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		Variables: `"variables": { {{ template "second_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
-		Response:  `{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
-	}
+	testRequestOne := NewTestRequest(
+		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
+		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
+		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
+	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := TmpPaginatedTestClient(t, "service/get_dependents", requests...)
+	client := BestTestClient(t, "service/get_dependents", requests...)
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -103,19 +91,12 @@ func TestGetServiceDependents(t *testing.T) {
 
 func TestDeleteServiceDependency(t *testing.T) {
 	// Arrange
-	request := `{
-   "query": "mutation ServiceDependencyDelete($input:DeleteInput!){serviceDependencyDelete(input: $input){errors{message,path}}}",
-   "variables": {
-		"input": {
-			"id": "{{ template "id1" }}"
-		}
-}}`
-	response := `{"data": {
-		"serviceDependencyDelete": {
-			"errors": []
-		}
-}}`
-	client := ABetterTestClient(t, "serviceDependencyDelete", request, response)
+	testRequest := NewTestRequest(
+		`"mutation ServiceDependencyDelete($input:DeleteInput!){serviceDependencyDelete(input: $input){errors{message,path}}}"`,
+		`{ "input": { "id": "{{ template "id1" }}" } }`,
+		`{"data": { "serviceDependencyDelete": { "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "serviceDependencyDelete", testRequest)
 	// Act
 	err := client.DeleteServiceDependency("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	// Assert
