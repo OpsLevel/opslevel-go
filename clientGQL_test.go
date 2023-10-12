@@ -72,42 +72,19 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 }
 
 func NewTestRequest(request string, variables string, response string) TestRequest {
-	testRequest := TestRequest{}
-	testRequest.templater = NewTestDataTemplater()
-	testRequest.ParseRequest(request)
-	testRequest.ParseVariables(variables)
-	testRequest.ParseResponse(response)
+	templater := NewTestDataTemplater()
+	testRequest := TestRequest{
+		Request:   templater.ParseTemplatedString(request),
+		Variables: templater.ParseTemplatedString(variables),
+		Response:  templater.ParseTemplatedString(response),
+	}
+	if !IsValidJson(testRequest.Variables) {
+		panic(fmt.Errorf("testRequest Variables during json indenting: %s", testRequest.Variables))
+	}
+	if !IsValidJson(testRequest.Response) {
+		panic(fmt.Errorf("testRequest Response during json indenting: %s", testRequest.Response))
+	}
 	return testRequest
-}
-
-type TestDataTemplater struct {
-	rootTemplate *template.Template
-}
-
-func (t *TestDataTemplater) ParseTemplatedString(contents string) (string, error) {
-	target, err := t.rootTemplate.Parse(contents)
-	if err != nil {
-		return "", fmt.Errorf("error parsing template: %s", err)
-	}
-	data := bytes.NewBuffer([]byte{})
-	err = target.Execute(data, nil)
-	if err != nil {
-		return "", err
-	}
-	return data.String(), nil
-}
-
-func (t *TestDataTemplater) JsonIndent(contents string) (string, error) {
-	output := bytes.NewBuffer([]byte{})
-	output.WriteString(contents)
-	contentsAsBytes := output.Bytes()
-	output.Reset()
-
-	err := json.Indent(output, contentsAsBytes, "", "  ")
-	if err != nil {
-		return "", fmt.Errorf("error during json indenting: %s", err)
-	}
-	return output.String(), nil
 }
 
 func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
@@ -136,62 +113,38 @@ func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
 	return &output
 }
 
+type TestDataTemplater struct {
+	rootTemplate *template.Template
+}
+
+func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
+	target, err := t.rootTemplate.Parse(contents)
+	if err != nil {
+		panic(fmt.Errorf("error parsing template: %s", err))
+	}
+	data := bytes.NewBuffer([]byte{})
+	if err = target.Execute(data, nil); err != nil {
+		panic(err)
+	}
+	return strings.TrimSpace(data.String())
+}
+
 type TestRequest struct {
-	templater *TestDataTemplater
 	Request   string
 	Variables string
 	Response  string
 }
 
 func (t *TestRequest) RequestWithVariables() string {
-	jsonRequestWithVariables := fmt.Sprintf(`{%s, %s}`, t.Request, t.Variables)
-	if t.IsValidJson(jsonRequestWithVariables) {
-		return jsonRequestWithVariables
+	jsonRequestWithVariables := fmt.Sprintf(`{"query": %s, "variables": %s}`, t.Request, t.Variables)
+	if !IsValidJson(jsonRequestWithVariables) {
+		panic(fmt.Errorf("test request with variables could not be JSON formatted: %s", jsonRequestWithVariables))
 	}
-	panic(fmt.Errorf("test request+variables could not be JSON formatted: %s", jsonRequestWithVariables))
+	return jsonRequestWithVariables
 }
 
-func (t *TestRequest) IsValidJson(data string) bool {
+func IsValidJson(data string) bool {
 	return json.Valid([]byte(data))
-}
-
-func (t *TestRequest) ParseRequest(rawRequest string) {
-	parsedRequest, _ := t.templater.ParseTemplatedString(rawRequest)
-	jsonFormattedRequest := fmt.Sprintf("{%s}", parsedRequest)
-	if !t.IsValidJson(jsonFormattedRequest) {
-		panic(fmt.Errorf("test request could not be JSON formatted: %s", parsedRequest))
-	}
-	jsonFormattedRequest, err := t.templater.JsonIndent(fmt.Sprintf("{%s}", parsedRequest))
-	if err != nil {
-		panic(err)
-	}
-	t.Request = strings.TrimSpace(strings.Trim(jsonFormattedRequest, "{}"))
-}
-
-func (t *TestRequest) ParseVariables(rawVariables string) {
-	parsedVariables, err := t.templater.ParseTemplatedString(rawVariables)
-	if err != nil {
-		panic(err)
-	}
-
-	varPrefix := `"variables":`
-	jsonFormattedVariableObject := strings.TrimSpace(parsedVariables)
-	jsonFormattedVariableObject, _ = strings.CutPrefix(jsonFormattedVariableObject, varPrefix)
-	if !t.IsValidJson(jsonFormattedVariableObject) {
-		panic(fmt.Errorf("test variables could not be JSON formatted: %s", parsedVariables))
-	}
-	t.Variables = fmt.Sprintf("%s %s", varPrefix, jsonFormattedVariableObject)
-}
-
-func (t *TestRequest) ParseResponse(rawResponse string) {
-	parsedResponse, err := t.templater.ParseTemplatedString(rawResponse)
-	if err != nil {
-		panic(err)
-	}
-	if !t.IsValidJson(parsedResponse) {
-		panic(fmt.Errorf("test response could not be JSON formatted: %s", parsedResponse))
-	}
-	t.Response = parsedResponse
 }
 
 func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
@@ -206,21 +159,6 @@ func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRe
 }
 
 func BestTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
-	if len(requests) > 1 {
-		return APaginatedTestClient(t, endpoint, requests...)
-	}
-	request := requests[0]
-	urlOption := ol.SetURL(
-		autopilot.RegisterEndpoint(
-			fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
-			TemplatedResponse(request.Response),
-			GraphQLQueryTemplatedValidation(t, request.RequestWithVariables()),
-		),
-	)
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), urlOption)
-}
-
-func APaginatedTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
 	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
 }

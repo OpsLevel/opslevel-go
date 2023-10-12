@@ -9,8 +9,8 @@ import (
 func TestListLifecycles(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query LifecycleList{account{lifecycles{alias,description,id,index,name}}}"`,
-		`"variables":{}`,
+		`"query LifecycleList{account{lifecycles{alias,description,id,index,name}}}"`,
+		`{}`,
 		`{"data": { "account": {
 		"lifecycles": [
 			{{ template "lifecycle-pre-alpha" }},

@@ -10,8 +10,8 @@ import (
 func TestInviteUser(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
-		`"variables": {"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "skipWelcomeEmail": false }}`,
+		`"mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+		`{"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "skipWelcomeEmail": false }}`,
 		`{"data": { "userInvite": { "user": {{ template "user_1" }}, "errors": [] }}}`,
 	)
 
@@ -30,8 +30,8 @@ func TestInviteUser(t *testing.T) {
 func TestGetUser(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}"`,
-		`"variables": {"input": { "email": "kyle@opslevel.com" }}`,
+		`"query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}"`,
+		`{"input": { "email": "kyle@opslevel.com" }}`,
 		`{"data": {"account": {"user": {{ template "user_1" }} }}}`,
 	)
 
@@ -48,18 +48,18 @@ func TestGetUser(t *testing.T) {
 func TestGetUserTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`"query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1"}}" }`,
 		`{ "data": { "account": { "user": { "teams": { "nodes": [ {{ template "teamId_1"}}, {{ template "teamId_2"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`"query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1"}}" }`,
 		`{ "data": { "account": { "user": { "teams": { "nodes": [ {{ template "teamId_3"}} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "user/teams", requests...)
+	client := BestTestClient(t, "user/teams", requests...)
 	// Act
 	user := ol.User{
 		UserId: ol.UserId{
@@ -78,18 +78,18 @@ func TestGetUserTeams(t *testing.T) {
 func TestListUser(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "user/list", requests...)
+	client := BestTestClient(t, "user/list", requests...)
 	// Act
 	response, err := client.ListUsers(nil)
 	result := response.Nodes
@@ -105,8 +105,8 @@ func TestListUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
-		`"variables": {"input": {"role": "admin", "skipWelcomeEmail": false }, "user": {"email": "kyle@opslevel.com" }}`,
+		`"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+		`{"input": {"role": "admin", "skipWelcomeEmail": false }, "user": {"email": "kyle@opslevel.com" }}`,
 		`{"data": {"userUpdate": {"user": {{ template "user_1_update" }}, "errors": [] }}}`,
 	)
 
@@ -125,8 +125,8 @@ func TestUpdateUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
-		`"variables": {"user": {"email": "kyle@opslevel.com" }}`,
+		`"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
+		`{"user": {"email": "kyle@opslevel.com" }}`,
 		`{"data": {"userDelete": {"errors": [] }}}`,
 	)
 
@@ -140,8 +140,8 @@ func TestDeleteUser(t *testing.T) {
 func TestDeleteUserDoesNotExist(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
-		`"variables": {"user": {"email": "not-found@opslevel.com" }}`,
+		`"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
+		`{"user": {"email": "not-found@opslevel.com" }}`,
 		`{"data": {"userDelete": {"errors": [{"message": "User with email 'not-found@opslevel.com' does not exist on this account", "path": ["user"] }] }}}`,
 	)
 
@@ -157,8 +157,8 @@ func TestDeleteUserDoesNotExist(t *testing.T) {
 func TestGetUserTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`"query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1"}}" }`,
 		`{
         "data": {
           "account": {
@@ -190,8 +190,8 @@ func TestGetUserTags(t *testing.T) {
       }`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`"query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1"}}" }`,
 		`{
         "data": {
           "account": {
@@ -212,7 +212,7 @@ func TestGetUserTags(t *testing.T) {
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "user/tags", requests...)
+	client := BestTestClient(t, "user/tags", requests...)
 	// Act
 	user := ol.User{
 		UserId: ol.UserId{

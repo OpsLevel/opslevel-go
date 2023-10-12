@@ -10,8 +10,8 @@ import (
 func TestSystemCreate(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
-		`"variables": {"input": { "name": "PlatformSystem3", "description": "creating this for testing purposes", "ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "hello world" } }`,
+		`"mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
+		`{"input": { "name": "PlatformSystem3", "description": "creating this for testing purposes", "ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "hello world" } }`,
 		`{"data": { "systemCreate": { "system": {{ template "system1_response" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "system/create", testRequest)
@@ -33,18 +33,18 @@ func TestSystemCreate(t *testing.T) {
 func TestSystemGetServices(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
+		`"query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
 		`{ "data": { "account": { "system": { "childServices": { "nodes": [ {{ template "service_1" }}, {{ template "service_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
+		`"query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
 		`{ "data": { "account": { "system": { "childServices": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "system/child_services", requests...)
+	client := BestTestClient(t, "system/child_services", requests...)
 	system := ol.SystemId{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
@@ -62,18 +62,18 @@ func TestSystemGetServices(t *testing.T) {
 func TestSystemGetTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
+		`"query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
 		`{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
+		`"query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }}`,
 		`{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "system/tags", requests...)
+	client := BestTestClient(t, "system/tags", requests...)
 	system := ol.SystemId{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
@@ -94,8 +94,8 @@ func TestSystemGetTags(t *testing.T) {
 func TestSystemAssignService(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
-		`"variables": {"system": {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }, "childServices": [ {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"} ] }`,
+		`"mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
+		`{"system": {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }, "childServices": [ {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"} ] }`,
 		`{"data": { "systemChildAssign": { "system": {{ template "system1_response" }} } }}`,
 	)
 
@@ -115,8 +115,8 @@ func TestSystemAssignService(t *testing.T) {
 func TestSystemGetId(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note}}}"`,
-		`"variables":{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy" } }`,
+		`"query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note}}}"`,
+		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy" } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)
 	client := BestTestClient(t, "system/get_id", testRequest)
@@ -130,8 +130,8 @@ func TestSystemGetId(t *testing.T) {
 func TestSystemGetAlias(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note}}}"`,
-		`"variables":{ "input": { "alias": "platformsystem1" } }`,
+		`"query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note}}}"`,
+		`{ "input": { "alias": "platformsystem1" } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)
 	client := BestTestClient(t, "system/get_alias", testRequest)
@@ -145,18 +145,18 @@ func TestSystemGetAlias(t *testing.T) {
 func TestListSystems(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "systems": { "nodes": [ {{ template "system1_response" }}, {{ template "system2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "systems": { "nodes": [ {{ template "system3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "system/list", requests...)
+	client := BestTestClient(t, "system/list", requests...)
 	// Act
 	response, err := client.ListSystems(nil)
 	result := response.Nodes
@@ -172,8 +172,8 @@ func TestListSystems(t *testing.T) {
 func TestSystemUpdate(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
-		`"variables": {"system":{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"}, "input":{ "name": "PlatformSystem1", "description":"Yolo!", "ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "Please delete me" }}`,
+		`"mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
+		`{"system":{"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy"}, "input":{ "name": "PlatformSystem1", "description":"Yolo!", "ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "Please delete me" }}`,
 		`{"data": { "systemUpdate": { "system": {{ template "system1_response" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "system/update", testRequest)
@@ -195,8 +195,8 @@ func TestSystemUpdate(t *testing.T) {
 func TestSystemDelete(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SystemDelete($input:IdentifierInput!){systemDelete(resource: $input){errors{message,path}}}"`,
-		`"variables":{"input":{"alias":"PlatformSystem3"}}`,
+		`"mutation SystemDelete($input:IdentifierInput!){systemDelete(resource: $input){errors{message,path}}}"`,
+		`{"input":{"alias":"PlatformSystem3"}}`,
 		`{"data": { "systemDelete": { "errors": [] } }}`,
 	)
 	client := BestTestClient(t, "system/delete", testRequest)

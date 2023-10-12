@@ -58,18 +58,18 @@ func TestGetTeam(t *testing.T) {
 func TestTeamMembers(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`"query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": { "account": { "team": { "members": { "nodes": [ {{ template "user_1"}}, {{ template "user_2"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`"query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": { "account": { "team": { "members": { "nodes": [ {{ template "user_3"}} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "team/members", requests...)
+	client := BestTestClient(t, "team/members", requests...)
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
@@ -88,18 +88,18 @@ func TestTeamMembers(t *testing.T) {
 func TestTeamTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`"query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": { "account": { "team": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5", "key": "prod", "value": "false" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`"query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": { "account": { "team": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4", "key": "test", "value": "true" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "team/tags", requests...)
+	client := BestTestClient(t, "team/tags", requests...)
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
@@ -133,7 +133,7 @@ func TestGetTeamWithAlias(t *testing.T) {
 func TestListTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -220,7 +220,7 @@ func TestListTeams(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -283,7 +283,7 @@ func TestListTeams(t *testing.T) {
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "team/list", requests...)
+	client := BestTestClient(t, "team/list", requests...)
 	// Act
 	response, err := client.ListTeams(nil)
 	result := response.Nodes
@@ -300,8 +300,8 @@ func TestListTeams(t *testing.T) {
 func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		`"variables": { "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{ "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
         "teams": {
@@ -387,8 +387,8 @@ func TestListTeamsWithManager(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		`"variables": { "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{ "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
         "teams": {
@@ -450,7 +450,7 @@ func TestListTeamsWithManager(t *testing.T) {
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "team/list_with_manager", requests...)
+	client := BestTestClient(t, "team/list_with_manager", requests...)
 	// Act
 	response, err := client.ListTeamsWithManager("kyle@opslevel.com", nil)
 	result := response.Nodes

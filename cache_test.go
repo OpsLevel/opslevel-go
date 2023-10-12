@@ -10,48 +10,48 @@ import (
 func TestCache(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query TierList{account{tiers{alias,description,id,index,name}}}"`,
-		`"variables":{}`,
+		`"query TierList{account{tiers{alias,description,id,index,name}}}"`,
+		`{}`,
 		`{"data":{"account":{ "tiers": [ {{ template "tier_1" }} ] }}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query LifecycleList{account{lifecycles{alias,description,id,index,name}}}"`,
-		`"variables":{}`,
+		`"query LifecycleList{account{lifecycles{alias,description,id,index,name}}}"`,
+		`{}`,
 		`{"data":{"account":{ "lifecycles":[{{ template "lifecycle_1" }}] }}}`,
 	)
 	testRequestThree := NewTestRequest(
-		`"query": "query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		`"variables":{ "after": "", "first": 100 }`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "teams":{ "nodes":[{{ template "team_1" }}] } }}}`,
 	)
 	testRequestFour := NewTestRequest(
-		`"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables":{ "after": "", "first": 100 }`,
+		`"query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{"rubric":{ "categories":{ "nodes":[{{ template "category_1" }}] } }}}}`,
 	)
 	testRequestFive := NewTestRequest(
-		`"query": "{account{rubric{levels{nodes{alias,description,id,index,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables":{}`,
+		`"{account{rubric{levels{nodes{alias,description,id,index,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{}`,
 		`{"data":{"account":{"rubric":{ "levels":{ "nodes":[{{ template "level_1" }}] } }}}}`,
 	)
 	testRequestSix := NewTestRequest(
-		`"query": "query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		`"variables":{ "after": "", "first": 100 }`,
+		`"query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	)
 	testRequestSeven := NewTestRequest(
-		`"query": "query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
-		`"variables":{ "after": "", "first": 100 }`,
+		`"query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "integrations":{ "nodes":[{{ template "integration_1" }}] } }}}`,
 	)
 	testRequestEight := NewTestRequest(
-		`"query": "query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}"`,
-		`"variables":{ "after": "", "first": 100 }`,
+		`"query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount,visibleCount}}}"`,
+		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "repositories":{ "hiddenCount": 0, "nodes":[{{ template "repository_1" }}] } }}}`,
 	)
 	testRequestNine := NewTestRequest(
-		`"query": "query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
-		`"variables":{ "after": "", "first": 100 }`,
+		`"query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "infrastructureResourceSchemas":{ "nodes":[ {{ template "infra_schema_1" }} ] }}}}`,
 	)
 	testRequestTen := TestRequest{}
@@ -70,8 +70,8 @@ func TestCache(t *testing.T) {
 	}
 
 	id := ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
-	client1 := APaginatedTestClient(t, "cache1", requests...)
-	client2 := APaginatedTestClient(t, "cache2", requests...)
+	client1 := BestTestClient(t, "cache1", requests...)
+	client2 := BestTestClient(t, "cache2", requests...)
 
 	// Act
 	ol.Cache.CacheAll(client1)

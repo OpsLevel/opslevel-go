@@ -10,8 +10,8 @@ import (
 func TestCreateRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}"`,
-		`"variables":{ "input": { "name": "Kyle" }}`,
+		`"mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}"`,
+		`{ "input": { "name": "Kyle" }}`,
 		`{"data": { "categoryCreate": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Kyle" }, "errors": [] } }}`,
 	)
 	client := BestTestClient(t, "rubric/category_create", testRequest)
@@ -26,8 +26,8 @@ func TestCreateRubricCategory(t *testing.T) {
 func TestGetRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
-		`"variables":{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg" }`,
+		`"query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
+		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg" }`,
 		`{"data": { "account": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA0", "name": "Reliability" } }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_get", testRequest)
@@ -41,8 +41,8 @@ func TestGetRubricCategory(t *testing.T) {
 func TestGetMissingRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
-		`"variables":{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg" }`,
+		`"query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
+		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg" }`,
 		`{"data": { "account": { "category": null }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_get_missing", testRequest)
@@ -55,18 +55,18 @@ func TestGetMissingRubricCategory(t *testing.T) {
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`"query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response1" }} }, { {{ template "rubric_categories_response2" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`"query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response3" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "rubric/category_list", requests...)
+	client := BestTestClient(t, "rubric/category_list", requests...)
 	// Act
 	response, err := client.ListCategories(nil)
 	result := response.Nodes
@@ -83,8 +83,8 @@ func TestListRubricCategories(t *testing.T) {
 func TestUpdateRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{id,name},errors{message,path}}}"`,
-		`"variables":{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Emily" }}`,
+		`"mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{id,name},errors{message,path}}}"`,
+		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Emily" }}`,
 		`{"data": { "categoryUpdate": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Emily" }, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_update", testRequest)
@@ -100,8 +100,8 @@ func TestUpdateRubricCategory(t *testing.T) {
 func TestDeleteRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation CategoryDelete($input:CategoryDeleteInput!){categoryDelete(input: $input){deletedCategoryId,errors{message,path}}}"`,
-		`"variables":{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
+		`"mutation CategoryDelete($input:CategoryDeleteInput!){categoryDelete(input: $input){deletedCategoryId,errors{message,path}}}"`,
+		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
 		`{"data": { "categoryDelete": { "deletedCategoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_delete", testRequest)

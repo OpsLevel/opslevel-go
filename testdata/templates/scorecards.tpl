@@ -1,5 +1,5 @@
 {{- define "scorecard_create_request" }}
-"query":"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
+"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
 {{ end }}
 
 {{- define "scorecard_create_request_vars" }}
@@ -11,7 +11,7 @@
 }{{ end }}
 
 {{- define "scorecard_update_request" }}
-"query":"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
+"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
 {{ end }}
 
 {{- define "scorecard_update_request_vars" }}
@@ -23,11 +23,11 @@
 }{{ end }}
 
 {{- define "scorecard_delete_request" }}
-"query":"mutation ScorecardDelete($input:IdentifierInput!){scorecardDelete(input: $input){deletedScorecardId,errors{message,path}}}"
+"mutation ScorecardDelete($input:IdentifierInput!){scorecardDelete(input: $input){deletedScorecardId,errors{message,path}}}"
 {{ end }}
 
 {{- define "scorecard_delete_request_vars" }}
-"variables":{"input":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK"}}
+{"input":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK"}}
 {{ end }}
 
 {{- define "scorecard_delete_response" }}{
@@ -35,11 +35,11 @@
 }{{ end }}
 
 {{- define "scorecard_get_request" }}
-"query":"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}"
+"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}"
 {{ end }}
 
 {{- define "scorecard_get_request_vars" }}
-"variables":{"input":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK"}}
+{"input":{"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK"}}
 {{ end }}
 
 {{- define "scorecard_get_response" }}{

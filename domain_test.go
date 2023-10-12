@@ -10,8 +10,8 @@ import (
 func TestDomainCreate(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`"variables": {"input": { "name": "platform-test", "description": "Domain created for testing.", "ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "additional note about platform-test domain" }}`,
+		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`{"input": { "name": "platform-test", "description": "Domain created for testing.", "ownerId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "additional note about platform-test domain" }}`,
 		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
@@ -33,18 +33,18 @@ func TestDomainCreate(t *testing.T) {
 func TestDomainGetSystems(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
+		`"query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
+		`{ {{ template "first_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
 		`{ "data": { "account": { "domain": { "childSystems": { "nodes": [ {{ template "system1_response" }}, {{ template "system2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
+		`"query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
+		`{ {{ template "second_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
 		`{ "data": { "account": { "domain": { "childSystems": { "nodes": [ {{ template "system3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "domain/child_systems", requests...)
+	client := BestTestClient(t, "domain/child_systems", requests...)
 	domain := ol.DomainId{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
@@ -62,18 +62,18 @@ func TestDomainGetSystems(t *testing.T) {
 func TestDomainGetTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "first_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
+		`"query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "first_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
 		`{ "data": { "account": { "domain": { "tags": { "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
-		`"variables": { {{ template "second_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
+		`"query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ {{ template "second_page_variables" }}, "domain": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" } }`,
 		`{ "data": { "account": { "domain": { "tags": { "nodes": [ {{ template "tag3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "domain/tags", requests...)
+	client := BestTestClient(t, "domain/tags", requests...)
 	domain := ol.DomainId{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx",
 	}
@@ -94,8 +94,8 @@ func TestDomainGetTags(t *testing.T) {
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`"variables": {"domain":{ "id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }, "childSystems": [ {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"} ] }`,
+		`"mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`{"domain":{ "id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUx" }, "childSystems": [ {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzUy"} ] }`,
 		`{"data": {"domainChildAssign": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
@@ -115,8 +115,8 @@ func TestDomainAssignSystem(t *testing.T) {
 func TestDomainGetId(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}"`,
-		`"variables": {"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw" }}`,
+		`"query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}"`,
+		`{"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw" }}`,
 		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
@@ -131,8 +131,8 @@ func TestDomainGetId(t *testing.T) {
 func TestDomainGetAlias(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}"`,
-		`"variables": {"input": {"alias": "my-domain" }}`,
+		`"query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note}}}"`,
+		`{"input": {"alias": "my-domain" }}`,
 		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
@@ -147,18 +147,18 @@ func TestDomainGetAlias(t *testing.T) {
 func TestDomainList(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "domains": { "nodes": [ {{ template "domain1_response" }}, {{ template "domain2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "domains": { "nodes": [ {{ template "domain3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "domain/list", requests...)
+	client := BestTestClient(t, "domain/list", requests...)
 	// Act
 	response, err := client.ListDomains(nil)
 	result := response.Nodes
@@ -173,8 +173,8 @@ func TestDomainList(t *testing.T) {
 func TestDomainUpdate(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`"variables": {"domain": {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"}, "input": {"name": "platform-test-4", "description":"Domain created for testing.", "ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "Please delete me" }}`,
+		`"mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`{"domain": {"id":"Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw"}, "input": {"name": "platform-test-4", "description":"Domain created for testing.", "ownerId":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU", "note": "Please delete me" }}`,
 		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
@@ -196,8 +196,8 @@ func TestDomainUpdate(t *testing.T) {
 func TestDomainDelete(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation DomainDelete($input:IdentifierInput!){domainDelete(resource: $input){errors{message,path}}}"`,
-		`"variables":{"input":{"alias":"platformdomain3"}}`,
+		`"mutation DomainDelete($input:IdentifierInput!){domainDelete(resource: $input){errors{message,path}}}"`,
+		`{"input":{"alias":"platformdomain3"}}`,
 		`{"data": {"domainDelete": {"errors": [] }}}`,
 	)
 

@@ -11,8 +11,8 @@ import (
 func TestCreateSecret(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SecretsVaultsSecretCreate($alias:String!$input:SecretInput!){secretsVaultsSecretCreate(alias: $alias, input: $input){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}"`,
-		`"variables": {{ template "secret_create_vars" }}`,
+		`"mutation SecretsVaultsSecretCreate($alias:String!$input:SecretInput!){secretsVaultsSecretCreate(alias: $alias, input: $input){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}"`,
+		`{{ template "secret_create_vars" }}`,
 		`{{ template "secret_create_response" }}`,
 	)
 	id2 := opslevel.NewID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
@@ -33,8 +33,8 @@ func TestCreateSecret(t *testing.T) {
 func TestGetSecret(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "query SecretsVaultsSecret($input:IdentifierInput!){account{secretsVaultsSecret(input: $input){alias,id,owner{alias,id},timestamps{createdAt,updatedAt}}}}"`,
-		`"variables": {{ template "secret_get_vars" }}`,
+		`"query SecretsVaultsSecret($input:IdentifierInput!){account{secretsVaultsSecret(input: $input){alias,id,owner{alias,id},timestamps{createdAt,updatedAt}}}}"`,
+		`{{ template "secret_get_vars" }}`,
 		`{{ template "secret_get_response" }}`,
 	)
 	client := BestTestClient(t, "secret/get", testRequest)
@@ -48,18 +48,18 @@ func TestGetSecret(t *testing.T) {
 func TestListSecrets(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{{ template "secret_list_response_1" }}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query": "query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{{ template "secret_list_response_2" }}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-	client := APaginatedTestClient(t, "secrets/list", requests...)
+	client := BestTestClient(t, "secrets/list", requests...)
 	// Act
 	secretsVaultsSecretConnection, err := client.ListSecretsVaultsSecret(nil)
 	secretNode := secretsVaultsSecretConnection.Nodes
@@ -73,15 +73,10 @@ func TestListSecrets(t *testing.T) {
 func TestUpdateSecret(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SecretsVaultsSecretUpdate($input:SecretInput!$secret:IdentifierInput!){secretsVaultsSecretUpdate(input: $input, secret: $secret){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}"`,
-		`"variables": {{ template "secret_update_vars" }}`,
+		`"mutation SecretsVaultsSecretUpdate($input:SecretInput!$secret:IdentifierInput!){secretsVaultsSecretUpdate(input: $input, secret: $secret){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}"`,
+		`{{ template "secret_update_vars" }}`,
 		`{{ template "secret_update_response" }}`,
 	)
-	// request := `{
-	//    "query": "mutation SecretsVaultsSecretUpdate($input:SecretInput!$secret:IdentifierInput!){secretsVaultsSecretUpdate(input: $input, secret: $secret){secret{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},errors{message,path}}}",
-	//    "variables": {{ template "secret_update_vars" }}
-	//  }`
-	// response := `{{ template "secret_update_response" }}`
 	client := BestTestClient(t, "secrets/update", testRequest)
 	// Act
 	id2 := opslevel.NewID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
@@ -99,8 +94,8 @@ func TestUpdateSecret(t *testing.T) {
 func TestDeleteSecrets(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation SecretsVaultsSecretDelete($input:IdentifierInput!){secretsVaultsSecretDelete(resource: $input){errors{message,path}}}"`,
-		`"variables": {{ template "secret_delete_vars" }}`,
+		`"mutation SecretsVaultsSecretDelete($input:IdentifierInput!){secretsVaultsSecretDelete(resource: $input){errors{message,path}}}"`,
+		`{{ template "secret_delete_vars" }}`,
 		`{{ template "secret_delete_response" }}`,
 	)
 

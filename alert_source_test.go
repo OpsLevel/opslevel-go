@@ -10,8 +10,8 @@ import (
 func TestCreateAlertSourceService(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{name,description,id,type,externalId,integration{id,name,type},url},id,service{id,aliases},status},errors{message,path}}}"`,
-		`"variables": {"input": { "alertSourceExternalIdentifier": { "externalId": "QWERTY", "type": "datadog" }, "service": { "alias": "example" }}}`,
+		`"mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{name,description,id,type,externalId,integration{id,name,type},url},id,service{id,aliases},status},errors{message,path}}}"`,
+		`{"input": { "alertSourceExternalIdentifier": { "externalId": "QWERTY", "type": "datadog" }, "service": { "alias": "example" }}}`,
 		`{"data": { "alertSourceServiceCreate": { "alertSourceService": { "service": { "aliases": ["example"] }}}}}`,
 	)
 
@@ -28,8 +28,8 @@ func TestCreateAlertSourceService(t *testing.T) {
 func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}"`,
-		`"variables": {"externalIdentifier": { "type": "datadog", "externalId": "12345678" }}`,
+		`"query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}"`,
+		`{"externalIdentifier": { "type": "datadog", "externalId": "12345678" }}`,
 		`{"data": {
         "account": {
           "alertSource": {
@@ -64,8 +64,8 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 func TestGetAlertSource(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query":"query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}"`,
-		`"variables": {"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
+		`"query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}"`,
+		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
 		`{"data": {
         "account": {
           "alertSource": {
@@ -96,8 +96,8 @@ func TestGetAlertSource(t *testing.T) {
 func TestDeleteAlertSourceService(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query": "mutation AlertSourceServiceDelete($input:AlertSourceDeleteInput!){alertSourceServiceDelete(input: $input){errors{message,path}}}"`,
-		`"variables": {"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
+		`"mutation AlertSourceServiceDelete($input:AlertSourceDeleteInput!){alertSourceServiceDelete(input: $input){errors{message,path}}}"`,
+		`{"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
 		`{"data": { "alertSourceServiceDelete": { "errors": [] }}}`,
 	)
 
