@@ -78,11 +78,14 @@ func NewTestRequest(request string, variables string, response string) TestReque
 		Variables: templater.ParseTemplatedString(variables),
 		Response:  templater.ParseTemplatedString(response),
 	}
+	if !strings.HasPrefix(testRequest.Request, "\"") || !strings.HasSuffix(testRequest.Request, "\"") {
+		panic(fmt.Errorf("testRequest Request should be wrapped in quotes: '%s'", testRequest.Request))
+	}
 	if !IsValidJson(testRequest.Variables) {
-		panic(fmt.Errorf("testRequest Variables is not valid json: %s", testRequest.Variables))
+		panic(fmt.Errorf("testRequest Variables is not valid json: '%s'", testRequest.Variables))
 	}
 	if !IsValidJson(testRequest.Response) {
-		panic(fmt.Errorf("testRequest Response is not json: %s", testRequest.Response))
+		panic(fmt.Errorf("testRequest Response is not json: '%s'", testRequest.Response))
 	}
 	return testRequest
 }
