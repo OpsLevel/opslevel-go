@@ -92,8 +92,14 @@ type TeamDeleteInput struct {
 	Alias string `json:"alias,omitempty"`
 }
 
+type TeamMembership struct {
+	Team TeamId `graphql:"team"`
+	Role string `graphql:"role"`
+	User UserId `graphql:"user"`
+}
+
 type TeamMembershipUserInput struct {
-	Email string `json:"email"`
+	User UserIdentifierInput `json:"user"`
 }
 
 type TeamMembershipCreateInput struct {
@@ -221,7 +227,7 @@ func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnect
 
 func BuildMembershipInput(members []string) (output []TeamMembershipUserInput) {
 	for _, email := range members {
-		output = append(output, TeamMembershipUserInput{Email: email})
+		output = append(output, TeamMembershipUserInput{User: UserIdentifierInput{Email: email}})
 	}
 	return
 }
@@ -290,10 +296,10 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
 }
 
-func (client *Client) AddMembers(team *TeamId, emails []string) ([]User, error) {
+func (client *Client) AddMembers(team *TeamId, emails []string) ([]TeamMembership, error) {
 	var m struct {
 		Payload struct {
-			Members []User
+			Members []TeamMembership `graphql:"memberships"`
 			Errors  []OpsLevelErrors
 		} `graphql:"teamMembershipCreate(input: $input)"`
 	}
@@ -307,7 +313,7 @@ func (client *Client) AddMembers(team *TeamId, emails []string) ([]User, error) 
 	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) AddMember(team *TeamId, email string) ([]User, error) {
+func (client *Client) AddMember(team *TeamId, email string) ([]TeamMembership, error) {
 	emails := []string{email}
 	return client.AddMembers(team, emails)
 }

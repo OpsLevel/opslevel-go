@@ -1,12 +1,12 @@
 {
   "data": {
     "teamMembershipCreate": {
-      "members": [
+      "memberships": [
         {
-          "email": "john@example.com",
-          "htmlUrl": "https://app.opslevel.com/users/3068",
-          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4",
-          "name": "John",
+          "user": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4",
+            "email": "john@example.com"
+          },
           "role": "admin"
         }
       ],

@@ -9,14 +9,100 @@ import (
 
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
-var getWithAliasClient *ol.Client
-
-func getWithAliasTestClient(t *testing.T) *ol.Client {
-	if getWithAliasClient == nil {
-		getWithAliasClient = ATestClientAlt(t, "team/get", "team/get_with_alias")
-	}
-	return getWithAliasClient
-}
+var testRequestWithAlias = NewTestRequest(
+	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+	`{"alias":"example"}`,
+	`{ "data": {
+    "account": {
+      "team": {
+        "alias": "example",
+        "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+        "aliases": [
+          "example"
+        ],
+        "contacts": [
+          {
+            "address": "#general",
+            "displayName": "",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgy",
+            "type": "slack"
+          },
+          {
+            "address": "https://example.com",
+            "displayName": "Homepage",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgz",
+            "type": "web"
+          }
+        ],
+        "htmlUrl": "https://app.opslevel.com/teams/example",
+        "manager": {
+          "email": "john@example.com",
+          "htmlUrl": "https://app.opslevel.com/users/1098",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+          "name": "John Example",
+          "role": "admin"
+        },
+        "members": {
+          "nodes": [
+            {
+              "email": "kyle@example.com",
+              "htmlUrl": "https://app.opslevel.com/users/1097",
+              "id": "Z2lkOiBvb38zbGV2ZWwvVXNlci8xMDk3",
+              "name": "Kyle Example",
+              "role": "admin"
+            },
+            {
+              "email": "john@example.com",
+              "htmlUrl": "https://app.opslevel.com/users/1098",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+              "name": "John Example",
+              "role": "admin"
+            },
+            {
+              "email": "ken@example.com",
+              "htmlUrl": "https://app.opslevel.com/users/1099",
+              "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+              "name": "Ken Example",
+              "role": "user"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "MQ"
+          }
+        },
+        "tags": {
+          "nodes": [
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
+              "key": "k8s-app",
+              "value": "kube-dns"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
+              "key": "imported",
+              "value": "kubectl-opslevel"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
+              "key": "hello",
+              "value": "world"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "Mw"
+          },
+          "totalCount": 3
+        },
+        "name": "Example",
+        "responsibilities": "Foo &amp; bar"
+      }}}}`,
+)
 
 func TestCreateTeam(t *testing.T) {
 	// Arrange
@@ -44,7 +130,102 @@ func TestCreateTeam(t *testing.T) {
 
 func TestGetTeam(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/get")
+	testRequest := NewTestRequest(
+		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`{ "id":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ" }`,
+		`{ "data": {
+    "account": {
+      "team": {
+        "alias": "example",
+        "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+        "aliases": [
+          "example"
+        ],
+        "contacts": [
+          {
+            "address": "#general",
+            "displayName": "",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgy",
+            "type": "slack"
+          },
+          {
+            "address": "https://example.com",
+            "displayName": "Homepage",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgz",
+            "type": "web"
+          }
+        ],
+        "htmlUrl": "https://app.opslevel.com/teams/example",
+        "manager": {
+          "email": "john@example.com",
+          "htmlUrl": "https://app.opslevel.com/users/1098",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+          "name": "John Example",
+          "role": "admin"
+        },
+        "members": {
+          "nodes": [
+            {
+              "email": "kyle@example.com",
+              "htmlUrl": "https://app.opslevel.com/users/1097",
+              "id": "Z2lkOiBvb38zbGV2ZWwvVXNlci8xMDk3",
+              "name": "Kyle Example",
+              "role": "admin"
+            },
+            {
+              "email": "john@example.com",
+              "htmlUrl": "https://app.opslevel.com/users/1098",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+              "name": "John Example",
+              "role": "admin"
+            },
+            {
+              "email": "ken@example.com",
+              "htmlUrl": "https://app.opslevel.com/users/1099",
+              "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+              "name": "Ken Example",
+              "role": "user"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "MQ"
+          }
+        },
+        "tags": {
+          "nodes": [
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
+              "key": "k8s-app",
+              "value": "kube-dns"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
+              "key": "imported",
+              "value": "kubectl-opslevel"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
+              "key": "hello",
+              "value": "world"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "Mw"
+          },
+          "totalCount": 3
+        },
+        "name": "Example",
+        "responsibilities": "Foo &amp; bar"
+      }}}}`,
+	)
+
+	client := BestTestClient(t, "team/get", testRequest)
 	// Act
 	result, err := client.GetTeam("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ")
 	// Assert
@@ -119,7 +300,7 @@ func TestTeamTags(t *testing.T) {
 
 func TestGetTeamWithAlias(t *testing.T) {
 	// Arrange
-	client := getWithAliasTestClient(t)
+	client := BestTestClient(t, "team/get_with_alias", testRequestWithAlias)
 	// Act
 	result, err := client.GetTeamWithAlias("example")
 	// Assert
@@ -502,11 +683,18 @@ func TestDeleteTeamWithAlias(t *testing.T) {
 
 func TestTeamAddMember(t *testing.T) {
 	// Arrange
-	client1 := getWithAliasTestClient(t)
-	client2 := ATestClient(t, "team/add_member")
+	testRequestWithTeamId := NewTestRequest(
+		`"mutation TeamMembershipCreate($input:TeamMembershipCreateInput!){teamMembershipCreate(input: $input){memberships{team{alias,id},role,user{id,email}},errors{message,path}}}"`,
+		`{"input": {"teamId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ", "members": [ {"user": {"email": "john@example.com"}} ] }}`,
+		`{"data": {"teamMembershipCreate": {"memberships": [ {"user": {"id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", "email": "john@example.com"}, "role": "admin"} ], "errors": [] }}}`,
+	)
+
+	clientWithTeamId := BestTestClient(t, "team/add_member", testRequestWithTeamId)
+	clientWithAlias := BestTestClient(t, "team/get_with_alias_add_member", testRequestWithAlias)
+
 	// Act
-	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddMember(&team.TeamId, "john@example.com")
+	team, _ := clientWithAlias.GetTeamWithAlias("example")
+	result, err := clientWithTeamId.AddMember(&team.TeamId, "john@example.com")
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result))
@@ -514,7 +702,7 @@ func TestTeamAddMember(t *testing.T) {
 
 func TestTeamRemoveMember(t *testing.T) {
 	// Arrange
-	client1 := getWithAliasTestClient(t)
+	client1 := BestTestClient(t, "team/get_with_alias_rm_member", testRequestWithAlias)
 	client2 := ATestClient(t, "team/remove_member")
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
@@ -526,7 +714,7 @@ func TestTeamRemoveMember(t *testing.T) {
 
 func TestTeamAddContact(t *testing.T) {
 	// Arrange
-	client1 := getWithAliasTestClient(t)
+	client1 := BestTestClient(t, "team/get_with_alias_add_contact", testRequestWithAlias)
 	client2 := ATestClient(t, "team/add_contact")
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
