@@ -10,7 +10,7 @@ import (
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
 var testRequestWithAlias = NewTestRequest(
-	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
 	`{"alias":"example"}`,
 	`{ "data": {
     "account": {
@@ -106,7 +106,73 @@ var testRequestWithAlias = NewTestRequest(
 
 func TestCreateTeam(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/create")
+	testRequest := NewTestRequest(
+		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`{"input": {"name": "Example", "managerEmail": "john@example.com", "parentTeam": {"alias": "parent_team"}, "responsibilities": "Foo & bar", "group": {"alias": "test_group"}, "contacts": [ {"type": "slack_handle", "address": "@mozzie"}, {"type": "slack", "displayName": "", "address": "#general"}, {"type": "web", "displayName": "Homepage", "address": "https://example.com"} ] }}`,
+		`{ "data": {
+    "teamCreate": {
+      "team": {
+        "alias": "example",
+        "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzY",
+        "aliases": [
+          "example"
+        ],
+        "contacts": [
+          {
+            "address": "#general",
+            "displayName": "",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTk",
+            "type": "slack"
+          },
+          {
+            "address": "https://example.com",
+            "displayName": "Homepage",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNjA",
+            "type": "web"
+          }
+        ],
+        "group": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvNTI",
+          "alias": "test_group"
+        },
+        "htmlUrl": "https://app.opslevel-staging.com/teams/example",
+        "manager": {
+          "email": "john@example.com",
+          "htmlUrl": "https://app.opslevel-staging.com/users/410",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA",
+          "name": "John Example",
+          "role": "admin"
+        },
+        "members": {
+          "nodes": [
+            {
+              "email": "john@example.com",
+              "htmlUrl": "https://app.opslevel-staging.com/users/410",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA",
+              "name": "John Example",
+              "role": "admin"
+            }
+          ],
+          "pageInfo": {
+            "hasNextPage": false,
+            "hasPreviousPage": false,
+            "startCursor": "MQ",
+            "endCursor": "MQ"
+          }
+        },
+        "name": "Example",
+        "parentTeam": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3",
+          "alias": "parent_team"
+        },
+        "responsibilities": "Foo &amp; bar"
+      },
+      "errors": []
+    }}}`,
+	)
+
+	client := BestTestClient(t, "team/create", testRequest)
+	// client := ATestClient(t, "team/create")
 	// Act
 	contacts := []ol.ContactInput{
 		ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
@@ -119,6 +185,7 @@ func TestCreateTeam(t *testing.T) {
 		Responsibilities: "Foo & bar",
 		Contacts:         &contacts,
 		Group:            ol.NewIdentifier("test_group"),
+		ParentTeam:       ol.NewIdentifier("parent_team"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -126,12 +193,13 @@ func TestCreateTeam(t *testing.T) {
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
 	autopilot.Equals(t, "test_group", result.Group.Alias)
+	autopilot.Equals(t, "parent_team", result.ParentTeam.Alias)
 }
 
 func TestGetTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
 		`{ "id":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ" }`,
 		`{ "data": {
     "account": {
@@ -314,7 +382,7 @@ func TestGetTeamWithAlias(t *testing.T) {
 func TestListTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -401,7 +469,7 @@ func TestListTeams(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -481,7 +549,7 @@ func TestListTeams(t *testing.T) {
 func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{ "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
@@ -568,7 +636,7 @@ func TestListTeamsWithManager(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{ "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
@@ -647,13 +715,93 @@ func TestListTeamsWithManager(t *testing.T) {
 
 func TestUpdateTeam(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/update")
+	testRequest := NewTestRequest(
+		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ", "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"}, "group": {"alias": "test_group" }}}`,
+		`{ "data": {
+      "teamUpdate": {
+        "team": {
+          "alias": "example",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+          "aliases": [
+            "example"
+          ],
+          "contacts": [
+            {
+              "address": "#general",
+              "displayName": "",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgy",
+              "type": "slack"
+            },
+            {
+              "address": "https://example.com",
+              "displayName": "Homepage",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgz",
+              "type": "web"
+            }
+          ],
+          "group": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvNTI",
+            "alias": "test_group"
+          },
+          "htmlUrl": "https://app.opslevel.com/teams/example",
+          "manager":               {
+            "email": "ken@example.com",
+            "htmlUrl": "https://app.opslevel.com/users/1099",
+            "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+            "name": "Ken Example",
+            "role": "user"
+          },
+          "members": {
+            "nodes": [
+              {
+                "email": "kyle@example.com",
+                "htmlUrl": "https://app.opslevel.com/users/1097",
+                "id": "Z2lkOiBvb38zbGV2ZWwvVXNlci8xMDk3",
+                "name": "Kyle Example",
+                "role": "admin"
+              },
+              {
+                "email": "john@example.com",
+                "htmlUrl": "https://app.opslevel.com/users/1098",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+                "name": "John Example",
+                "role": "admin"
+              },
+              {
+                "email": "ken@example.com",
+                "htmlUrl": "https://app.opslevel.com/users/1099",
+                "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+                "name": "Ken Example",
+                "role": "user"
+              }
+            ],
+            "pageInfo": {
+              "hasNextPage": false,
+              "hasPreviousPage": false,
+              "startCursor": "MQ",
+              "endCursor": "MQ"
+            }
+          },
+          "parentTeam": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3",
+            "alias": "parent_team"
+          },
+          "name": "Example",
+          "responsibilities": "Foo &amp; bar"
+        },
+        "errors": []
+       }}}`,
+	)
+	client := BestTestClient(t, "team/update", testRequest)
+	// client := ATestClient(t, "team/update")
 	// Act
 	result, err := client.UpdateTeam(ol.TeamUpdateInput{
 		Id:               "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
 		ManagerEmail:     "ken@example.com",
 		Responsibilities: "Foo & bar",
 		Group:            ol.NewIdentifier("test_group"),
+		ParentTeam:       ol.NewIdentifier("parent_team"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -661,6 +809,7 @@ func TestUpdateTeam(t *testing.T) {
 	autopilot.Equals(t, "ken@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
 	autopilot.Equals(t, "test_group", result.Group.Alias)
+	autopilot.Equals(t, "parent_team", result.ParentTeam.Alias)
 }
 
 func TestDeleteTeam(t *testing.T) {
