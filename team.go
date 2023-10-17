@@ -54,7 +54,7 @@ type Team struct {
 	Manager          User
 	Members          *UserConnection
 	Name             string
-	ParentTeam       *TeamId
+	ParentTeam       TeamId
 	Responsibilities string
 	Tags             *TagConnection
 }
@@ -78,7 +78,7 @@ type TeamCreateInput struct {
 	Responsibilities string           `json:"responsibilities,omitempty"`
 	Group            *IdentifierInput `json:"group"`
 	Contacts         *[]ContactInput  `json:"contacts,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty"`
+	ParentTeam       *IdentifierInput `json:"parentTeam"`
 }
 
 type TeamUpdateInput struct {
@@ -88,7 +88,7 @@ type TeamUpdateInput struct {
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
 	Group            *IdentifierInput `json:"group"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty"`
+	ParentTeam       *IdentifierInput `json:"parentTeam"`
 }
 
 type TeamDeleteInput struct {
