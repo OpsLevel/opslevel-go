@@ -10,7 +10,7 @@ import (
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
 var testRequestWithAlias = NewTestRequest(
-	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
 	`{"alias":"example"}`,
 	`{ "data": {
     "account": {
@@ -107,7 +107,7 @@ var testRequestWithAlias = NewTestRequest(
 func TestCreateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
 		`{"input": {"name": "Example", "managerEmail": "john@example.com", "parentTeam": {"alias": "parent_team"}, "responsibilities": "Foo & bar", "group": {"alias": "test_group"}, "contacts": [ {"type": "slack_handle", "address": "@mozzie"}, {"type": "slack", "displayName": "", "address": "#general"}, {"type": "web", "displayName": "Homepage", "address": "https://example.com"} ] }}`,
 		`{ "data": {
     "teamCreate": {
@@ -199,7 +199,7 @@ func TestCreateTeam(t *testing.T) {
 func TestGetTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
 		`{ "id":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ" }`,
 		`{ "data": {
     "account": {
@@ -382,7 +382,7 @@ func TestGetTeamWithAlias(t *testing.T) {
 func TestListTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -469,7 +469,7 @@ func TestListTeams(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -549,7 +549,7 @@ func TestListTeams(t *testing.T) {
 func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{ "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
@@ -636,7 +636,7 @@ func TestListTeamsWithManager(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}"`,
 		`{ "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
@@ -716,7 +716,7 @@ func TestListTeamsWithManager(t *testing.T) {
 func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{id,alias},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
+		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}"`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ", "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"}, "group": {"alias": "test_group" }}}`,
 		`{ "data": {
       "teamUpdate": {

@@ -38,6 +38,7 @@ type ContactDeleteInput struct {
 	Id ID `json:"id"`
 }
 
+// Has no json struct tags as this is nested in returned data structs
 type TeamId struct {
 	Alias string
 	Id    ID
@@ -53,7 +54,7 @@ type Team struct {
 	Manager          User
 	Members          *UserConnection
 	Name             string
-	ParentTeam       *IdentifierInput
+	ParentTeam       *TeamId
 	Responsibilities string
 	Tags             *TagConnection
 }
