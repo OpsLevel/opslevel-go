@@ -54,7 +54,7 @@ type Team struct {
 	Manager          User
 	Members          *UserConnection
 	Name             string
-	ParentTeam       *TeamId
+	ParentTeam       TeamId
 	Responsibilities string
 	Tags             *TagConnection
 }
