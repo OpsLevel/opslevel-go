@@ -20,6 +20,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var (
+	dataTemplater = NewTestDataTemplater()
+	id1           = ol.ID(dataTemplater.ParseValue("id1"))
+	id2           = ol.ID(dataTemplater.ParseValue("id2"))
+	id3           = ol.ID(dataTemplater.ParseValue("id3"))
+)
+
 func TestMain(m *testing.M) {
 	output := zerolog.ConsoleWriter{Out: os.Stderr}
 	log.Logger = log.Output(output)
@@ -118,6 +125,10 @@ func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
 
 type TestDataTemplater struct {
 	rootTemplate *template.Template
+}
+
+func (t *TestDataTemplater) ParseValue(value string) string {
+	return t.ParseTemplatedString(`{{ template "` + value + `" }}`)
 }
 
 func (t *TestDataTemplater) ParseTemplatedString(contents string) string {

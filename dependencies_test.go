@@ -25,9 +25,9 @@ func TestCreateServiceDependency(t *testing.T) {
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), result.Id)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5"), result.Service.Id)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx"), result.DependsOn.Id)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, id2, result.Service.Id)
+	autopilot.Equals(t, id3, result.DependsOn.Id)
 	autopilot.Equals(t, "An example description", result.Notes)
 }
 
@@ -35,12 +35,12 @@ func TestGetServiceDependencies(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1" }}" }`,
 		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1" }}" }`,
 		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
@@ -49,27 +49,27 @@ func TestGetServiceDependencies(t *testing.T) {
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id: id1,
 		},
 	}
 	resp, err := resource.GetDependencies(client, nil)
 	result := resp.Edges
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), result[0].Id)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx"), result[2].Id)
+	autopilot.Equals(t, id1, result[0].Id)
+	autopilot.Equals(t, id3, result[2].Id)
 }
 
 func TestGetServiceDependents(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1" }}" }`,
 		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}"`,
-		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1" }}" }`,
 		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
@@ -78,15 +78,15 @@ func TestGetServiceDependents(t *testing.T) {
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id: id1,
 		},
 	}
 	resp, err := resource.GetDependents(client, nil)
 	result := resp.Edges
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), result[0].Id)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx"), result[2].Id)
+	autopilot.Equals(t, id1, result[0].Id)
+	autopilot.Equals(t, id3, result[2].Id)
 }
 
 func TestDeleteServiceDependency(t *testing.T) {
@@ -98,7 +98,7 @@ func TestDeleteServiceDependency(t *testing.T) {
 	)
 	client := BestTestClient(t, "serviceDependencyDelete", testRequest)
 	// Act
-	err := client.DeleteServiceDependency("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	err := client.DeleteServiceDependency(id1)
 	// Assert
 	autopilot.Ok(t, err)
 }

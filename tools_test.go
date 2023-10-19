@@ -19,12 +19,12 @@ func TestCreateTool(t *testing.T) {
 	result, err := client.CreateTool(ol.ToolCreateInput{
 		Category:    ol.ToolCategoryOther,
 		DisplayName: "example",
-		ServiceId:   "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		ServiceId:   id1,
 		Url:         "https://example.com",
 	})
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), result.Service.Id)
+	autopilot.Equals(t, id1, result.Service.Id)
 	autopilot.Equals(t, ol.ToolCategoryOther, result.Category)
 	autopilot.Equals(t, "Example", result.DisplayName)
 	autopilot.Equals(t, "https://example.com", result.Url)
@@ -40,7 +40,7 @@ func TestUpdateTool(t *testing.T) {
 	client := BestTestClient(t, "toolUpdate", testRequest)
 	// Act
 	result, err := client.UpdateTool(ol.ToolUpdateInput{
-		Id:       "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:       id1,
 		Category: ol.ToolCategoryDeployment,
 	})
 	// Assert
@@ -58,7 +58,7 @@ func TestDeleteTool(t *testing.T) {
 	)
 	client := BestTestClient(t, "toolDelete", testRequest)
 	// Act
-	err := client.DeleteTool("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	err := client.DeleteTool(id1)
 	// Assert
 	autopilot.Ok(t, err)
 }
