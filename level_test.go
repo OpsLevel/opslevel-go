@@ -86,7 +86,7 @@ func TestUpdateRubricLevel(t *testing.T) {
 	client := BestTestClient(t, "rubric/level_update", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:          id1,
 		Name:        "Example",
 		Description: ol.NewString("An example description"),
 	})
@@ -107,7 +107,7 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 	client := BestTestClient(t, "rubric/level_update_noname", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:          id1,
 		Description: ol.NewString("An example description"),
 	})
 	// Assert
@@ -127,7 +127,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	client := BestTestClient(t, "rubric/level_update_emptydescription", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:          id1,
 		Name:        "Example",
 		Description: ol.NewString(""),
 	})
@@ -148,7 +148,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	client := BestTestClient(t, "rubric/level_update_nodescription", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
-		Id:   "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:   id1,
 		Name: "Example",
 	})
 	// Assert

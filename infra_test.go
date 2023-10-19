@@ -14,7 +14,7 @@ func TestCreateInfra(t *testing.T) {
 		`{
     "all": true,
     "input": {
-      "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+      "ownerId":"{{ template "id1" }}",
       "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false,\"storage_size\":{\"unit\":\"GB\",\"value\":1024}}",
       "providerData": {
         "accountName": "Dev - 123456789",
@@ -32,7 +32,7 @@ func TestCreateInfra(t *testing.T) {
 	// Act
 	result, err := client.CreateInfrastructure(opslevel.InfraInput{
 		Schema: "Database",
-		Owner:  opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Owner:  &id1,
 		Provider: &opslevel.InfraProviderInput{
 			Account: "Dev - 123456789",
 			Name:    "Google",
@@ -52,7 +52,7 @@ func TestCreateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, string(id1), result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -60,15 +60,15 @@ func TestGetInfra(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}"`,
-		`{"all": true, "input":{ "id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }}`,
+		`{"all": true, "input":{ "id":"{{ template "id1" }}" }}`,
 		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
 	)
 	client := BestTestClient(t, "infra/get", testRequest)
 	// Act
-	result, err := client.GetInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	result, err := client.GetInfrastructure(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, string(id1), result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -127,13 +127,13 @@ func TestUpdateInfra(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}"`,
-		`{"all": true, "identifier": {"id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}, "input": { "ownerId":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
+		`{"all": true, "identifier": {"id": "{{ template "id1" }}"}, "input": { "ownerId":"{{ template "id1" }}", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
 		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "infra/update", testRequest)
 	// Act
-	result, err := client.UpdateInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.InfraInput{
-		Owner: opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+	result, err := client.UpdateInfrastructure(string(id1), opslevel.InfraInput{
+		Owner: &id1,
 		Data: opslevel.JSON{
 			"name":     "my-big-query",
 			"engine":   "BigQuery",
@@ -143,7 +143,7 @@ func TestUpdateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, string(id1), result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -151,12 +151,12 @@ func TestDeleteInfra(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}"`,
-		`{ "input": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" } }`,
+		`{ "input": { "id": "{{ template "id1" }}" } }`,
 		`{"data": { "infrastructureResourceDelete": { "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "infra/delete", testRequest)
 	// Act
-	err := client.DeleteInfrastructure("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	err := client.DeleteInfrastructure(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
 }

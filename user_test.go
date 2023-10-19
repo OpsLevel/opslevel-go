@@ -63,7 +63,7 @@ func TestGetUserTeams(t *testing.T) {
 	// Act
 	user := ol.User{
 		UserId: ol.UserId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id: id1,
 		},
 	}
 	resp, err := user.Teams(client, nil)
@@ -216,7 +216,7 @@ func TestGetUserTags(t *testing.T) {
 	// Act
 	user := ol.User{
 		UserId: ol.UserId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id: id1,
 		},
 	}
 	resp, err := user.GetTags(client, nil)

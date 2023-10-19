@@ -15,19 +15,18 @@ func TestCreateSecret(t *testing.T) {
 		`{{ template "secret_create_vars" }}`,
 		`{{ template "secret_create_response" }}`,
 	)
-	id2 := opslevel.NewID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
 	client := BestTestClient(t, "secrets/create", testRequest)
 	fmt.Println(client)
 	// Act
 	secretInput := opslevel.SecretInput{
-		Owner: opslevel.IdentifierInput{Id: *id2},
+		Owner: opslevel.IdentifierInput{Id: id2},
 		Value: "my-secret",
 	}
 	result, err := client.CreateSecret("alias1", secretInput)
 
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, *id2, result.Owner.Id)
+	autopilot.Equals(t, id2, result.Owner.Id)
 }
 
 func TestGetSecret(t *testing.T) {
@@ -39,10 +38,10 @@ func TestGetSecret(t *testing.T) {
 	)
 	client := BestTestClient(t, "secret/get", testRequest)
 	// Act
-	result, err := client.GetSecret("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
+	result, err := client.GetSecret(string(id2))
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5", string(result.ID))
+	autopilot.Equals(t, id2, result.ID)
 }
 
 func TestListSecrets(t *testing.T) {
@@ -79,16 +78,15 @@ func TestUpdateSecret(t *testing.T) {
 	)
 	client := BestTestClient(t, "secrets/update", testRequest)
 	// Act
-	id2 := opslevel.NewID("Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5")
 	secretInput := opslevel.SecretInput{
-		Owner: opslevel.IdentifierInput{Id: *id2},
+		Owner: opslevel.IdentifierInput{Id: id2},
 		Value: "secret_value_2",
 	}
-	result, err := client.UpdateSecret(string(*id2), secretInput)
+	result, err := client.UpdateSecret(string(id2), secretInput)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, *id2, result.ID)
-	autopilot.Equals(t, *id2, result.Owner.Id)
+	autopilot.Equals(t, id2, result.ID)
+	autopilot.Equals(t, id2, result.Owner.Id)
 }
 
 func TestDeleteSecrets(t *testing.T) {
@@ -99,10 +97,9 @@ func TestDeleteSecrets(t *testing.T) {
 		`{{ template "secret_delete_response" }}`,
 	)
 
-	id1 := opslevel.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	client := BestTestClient(t, "secrets/delete", testRequest)
 	// Act
-	err := client.DeleteSecret(string(*id1))
+	err := client.DeleteSecret(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
 }

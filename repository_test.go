@@ -12,7 +12,7 @@ func TestConnectServiceRepository(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ServiceRepositoryCreate($input:ServiceRepositoryCreateInput!){serviceRepositoryCreate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}"`,
-		`{ "input": { "service": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }, "repository": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }, "baseDirectory": "/", "displayName": "OpsLevel/opslevel" }}`,
+		`{ "input": { "service": { "id": "{{ template "id1" }}" }, "repository": { "id": "{{ template "id1" }}" }, "baseDirectory": "/", "displayName": "OpsLevel/opslevel" }}`,
 		`{"data": {
     "serviceRepositoryCreate": {
         "serviceRepository": {
@@ -36,10 +36,10 @@ func TestConnectServiceRepository(t *testing.T) {
 	)
 	client := BestTestClient(t, "repository/connect", testRequest)
 	service := ol.ServiceId{
-		Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id: id1,
 	}
 	repository := ol.Repository{
-		Id:           "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:           id1,
 		Name:         "opslevel",
 		Organization: "OpsLevel",
 	}
@@ -166,8 +166,8 @@ func TestUpdateRepository(t *testing.T) {
 	client := BestTestClient(t, "repositories/update", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
-		Id:    *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
-		Owner: ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Id:    id1,
+		Owner: ol.NewID(string(id1)),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -185,7 +185,7 @@ func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 	client := BestTestClient(t, "repositories/update_owner_not_present", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
-		Id: *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Id: *ol.NewID(string(id1)),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -203,7 +203,7 @@ func TestRepositoryUpdateOwnerNull(t *testing.T) {
 	client := BestTestClient(t, "repositories/update_owner_null", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
-		Id:    *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+		Id:    *ol.NewID(string(id1)),
 		Owner: ol.NewID(""),
 	})
 	// Assert
@@ -241,7 +241,7 @@ func TestUpdateServiceRepository(t *testing.T) {
 	client := BestTestClient(t, "repository/service_update", testRequest)
 	// Act
 	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
-		Id:          "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:          id1,
 		DisplayName: "Foobar",
 	})
 	// Assert
