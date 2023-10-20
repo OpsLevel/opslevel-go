@@ -3,7 +3,8 @@ module github.com/opslevel/opslevel-go/v2023
 go 1.21
 
 require (
-	github.com/go-resty/resty/v2 v2.9.1
+	github.com/Masterminds/sprig/v3 v3.2.2
+	github.com/go-resty/resty/v2 v2.10.0
 	github.com/gosimple/slug v1.13.1
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/hasura/go-graphql-client v0.10.0
@@ -15,7 +16,6 @@ require (
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/uuid v1.3.0 // indirect
