@@ -442,9 +442,10 @@ const (
 	PredicateKeyEnumOwnerIDs       PredicateKeyEnum = "owner_ids"       // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain.
 	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" // Filter by the creation source.
 	PredicateKeyEnumRepositoryIDs  PredicateKeyEnum = "repository_ids"  // Filter by Repository that this service is attached to, if any.
+	PredicateKeyEnumFilterID       PredicateKeyEnum = "filter_id"       // Filter by another filter.
+	PredicateKeyEnumAliases        PredicateKeyEnum = "aliases"         // Filter by Alias attached to this service, if any.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
 	PredicateKeyEnumSystemID       PredicateKeyEnum = "system_id"       // Filter by System that this service is assigned to, if any.
-	PredicateKeyEnumFilterID       PredicateKeyEnum = "filter_id"       // Filter by another filter.
 )
 
 // All PredicateKeyEnum as []string
@@ -461,9 +462,10 @@ var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumOwnerIDs),
 	string(PredicateKeyEnumCreationSource),
 	string(PredicateKeyEnumRepositoryIDs),
+	string(PredicateKeyEnumFilterID),
+	string(PredicateKeyEnumAliases),
 	string(PredicateKeyEnumDomainID),
 	string(PredicateKeyEnumSystemID),
-	string(PredicateKeyEnumFilterID),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
