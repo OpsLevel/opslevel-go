@@ -47,12 +47,12 @@ func TestGetSecret(t *testing.T) {
 func TestListSecrets(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{{ template "secret_list_response_1" }}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}"`,
+		`"query SecretList($after:String!$first:Int!){account{secretsVaultsSecrets(after: $after, first: $first){nodes{alias,id,owner{alias,id},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{{ template "secret_list_response_2" }}`,
 	)
