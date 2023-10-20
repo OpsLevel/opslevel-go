@@ -1,4 +1,0 @@
-kind: Feature
-body: "Update predicate filter enum to support `aliases` and `filter_id` as options
-  for new filter types"
-time: 2023-10-20T13:01:53.680499-05:00
