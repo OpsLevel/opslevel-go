@@ -26,10 +26,11 @@ func TestCreateScorecard(t *testing.T) {
 
 	client := BestTestClient(t, "scorecards/create_scorecard", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
-		Name:        name,
-		Description: &description,
-		OwnerId:     *fakeOwnerId,
-		FilterId:    fakeFilterId,
+		Name:                        name,
+		Description:                 &description,
+		OwnerId:                     *fakeOwnerId,
+		FilterId:                    fakeFilterId,
+		AffectsOverallServiceLevels: ol.Bool(true),
 	})
 
 	autopilot.Ok(t, err)
@@ -37,6 +38,33 @@ func TestCreateScorecard(t *testing.T) {
 	autopilot.Equals(t, description, sc.Description)
 	autopilot.Equals(t, *fakeOwnerId, sc.Owner.Id())
 	autopilot.Equals(t, *fakeFilterId, sc.Filter.Id)
+	autopilot.Equals(t, true, sc.AffectsOverallServiceLevels)
+}
+
+func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
+	testRequest := NewTestRequest(
+		`{{ template "scorecard_create_request" }}`,
+		`{{ template "scorecard_create_request_vars_affects_service_levels_false" }}`,
+		`{{ template "scorecard_create_response_affects_service_levels_false" }}`,
+	)
+	name := "new scorecard"
+	description := "a new scorecard with an attached filter id"
+
+	client := BestTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
+	sc, err := client.CreateScorecard(ol.ScorecardInput{
+		Name:                        name,
+		Description:                 &description,
+		OwnerId:                     *fakeOwnerId,
+		FilterId:                    fakeFilterId,
+		AffectsOverallServiceLevels: ol.Bool(false),
+	})
+
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, name, sc.Name)
+	autopilot.Equals(t, description, sc.Description)
+	autopilot.Equals(t, *fakeOwnerId, sc.Owner.Id())
+	autopilot.Equals(t, *fakeFilterId, sc.Filter.Id)
+	autopilot.Equals(t, false, sc.AffectsOverallServiceLevels)
 }
 
 func TestUpdateScorecard(t *testing.T) {
@@ -63,6 +91,7 @@ func TestUpdateScorecard(t *testing.T) {
 	autopilot.Equals(t, description, sc.Description)
 	autopilot.Equals(t, *newOwnerId, sc.Owner.Id())
 	autopilot.Equals(t, *newFilterId, sc.Filter.Id)
+	autopilot.Equals(t, false, sc.AffectsOverallServiceLevels)
 }
 
 func TestDeleteScorecard(t *testing.T) {
