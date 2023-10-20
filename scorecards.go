@@ -12,13 +12,14 @@ type ScorecardId struct {
 type Scorecard struct {
 	ScorecardId
 
-	Description   string      `graphql:"description"` // optional
-	Filter        Filter      `graphql:"filter"`      // optional
-	Name          string      `graphql:"name"`
-	Owner         EntityOwner `graphql:"owner"`
-	PassingChecks int         `graphql:"passingChecks"`
-	ServiceCount  int         `graphql:"serviceCount"`
-	ChecksCount   int         `graphql:"totalChecks"`
+	AffectsOverallServiceLevels bool        `graphql:"affectsOverallServiceLevels"`
+	Description                 string      `graphql:"description"` // optional
+	Filter                      Filter      `graphql:"filter"`      // optional
+	Name                        string      `graphql:"name"`
+	Owner                       EntityOwner `graphql:"owner"`
+	PassingChecks               int         `graphql:"passingChecks"`
+	ServiceCount                int         `graphql:"serviceCount"`
+	ChecksCount                 int         `graphql:"totalChecks"`
 }
 
 type ScorecardConnection struct {
@@ -28,10 +29,11 @@ type ScorecardConnection struct {
 }
 
 type ScorecardInput struct {
-	Name        string  `graphql:"name" json:"name"`
-	Description *string `graphql:"description" json:"description,omitempty"`
-	OwnerId     ID      `graphql:"ownerId" json:"ownerId"`
-	FilterId    *ID     `graphql:"filterId" json:"filterId,omitempty"`
+	AffectsOverallServiceLevels *bool   `graphql:"affectsOverallServiceLevels" json:"affectsOverallServiceLevels,omitempty"`
+	Name                        string  `graphql:"name" json:"name"`
+	Description                 *string `graphql:"description" json:"description,omitempty"`
+	OwnerId                     ID      `graphql:"ownerId" json:"ownerId"`
+	FilterId                    *ID     `graphql:"filterId" json:"filterId,omitempty"`
 }
 
 func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) {
