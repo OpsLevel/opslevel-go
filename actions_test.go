@@ -286,7 +286,7 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
-		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"}]}}`,
+		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"{{ template "id1" }}"}]}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/update_trigger3", testRequest)
@@ -298,7 +298,7 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 		Description: ol.NewString(""),
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier("123456789"),
-			*ol.NewIdentifier("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"),
+			*ol.NewIdentifier(string(id1)),
 		},
 	})
 	// Assert
@@ -360,7 +360,7 @@ func TestListExtendedTeamAccess(t *testing.T) {
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "custom_actions/list_extended_team_access", requests...)
-	id1 := *ol.NewID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	id1 := *ol.NewID(string(id1))
 	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
 
 	// Act

@@ -69,7 +69,6 @@ func TestCache(t *testing.T) {
 		testRequestTen,
 	}
 
-	id := ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
 	client1 := BestTestClient(t, "cache1", requests...)
 	client2 := BestTestClient(t, "cache2", requests...)
 
@@ -115,42 +114,42 @@ func TestCache(t *testing.T) {
 
 	// Assert
 	autopilot.Equals(t, true, tier1Ok)
-	autopilot.Equals(t, id, tier1.Id)
+	autopilot.Equals(t, id1, tier1.Id)
 	autopilot.Equals(t, false, tier2Ok)
 	autopilot.Equals(t, true, tier2 == nil)
 
 	autopilot.Equals(t, true, lifecycle1Ok)
-	autopilot.Equals(t, id, lifecycle1.Id)
+	autopilot.Equals(t, id1, lifecycle1.Id)
 	autopilot.Equals(t, false, lifecycle2Ok)
 	autopilot.Equals(t, true, lifecycle2 == nil)
 
 	autopilot.Equals(t, true, team1Ok)
-	autopilot.Equals(t, id, team1.Id)
+	autopilot.Equals(t, id1, team1.Id)
 	autopilot.Equals(t, false, team2Ok)
 	autopilot.Equals(t, true, team2 == nil)
 
 	autopilot.Equals(t, true, category1Ok)
-	autopilot.Equals(t, id, category1.Id)
+	autopilot.Equals(t, id1, category1.Id)
 	autopilot.Equals(t, false, category2Ok)
 	autopilot.Equals(t, true, category2 == nil)
 
 	autopilot.Equals(t, true, level1Ok)
-	autopilot.Equals(t, id, level1.Id)
+	autopilot.Equals(t, id1, level1.Id)
 	autopilot.Equals(t, false, level2Ok)
 	autopilot.Equals(t, true, level2 == nil)
 
 	autopilot.Equals(t, true, filter1Ok)
-	autopilot.Equals(t, id, filter1.Id)
+	autopilot.Equals(t, id1, filter1.Id)
 	autopilot.Equals(t, false, filter2Ok)
 	autopilot.Equals(t, true, filter2 == nil)
 
 	autopilot.Equals(t, true, integration1Ok)
-	autopilot.Equals(t, id, integration1.Id)
+	autopilot.Equals(t, id1, integration1.Id)
 	autopilot.Equals(t, false, integration2Ok)
 	autopilot.Equals(t, true, integration2 == nil)
 
 	autopilot.Equals(t, true, repository1Ok)
-	autopilot.Equals(t, id, repository1.Id)
+	autopilot.Equals(t, id1, repository1.Id)
 	autopilot.Equals(t, false, repository2Ok)
 	autopilot.Equals(t, true, repository2 == nil)
 

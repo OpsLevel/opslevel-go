@@ -36,7 +36,7 @@ func TestAssignTagForId(t *testing.T) {
 
 	client := BestTestClient(t, "tagAssignWithId", testRequest)
 	// Act
-	result, err := client.AssignTags("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", map[string]string{"hello": "world"})
+	result, err := client.AssignTags(string(id1), map[string]string{"hello": "world"})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result))
@@ -54,7 +54,7 @@ func TestCreateTag(t *testing.T) {
 
 	client := BestTestClient(t, "tagCreate", testRequest)
 	// Act
-	result, err := client.CreateTags("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", map[string]string{"hello": "world"})
+	result, err := client.CreateTags(string(id1), map[string]string{"hello": "world"})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result))
@@ -73,7 +73,7 @@ func TestUpdateTag(t *testing.T) {
 	client := BestTestClient(t, "tagUpdate", testRequest)
 	// Act
 	result, err := client.UpdateTag(ol.TagUpdateInput{
-		Id:    "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		Id:    id1,
 		Key:   "hello",
 		Value: "world!",
 	})
@@ -93,7 +93,7 @@ func TestDeleteTag(t *testing.T) {
 
 	client := BestTestClient(t, "tagDelete", testRequest)
 	// Act
-	err := client.DeleteTag("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	err := client.DeleteTag(id1)
 	// Assert
 	autopilot.Ok(t, err)
 }

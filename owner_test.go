@@ -11,14 +11,14 @@ func TestEntityOwnerGroupReturnsCorrectId(t *testing.T) {
 	// Arrange
 	owner := ol.EntityOwner{
 		OnGroup: ol.EntityOwnerGroup{
-			Id:    "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id:    id1,
 			Alias: "Example",
 		},
 	}
 	// Act
 	// Assert
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.Id())
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.OnGroup.AsGroup().Id)
+	autopilot.Equals(t, id1, owner.Id())
+	autopilot.Equals(t, id1, owner.OnGroup.AsGroup().Id)
 	autopilot.Equals(t, "Example", owner.Alias())
 	autopilot.Equals(t, "Example", owner.OnGroup.AsGroup().Alias)
 }
@@ -27,14 +27,14 @@ func TestEntityOwnerTeamReturnsCorrectId(t *testing.T) {
 	// Arrange
 	owner := ol.EntityOwner{
 		OnTeam: ol.EntityOwnerTeam{
-			Id:    "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id:    id1,
 			Alias: "Example",
 		},
 	}
 	// Act
 	// Assert
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.Id())
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"), owner.OnTeam.AsTeam().Id)
+	autopilot.Equals(t, id1, owner.Id())
+	autopilot.Equals(t, id1, owner.OnTeam.AsTeam().Id)
 	autopilot.Equals(t, "Example", owner.Alias())
 	autopilot.Equals(t, "Example", owner.OnTeam.AsTeam().Alias)
 }

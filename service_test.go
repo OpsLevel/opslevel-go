@@ -320,7 +320,7 @@ func TestGetServiceDocuments(t *testing.T) {
 	client := BestTestClient(t, "service/get_documents", requests...)
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
-			Id: "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+			Id: id1,
 		},
 	}
 	// Act

@@ -16,7 +16,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		`{"data": {
       "awsIntegrationCreate": {
         "integration": {
-          "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+          "id": "{{ template "id1" }}",
           "name": "AWS - XXXX",
           "type": "aws",
           "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -39,7 +39,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "AWS - XXXX", result.Name)
 }
 
@@ -51,7 +51,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 		`{"data": {
       "newRelicIntegrationCreate": {
         "integration": {
-          "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+          "id": "{{ template "id1" }}",
           "name": "New Relic - XXXX",
           "type": "new_relic",
           "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -71,7 +71,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "New Relic - XXXX", result.Name)
 }
 
@@ -141,11 +141,11 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
-		`{"integration": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
+		`{"integration": { "id": "{{ template "id1" }}" }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
 		`{"data": {
       "awsIntegrationUpdate": {
         "integration": {
-        "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+        "id": "{{ template "id1" }}",
         "name": "Dev2",
         "type": "aws",
         "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -162,13 +162,13 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	)
 	client := BestTestClient(t, "integration/update_aws", testRequest)
 	// Act
-	result, err := client.UpdateIntegrationAWS("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", opslevel.AWSIntegrationInput{
+	result, err := client.UpdateIntegrationAWS(string(id1), opslevel.AWSIntegrationInput{
 		Name:       opslevel.NewString("Dev2"),
 		ExternalID: opslevel.NewString("123456789"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "Dev2", result.Name)
 }
 
@@ -176,11 +176,11 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
-		`{"resource": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
+		`{"resource": { "id": "{{ template "id1" }}" }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
 		`{"data": {
       "newRelicIntegrationUpdate": {
         "integration": {
-        "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+        "id": "{{ template "id1" }}",
         "name": "New Relic - XXXX",
         "type": "new_relic",
         "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -195,14 +195,14 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/update_new_relic", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(
-		"Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx",
+		string(id1),
 		opslevel.NewRelicIntegrationInput{
 			BaseUrl: opslevel.NewString("https://api-test.newrelic.com/graphql"),
 		},
 	)
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(result.Id))
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "https://api-test.newrelic.com/graphql", result.BaseUrl)
 }
 
@@ -210,12 +210,12 @@ func TestDeleteIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation IntegrationDelete($input:IdentifierInput!){integrationDelete(resource: $input){errors{message,path}}}"`,
-		`{"input": { "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }}`,
+		`{"input": { "id": "{{ template "id1" }}" }}`,
 		`{"data": { "integrationDelete": { "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "integration/delete", testRequest)
 	// Act
-	err := client.DeleteIntegration("Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx")
+	err := client.DeleteIntegration(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
 }
