@@ -277,8 +277,7 @@ var templFuncMap = template.FuncMap{
 	},
 	"identifier":     func(name string) string { return ident.ParseLowerCamelCase(name).ToMixedCaps() },
 	"enumIdentifier": func(name string) string { return ident.ParseScreamingSnakeCase(name).ToMixedCaps() },
-	// "type":           typeString,
-	"clean": func(s string) string { return strings.Join(strings.Fields(s), " ") },
+	"clean":          func(s string) string { return strings.Join(strings.Fields(s), " ") },
 	"endSentence": func(s string) string {
 		if len(s) == 0 {
 			// Do nothing.
