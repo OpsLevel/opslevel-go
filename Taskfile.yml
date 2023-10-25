@@ -5,6 +5,7 @@ version: '3'
 tasks:
   generate:
     desc: Generate code based on public GraphQL Interface
+    aliases: [gen]
     cmds:
       - go generate
       - gofumpt -w .
