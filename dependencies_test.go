@@ -35,12 +35,12 @@ func TestGetServiceDependencies(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
-		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1" }}" }`,
+		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
-		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1" }}" }`,
+		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
@@ -64,12 +64,12 @@ func TestGetServiceDependents(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
-		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1" }}" }`,
+		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
-		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1" }}" }`,
+		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
@@ -93,7 +93,7 @@ func TestDeleteServiceDependency(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ServiceDependencyDelete($input:DeleteInput!){serviceDependencyDelete(input: $input){errors{message,path}}}"`,
-		`{ "input": { "id": "{{ template "id1" }}" } }`,
+		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "serviceDependencyDelete": { "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "serviceDependencyDelete", testRequest)

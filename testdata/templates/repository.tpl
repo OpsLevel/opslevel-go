@@ -7,7 +7,7 @@
 "description": "A golang testing utils library",
 "forked": false,
 "htmlUrl": "https://app.opslevel.com/repositories/26519",
-"id": "{{ template "id1" }}",
+{{ template "id1" }},
 "languages": [
     {
         "name": "Go",

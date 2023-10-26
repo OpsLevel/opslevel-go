@@ -2,7 +2,7 @@
 {
 "address": "{{ template "email1" }}",
 "displayName": "Email",
-"id": "{{ template "id1" }}",
+{{ template "id1" }},
 "type": "email"
 }
 {{ end }}
@@ -10,7 +10,7 @@
 {
 "address": "{{ template "email2" }}",
 "displayName": "Email",
-"id": "{{ template "id2" }}",
+{{ template "id2" }},
 "type": "email"
 }
 {{ end }}
@@ -18,7 +18,7 @@
 {
 "address": "{{ template "email3" }}",
 "displayName": "Email",
-"id": "{{ template "id3" }}",
+{{ template "id3" }},
 "type": "email"
 }
 {{ end }}

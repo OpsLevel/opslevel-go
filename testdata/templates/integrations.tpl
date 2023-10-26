@@ -1,6 +1,6 @@
 {{ define "integration_1" }}
 {
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "name": "{{ template "name1" }}",
     "type": "deploy"
 }
@@ -8,7 +8,7 @@
 
 {{ define "integration_2" }}
 {
-    "id": "{{ template "id2" }}",
+    {{ template "id2" }},
     "name": "{{ template "name2" }}",
     "type": "payload"
 }
@@ -16,7 +16,7 @@
 
 {{ define "integration_3" }}
 {
-    "id": "{{ template "id3" }}",
+    {{ template "id3" }},
     "name": "{{ template "name3" }}",
     "type": "generic"
 }

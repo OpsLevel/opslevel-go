@@ -79,7 +79,7 @@ func TestUpdateRubricLevel(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "name": "{{ template "name1" }}", "description": "{{ template "description" }}" }}`,
+		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": "{{ template "description" }}" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
@@ -100,7 +100,7 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "description": "{{ template "description" }}" } }`,
+		`{"input": { {{ template "id1" }}, "description": "{{ template "description" }}" } }`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
@@ -120,7 +120,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "name": "{{ template "name1" }}", "description": "" }}`,
+		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": "" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
@@ -141,7 +141,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "name": "{{ template "name1" }}" }}`,
+		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 

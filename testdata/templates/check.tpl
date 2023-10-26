@@ -10,7 +10,7 @@
     "description": "Verifies that the service has a repository integrated.",
     "enabled": true,
     "filter": null,
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "level": {
       "alias": "bronze",
       "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",

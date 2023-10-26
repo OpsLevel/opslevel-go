@@ -22,9 +22,10 @@ import (
 
 var (
 	dataTemplater = NewTestDataTemplater()
-	id1           = ol.ID(dataTemplater.ParseValue("id1"))
-	id2           = ol.ID(dataTemplater.ParseValue("id2"))
-	id3           = ol.ID(dataTemplater.ParseValue("id3"))
+	id1           = ol.ID(dataTemplater.ParseValue("id1_string"))
+	id2           = ol.ID(dataTemplater.ParseValue("id2_string"))
+	id3           = ol.ID(dataTemplater.ParseValue("id3_string"))
+	id4           = ol.ID(dataTemplater.ParseValue("id4_string"))
 )
 
 func TestMain(m *testing.M) {
@@ -115,7 +116,12 @@ func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
 	}
 
 	output := TestDataTemplater{}
-	tmpl, err := template.New("").Funcs(sprig.TxtFuncMap()).ParseFiles(templateFiles...)
+	tmpl := template.New("")
+	tmpl.Funcs(template.FuncMap{
+		"WrapWithCurlyBrackets": func(value string) string { return "{ " + value + " }" },
+	})
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl, err := tmpl.ParseFiles(templateFiles...)
 	if err != nil {
 		panic(fmt.Errorf("error during template initialization: %s", err))
 	}

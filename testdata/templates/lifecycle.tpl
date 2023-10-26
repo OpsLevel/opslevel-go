@@ -2,7 +2,7 @@
 {
 "alias": "{{ template "alias1" }}",
 "description": "{{ template "description" }}",
-"id": "{{ template "id1" }}",
+{{ template "id1" }},
 "index": 1,
 "name": "{{ template "name1" }}"
 }
@@ -12,7 +12,7 @@
 {
 "alias": "pre-alpha",
 "description": "Service is only being used/tested by the people building it.",
-"id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyNg",
+{{ template "id1" }},
 "index": 1,
 "name": "Pre-alpha"
 }
@@ -22,7 +22,7 @@
 {
 "alias": "alpha",
 "description": "Service is supporting features used by others at the company, or a very small set of friendly customers.",
-"id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyNw",
+{{ template "id2" }},
 "index": 2,
 "name": "Alpha"
 }
@@ -32,7 +32,7 @@
 {
 "alias": "beta",
 "description": "Service is supporting features used by a larger set of beta customers.",
-"id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyOA",
+{{ template "id3" }},
 "index": 3,
 "name": "Beta"
 }
@@ -42,7 +42,7 @@
 {
 "alias": "generally_available",
 "description": "Service is supporting features available to be used by all customers, and should be fully stable.",
-"id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyOQ",
+{{ template "id1" }},
 "index": 4,
 "name": "Generally Available"
 }
@@ -52,7 +52,7 @@
 {
 "alias": "end-of-life",
 "description": "Service is being retired. Might have reduced or no support.",
-"id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQzMA",
+{{ template "id4" }},
 "index": 5,
 "name": "End-of-life"
 }

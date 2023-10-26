@@ -4,9 +4,9 @@
     "categoryAlias": null,
     "displayName": "{{ template "name1" }}",
     "environment": null,
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "service": {
-        "id": "{{ template "id1" }}"
+        {{ template "id1" }}
     },
     "url": "https://example.com"
 }
@@ -18,9 +18,9 @@
     "categoryAlias": null,
     "displayName": "{{ template "name1" }}",
     "environment": "prod",
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "service": {
-        "id": "{{ template "id1" }}"
+        {{ template "id1" }}
     },
     "url": "https://example.com"
 }

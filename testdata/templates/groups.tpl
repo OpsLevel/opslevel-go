@@ -1,7 +1,7 @@
 {{- define "group_1" }}
 {
     "alias": "test_group_1",
-    "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI",
+    {{ template "id4" }},
     "description": null,
     "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1",
     "name": "test_group_1",

@@ -12,7 +12,7 @@ func TestCreateRubricCategory(t *testing.T) {
 	testRequest := NewTestRequest(
 		`"mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}"`,
 		`{ "input": { "name": "Kyle" }}`,
-		`{"data": { "categoryCreate": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Kyle" }, "errors": [] } }}`,
+		`{"data": { "categoryCreate": { "category": { {{ template "id1" }}, "name": "Kyle" }, "errors": [] } }}`,
 	)
 	client := BestTestClient(t, "rubric/category_create", testRequest)
 	// Act
@@ -20,6 +20,7 @@ func TestCreateRubricCategory(t *testing.T) {
 		Name: "Kyle",
 	})
 	// Assert
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "Kyle", result.Name)
 }
 
@@ -27,14 +28,15 @@ func TestGetRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
-		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg" }`,
-		`{"data": { "account": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA0", "name": "Reliability" } }}}`,
+		`{ {{ template "id2" }} }`,
+		`{"data": { "account": { "category": { {{ template "id3" }}, "name": "Reliability" } }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_get", testRequest)
 	// Act
-	result, err := client.GetCategory("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	result, err := client.GetCategory(id2)
 	// Assert
 	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id3, result.Id)
 	autopilot.Equals(t, "Reliability", result.Name)
 }
 
@@ -42,12 +44,12 @@ func TestGetMissingRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
-		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg" }`,
+		`{ {{ template "id1" }} }`,
 		`{"data": { "account": { "category": null }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_get_missing", testRequest)
 	// Act
-	_, err := client.GetCategory("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
+	_, err := client.GetCategory(id1)
 	// Assert
 	autopilot.Assert(t, err != nil, "This test should throw an error.")
 }
@@ -84,16 +86,18 @@ func TestUpdateRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{id,name},errors{message,path}}}"`,
-		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Emily" }}`,
-		`{"data": { "categoryUpdate": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "name": "Emily" }, "errors": [] }}}`,
+		`{ "input": { {{ template "id4" }}, "name": "Emily" }}`,
+		`{"data": { "categoryUpdate": { "category": { {{ template "id4" }}, "name": "Emily" }, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_update", testRequest)
 	// Act
-	result, _ := client.UpdateCategory(ol.CategoryUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz",
+	result, err := client.UpdateCategory(ol.CategoryUpdateInput{
+		Id:   id4,
 		Name: "Emily",
 	})
 	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id4, result.Id)
 	autopilot.Equals(t, "Emily", result.Name)
 }
 
@@ -101,12 +105,12 @@ func TestDeleteRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation CategoryDelete($input:CategoryDeleteInput!){categoryDelete(input: $input){deletedCategoryId,errors{message,path}}}"`,
-		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
-		`{"data": { "categoryDelete": { "deletedCategoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz", "errors": [] }}}`,
+		`{ "input": { {{ template "id2" }} }}`,
+		`{"data": { "categoryDelete": { "deletedCategoryId": "{{ template "id2_string" }}", "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_delete", testRequest)
 	// Act
-	err := client.DeleteCategory("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
+	err := client.DeleteCategory(id2)
 	// Assert
 	autopilot.Equals(t, nil, err)
 }

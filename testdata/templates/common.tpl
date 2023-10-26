@@ -9,11 +9,15 @@
 {{- define "email1" }}kyle@opslevel.com{{ end }}
 {{- define "email2" }}edgar@opslevel.com{{ end }}
 {{- define "email3" }}matthew@opslevel.com{{ end }}
-{{- define "id1" }}Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx{{ end }}
-{{- define "id2" }}Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5{{ end }}
-{{- define "id3" }}Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx{{ end }}
-{{- define "id4" }}Z2lkOi8vMTkyODM3NDY1{{ end }}
-{{- define "eid1" }}NzQxODUyOTYzNzQxODUyOTYz{{ end }}
+{{- define "id1_string" }}Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx{{ end }}
+{{- define "id2_string" }}Z2lkOi8vOTg3NjU0MzIxMTIzNDU2Nzg5{{ end }}
+{{- define "id3_string" }}Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx{{ end }}
+{{- define "id4_string" }}Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI{{ end }}
+{{- define "eid1" }}"NzQxODUyOTYzNzQxODUyOTYz"{{ end }}
+{{- define "id1" }}"id": "{{ template "id1_string" }}"{{ end }}
+{{- define "id2" }}"id": "{{ template "id2_string" }}"{{ end }}
+{{- define "id3" }}"id": "{{ template "id3_string" }}"{{ end }}
+{{- define "id4" }}"id": "{{ template "id4_string" }}"{{ end }}
 {{- define "timestamps" }}
 {
     "createdAt": "2022-12-15T01:34:00.289687Z",

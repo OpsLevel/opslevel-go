@@ -14,7 +14,7 @@ func TestCreateInfra(t *testing.T) {
 		`{
     "all": true,
     "input": {
-      "ownerId":"{{ template "id1" }}",
+      "ownerId": "{{ template "id1_string" }}",
       "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false,\"storage_size\":{\"unit\":\"GB\",\"value\":1024}}",
       "providerData": {
         "accountName": "Dev - 123456789",
@@ -60,7 +60,7 @@ func TestGetInfra(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}"`,
-		`{"all": true, "input":{ "id":"{{ template "id1" }}" }}`,
+		`{"all": true, "input":{ {{ template "id1" }} }}`,
 		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
 	)
 	client := BestTestClient(t, "infra/get", testRequest)
@@ -127,7 +127,7 @@ func TestUpdateInfra(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}"`,
-		`{"all": true, "identifier": {"id": "{{ template "id1" }}"}, "input": { "ownerId":"{{ template "id1" }}", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
+		`{"all": true, "identifier": { {{ template "id1" }}}, "input": { "ownerId": "{{ template "id1_string" }}", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
 		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "infra/update", testRequest)
@@ -151,7 +151,7 @@ func TestDeleteInfra(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation InfrastructureResourceDelete($input:IdentifierInput!){infrastructureResourceDelete(resource: $input){errors{message,path}}}"`,
-		`{ "input": { "id": "{{ template "id1" }}" } }`,
+		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "infrastructureResourceDelete": { "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "infra/delete", testRequest)
@@ -165,7 +165,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "first_page_variables" }}, "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"} }`,
+		`{ {{ template "first_page_variables" }}, "infrastructureResource": { {{template "id1" }} } }`,
 		`{
                   "data": {
                     "account": {
@@ -173,17 +173,17 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                         "tags": {
                           "nodes": [
                             {
-                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIw",
+                              {{ template "id2" }},
                               "key": "abc",
                               "value": "abc"
                             },
                             {
-                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIx",
+                              {{ template "id3" }},
                               "key": "db",
                               "value": "mongoqqqq"
                             },
                             {
-                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIy",
+                              {{ template "id4" }},
                               "key": "db",
                               "value": "prod"
                             }
@@ -198,7 +198,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
 	)
 	testRequestTwo := NewTestRequest(
 		`"query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "second_page_variables" }}, "infrastructureResource": {"id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"} }`,
+		`{ {{ template "second_page_variables" }}, "infrastructureResource": { {{template "id1" }} }}`,
 		`{
                   "data": {
                     "account": {
@@ -206,7 +206,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                         "tags": {
                           "nodes": [
                             {
-                              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIz",
+                              {{ template "id3" }},
                               "key": "env",
                               "value": "staging"
                             }
@@ -222,7 +222,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "infrastructureResource/tags", requests...)
 	// Act
-	infra := opslevel.InfrastructureResource{Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc"}
+	infra := opslevel.InfrastructureResource{Id: string(id1)}
 	resp, err := infra.GetTags(client, nil)
 	autopilot.Ok(t, err)
 	result := resp.Nodes

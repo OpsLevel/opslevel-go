@@ -1,6 +1,6 @@
 {{- define "domain1_response" }}
 {
-    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMw",
+    {{ template "id1" }},
     "aliases": [
       "platformdomain"
     ],
@@ -9,14 +9,14 @@
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain",
     "owner": {
       "groupAlias": "kyle_team",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
+      {{ template "id4" }}
     },
     "note": "{{ template "description" }}"
 }
 {{end}}
 {{- define "domain2_response" }}
 {
-    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMx",
+    {{ template "id2" }},
     "aliases": [
       "platformdomain2"
     ],
@@ -25,14 +25,14 @@
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain2",
     "owner": {
       "groupAlias": "kyle_team",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
+      {{ template "id4" }}
     },
     "note": "{{ template "description" }}"
 }
 {{end}}
 {{- define "domain3_response" }}
 {
-    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMx",
+    {{ template "id3" }},
     "aliases": [
       "platformdomain3"
     ],

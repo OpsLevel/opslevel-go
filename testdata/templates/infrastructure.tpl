@@ -1,12 +1,12 @@
 {{- define "infra_1" }}
 {
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "aliases": [],
     "name": "my-big-query",
     "type": "Database",
     "owner": {
       "groupAlias": "test_team",
-      "id": "{{ template "id1" }}"
+      {{ template "id1" }}
     },
     "ownerLocked": false,
     "data": {
@@ -19,7 +19,7 @@
 {{end}}
 {{- define "infra_2" }}
 {
-    "id": "{{ template "id2" }}",
+    {{ template "id2" }},
     "aliases": [
       "arn:aws:ec2:ca-central-1:XXXXXXXXXX:vpc/vpc-XXXXXXXXXX"
     ],
@@ -43,7 +43,7 @@
 {{end}}
 {{- define "infra_3" }}
 {
-    "id": "{{ template "id3" }}",
+    {{ template "id3" }},
     "aliases": [
       "arn:aws:elasticache:us-east-1:XXXXXXXXXX:cluster:production-demo"
     ],
@@ -51,7 +51,7 @@
     "type": "Cache",
     "owner": {
       "teamAlias": "platform",
-      "id": "{{ template "id1" }}"
+      {{ template "id1" }}
     },
     "ownerLocked": true,
     "data": {
