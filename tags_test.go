@@ -13,7 +13,7 @@ func TestAssignTagForAlias(t *testing.T) {
 	testRequest := NewTestRequest(
 		`"mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}"`,
 		`{"input": { "alias": "{{ template "alias1" }}", "tags": [ { "key": "hello", "value": "world" } ] } }`,
-		`{"data": {"tagAssign": { "tags": [ { "id": "{{ template "id1" }}", "key": "hello", "value": "world" } ], "errors": [] }}}`,
+		`{"data": {"tagAssign": { "tags": [ { {{ template "id1" }}, "key": "hello", "value": "world" } ], "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "tagAssignWithAlias", testRequest)
@@ -30,8 +30,8 @@ func TestAssignTagForId(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "tags": [ { "key": "hello", "value": "world" } ] }}`,
-		`{"data": { "tagAssign": { "tags": [ { "id": "{{ template "id1" }}", "key": "hello", "value": "world" } ], "errors": [] }}}`,
+		`{"input": { {{ template "id1" }}, "tags": [ { "key": "hello", "value": "world" } ] }}`,
+		`{"data": { "tagAssign": { "tags": [ { {{ template "id1" }}, "key": "hello", "value": "world" } ], "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "tagAssignWithId", testRequest)
@@ -48,8 +48,8 @@ func TestCreateTag(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TagCreate($input:TagCreateInput!){tagCreate(input: $input){tag{id,key,value},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "key": "hello", "value": "world" }}`,
-		`{"data": { "tagCreate": { "tag": { "id": "{{ template "id1" }}", "key": "hello", "value": "world" }, "errors": [] }}}`,
+		`{"input": { {{ template "id1" }}, "key": "hello", "value": "world" }}`,
+		`{"data": { "tagCreate": { "tag": { {{ template "id1" }}, "key": "hello", "value": "world" }, "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "tagCreate", testRequest)
@@ -66,8 +66,8 @@ func TestUpdateTag(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TagUpdate($input:TagUpdateInput!){tagUpdate(input: $input){tag{id,key,value},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "key": "hello", "value": "world!" }}`,
-		`{"data": { "tagUpdate": { "tag": { "id": "{{ template "id1" }}", "key": "hello", "value": "world!" }, "errors": [] }}}`,
+		`{"input": { {{ template "id1" }}, "key": "hello", "value": "world!" }}`,
+		`{"data": { "tagUpdate": { "tag": { {{ template "id1" }}, "key": "hello", "value": "world!" }, "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "tagUpdate", testRequest)
@@ -87,7 +87,7 @@ func TestDeleteTag(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TagDelete($input:TagDeleteInput!){tagDelete(input: $input){errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}" }}`,
+		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "tagDelete": { "errors": [] }}}`,
 	)
 

@@ -1,6 +1,6 @@
 {{- define "system1_response" }}
 {
-    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMy",
+    {{ template "id1" }},
     "aliases": [
       "platformsystem1"
     ],
@@ -9,7 +9,7 @@
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem1",
     "owner": {
       "groupAlias": "kyle_team",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
+      {{ template "id4" }}
     },
     "parent": {{ template "domain1_response" }},
     "note": "{{ template "description" }}"
@@ -17,7 +17,7 @@
 {{end}}
 {{- define "system2_response" }}
 {
-    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzMz",
+    {{ template "id2" }},
     "aliases": [
       "platformsystem2"
     ],
@@ -26,14 +26,14 @@
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem2",
     "owner": {
       "groupAlias": "kyle_team",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
+      {{ template "id4" }}
     },
     "note": "{{ template "description" }}"
 }
 {{end}}
 {{- define "system3_response" }}
 {
-    "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzM0",
+    {{ template "id3" }},
     "aliases": [
       "platformsystem3"
     ],
@@ -42,7 +42,7 @@
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem3",
     "owner": {
       "teamAlias": "kyle_team",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzU"
+      {{ template "id4" }}
     },
     "parent": {{ template "domain1_response" }},
     "note": "{{ template "description" }}"

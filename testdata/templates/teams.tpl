@@ -1,19 +1,19 @@
 {{- define "teamId_1" }}
 {
 "alias": "{{ template "alias1" }}",
-"id": "{{ template "id1" }}"
+{{ template "id1" }}
 }
 {{ end }}
 {{- define "teamId_2" }}
 {
 "alias": "{{ template "alias2" }}",
-"id": "{{ template "id2" }}"
+{{ template "id2" }}
 }
 {{ end }}
 {{- define "teamId_3" }}
 {
 "alias": "{{ template "alias3" }}",
-"id": "{{ template "id3" }}"
+{{ template "id3" }}
 }
 {{ end }}
 
@@ -22,7 +22,7 @@
 {{- define "team_1" }}
 {
 "alias": "{{ template "alias1" }}",
-"id": "{{ template "id1" }}",
+{{ template "id1" }},
 "aliases": [
   "{{ template "alias1" }}"
 ],
@@ -52,7 +52,7 @@
 {{- define "team_2" }}
 {
 "alias": "{{ template "alias2" }}",
-"id": "{{ template "id2" }}",
+{{ template "id2" }},
 "aliases": [
   "{{ template "alias2" }}"
 ],
@@ -82,7 +82,7 @@
 {{- define "team_3" }}
 {
 "alias": "{{ template "alias3" }}",
-"id": "{{ template "id3" }}",
+{{ template "id3" }},
 "aliases": [
   "{{ template "alias3" }}"
 ],

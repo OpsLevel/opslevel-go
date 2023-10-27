@@ -11,7 +11,7 @@ func TestCreateTool(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}"`,
-		`{ "input": { "category": "other", "displayName": "example", "serviceId": "{{ template "id1" }}", "url": "https://example.com" }}`,
+		`{ "input": { "category": "other", "displayName": "example", "serviceId": "{{ template "id1_string" }}", "url": "https://example.com" }}`,
 		`{"data": { "toolCreate": { "tool": {{ template "tool_1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "toolCreate", testRequest)
@@ -34,7 +34,7 @@ func TestUpdateTool(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}"`,
-		`{ "input": { "id": "{{ template "id1" }}", "category": "deployment" }}`,
+		`{ "input": { {{ template "id1" }}, "category": "deployment" }}`,
 		`{"data": { "toolUpdate": { "tool": {{ template "tool_1_update" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "toolUpdate", testRequest)
@@ -53,7 +53,7 @@ func TestDeleteTool(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ToolDelete($input:ToolDeleteInput!){toolDelete(input: $input){errors{message,path}}}"`,
-		`{ "input": { "id": "{{ template "id1" }}" } }`,
+		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "toolDelete": { "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "toolDelete", testRequest)

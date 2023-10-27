@@ -49,12 +49,12 @@ func TestGetUserTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "user": { "teams": { "nodes": [ {{ template "teamId_1"}}, {{ template "teamId_2"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "user": { "teams": { "nodes": [ {{ template "teamId_3"}} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
@@ -158,7 +158,7 @@ func TestGetUserTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{
         "data": {
           "account": {
@@ -191,7 +191,7 @@ func TestGetUserTags(t *testing.T) {
 	)
 	testRequestTwo := NewTestRequest(
 		`"query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1"}}" }`,
+		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string"}}" }`,
 		`{
         "data": {
           "account": {

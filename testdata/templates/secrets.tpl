@@ -1,13 +1,13 @@
 {{- define "secrets_1" }}
 {
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "alias": "{{ template "alias1" }}",
     "timestamps": {{ template "timestamps" }}
 }
 {{end}}
 {{- define "secrets_2" }}
 {
-    "id": "{{ template "id2" }}",
+    {{ template "id2" }},
     "alias": "{{ template "alias2" }}",
     "owner": {{ template "teamId_2" }},
     "timestamps": {{ template "timestamps" }}
@@ -15,7 +15,7 @@
 {{end}}
 {{- define "secrets_3" }}
 {
-    "id": "{{ template "id3" }}",
+    {{ template "id3" }},
     "alias": "{{ template "alias3" }}",
     "owner": {{ template "teamId_3" }},
     "timestamps": {{ template "timestamps" }}
@@ -25,7 +25,7 @@
 {
   "value": "secret_value_1"
   "owner": {
-    "id": "{{ template "id1" }}"
+    {{ template "id1" }}
   }
 }
 {{end}}
@@ -35,7 +35,7 @@
   "input": {
     "value": "my-secret",
     "owner": {
-      "id": "{{ template "id2" }}"
+      {{ template "id2" }}
     }
   }
 }
@@ -43,14 +43,14 @@
 {{- define "secret_delete_vars" }}
 {
   "input": {
-    "id": "{{ template "id1" }}"
+    {{ template "id1" }}
   }
 }
 {{end}}
 {{- define "secret_get_vars" }}
 {
   "input":{
-    "id": "{{ template "id2" }}"
+    {{ template "id2" }}
   }
 }
 
@@ -60,11 +60,11 @@
   "input": {
     "value": "secret_value_2",
     "owner": {
-      "id": "{{ template "id2" }}"
+      {{ template "id2" }}
     }
   },
   "secret": {
-    "id": "{{ template "id2" }}"
+    {{ template "id2" }}
   }
 }
 {{end}}

@@ -307,12 +307,12 @@ func TestGetServiceDocuments(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query ServiceDocumentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ "service": "{{ template "id1" }}", {{ template "first_page_variables" }} }`,
+		`{ "service": "{{ template "id1_string" }}", {{ template "first_page_variables" }} }`,
 		`{ "data": { "account": { "service": { "documents": { "nodes": [ {{ template "document_1" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query ServiceDocumentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ "service": "{{ template "id1" }}", {{ template "second_page_variables" }} }`,
+		`{ "service": "{{ template "id1_string" }}", {{ template "second_page_variables" }} }`,
 		`{ "data": { "account": { "service": { "documents": { "nodes": [ {{ template "document_1" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}

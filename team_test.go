@@ -16,7 +16,7 @@ var testRequestWithAlias = NewTestRequest(
     "account": {
       "team": {
         "alias": "example",
-        "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+        {{ template "id1" }},
         "aliases": [
           "example"
         ],
@@ -24,13 +24,13 @@ var testRequestWithAlias = NewTestRequest(
           {
             "address": "#general",
             "displayName": "",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgy",
+            {{ template "id2" }},
             "type": "slack"
           },
           {
             "address": "https://example.com",
             "displayName": "Homepage",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgz",
+            {{ template "id3" }},
             "type": "web"
           }
         ],
@@ -38,7 +38,7 @@ var testRequestWithAlias = NewTestRequest(
         "manager": {
           "email": "john@example.com",
           "htmlUrl": "https://app.opslevel.com/users/1098",
-          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+          {{ template "id2" }},
           "name": "John Example",
           "role": "admin"
         },
@@ -47,21 +47,21 @@ var testRequestWithAlias = NewTestRequest(
             {
               "email": "kyle@example.com",
               "htmlUrl": "https://app.opslevel.com/users/1097",
-              "id": "Z2lkOiBvb38zbGV2ZWwvVXNlci8xMDk3",
+              {{ template "id2" }},
               "name": "Kyle Example",
               "role": "admin"
             },
             {
               "email": "john@example.com",
               "htmlUrl": "https://app.opslevel.com/users/1098",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+              {{ template "id3" }},
               "name": "John Example",
               "role": "admin"
             },
             {
               "email": "ken@example.com",
               "htmlUrl": "https://app.opslevel.com/users/1099",
-              "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+              {{ template "id4" }},
               "name": "Ken Example",
               "role": "user"
             }
@@ -76,17 +76,17 @@ var testRequestWithAlias = NewTestRequest(
         "tags": {
           "nodes": [
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
+              {{ template "id2" }},
               "key": "k8s-app",
               "value": "kube-dns"
             },
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
+              {{ template "id3" }},
               "key": "imported",
               "value": "kubectl-opslevel"
             },
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
+              {{ template "id4" }},
               "key": "hello",
               "value": "world"
             }
@@ -113,7 +113,7 @@ func TestCreateTeam(t *testing.T) {
     "teamCreate": {
       "team": {
         "alias": "example",
-        "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzY",
+        {{ template "id1" }},
         "aliases": [
           "example"
         ],
@@ -121,25 +121,25 @@ func TestCreateTeam(t *testing.T) {
           {
             "address": "#general",
             "displayName": "",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTk",
+            {{ template "id2" }},
             "type": "slack"
           },
           {
             "address": "https://example.com",
             "displayName": "Homepage",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNjA",
+            {{ template "id3" }},
             "type": "web"
           }
         ],
         "group": {
-          "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvNTI",
+          {{ template "id4" }},
           "alias": "test_group"
         },
         "htmlUrl": "https://app.opslevel-staging.com/teams/example",
         "manager": {
           "email": "john@example.com",
           "htmlUrl": "https://app.opslevel-staging.com/users/410",
-          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA",
+          {{ template "id2" }},
           "name": "John Example",
           "role": "admin"
         },
@@ -148,7 +148,7 @@ func TestCreateTeam(t *testing.T) {
             {
               "email": "john@example.com",
               "htmlUrl": "https://app.opslevel-staging.com/users/410",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci80MTA",
+              {{ template "id3" }},
               "name": "John Example",
               "role": "admin"
             }
@@ -162,7 +162,7 @@ func TestCreateTeam(t *testing.T) {
         },
         "name": "Example",
         "parentTeam": {
-          "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3",
+          {{ template "id2" }},
           "alias": "parent_team"
         },
         "responsibilities": "Foo &amp; bar"
@@ -172,7 +172,6 @@ func TestCreateTeam(t *testing.T) {
 	)
 
 	client := BestTestClient(t, "team/create", testRequest)
-	// client := ATestClient(t, "team/create")
 	// Act
 	contacts := []ol.ContactInput{
 		ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
@@ -200,12 +199,12 @@ func TestGetTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ "id":"Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ" }`,
+		`{ {{ template "id1" }} }`,
 		`{ "data": {
     "account": {
       "team": {
         "alias": "example",
-        "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+        {{ template "id1" }},
         "aliases": [
           "example"
         ],
@@ -213,13 +212,13 @@ func TestGetTeam(t *testing.T) {
           {
             "address": "#general",
             "displayName": "",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgy",
+            {{ template "id2" }},
             "type": "slack"
           },
           {
             "address": "https://example.com",
             "displayName": "Homepage",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgz",
+            {{ template "id3" }},
             "type": "web"
           }
         ],
@@ -227,7 +226,7 @@ func TestGetTeam(t *testing.T) {
         "manager": {
           "email": "john@example.com",
           "htmlUrl": "https://app.opslevel.com/users/1098",
-          "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+          {{ template "id2" }},
           "name": "John Example",
           "role": "admin"
         },
@@ -236,21 +235,21 @@ func TestGetTeam(t *testing.T) {
             {
               "email": "kyle@example.com",
               "htmlUrl": "https://app.opslevel.com/users/1097",
-              "id": "Z2lkOiBvb38zbGV2ZWwvVXNlci8xMDk3",
+              {{ template "id2" }},
               "name": "Kyle Example",
               "role": "admin"
             },
             {
               "email": "john@example.com",
               "htmlUrl": "https://app.opslevel.com/users/1098",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+              {{ template "id3" }},
               "name": "John Example",
               "role": "admin"
             },
             {
               "email": "ken@example.com",
               "htmlUrl": "https://app.opslevel.com/users/1099",
-              "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+              {{ template "id4" }},
               "name": "Ken Example",
               "role": "user"
             }
@@ -265,17 +264,17 @@ func TestGetTeam(t *testing.T) {
         "tags": {
           "nodes": [
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
+              {{ template "id2" }},
               "key": "k8s-app",
               "value": "kube-dns"
             },
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
+              {{ template "id3" }},
               "key": "imported",
               "value": "kubectl-opslevel"
             },
             {
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
+              {{ template "id4" }},
               "key": "hello",
               "value": "world"
             }
@@ -295,7 +294,7 @@ func TestGetTeam(t *testing.T) {
 
 	client := BestTestClient(t, "team/get", testRequest)
 	// Act
-	result, err := client.GetTeam("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ")
+	result, err := client.GetTeam(id1)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
@@ -308,12 +307,12 @@ func TestTeamMembers(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`{ {{ template "first_page_variables" }}, "team": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "team": { "members": { "nodes": [ {{ template "user_1"}}, {{ template "user_2"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query TeamMembersList($after:String!$first:Int!$team:ID!){account{team(id: $team){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`{ {{ template "second_page_variables" }}, "team": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "team": { "members": { "nodes": [ {{ template "user_3"}} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
@@ -322,7 +321,7 @@ func TestTeamMembers(t *testing.T) {
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
-			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+			Id: id4,
 		},
 	}
 	resp, err := team.GetMembers(client, nil)
@@ -338,13 +337,13 @@ func TestTeamTags(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
 		`"query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "first_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
-		`{ "data": { "account": { "team": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5", "key": "prod", "value": "false" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		`{ {{ template "first_page_variables" }}, "team": "{{ template "id1_string" }}" }`,
+		`{ "data": { "account": { "team": { "tags": { "nodes": [ { {{ template "id2" }}, "key": "prod", "value": "false" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query TeamTagsList($after:String!$first:Int!$team:ID!){account{team(id: $team){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-		`{ {{ template "second_page_variables" }}, "team": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
-		`{ "data": { "account": { "team": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4", "key": "test", "value": "true" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
+		`{ {{ template "second_page_variables" }}, "team": "{{ template "id1_string" }}" }`,
+		`{ "data": { "account": { "team": { "tags": { "nodes": [ { {{ template "id3" }}, "key": "test", "value": "true" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
@@ -352,7 +351,7 @@ func TestTeamTags(t *testing.T) {
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
-			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+			Id: id1,
 		},
 	}
 	resp, err := team.GetTags(client, nil)
@@ -395,7 +394,7 @@ func TestListTeams(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/devops",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+              {{ template "id1" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -420,7 +419,7 @@ func TestListTeams(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/developers",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk",
+              {{ template "id2" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -445,7 +444,7 @@ func TestListTeams(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/marketing",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTA",
+              {{ template "id3" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -482,7 +481,7 @@ func TestListTeams(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/security",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTE",
+              {{ template "id4" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -507,7 +506,7 @@ func TestListTeams(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/vps",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTI",
+              {{ template "id4" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -562,7 +561,7 @@ func TestListTeamsWithManager(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/devops",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+              {{ template "id1" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -587,7 +586,7 @@ func TestListTeamsWithManager(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/developers",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk",
+              {{ template "id1" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -612,7 +611,7 @@ func TestListTeamsWithManager(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/marketing",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTA",
+              {{ template "id2" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -649,7 +648,7 @@ func TestListTeamsWithManager(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/security",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTE",
+              {{ template "id3" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -674,7 +673,7 @@ func TestListTeamsWithManager(t *testing.T) {
               ],
               "contacts": [],
               "htmlUrl": "https://app.opslevel.com/teams/vps",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NTI",
+              {{ template "id4" }},
               "manager": {{ template "user_1" }},
               "members": {
                 "nodes": [
@@ -717,12 +716,12 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ", "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"}, "group": {"alias": "test_group" }}}`,
+		`{"input": { {{ template "id1" }}, "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"}, "group": {"alias": "test_group" }}}`,
 		`{ "data": {
       "teamUpdate": {
         "team": {
           "alias": "example",
-          "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+          {{ template "id1" }},
           "aliases": [
             "example"
           ],
@@ -730,25 +729,25 @@ func TestUpdateTeam(t *testing.T) {
             {
               "address": "#general",
               "displayName": "",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgy",
+              {{ template "id2" }},
               "type": "slack"
             },
             {
               "address": "https://example.com",
               "displayName": "Homepage",
-              "id": "Z2lkOi8vb3BzbGV2ZWwvQ29udGFjdC8xNTgz",
+              {{ template "id4" }},
               "type": "web"
             }
           ],
           "group": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvNTI",
+            {{ template "id3" }},
             "alias": "test_group"
           },
           "htmlUrl": "https://app.opslevel.com/teams/example",
           "manager":               {
             "email": "ken@example.com",
             "htmlUrl": "https://app.opslevel.com/users/1099",
-            "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+            {{ template "id1" }},
             "name": "Ken Example",
             "role": "user"
           },
@@ -757,21 +756,21 @@ func TestUpdateTeam(t *testing.T) {
               {
                 "email": "kyle@example.com",
                 "htmlUrl": "https://app.opslevel.com/users/1097",
-                "id": "Z2lkOiBvb38zbGV2ZWwvVXNlci8xMDk3",
+                {{ template "id3" }},
                 "name": "Kyle Example",
                 "role": "admin"
               },
               {
                 "email": "john@example.com",
                 "htmlUrl": "https://app.opslevel.com/users/1098",
-                "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8xMDk3",
+                {{ template "id1" }},
                 "name": "John Example",
                 "role": "admin"
               },
               {
                 "email": "ken@example.com",
                 "htmlUrl": "https://app.opslevel.com/users/1099",
-                "id": "Z2lkOi7vb3BzbBV2ZWwvVXNlci8xMDk3",
+                {{ template "id2" }},
                 "name": "Ken Example",
                 "role": "user"
               }
@@ -784,7 +783,7 @@ func TestUpdateTeam(t *testing.T) {
             }
           },
           "parentTeam": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3",
+            {{ template "id4" }},
             "alias": "parent_team"
           },
           "name": "Example",
@@ -794,10 +793,9 @@ func TestUpdateTeam(t *testing.T) {
        }}}`,
 	)
 	client := BestTestClient(t, "team/update", testRequest)
-	// client := ATestClient(t, "team/update")
 	// Act
 	result, err := client.UpdateTeam(ol.TeamUpdateInput{
-		Id:               "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ",
+		Id:               id1,
 		ManagerEmail:     "ken@example.com",
 		Responsibilities: "Foo & bar",
 		Group:            ol.NewIdentifier("test_group"),
@@ -814,16 +812,26 @@ func TestUpdateTeam(t *testing.T) {
 
 func TestDeleteTeam(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/delete")
+	testRequest := NewTestRequest(
+		`"mutation TeamDelete($input:TeamDeleteInput!){teamDelete(input: $input){deletedTeamId,deletedTeamAlias,errors{message,path}}}"`,
+		`{"input": { {{ template "id3" }} } }`,
+		`{"data": {"teamDelete": {"deletedTeamId": "{{ template "id3_string" }}", "deletedTeamAlias": "example", "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "team/delete", testRequest)
 	// Act
-	err := client.DeleteTeam("Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ")
+	err := client.DeleteTeam(id3)
 	// Assert
 	autopilot.Ok(t, err)
 }
 
 func TestDeleteTeamWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "team/delete", "team/delete_with_alias")
+	testRequest := NewTestRequest(
+		`"mutation TeamDelete($input:TeamDeleteInput!){teamDelete(input: $input){deletedTeamId,deletedTeamAlias,errors{message,path}}}"`,
+		`{"input": {"alias": "example" }}`,
+		`{"data": {"teamDelete": {"deletedTeamId": "{{ template "id3_string" }}", "deletedTeamAlias": "example", "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "team/delete_with_alias", testRequest)
 	// Act
 	err := client.DeleteTeamWithAlias("example")
 	// Assert
@@ -834,8 +842,8 @@ func TestTeamAddMember(t *testing.T) {
 	// Arrange
 	testRequestWithTeamId := NewTestRequest(
 		`"mutation TeamMembershipCreate($input:TeamMembershipCreateInput!){teamMembershipCreate(input: $input){memberships{team{alias,id},role,user{id,email}},errors{message,path}}}"`,
-		`{"input": {"teamId": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83NzQ", "members": [ {"user": {"email": "john@example.com"}} ] }}`,
-		`{"data": {"teamMembershipCreate": {"memberships": [ {"user": {"id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", "email": "john@example.com"}, "role": "admin"} ], "errors": [] }}}`,
+		`{"input": {"teamId": "{{ template "id1_string" }}", "members": [ {"user": {"email": "john@example.com"}} ] }}`,
+		`{"data": {"teamMembershipCreate": {"memberships": [ {"user": { {{ template "id2" }}, "email": "john@example.com"}, "role": "admin"} ], "errors": [] }}}`,
 	)
 
 	clientWithTeamId := BestTestClient(t, "team/add_member", testRequestWithTeamId)
@@ -851,8 +859,25 @@ func TestTeamAddMember(t *testing.T) {
 
 func TestTeamRemoveMember(t *testing.T) {
 	// Arrange
+	testRequest := NewTestRequest(
+		`"mutation TeamMembershipDelete($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+		`{"input": {"teamId": "{{ template "id1_string" }}", "members": [ {"user": {"email": "john@example.com" }} ] }}`,
+		`{ "data": {
+    "teamMembershipDelete": {
+      "deletedMembers": [
+        {
+          "email": "john@example.com",
+          "htmlUrl": "https://app.opslevel.com/users/3068",
+          {{ template "id2" }},
+          "name": "John",
+          "role": "admin"
+        }
+      ],
+      "errors": []
+    }}}`,
+	)
 	client1 := BestTestClient(t, "team/get_with_alias_rm_member", testRequestWithAlias)
-	client2 := ATestClient(t, "team/remove_member")
+	client2 := BestTestClient(t, "team/remove_member", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
 	result, err := client2.RemoveMember(&team.TeamId, "john@example.com")
@@ -863,8 +888,13 @@ func TestTeamRemoveMember(t *testing.T) {
 
 func TestTeamAddContact(t *testing.T) {
 	// Arrange
+	testRequest := NewTestRequest(
+		`"mutation ContactCreate($input:ContactCreateInput!){contactCreate(input: $input){contact{address,displayName,id,type},errors{message,path}}}"`,
+		`{"input": {"type":"slack", "address":"#general", "teamId": "{{ template "id1_string" }}" }}`,
+		`{"data": {"contactCreate": {"contact": {"address": "#general", "displayName": "Slack", {{ template "id2" }}, "type": "slack"}, "errors": [] } }}`,
+	)
 	client1 := BestTestClient(t, "team/get_with_alias_add_contact", testRequestWithAlias)
-	client2 := ATestClient(t, "team/add_contact")
+	client2 := BestTestClient(t, "team/alias_add_contact", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
 	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", ol.NewString("")))
@@ -875,9 +905,14 @@ func TestTeamAddContact(t *testing.T) {
 
 func TestTeamUpdateContact(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/update_contact")
+	testRequest := NewTestRequest(
+		`"mutation ContactUpdate($input:ContactUpdateInput!){contactUpdate(input: $input){contact{address,displayName,id,type},errors{message,path}}}"`,
+		`{"input": { {{ template "id1" }}, "type":"slack", "displayName":"Main Channel", "address":"#general" }}`,
+		`{"data": {"contactUpdate":  {"contact": {"address": "#general", "displayName": "Main Channel", {{ template "id2" }}, "type": "slack" }, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "team/update_contact", testRequest)
 	// Act
-	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.CreateContactSlack("#general", ol.NewString("Main Channel")))
+	result, err := client.UpdateContact(id1, ol.CreateContactSlack("#general", ol.NewString("Main Channel")))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
@@ -885,9 +920,14 @@ func TestTeamUpdateContact(t *testing.T) {
 
 func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "team/update_contact", "team/update_contact_nil_type")
+	testRequest := NewTestRequest(
+		`"mutation ContactUpdate($input:ContactUpdateInput!){contactUpdate(input: $input){contact{address,displayName,id,type},errors{message,path}}}"`,
+		`{ "input": { {{ template "id2" }}, "displayName": "Main Channel", "address": "#general" }}`,
+		`{"data": {"contactUpdate": {"contact": {"address": "#general", "displayName": "Main Channel", {{ template "id2" }}, "type": "slack" }, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "team/update_contact_nil_type", testRequest)
 	// Act
-	result, err := client.UpdateContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4", ol.ContactInput{Address: "#general", DisplayName: ol.NewString("Main Channel")})
+	result, err := client.UpdateContact(id2, ol.ContactInput{Address: "#general", DisplayName: ol.NewString("Main Channel")})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
@@ -895,9 +935,14 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 
 func TestTeamRemoveContact(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "team/remove_contact")
+	testRequest := NewTestRequest(
+		`"mutation ContactDelete($input:ContactDeleteInput!){contactDelete(input: $input){deletedContactId,errors{message,path}}}"`,
+		`{"input": { {{ template "id3" }} }}`,
+		`{"data": {"contactDelete": {"deletedContactId": "{{ template "id2_string" }}", "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "team/remove_contact", testRequest)
 	// Act
-	err := client.RemoveContact("Z2lkOi8vb3BzbGV2ZWwvVXNlci8zMDY4")
+	err := client.RemoveContact(id3)
 	// Assert
 	autopilot.Ok(t, err)
 }

@@ -47,7 +47,7 @@ func TestRunnerGetPendingJobs(t *testing.T) {
 		`{"data": {
       "runnerGetPendingJob": {
         "runnerJob": {
-          "id": "{{ template "id1" }}",
+          {{ template "id1" }},
           "image": "public.ecr.aws/opslevel/cli:v2022.02.25",
           "outcome": "unstarted",
           "status": "running",
@@ -102,7 +102,7 @@ func TestRunnerReportJobOutcome(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation RunnerReportJobOutcome($input:RunnerReportJobOutcomeInput!){runnerReportJobOutcome(input: $input){errors{message,path}}}"`,
-		`{"input": { "runnerId":"1234567890", "runnerJobId":"{{ template "id1" }}", "outcome":"execution_timeout" }}`,
+		`{"input": { "runnerId":"1234567890", "runnerJobId": "{{ template "id1_string" }}", "outcome":"execution_timeout" }}`,
 		`{"data": { "runnerReportJobOutcome": { "errors": [] }}}`,
 	)
 

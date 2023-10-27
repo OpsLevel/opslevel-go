@@ -286,7 +286,7 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}"`,
-		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"},{"id":"{{ template "id1" }}"}]}}`,
+		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"}, { {{ template "id1" }} } ]}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/update_trigger3", testRequest)

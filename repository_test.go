@@ -12,19 +12,19 @@ func TestConnectServiceRepository(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ServiceRepositoryCreate($input:ServiceRepositoryCreateInput!){serviceRepositoryCreate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}"`,
-		`{ "input": { "service": { "id": "{{ template "id1" }}" }, "repository": { "id": "{{ template "id1" }}" }, "baseDirectory": "/", "displayName": "OpsLevel/opslevel" }}`,
+		`{ "input": { "service": { {{ template "id1" }} }, "repository": { {{ template "id1" }} }, "baseDirectory": "/", "displayName": "OpsLevel/opslevel" }}`,
 		`{"data": {
     "serviceRepositoryCreate": {
         "serviceRepository": {
             "baseDirectory": "/",
             "displayName": "OpsLevel/opslevel",
-            "id": "{{ template "id1" }}",
+            {{ template "id1" }},
             "repository": {
-                "id": "{{ template "id2" }}",
+                {{ template "id2" }},
                 "defaultAlias": "{{ template "alias1" }}"
             },
             "service": {
-                "id": "{{ template "id3" }}",
+                {{ template "id3" }},
                 "aliases": [
                   "{{ template "alias1" }}",
                   "{{ template "alias2" }}"
@@ -159,7 +159,7 @@ func TestUpdateRepository(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}"`,
-		`{ "input": { "id": "{{ template "id1" }}", "ownerId": "{{ template "id1" }}" }}`,
+		`{ "input": { {{ template "id1" }}, "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_1" }}, "errors": [] }}}`,
 	)
 
@@ -178,7 +178,7 @@ func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}" }}`,
+		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_2" }}, "errors": [] }}}`,
 	)
 
@@ -196,7 +196,7 @@ func TestRepositoryUpdateOwnerNull(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}", "ownerId": null }}`,
+		`{"input": { {{ template "id1" }}, "ownerId": null }}`,
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_3" }}, "errors": [] }}}`,
 	)
 
@@ -215,19 +215,19 @@ func TestUpdateServiceRepository(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ServiceRepositoryUpdate($input:ServiceRepositoryUpdateInput!){serviceRepositoryUpdate(input: $input){serviceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},errors{message,path}}}"`,
-		`{ "input": { "id": "{{ template "id1" }}", "displayName": "Foobar" }}`,
+		`{ "input": { {{ template "id1" }}, "displayName": "Foobar" }}`,
 		`{"data": {
     "serviceRepositoryUpdate": {
         "serviceRepository": {
             "baseDirectory": "",
             "displayName": "Foobar",
-            "id": "{{ template "id1" }}",
+            {{ template "id1" }},
             "repository": {
-                "id": "{{ template "id2" }}",
+                {{ template "id2" }},
                 "defaultAlias": "{{ template "alias1" }}"
             },
             "service": {
-                "id": "{{ template "id3" }}",
+                {{ template "id3" }},
                 "aliases": [
                   "{{ template "alias1" }}",
                   "{{ template "alias2" }}"

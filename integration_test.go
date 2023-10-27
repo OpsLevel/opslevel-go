@@ -16,7 +16,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 		`{"data": {
       "awsIntegrationCreate": {
         "integration": {
-          "id": "{{ template "id1" }}",
+          {{ template "id1" }},
           "name": "AWS - XXXX",
           "type": "aws",
           "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -51,7 +51,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 		`{"data": {
       "newRelicIntegrationCreate": {
         "integration": {
-          "id": "{{ template "id1" }}",
+          {{ template "id1" }},
           "name": "New Relic - XXXX",
           "type": "new_relic",
           "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -79,11 +79,11 @@ func TestGetIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}"`,
-		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
+		`{ {{ template "id1" }} }`,
 		`{"data": {
       "account": {
         "integration": {
-          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf",
+          {{ template "id1" }},
           "name": "Deploy",
           "type": "deploy"
         }
@@ -91,10 +91,10 @@ func TestGetIntegration(t *testing.T) {
 	)
 	client := BestTestClient(t, "integration/get", testRequest)
 	// Act
-	result, err := client.GetIntegration("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
+	result, err := client.GetIntegration(id1)
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf", string(result.Id))
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "Deploy", result.Name)
 }
 
@@ -102,12 +102,12 @@ func TestGetMissingIntegraion(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}"`,
-		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
+		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "integration": null }}}`,
 	)
 	client := BestTestClient(t, "integration/get_missing", testRequest)
 	// Act
-	_, err := client.GetIntegration("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
+	_, err := client.GetIntegration(id2)
 	// Assert
 	autopilot.Assert(t, err != nil, "This test should throw an error.")
 }
@@ -141,11 +141,11 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
-		`{"integration": { "id": "{{ template "id1" }}" }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
+		`{"integration": { {{ template "id1" }} }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
 		`{"data": {
       "awsIntegrationUpdate": {
         "integration": {
-        "id": "{{ template "id1" }}",
+        {{ template "id1" }},
         "name": "Dev2",
         "type": "aws",
         "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -176,11 +176,11 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
-		`{"resource": { "id": "{{ template "id1" }}" }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
+		`{"resource": { {{ template "id1" }} }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
 		`{"data": {
       "newRelicIntegrationUpdate": {
         "integration": {
-        "id": "{{ template "id1" }}",
+        {{ template "id1" }},
         "name": "New Relic - XXXX",
         "type": "new_relic",
         "createdAt": "2023-04-26T16:25:29.574450Z",
@@ -210,7 +210,7 @@ func TestDeleteIntegration(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation IntegrationDelete($input:IdentifierInput!){integrationDelete(resource: $input){errors{message,path}}}"`,
-		`{"input": { "id": "{{ template "id1" }}" }}`,
+		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "integrationDelete": { "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "integration/delete", testRequest)

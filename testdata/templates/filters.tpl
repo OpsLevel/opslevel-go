@@ -2,7 +2,7 @@
 {
     "connective": null,
     "htmlUrl": "https://app.opslevel.com/filters/1",
-    "id": "{{ template "id1" }}",
+    {{ template "id1" }},
     "name": "{{ template "name1" }}",
     "predicates": []
 }
@@ -12,7 +12,7 @@
 {
     "connective": null,
     "htmlUrl": "https://app.opslevel.com/filters/2",
-    "id": "{{ template "id2" }}",
+    {{ template "id2" }},
     "name": "{{ template "name2" }}",
     "predicates": [
         {
@@ -29,7 +29,7 @@
 {
     "connective": null,
     "htmlUrl": "https://app.opslevel.com/filters/3",
-    "id": "{{ template "id3" }}",
+    {{ template "id3" }},
     "name": "{{ template "name3" }}",
     "predicates": []
 }
