@@ -8,7 +8,6 @@
     "description": "Our first Platform Domain!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain",
     "owner": {
-      "groupAlias": "kyle_team",
       {{ template "id4" }}
     },
     "note": "{{ template "description" }}"
@@ -24,7 +23,6 @@
     "description": "Our second domain!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain2",
     "owner": {
-      "groupAlias": "kyle_team",
       {{ template "id4" }}
     },
     "note": "{{ template "description" }}"

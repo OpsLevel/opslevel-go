@@ -17,40 +17,10 @@ type Group struct {
 	Parent      GroupId `json:"parent,omitempty"`
 }
 
-// type SubgroupConnection struct {
-// 	nodes      []GroupId
-// 	PageInfo   PageInfo
-// 	TotalCount graphql.Int
-// }
-
 type GroupConnection struct {
 	Nodes      []Group
 	PageInfo   PageInfo
 	TotalCount int
-}
-
-type GroupInput struct {
-	Name        string             `json:"name,omitempty"`
-	Description string             `json:"description,omitempty"`
-	Parent      *IdentifierInput   `json:"parent"`
-	Members     *[]MemberInput     `json:"members,omitempty"`
-	Teams       *[]IdentifierInput `json:"teams,omitempty"`
-}
-
-//#region Create
-
-func (client *Client) CreateGroup(input GroupInput) (*Group, error) {
-	var m struct {
-		Payload struct {
-			Group  Group
-			Errors []OpsLevelErrors
-		} `graphql:"groupCreate(input: $input)"`
-	}
-	v := PayloadVariables{
-		"input": input,
-	}
-	err := client.Mutate(&m, v, WithName("GroupCreate"))
-	return &m.Payload.Group, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion
@@ -293,25 +263,6 @@ func (g *Group) Members(client *Client, variables *PayloadVariables) (*UserConne
 		q.Account.Group.Members.TotalCount += resp.TotalCount
 	}
 	return &q.Account.Group.Members, nil
-}
-
-//#endregion
-
-//#region Update
-
-func (client *Client) UpdateGroup(identifier string, input GroupInput) (*Group, error) {
-	var m struct {
-		Payload struct {
-			Group  Group
-			Errors []OpsLevelErrors
-		} `graphql:"groupUpdate(group: $group, input: $input)"`
-	}
-	v := PayloadVariables{
-		"group": *NewIdentifier(identifier),
-		"input": input,
-	}
-	err := client.Mutate(&m, v, WithName("GroupUpdate"))
-	return &m.Payload.Group, HandleErrors(err, m.Payload.Errors)
 }
 
 //#endregion

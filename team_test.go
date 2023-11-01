@@ -108,7 +108,7 @@ func TestCreateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input": {"name": "Example", "managerEmail": "john@example.com", "parentTeam": {"alias": "parent_team"}, "responsibilities": "Foo & bar", "group": {"alias": "test_group"}, "contacts": [ {"type": "slack_handle", "address": "@mozzie"}, {"type": "slack", "displayName": "", "address": "#general"}, {"type": "web", "displayName": "Homepage", "address": "https://example.com"} ] }}`,
+		`{"input": {"name": "Example", "managerEmail": "john@example.com", "parentTeam": {"alias": "parent_team"}, "responsibilities": "Foo & bar", "contacts": [ {"type": "slack_handle", "address": "@mozzie"}, {"type": "slack", "displayName": "", "address": "#general"}, {"type": "web", "displayName": "Homepage", "address": "https://example.com"} ] }}`,
 		`{ "data": {
     "teamCreate": {
       "team": {
@@ -131,10 +131,6 @@ func TestCreateTeam(t *testing.T) {
             "type": "web"
           }
         ],
-        "group": {
-          {{ template "id4" }},
-          "alias": "test_group"
-        },
         "htmlUrl": "https://app.opslevel-staging.com/teams/example",
         "manager": {
           "email": "john@example.com",
@@ -183,7 +179,6 @@ func TestCreateTeam(t *testing.T) {
 		ManagerEmail:     "john@example.com",
 		Responsibilities: "Foo & bar",
 		Contacts:         &contacts,
-		Group:            ol.NewIdentifier("test_group"),
 		ParentTeam:       ol.NewIdentifier("parent_team"),
 	})
 	// Assert
@@ -191,7 +186,6 @@ func TestCreateTeam(t *testing.T) {
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "john@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
-	autopilot.Equals(t, "test_group", result.Group.Alias)
 	autopilot.Equals(t, "parent_team", result.ParentTeam.Alias)
 }
 
@@ -716,7 +710,7 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input": { {{ template "id1" }}, "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"}, "group": {"alias": "test_group" }}}`,
+		`{"input": { {{ template "id1" }}, "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"} }}`,
 		`{ "data": {
       "teamUpdate": {
         "team": {
@@ -739,10 +733,6 @@ func TestUpdateTeam(t *testing.T) {
               "type": "web"
             }
           ],
-          "group": {
-            {{ template "id3" }},
-            "alias": "test_group"
-          },
           "htmlUrl": "https://app.opslevel.com/teams/example",
           "manager":               {
             "email": "ken@example.com",
@@ -798,7 +788,6 @@ func TestUpdateTeam(t *testing.T) {
 		Id:               id1,
 		ManagerEmail:     "ken@example.com",
 		Responsibilities: "Foo & bar",
-		Group:            ol.NewIdentifier("test_group"),
 		ParentTeam:       ol.NewIdentifier("parent_team"),
 	})
 	// Assert
@@ -806,7 +795,6 @@ func TestUpdateTeam(t *testing.T) {
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "ken@example.com", result.Manager.Email)
 	autopilot.Equals(t, "Foo & bar", result.Responsibilities)
-	autopilot.Equals(t, "test_group", result.Group.Alias)
 	autopilot.Equals(t, "parent_team", result.ParentTeam.Alias)
 }
 
