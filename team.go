@@ -47,8 +47,9 @@ type TeamId struct {
 type Team struct {
 	TeamId
 
-	Aliases          []string
-	Contacts         []Contact
+	Aliases  []string
+	Contacts []Contact
+	// Deprecated: Group field will be removed in a future release
 	Group            GroupId
 	HTMLUrl          string
 	Manager          User
@@ -76,7 +77,6 @@ type TeamCreateInput struct {
 	Name             string           `json:"name"`
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
-	Group            *IdentifierInput `json:"group"`
 	Contacts         *[]ContactInput  `json:"contacts,omitempty"`
 	ParentTeam       *IdentifierInput `json:"parentTeam"`
 }
@@ -86,7 +86,6 @@ type TeamUpdateInput struct {
 	Alias            string           `json:"alias,omitempty"`
 	Name             string           `json:"name,omitempty"`
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
-	Group            *IdentifierInput `json:"group"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
 	ParentTeam       *IdentifierInput `json:"parentTeam"`
 }

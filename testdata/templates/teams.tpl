@@ -29,7 +29,6 @@
 "contacts": [
   {{ template "contact_1" }}
 ],
-"group": null,
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
 "members": {
@@ -59,7 +58,6 @@
 "contacts": [
   {{ template "contact_2" }}
 ],
-"group": null,
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
 "members": {
@@ -89,7 +87,6 @@
 "contacts": [
   {{ template "contact_3" }}
 ],
-"group": null,
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
 "members": {

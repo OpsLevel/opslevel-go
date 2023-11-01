@@ -18,31 +18,6 @@ func getGroupWithAliasTestClient(t *testing.T) *ol.Client {
 	return getGroupWithAliasClient
 }
 
-func TestCreateGroup(t *testing.T) {
-	// Arrange
-	client := ATestClient(t, "group/create")
-	members := []ol.MemberInput{
-		{Email: "edgar+test@opslevel.com"},
-	}
-	teams := []ol.IdentifierInput{
-		{Alias: "platform"},
-	}
-	// Act
-
-	result, err := client.CreateGroup(ol.GroupInput{
-		Name:        "platform",
-		Description: "Another test group",
-		Members:     &members,
-		Parent:      ol.NewIdentifier("test_group_1"),
-		Teams:       &teams,
-	})
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, "platform", result.Name)
-	autopilot.Equals(t, "Another test group", result.Description)
-	autopilot.Equals(t, "test_group_1", result.Parent.Alias)
-}
-
 func TestDeleteGroup(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
@@ -342,27 +317,4 @@ func TestMembers(t *testing.T) {
 	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "kyle@opslevel.com", result[0].Email)
 	autopilot.Equals(t, "Matthew Brahms", result[2].Name)
-}
-
-func TestUpdateGroup(t *testing.T) {
-	// Arrange
-	client := ATestClient(t, "group/update")
-	members := []ol.MemberInput{
-		{Email: "edgar+test@opslevel.com"},
-	}
-	teams := []ol.IdentifierInput{
-		{Alias: "platform"},
-	}
-	// Act
-	result, err := client.UpdateGroup(string(id4), ol.GroupInput{
-		Description: "This is the first test group",
-		Members:     &members,
-		Parent:      ol.NewIdentifier("test_group_2"),
-		Teams:       &teams,
-	})
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, "test_group_1", result.Name)
-	autopilot.Equals(t, "This is the first test group", result.Description)
-	autopilot.Equals(t, "test_group_2", result.Parent.Alias)
 }

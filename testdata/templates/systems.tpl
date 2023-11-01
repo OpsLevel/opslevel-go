@@ -8,7 +8,6 @@
     "description": "Yolo!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem1",
     "owner": {
-      "groupAlias": "kyle_team",
       {{ template "id4" }}
     },
     "parent": {{ template "domain1_response" }},
@@ -25,7 +24,6 @@
     "description": "Yolo2!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem2",
     "owner": {
-      "groupAlias": "kyle_team",
       {{ template "id4" }}
     },
     "note": "{{ template "description" }}"

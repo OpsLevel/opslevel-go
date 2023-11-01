@@ -1,5 +1,5 @@
 {{- define "scorecard_create_request" }}
-"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
+"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
 {{ end }}
 
 {{- define "scorecard_create_request_vars" }}
@@ -19,7 +19,7 @@
 }{{ end }}
 
 {{- define "scorecard_update_request" }}
-"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
+"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
 {{ end }}
 
 {{- define "scorecard_update_request_vars" }}
@@ -43,7 +43,7 @@
 }{{ end }}
 
 {{- define "scorecard_get_request" }}
-"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}"
+"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}"
 {{ end }}
 
 {{- define "scorecard_get_request_vars" }}
@@ -54,7 +54,7 @@
     "data":{"account":{"scorecard":{"aliases":["existing_scorecard"],"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK","description":"hello there!","filter":{"connective":null,"htmlUrl":"https://app.opslevel.com/filters/123456123","id":"Z2lkOi8vMTIzNDU2MTIzCg==","name":"some filter","predicates":[]},"name":"fetched scorecard","owner":{"id":"Z2lkOi8vMTIzNDU2Nzg5Cg=="},"passingChecks":10,"serviceCount":20,"totalChecks":30}}}
 }{{ end }}
 
-{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Group{groupAlias:alias,id},... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}{{ end }}
+{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}{{ end }}
 
 {{- define "scorecard_1_response" }}
     "id":"Z2lkOi8vMTExMTExMTEK",

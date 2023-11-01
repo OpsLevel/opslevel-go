@@ -5,7 +5,6 @@
     "name": "my-big-query",
     "type": "Database",
     "owner": {
-      "groupAlias": "test_team",
       {{ template "id1" }}
     },
     "ownerLocked": false,
