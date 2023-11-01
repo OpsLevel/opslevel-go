@@ -7,22 +7,6 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-// func TestEntityOwnerGroupReturnsCorrectId(t *testing.T) {
-// 	// Arrange
-// 	owner := ol.EntityOwner{
-// 		OnGroup: ol.EntityOwnerGroup{
-// 			Id:    id1,
-// 			Alias: "Example",
-// 		},
-// 	}
-// 	// Act
-// 	// Assert
-// 	autopilot.Equals(t, id1, owner.Id())
-// 	autopilot.Equals(t, id1, owner.OnGroup.AsGroup().Id)
-// 	autopilot.Equals(t, "Example", owner.Alias())
-// 	autopilot.Equals(t, "Example", owner.OnGroup.AsGroup().Alias)
-// }
-
 func TestEntityOwnerTeamReturnsCorrectId(t *testing.T) {
 	// Arrange
 	owner := ol.EntityOwner{
