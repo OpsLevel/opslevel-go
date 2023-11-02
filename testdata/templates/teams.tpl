@@ -31,10 +31,18 @@
 ],
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
-"members": {
+"memberships": {
   "nodes": [
-    {{ template "user_2" }},
-    {{ template "user_3" }}
+    {
+      "team": {{ template "teamId_2" }},
+      "user": {{ template "user_2" }},
+      "role": "admin"
+    },
+    {
+      "team": {{ template "teamId_3" }},
+      "user": {{ template "user_3" }},
+      "role": "admin"
+    }
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -60,10 +68,18 @@
 ],
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
-"members": {
+"memberships": {
   "nodes": [
-    {{ template "user_2" }},
-    {{ template "user_3" }}
+    {
+      "team": {{ template "teamId_2" }},
+      "user": {{ template "user_2" }},
+      "role": "admin"
+    },
+    {
+      "team": {{ template "teamId_3" }},
+      "user": {{ template "user_3" }},
+      "role": "admin"
+    }
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -89,10 +105,18 @@
 ],
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
-"members": {
+"memberships": {
   "nodes": [
-    {{ template "user_2" }},
-    {{ template "user_3" }}
+    {
+      "team": {{ template "teamId_2" }},
+      "user": {{ template "user_2" }},
+      "role": "admin"
+    },
+    {
+      "team": {{ template "teamId_3" }},
+      "user": {{ template "user_3" }},
+      "role": "admin"
+    }
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2

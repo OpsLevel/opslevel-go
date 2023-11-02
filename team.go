@@ -53,7 +53,7 @@ type Team struct {
 	Group            GroupId
 	HTMLUrl          string
 	Manager          User
-	Members          *UserConnection
+	Memberships      *TeamMembershipConnection
 	Name             string
 	ParentTeam       TeamId
 	Responsibilities string
@@ -101,8 +101,15 @@ type TeamMembership struct {
 	User UserId `graphql:"user"`
 }
 
+type TeamMembershipConnection struct {
+	Nodes      []TeamMembership
+	PageInfo   PageInfo
+	TotalCount int
+}
+
 type TeamMembershipUserInput struct {
 	User UserIdentifierInput `json:"user"`
+	Role string              `json:"role"`
 }
 
 type TeamMembershipCreateInput struct {
@@ -128,12 +135,12 @@ func (t *Team) ResourceType() TaggableResource {
 func (self *Team) Hydrate(client *Client) error {
 	self.Responsibilities = html.UnescapeString(self.Responsibilities)
 
-	if self.Members == nil {
-		self.Members = &UserConnection{}
+	if self.Memberships == nil {
+		self.Memberships = &TeamMembershipConnection{}
 	}
-	if self.Members.PageInfo.HasNextPage {
+	if self.Memberships.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Members.PageInfo.End
+		(*variables)["after"] = self.Memberships.PageInfo.End
 		_, err := self.GetMembers(client, variables)
 		if err != nil {
 			return err
@@ -154,39 +161,39 @@ func (self *Team) Hydrate(client *Client) error {
 	return nil
 }
 
-func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*UserConnection, error) {
+func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*TeamMembershipConnection, error) {
+	if t.Id == "" {
+		return nil, fmt.Errorf("Unable to get Memberships, invalid team id: '%s'", t.Id)
+	}
 	var q struct {
 		Account struct {
 			Team struct {
-				Members UserConnection `graphql:"members(after: $after, first: $first)"`
+				Memberships TeamMembershipConnection `graphql:"memberships(after: $after, first: $first)"`
 			} `graphql:"team(id: $team)"`
 		}
-	}
-	if t.Id == "" {
-		return nil, fmt.Errorf("Unable to get Members, invalid team id: '%s'", t.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
 	(*variables)["team"] = t.Id
-	if err := client.Query(&q, *variables, WithName("TeamMembersList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("TeamMembershipsList")); err != nil {
 		return nil, err
 	}
-	if t.Members == nil {
-		members := UserConnection{}
-		t.Members = &members
+	if t.Memberships == nil {
+		memberships := TeamMembershipConnection{}
+		t.Memberships = &memberships
 	}
-	t.Members.Nodes = append(t.Members.Nodes, q.Account.Team.Members.Nodes...)
-	t.Members.PageInfo = q.Account.Team.Members.PageInfo
-	t.Members.TotalCount += q.Account.Team.Members.TotalCount
-	for t.Members.PageInfo.HasNextPage {
-		(*variables)["after"] = t.Members.PageInfo.End
+	t.Memberships.Nodes = append(t.Memberships.Nodes, q.Account.Team.Memberships.Nodes...)
+	t.Memberships.PageInfo = q.Account.Team.Memberships.PageInfo
+	t.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
+	for t.Memberships.PageInfo.HasNextPage {
+		(*variables)["after"] = t.Memberships.PageInfo.End
 		_, err := t.GetMembers(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return t.Members, nil
+	return t.Memberships, nil
 }
 
 func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -299,7 +306,7 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
 }
 
-func (client *Client) AddMembers(team *TeamId, emails []string) ([]TeamMembership, error) {
+func (client *Client) AddMembers(team *TeamId, memberships ...TeamMembershipUserInput) ([]TeamMembership, error) {
 	var m struct {
 		Payload struct {
 			Members []TeamMembership `graphql:"memberships"`
@@ -309,16 +316,15 @@ func (client *Client) AddMembers(team *TeamId, emails []string) ([]TeamMembershi
 	v := PayloadVariables{
 		"input": TeamMembershipCreateInput{
 			TeamId:  team.Id,
-			Members: BuildMembershipInput(emails),
+			Members: memberships,
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamMembershipCreate"))
 	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) AddMember(team *TeamId, email string) ([]TeamMembership, error) {
-	emails := []string{email}
-	return client.AddMembers(team, emails)
+func (client *Client) AddMember(team *TeamId, membership TeamMembershipUserInput) ([]TeamMembership, error) {
+	return client.AddMembers(team, membership)
 }
 
 func (client *Client) AddContact(team string, contact ContactInput) (*Contact, error) {
