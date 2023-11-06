@@ -97,15 +97,6 @@ func (s *Service) HasAlias(alias string) bool {
 	return false
 }
 
-func (s *Service) HasManagedAlias(alias string) bool {
-	for _, a := range s.ManagedAliases {
-		if a == alias {
-			return true
-		}
-	}
-	return false
-}
-
 func (s *Service) HasTag(key string, value string) bool {
 	for _, tag := range s.Tags.Nodes {
 		if tag.Key == key && tag.Value == value {
