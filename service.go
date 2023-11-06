@@ -21,6 +21,7 @@ type Service struct {
 	ServiceId
 	Language                   string                       `json:"language,omitempty"`
 	Lifecycle                  Lifecycle                    `json:"lifecycle,omitempty"`
+	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
 	Name                       string                       `json:"name,omitempty"`
 	Owner                      TeamId                       `json:"owner,omitempty"`
 	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
@@ -89,6 +90,15 @@ func (s *Service) ResourceType() TaggableResource {
 
 func (s *Service) HasAlias(alias string) bool {
 	for _, a := range s.Aliases {
+		if a == alias {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *Service) HasManagedAlias(alias string) bool {
+	for _, a := range s.ManagedAliases {
 		if a == alias {
 			return true
 		}
