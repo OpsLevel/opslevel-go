@@ -49,12 +49,11 @@ type Team struct {
 
 	Aliases  []string
 	Contacts []Contact
-	// Deprecated: Group field will be removed in a future release
-	Group   GroupId
-	HTMLUrl string
-	Manager User
-	// Deprecated: Members field will be removed in a future release
-	Members          *UserConnection
+
+	Group            GroupId // Deprecated: Group field will be removed in a future release
+	HTMLUrl          string
+	Manager          User
+	Members          *UserConnection // Deprecated: Members field will be removed in a future release
 	Memberships      *TeamMembershipConnection
 	Name             string
 	ParentTeam       TeamId
