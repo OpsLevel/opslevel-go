@@ -21,6 +21,7 @@ type Service struct {
 	ServiceId
 	Language                   string                       `json:"language,omitempty"`
 	Lifecycle                  Lifecycle                    `json:"lifecycle,omitempty"`
+	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
 	Name                       string                       `json:"name,omitempty"`
 	Owner                      TeamId                       `json:"owner,omitempty"`
 	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
