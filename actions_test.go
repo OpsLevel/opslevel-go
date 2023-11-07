@@ -345,30 +345,30 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	autopilot.Assert(t, err3 != nil, "Expected error was not thrown")
 }
 
-// func TestListExtendedTeamAccess(t *testing.T) {
-// 	// Arrange
-// 	testRequestOne := NewTestRequest(
-// 		`"query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
-// 		`{{ template "extended_team_access_get_vars_1" }}`,
-// 		`{{ template "extended_team_access_response_1" }}`,
-// 	)
-// 	testRequestTwo := NewTestRequest(
-// 		`"query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
-// 		`{{ template "extended_team_access_get_vars_2" }}`,
-// 		`{{ template "extended_team_access_response_2" }}`,
-// 	)
-// 	requests := []TestRequest{testRequestOne, testRequestTwo}
+func TestListExtendedTeamAccess(t *testing.T) {
+	// Arrange
+	testRequestOne := NewTestRequest(
+		`"query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+		`{{ template "extended_team_access_get_vars_1" }}`,
+		`{{ template "extended_team_access_response_1" }}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+		`{{ template "extended_team_access_get_vars_2" }}`,
+		`{{ template "extended_team_access_response_2" }}`,
+	)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
 
-// 	client := BestTestClient(t, "custom_actions/list_extended_team_access", requests...)
-// 	id1 := *ol.NewID(string(id1))
-// 	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
+	client := BestTestClient(t, "custom_actions/list_extended_team_access", requests...)
+	id1 := *ol.NewID(string(id1))
+	trigger := ol.CustomActionsTriggerDefinition{Id: id1}
 
-// 	// Act
-// 	resp, err := trigger.ExtendedTeamAccess(client, nil)
-// 	result := resp.Nodes
+	// Act
+	resp, err := trigger.ExtendedTeamAccess(client, nil)
+	result := resp.Nodes
 
-// 	// Assert
-// 	autopilot.Ok(t, err)
-// 	autopilot.Equals(t, "example", result[0].Alias)
-// 	autopilot.Equals(t, id1, result[0].TeamId.Id)
-// }
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "example", result[0].Alias)
+	autopilot.Equals(t, id1, result[0].TeamId.Id)
+}
