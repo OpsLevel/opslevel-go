@@ -23,16 +23,17 @@ type InfrastructureResourceProviderData struct {
 }
 
 type InfrastructureResource struct {
-	Id           string                             `json:"id"`
-	Aliases      []string                           `json:"aliases"`
-	Name         string                             `json:"name"`
-	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
-	ProviderType string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
-	ProviderData InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`
-	Owner        EntityOwner                        `json:"owner" graphql:"owner @include(if: $all)"`
-	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
-	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
-	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
+	Id             string                             `json:"id"`
+	Aliases        []string                           `json:"aliases"`
+	ManagedAliases []string                           `json:"managedAliases"`
+	Name           string                             `json:"name"`
+	Schema         string                             `json:"type" graphql:"type @include(if: $all)"`
+	ProviderType   string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
+	ProviderData   InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`
+	Owner          EntityOwner                        `json:"owner" graphql:"owner @include(if: $all)"`
+	OwnerLocked    bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
+	ParsedData     JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
+	Data           JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
 }
 
 type InfrastructureResourceConnection struct {
