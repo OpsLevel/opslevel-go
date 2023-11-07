@@ -26,16 +26,8 @@
 "manager": {{ template "user_1" }},
 "memberships": {
   "nodes": [
-    {
-      "team": { {{ template "teamId_2" }} },
-      "user": {{ template "user_2" }},
-      "role": "admin"
-    },
-    {
-      "team": { {{ template "teamId_3" }} },
-      "user": {{ template "user_3" }},
-      "role": "admin"
-    }
+    {{ template "team_membership_1" }},
+    {{ template "team_membership_2" }}
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -63,16 +55,8 @@
 "manager": {{ template "user_1" }},
 "memberships": {
   "nodes": [
-    {
-      "team": {{ template "teamId_2" }},
-      "user": {{ template "user_2" }},
-      "role": "admin"
-    },
-    {
-      "team": {{ template "teamId_3" }},
-      "user": {{ template "user_3" }},
-      "role": "admin"
-    }
+    {{ template "team_membership_1" }},
+    {{ template "team_membership_2" }}
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -100,16 +84,8 @@
 "manager": {{ template "user_1" }},
 "memberships": {
   "nodes": [
-    {
-      "team": {{ template "teamId_2" }},
-      "user": {{ template "user_2" }},
-      "role": "admin"
-    },
-    {
-      "team": {{ template "teamId_3" }},
-      "user": {{ template "user_3" }},
-      "role": "admin"
-    }
+    {{ template "team_membership_1" }},
+    {{ template "team_membership_2" }}
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
