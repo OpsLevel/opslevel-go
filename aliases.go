@@ -64,6 +64,13 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 
 //#region Delete
 
+func (client *Client) DeleteInfraAlias(alias string) error {
+	return client.DeleteAlias(AliasDeleteInput{
+		Alias:     alias,
+		OwnerType: AliasOwnerTypeEnumInfrastructureResource,
+	})
+}
+
 func (client *Client) DeleteServiceAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
 		Alias:     alias,
