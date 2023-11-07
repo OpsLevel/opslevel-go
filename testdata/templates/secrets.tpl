@@ -9,7 +9,7 @@
 {
     {{ template "id2" }},
     "alias": "{{ template "alias2" }}",
-    "owner": {{ template "teamId_2" }},
+    "owner": { {{ template "teamId_2" }} },
     "timestamps": {{ template "timestamps" }}
 }
 {{end}}
@@ -17,7 +17,7 @@
 {
     {{ template "id3" }},
     "alias": "{{ template "alias3" }}",
-    "owner": {{ template "teamId_3" }},
+    "owner": { {{ template "teamId_3" }} },
     "timestamps": {{ template "timestamps" }}
 }
 {{end}}

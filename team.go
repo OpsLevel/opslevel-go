@@ -50,9 +50,11 @@ type Team struct {
 	Aliases  []string
 	Contacts []Contact
 	// Deprecated: Group field will be removed in a future release
-	Group            GroupId
-	HTMLUrl          string
-	Manager          User
+	Group   GroupId
+	HTMLUrl string
+	Manager User
+	// Deprecated: Members field will be removed in a future release
+	Members          *UserConnection
 	Memberships      *TeamMembershipConnection
 	Name             string
 	ParentTeam       TeamId
@@ -141,7 +143,7 @@ func (self *Team) Hydrate(client *Client) error {
 	if self.Memberships.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = self.Memberships.PageInfo.End
-		_, err := self.GetMembers(client, variables)
+		_, err := self.GetMemberships(client, variables)
 		if err != nil {
 			return err
 		}
@@ -161,7 +163,7 @@ func (self *Team) Hydrate(client *Client) error {
 	return nil
 }
 
-func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*TeamMembershipConnection, error) {
+func (t *Team) GetMemberships(client *Client, variables *PayloadVariables) (*TeamMembershipConnection, error) {
 	if t.Id == "" {
 		return nil, fmt.Errorf("Unable to get Memberships, invalid team id: '%s'", t.Id)
 	}
@@ -176,7 +178,7 @@ func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*TeamMem
 		variables = client.InitialPageVariablesPointer()
 	}
 	(*variables)["team"] = t.Id
-	if err := client.Query(&q, *variables, WithName("TeamMembershipsList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("TeamMembersList")); err != nil {
 		return nil, err
 	}
 	if t.Memberships == nil {
@@ -188,12 +190,17 @@ func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*TeamMem
 	t.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
 	for t.Memberships.PageInfo.HasNextPage {
 		(*variables)["after"] = t.Memberships.PageInfo.End
-		_, err := t.GetMembers(client, variables)
+		_, err := t.GetMemberships(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
 	return t.Memberships, nil
+}
+
+// Deprecated: use GetMemberships instead
+func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*UserConnection, error) {
+	return nil, fmt.Errorf("Deprecated, use GetMemberships instead")
 }
 
 func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -233,13 +240,6 @@ func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnect
 		}
 	}
 	return t.Tags, nil
-}
-
-func BuildMembershipInput(members []string) (output []TeamMembershipUserInput) {
-	for _, email := range members {
-		output = append(output, TeamMembershipUserInput{User: UserIdentifierInput{Email: email}})
-	}
-	return
 }
 
 func CreateContactSlack(channel string, name *string) ContactInput {
@@ -309,8 +309,8 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 func (client *Client) AddMembers(team *TeamId, memberships ...TeamMembershipUserInput) ([]TeamMembership, error) {
 	var m struct {
 		Payload struct {
-			Members []TeamMembership `graphql:"memberships"`
-			Errors  []OpsLevelErrors
+			Memberships []TeamMembership `graphql:"memberships"`
+			Errors      []OpsLevelErrors
 		} `graphql:"teamMembershipCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -320,9 +320,10 @@ func (client *Client) AddMembers(team *TeamId, memberships ...TeamMembershipUser
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamMembershipCreate"))
-	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
+	return m.Payload.Memberships, HandleErrors(err, m.Payload.Errors)
 }
 
+// Deprecated: use AddMembers instead
 func (client *Client) AddMember(team *TeamId, membership TeamMembershipUserInput) ([]TeamMembership, error) {
 	return client.AddMembers(team, membership)
 }
@@ -563,7 +564,7 @@ func (client *Client) DeleteTeam(id ID) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, error) {
+func (client *Client) RemoveMembers(team *TeamId, memberships ...TeamMembershipUserInput) ([]User, error) {
 	var m struct {
 		Payload struct {
 			Members []User `graphql:"deletedMembers"`
@@ -573,16 +574,16 @@ func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, erro
 	v := PayloadVariables{
 		"input": TeamMembershipDeleteInput{
 			TeamId:  team.Id,
-			Members: BuildMembershipInput(emails),
+			Members: memberships,
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamMembershipDelete"))
 	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) RemoveMember(team *TeamId, email string) ([]User, error) {
-	emails := []string{email}
-	return client.RemoveMembers(team, emails)
+// Deprecated: use RemoveMembers instead
+func (client *Client) RemoveMember(team *TeamId, membership TeamMembershipUserInput) ([]User, error) {
+	return client.RemoveMembers(team, membership)
 }
 
 func (client *Client) RemoveContact(contact ID) error {

@@ -1,22 +1,15 @@
 {{- define "teamId_1" }}
-{
 "alias": "{{ template "alias1" }}",
 {{ template "id1" }}
-}
 {{ end }}
 {{- define "teamId_2" }}
-{
 "alias": "{{ template "alias2" }}",
 {{ template "id2" }}
-}
 {{ end }}
 {{- define "teamId_3" }}
-{
 "alias": "{{ template "alias3" }}",
 {{ template "id3" }}
-}
 {{ end }}
-
 
 
 {{- define "team_1" }}
@@ -34,12 +27,12 @@
 "memberships": {
   "nodes": [
     {
-      "team": {{ template "teamId_2" }},
+      "team": { {{ template "teamId_2" }} },
       "user": {{ template "user_2" }},
       "role": "admin"
     },
     {
-      "team": {{ template "teamId_3" }},
+      "team": { {{ template "teamId_3" }} },
       "user": {{ template "user_3" }},
       "role": "admin"
     }
@@ -128,5 +121,32 @@
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 0
 }
+}
+{{ end }}
+
+{{- define "team_membership_user_input_1" }}
+"user": { {{ template "user_id_email_1" }} },
+"role": "user"
+{{ end }}
+
+{{- define "team_membership_1" }}
+{
+  "user": { {{ template "user_id_email_1" }} },
+  "team": { {{ template "teamId_1" }} },
+  "role": "user"
+}
+{{ end }}
+{{- define "team_membership_2" }}
+{
+  "user": { {{ template "user_id_email_2" }} },
+  "team": { {{ template "teamId_2" }} },
+  "role": "user"
+}
+{{ end }}
+{{- define "team_membership_3" }}
+{
+  "user": { {{ template "user_id_email_3" }} },
+  "team": { {{ template "teamId_3" }} },
+  "role": "user"
 }
 {{ end }}
