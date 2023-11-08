@@ -305,7 +305,7 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
 }
 
-func (client *Client) AddMembers(team *TeamId, memberships ...TeamMembershipUserInput) ([]TeamMembership, error) {
+func (client *Client) AddMemberships(team *TeamId, memberships ...TeamMembershipUserInput) ([]TeamMembership, error) {
 	var m struct {
 		Payload struct {
 			Memberships []TeamMembership `graphql:"memberships"`
@@ -322,9 +322,14 @@ func (client *Client) AddMembers(team *TeamId, memberships ...TeamMembershipUser
 	return m.Payload.Memberships, HandleErrors(err, m.Payload.Errors)
 }
 
-// Deprecated: use AddMembers instead
-func (client *Client) AddMember(team *TeamId, membership TeamMembershipUserInput) ([]TeamMembership, error) {
-	return client.AddMembers(team, membership)
+// Deprecated: use AddMemberships instead
+func (client *Client) AddMembers(team *TeamId, emails []string) ([]TeamMembership, error) {
+	return nil, fmt.Errorf("Deprecated, use AddMemberships instead")
+}
+
+// Deprecated: use AddMemberships instead
+func (client *Client) AddMember(team *TeamId, email string) ([]TeamMembership, error) {
+	return nil, fmt.Errorf("Deprecated, use AddMemberships instead")
 }
 
 func (client *Client) AddContact(team string, contact ContactInput) (*Contact, error) {
@@ -563,7 +568,7 @@ func (client *Client) DeleteTeam(id ID) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) RemoveMembers(team *TeamId, memberships ...TeamMembershipUserInput) ([]User, error) {
+func (client *Client) RemoveMemberships(team *TeamId, memberships ...TeamMembershipUserInput) ([]User, error) {
 	var m struct {
 		Payload struct {
 			Members []User `graphql:"deletedMembers"`
@@ -581,8 +586,13 @@ func (client *Client) RemoveMembers(team *TeamId, memberships ...TeamMembershipU
 }
 
 // Deprecated: use RemoveMembers instead
+func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, error) {
+	return nil, fmt.Errorf("Deprecated, use RemoveMemberships instead")
+}
+
+// Deprecated: use RemoveMembers instead
 func (client *Client) RemoveMember(team *TeamId, membership TeamMembershipUserInput) ([]User, error) {
-	return client.RemoveMembers(team, membership)
+	return nil, fmt.Errorf("Deprecated, use RemoveMemberships instead")
 }
 
 func (client *Client) RemoveContact(contact ID) error {

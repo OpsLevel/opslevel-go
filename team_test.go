@@ -303,7 +303,6 @@ func TestTeamMembers(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "kyle@opslevel.com", result[0].User.Email)
-	// autopilot.Equals(t, "Matthew Brahms", result[2].Name)
 }
 
 func TestTeamTags(t *testing.T) {
@@ -787,7 +786,7 @@ func TestDeleteTeamWithAlias(t *testing.T) {
 	autopilot.Ok(t, err)
 }
 
-func TestTeamAddMember(t *testing.T) {
+func TestTeamAddMemberhip(t *testing.T) {
 	// Arrange
 	testRequestWithTeamId := NewTestRequest(
 		`"mutation TeamMembershipCreate($input:TeamMembershipCreateInput!){teamMembershipCreate(input: $input){memberships{team{alias,id},role,user{id,email}},errors{message,path}}}"`,
@@ -804,13 +803,13 @@ func TestTeamAddMember(t *testing.T) {
 		Role: "user",
 		User: ol.UserIdentifierInput{Id: id1, Email: "kyle@opslevel.com"},
 	}
-	result, err := clientWithTeamId.AddMember(&team.TeamId, newMembership)
+	result, err := clientWithTeamId.AddMemberships(&team.TeamId, newMembership)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result))
 }
 
-func TestTeamRemoveMember(t *testing.T) {
+func TestTeamRemoveMemberhip(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation TeamMembershipDelete($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,role},errors{message,path}}}"`,
@@ -837,7 +836,7 @@ func TestTeamRemoveMember(t *testing.T) {
 		User: ol.UserIdentifierInput{Id: id1, Email: "kyle@opslevel.com"},
 	}
 
-	result, err := client2.RemoveMember(&team.TeamId, membershipToDelete)
+	result, err := client2.RemoveMemberships(&team.TeamId, membershipToDelete)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 1, len(result))
