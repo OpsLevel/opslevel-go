@@ -32,6 +32,12 @@
     "startCursor": "MQ",
     "endCursor": "NA"
 }{{ end }}
+{{- define "pagination_response_same_cursor" }}"pageInfo": {
+    "hasNextPage": false,
+    "hasPreviousPage": false,
+    "startCursor": "MQ",
+    "endCursor": "MQ"
+}{{ end }}
 {{- define "first_page_variables" }}
 "after": "",
 "first": 100

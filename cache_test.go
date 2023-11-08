@@ -20,7 +20,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "lifecycles":[{{ template "lifecycle_1" }}] }}}`,
 	)
 	testRequestThree := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "teams":{ "nodes":[{{ template "team_1" }}] } }}}`,
 	)

@@ -1,22 +1,15 @@
 {{- define "teamId_1" }}
-{
 "alias": "{{ template "alias1" }}",
 {{ template "id1" }}
-}
 {{ end }}
 {{- define "teamId_2" }}
-{
 "alias": "{{ template "alias2" }}",
 {{ template "id2" }}
-}
 {{ end }}
 {{- define "teamId_3" }}
-{
 "alias": "{{ template "alias3" }}",
 {{ template "id3" }}
-}
 {{ end }}
-
 
 
 {{- define "team_1" }}
@@ -31,10 +24,10 @@
 ],
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
-"members": {
+"memberships": {
   "nodes": [
-    {{ template "user_2" }},
-    {{ template "user_3" }}
+    {{ template "team_membership_1" }},
+    {{ template "team_membership_2" }}
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -60,10 +53,10 @@
 ],
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
-"members": {
+"memberships": {
   "nodes": [
-    {{ template "user_2" }},
-    {{ template "user_3" }}
+    {{ template "team_membership_1" }},
+    {{ template "team_membership_2" }}
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -89,10 +82,10 @@
 ],
 "htmlUrl": "https://app.opslevel.com/teams/bots",
 "manager": {{ template "user_1" }},
-"members": {
+"memberships": {
   "nodes": [
-    {{ template "user_2" }},
-    {{ template "user_3" }}
+    {{ template "team_membership_1" }},
+    {{ template "team_membership_2" }}
   ],
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 2
@@ -104,5 +97,32 @@
   "pageInfo": {{ template "next_page_false" }},
   "totalCount": 0
 }
+}
+{{ end }}
+
+{{- define "team_membership_user_input_1" }}
+"user": { {{ template "user_id_email_1" }} },
+"role": "user"
+{{ end }}
+
+{{- define "team_membership_1" }}
+{
+  "user": { {{ template "user_id_email_1" }} },
+  "team": { {{ template "teamId_1" }} },
+  "role": "user"
+}
+{{ end }}
+{{- define "team_membership_2" }}
+{
+  "user": { {{ template "user_id_email_2" }} },
+  "team": { {{ template "teamId_2" }} },
+  "role": "user"
+}
+{{ end }}
+{{- define "team_membership_3" }}
+{
+  "user": { {{ template "user_id_email_3" }} },
+  "team": { {{ template "teamId_3" }} },
+  "role": "user"
 }
 {{ end }}
