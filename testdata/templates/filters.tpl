@@ -42,6 +42,7 @@
   "name": "Kubernetes",
   "predicates": []
 {{ end }}
+
 {{- define "filter_tier1service_response" }}
   "connective": null,
   "htmlUrl": "https://app.opslevel.com/filters/401",
@@ -56,6 +57,7 @@
     }
   ]
 {{ end }}
+
 {{- define "filter_complex_kubernetes_response" }}
   "connective": null,
   "htmlUrl": "https://app.opslevel.com/filters/452",
@@ -87,6 +89,7 @@
 ],
 "connective": "or"
 {{ end }}
+
 {{- define "create_filter_nested_response" }}
 "connective": "or",
 "htmlUrl": "https://app.opslevel.com/filters/2346",
@@ -124,6 +127,7 @@
 ],
 "connective": "and"
 {{ end }}
+
 {{- define "update_filter_nested_response" }}
 "connective": "and",
 "htmlUrl": "https://app.opslevel.com/filters/2346",

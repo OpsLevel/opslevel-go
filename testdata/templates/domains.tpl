@@ -1,3 +1,12 @@
+{{- define "domain_input" -}}
+{
+  "name": "{{ .Name }}",
+  "description": "{{ .Description }}",
+  "note": "{{ .Note  }}",
+  "ownerId": "{{ .Owner }}"
+}
+{{- end}}
+
 {{- define "domain1_response" }}
 {
     {{ template "id1" }},

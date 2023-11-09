@@ -27,3 +27,13 @@
     "name": "{{ template "name3" }}"
 }
 {{ end }}
+
+{{- define "level_bronze" }}
+"level": {
+  "alias": "bronze",
+  "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+  "index": 1,
+  "name": "Bronze"
+}
+{{ end }}

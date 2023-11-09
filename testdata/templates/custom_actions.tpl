@@ -1,8 +1,24 @@
+{{- define "liquid_template_freeze_string" -}}
+{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"freeze\"}
+{{- end }}
+
+{{- define "liquid_template_rollback_string" -}}
+{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}
+{{- end }}
+
+{{- define "liquid_template_freeze" -}}
+"liquidTemplate": "{{- template "liquid_template_freeze_string" -}}"
+{{ end }}
+
+{{- define "liquid_template_rollback" }}
+"liquidTemplate": "{{- template "liquid_template_rollback_string" -}}"
+{{ end }}
+
 {{- define "custom_action1_response" }}
     "aliases": [],
     "description": null,
     "id": "123456789",
-    "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}",
+    {{ template "liquid_template_rollback" }},
     "name": "Deploy Rollback",
     "headers": {
         "Content-Type": "application/json"
@@ -14,7 +30,7 @@
     "aliases": [],
     "description": "Trigger a deploy freeze",
     "id": "987654322",
-    "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"freeze\"}",
+    {{ template "liquid_template_freeze" }},
     "name": "Deploy Freeze",
     "headers": {
         "Accept": "application/vnd.github+json",
@@ -27,7 +43,7 @@
     "aliases": [],
     "description": "Page the On-Call Engineer",
     "id": "987654323",
-    "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"freeze\"}",
+    {{ template "liquid_template_freeze" }},
     "name": "Page On-Call",
     "headers": {
         "Accept": "application/vnd.github+json",
@@ -108,7 +124,7 @@
     "aliases": [],
     "description": null,
     "id": "123456789",
-    "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}",
+    {{ template "liquid_template_rollback" }},
     "name": "Deploy Rollback",
     "headers": {
         "Content-Type": "application/json"
@@ -120,7 +136,7 @@
     "aliases": [],
     "description": "Trigger a deploy freeze",
     "id": "987654321",
-    "liquidTemplate": "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"freeze\"}",
+    {{ template "liquid_template_freeze" }},
     "name": "Deploy Freeze",
     "headers": {
         "Accept": "application/vnd.github+json",
