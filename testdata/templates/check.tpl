@@ -11,13 +11,7 @@
     "enabled": true,
     "filter": null,
     {{ template "id1" }},
-    "level": {
-      "alias": "bronze",
-      "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-      "index": 1,
-      "name": "Bronze"
-    },
+    "level": {{ template "level_1" }},
     "name": "Repository Integrated",
     "notes": null
 {{ end }}
@@ -34,44 +28,19 @@
     "category": null,
     "description": "The service has a metrics tool.",
     "enabled": true,
-    "filter": {
-      "connective": null,
-      "htmlUrl": "https://app.opslevel.com/filters/401",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzQwMQ",
-      "name": "Tier 1 Services",
-      "predicates": [
-        {
-          "key": "tier_index",
-          "keyData": null,
-          "type": "equals",
-          "value": "1"
-        }
-      ]
-    },
+    "filter": { {{ template "filter_tier1service_response" }} },
     "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpUb29sVXNhZ2UvMTMyNw",
-    "level": {
-      "alias": "bronze",
-      "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-      "index": 1,
-      "name": "Bronze"
-    },
+    {{ template "level_bronze" }},
     "name": "Metrics Tool",
     "notes": null
 {{ end }}
 {{- define "owner_defined_check" }}
     "category": null,
-	"description": "Verifies that the service has an owner defined.",
+    "description": "Verifies that the service has an owner defined.",
     "enabled": true,
     "filter": null,
     "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8xMzI9",
-    "level": {
-      "alias": "bronze",
-      "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-      "index": 1,
-      "name": "Bronze"
-    },
+    {{ template "level_bronze" }},
     "name": "Owner Defined",
     "notes": null
 {{ end }}

@@ -137,16 +137,20 @@ func (t *TestDataTemplater) ParseValue(value string) string {
 	return t.ParseTemplatedString(`{{ template "` + value + `" }}`)
 }
 
-func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
+func (t *TestDataTemplater) ParseTemplatedStringWith(contents string, givenData any) string {
 	target, err := t.rootTemplate.Parse(contents)
 	if err != nil {
 		panic(fmt.Errorf("error parsing template: %s", err))
 	}
 	data := bytes.NewBuffer([]byte{})
-	if err = target.Execute(data, nil); err != nil {
+	if err = target.Execute(data, givenData); err != nil {
 		panic(err)
 	}
 	return strings.TrimSpace(data.String())
+}
+
+func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
+	return t.ParseTemplatedStringWith(contents, nil)
 }
 
 type TestRequest struct {

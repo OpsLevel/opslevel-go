@@ -9,20 +9,22 @@ import (
 
 func TestDomainCreate(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`{"input": { "name": "platform-test", "description": "Domain created for testing.", "ownerId": "{{ template "id1_string" }}", "note": "additional note about platform-test domain" }}`,
-		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
-	)
-
-	client := BestTestClient(t, "domain/create", testRequest)
-	// Act
 	input := ol.DomainInput{
 		Name:        ol.NewString("platform-test"),
 		Description: ol.NewString("Domain created for testing."),
 		Owner:       &id1,
 		Note:        ol.NewString("additional note about platform-test domain"),
 	}
+	inputVars := dataTemplater.ParseTemplatedStringWith(`{{ template "domain_input" . }}`, input)
+
+	testRequest := NewTestRequest(
+		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`{"input": `+inputVars+`}`,
+		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/create", testRequest)
+	// Act
 	result, err := client.CreateDomain(input)
 	// Assert
 	autopilot.Ok(t, err)
@@ -171,19 +173,20 @@ func TestDomainList(t *testing.T) {
 
 func TestDomainUpdate(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`{"domain": { {{ template "id1" }} }, "input": {"name": "platform-test-4", "description":"Domain created for testing.", "ownerId":"{{ template "id3_string" }}", "note": "Please delete me" }}`,
-		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
-	)
-
-	client := BestTestClient(t, "domain/update", testRequest)
 	input := ol.DomainInput{
 		Name:        ol.NewString("platform-test-4"),
 		Description: ol.NewString("Domain created for testing."),
 		Owner:       &id3,
 		Note:        ol.NewString("Please delete me"),
 	}
+	inputVars := dataTemplater.ParseTemplatedStringWith(`{{ template "domain_input" . }}`, input)
+	testRequest := NewTestRequest(
+		`"mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`{"domain": { {{ template "id1" }} }, "input": `+inputVars+`}`,
+		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
+	)
+
+	client := BestTestClient(t, "domain/update", testRequest)
 	// Act
 	result, err := client.UpdateDomain(string(id1), input)
 	// Assert
