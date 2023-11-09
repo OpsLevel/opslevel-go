@@ -1,3 +1,12 @@
+{{- define "page_info" -}}
+{
+"hasNextPage": {{ .HasNextPage }},
+"hasPreviousPage": {{ .HasPreviousPage }},
+"startCursor": "{{ .Start }}",
+"endCursor": "{{ .End }}"
+}
+{{- end}}
+
 {{- define "alias1" }}example{{ end }}
 {{- define "alias2" }}example_2{{ end }}
 {{- define "alias3" }}example_3{{ end }}
@@ -26,6 +35,9 @@
 {{ end }}
 {{- define "description" }}An example description{{ end }}
 {{- define "pagination_request" }}pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}{{ end }}
+
+
+
 {{- define "no_pagination_response" }}"pageInfo": {
     "hasNextPage": false,
     "hasPreviousPage": false,

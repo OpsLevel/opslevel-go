@@ -59,10 +59,7 @@ func (client *Client) InitialPageVariables() PayloadVariables {
 }
 
 func (client *Client) InitialPageVariablesPointer() *PayloadVariables {
-	v := PayloadVariables{
-		"after": "",
-		"first": client.pageSize,
-	}
+	v := client.InitialPageVariables()
 	return &v
 }
 

@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
@@ -19,7 +20,7 @@ func TestDomainCreate(t *testing.T) {
 
 	testRequest := NewTestRequest(
 		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`{"input": `+inputVars+`}`,
+		fmt.Sprintf(`{"input": %s}`, inputVars),
 		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 

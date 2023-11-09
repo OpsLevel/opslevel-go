@@ -1,18 +1,29 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+var pageInfoSameCursor string = dataTemplater.ParseTemplatedStringWith(
+	`{{ template "page_info" . }}`,
+	ol.PageInfo{Start: "MQ", End: "MQ"},
+)
+
+var pageInfoDifferentCursor string = dataTemplater.ParseTemplatedStringWith(
+	`{{ template "page_info" . }}`,
+	ol.PageInfo{Start: "MQ", End: "Mw"},
+)
+
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
 var testRequestWithAlias = NewTestRequest(
-	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
+	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
 	`{"alias":"example"}`,
-	`{ "data": {
+	fmt.Sprintf(`{ "data": {
     "account": {
       "team": {
         "alias": "example",
@@ -48,12 +59,7 @@ var testRequestWithAlias = NewTestRequest(
             {{ template "team_membership_2" }},
             {{ template "team_membership_3" }}
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
+          "pageInfo": %s
         },
         "tags": {
           "nodes": [
@@ -73,25 +79,20 @@ var testRequestWithAlias = NewTestRequest(
               "value": "world"
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "Mw"
-          },
+          "pageInfo": %s,
           "totalCount": 3
         },
         "name": "Example",
         "responsibilities": "Foo &amp; bar"
-      }}}}`,
+      }}}}`, pageInfoSameCursor, pageInfoDifferentCursor),
 )
 
 func TestCreateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
 		`{"input": {"name": "Example", "managerEmail": "john@example.com", "parentTeam": {"alias": "parent_team"}, "responsibilities": "Foo & bar", "contacts": [ {"type": "slack_handle", "address": "@mozzie"}, {"type": "slack", "displayName": "", "address": "#general"}, {"type": "web", "displayName": "Homepage", "address": "https://example.com"} ] }}`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
     "teamCreate": {
       "team": {
         "alias": "example",
@@ -123,12 +124,7 @@ func TestCreateTeam(t *testing.T) {
         },
         "memberships": {
           "nodes": [ {{ template "team_membership_3" }} ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
+          "pageInfo": %s
         },
         "name": "Example",
         "parentTeam": {
@@ -138,7 +134,7 @@ func TestCreateTeam(t *testing.T) {
         "responsibilities": "Foo &amp; bar"
       },
       "errors": []
-    }}}`,
+    }}}`, pageInfoSameCursor),
 	)
 
 	client := BestTestClient(t, "team/create", testRequest)
@@ -166,9 +162,9 @@ func TestCreateTeam(t *testing.T) {
 func TestGetTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
+		`"query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
 		`{ {{ template "id1" }} }`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
     "account": {
       "team": {
         "alias": "example",
@@ -222,12 +218,7 @@ func TestGetTeam(t *testing.T) {
               "role": "user"
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
+          "pageInfo": %s
         },
         "memberships": {
           "nodes": [ {{ template "team_membership_2" }} ],
@@ -251,17 +242,12 @@ func TestGetTeam(t *testing.T) {
               "value": "world"
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "Mw"
-          },
+          "pageInfo": %s,
           "totalCount": 3
         },
         "name": "Example",
         "responsibilities": "Foo &amp; bar"
-      }}}}`,
+      }}}}`, pageInfoSameCursor, pageInfoDifferentCursor),
 	)
 
 	client := BestTestClient(t, "team/get", testRequest)
@@ -353,9 +339,9 @@ func TestGetTeamWithAlias(t *testing.T) {
 func TestListTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -374,12 +360,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "DevOps",
               "responsibilities": "Own Infra & Tools."
@@ -399,12 +380,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "Developers",
               "responsibilities": null
@@ -424,12 +400,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "Marketing",
               "responsibilities": null
@@ -437,12 +408,12 @@ func TestListTeams(t *testing.T) {
           ],
         {{ template "pagination_initial_pageInfo_response" }},
         "totalCount": 3
-        }}}}`,
+        }}}}`, pageInfoDifferentCursor, pageInfoDifferentCursor, pageInfoDifferentCursor),
 	)
 	testRequestTwo := NewTestRequest(
-		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -461,12 +432,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "Security",
               "responsibilities": null
@@ -486,12 +452,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "VPs",
               "responsibilities": null
@@ -499,7 +460,7 @@ func TestListTeams(t *testing.T) {
           ],
 {{ template "pagination_second_pageInfo_response" }},
 			"totalCount": 2
-        }}}}`,
+        }}}}`, pageInfoDifferentCursor, pageInfoDifferentCursor),
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
@@ -520,9 +481,9 @@ func TestListTeams(t *testing.T) {
 func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
 		`{ "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -541,12 +502,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "DevOps",
               "responsibilities": "Own Infra & Tools."
@@ -566,12 +522,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "Developers",
               "responsibilities": null
@@ -591,12 +542,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "Marketing",
               "responsibilities": null
@@ -604,12 +550,12 @@ func TestListTeamsWithManager(t *testing.T) {
           ],
         {{ template "pagination_initial_pageInfo_response" }},
         "totalCount": 3
-        }}}}`,
+        }}}}`, pageInfoDifferentCursor, pageInfoDifferentCursor, pageInfoDifferentCursor),
 	)
 	testRequestTwo := NewTestRequest(
-		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}"`,
 		`{ "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
       "account": {
         "teams": {
           "nodes": [
@@ -628,12 +574,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "Security",
               "responsibilities": null
@@ -653,12 +594,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                "pageInfo": %s
               },
               "name": "VPs",
               "responsibilities": null
@@ -666,7 +602,7 @@ func TestListTeamsWithManager(t *testing.T) {
           ],
         {{ template "pagination_second_pageInfo_response" }},
         "totalCount": 2
-        }}}}`,
+        }}}}`, pageInfoDifferentCursor, pageInfoDifferentCursor),
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 
@@ -687,9 +623,9 @@ func TestListTeamsWithManager(t *testing.T) {
 func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
 		`{"input": { {{ template "id1" }}, "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"} }}`,
-		`{ "data": {
+		fmt.Sprintf(`{ "data": {
       "teamUpdate": {
         "team": {
           "alias": "example",
@@ -725,12 +661,7 @@ func TestUpdateTeam(t *testing.T) {
               {{ template "team_membership_2" }},
               {{ template "team_membership_3" }}
             ],
-            "pageInfo": {
-              "hasNextPage": false,
-              "hasPreviousPage": false,
-              "startCursor": "MQ",
-              "endCursor": "MQ"
-            }
+            "pageInfo": %s
           },
           "parentTeam": {
             {{ template "id4" }},
@@ -740,7 +671,7 @@ func TestUpdateTeam(t *testing.T) {
           "responsibilities": "Foo &amp; bar"
         },
         "errors": []
-       }}}`,
+       }}}`, pageInfoSameCursor),
 	)
 	client := BestTestClient(t, "team/update", testRequest)
 	// Act
