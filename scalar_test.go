@@ -22,8 +22,6 @@ func TestMarshalID(t *testing.T) {
 	id2 := ol.NewID("Z2lkOi8vMTIzNDU2Nzg5")
 	case1 := IDTester{}
 	case2 := IDTester{
-		Key1: *id1,
-		Key2: *id1,
 		Key3: id1,
 		Key4: id1,
 	}
@@ -39,9 +37,9 @@ func TestMarshalID(t *testing.T) {
 	buf3, err3 := json.Marshal(case3)
 	// Assert
 	autopilot.Ok(t, err1)
-	autopilot.Equals(t, `{"key1":"","key3":null}`, string(buf1))
+	autopilot.Equals(t, `{"key1":{},"key2":{},"key3":null}`, string(buf1))
 	autopilot.Ok(t, err2)
-	autopilot.Equals(t, `{"key1":"","key3":null,"key4":null}`, string(buf2))
+	autopilot.Equals(t, `{"key3":null,"key4":null}`, string(buf2))
 	autopilot.Ok(t, err3)
 	autopilot.Equals(t, `{"key1":"Z2lkOi8vMTIzNDU2Nzg5","key2":"Z2lkOi8vMTIzNDU2Nzg5","key3":"Z2lkOi8vMTIzNDU2Nzg5","key4":"Z2lkOi8vMTIzNDU2Nzg5"}`, string(buf3))
 }
