@@ -35,9 +35,6 @@
 {{ end }}
 {{- define "description" }}An example description{{ end }}
 {{- define "pagination_request" }}pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}{{ end }}
-
-
-
 {{- define "no_pagination_response" }}"pageInfo": {
     "hasNextPage": false,
     "hasPreviousPage": false,
