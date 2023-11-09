@@ -41,9 +41,12 @@ func NewIdentifier(value string) *IdentifierInput {
 			Id: ID(value),
 		}
 	}
-	return &IdentifierInput{
-		Alias: value,
+	if (len(value) > 0) {
+		return &IdentifierInput{
+			Alias: value,
+		}
 	}
+	return nil
 }
 
 func NewIdentifierArray(values []string) []IdentifierInput {

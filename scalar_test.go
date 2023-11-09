@@ -128,7 +128,7 @@ func TestMarshalIdentifier(t *testing.T) {
 	autopilot.Ok(t, err1)
 	autopilot.Equals(t, `{"key1":{},"key2":{},"key3":null}`, string(buf1))
 	autopilot.Ok(t, err2)
-	autopilot.Equals(t, `{"key1":{},"key2":{},"key3":{},"key4":{}}`, string(buf2))
+	autopilot.Equals(t, `{"key1":{},"key2":{},"key3":null,"key4":null}`, string(buf2))
 	autopilot.Ok(t, err3)
 	autopilot.Equals(t, `{"key1":{"alias":"my-service"},"key2":{"alias":"my-service"},"key3":{"alias":"my-service"},"key4":{"alias":"my-service"}}`, string(buf3))
 	autopilot.Ok(t, err4)
