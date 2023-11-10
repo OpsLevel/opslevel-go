@@ -9,10 +9,11 @@ import (
 
 // TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
-var testRequestWithAlias = NewTestRequest(
-	`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
-	`{"alias":"example"}`,
-	`{ "data": {
+func getTestRequestWithAlias() TestRequest {
+	return NewTestRequest(
+		`"query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
+		`{"alias":"example"}`,
+		`{ "data": {
     "account": {
       "team": {
         "alias": "example",
@@ -84,13 +85,29 @@ var testRequestWithAlias = NewTestRequest(
         "name": "Example",
         "responsibilities": "Foo &amp; bar"
       }}}}`,
-)
+	)
+}
 
 func TestCreateTeam(t *testing.T) {
 	// Arrange
+	contacts := autopilot.Register[[]ol.ContactInput]("contact_input_slice",
+		[]ol.ContactInput{
+			ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
+			ol.CreateContactSlack("#general", ol.NewString("")),
+			ol.CreateContactWeb("https://example.com", ol.NewString("Homepage")),
+		},
+	)
+	input := autopilot.Register[ol.TeamCreateInput]("team_create_input",
+		ol.TeamCreateInput{
+			Name:             "Example",
+			ManagerEmail:     "john@example.com",
+			Responsibilities: "Foo & bar",
+			Contacts:         &contacts,
+			ParentTeam:       ol.NewIdentifier("parent_team"),
+		})
 	testRequest := NewTestRequest(
 		`"mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input": {"name": "Example", "managerEmail": "john@example.com", "parentTeam": {"alias": "parent_team"}, "responsibilities": "Foo & bar", "contacts": [ {"type": "slack_handle", "address": "@mozzie"}, {"type": "slack", "displayName": "", "address": "#general"}, {"type": "web", "displayName": "Homepage", "address": "https://example.com"} ] }}`,
+		`{"input": {{ template "team_create_input" }} }`,
 		`{ "data": {
     "teamCreate": {
       "team": {
@@ -99,20 +116,7 @@ func TestCreateTeam(t *testing.T) {
         "aliases": [
           "example"
         ],
-        "contacts": [
-          {
-            "address": "#general",
-            "displayName": "",
-            {{ template "id2" }},
-            "type": "slack"
-          },
-          {
-            "address": "https://example.com",
-            "displayName": "Homepage",
-            {{ template "id3" }},
-            "type": "web"
-          }
-        ],
+        "contacts": {{ template "contact_input_slice" }},
         "htmlUrl": "https://app.opslevel-staging.com/teams/example",
         "manager": {
           "email": "john@example.com",
@@ -143,18 +147,7 @@ func TestCreateTeam(t *testing.T) {
 
 	client := BestTestClient(t, "team/create", testRequest)
 	// Act
-	contacts := []ol.ContactInput{
-		ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
-		ol.CreateContactSlack("#general", ol.NewString("")),
-		ol.CreateContactWeb("https://example.com", ol.NewString("Homepage")),
-	}
-	result, err := client.CreateTeam(ol.TeamCreateInput{
-		Name:             "Example",
-		ManagerEmail:     "john@example.com",
-		Responsibilities: "Foo & bar",
-		Contacts:         &contacts,
-		ParentTeam:       ol.NewIdentifier("parent_team"),
-	})
+	result, err := client.CreateTeam(input)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
@@ -339,7 +332,7 @@ func TestTeamTags(t *testing.T) {
 
 func TestGetTeamWithAlias(t *testing.T) {
 	// Arrange
-	client := BestTestClient(t, "team/get_with_alias", testRequestWithAlias)
+	client := BestTestClient(t, "team/get_with_alias", getTestRequestWithAlias())
 	// Act
 	result, err := client.GetTeamWithAlias("example")
 	// Assert
@@ -686,9 +679,17 @@ func TestListTeamsWithManager(t *testing.T) {
 
 func TestUpdateTeam(t *testing.T) {
 	// Arrange
+	input := autopilot.Register[ol.TeamUpdateInput]("team_update_input",
+		ol.TeamUpdateInput{
+			Id:               id1,
+			ManagerEmail:     "ken@example.com",
+			Responsibilities: "Foo & bar",
+			ParentTeam:       ol.NewIdentifier("parent_team"),
+		},
+	)
 	testRequest := NewTestRequest(
 		`"mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input": { {{ template "id1" }}, "managerEmail": "ken@example.com", "responsibilities": "Foo & bar", "parentTeam": {"alias": "parent_team"} }}`,
+		`{"input": {{ template "team_update_input" }} }`,
 		`{ "data": {
       "teamUpdate": {
         "team": {
@@ -744,12 +745,7 @@ func TestUpdateTeam(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/update", testRequest)
 	// Act
-	result, err := client.UpdateTeam(ol.TeamUpdateInput{
-		Id:               id1,
-		ManagerEmail:     "ken@example.com",
-		Responsibilities: "Foo & bar",
-		ParentTeam:       ol.NewIdentifier("parent_team"),
-	})
+	result, err := client.UpdateTeam(input)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
@@ -795,7 +791,7 @@ func TestTeamAddMemberhip(t *testing.T) {
 	)
 
 	clientWithTeamId := BestTestClient(t, "team/add_member", testRequestWithTeamId)
-	clientWithAlias := BestTestClient(t, "team/get_with_alias_add_member", testRequestWithAlias)
+	clientWithAlias := BestTestClient(t, "team/get_with_alias_add_member", getTestRequestWithAlias())
 
 	// Act
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
@@ -827,7 +823,7 @@ func TestTeamRemoveMemberhip(t *testing.T) {
       "errors": []
     }}}`,
 	)
-	client1 := BestTestClient(t, "team/get_with_alias_rm_member", testRequestWithAlias)
+	client1 := BestTestClient(t, "team/get_with_alias_rm_member", getTestRequestWithAlias())
 	client2 := BestTestClient(t, "team/remove_member", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
@@ -849,7 +845,7 @@ func TestTeamAddContact(t *testing.T) {
 		`{"input": {"type":"slack", "address":"#general", "teamId": "{{ template "id1_string" }}" }}`,
 		`{"data": {"contactCreate": {"contact": {"address": "#general", "displayName": "Slack", {{ template "id2" }}, "type": "slack"}, "errors": [] } }}`,
 	)
-	client1 := BestTestClient(t, "team/get_with_alias_add_contact", testRequestWithAlias)
+	client1 := BestTestClient(t, "team/get_with_alias_add_contact", getTestRequestWithAlias())
 	client2 := BestTestClient(t, "team/alias_add_contact", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
@@ -861,14 +857,24 @@ func TestTeamAddContact(t *testing.T) {
 
 func TestTeamUpdateContact(t *testing.T) {
 	// Arrange
+	input := autopilot.Register[ol.ContactInput]("contact_input_slack",
+		ol.CreateContactSlack("#general", ol.NewString("Main Channel")),
+	)
+	autopilot.Register[ol.ContactUpdateInput]("contact_update_input_slack",
+		ol.ContactUpdateInput{
+			Id:          id1,
+			DisplayName: *input.DisplayName,
+			Address:     input.Address,
+			Type:        &input.Type,
+		})
 	testRequest := NewTestRequest(
 		`"mutation ContactUpdate($input:ContactUpdateInput!){contactUpdate(input: $input){contact{address,displayName,id,type},errors{message,path}}}"`,
-		`{"input": { {{ template "id1" }}, "type":"slack", "displayName":"Main Channel", "address":"#general" }}`,
+		`{"input":  {{ template "contact_update_input_slack" }} }`,
 		`{"data": {"contactUpdate":  {"contact": {"address": "#general", "displayName": "Main Channel", {{ template "id2" }}, "type": "slack" }, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "team/update_contact", testRequest)
 	// Act
-	result, err := client.UpdateContact(id1, ol.CreateContactSlack("#general", ol.NewString("Main Channel")))
+	result, err := client.UpdateContact(id1, input)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
@@ -876,14 +882,23 @@ func TestTeamUpdateContact(t *testing.T) {
 
 func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	// Arrange
+	input := autopilot.Register[ol.ContactInput]("contact_input",
+		ol.ContactInput{Address: "#general", DisplayName: ol.NewString("Main Channel")},
+	)
+	autopilot.Register[ol.ContactUpdateInput]("contact_update_input",
+		ol.ContactUpdateInput{
+			Id:          id2,
+			DisplayName: *input.DisplayName,
+			Address:     input.Address,
+		})
 	testRequest := NewTestRequest(
 		`"mutation ContactUpdate($input:ContactUpdateInput!){contactUpdate(input: $input){contact{address,displayName,id,type},errors{message,path}}}"`,
-		`{ "input": { {{ template "id2" }}, "displayName": "Main Channel", "address": "#general" }}`,
+		`{ "input": {{ template "contact_update_input" }} }`,
 		`{"data": {"contactUpdate": {"contact": {"address": "#general", "displayName": "Main Channel", {{ template "id2" }}, "type": "slack" }, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "team/update_contact_nil_type", testRequest)
 	// Act
-	result, err := client.UpdateContact(id2, ol.ContactInput{Address: "#general", DisplayName: ol.NewString("Main Channel")})
+	result, err := client.UpdateContact(id2, input)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
