@@ -9,17 +9,17 @@ import (
 
 func TestDomainCreate(t *testing.T) {
 	// Arrange
-	input := ol.DomainInput{
-		Name:        ol.NewString("platform-test"),
-		Description: ol.NewString("Domain created for testing."),
-		Owner:       &id1,
-		Note:        ol.NewString("additional note about platform-test domain"),
-	}
-	inputVars := dataTemplater.ParseTemplatedStringWith(`{{ template "domain_input" . }}`, input)
+	input := autopilot.Register[ol.DomainInput]("domain_create_input",
+		ol.DomainInput{
+			Name:        ol.NewString("platform-test"),
+			Description: ol.NewString("Domain created for testing."),
+			Owner:       &id1,
+			Note:        ol.NewString("additional note about platform-test domain"),
+		})
 
 	testRequest := NewTestRequest(
 		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`{"input": `+inputVars+`}`,
+		`{"input": {{ template "domain_create_input" }} }`,
 		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
@@ -173,16 +173,17 @@ func TestDomainList(t *testing.T) {
 
 func TestDomainUpdate(t *testing.T) {
 	// Arrange
-	input := ol.DomainInput{
-		Name:        ol.NewString("platform-test-4"),
-		Description: ol.NewString("Domain created for testing."),
-		Owner:       &id3,
-		Note:        ol.NewString("Please delete me"),
-	}
-	inputVars := dataTemplater.ParseTemplatedStringWith(`{{ template "domain_input" . }}`, input)
+	input := autopilot.Register[ol.DomainInput]("domain_update_input",
+		ol.DomainInput{
+			Name:        ol.NewString("platform-test-4"),
+			Description: ol.NewString("Domain created for testing."),
+			Owner:       &id3,
+			Note:        ol.NewString("Please delete me"),
+		})
+
 	testRequest := NewTestRequest(
 		`"mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
-		`{"domain": { {{ template "id1" }} }, "input": `+inputVars+`}`,
+		`{"domain": { {{ template "id1" }} }, "input": {{ template "domain_update_input" }} }`,
 		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 

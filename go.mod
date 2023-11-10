@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/hasura/go-graphql-client v0.10.0
 	github.com/relvacode/iso8601 v1.3.0
-	github.com/rocktavious/autopilot/v2023 v2023.11.2
+	github.com/rocktavious/autopilot/v2023 v2023.11.3-0.20231109195949-b29afb0d3daa
 	github.com/rs/zerolog v1.31.0
 )
 

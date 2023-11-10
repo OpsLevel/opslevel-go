@@ -42,7 +42,7 @@ func Templated(input string) string {
 	if err != nil {
 		panic(err)
 	}
-	return response
+	return strings.TrimSpace(response)
 }
 
 func TemplatedResponse(response string) autopilot.ResponseWriter {
@@ -80,11 +80,10 @@ func ATestClient(t *testing.T, endpoint string) *ol.Client {
 }
 
 func NewTestRequest(request string, variables string, response string) TestRequest {
-	templater := NewTestDataTemplater()
 	testRequest := TestRequest{
-		Request:   templater.ParseTemplatedString(request),
-		Variables: templater.ParseTemplatedString(variables),
-		Response:  templater.ParseTemplatedString(response),
+		Request:   Templated(request),
+		Variables: Templated(variables),
+		Response:  Templated(response),
 	}
 	if !strings.HasPrefix(testRequest.Request, "\"") || !strings.HasSuffix(testRequest.Request, "\"") {
 		panic(fmt.Errorf("testRequest Request should be wrapped in quotes: '%s'", testRequest.Request))
@@ -137,20 +136,16 @@ func (t *TestDataTemplater) ParseValue(value string) string {
 	return t.ParseTemplatedString(`{{ template "` + value + `" }}`)
 }
 
-func (t *TestDataTemplater) ParseTemplatedStringWith(contents string, givenData any) string {
+func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
 	target, err := t.rootTemplate.Parse(contents)
 	if err != nil {
 		panic(fmt.Errorf("error parsing template: %s", err))
 	}
 	data := bytes.NewBuffer([]byte{})
-	if err = target.Execute(data, givenData); err != nil {
+	if err = target.Execute(data, nil); err != nil {
 		panic(err)
 	}
 	return strings.TrimSpace(data.String())
-}
-
-func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
-	return t.ParseTemplatedStringWith(contents, nil)
 }
 
 type TestRequest struct {
