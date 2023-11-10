@@ -797,7 +797,7 @@ func TestTeamAddMemberhip(t *testing.T) {
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
 	newMembership := ol.TeamMembershipUserInput{
 		Role: "user",
-		User: ol.UserIdentifierInput{Id: id1, Email: "kyle@opslevel.com"},
+		User: ol.UserIdentifierInput{Id: &id1, Email: ol.NewString("kyle@opslevel.com")},
 	}
 	result, err := clientWithTeamId.AddMemberships(&team.TeamId, newMembership)
 	// Assert
@@ -829,7 +829,7 @@ func TestTeamRemoveMemberhip(t *testing.T) {
 	team, _ := client1.GetTeamWithAlias("example")
 	membershipToDelete := ol.TeamMembershipUserInput{
 		Role: "user",
-		User: ol.UserIdentifierInput{Id: id1, Email: "kyle@opslevel.com"},
+		User: ol.UserIdentifierInput{Id: &id1, Email: ol.NewString("kyle@opslevel.com")},
 	}
 
 	result, err := client2.RemoveMemberships(&team.TeamId, membershipToDelete)
