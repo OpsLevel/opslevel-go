@@ -38,7 +38,6 @@
     "description": "Our third domain!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/domains/platformdomain3",
     "owner": {
-      "teamAlias": "kyle_team",
       "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS83AbC"
     },
     "note": "{{ template "description" }}"
