@@ -9,11 +9,11 @@ type DomainId Identifier
 
 type Domain struct {
 	DomainId
-	Name        string      `graphql:"name"`
-	Description string      `graphql:"description"`
-	HTMLUrl     string      `graphql:"htmlUrl"`
-	Owner       EntityOwner `graphql:"owner"`
-	Note        string      `graphql:"note"`
+	Name        string `graphql:"name"`
+	Description string `graphql:"description"`
+	HTMLUrl     string `graphql:"htmlUrl"`
+	Owner       TeamId `graphql:"owner"`
+	Note        string `graphql:"note"`
 }
 
 type DomainConnection struct {

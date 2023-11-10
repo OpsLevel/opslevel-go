@@ -18,7 +18,7 @@ func TestDomainCreate(t *testing.T) {
 		})
 
 	testRequest := NewTestRequest(
-		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`"mutation DomainCreate($input:DomainInput!){domainCreate(input:$input){domain{id,aliases,name,description,htmlUrl,owner{alias,id},note},errors{message,path}}}"`,
 		`{"input": {{ template "domain_create_input" }} }`,
 		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
@@ -35,12 +35,12 @@ func TestDomainCreate(t *testing.T) {
 func TestDomainGetSystems(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},{{ template "pagination_request" }}}}}}"`,
+		`"query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},{{ template "pagination_request" }}}}}}"`,
 		`{ {{ template "first_page_variables" }}, "domain": { {{ template "id2" }} } }`,
 		`{ "data": { "account": { "domain": { "childSystems": { "nodes": [ {{ template "system1_response" }}, {{ template "system2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},{{ template "pagination_request" }}}}}}"`,
+		`"query DomainChildSystemsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){childSystems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},{{ template "pagination_request" }}}}}}"`,
 		`{ {{ template "second_page_variables" }}, "domain": { {{ template "id2" }} } }`,
 		`{ "data": { "account": { "domain": { "childSystems": { "nodes": [ {{ template "system3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
@@ -96,7 +96,7 @@ func TestDomainGetTags(t *testing.T) {
 func TestDomainAssignSystem(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`"mutation DomainAssignSystem($childSystems:[IdentifierInput!]!$domain:IdentifierInput!){domainChildAssign(domain:$domain, childSystems:$childSystems){domain{id,aliases,name,description,htmlUrl,owner{alias,id},note},errors{message,path}}}"`,
 		`{"domain":{ {{ template "id1" }} }, "childSystems": [ { {{ template "id3" }} } ] }`,
 		`{"data": {"domainChildAssign": {"domain": {{ template "domain1_response" }} }}}`,
 	)
@@ -116,7 +116,7 @@ func TestDomainAssignSystem(t *testing.T) {
 func TestDomainGetId(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note}}}"`,
+		`"query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{alias,id},note}}}"`,
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
 	)
@@ -132,7 +132,7 @@ func TestDomainGetId(t *testing.T) {
 func TestDomainGetAlias(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note}}}"`,
+		`"query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,name,description,htmlUrl,owner{alias,id},note}}}"`,
 		`{"input": {"alias": "my-domain" }}`,
 		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
 	)
@@ -148,12 +148,12 @@ func TestDomainGetAlias(t *testing.T) {
 func TestDomainList(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},{{ template "pagination_request" }}}}}"`,
+		`"query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{alias,id},note},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "domains": { "nodes": [ {{ template "domain1_response" }}, {{ template "domain2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},{{ template "pagination_request" }}}}}"`,
+		`"query DomainsList($after:String!$first:Int!){account{domains(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{alias,id},note},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "domains": { "nodes": [ {{ template "domain3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -182,7 +182,7 @@ func TestDomainUpdate(t *testing.T) {
 		})
 
 	testRequest := NewTestRequest(
-		`"mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},errors{message,path}}}"`,
+		`"mutation DomainUpdate($domain:IdentifierInput!$input:DomainInput!){domainUpdate(domain:$domain,input:$input){domain{id,aliases,name,description,htmlUrl,owner{alias,id},note},errors{message,path}}}"`,
 		`{"domain": { {{ template "id1" }} }, "input": {{ template "domain_update_input" }} }`,
 		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
 	)

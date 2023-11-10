@@ -10,7 +10,7 @@ import (
 func TestSystemCreate(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
+		`"mutation SystemCreate($input:SystemInput!){systemCreate(input:$input){system{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},errors{message,path}}}"`,
 		`{"input": { "name": "PlatformSystem3", "description": "creating this for testing purposes", "ownerId": "{{ template "id4_string" }}", "note": "hello world" } }`,
 		`{"data": { "systemCreate": { "system": {{ template "system1_response" }}, "errors": [] }}}`,
 	)
@@ -94,7 +94,7 @@ func TestSystemGetTags(t *testing.T) {
 func TestSystemAssignService(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
+		`"mutation SystemAssignService($childServices:[IdentifierInput!]!$system:IdentifierInput!){systemChildAssign(system:$system, childServices:$childServices){system{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},errors{message,path}}}"`,
 		`{"system": { {{ template "id3" }} }, "childServices": [ { {{ template "id4" }} } ] }`,
 		`{"data": { "systemChildAssign": { "system": {{ template "system1_response" }} } }}`,
 	)
@@ -114,7 +114,7 @@ func TestSystemAssignService(t *testing.T) {
 func TestSystemGetId(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note}}}"`,
+		`"query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note}}}"`,
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)
@@ -129,7 +129,7 @@ func TestSystemGetId(t *testing.T) {
 func TestSystemGetAlias(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note}}}"`,
+		`"query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note}}}"`,
 		`{ "input": { "alias": "platformsystem1" } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)
@@ -144,12 +144,12 @@ func TestSystemGetAlias(t *testing.T) {
 func TestListSystems(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},{{ template "pagination_request" }}}}}"`,
+		`"query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "systems": { "nodes": [ {{ template "system1_response" }}, {{ template "system2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},{{ template "pagination_request" }}}}}"`,
+		`"query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "systems": { "nodes": [ {{ template "system3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -171,7 +171,7 @@ func TestListSystems(t *testing.T) {
 func TestSystemUpdate(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},note},note},errors{message,path}}}"`,
+		`"mutation SystemUpdate($input:SystemInput!$system:IdentifierInput!){systemUpdate(system:$system,input:$input){system{id,aliases,name,description,htmlUrl,owner{alias,id},parent{id,aliases,name,description,htmlUrl,owner{alias,id},note},note},errors{message,path}}}"`,
 		`{"system": { {{ template "id1" }} }, "input":{ "name": "PlatformSystem1", "description":"Yolo!", "ownerId":"{{ template "id4_string" }}", "note": "Please delete me" }}`,
 		`{"data": {"systemUpdate": {"system": {{ template "system1_response" }}, "errors": [] }}}`,
 	)
