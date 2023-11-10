@@ -30,8 +30,8 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    ID     `graphql:"id" json:"id,omitempty"`
-	Email string `graphql:"email" json:"email,omitempty"`
+	Id    *ID     `graphql:"id" json:"id,omitempty"`
+	Email *string `graphql:"email" json:"email,omitempty"`
 }
 
 type UserInput struct {
@@ -53,11 +53,11 @@ func (u *User) ResourceType() TaggableResource {
 func NewUserIdentifier(value string) UserIdentifierInput {
 	if IsID(value) {
 		return UserIdentifierInput{
-			Id: ID(value),
+			Id: NewID(value),
 		}
 	}
 	return UserIdentifierInput{
-		Email: value,
+		Email: NewString(value),
 	}
 }
 
