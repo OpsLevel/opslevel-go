@@ -165,7 +165,7 @@ func (client *Client) GetCustomAction(input IdentifierInput) (*CustomActionsExte
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
 	if q.Account.Action.Id == "" {
-		err = fmt.Errorf("CustomActionsExternalAction with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
+		err = fmt.Errorf("CustomActionsExternalAction with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)
 }
@@ -252,7 +252,7 @@ func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomAction
 	}
 	err := client.Query(&q, v, WithName("TriggerDefinitionGet"))
 	if q.Account.Definition.Id == "" {
-		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
+		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
 	}
 	return &q.Account.Definition, HandleErrors(err, nil)
 }

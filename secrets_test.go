@@ -19,7 +19,7 @@ func TestCreateSecret(t *testing.T) {
 	fmt.Println(client)
 	// Act
 	secretInput := opslevel.SecretInput{
-		Owner: opslevel.IdentifierInput{Id: id2},
+		Owner: opslevel.IdentifierInput{Id: &id2},
 		Value: "my-secret",
 	}
 	result, err := client.CreateSecret("alias1", secretInput)
@@ -79,7 +79,7 @@ func TestUpdateSecret(t *testing.T) {
 	client := BestTestClient(t, "secrets/update", testRequest)
 	// Act
 	secretInput := opslevel.SecretInput{
-		Owner: opslevel.IdentifierInput{Id: id2},
+		Owner: opslevel.IdentifierInput{Id: &id2},
 		Value: "secret_value_2",
 	}
 	result, err := client.UpdateSecret(string(id2), secretInput)

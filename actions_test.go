@@ -7,6 +7,8 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+var newID *ol.ID = ol.NewID("123456789")
+
 func TestCreateWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
@@ -70,7 +72,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
-		Id:         "123456789",
+		Id:         *newID,
 		HTTPMethod: ol.CustomActionsHttpMethodEnumPut,
 	})
 
@@ -94,7 +96,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
-		Id:          "123456789",
+		Id:          *newID,
 		Description: ol.NewString(""),
 		Headers:     &headers,
 	})
@@ -116,7 +118,7 @@ func TestDeleteWebhookAction(t *testing.T) {
 
 	// Act
 	err := client.DeleteWebhookAction(ol.IdentifierInput{
-		Id: "123456789",
+		Id: newID,
 	})
 
 	// Assert
@@ -136,8 +138,8 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:        "Deploy Rollback",
 		Description: ol.NewString("Disables the Deploy Freeze"),
-		Action:      "123456789",
-		Owner:       "123456789",
+		Action:      *newID,
+		Owner:       *newID,
 		Filter:      ol.NewID("987654321"),
 	})
 	// Assert
@@ -158,8 +160,8 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:        "Deploy Rollback",
 		Description: ol.NewString("Disables the Deploy Freeze"),
-		Action:      "123456789",
-		Owner:       "123456789",
+		Action:      *newID,
+		Owner:       *newID,
 		Filter:      ol.NewID("987654321"),
 		EntityType:  "GLOBAL",
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
@@ -185,8 +187,8 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:               "Deploy Rollback",
 		Description:        ol.NewString("Disables the Deploy Freeze"),
-		Action:             "123456789",
-		Owner:              "123456789",
+		Action:             *newID,
+		Owner:              *newID,
 		Filter:             ol.NewID("987654321"),
 		ExtendedTeamAccess: &[]ol.IdentifierInput{},
 	})
@@ -205,12 +207,12 @@ func TestGetTriggerDefinition(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/get_trigger", testRequest)
 
 	// Act
-	trigger, err := client.GetTriggerDefinition(ol.IdentifierInput{Id: "123456789"})
+	trigger, err := client.GetTriggerDefinition(ol.IdentifierInput{Id: newID})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Release", trigger.Name)
 	autopilot.Equals(t, "Uses Ruby", trigger.Filter.Name)
-	autopilot.Equals(t, "123456789", string(trigger.Owner.Id))
+	autopilot.Equals(t, *newID, trigger.Owner.Id)
 }
 
 func TestListTriggerDefinitions(t *testing.T) {
@@ -236,7 +238,7 @@ func TestListTriggerDefinitions(t *testing.T) {
 	autopilot.Equals(t, 3, triggers.TotalCount)
 	autopilot.Equals(t, "Release", result[1].Name)
 	autopilot.Equals(t, "Uses Ruby", result[1].Filter.Name)
-	autopilot.Equals(t, "123456789", string(result[1].Owner.Id))
+	autopilot.Equals(t, *newID, result[1].Owner.Id)
 	autopilot.Equals(t, "Rollback", result[2].Name)
 	autopilot.Equals(t, "Uses Go", result[2].Filter.Name)
 	autopilot.Equals(t, "123456781", string(result[2].Owner.Id))
@@ -253,7 +255,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
-		Id:     "123456789",
+		Id:     *newID,
 		Filter: ol.NewID(),
 	})
 	// Assert
@@ -272,7 +274,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
-		Id:                 "123456789",
+		Id:                 *newID,
 		Name:               ol.NewString("test"),
 		Description:        ol.NewString(""),
 		ExtendedTeamAccess: &[]ol.IdentifierInput{},
@@ -293,11 +295,11 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
-		Id:          "123456789",
+		Id:          *newID,
 		Name:        ol.NewString("test"),
 		Description: ol.NewString(""),
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
-			*ol.NewIdentifier("123456789"),
+			*ol.NewIdentifier(string(*newID)),
 			*ol.NewIdentifier(string(id1)),
 		},
 	})
@@ -328,15 +330,9 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	clientErr := BestTestClient(t, "custom_actions/delete_trigger_err", testRequestError)
 	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
 	// Act
-	err := client.DeleteTriggerDefinition(ol.IdentifierInput{
-		Id: "123456789",
-	})
-	err2 := clientErr.DeleteTriggerDefinition(ol.IdentifierInput{
-		Id: "123456789",
-	})
-	err3 := clientErr2.DeleteTriggerDefinition(ol.IdentifierInput{
-		Id: "123456789",
-	})
+	err := client.DeleteTriggerDefinition(ol.IdentifierInput{Id: newID})
+	err2 := clientErr.DeleteTriggerDefinition(ol.IdentifierInput{Id: newID})
+	err3 := clientErr2.DeleteTriggerDefinition(ol.IdentifierInput{Id: newID})
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `OpsLevel API Errors:
