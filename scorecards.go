@@ -62,7 +62,7 @@ func (client *Client) GetScorecard(identifier string) (*Scorecard, error) {
 	}
 	err := client.Query(&q, v, WithName("ScorecardGet"))
 	if q.Account.Scorecard.Id == "" {
-		err = fmt.Errorf("Scorecard with ID '%s' or Alias '%s' not found", input.Id, input.Alias)
+		err = fmt.Errorf("Scorecard with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
 	}
 	return &q.Account.Scorecard, HandleErrors(err, nil)
 }

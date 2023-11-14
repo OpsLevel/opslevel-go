@@ -31,18 +31,18 @@ type Identifier struct {
 }
 
 type IdentifierInput struct {
-	Id    ID     `graphql:"id" json:"id,omitempty"`
-	Alias string `graphql:"alias" json:"alias,omitempty"`
+	Id    *ID     `graphql:"id" json:"id,omitempty"`
+	Alias *string `graphql:"alias" json:"alias,omitempty"`
 }
 
 func NewIdentifier(value string) *IdentifierInput {
 	if IsID(value) {
 		return &IdentifierInput{
-			Id: ID(value),
+			Id: NewID(value),
 		}
 	}
 	return &IdentifierInput{
-		Alias: value,
+		Alias: NewString(value),
 	}
 }
 

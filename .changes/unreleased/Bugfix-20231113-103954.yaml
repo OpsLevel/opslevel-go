@@ -1,0 +1,3 @@
+kind: Bugfix
+body: 'BREAKING: change IdentifierInput struct fields to pointers'
+time: 2023-11-13T10:39:54.061401-06:00
