@@ -49,6 +49,7 @@
     "name": "production-demo",
     "type": "Cache",
     "owner": {
+      "teamAlias": "platform",
       {{ template "id1" }}
     },
     "ownerLocked": true,

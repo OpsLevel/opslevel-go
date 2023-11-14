@@ -39,6 +39,7 @@
     "description": "Yolo3!",
     "htmlUrl": "https://app.opslevel-staging.com/catalog/systems/platformsystem3",
     "owner": {
+      "teamAlias": "kyle_team",
       {{ template "id4" }}
     },
     "parent": {{ template "domain1_response" }},

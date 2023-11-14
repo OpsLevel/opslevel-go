@@ -1,0 +1,3 @@
+kind: Bugfix
+body: revert removal of EntityOwner struct, not yet removed in API
+time: 2023-11-14T14:27:39.915374-06:00
