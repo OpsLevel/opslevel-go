@@ -75,12 +75,6 @@ func ABetterTestClient(t *testing.T, endpoint string, request string, response s
 		GraphQLQueryTemplatedValidation(t, request))))
 }
 
-func ATestClient(t *testing.T, endpoint string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
-		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
-		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", endpoint)))))
-}
-
 func NewTestRequest(request string, variables string, response string) TestRequest {
 	testRequest := TestRequest{
 		Request:   Templated(request),
@@ -182,18 +176,6 @@ func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRe
 func BestTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
 	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
-}
-
-func ATestClientAlt(t *testing.T, response string, request string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s__%s", response, request),
-		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", response)),
-		autopilot.GraphQLQueryFixtureValidation(t, fmt.Sprintf("%s_request.json", request)))))
-}
-
-func ATestClientSkipRequest(t *testing.T, endpoint string) *ol.Client {
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(autopilot.RegisterEndpoint(fmt.Sprintf("/LOCAL_TESTING/%s", endpoint),
-		autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
-		autopilot.SkipRequestValidation())))
 }
 
 func TestClientQuery(t *testing.T) {
