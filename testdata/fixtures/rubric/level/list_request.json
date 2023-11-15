@@ -1,3 +1,0 @@
-{
-    "query": "{account{rubric{levels{nodes{alias,description,id,index,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"
-}

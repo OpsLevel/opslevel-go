@@ -13,7 +13,12 @@ var getGroupWithAliasClient *ol.Client
 
 func getGroupWithAliasTestClient(t *testing.T) *ol.Client {
 	if getGroupWithAliasClient == nil {
-		getGroupWithAliasClient = ATestClientAlt(t, "group/get", "group/get_with_alias")
+		testRequest := NewTestRequest(
+			`"query GroupGet($group:String!){account{group(alias: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}"`,
+			`{ "group": "test_group_1" }`,
+			`{ "data": { "account": { "group": { "alias": "test_group_1", "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", "description": null, "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1", "name": "test_group_1", "parent": null } } } }`,
+		)
+		getGroupWithAliasClient = BestTestClient(t, "group/get_with_alias", testRequest)
 	}
 	return getGroupWithAliasClient
 }
@@ -40,7 +45,6 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 		`{"data": {"groupDelete": {"errors": [] }}}`,
 	)
 	client := BestTestClient(t, "group/delete_with_alias", testRequest)
-	// client := ATestClientAlt(t, "group/delete", "group/delete_with_alias")
 	// Act
 	err := client.DeleteGroup("platform")
 	// Assert
@@ -50,12 +54,12 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 func TestChildTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`"query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
 		`{ {{ template "first_page_variables" }}, "group": "123456789" }`,
 		`{ "data": { "account": { "group": { "childTeams": { "nodes": [ {{ template "team_1" }}, {{ template "team_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}"`,
+		`"query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
 		`{ {{ template "second_page_variables" }}, "group": "123456789" }`,
 		`{ "data": { "account": { "group": { "childTeams": { "nodes": [ {{ template "team_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
@@ -80,12 +84,12 @@ func TestChildTeams(t *testing.T) {
 func TestDescendantTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+		`"query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
 		`{ {{ template "first_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantTeams": { "nodes": [ {{ template "team_1" }}, {{ template "team_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+		`"query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
 		`{ {{ template "second_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantTeams": { "nodes": [ {{ template "team_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
@@ -199,7 +203,12 @@ func TestDescendantSubgroups(t *testing.T) {
 
 func TestGetGroup(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "group/get")
+	testRequest := NewTestRequest(
+		`"query GroupGet($group:ID!){account{group(id: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}"`,
+		`{ "group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI" }`,
+		`{ "data": { "account": { "group": { "alias": "test_group_1", "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", "description": null, "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1", "name": "test_group_1", "parent": null } } } }`,
+	)
+	client := BestTestClient(t, "group/get", testRequest)
 	// Act
 	result, err := client.GetGroup(id4)
 	// Assert

@@ -172,12 +172,7 @@
         ]
       }
     ],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": "MQ",
-      "endCursor": "Mw"
-    },
+    {{ template "pagination_response_different_cursor" }},
     "totalCount": 3
   },
   "tags": {
@@ -370,12 +365,7 @@
         ]
       }
     ],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": "MQ",
-      "endCursor": "Mw"
-    },
+    {{ template "pagination_response_different_cursor" }},
     "totalCount": 3
   },
   "tags": {
@@ -566,12 +556,7 @@
         ]
       }
     ],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": "MQ",
-      "endCursor": "Mw"
-    },
+    {{ template "pagination_response_different_cursor" }},
     "totalCount": 3
   },
   "tags": {
@@ -582,12 +567,7 @@
         "value": "test"
       }
     ],
-    "pageInfo": {
-      "hasNextPage": false,
-      "hasPreviousPage": false,
-      "startCursor": "MQ",
-      "endCursor": "MQ"
-    },
+    {{ template "pagination_response_same_cursor" }},
     "totalCount": 1
   },
   "tier": {

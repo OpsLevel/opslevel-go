@@ -1,8 +1,0 @@
-{
-    "query": "mutation ServiceDelete($input:ServiceDeleteInput!){serviceDelete(input: $input){deletedServiceId,deletedServiceAlias,errors{message,path}}}",
-    "variables": {
-      "input": {
-        "alias": "db"
-      }
-    }
-  }
