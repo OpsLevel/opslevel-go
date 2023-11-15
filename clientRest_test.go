@@ -2,6 +2,7 @@ package opslevel_test
 
 import (
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/go-resty/resty/v2"
@@ -9,11 +10,21 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+const testRestClientResponse = `{ "result": "Hello World!" }`
+
+func testRestClientResponseWriter() autopilot.ResponseWriter {
+	return func(w http.ResponseWriter) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, testRestClientResponse)
+	}
+}
+
 func ATestRestClient(t *testing.T, endpoint string) *resty.Client {
 	return ol.NewRestClient(ol.SetURL(
 		autopilot.RegisterEndpoint(
 			fmt.Sprintf("/%s", endpoint),
-			autopilot.FixtureResponse(fmt.Sprintf("%s_response.json", endpoint)),
+			testRestClientResponseWriter(),
 			autopilot.SkipRequestValidation(),
 		),
 	),
