@@ -67,7 +67,51 @@ func TestGetMissingRubricLevel(t *testing.T) {
 
 func TestListRubricLevels(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "rubric/level/list")
+	testRequest := NewTestRequest(
+		`"{account{rubric{levels{nodes{alias,description,id,index,name},{{ template "pagination_request" }},totalCount}}}}"`,
+		`{}`,
+		`{
+    "data": {
+      "account": {
+        "rubric": {
+          "levels": {
+            "nodes": [
+              {
+                "alias": "beginner",
+                "description": "Services in this level are below the minimum standard to ship to production. You should address your failing checks as soon as possible.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMTAx",
+                "index": 0,
+                "name": "Beginner"
+              },
+              {
+                "alias": "bronze",
+                "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+                "index": 1,
+                "name": "Bronze"
+              },
+              {
+                "alias": "silver",
+                "description": "Services in this level satisfy important and critical checks. This is considered healthy.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE4",
+                "index": 2,
+                "name": "Silver"
+              },
+              {
+                "alias": "gold",
+                "description": "Services in this level satisfy critical, important and useful checks. This is the requirement for your highest tier services but all services should aspire to be in this level.",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE5",
+                "index": 3,
+                "name": "Gold"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }`,
+	)
+	client := BestTestClient(t, "rubric/level/list", testRequest)
 	// Act
 	result, _ := client.ListLevels()
 	// Assert

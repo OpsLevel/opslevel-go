@@ -1,6 +1,0 @@
-{
-    "query": "query GroupGet($group:ID!){account{group(id: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}",
-    "variables": {
-      "group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI"
-    }
-}

@@ -1,6 +1,0 @@
-{
-    "query": "query ServiceGet($service:String!){account{service(alias: $service){id,aliases}}}",
-    "variables": {
-      "service": "coredns"
-    }
-  }

@@ -49,12 +49,7 @@ func getTestRequestWithAlias() TestRequest {
             {{ template "team_membership_2" }},
             {{ template "team_membership_3" }}
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
+          {{ template "pagination_response_same_cursor" }}
         },
         "tags": {
           "nodes": [
@@ -74,12 +69,7 @@ func getTestRequestWithAlias() TestRequest {
               "value": "world"
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "Mw"
-          },
+          {{ template "pagination_response_different_cursor" }},
           "totalCount": 3
         },
         "name": "Example",
@@ -127,12 +117,7 @@ func TestCreateTeam(t *testing.T) {
         },
         "memberships": {
           "nodes": [ {{ template "team_membership_3" }} ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
+          {{ template "pagination_response_same_cursor" }}
         },
         "name": "Example",
         "parentTeam": {
@@ -215,12 +200,7 @@ func TestGetTeam(t *testing.T) {
               "role": "user"
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "MQ"
-          }
+          {{ template "pagination_response_same_cursor" }}
         },
         "memberships": {
           "nodes": [ {{ template "team_membership_2" }} ],
@@ -244,12 +224,7 @@ func TestGetTeam(t *testing.T) {
               "value": "world"
             }
           ],
-          "pageInfo": {
-            "hasNextPage": false,
-            "hasPreviousPage": false,
-            "startCursor": "MQ",
-            "endCursor": "Mw"
-          },
+          {{ template "pagination_response_different_cursor" }},
           "totalCount": 3
         },
         "name": "Example",
@@ -367,12 +342,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "DevOps",
               "responsibilities": "Own Infra & Tools."
@@ -392,12 +362,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "Developers",
               "responsibilities": null
@@ -417,12 +382,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "Marketing",
               "responsibilities": null
@@ -454,12 +414,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "Security",
               "responsibilities": null
@@ -479,12 +434,7 @@ func TestListTeams(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "VPs",
               "responsibilities": null
@@ -534,12 +484,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "DevOps",
               "responsibilities": "Own Infra & Tools."
@@ -559,12 +504,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "Developers",
               "responsibilities": null
@@ -584,12 +524,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "Marketing",
               "responsibilities": null
@@ -621,12 +556,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "Security",
               "responsibilities": null
@@ -646,12 +576,7 @@ func TestListTeamsWithManager(t *testing.T) {
                     {{ template "team_membership_2" }},
                     {{ template "team_membership_3" }}
                 ],
-                "pageInfo": {
-                  "hasNextPage": false,
-                  "hasPreviousPage": false,
-                  "startCursor": "MQ",
-                  "endCursor": "Mw"
-                }
+                {{ template "pagination_response_different_cursor" }}
               },
               "name": "VPs",
               "responsibilities": null
@@ -726,12 +651,7 @@ func TestUpdateTeam(t *testing.T) {
               {{ template "team_membership_2" }},
               {{ template "team_membership_3" }}
             ],
-            "pageInfo": {
-              "hasNextPage": false,
-              "hasPreviousPage": false,
-              "startCursor": "MQ",
-              "endCursor": "MQ"
-            }
+            {{ template "pagination_response_same_cursor" }}
           },
           "parentTeam": {
             {{ template "id4" }},

@@ -228,7 +228,12 @@ func TestServiceRepositories(t *testing.T) {
 
 func TestCreateService(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "service/create")
+	testRequest := NewTestRequest(
+		`"mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`{ "input": { "name": "Foo", "description": "Foo service" } }`,
+		`{ "data": { "serviceCreate": { "service": {{ template "service_1" }}, "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "service/create", testRequest)
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
@@ -261,7 +266,12 @@ func TestUpdateService(t *testing.T) {
 
 func TestGetServiceIdWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/get_id", "service/get_id_with_alias")
+	testRequest := NewTestRequest(
+		`"query ServiceGet($service:String!){account{service(alias: $service){id,aliases}}}"`,
+		`{ "service": "coredns" }`,
+		`{ "data": { "account": { "service": { "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx" } } } }`,
+	)
+	client := BestTestClient(t, "service/get_id_with_alias", testRequest)
 	// Act
 	result, err := client.GetServiceIdWithAlias("coredns")
 	// Assert
@@ -271,7 +281,162 @@ func TestGetServiceIdWithAlias(t *testing.T) {
 
 func TestGetServiceWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/get", "service/get_with_alias")
+	testRequest := NewTestRequest(
+		`"query ServiceGet($service:String!){account{service(alias: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}}}}"`,
+		`{ "service": "coredns" }`,
+		`{ "data": {
+    "account": {
+      "service": {
+        "aliases": [
+          "coredns",
+          "coredns-kube-system"
+        ],
+        "apiDocumentPath": null,
+        "description": null,
+        "framework": null,
+        "language": "go",
+        "lifecycle": {
+          "alias": "alpha",
+          "description": "Service is supporting features used by others at the company, or a very small set of friendly customers.",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyNw",
+          "index": 2,
+          "name": "Alpha"
+        },
+        "name": "coredns",
+        "owner": {
+          "alias": "developers",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
+        },
+        "preferredApiDocument": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvRG9jdW1lbnRzOjpBcGkvOTU0MQ",
+          "htmlUrl": null,
+          "source": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkRvY3VtZW50czo6QXBpRG9jSW50ZWdyYXRpb24vMTgxNw",
+            "name": "API Docs",
+            "type": "apiDoc"
+          },
+          "timestamps": {
+            "createdAt": "2022-07-22T17:01:53.080794Z",
+            "updatedAt": "2022-07-22T17:01:53.101899Z"
+          }
+        },
+        "preferredApiDocumentSource": "PUSH",
+        "product": "MyProduct",
+        "repos": {
+          "edges": [
+            {
+              "node": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
+                "defaultAlias": "github.com:rocktavious/autopilot"
+              },
+              "serviceRepositories": [
+                {
+                  "baseDirectory": "",
+                  "displayName": "rocktavious/autopilot",
+                  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNw",
+                  "repository": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
+                    "defaultAlias": "github.com:rocktavious/autopilot"
+                  },
+                  "service": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81NDI5"
+                  }
+                }
+              ]
+            }
+          ],
+          {{ template "pagination_response_same_cursor" }},
+          "totalCount": 1
+        },
+        "tier": {
+          "alias": "tier_1",
+          "description": "Mission-critical service or repository. Failure could result in significant impact to revenue or reputation.",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVGllci8zNDE",
+          "index": 1,
+          "name": "Tier 1"
+        },
+        "tags": {
+          "nodes": [
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
+              "key": "k8s-app",
+              "value": "kube-dns"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
+              "key": "imported",
+              "value": "kubectl-opslevel"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
+              "key": "hello",
+              "value": "world"
+            }
+          ],
+          {{ template "pagination_response_different_cursor" }},
+          "totalCount": 3
+        },
+        "timestamps": {
+          "createdAt": "2022-07-22T16:59:20.361676Z",
+          "updatedAt": "2022-07-22T16:59:38.940251Z"
+        },
+        "tools": {
+          "nodes": [
+            {
+              "category": "code",
+              "categoryAlias": null,
+              "displayName": "GitHub",
+              "environment": "prod",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNA",
+              "url": "https://github.com/opslevel/coredns",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "code",
+              "categoryAlias": null,
+              "displayName": "github",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNQ",
+              "url": "https://github.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "logs",
+              "categoryAlias": null,
+              "displayName": "logz",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNg",
+              "url": "https://logz.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "other",
+              "categoryAlias": null,
+              "displayName": "datadog",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNw",
+              "url": "https://datadog.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            }
+          ],
+          {{ template "no_pagination_response" }},
+          "totalCount": 4
+        },
+        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+      }
+    }
+  }
+}`,
+	)
+	client := BestTestClient(t, "service/get_with_alias", testRequest)
 	// Act
 	result, err := client.GetServiceWithAlias("coredns")
 	// Assert
@@ -292,7 +457,162 @@ func TestGetServiceWithAlias(t *testing.T) {
 
 func TestGetService(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "service/get")
+	testRequest := NewTestRequest(
+		`"query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}}}}"`,
+		`{ "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx" }`,
+		`{ "data": {
+    "account": {
+      "service": {
+        "aliases": [
+          "coredns",
+          "coredns-kube-system"
+        ],
+        "apiDocumentPath": null,
+        "description": null,
+        "framework": null,
+        "language": "go",
+        "lifecycle": {
+          "alias": "alpha",
+          "description": "Service is supporting features used by others at the company, or a very small set of friendly customers.",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvTGlmZWN5Y2xlLzQyNw",
+          "index": 2,
+          "name": "Alpha"
+        },
+        "name": "coredns",
+        "owner": {
+          "alias": "developers",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
+        },
+        "preferredApiDocument": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvRG9jdW1lbnRzOjpBcGkvOTU0MQ",
+          "htmlUrl": null,
+          "source": {
+            "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkRvY3VtZW50czo6QXBpRG9jSW50ZWdyYXRpb24vMTgxNw",
+            "name": "API Docs",
+            "type": "apiDoc"
+          },
+          "timestamps": {
+            "createdAt": "2022-07-22T17:01:53.080794Z",
+            "updatedAt": "2022-07-22T17:01:53.101899Z"
+          }
+        },
+        "preferredApiDocumentSource": "PUSH",
+        "product": "MyProduct",
+        "repos": {
+          "edges": [
+            {
+              "node": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
+                "defaultAlias": "github.com:rocktavious/autopilot"
+              },
+              "serviceRepositories": [
+                {
+                  "baseDirectory": "",
+                  "displayName": "rocktavious/autopilot",
+                  "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNw",
+                  "repository": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
+                    "defaultAlias": "github.com:rocktavious/autopilot"
+                  },
+                  "service": {
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81NDI5"
+                  }
+                }
+              ]
+            }
+          ],
+          {{ template "pagination_response_same_cursor" }},
+          "totalCount": 1
+        },
+        "tier": {
+          "alias": "tier_1",
+          "description": "Mission-critical service or repository. Failure could result in significant impact to revenue or reputation.",
+          "id": "Z2lkOi8vb3BzbGV2ZWwvVGllci8zNDE",
+          "index": 1,
+          "name": "Tier 1"
+        },
+        "tags": {
+          "nodes": [
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NA",
+              "key": "k8s-app",
+              "value": "kube-dns"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4NQ",
+              "key": "imported",
+              "value": "kubectl-opslevel"
+            },
+            {
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzExMDg4Ng",
+              "key": "hello",
+              "value": "world"
+            }
+          ],
+          {{ template "pagination_response_different_cursor" }},
+          "totalCount": 3
+        },
+        "timestamps": {
+          "createdAt": "2022-07-22T16:59:20.361676Z",
+          "updatedAt": "2022-07-22T16:59:38.940251Z"
+        },
+        "tools": {
+          "nodes": [
+            {
+              "category": "code",
+              "categoryAlias": null,
+              "displayName": "GitHub",
+              "environment": "prod",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNA",
+              "url": "https://github.com/opslevel/coredns",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "code",
+              "categoryAlias": null,
+              "displayName": "github",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNQ",
+              "url": "https://github.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "logs",
+              "categoryAlias": null,
+              "displayName": "logz",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNg",
+              "url": "https://logz.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            },
+            {
+              "category": "other",
+              "categoryAlias": null,
+              "displayName": "datadog",
+              "environment": null,
+              "id": "Z2lkOi8vb3BzbGV2ZWwvVG9vbC8yMjgxNw",
+              "url": "https://datadog.com",
+              "service": {
+                "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+              }
+            }
+          ],
+          {{ template "no_pagination_response" }},
+          "totalCount": 4
+        },
+        "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx"
+      }
+    }
+  }
+}`,
+	)
+	client := BestTestClient(t, "service/get", testRequest)
 	// Act
 	result, err := client.GetService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx")
 	// Assert
@@ -534,7 +854,12 @@ func TestListServicesWithProduct(t *testing.T) {
 
 func TestDeleteService(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "service/delete")
+	testRequest := NewTestRequest(
+		`"mutation ServiceDelete($input:ServiceDeleteInput!){serviceDelete(input: $input){deletedServiceId,deletedServiceAlias,errors{message,path}}}"`,
+		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3" } }`,
+		`{ "data": { "serviceDelete": { "deletedServiceId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3", "deletedServiceAlias": "db", "errors": [] } } }`,
+	)
+	client := BestTestClient(t, "service/delete", testRequest)
 	// Act
 	err := client.DeleteService(ol.ServiceDeleteInput{Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"})
 	// Assert
@@ -543,7 +868,12 @@ func TestDeleteService(t *testing.T) {
 
 func TestDeleteServicesWithAlias(t *testing.T) {
 	// Arrange
-	client := ATestClientAlt(t, "service/delete", "service/delete_with_alias")
+	testRequest := NewTestRequest(
+		`"mutation ServiceDelete($input:ServiceDeleteInput!){serviceDelete(input: $input){deletedServiceId,deletedServiceAlias,errors{message,path}}}"`,
+		`{ "input": { "alias": "db" } }`,
+		`{ "data": { "serviceDelete": { "deletedServiceId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3", "deletedServiceAlias": "db", "errors": [] } } }`,
+	)
+	client := BestTestClient(t, "service/delete_with_alias", testRequest)
 	// Act
 	err := client.DeleteServiceWithAlias("db")
 	// Assert

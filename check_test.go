@@ -578,7 +578,12 @@ func TestListChecks(t *testing.T) {
 
 func TestGetMissingCheck(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "check/get_missing")
+	testRequest := NewTestRequest(
+		`"query CheckGet($id:ID!){account{check(id: $id){category{id,name},description,enabled,enableOn,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{startingDate,frequencyTimeScale,frequencyValue},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}}}}"`,
+		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
+		`{ "data": { "account": { "check": null } } }`,
+	)
+	client := BestTestClient(t, "check/get_missing", testRequest)
 	// Act
 	_, err := client.GetCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
 	// Assert
@@ -587,7 +592,12 @@ func TestGetMissingCheck(t *testing.T) {
 
 func TestDeleteCheck(t *testing.T) {
 	// Arrange
-	client := ATestClient(t, "check/delete")
+	testRequest := NewTestRequest(
+		`"mutation CheckDelete($input:CheckDeleteInput!){checkDelete(input: $input){errors{message,path}}}"`,
+		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzIxNzI" } }`,
+		`{ "data": { "checkDelete": { "errors": [] } } }`,
+	)
+	client := BestTestClient(t, "check/delete", testRequest)
 	// Act
 	err := client.DeleteCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzIxNzI")
 	// Assert
