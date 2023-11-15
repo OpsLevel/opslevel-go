@@ -7,6 +7,10 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+// TODO: template variable for reused schema
+// TODO: template variable for ID's
+// TODO: template variable for prop1,prop2,prop3
+
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
