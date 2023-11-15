@@ -14,7 +14,7 @@ tasks:
     desc: Formatting and linting
     deps: [install-gofumpt]
     cmds:
-      - gofumpt -d .
+      - test -z "$(gofumpt -d -e . | tee /dev/stderr)"
       - go vet ./...
       - golangci-lint run
 
@@ -60,6 +60,7 @@ tasks:
     cmds:
       - task: install-go-tool
         vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
+      - echo "  'gofumpt' is installed."
 
   install-golangci-lint:
     desc: go install "golangci-lint" and set GOBIN if not set
@@ -67,3 +68,4 @@ tasks:
     cmds:
       - task: install-go-tool
         vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
+      - echo "  'golangci-lint' is installed."

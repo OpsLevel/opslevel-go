@@ -24,11 +24,12 @@ jobs:
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run Tests
+      - name: Lint code
         run: |-
           task setup
           task lint
-          task test
+      - name: Test code
+        run: task test
       - name: Upload Coverage
         run: |-
           bash <(curl -s https://codecov.io/bash)

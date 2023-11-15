@@ -12,7 +12,9 @@ func (s JSON) GetGraphQLType() string { return "JSON" }
 
 func NewJSON(data string) JSON {
 	result := make(JSON)
-	json.Unmarshal([]byte(data), &result)
+	if err := json.Unmarshal([]byte(data), &result); err != nil {
+		panic(err)
+	}
 	return result
 }
 
