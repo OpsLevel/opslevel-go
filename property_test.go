@@ -23,6 +23,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	})
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, "XXX", string(property.Id))
 	autopilot.Equals(t, "my-prop", property.Name)
 	autopilot.Equals(t, "{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}", property.Schema)
 }
@@ -57,6 +58,34 @@ func TestGetPropertyDefinition(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, "XXX", string(property.Id))
 	autopilot.Equals(t, "my-prop", property.Name)
 	autopilot.Equals(t, "{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}", property.Schema)
+}
+
+func TestListPropertyDefinitions(t *testing.T) {
+	// Arrange
+	testRequestOne := NewTestRequest(
+		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }},totalCount}}}"`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema":"{\"key1\":\"val1\"}"},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema":"{\"key2\":\"val2\"}"}],{{ template "pagination_initial_pageInfo_response" }},"totalCount":2}}}}`,
+	)
+	testRequestTwo := NewTestRequest(
+		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }},totalCount}}}"`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema":"{\"key3\":\"val3\"}"}],{{ template "pagination_second_pageInfo_response" }},"totalCount":1}}}}`,
+	)
+	requests := []TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "properties/definition_list", requests...)
+
+	// Act
+	properties, err := client.ListPropertyDefinitions(nil)
+	result := properties.Nodes
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, "prop1", result[0].Name)
+	autopilot.Equals(t, "prop2", result[1].Name)
+	autopilot.Equals(t, "prop3", result[2].Name)
 }
