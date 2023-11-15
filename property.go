@@ -45,7 +45,7 @@ func (client *Client) GetPropertyDefinition(input IdentifierInput) (*PropertyDef
 	}
 	err := client.Query(&q, v, WithName("PropertyDefinitionGet"))
 	if q.Account.Definition.Id == "" {
-		err = fmt.Errorf("PropertyDefinition with ID '%s' or Alias '%s' not found", string(input.Id), input.Alias)
+		err = fmt.Errorf("PropertyDefinition with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
 	}
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
