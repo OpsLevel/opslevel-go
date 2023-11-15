@@ -17,7 +17,7 @@ type PropertyDefinition struct {
 type PropertyDefinitionConnection struct {
 	Nodes      []PropertyDefinition
 	PageInfo   PageInfo
-	TotalCount int
+	TotalCount int `graphql:"-"`
 }
 
 func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*PropertyDefinition, error) {
@@ -34,7 +34,7 @@ func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*
 	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetPropertyDefinition(input IdentifierInput) (*PropertyDefinition, error) {
+func (client *Client) GetPropertyDefinition(input string) (*PropertyDefinition, error) {
 	var q struct {
 		Account struct {
 			Definition PropertyDefinition `graphql:"propertyDefinition(input: $input)"`
@@ -70,7 +70,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (Prop
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo
-		q.Account.Definitions.TotalCount += resp.TotalCount
+		q.Account.Definitions.TotalCount += len(q.Account.Definitions.Nodes)
 	}
 	return q.Account.Definitions, nil
 }
