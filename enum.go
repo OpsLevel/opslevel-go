@@ -622,6 +622,7 @@ const (
 	ServicePropertyTypeEnumLifecycleIndex ServicePropertyTypeEnum = "lifecycle_index" // The index of the lifecycle a service belongs to.
 	ServicePropertyTypeEnumTierIndex      ServicePropertyTypeEnum = "tier_index"      // The index of the tier a service belongs to.
 	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            // Additional information about the service.
+	ServicePropertyTypeEnumSystem         ServicePropertyTypeEnum = "system"          // The system that the service belongs to.
 )
 
 // All ServicePropertyTypeEnum as []string
@@ -634,6 +635,7 @@ var AllServicePropertyTypeEnum = []string{
 	string(ServicePropertyTypeEnumLifecycleIndex),
 	string(ServicePropertyTypeEnumTierIndex),
 	string(ServicePropertyTypeEnumNote),
+	string(ServicePropertyTypeEnumSystem),
 }
 
 // ServiceSortEnum represents sort possibilities for services.
