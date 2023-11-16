@@ -622,6 +622,7 @@ const (
 	ServicePropertyTypeEnumLifecycleIndex ServicePropertyTypeEnum = "lifecycle_index" // The index of the lifecycle a service belongs to.
 	ServicePropertyTypeEnumTierIndex      ServicePropertyTypeEnum = "tier_index"      // The index of the tier a service belongs to.
 	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            // Additional information about the service.
+	ServicePropertyTypeEnumSystem         ServicePropertyTypeEnum = "system"          // The system that the service belongs to.
 )
 
 // All ServicePropertyTypeEnum as []string
@@ -634,6 +635,7 @@ var AllServicePropertyTypeEnum = []string{
 	string(ServicePropertyTypeEnumLifecycleIndex),
 	string(ServicePropertyTypeEnumTierIndex),
 	string(ServicePropertyTypeEnumNote),
+	string(ServicePropertyTypeEnumSystem),
 }
 
 // ServiceSortEnum represents sort possibilities for services.
@@ -770,16 +772,14 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleUser      UserRole = "user"       // A regular user on the account.
-	UserRoleAdmin     UserRole = "admin"      // An administrator on the account.
-	UserRoleBasicUser UserRole = "basic_user" // A basic user on the account with limited access.
+	UserRoleUser  UserRole = "user"  // A regular user on the account.
+	UserRoleAdmin UserRole = "admin" // An administrator on the account.
 )
 
 // All UserRole as []string
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
-	string(UserRoleBasicUser),
 }
 
 // UsersFilterEnum represents fields that can be used as part of filter for users.
