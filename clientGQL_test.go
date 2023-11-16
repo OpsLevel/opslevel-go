@@ -87,6 +87,14 @@ func NewTestRequest(request string, variables string, response string) TestReque
 	if !IsValidJson(testRequest.Variables) {
 		panic(fmt.Errorf("testRequest Variables is not valid json: '%s'", testRequest.Variables))
 	}
+	jsonRequestWithVariables := fmt.Sprintf(
+		`{"query": %s, "variables": %s}`,
+		testRequest.Request,
+		testRequest.Variables,
+	)
+	if !IsValidJson(jsonRequestWithVariables) {
+		panic(fmt.Errorf("testRequest Request with Variables is not valid json: '%s'", jsonRequestWithVariables))
+	}
 	if !IsValidJson(testRequest.Response) {
 		panic(fmt.Errorf("testRequest Response is not json: '%s'", testRequest.Response))
 	}
@@ -150,14 +158,6 @@ type TestRequest struct {
 	Response  string
 }
 
-func (t *TestRequest) RequestWithVariables() string {
-	jsonRequestWithVariables := fmt.Sprintf(`{"query": %s, "variables": %s}`, t.Request, t.Variables)
-	if !IsValidJson(jsonRequestWithVariables) {
-		panic(fmt.Errorf("test request with variables could not be JSON formatted: %s", jsonRequestWithVariables))
-	}
-	return jsonRequestWithVariables
-}
-
 func IsValidJson(data string) bool {
 	return json.Valid([]byte(data))
 }
@@ -166,7 +166,11 @@ func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRe
 	url := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
 	requestCount := 0
 	autopilot.Mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
-		GraphQLQueryTemplatedValidation(t, requests[requestCount].RequestWithVariables())(r)
+		GraphQLQueryTemplatedValidation(t, fmt.Sprintf(
+			`{"query": %s, "variables": %s}`,
+			requests[requestCount].Request,
+			requests[requestCount].Variables),
+		)(r)
 		TemplatedResponse(requests[requestCount].Response)(w)
 		requestCount += 1
 	})
