@@ -1,4 +1,0 @@
-kind: Removed
-body: GroupInput and EntityOwnerGroup structs, CreateGroup and UpdateGroup client
-  methods, Group field from TeamCreateInput and TeamUpdateInput structs
-time: 2023-11-01T08:37:03.11188-05:00

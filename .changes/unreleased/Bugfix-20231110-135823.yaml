@@ -1,3 +1,0 @@
-kind: Bugfix
-body: make UserIdentifierInput fields pointers, fixing the omitempty struct tag behavior
-time: 2023-11-10T13:58:23.41047-06:00

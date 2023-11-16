@@ -1,3 +1,0 @@
-kind: Removed
-body: EntityOwner removed, replaced with TeamId since Groups are deprecated
-time: 2023-11-10T12:25:04.913673-06:00
