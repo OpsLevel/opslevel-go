@@ -369,7 +369,7 @@ type {{.Name}} struct {
 
 {{ define "mutation" -}}
 {{- range .Fields }}
-// {{ .Name | title }} {{.Description | clean | endSentence}}
+// {{ .Name | title | renameMutation }} {{.Description | clean | endSentence}}
 func (client *Client) {{ .Name | title | renameMutation }}(
   {{- range $index, $element := .Args }}{{- if gt $index 0 }}, {{ end -}}
     {{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
