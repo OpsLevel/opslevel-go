@@ -47,28 +47,11 @@ var stringTypeSuffixes = []string{
 	"message",
 	"name",
 	"processedat",
+	"role",
 	"queryparams",
 	"updatedat",
 	"userdeletepayload",
 	"yaml",
-}
-
-var multiples = []string{
-	"as",
-	"ds",
-	"gs",
-	"ks",
-	"ls",
-	"ps",
-	"ms",
-	"ns",
-	"rs",
-	"ts",
-	"ys",
-	"lifecycles",
-	"services",
-	"sources",
-	"templates",
 }
 
 var knownTypeMappings = map[string]string{
@@ -287,7 +270,11 @@ var All{{$.Name}} = []string {
 {{- define "input_object" -}}
 // {{.Name}} {{.Description | clean | endSentence}}
 type {{.Name}} struct { {{range .InputFields }}
-  {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end}}{{.Type.OfType.OfTypeName | lowerStringType}} ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
+  {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
+    {{- if isListType .Name }}[]{{ end -}}
+    {{- with .Type.Name }}{{. | convertPayloadType }}
+    {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}}
+    ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
 		"`" + `// {{.Description | clean | fullSentence}} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
 }
@@ -467,21 +454,25 @@ func t(text string) *template.Template {
 
 func makeSingular(s string) string {
 	value := strings.ToLower(s)
-	for _, multiplesSuffix := range multiples {
-		if strings.HasSuffix(value, multiplesSuffix) {
-			return strings.TrimSuffix(s, "s")
-		}
-	}
 	if strings.HasSuffix(value, "ies") {
 		return strings.ReplaceAll(s, "ies", "y")
+	}
+	if isPlural(s) {
+		return strings.TrimSuffix(s, "s")
 	}
 	return s
 }
 
 func convertPayloadType(s string) string {
+	if s == "" || s == "String" || s == "ISO8601DateTime" {
+		return "string"
+	}
 	value := strings.ToLower(s)
 	if strings.HasSuffix(value, "id") {
 		return "ID"
+	}
+	if value == "boolean" {
+		return "bool"
 	}
 	for k, v := range knownTypeMappings {
 		if value == k {
@@ -496,15 +487,18 @@ func convertPayloadType(s string) string {
 	return makeSingular(s)
 }
 
-func isMultipleOfType(s string) bool {
-	if strings.HasSuffix(s, "es") {
-		return true
-	}
+func isPlural(s string) bool {
 	value := strings.ToLower(s)
-	for _, thing := range multiples {
-		if strings.HasSuffix(value, thing) {
-			return true
-		}
+	// Examples: "alias", "address"
+	if value == "notes" ||
+		strings.HasSuffix(value, "ias") ||
+		strings.HasSuffix(value, "ss") {
+		return false
+	}
+	if strings.HasSuffix(value, "es") ||
+		strings.HasSuffix(value, "as") ||
+		strings.HasSuffix(value, "s") {
+		return true
 	}
 	return false
 }
@@ -513,15 +507,9 @@ var templFuncMap = template.FuncMap{
 	"internal":           func(s string) bool { return strings.HasPrefix(s, "__") },
 	"quote":              strconv.Quote,
 	"join":               strings.Join,
-	"isListType":         isMultipleOfType,
+	"isListType":         isPlural,
 	"convertPayloadType": convertPayloadType,
 	"makeSingular":       makeSingular,
-	"lowerStringType": func(value string) string {
-		if value == "String" || value == "" {
-			return "string"
-		}
-		return value
-	},
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
 			return string(unicode.ToLower(v)) + value[i+1:]
