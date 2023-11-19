@@ -25,6 +25,7 @@ const (
 	enumFile        string = "gen/enum.go"
 	inputObjectFile string = "gen/input.go"
 	interfaceFile   string = "gen/interface.go"
+	mutationFile    string = "gen/mutation.go"
 	objectFile      string = "gen/object.go"
 	payloadFile     string = "gen/payload.go"
 	queryFile       string = "gen/query.go"
@@ -206,6 +207,8 @@ func run() error {
 		case interfaceFile:
 			break
 		// 	subSchema = interfaceSchema
+		case mutationFile:
+			subSchema = objectSchema
 		case objectFile:
 			subSchema = objectSchema
 		case payloadFile:
@@ -355,12 +358,42 @@ type {{.Name}} struct {
 }
 {{- end }}{{- end -}}
 `),
-	objectFile: t(header + `
+	mutationFile: t(header + `
 {{range .Types | sortByName}}
   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
     {{- if eq .Name "Mutation" }}
       {{- template "mutation" .}}
-    {{- else if eq .Name "Account" }}
+    {{end}}
+  {{- end}}
+{{- end}}
+
+{{ define "mutation" -}}
+{{- range .Fields }}
+// {{ .Name | title }} {{.Description | clean | endSentence}}
+func (client *Client) {{ .Name | title | renameMutation }}(
+  {{- range $index, $element := .Args }}{{- if gt $index 0 }}, {{ end -}}
+    {{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
+  {{- end -}} ) ({{.Name | title | renameMutationReturnType}} error) {
+    var m struct {
+      Payload struct {
+        {{ .Name | title | renameMutationReturnType}} {{ .Name | title | renameMutationReturnType}}
+        Errors []OpsLevelErrors
+      }` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+    }
+    v := PayloadVariables{ {{ range .Args }}
+      "{{.Name}}": input,
+                           {{- end}}
+    }
+    err := client.Mutate(&m, v, WithName("{{ .Name | title | renameMutation }}"))
+    return &m.Account.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.Payload.Errors)
+}
+{{- end}}
+{{- end}}
+`),
+	objectFile: t(header + `
+{{range .Types | sortByName}}
+  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+    {{- if eq .Name "Account" }}
       {{- template "account_struct" . }}
     {{- else}}{{template "object" .}}{{end}}
   {{- end}}
@@ -373,17 +406,6 @@ type {{.Name}} struct { {{range .Fields }}
  {{- end }}
 }
 {{- end }}
-
-{{ define "mutation" -}}
-{{range .Fields }}
-// {{.Name | title}} {{.Description | clean | endSentence}}
-func {{.Name | title}}(
-  {{- range $index, $element := .Args }}{{- if gt $index 0 }}, {{ end -}}
-    {{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
-{{- end -}} ) {
-  // TODO
-} {{- end}}
-{{- end -}}
 
 {{- define "object" -}}
 {{ if not (hasSuffix "Payload" .Name) }}
@@ -487,6 +509,39 @@ func convertPayloadType(s string) string {
 	return makeSingular(s)
 }
 
+// TODO fix up later
+func renameMutationReturnType(s string) string {
+	create := "Create"
+	delete := "Delete"
+	update := "Update"
+	if strings.HasSuffix(s, create) {
+		s = strings.TrimSuffix(s, create)
+	} else if strings.HasSuffix(s, delete) {
+		s = strings.TrimSuffix(s, delete)
+	} else if strings.HasSuffix(s, update) {
+		s = strings.TrimSuffix(s, update)
+	}
+	return s
+}
+
+// TODO fix up later
+func renameMutation(s string) string {
+	create := "Create"
+	delete := "Delete"
+	update := "Update"
+	if strings.HasSuffix(s, create) {
+		s = strings.TrimSuffix(s, create)
+		s = fmt.Sprintf("%s%s", create, s)
+	} else if strings.HasSuffix(s, delete) {
+		s = strings.TrimSuffix(s, delete)
+		s = fmt.Sprintf("%s%s", delete, s)
+	} else if strings.HasSuffix(s, update) {
+		s = strings.TrimSuffix(s, update)
+		s = fmt.Sprintf("%s%s", update, s)
+	}
+	return s
+}
+
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
 	// Examples: "alias", "address"
@@ -495,21 +550,21 @@ func isPlural(s string) bool {
 		strings.HasSuffix(value, "ss") {
 		return false
 	}
-	if strings.HasSuffix(value, "es") ||
-		strings.HasSuffix(value, "as") ||
-		strings.HasSuffix(value, "s") {
+	if strings.HasSuffix(value, "s") {
 		return true
 	}
 	return false
 }
 
 var templFuncMap = template.FuncMap{
-	"internal":           func(s string) bool { return strings.HasPrefix(s, "__") },
-	"quote":              strconv.Quote,
-	"join":               strings.Join,
-	"isListType":         isPlural,
-	"convertPayloadType": convertPayloadType,
-	"makeSingular":       makeSingular,
+	"internal":                 func(s string) bool { return strings.HasPrefix(s, "__") },
+	"quote":                    strconv.Quote,
+	"join":                     strings.Join,
+	"isListType":               isPlural,
+	"renameMutation":           renameMutation,
+	"renameMutationReturnType": renameMutationReturnType,
+	"convertPayloadType":       convertPayloadType,
+	"makeSingular":             makeSingular,
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
 			return string(unicode.ToLower(v)) + value[i+1:]
