@@ -45,7 +45,7 @@ func (client *Client) GetPropertyDefinition(input string) (*PropertyDefinition, 
 	}
 	err := client.Query(&q, v, WithName("PropertyDefinitionGet"))
 	if q.Account.Definition.Id == "" {
-		err = fmt.Errorf("PropertyDefinition with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
+		err = fmt.Errorf("PropertyDefinition with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
@@ -75,7 +75,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (Prop
 	return q.Account.Definitions, nil
 }
 
-func (client *Client) DeletePropertyDefinition(input IdentifierInput) error {
+func (client *Client) DeletePropertyDefinition(input string) error {
 	var m struct {
 		Payload struct {
 			DeletedAlias string           `graphql:"deletedAlias"`

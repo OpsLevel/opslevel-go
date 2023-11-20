@@ -42,7 +42,7 @@ func TestDeletePropertyDefinition(t *testing.T) {
 	client := BestTestClient(t, "properties/definition_delete", testRequest)
 
 	// Act
-	err := client.DeletePropertyDefinition(*ol.NewIdentifier("my_prop"))
+	err := client.DeletePropertyDefinition("my_prop")
 
 	// Assert
 	autopilot.Ok(t, err)
@@ -58,7 +58,7 @@ func TestGetPropertyDefinition(t *testing.T) {
 	client := BestTestClient(t, "properties/definition_get", testRequest)
 
 	// Act
-	property, err := client.GetPropertyDefinition(*ol.NewIdentifier("my_prop"))
+	property, err := client.GetPropertyDefinition("my_prop")
 
 	// Assert
 	autopilot.Ok(t, err)
