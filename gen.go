@@ -443,7 +443,7 @@ type {{.Name}} struct { {{range .Fields }}
 // {{.Name}} {{.Description | clean | endSentence}}
 type {{.Name}} struct {
     {{ range .Fields -}}
-    {{.Name | title}} {{ .Name | title | convertPayloadType }} ` + "`" + `graphql:"{{.Name | lowerFirst }}"` + "`" + ` // {{.Description | clean | fullSentence}}
+    {{ if not (len .Args) }}{{.Name | title}} {{ .Name | title | convertPayloadType }} ` + "`" + `graphql:"{{.Name | lowerFirst }}"` + "`" + ` // {{.Description | clean | fullSentence}}{{end}}
     {{ end -}}
 }
 {{- end }}{{- end -}}
