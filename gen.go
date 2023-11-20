@@ -372,19 +372,25 @@ type {{.Name}} struct {
 // {{ .Name | title | renameMutation }} {{.Description | clean | endSentence}}
 func (client *Client) {{ .Name | title | renameMutation }}(
   {{- range $index, $element := .Args }}{{- if gt $index 0 }}, {{ end -}}
-    {{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
-  {{- end -}} ) ({{.Name | title | renameMutationReturnType}} error) {
+    {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}identifier string
+    {{- else }}{{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
+    {{- end }}
+  {{- end -}} ) (*{{.Name | title | renameMutationReturnType}}, error) {
     var m struct {
       Payload struct {
         {{ .Name | title | renameMutationReturnType}} {{ .Name | title | renameMutationReturnType}}
         Errors []OpsLevelErrors
-      }` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+      }` + "`" + `graphql:"{{.Name}}(
+        {{- range $index, $element := .Args }}{{- if gt $index 0 }},{{ end -}}
+          {{- .Name}}: ${{.Name}}
+        {{- end}})"` + "`" + `
     }
     v := PayloadVariables{ {{ range .Args }}
-      "{{.Name}}": input,
+      "{{.Name}}": {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}*NewIdentifier(identifier),
+                   {{- else}}{{.Name}},{{ end }}
                            {{- end}}
     }
-    err := client.Mutate(&m, v, WithName("{{ .Name | title | renameMutation }}"))
+    err := client.Mutate(&m, v, WithName("{{ .Name | title }}"))
     return &m.Account.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.Payload.Errors)
 }
 {{- end}}
