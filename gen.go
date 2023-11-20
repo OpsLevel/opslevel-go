@@ -22,6 +22,7 @@ import (
 )
 
 const (
+	connectionFile  string = "gen/connection.go"
 	enumFile        string = "gen/enum.go"
 	inputObjectFile string = "gen/input.go"
 	interfaceFile   string = "gen/interface.go"
@@ -59,19 +60,19 @@ var knownTypeMappings = map[string]string{
 	"data":                           "JSON",
 	"deletedmembers":                 "User",
 	"edges":                          "any",
-	"filteredcount":                  "Int",
+	"filteredcount":                  "int",
 	"memberships":                    "TeamMembership",
 	"node":                           "any",
-	"nodes":                          "any",
+	"nodes":                          "[]any",
 	"notupdatedrepositories":         "RepositoryOperationErrorPayload",
 	"promotedchecks":                 "Check",
 	"relationship":                   "RelationshipType",
 	"teamsbeingnotified":             "CampaignSendReminderOutcomeTeams",
-	"teamsbeingnotifiedcount":        "Int",
-	"teamsmissingcontactmethod":      "Int",
-	"teamsmissingcontactmethodcount": "Int",
+	"teamsbeingnotifiedcount":        "int",
+	"teamsmissingcontactmethod":      "int",
+	"teamsmissingcontactmethodcount": "int",
 	"type":                           "any",
-	"totalcount":                     "Int",
+	"totalcount":                     "int",
 	"triggerdefinition":              "CustomActionsTriggerDefinition",
 	"updatedrepositories":            "Repository",
 	"webhookaction":                  "CustomActionsWebhookAction",
@@ -200,6 +201,8 @@ func run() error {
 	var subSchema GraphQLSchema
 	for filename, t := range templates {
 		switch filename {
+		case connectionFile:
+			subSchema = objectSchema
 		case enumFile:
 			subSchema = enumSchema
 		case inputObjectFile:
@@ -245,6 +248,28 @@ func run() error {
 
 // Filename -> Template.
 var templates = map[string]*template.Template{
+	connectionFile: t(header + `
+{{range .Types | sortByName}}
+  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+    {{ if hasSuffix "Connection" .Name }}
+      {{- template "object" . }}
+    {{end}}
+  {{- end}}
+{{- end}}
+
+{{- define "object" -}}
+{{ if hasSuffix "Connection" .Name }}
+// {{.Name}} {{.Description | clean | endSentence}}
+type {{.Name}} struct {
+  Nodes []{{.Name | trimSuffix "Connection" }} ` + "`" + `graphql:"nodes"` + "`" + `
+  Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` + "`" + `
+{{ range .Fields }} {{ if and (ne "edges" .Name) (ne "nodes" .Name) }}
+    {{- .Name | title}} {{ .Name | title | convertPayloadType }} ` + "`" + `graphql:"{{.Name | lowerFirst }}"` + "`" + ` // {{.Description | clean | fullSentence}}
+  {{- end }}
+{{- end }}
+}
+{{- end }}{{- end -}}
+  `),
 	enumFile: t(header + `
 {{range .Types | sortByName}}{{if and (eq .Kind "ENUM") (not (internal .Name))}}
 {{template "enum" .}}
@@ -414,7 +439,7 @@ type {{.Name}} struct { {{range .Fields }}
 {{- end }}
 
 {{- define "object" -}}
-{{ if not (hasSuffix "Payload" .Name) }}
+{{ if and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name)) }}
 // {{.Name}} {{.Description | clean | endSentence}}
 type {{.Name}} struct {
     {{ range .Fields -}}
@@ -492,15 +517,21 @@ func makeSingular(s string) string {
 }
 
 func convertPayloadType(s string) string {
-	if s == "" || s == "String" || s == "ISO8601DateTime" {
+	switch s {
+	case "Boolean":
+		return "bool"
+	case "Int":
+		return "int"
+	case "String":
+		return "string"
+	case "ISO8601DateTime":
+		return "string"
+	case "":
 		return "string"
 	}
 	value := strings.ToLower(s)
 	if strings.HasSuffix(value, "id") {
 		return "ID"
-	}
-	if value == "boolean" {
-		return "bool"
 	}
 	for k, v := range knownTypeMappings {
 		if value == k {
@@ -550,10 +581,11 @@ func renameMutation(s string) string {
 
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
-	// Examples: "alias", "address"
+	// Examples: "alias", "address", "status"
 	if value == "notes" ||
 		strings.HasSuffix(value, "ias") ||
-		strings.HasSuffix(value, "ss") {
+		strings.HasSuffix(value, "ss") ||
+		strings.HasSuffix(value, "us") {
 		return false
 	}
 	if strings.HasSuffix(value, "s") {
