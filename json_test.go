@@ -114,6 +114,7 @@ func TestConstructMutationJSON(t *testing.T) {
 }
 
 func TestNewJSONStringInvalidType(t *testing.T) {
+	// Arrange
 	tests := map[string]string{
 		"invalid_string":       "needs escaped quotes or backticks",
 		"invalid_string_empty": "",
@@ -132,6 +133,7 @@ func TestNewJSONStringInvalidType(t *testing.T) {
 }
 
 func TestNewJSONStringValidTypeInvalidContents(t *testing.T) {
+	// Arrange
 	tests := map[string]string{
 		"array":  `[check]`,
 		"number": "01234",
