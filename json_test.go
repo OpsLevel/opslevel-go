@@ -112,3 +112,69 @@ func TestConstructMutationJSON(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `mutation MyMutation($id1:JSON!$id2:JSON){account{myMutation(id1: $id1 id2: $id2){data}}}`, query)
 }
+
+func TestNewJSONStringInvalidType(t *testing.T) {
+	tests := map[string]string{
+		"invalid_string":       "needs escaped quotes or backticks",
+		"invalid_string_empty": "",
+	}
+	for testName, testValue := range tests {
+		t.Run(testName, func(t *testing.T) {
+			// Act
+			_, getTypeErr := ol.JSONString(testValue).GetType()
+			emptyJsonString, invalidJsonErr := ol.NewJsonString(testValue)
+			// Assert
+			autopilot.Equals(t, emptyJsonString, ol.JSONString(""))
+			autopilot.Assert(t, getTypeErr != nil, "expected invalid JSONString type error")
+			autopilot.Assert(t, invalidJsonErr != nil, "expected JSONString validation error")
+		})
+	}
+}
+
+func TestNewJSONStringValidTypeInvalidContents(t *testing.T) {
+	tests := map[string]string{
+		"array":  `[check]`,
+		"number": "01234",
+		"object": `{"foo"}`,
+	}
+	for testName, testValue := range tests {
+		t.Run(testName, func(t *testing.T) {
+			// Act
+			actualType, getTypeErr := ol.JSONString(testValue).GetType()
+			_, invalidJsonErr := ol.NewJsonString(testValue)
+			// Assert
+			autopilot.Ok(t, getTypeErr)
+			autopilot.Equals(t, testName, actualType)
+			autopilot.Assert(t, invalidJsonErr != nil, "expected JSONString validation error")
+		})
+	}
+}
+
+func TestNewJSONString(t *testing.T) {
+	// Arrange
+	tests := map[string]string{
+		"array_of_strings":      `["foo", "bar"]`,
+		"array_of_numbers":      `[5, 1.41, -3.14]`,
+		"array_of_all_types":    `["foo", null, {}, [], -9.1, 2]`,
+		"array_empty":           `[]`,
+		"number_int":            "7",
+		"number_int_negative":   "-98765432187654321876",
+		"number_float":          "9.6",
+		"number_float_negative": "-0.24",
+		"null":                  "null",
+		"string":                `"baz"`,
+		"string_empty":          `""`,
+		"object":                `{"foo": "bar", "baz": [], "c": -1.2}`,
+		"object_empty":          `{}`,
+	}
+	for testName, testValue := range tests {
+		t.Run(testName, func(t *testing.T) {
+			// Act
+			jsonStringDirect := ol.JSONString(testValue)
+			jsonStringFromConstructor, err := ol.NewJsonString(testValue)
+			// Assert
+			autopilot.Ok(t, err)
+			autopilot.Equals(t, jsonStringDirect, jsonStringFromConstructor)
+		})
+	}
+}

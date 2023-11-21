@@ -2,7 +2,10 @@ package opslevel
 
 import (
 	"encoding/json"
+	"fmt"
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
@@ -34,6 +37,52 @@ func (s JSON) MarshalJSON() ([]byte, error) {
 	}
 	b, err := json.Marshal(dto)
 	return []byte(strconv.Quote(string(b))), err
+}
+
+type JSONString string
+
+func NewJsonString(text string) (JSONString, error) {
+	jsonString := JSONString(text)
+	typeFound, err := jsonString.GetType()
+	if err != nil {
+		return "", err
+	}
+	if !json.Valid([]byte(text)) {
+		return "", fmt.Errorf(
+			"JSONString with type '%s' is not valid JSON. String provided: %s",
+			typeFound,
+			string(text),
+		)
+	}
+	return jsonString, nil
+}
+
+func (s JSONString) GetType() (string, error) {
+	typeFound := string(s)
+	switch typeFound {
+	case "true":
+		return "bool", nil
+	case "false":
+		return "bool", nil
+	case "null":
+		return "null", nil
+	}
+	if strings.HasPrefix(typeFound, "{") || strings.HasSuffix(typeFound, "}") {
+		return "object", nil
+	}
+	if strings.HasPrefix(typeFound, "[") || strings.HasSuffix(typeFound, "]") {
+		return "array", nil
+	}
+	if strings.HasPrefix(typeFound, "\"") || strings.HasSuffix(typeFound, "\"") {
+		return "string", nil
+	}
+	// REGEX:  starts with zero or one '-' for negative numbers, followed by
+	// either: one or more digits, no other characters
+	//     or: one or more digits, one dot, one or more digits, no other characters
+	if ok, _ := regexp.MatchString(`^-?(\d+$|\d+\.?\d+)`, string(s)); ok {
+		return "number", nil
+	}
+	return "", fmt.Errorf("unknown JSONString type: '%s'", string(s))
 }
 
 //
