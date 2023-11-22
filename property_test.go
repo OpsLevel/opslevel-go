@@ -19,11 +19,30 @@ func TestCreatePropertyDefinition(t *testing.T) {
 		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema":"{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}"},"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
+	schema := ol.JSON{
+		"$ref": "#/$defs/MyProp",
+		"$defs": ol.JSON{
+			"MyProp": ol.JSON{
+				"properties": ol.JSON{
+					"name": ol.JSON{
+						"type":        "string",
+						"title":       "the name",
+						"description": "The name of a friend",
+						"default":     "alex",
+						"examples":    []string{"joe", "lucy"},
+					},
+				},
+				"additionalProperties": false,
+				"type":                 "object",
+				"required":             []string{"name"},
+			},
+		},
+	}
 
 	// Act
 	property, err := client.CreatePropertyDefinition(ol.PropertyDefinitionInput{
 		Name:   "my-prop",
-		Schema: "{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}",
+		Schema: schema,
 	})
 	// Assert
 	autopilot.Ok(t, err)

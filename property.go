@@ -4,7 +4,7 @@ import "fmt"
 
 type PropertyDefinitionInput struct {
 	Name   string `json:"name"`
-	Schema string `json:"schema"`
+	Schema JSON   `json:"schema" scalar:"true"`
 }
 
 type PropertyDefinition struct {
