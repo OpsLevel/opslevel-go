@@ -13,42 +13,27 @@ import (
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
+	propertyDefinition := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+		Name:   "epic",
+		Schema: ol.NewJSON("{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}"),
+	})
 	testRequest := NewTestRequest(
 		`"mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}"`,
-		`{"input":{"name":"my-prop","schema":"{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}"}}`,
-		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema":"{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}"},"errors":[]}}}`,
+		`{"input": {{ template "property_definition_input" }} }`,
+		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema":"{{ template "json_schema_string" }}"},"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
-	schema := ol.JSON{
-		"$ref": "#/$defs/MyProp",
-		"$defs": ol.JSON{
-			"MyProp": ol.JSON{
-				"properties": ol.JSON{
-					"name": ol.JSON{
-						"type":        "string",
-						"title":       "the name",
-						"description": "The name of a friend",
-						"default":     "alex",
-						"examples":    []string{"joe", "lucy"},
-					},
-				},
-				"additionalProperties": false,
-				"type":                 "object",
-				"required":             []string{"name"},
-			},
-		},
-	}
 
 	// Act
-	property, err := client.CreatePropertyDefinition(ol.PropertyDefinitionInput{
-		Name:   "my-prop",
-		Schema: schema,
-	})
+	property, err := client.CreatePropertyDefinition(propertyDefinition)
+	x := dataTemplater.ParseValue("json_schema_string")
+	// x := Templated(`{{ template "json_schema_string" }}`)
+
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "XXX", string(property.Id))
 	autopilot.Equals(t, "my-prop", property.Name)
-	autopilot.Equals(t, "{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}", property.Schema)
+	autopilot.Equals(t, x, property.Schema)
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {
