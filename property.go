@@ -11,7 +11,7 @@ type PropertyDefinition struct {
 	Aliases []string `graphql:"aliases"`
 	Id      ID       `graphql:"id"`
 	Name    string   `graphql:"name"`
-	Schema  JSON     `graphql:"schema" scalar:"true"`
+	Schema  string   `graphql:"schema"`
 }
 
 type PropertyDefinitionConnection struct {

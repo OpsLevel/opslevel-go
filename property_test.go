@@ -78,14 +78,14 @@ func TestGetPropertyDefinition(t *testing.T) {
 func TestListPropertyDefinitions(t *testing.T) {
 	// Arrange
 	testRequestOne := NewTestRequest(
-		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema":"{\"key1\":\"val1\"}"},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema":"{\"key2\":\"val2\"}"}],{{ template "pagination_initial_pageInfo_response" }},"totalCount":2}}}}`,
+		`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema":"{\"key1\":\"val1\"}"},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema":"{\"key2\":\"val2\"}"}],{{ template "pagination_initial_pageInfo_response" }}}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
-		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }},totalCount}}}"`,
+		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema":"{\"key3\":\"val3\"}"}],{{ template "pagination_second_pageInfo_response" }},"totalCount":1}}}}`,
+		`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema":"{\"key3\":\"val3\"}"}],{{ template "pagination_second_pageInfo_response" }}}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "properties/definition_list", requests...)
