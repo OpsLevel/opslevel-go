@@ -83,8 +83,9 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 			Errors       []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"propertyDefinitionDelete(resource: $input)"`
 	}
+	identifier := NewIdentifier(input)
 	v := PayloadVariables{
-		"input": input,
+		"input": identifier,
 	}
 	err := client.Mutate(&m, v, WithName("PropertyDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
