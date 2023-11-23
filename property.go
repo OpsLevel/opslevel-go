@@ -40,8 +40,9 @@ func (client *Client) GetPropertyDefinition(input string) (*PropertyDefinition, 
 			Definition PropertyDefinition `graphql:"propertyDefinition(input: $input)"`
 		}
 	}
+	identifier := NewIdentifier(input)
 	v := PayloadVariables{
-		"input": input,
+		"input": identifier,
 	}
 	err := client.Query(&q, v, WithName("PropertyDefinitionGet"))
 	if q.Account.Definition.Id == "" {

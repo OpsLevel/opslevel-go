@@ -59,7 +59,7 @@ func TestDeletePropertyDefinition(t *testing.T) {
 func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,id,name,schema}}}"`,
+		`"query PropertyDefinitionGet($input:IdentifierInput){account{propertyDefinition(input: $input){aliases,id,name,schema}}}"`,
 		`{"input":{"alias":"my_prop"}}`,
 		`{"data":{"account":{"propertyDefinition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema":"{\"$ref\":\"#/$defs/MyProp\",\"$defs\":{\"MyProp\":{\"properties\":{\"name\":{\"type\":\"string\",\"title\":\"the name\",\"description\":\"The name of a friend\",\"default\":\"alex\",\"examples\":[\"joe\",\"lucy\"]}},\"additionalProperties\":false,\"type\":\"object\",\"required\":[\"name\"]}}}"}}}}`,
 	)
