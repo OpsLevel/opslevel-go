@@ -248,7 +248,7 @@ func TestUpdateService(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input":{"id": "123456789"}}`,
+		`{"input":{"id": "123456789", "description": null, "framework": null, "language": null, "lifecycleAlias": null, "name": null, "ownerInput": null, "product": null, "tierAlias": null}}`,
 		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
 
@@ -256,7 +256,7 @@ func TestUpdateService(t *testing.T) {
 
 	// Act
 	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Id: "123456789",
+		Id: ol.NewID("123456789"),
 	})
 
 	// Assert
