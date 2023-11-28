@@ -1,7 +1,6 @@
 package opslevel_test
 
 import (
-	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
@@ -16,17 +15,15 @@ const template1 = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"na
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema1 := ol.NewJSON(template1)
+	schema1 := autopilot.Register[ol.JSON]("schema_for_property_definition", ol.NewJSON(template1))
 	propertyDefinition := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   "epic",
 		Schema: schema1,
 	})
-	var1 := fmt.Sprintf(`{"input":%s}`, template1)
-	var2 := fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema":%s},"errors":[]}}}`, template1)
 	testRequest := NewTestRequest(
 		`"mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}"`,
-		var1,
-		var2,
+		`{"input": {{ template "property_definition_input" }} }`,
+		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": `+schema1.ToJSON()+` },"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 

@@ -4,14 +4,14 @@ import "fmt"
 
 type PropertyDefinitionInput struct {
 	Name   string `json:"name"`
-	Schema JSON   `json:"schema" scalar:"true"`
+	Schema JSON   `json:"schema"`
 }
 
 type PropertyDefinition struct {
 	Aliases []string `graphql:"aliases"`
 	Id      ID       `graphql:"id"`
 	Name    string   `graphql:"name"`
-	Schema  string   `graphql:"schema"`
+	Schema  JSON     `graphql:"schema" scalar:"true"`
 }
 
 type PropertyDefinitionConnection struct {
