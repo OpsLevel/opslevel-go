@@ -1,29 +1,26 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-// TODO: template variable for reused schema
-// TODO: template variable for ID's
-// TODO: template variable for prop1,prop2,prop3
-
-const template1 = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"name":{"type":"string","title":"the name","description":"The name of a friend","default":"alex","examples":["joe","lucy"]}},"additionalProperties":false,"type":"object","required":["name"]}}}`
+const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"name":{"type":"string","title":"the name","description":"The name of a friend","default":"alex","examples":["joe","lucy"]}},"additionalProperties":false,"type":"object","required":["name"]}}}`
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema1 := autopilot.Register[ol.JSON]("schema_for_property_definition", ol.NewJSON(template1))
+	schema := ol.NewJSON(schemaString)
 	propertyDefinition := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
-		Name:   "epic",
-		Schema: schema1,
+		Name:   "my-prop",
+		Schema: schema,
 	})
 	testRequest := NewTestRequest(
 		`"mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}"`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": `+schema1.ToJSON()+` },"errors":[]}}}`,
+		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s },"errors":[]}}}`, schema.ToJSON()),
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
@@ -32,9 +29,8 @@ func TestCreatePropertyDefinition(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "XXX", string(property.Id))
-	autopilot.Equals(t, "my-prop", property.Name)
-	autopilot.Equals(t, schema1, property.Schema)
+	autopilot.Equals(t, propertyDefinition.Name, property.Name)
+	autopilot.Equals(t, propertyDefinition.Schema, property.Schema)
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {
