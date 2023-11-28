@@ -40,9 +40,8 @@ func (client *Client) GetPropertyDefinition(input string) (*PropertyDefinition, 
 			Definition PropertyDefinition `graphql:"propertyDefinition(input: $input)"`
 		}
 	}
-	identifier := *NewIdentifier(input)
 	v := PayloadVariables{
-		"input": identifier,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("PropertyDefinitionGet"))
 	if q.Account.Definition.Id == "" {
@@ -84,9 +83,8 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 			Errors       []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"propertyDefinitionDelete(resource: $input)"`
 	}
-	identifier := *NewIdentifier(input)
 	v := PayloadVariables{
-		"input": identifier,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Mutate(&m, v, WithName("PropertyDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
