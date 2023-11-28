@@ -37,7 +37,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 func TestDeletePropertyDefinition(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation PropertyDefinitionDelete($input:IdentifierInput){propertyDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}"`,
+		`"mutation PropertyDefinitionDelete($input:IdentifierInput!){propertyDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}"`,
 		`{"input":{"alias":"my_prop"}}`,
 		`{"data":{"propertyDefinitionDelete":{"deletedAlias":"my_prop","deletedId":"XXX","errors":[]}}}`,
 	)
@@ -54,7 +54,7 @@ func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
 	schema := ol.NewJSON(schemaString)
 	testRequest := NewTestRequest(
-		`"query PropertyDefinitionGet($input:IdentifierInput){account{propertyDefinition(input: $input){aliases,id,name,schema}}}"`,
+		`"query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,id,name,schema}}}"`,
 		`{"input":{"alias":"my_prop"}}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}}}}`, schema.ToJSON()),
 	)

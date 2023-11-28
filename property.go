@@ -40,7 +40,7 @@ func (client *Client) GetPropertyDefinition(input string) (*PropertyDefinition, 
 			Definition PropertyDefinition `graphql:"propertyDefinition(input: $input)"`
 		}
 	}
-	identifier := NewIdentifier(input)
+	identifier := *NewIdentifier(input)
 	v := PayloadVariables{
 		"input": identifier,
 	}
@@ -84,7 +84,7 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 			Errors       []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"propertyDefinitionDelete(resource: $input)"`
 	}
-	identifier := NewIdentifier(input)
+	identifier := *NewIdentifier(input)
 	v := PayloadVariables{
 		"input": identifier,
 	}
