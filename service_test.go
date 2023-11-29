@@ -248,20 +248,26 @@ func TestUpdateService(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
 		`"mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
-		`{"input":{"id": "123456789", "description": null, "framework": null, "language": null, "lifecycleAlias": null, "name": null, "ownerInput": null, "product": null, "tierAlias": null}}`,
-		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+		`{"input":{"description":null,"framework":"Rails","id": "123456789","language":""}}`,
+		`{"data": {"serviceUpdate": { "service": {{ template "service_updated" }}, "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "service/update", testRequest)
 
 	// Act
 	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Id: ol.NewID("123456789"),
+		Id:          ol.NewID("123456789"),
+		Framework:   ol.NewNullableInputString("Rails"),
+		Language:    ol.NewNullableInputString(""),
+		Description: ol.NewNullableInputString(),
 	})
 
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Foo", result.Name)
+	autopilot.Equals(t, "", result.Description)
+	autopilot.Equals(t, "Rails", result.Framework)
+	autopilot.Equals(t, "", result.Language)
 }
 
 func TestGetServiceIdWithAlias(t *testing.T) {

@@ -1,4 +1,0 @@
-kind: Bugfix
-body: BREAKING CHANGE allow unsetting of Service fields by using pointers on the update
-  input struct without omitempty
-time: 2023-11-24T16:31:15.473408-05:00

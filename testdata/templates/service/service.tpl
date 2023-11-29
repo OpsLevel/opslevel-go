@@ -98,3 +98,53 @@
     }
 }
 {{ end }}
+{{- define "service_updated" }}
+{
+    "apiDocumentPath": "/src/swagger.json",
+    "aliases": [
+        "{{ template "alias1" }}"
+    ],
+    "description": null,
+    "framework": "Rails",
+    "htmlUrl": "https://app.opslevel.com/services/{{ template "alias1" }}",
+    {{ template "id1" }},
+    "language": "",
+    "lifecycle": null,
+    "name": "Foo",
+    "owner": null,
+    "preferredApiDocument": null,
+    "preferredApiDocumentSource": "PULL",
+    "product": null,
+    "repos": {
+        "edges": [],
+        "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": null,
+        "endCursor": null
+        },
+        "totalCount": 0
+    },
+    "tags": {
+        "nodes": [],
+        "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": null,
+        "endCursor": null
+        },
+        "totalCount": 0
+    },
+    "tier": null,
+    "tools": {
+        "nodes": [],
+        "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": null,
+        "endCursor": null
+        },
+        "totalCount": 0
+    }
+}
+{{ end }}

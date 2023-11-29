@@ -61,3 +61,29 @@ func IsID(value string) bool {
 	}
 	return strings.HasPrefix(string(decoded), "gid://")
 }
+
+type NullableInputString struct {
+	Value   string
+	SetNull bool
+}
+
+func NewNullableInputString(s ...string) *NullableInputString {
+	var output NullableInputString
+	if len(s) == 0 {
+		output = NullableInputString{
+			SetNull: true,
+		}
+	} else {
+		output = NullableInputString{
+			Value: s[0],
+		}
+	}
+	return &output
+}
+
+func (s *NullableInputString) MarshalJSON() ([]byte, error) {
+	if s.SetNull {
+		return []byte("null"), nil
+	}
+	return []byte(strconv.Quote(s.Value)), nil
+}

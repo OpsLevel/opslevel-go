@@ -61,15 +61,15 @@ type ServiceCreateInput struct {
 }
 
 type ServiceUpdateInput struct {
-	Id          *ID              `json:"id"`
-	Name        *string          `json:"name"`
-	Product     *string          `json:"product"`
-	Description *string          `json:"description"`
-	Language    *string          `json:"language"`
-	Framework   *string          `json:"framework"`
-	Tier        *string          `json:"tierAlias"`
-	Owner       *IdentifierInput `json:"ownerInput"`
-	Lifecycle   *string          `json:"lifecycleAlias"`
+	Id          *ID                  `json:"id"`
+	Name        *NullableInputString `json:"name,omitempty"`
+	Product     *NullableInputString `json:"product,omitempty"`
+	Description *NullableInputString `json:"description,omitempty"`
+	Language    *NullableInputString `json:"language,omitempty"`
+	Framework   *NullableInputString `json:"framework,omitempty"`
+	Tier        *NullableInputString `json:"tierAlias,omitempty"`
+	Owner       *IdentifierInput     `json:"ownerInput,omitempty"`
+	Lifecycle   *NullableInputString `json:"lifecycleAlias,omitempty"`
 }
 
 type ServiceDeleteInput struct {
