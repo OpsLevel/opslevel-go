@@ -1,0 +1,4 @@
+kind: Bugfix
+body: Fix a bug where during UpdateService you were unable to "unset" fields like
+  description, framework, lifecycle, etc
+time: 2023-12-01T17:29:47.430731-06:00

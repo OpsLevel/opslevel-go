@@ -264,6 +264,48 @@ func TestUpdateService(t *testing.T) {
 	autopilot.Equals(t, "Foo", result.Name)
 }
 
+func TestUpdateServiceUnsetDescription(t *testing.T) {
+	// Arrange
+	testRequest := NewTestRequest(
+		`"mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`{"input":{"id": "123456789", "description": ""}}`,
+		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "service/update_unset_description", testRequest)
+
+	// Act
+	result, err := client.UpdateService(ol.ServiceUpdateInput{
+		Id:          "123456789",
+		Description: ol.NewString(""),
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Foo", result.Name)
+}
+
+func TestUpdateServiceUnsetFramework(t *testing.T) {
+	// Arrange
+	testRequest := NewTestRequest(
+		`"mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`{"input":{"id": "123456789", "framework": ""}}`,
+		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "service/update_unset_framework", testRequest)
+
+	// Act
+	result, err := client.UpdateService(ol.ServiceUpdateInput{
+		Id:        "123456789",
+		Framework: ol.NewString(""),
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Foo", result.Name)
+}
+
 func TestGetServiceIdWithAlias(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
