@@ -24,10 +24,14 @@ func TestNewJSON(t *testing.T) {
 	result1, err1 := json.Marshal(data1)
 	result2, err2 := json.Marshal(data2)
 	result3 := ol.NewJSONInput(`{"foo":"bar"}`)
-	result4 := ol.NewJSONInput(map[string]any{"foo": "bar"})
-	result5 := ol.NewJSONInput(true)
-	result6 := ol.NewJSONInput(1.32)
+
+	result4 := ol.NewJSONInput(true)
+	result4a := ol.NewJSONInput(false)
+	result5 := ol.NewJSONInput(1.32)
+	result5a := ol.NewJSONInput(0)
+	result6 := ol.NewJSONInput("hello world")
 	result7 := ol.NewJSONInput([]any{"foo", "bar"})
+	result8 := ol.NewJSONInput(map[string]any{"foo": "bar"})
 	// Assert
 	autopilot.Ok(t, err1)
 	autopilot.Ok(t, err2)
@@ -36,10 +40,14 @@ func TestNewJSON(t *testing.T) {
 	autopilot.Equals(t, result1, result2)
 	autopilot.Equals(t, string(result1), string(result3))
 	autopilot.Equals(t, string(result2), string(result3))
-	autopilot.Equals(t, `{"foo":"bar"}`, string(result4))
-	autopilot.Equals(t, `true`, string(result5))
-	autopilot.Equals(t, `1.32`, string(result6))
+
+	autopilot.Equals(t, `true`, string(result4))
+	autopilot.Equals(t, `false`, string(result4a))
+	autopilot.Equals(t, `1.32`, string(result5))
+	autopilot.Equals(t, `0`, string(result5a))
+	autopilot.Equals(t, `"hello world"`, string(result6))
 	autopilot.Equals(t, `["foo","bar"]`, string(result7))
+	autopilot.Equals(t, `{"foo":"bar"}`, string(result8))
 }
 
 func TestMarshalJSON(t *testing.T) {
@@ -128,4 +136,31 @@ func TestConstructMutationJSON(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `mutation MyMutation($id1:JSON!$id2:JSON$id3:JsonString!){account{myMutation(id1: $id1 id2: $id2 id3: $id3){data}}}`, query)
+}
+
+func TestUnmarshalJSONString(t *testing.T) {
+	// Arrange
+	data1 := true
+	data1a := false
+	data2 := 1.32
+	data2a := 0
+	data3 := "hello world"
+	data4 := []any{"foo", "bar"}
+	data5 := map[string]any{"foo": "bar"}
+	// Act
+	result1 := ol.JsonStringAs[bool](ol.NewJSONInput(data1))
+	result1a := ol.JsonStringAs[bool](ol.NewJSONInput(data1a))
+	result2 := ol.JsonStringAs[float64](ol.NewJSONInput(data2))
+	result2a := ol.JsonStringAs[int](ol.NewJSONInput(data2a))
+	result3 := ol.JsonStringAs[string](ol.NewJSONInput(data3))
+	result4 := ol.JsonStringAs[[]any](ol.NewJSONInput(data4))
+	result5 := ol.JsonStringAs[map[string]any](ol.NewJSONInput(data5))
+	// Assert
+	autopilot.Equals(t, data1, result1)
+	autopilot.Equals(t, data1a, result1a)
+	autopilot.Equals(t, data2, result2)
+	autopilot.Equals(t, data2a, result2a)
+	autopilot.Equals(t, data3, result3)
+	autopilot.Equals(t, data4, result4)
+	autopilot.Equals(t, data5, result5)
 }

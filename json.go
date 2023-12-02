@@ -36,17 +36,25 @@ func (s JSON) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.Quote(string(b))), err
 }
 
-// JSONInput is a specialized input type to support serialization to JSON for input to graphql
-type JSONInput string
+// JSONString is a specialized input type to support serialization to JSON for input to graphql
+type JSONString string
 
-func (s JSONInput) GetGraphQLType() string { return "JsonString" }
+func (s JSONString) GetGraphQLType() string { return "JsonString" }
 
-func NewJSONInput(data any) JSONInput {
+func NewJSONInput(data any) JSONString {
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
-	return JSONInput(bytes)
+	return JSONString(bytes)
+}
+
+func JsonStringAs[T any](data JSONString) T {
+	var result T
+	if err := json.Unmarshal([]byte(data), &result); err != nil {
+		panic(err)
+	}
+	return result
 }
 
 //
