@@ -23,12 +23,23 @@ func TestNewJSON(t *testing.T) {
 	// Act
 	result1, err1 := json.Marshal(data1)
 	result2, err2 := json.Marshal(data2)
+	result3 := ol.NewJSONInput(`{"foo":"bar"}`)
+	result4 := ol.NewJSONInput(map[string]any{"foo": "bar"})
+	result5 := ol.NewJSONInput(true)
+	result6 := ol.NewJSONInput(1.32)
+	result7 := ol.NewJSONInput([]any{"foo", "bar"})
 	// Assert
 	autopilot.Ok(t, err1)
 	autopilot.Ok(t, err2)
 	autopilot.Equals(t, data1, data2)
 	autopilot.Assert(t, &data1 != &data2, "The JSON objects have the same memory address")
 	autopilot.Equals(t, result1, result2)
+	autopilot.Equals(t, string(result1), string(result3))
+	autopilot.Equals(t, string(result2), string(result3))
+	autopilot.Equals(t, `{"foo":"bar"}`, string(result4))
+	autopilot.Equals(t, `true`, string(result5))
+	autopilot.Equals(t, `1.32`, string(result6))
+	autopilot.Equals(t, `["foo","bar"]`, string(result7))
 }
 
 func TestMarshalJSON(t *testing.T) {
@@ -76,18 +87,21 @@ func TestConstructQueryJSON(t *testing.T) {
 		Account struct {
 			Output struct {
 				Data ol.JSON `json:"data" scalar:"true"`
-			} `graphql:"myQuery(id1: $id1 id2: $id2)"`
+			} `graphql:"myQuery(id1: $id1 id2: $id2 id3: $id3)"`
 		}
 	}
 	v := ol.PayloadVariables{
 		"id1": data,
 		"id2": &data,
+		"id3": ol.NewJSONInput(map[string]any{
+			"foo": "bar",
+		}),
 	}
 	// Act
 	query, err := graphql.ConstructQuery(q, v, ol.WithName("MyQuery"))
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, `query MyQuery($id1:JSON!$id2:JSON){account{myQuery(id1: $id1 id2: $id2){data}}}`, query)
+	autopilot.Equals(t, `query MyQuery($id1:JSON!$id2:JSON$id3:JsonString!){account{myQuery(id1: $id1 id2: $id2 id3: $id3){data}}}`, query)
 }
 
 func TestConstructMutationJSON(t *testing.T) {
@@ -99,16 +113,19 @@ func TestConstructMutationJSON(t *testing.T) {
 		Account struct {
 			Output struct {
 				Data ol.JSON `json:"data" scalar:"true"`
-			} `graphql:"myMutation(id1: $id1 id2: $id2)"`
+			} `graphql:"myMutation(id1: $id1 id2: $id2 id3: $id3)"`
 		}
 	}
 	v := ol.PayloadVariables{
 		"id1": data,
 		"id2": &data,
+		"id3": ol.NewJSONInput(map[string]any{
+			"foo": "bar",
+		}),
 	}
 	// Act
 	query, err := graphql.ConstructMutation(q, v, ol.WithName("MyMutation"))
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, `mutation MyMutation($id1:JSON!$id2:JSON){account{myMutation(id1: $id1 id2: $id2){data}}}`, query)
+	autopilot.Equals(t, `mutation MyMutation($id1:JSON!$id2:JSON$id3:JsonString!){account{myMutation(id1: $id1 id2: $id2 id3: $id3){data}}}`, query)
 }
