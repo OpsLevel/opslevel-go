@@ -4,6 +4,9 @@ on:
   pull_request:
     # catch when the PR is opened with the label or when the label is added
     types: [labeled]
+    paths:
+      - '**.go'
+      - '!**_test.go'
 
 permissions:
   contents: write
