@@ -68,9 +68,9 @@ type ServiceUpdateInput struct {
 	Description *string          `json:"description,omitempty"`
 	Language    *string          `json:"language,omitempty"`
 	Framework   *string          `json:"framework,omitempty"`
-	Tier        *string          `json:"tierAlias,omitempty"`
+	Tier        *string          `json:"tierAlias"` // API accepts null or a valid tier alias, not empty string
 	Owner       *IdentifierInput `json:"ownerInput,omitempty"`
-	Lifecycle   *string          `json:"lifecycleAlias,omitempty"`
+	Lifecycle   *string          `json:"lifecycleAlias"` // API accepts null or a valid lifecycle alias, not empty string
 }
 
 type ServiceDeleteInput struct {
@@ -688,6 +688,13 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 //#region Update
 
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
+	if input.Lifecycle != nil && *input.Lifecycle == "" {
+		input.Lifecycle = nil
+	}
+	if input.Tier != nil && *input.Tier == "" {
+		input.Tier = nil
+	}
+
 	var m struct {
 		Payload struct {
 			Service Service
