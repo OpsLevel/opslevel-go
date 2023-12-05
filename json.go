@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"encoding/json"
+	"github.com/rs/zerolog/log"
 	"strconv"
 )
 
@@ -49,12 +50,43 @@ func NewJSONInput(data any) JSONString {
 	return JSONString(bytes)
 }
 
-func JsonStringAs[T any](data JSONString) T {
+func JsonStringAs[T any](data JSONString) (T, error) {
 	var result T
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		panic(err)
+		log.Warn().Err(err).Msgf("unable to marshal json as %T", result)
+		return result, err
 	}
-	return result
+	return result, nil
+}
+
+func (s JSONString) Bool() bool {
+	value, _ := JsonStringAs[bool](s)
+	return value
+}
+
+func (s JSONString) Int() int {
+	value, _ := JsonStringAs[int](s)
+	return value
+}
+
+func (s JSONString) Float64() float64 {
+	value, _ := JsonStringAs[float64](s)
+	return value
+}
+
+func (s JSONString) String() string {
+	value, _ := JsonStringAs[string](s)
+	return value
+}
+
+func (s JSONString) Array() []any {
+	value, _ := JsonStringAs[[]any](s)
+	return value
+}
+
+func (s JSONString) Map() map[string]any {
+	value, _ := JsonStringAs[map[string]any](s)
+	return value
 }
 
 //

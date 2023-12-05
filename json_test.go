@@ -148,13 +148,14 @@ func TestUnmarshalJSONString(t *testing.T) {
 	data4 := []any{"foo", "bar"}
 	data5 := map[string]any{"foo": "bar"}
 	// Act
-	result1 := ol.JsonStringAs[bool](ol.NewJSONInput(data1))
-	result1a := ol.JsonStringAs[bool](ol.NewJSONInput(data1a))
-	result2 := ol.JsonStringAs[float64](ol.NewJSONInput(data2))
-	result2a := ol.JsonStringAs[int](ol.NewJSONInput(data2a))
-	result3 := ol.JsonStringAs[string](ol.NewJSONInput(data3))
-	result4 := ol.JsonStringAs[[]any](ol.NewJSONInput(data4))
-	result5 := ol.JsonStringAs[map[string]any](ol.NewJSONInput(data5))
+	result1 := ol.NewJSONInput(data1).Bool()
+	result1a := ol.NewJSONInput(data1a).Bool()
+	result2 := ol.NewJSONInput(data2).Float64()
+	result2a := ol.NewJSONInput(data2a).Int()
+	result3 := ol.NewJSONInput(data3).String()
+	result4 := ol.NewJSONInput(data4).Array()
+	result5 := ol.NewJSONInput(data5).Map()
+	_, err := ol.JsonStringAs[float32](ol.NewJSONInput(data1))
 	// Assert
 	autopilot.Equals(t, data1, result1)
 	autopilot.Equals(t, data1a, result1a)
@@ -163,4 +164,5 @@ func TestUnmarshalJSONString(t *testing.T) {
 	autopilot.Equals(t, data3, result3)
 	autopilot.Equals(t, data4, result4)
 	autopilot.Equals(t, data5, result5)
+	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float32")
 }
