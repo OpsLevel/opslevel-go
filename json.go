@@ -2,7 +2,6 @@ package opslevel
 
 import (
 	"encoding/json"
-	"github.com/rs/zerolog/log"
 	"strconv"
 
 	"github.com/rs/zerolog/log"
