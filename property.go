@@ -78,9 +78,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (Prop
 func (client *Client) DeletePropertyDefinition(input string) error {
 	var m struct {
 		Payload struct {
-			DeletedAlias string           `graphql:"deletedAlias"`
-			DeletedID    ID               `graphql:"deletedId"`
-			Errors       []OpsLevelErrors `graphql:"errors"`
+			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"propertyDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{

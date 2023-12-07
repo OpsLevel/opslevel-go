@@ -36,9 +36,9 @@ func TestCreatePropertyDefinition(t *testing.T) {
 func TestDeletePropertyDefinition(t *testing.T) {
 	// Arrange
 	testRequest := NewTestRequest(
-		`"mutation PropertyDefinitionDelete($input:IdentifierInput!){propertyDefinitionDelete(resource: $input){deletedAlias,deletedId,errors{message,path}}}"`,
+		`"mutation PropertyDefinitionDelete($input:IdentifierInput!){propertyDefinitionDelete(resource: $input){errors{message,path}}}"`,
 		`{"input":{"alias":"my_prop"}}`,
-		`{"data":{"propertyDefinitionDelete":{"deletedAlias":"my_prop","deletedId":"XXX","errors":[]}}}`,
+		`{"data":{"propertyDefinitionDelete":{"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/definition_delete", testRequest)
 
