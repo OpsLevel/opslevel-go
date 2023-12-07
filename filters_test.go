@@ -10,13 +10,13 @@ import (
 
 func TestCreateFilter(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
 		`{"input": {"name": "Kubernetes", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1" } ], "connective": "and" }}`,
 		`{"data": {"filterCreate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "filter/create", testRequest)
+	client := AutopilotTestClient(t, "filter/create", testRequest)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
@@ -36,13 +36,13 @@ func TestCreateFilter(t *testing.T) {
 
 func TestCreateFilterNested(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
 		`{"input": { {{ template "create_filter_nested_input" }} }}`,
 		`{"data": {"filterCreate": {"filter": { {{ template "create_filter_nested_response" }} }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "filter/create_nested", testRequest)
+	client := AutopilotTestClient(t, "filter/create_nested", testRequest)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
@@ -74,13 +74,13 @@ func TestCreateFilterNested(t *testing.T) {
 
 func TestGetFilter(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": {"account": {"filter": { {{ template "filter_tier1service_response" }} }}}}`,
 	)
 
-	client := BestTestClient(t, "filter/get", testRequest)
+	client := AutopilotTestClient(t, "filter/get", testRequest)
 	// Act
 	result, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -91,13 +91,13 @@ func TestGetFilter(t *testing.T) {
 
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"}`,
 		`{"data": {"account": {"filter": null }}}`,
 	)
 
-	client := BestTestClient(t, "filter/get_missing", testRequest)
+	client := AutopilotTestClient(t, "filter/get_missing", testRequest)
 	// Act
 	_, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf")
 	// Assert
@@ -106,19 +106,19 @@ func TestGetMissingFilter(t *testing.T) {
 
 func TestListFilters(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "filter/list", requests...)
+	client := AutopilotTestClient(t, "filter/list", requests...)
 	// Act
 	response, err := client.ListFilters(nil)
 	result := response.Nodes
@@ -133,13 +133,13 @@ func TestListFilters(t *testing.T) {
 
 func TestUpdateFilter(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1" } ] }}`,
 		`{"data": {"filterUpdate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "filter/update", testRequest)
+	client := AutopilotTestClient(t, "filter/update", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -158,13 +158,13 @@ func TestUpdateFilter(t *testing.T) {
 
 func TestUpdateFilterNested(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
 		`{"input": { {{ template "update_filter_nested_input" }} }}`,
 		`{"data": {"filterUpdate": {"filter": { {{ template "update_filter_nested_response" }} }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "filter/update_nested", testRequest)
+	client := AutopilotTestClient(t, "filter/update_nested", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
@@ -197,8 +197,8 @@ func TestUpdateFilterNested(t *testing.T) {
 
 func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1", "caseSensitive": true } ] }}`,
 		`{"data": {
       "filterUpdate": {
@@ -221,7 +221,7 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
       }}}`,
 	)
 
-	client := BestTestClient(t, "filter/update_case_sensitive_true", testRequest)
+	client := AutopilotTestClient(t, "filter/update_case_sensitive_true", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -242,8 +242,8 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 
 func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1", "caseSensitive": false } ] }}`,
 		`{"data": {
       "filterUpdate": {
@@ -266,7 +266,7 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
       }}}`,
 	)
 
-	client := BestTestClient(t, "filter/update_case_sensitive_false", testRequest)
+	client := AutopilotTestClient(t, "filter/update_case_sensitive_false", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -287,13 +287,13 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 
 func TestDeleteFilter(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation FilterDelete($input:DeleteInput!){filterDelete(input: $input){deletedId,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation FilterDelete($input:DeleteInput!){filterDelete(input: $input){deletedId,errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
 		`{"data": {"filterDelete": {"deletedId": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyNQ", "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "filter/delete", testRequest)
+	client := AutopilotTestClient(t, "filter/delete", testRequest)
 	// Act
 	err := client.DeleteFilter("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert

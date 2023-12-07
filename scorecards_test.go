@@ -16,7 +16,7 @@ var (
 )
 
 func TestCreateScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_create_request" }}`,
 		`{{ template "scorecard_create_request_vars" }}`,
 		`{{ template "scorecard_create_response" }}`,
@@ -24,7 +24,7 @@ func TestCreateScorecard(t *testing.T) {
 	name := "new scorecard"
 	description := "a new scorecard with an attached filter id"
 
-	client := BestTestClient(t, "scorecards/create_scorecard", testRequest)
+	client := AutopilotTestClient(t, "scorecards/create_scorecard", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
 		Description:                 &description,
@@ -42,7 +42,7 @@ func TestCreateScorecard(t *testing.T) {
 }
 
 func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_create_request" }}`,
 		`{{ template "scorecard_create_request_vars_affects_service_levels_false" }}`,
 		`{{ template "scorecard_create_response_affects_service_levels_false" }}`,
@@ -50,7 +50,7 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 	name := "new scorecard"
 	description := "a new scorecard with an attached filter id"
 
-	client := BestTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
+	client := AutopilotTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
 		Description:                 &description,
@@ -68,7 +68,7 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 }
 
 func TestUpdateScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_update_request" }}`,
 		`{{ template "scorecard_update_request_vars" }}`,
 		`{{ template "scorecard_update_response" }}`,
@@ -77,7 +77,7 @@ func TestUpdateScorecard(t *testing.T) {
 	name := "updated scorecard"
 	description := "this scorecard was updated"
 
-	client := BestTestClient(t, "scorecards/update_scorecard", testRequest)
+	client := AutopilotTestClient(t, "scorecards/update_scorecard", testRequest)
 	sc, err := client.UpdateScorecard(scorecardId, ol.ScorecardInput{
 		Description: &description,
 		Name:        name,
@@ -95,12 +95,12 @@ func TestUpdateScorecard(t *testing.T) {
 }
 
 func TestDeleteScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_delete_request" }}`,
 		`{{ template "scorecard_delete_request_vars" }}`,
 		`{{ template "scorecard_delete_response" }}`,
 	)
-	client := BestTestClient(t, "scorecards/delete_scorecard", testRequest)
+	client := AutopilotTestClient(t, "scorecards/delete_scorecard", testRequest)
 	deletedScorecardId, err := client.DeleteScorecard(scorecardId)
 
 	autopilot.Ok(t, err)
@@ -108,7 +108,7 @@ func TestDeleteScorecard(t *testing.T) {
 }
 
 func TestGetScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_get_request" }}`,
 		`{{ template "scorecard_get_request_vars" }}`,
 		`{{ template "scorecard_get_response" }}`,
@@ -116,7 +116,7 @@ func TestGetScorecard(t *testing.T) {
 	name := "fetched scorecard"
 	description := "hello there!"
 
-	client := BestTestClient(t, "scorecards/get_scorecard", testRequest)
+	client := AutopilotTestClient(t, "scorecards/get_scorecard", testRequest)
 	sc, err := client.GetScorecard(scorecardId)
 
 	autopilot.Ok(t, err)
@@ -132,19 +132,19 @@ func TestGetScorecard(t *testing.T) {
 
 func TestListScorecards(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"{{ template "scorecard_list_query" }}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`{{ template "scorecard_list_query" }}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_1_response" }} }, { {{ template "scorecard_2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"{{ template "scorecard_list_query" }}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`{{ template "scorecard_list_query" }}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "scorecards/list_scorecards", requests...)
+	client := AutopilotTestClient(t, "scorecards/list_scorecards", requests...)
 	// Act
 	response, err := client.ListScorecards(nil)
 	result := response.Nodes

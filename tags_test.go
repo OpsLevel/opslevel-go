@@ -10,13 +10,13 @@ import (
 
 func TestAssignTagForAlias(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}`,
 		`{"input": { "alias": "{{ template "alias1" }}", "tags": [ { "key": "hello", "value": "world" } ] } }`,
 		`{"data": {"tagAssign": { "tags": [ { {{ template "id1" }}, "key": "hello", "value": "world" } ], "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "tagAssignWithAlias", testRequest)
+	client := AutopilotTestClient(t, "tagAssignWithAlias", testRequest)
 	// Act
 	result, err := client.AssignTags("example", map[string]string{"hello": "world"})
 	// Assert
@@ -28,13 +28,13 @@ func TestAssignTagForAlias(t *testing.T) {
 
 func TestAssignTagForId(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "tags": [ { "key": "hello", "value": "world" } ] }}`,
 		`{"data": { "tagAssign": { "tags": [ { {{ template "id1" }}, "key": "hello", "value": "world" } ], "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "tagAssignWithId", testRequest)
+	client := AutopilotTestClient(t, "tagAssignWithId", testRequest)
 	// Act
 	result, err := client.AssignTags(string(id1), map[string]string{"hello": "world"})
 	// Assert
@@ -46,13 +46,13 @@ func TestAssignTagForId(t *testing.T) {
 
 func TestCreateTag(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation TagCreate($input:TagCreateInput!){tagCreate(input: $input){tag{id,key,value},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation TagCreate($input:TagCreateInput!){tagCreate(input: $input){tag{id,key,value},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "key": "hello", "value": "world" }}`,
 		`{"data": { "tagCreate": { "tag": { {{ template "id1" }}, "key": "hello", "value": "world" }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "tagCreate", testRequest)
+	client := AutopilotTestClient(t, "tagCreate", testRequest)
 	// Act
 	result, err := client.CreateTags(string(id1), map[string]string{"hello": "world"})
 	// Assert
@@ -64,13 +64,13 @@ func TestCreateTag(t *testing.T) {
 
 func TestUpdateTag(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation TagUpdate($input:TagUpdateInput!){tagUpdate(input: $input){tag{id,key,value},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation TagUpdate($input:TagUpdateInput!){tagUpdate(input: $input){tag{id,key,value},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "key": "hello", "value": "world!" }}`,
 		`{"data": { "tagUpdate": { "tag": { {{ template "id1" }}, "key": "hello", "value": "world!" }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "tagUpdate", testRequest)
+	client := AutopilotTestClient(t, "tagUpdate", testRequest)
 	// Act
 	result, err := client.UpdateTag(ol.TagUpdateInput{
 		Id:    id1,
@@ -85,13 +85,13 @@ func TestUpdateTag(t *testing.T) {
 
 func TestDeleteTag(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation TagDelete($input:TagDeleteInput!){tagDelete(input: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation TagDelete($input:TagDeleteInput!){tagDelete(input: $input){errors{message,path}}}`,
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "tagDelete": { "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "tagDelete", testRequest)
+	client := AutopilotTestClient(t, "tagDelete", testRequest)
 	// Act
 	err := client.DeleteTag(id1)
 	// Assert

@@ -8,8 +8,8 @@ import (
 
 func TestGetServiceMaturityWithAlias(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query ($service:String!){account{service(alias:$service){name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query ($service:String!){account{service(alias:$service){name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}}}}`,
 		`{"service": "cert-manager"}`,
 		`{
   "data": {
@@ -121,7 +121,7 @@ func TestGetServiceMaturityWithAlias(t *testing.T) {
   }
 }`,
 	)
-	client := BestTestClient(t, "maturity/get_service_maturity_with_alias", testRequest)
+	client := AutopilotTestClient(t, "maturity/get_service_maturity_with_alias", testRequest)
 	// Act
 	result, err := client.GetServiceMaturityWithAlias("cert-manager")
 	// Assert
@@ -132,8 +132,8 @@ func TestGetServiceMaturityWithAlias(t *testing.T) {
 
 func TestListServicesMaturity(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query ($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},{{ template "pagination_request" }}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query ($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},{{ template "pagination_request" }}}}}`,
 		`{"after":"", "first":100}`,
 		`{
   "data": {
@@ -227,7 +227,7 @@ func TestListServicesMaturity(t *testing.T) {
   }
 }`,
 	)
-	client := BestTestClient(t, "maturity/services", testRequest)
+	client := AutopilotTestClient(t, "maturity/services", testRequest)
 	// Act
 	result, err := client.ListServicesMaturity()
 	// Assert

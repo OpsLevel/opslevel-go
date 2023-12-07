@@ -9,13 +9,13 @@ import (
 
 func TestRunnerRegister(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation RunnerRegister{runnerRegister{runner{id,status},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerRegister{runnerRegister{runner{id,status},errors{message,path}}}`,
 		`{}`,
 		`{"data": {"runnerRegister": { "runner": { "id": "1234", "status": "registered" }, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "job/register", testRequest)
+	client := AutopilotTestClient(t, "job/register", testRequest)
 	// Act
 	result, err := client.RunnerRegister()
 	// Assert
@@ -25,13 +25,13 @@ func TestRunnerRegister(t *testing.T) {
 
 func TestRunnerGetScale(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query RunnerScale($currentReplicaCount:Int!$jobConcurrency:Int!$runnerId:ID!){account{runnerScale(runnerId: $runnerId, currentReplicaCount: $currentReplicaCount, jobConcurrency: $jobConcurrency){recommendedReplicaCount}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query RunnerScale($currentReplicaCount:Int!$jobConcurrency:Int!$runnerId:ID!){account{runnerScale(runnerId: $runnerId, currentReplicaCount: $currentReplicaCount, jobConcurrency: $jobConcurrency){recommendedReplicaCount}}}`,
 		`{"currentReplicaCount":2, "jobConcurrency":3, "runnerId":"1234567890" }`,
 		`{"data": { "account": { "runnerScale": { "recommendedReplicaCount": 6 }}}}`,
 	)
 
-	client := BestTestClient(t, "job/scale", testRequest)
+	client := AutopilotTestClient(t, "job/scale", testRequest)
 	// Act
 	result, err := client.RunnerScale("1234567890", 2, 3)
 	// Assert
@@ -41,8 +41,8 @@ func TestRunnerGetScale(t *testing.T) {
 
 func TestRunnerGetPendingJobs(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,status,variables{key,sensitive,value},files{name,contents}},lastUpdateToken,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,status,variables{key,sensitive,value},files{name,contents}},lastUpdateToken,errors{message,path}}}`,
 		`{"id":"1234567890", "token":  "1234"}`,
 		`{"data": {
       "runnerGetPendingJob": {
@@ -68,7 +68,7 @@ func TestRunnerGetPendingJobs(t *testing.T) {
       }}}`,
 	)
 
-	client := BestTestClient(t, "job/get_pending", testRequest)
+	client := AutopilotTestClient(t, "job/get_pending", testRequest)
 	// Act
 	result, token, err := client.RunnerGetPendingJob("1234567890", "1234")
 	// Assert
@@ -80,13 +80,13 @@ func TestRunnerGetPendingJobs(t *testing.T) {
 
 func TestRunnerAppendJobLog(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation RunnerAppendJobLog($input:RunnerAppendJobLogInput!){runnerAppendJobLog(input: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerAppendJobLog($input:RunnerAppendJobLogInput!){runnerAppendJobLog(input: $input){errors{message,path}}}`,
 		`{"input":{ "logChunk":["Log1", "Log2"], "runnerId":"1234", "runnerJobId":"5678", "sentAt":"2022-07-01T01:00:00Z" }}`,
 		`{"data": { "runnerAppendJobLog": { "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "job/append_log", testRequest)
+	client := AutopilotTestClient(t, "job/append_log", testRequest)
 	// Act
 	err := client.RunnerAppendJobLog(ol.RunnerAppendJobLogInput{
 		RunnerId:    "1234",
@@ -100,13 +100,13 @@ func TestRunnerAppendJobLog(t *testing.T) {
 
 func TestRunnerReportJobOutcome(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation RunnerReportJobOutcome($input:RunnerReportJobOutcomeInput!){runnerReportJobOutcome(input: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerReportJobOutcome($input:RunnerReportJobOutcomeInput!){runnerReportJobOutcome(input: $input){errors{message,path}}}`,
 		`{"input": { "runnerId":"1234567890", "runnerJobId": "{{ template "id1_string" }}", "outcome":"execution_timeout" }}`,
 		`{"data": { "runnerReportJobOutcome": { "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "job/report_outcome", testRequest)
+	client := AutopilotTestClient(t, "job/report_outcome", testRequest)
 	// Act
 	err := client.RunnerReportJobOutcome(ol.RunnerReportJobOutcomeInput{
 		RunnerId:    "1234567890",
@@ -119,13 +119,13 @@ func TestRunnerReportJobOutcome(t *testing.T) {
 
 func TestRunnerUnregister(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation RunnerUnregister($runnerId:ID!){runnerUnregister(runnerId: $runnerId){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerUnregister($runnerId:ID!){runnerUnregister(runnerId: $runnerId){errors{message,path}}}`,
 		`{"runnerId": "1234" }`,
 		`{"data": { "runnerUnregister": { "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "job/unregister", testRequest)
+	client := AutopilotTestClient(t, "job/unregister", testRequest)
 	// Act
 	err := client.RunnerUnregister("1234")
 	// Assert
