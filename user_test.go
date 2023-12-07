@@ -9,13 +9,13 @@ import (
 
 func TestInviteUser(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation UserInvite($email:String!$input:UserInput!){userInvite(email: $email input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}`,
 		`{"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "skipWelcomeEmail": false }}`,
 		`{"data": { "userInvite": { "user": {{ template "user_1" }}, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "user/invite", testRequest)
+	client := AutopilotTestClient(t, "user/invite", testRequest)
 	// Act
 	result, err := client.InviteUser("kyle@opslevel.com", ol.UserInput{
 		Name: "Kyle Rockman",
@@ -29,13 +29,13 @@ func TestInviteUser(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,htmlUrl,name,role}}}`,
 		`{"input": { "email": "kyle@opslevel.com" }}`,
 		`{"data": {"account": {"user": {{ template "user_1" }} }}}`,
 	)
 
-	client := BestTestClient(t, "user/get", testRequest)
+	client := AutopilotTestClient(t, "user/get", testRequest)
 	// Act
 	result, err := client.GetUser("kyle@opslevel.com")
 	// Assert
@@ -47,19 +47,19 @@ func TestGetUser(t *testing.T) {
 
 func TestGetUserTeams(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "user": { "teams": { "nodes": [ { {{ template "teamId_1" }} }, { {{ template "teamId_2" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "user": { "teams": { "nodes": [ { {{ template "teamId_3"}} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "user/teams", requests...)
+	client := AutopilotTestClient(t, "user/teams", requests...)
 	// Act
 	user := ol.User{
 		UserId: ol.UserId{
@@ -77,19 +77,19 @@ func TestGetUserTeams(t *testing.T) {
 
 func TestListUser(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "user/list", requests...)
+	client := AutopilotTestClient(t, "user/list", requests...)
 	// Act
 	response, err := client.ListUsers(nil)
 	result := response.Nodes
@@ -104,13 +104,13 @@ func TestListUser(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,htmlUrl,name,role},errors{message,path}}}`,
 		`{"input": {"role": "admin", "skipWelcomeEmail": false }, "user": {"email": "kyle@opslevel.com" }}`,
 		`{"data": {"userUpdate": {"user": {{ template "user_1_update" }}, "errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "user/update", testRequest)
+	client := AutopilotTestClient(t, "user/update", testRequest)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
 		Role: ol.UserRoleAdmin,
@@ -124,13 +124,13 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}`,
 		`{"user": {"email": "kyle@opslevel.com" }}`,
 		`{"data": {"userDelete": {"errors": [] }}}`,
 	)
 
-	client := BestTestClient(t, "user/delete", testRequest)
+	client := AutopilotTestClient(t, "user/delete", testRequest)
 	// Act
 	err := client.DeleteUser("kyle@opslevel.com")
 	// Assert
@@ -139,13 +139,13 @@ func TestDeleteUser(t *testing.T) {
 
 func TestDeleteUserDoesNotExist(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation UserDelete($user:UserIdentifierInput!){userDelete(user: $user){errors{message,path}}}`,
 		`{"user": {"email": "not-found@opslevel.com" }}`,
 		`{"data": {"userDelete": {"errors": [{"message": "User with email 'not-found@opslevel.com' does not exist on this account", "path": ["user"] }] }}}`,
 	)
 
-	client := BestTestClient(t, "user/delete_not_found", testRequest)
+	client := AutopilotTestClient(t, "user/delete_not_found", testRequest)
 	// Act
 	err := client.DeleteUser("not-found@opslevel.com")
 	// Assert
@@ -156,8 +156,8 @@ func TestDeleteUserDoesNotExist(t *testing.T) {
 
 func TestGetUserTags(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{
         "data": {
@@ -189,8 +189,8 @@ func TestGetUserTags(t *testing.T) {
         }
       }`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string"}}" }`,
 		`{
         "data": {
@@ -210,9 +210,9 @@ func TestGetUserTags(t *testing.T) {
           }
           }}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "user/tags", requests...)
+	client := AutopilotTestClient(t, "user/tags", requests...)
 	// Act
 	user := ol.User{
 		UserId: ol.UserId{

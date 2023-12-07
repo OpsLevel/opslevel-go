@@ -75,24 +75,6 @@ func ABetterTestClient(t *testing.T, endpoint string, request string, response s
 		GraphQLQueryTemplatedValidation(t, request))))
 }
 
-func NewTestRequest(request string, variables string, response string) TestRequest {
-	testRequest := TestRequest{
-		Request:   Templated(request),
-		Variables: Templated(variables),
-		Response:  Templated(response),
-	}
-	if !strings.HasPrefix(testRequest.Request, "\"") || !strings.HasSuffix(testRequest.Request, "\"") {
-		panic(fmt.Errorf("testRequest Request should be wrapped in quotes: '%s'", testRequest.Request))
-	}
-	if !IsValidJson(testRequest.Variables) {
-		panic(fmt.Errorf("testRequest Variables is not valid json: '%s'", testRequest.Variables))
-	}
-	if !IsValidJson(testRequest.Response) {
-		panic(fmt.Errorf("testRequest Response is not json: '%s'", testRequest.Response))
-	}
-	return testRequest
-}
-
 func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
 	var templateFiles []string
 	for _, dir := range []string{"./testdata/templates"} {
@@ -144,38 +126,14 @@ func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
 	return strings.TrimSpace(data.String())
 }
 
-type TestRequest struct {
-	Request   string
-	Variables string
-	Response  string
-}
-
-func (t *TestRequest) RequestWithVariables() string {
-	jsonRequestWithVariables := fmt.Sprintf(`{"query": %s, "variables": %s}`, t.Request, t.Variables)
-	if !IsValidJson(jsonRequestWithVariables) {
-		panic(fmt.Errorf("test request with variables could not be JSON formatted: %s", jsonRequestWithVariables))
-	}
-	return jsonRequestWithVariables
-}
-
 func IsValidJson(data string) bool {
 	return json.Valid([]byte(data))
 }
 
-func RegisterPaginatedEndpoint(t *testing.T, endpoint string, requests ...TestRequest) string {
-	url := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
-	requestCount := 0
-	autopilot.Mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
-		GraphQLQueryTemplatedValidation(t, requests[requestCount].RequestWithVariables())(r)
-		TemplatedResponse(requests[requestCount].Response)(w)
-		requestCount += 1
-	})
-	return autopilot.Server.URL + url
-}
-
-func BestTestClient(t *testing.T, endpoint string, requests ...TestRequest) *ol.Client {
-	url := RegisterPaginatedEndpoint(t, endpoint, requests...)
-	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(url))
+func AutopilotTestClient(t *testing.T, endpoint string, requests ...autopilot.TestRequest) *ol.Client {
+	urlToRegister := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
+	registeredUrl := autopilot.RegisterPaginatedEndpoint(t, urlToRegister, requests...)
+	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(registeredUrl))
 }
 
 func TestClientQuery(t *testing.T) {

@@ -9,12 +9,12 @@ import (
 
 func TestCreateServiceDependency(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation ServiceDependencyCreate($input:ServiceDependencyCreateInput!){serviceDependencyCreate(inputV2: $input){serviceDependency{id,sourceService{id,aliases},destinationService{id,aliases},notes},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation ServiceDependencyCreate($input:ServiceDependencyCreateInput!){serviceDependencyCreate(inputV2: $input){serviceDependency{id,sourceService{id,aliases},destinationService{id,aliases},notes},errors{message,path}}}`,
 		`{ "input": { "dependencyKey": { "destinationIdentifier": {"alias": "example_3"}, "sourceIdentifier": {"alias": "example_2"} }, "notes": "An example description" }}`,
 		`{"data": { "serviceDependencyCreate": { "serviceDependency": {{ template "serviceDependency" }}, "errors": [] } }}`,
 	)
-	client := BestTestClient(t, "serviceDependencyCreate", testRequest)
+	client := AutopilotTestClient(t, "serviceDependencyCreate", testRequest)
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
 		Key: ol.ServiceDependencyKey{
@@ -33,19 +33,19 @@ func TestCreateServiceDependency(t *testing.T) {
 
 func TestGetServiceDependencies(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ServiceDependenciesList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependencies(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependencies": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "service/get_dependencies", requests...)
+	client := AutopilotTestClient(t, "service/get_dependencies", requests...)
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -62,19 +62,19 @@ func TestGetServiceDependencies(t *testing.T) {
 
 func TestGetServiceDependents(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_1" }}, {{ template "serviceDependencyEdge_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ServiceDependentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){dependents(after: $after, first: $first){edges{id,locked,node{id,aliases},notes},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": { "service": { "dependents": { "edges": [ {{ template "serviceDependencyEdge_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "service/get_dependents", requests...)
+	client := AutopilotTestClient(t, "service/get_dependents", requests...)
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -91,12 +91,12 @@ func TestGetServiceDependents(t *testing.T) {
 
 func TestDeleteServiceDependency(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation ServiceDependencyDelete($input:DeleteInput!){serviceDependencyDelete(input: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation ServiceDependencyDelete($input:DeleteInput!){serviceDependencyDelete(input: $input){errors{message,path}}}`,
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "serviceDependencyDelete": { "errors": [] }}}`,
 	)
-	client := BestTestClient(t, "serviceDependencyDelete", testRequest)
+	client := AutopilotTestClient(t, "serviceDependencyDelete", testRequest)
 	// Act
 	err := client.DeleteServiceDependency(id1)
 	// Assert

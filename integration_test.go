@@ -10,8 +10,8 @@ import (
 
 func TestCreateAWSIntegration(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
 		`{"input": { "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role", "externalId": "123456789", "ownershipTagKeys": ["owner"] }}`,
 		`{"data": {
       "awsIntegrationCreate": {
@@ -31,7 +31,7 @@ func TestCreateAWSIntegration(t *testing.T) {
         "errors": []
       }}}`,
 	)
-	client := BestTestClient(t, "integration/create_aws", testRequest)
+	client := AutopilotTestClient(t, "integration/create_aws", testRequest)
 	// Act
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
 		IAMRole:    opslevel.NewString("arn:aws:iam::XXXX:role/aws-integration-role"),
@@ -45,8 +45,8 @@ func TestCreateAWSIntegration(t *testing.T) {
 
 func TestCreateNewRelicIntegration(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
 		`{ "input": { "apiKey": "123456789", "baseUrl": "https://api.newrelic.com/graphql", "accountKey": "XXXX" }}`,
 		`{"data": {
       "newRelicIntegrationCreate": {
@@ -62,7 +62,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
         "errors": []
       }}}`,
 	)
-	client := BestTestClient(t, "integration/create_new_relic", testRequest)
+	client := AutopilotTestClient(t, "integration/create_new_relic", testRequest)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
 		ApiKey:     opslevel.NewString("123456789"),
@@ -77,8 +77,8 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 
 func TestGetIntegration(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"data": {
       "account": {
@@ -89,7 +89,7 @@ func TestGetIntegration(t *testing.T) {
         }
       }}}`,
 	)
-	client := BestTestClient(t, "integration/get", testRequest)
+	client := AutopilotTestClient(t, "integration/get", testRequest)
 	// Act
 	result, err := client.GetIntegration(id1)
 	// Assert
@@ -100,12 +100,12 @@ func TestGetIntegration(t *testing.T) {
 
 func TestGetMissingIntegraion(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "integration": null }}}`,
 	)
-	client := BestTestClient(t, "integration/get_missing", testRequest)
+	client := AutopilotTestClient(t, "integration/get_missing", testRequest)
 	// Act
 	_, err := client.GetIntegration(id2)
 	// Assert
@@ -114,19 +114,19 @@ func TestGetMissingIntegraion(t *testing.T) {
 
 func TestListIntegrations(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "deploy_integration_response" }} }, { {{ template "payload_integration_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "kubernetes_integration_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := BestTestClient(t, "integration/list", requests...)
+	client := AutopilotTestClient(t, "integration/list", requests...)
 	// Act
 	response, err := client.ListIntegrations(nil)
 	result := response.Nodes
@@ -139,8 +139,8 @@ func TestListIntegrations(t *testing.T) {
 
 func TestUpdateAWSIntegration(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
 		`{"integration": { {{ template "id1" }} }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
 		`{"data": {
       "awsIntegrationUpdate": {
@@ -160,7 +160,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
       "errors": []
     }}}`,
 	)
-	client := BestTestClient(t, "integration/update_aws", testRequest)
+	client := AutopilotTestClient(t, "integration/update_aws", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationAWS(string(id1), opslevel.AWSIntegrationInput{
 		Name:       opslevel.NewString("Dev2"),
@@ -174,8 +174,8 @@ func TestUpdateAWSIntegration(t *testing.T) {
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
 		`{"resource": { {{ template "id1" }} }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
 		`{"data": {
       "newRelicIntegrationUpdate": {
@@ -192,7 +192,7 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
     }}}`,
 	)
 
-	client := BestTestClient(t, "integration/update_new_relic", testRequest)
+	client := AutopilotTestClient(t, "integration/update_new_relic", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(
 		string(id1),
@@ -208,12 +208,12 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 
 func TestDeleteIntegration(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation IntegrationDelete($input:IdentifierInput!){integrationDelete(resource: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation IntegrationDelete($input:IdentifierInput!){integrationDelete(resource: $input){errors{message,path}}}`,
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "integrationDelete": { "errors": [] }}}`,
 	)
-	client := BestTestClient(t, "integration/delete", testRequest)
+	client := AutopilotTestClient(t, "integration/delete", testRequest)
 	// Act
 	err := client.DeleteIntegration(string(id1))
 	// Assert

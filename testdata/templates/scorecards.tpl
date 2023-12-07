@@ -1,5 +1,5 @@
 {{- define "scorecard_create_request" }}
-"mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
+mutation ScorecardCreate($input:ScorecardInput!){scorecardCreate(input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}
 {{ end }}
 
 {{- define "scorecard_create_request_vars" }}
@@ -19,7 +19,7 @@
 }{{ end }}
 
 {{- define "scorecard_update_request" }}
-"mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}"
+mutation ScorecardUpdate($input:ScorecardInput!$scorecard:IdentifierInput!){scorecardUpdate(scorecard: $scorecard, input: $input){scorecard{aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks},errors{message,path}}}
 {{ end }}
 
 {{- define "scorecard_update_request_vars" }}
@@ -31,7 +31,7 @@
 }{{ end }}
 
 {{- define "scorecard_delete_request" }}
-"mutation ScorecardDelete($input:IdentifierInput!){scorecardDelete(input: $input){deletedScorecardId,errors{message,path}}}"
+mutation ScorecardDelete($input:IdentifierInput!){scorecardDelete(input: $input){deletedScorecardId,errors{message,path}}}
 {{ end }}
 
 {{- define "scorecard_delete_request_vars" }}
@@ -43,7 +43,7 @@
 }{{ end }}
 
 {{- define "scorecard_get_request" }}
-"query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}"
+query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){aliases,id,affectsOverallServiceLevels,description,filter{connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}},name,owner{... on Team{teamAlias:alias,id}},passingChecks,serviceCount,totalChecks}}}
 {{ end }}
 
 {{- define "scorecard_get_request_vars" }}
