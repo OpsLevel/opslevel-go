@@ -12,15 +12,14 @@ const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
 	propertyDefinition := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   "my-prop",
-		Schema: schema,
+		Schema: ol.NewJSONInput(schemaString),
 	})
 	testRequest := NewTestRequest(
 		`"mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}"`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s},"errors":[]}}}`, propertyDefinition.Schema.ToJSON()),
+		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": {{ template "property_definition_input" }}},"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
@@ -31,7 +30,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "XXX", string(property.Id))
 	autopilot.Equals(t, propertyDefinition.Name, property.Name)
-	autopilot.Equals(t, propertyDefinition.Schema, property.Schema)
+	autopilot.Equals(t, string(propertyDefinition.Schema), property.Schema["schema"])
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {

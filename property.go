@@ -3,8 +3,8 @@ package opslevel
 import "fmt"
 
 type PropertyDefinitionInput struct {
-	Name   string `json:"name"`
-	Schema JSON   `json:"schema"`
+	Name   string     `json:"name"`
+	Schema JSONString `json:"schema"`
 }
 
 type PropertyDefinition struct {
