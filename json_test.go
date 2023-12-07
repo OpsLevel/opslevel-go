@@ -23,12 +23,31 @@ func TestNewJSON(t *testing.T) {
 	// Act
 	result1, err1 := json.Marshal(data1)
 	result2, err2 := json.Marshal(data2)
+	result3 := ol.NewJSONInput(`{"foo":"bar"}`)
+
+	result4 := ol.NewJSONInput(true)
+	result4a := ol.NewJSONInput(false)
+	result5 := ol.NewJSONInput(1.32)
+	result5a := ol.NewJSONInput(0)
+	result6 := ol.NewJSONInput("hello world")
+	result7 := ol.NewJSONInput([]any{"foo", "bar"})
+	result8 := ol.NewJSONInput(map[string]any{"foo": "bar"})
 	// Assert
 	autopilot.Ok(t, err1)
 	autopilot.Ok(t, err2)
 	autopilot.Equals(t, data1, data2)
 	autopilot.Assert(t, &data1 != &data2, "The JSON objects have the same memory address")
 	autopilot.Equals(t, result1, result2)
+	autopilot.Equals(t, string(result1), string(result3))
+	autopilot.Equals(t, string(result2), string(result3))
+
+	autopilot.Equals(t, `true`, string(result4))
+	autopilot.Equals(t, `false`, string(result4a))
+	autopilot.Equals(t, `1.32`, string(result5))
+	autopilot.Equals(t, `0`, string(result5a))
+	autopilot.Equals(t, `"hello world"`, string(result6))
+	autopilot.Equals(t, `["foo","bar"]`, string(result7))
+	autopilot.Equals(t, `{"foo":"bar"}`, string(result8))
 }
 
 func TestMarshalJSON(t *testing.T) {
@@ -76,18 +95,21 @@ func TestConstructQueryJSON(t *testing.T) {
 		Account struct {
 			Output struct {
 				Data ol.JSON `json:"data" scalar:"true"`
-			} `graphql:"myQuery(id1: $id1 id2: $id2)"`
+			} `graphql:"myQuery(id1: $id1 id2: $id2 id3: $id3)"`
 		}
 	}
 	v := ol.PayloadVariables{
 		"id1": data,
 		"id2": &data,
+		"id3": ol.NewJSONInput(map[string]any{
+			"foo": "bar",
+		}),
 	}
 	// Act
 	query, err := graphql.ConstructQuery(q, v, ol.WithName("MyQuery"))
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, `query MyQuery($id1:JSON!$id2:JSON){account{myQuery(id1: $id1 id2: $id2){data}}}`, query)
+	autopilot.Equals(t, `query MyQuery($id1:JSON!$id2:JSON$id3:JsonString!){account{myQuery(id1: $id1 id2: $id2 id3: $id3){data}}}`, query)
 }
 
 func TestConstructMutationJSON(t *testing.T) {
@@ -99,16 +121,48 @@ func TestConstructMutationJSON(t *testing.T) {
 		Account struct {
 			Output struct {
 				Data ol.JSON `json:"data" scalar:"true"`
-			} `graphql:"myMutation(id1: $id1 id2: $id2)"`
+			} `graphql:"myMutation(id1: $id1 id2: $id2 id3: $id3)"`
 		}
 	}
 	v := ol.PayloadVariables{
 		"id1": data,
 		"id2": &data,
+		"id3": ol.NewJSONInput(map[string]any{
+			"foo": "bar",
+		}),
 	}
 	// Act
 	query, err := graphql.ConstructMutation(q, v, ol.WithName("MyMutation"))
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, `mutation MyMutation($id1:JSON!$id2:JSON){account{myMutation(id1: $id1 id2: $id2){data}}}`, query)
+	autopilot.Equals(t, `mutation MyMutation($id1:JSON!$id2:JSON$id3:JsonString!){account{myMutation(id1: $id1 id2: $id2 id3: $id3){data}}}`, query)
+}
+
+func TestUnmarshalJSONString(t *testing.T) {
+	// Arrange
+	data1 := true
+	data1a := false
+	data2 := 1.32
+	data2a := 0
+	data3 := "hello world"
+	data4 := []any{"foo", "bar"}
+	data5 := map[string]any{"foo": "bar"}
+	// Act
+	result1 := ol.NewJSONInput(data1).Bool()
+	result1a := ol.NewJSONInput(data1a).Bool()
+	result2 := ol.NewJSONInput(data2).Float64()
+	result2a := ol.NewJSONInput(data2a).Int()
+	result3 := ol.NewJSONInput(data3).String()
+	result4 := ol.NewJSONInput(data4).Array()
+	result5 := ol.NewJSONInput(data5).Map()
+	_, err := ol.JsonStringAs[float32](ol.NewJSONInput(data1))
+	// Assert
+	autopilot.Equals(t, data1, result1)
+	autopilot.Equals(t, data1a, result1a)
+	autopilot.Equals(t, data2, result2)
+	autopilot.Equals(t, data2a, result2a)
+	autopilot.Equals(t, data3, result3)
+	autopilot.Equals(t, data4, result4)
+	autopilot.Equals(t, data5, result5)
+	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float32")
 }

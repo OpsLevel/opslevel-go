@@ -3,6 +3,8 @@ package opslevel
 import (
 	"encoding/json"
 	"strconv"
+
+	"github.com/rs/zerolog/log"
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
@@ -34,6 +36,58 @@ func (s JSON) MarshalJSON() ([]byte, error) {
 	}
 	b, err := json.Marshal(dto)
 	return []byte(strconv.Quote(string(b))), err
+}
+
+// JSONString is a specialized input type to support serialization to JSON for input to graphql
+type JSONString string
+
+func (s JSONString) GetGraphQLType() string { return "JsonString" }
+
+func NewJSONInput(data any) JSONString {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	return JSONString(bytes)
+}
+
+func JsonStringAs[T any](data JSONString) (T, error) {
+	var result T
+	if err := json.Unmarshal([]byte(data), &result); err != nil {
+		log.Warn().Err(err).Msgf("unable to marshal json as %T", result)
+		return result, err
+	}
+	return result, nil
+}
+
+func (s JSONString) Bool() bool {
+	value, _ := JsonStringAs[bool](s)
+	return value
+}
+
+func (s JSONString) Int() int {
+	value, _ := JsonStringAs[int](s)
+	return value
+}
+
+func (s JSONString) Float64() float64 {
+	value, _ := JsonStringAs[float64](s)
+	return value
+}
+
+func (s JSONString) String() string {
+	value, _ := JsonStringAs[string](s)
+	return value
+}
+
+func (s JSONString) Array() []any {
+	value, _ := JsonStringAs[[]any](s)
+	return value
+}
+
+func (s JSONString) Map() map[string]any {
+	value, _ := JsonStringAs[map[string]any](s)
+	return value
 }
 
 //
