@@ -8,10 +8,10 @@ type PropertyDefinitionInput struct {
 }
 
 type PropertyDefinition struct {
-	Aliases []string `graphql:"aliases"`
-	Id      ID       `graphql:"id"`
-	Name    string   `graphql:"name"`
-	Schema  JSON     `graphql:"schema" scalar:"true"`
+	Aliases []string `graphql:"aliases" json:"aliases"`
+	Id      ID       `graphql:"id" json:"id"`
+	Name    string   `graphql:"name" json:"name"`
+	Schema  JSON     `json:"schema" scalar:"true"` // Do not add graphql struct tag here
 }
 
 type PropertyDefinitionConnection struct {
