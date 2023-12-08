@@ -14,7 +14,7 @@ func TestSystemCreate(t *testing.T) {
 		`{"input": { "name": "PlatformSystem3", "description": "creating this for testing purposes", "ownerId": "{{ template "id4_string" }}", "note": "hello world" } }`,
 		`{"data": { "systemCreate": { "system": {{ template "system1_response" }}, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "system/create", testRequest)
+	client := BestTestClient(t, "system/create", testRequest)
 	input := ol.SystemInput{
 		Name:        ol.NewString("PlatformSystem3"),
 		Description: ol.NewString("creating this for testing purposes"),
@@ -44,7 +44,7 @@ func TestSystemGetServices(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "system/child_services", requests...)
+	client := BestTestClient(t, "system/child_services", requests...)
 	system := ol.SystemId{
 		Id: id3,
 	}
@@ -73,7 +73,7 @@ func TestSystemGetTags(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "system/tags", requests...)
+	client := BestTestClient(t, "system/tags", requests...)
 	system := ol.SystemId{
 		Id: id3,
 	}
@@ -99,7 +99,7 @@ func TestSystemAssignService(t *testing.T) {
 		`{"data": { "systemChildAssign": { "system": {{ template "system1_response" }} } }}`,
 	)
 
-	client := AutopilotTestClient(t, "system/assign_service", testRequest)
+	client := BestTestClient(t, "system/assign_service", testRequest)
 	// Act
 	system := ol.System{
 		SystemId: ol.SystemId{
@@ -118,7 +118,7 @@ func TestSystemGetId(t *testing.T) {
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)
-	client := AutopilotTestClient(t, "system/get_id", testRequest)
+	client := BestTestClient(t, "system/get_id", testRequest)
 	// Act
 	result, err := client.GetSystem(string(id1))
 	// Assert
@@ -133,7 +133,7 @@ func TestSystemGetAlias(t *testing.T) {
 		`{ "input": { "alias": "platformsystem1" } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)
-	client := AutopilotTestClient(t, "system/get_alias", testRequest)
+	client := BestTestClient(t, "system/get_alias", testRequest)
 	// Act
 	result, err := client.GetSystem("platformsystem1")
 	// Assert
@@ -155,7 +155,7 @@ func TestListSystems(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "system/list", requests...)
+	client := BestTestClient(t, "system/list", requests...)
 	// Act
 	response, err := client.ListSystems(nil)
 	result := response.Nodes
@@ -175,7 +175,7 @@ func TestSystemUpdate(t *testing.T) {
 		`{"system": { {{ template "id1" }} }, "input":{ "name": "PlatformSystem1", "description":"Yolo!", "ownerId":"{{ template "id4_string" }}", "note": "Please delete me" }}`,
 		`{"data": {"systemUpdate": {"system": {{ template "system1_response" }}, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "system/update", testRequest)
+	client := BestTestClient(t, "system/update", testRequest)
 	input := ol.SystemInput{
 		Name:        ol.NewString("PlatformSystem1"),
 		Description: ol.NewString("Yolo!"),
@@ -198,7 +198,7 @@ func TestSystemDelete(t *testing.T) {
 		`{"input":{"alias":"PlatformSystem3"}}`,
 		`{"data": { "systemDelete": { "errors": [] } }}`,
 	)
-	client := AutopilotTestClient(t, "system/delete", testRequest)
+	client := BestTestClient(t, "system/delete", testRequest)
 	// Act
 	err := client.DeleteSystem("PlatformSystem3")
 	// Assert

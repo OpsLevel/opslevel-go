@@ -23,7 +23,7 @@ func TestDomainCreate(t *testing.T) {
 		`{"data": {"domainCreate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "domain/create", testRequest)
+	client := BestTestClient(t, "domain/create", testRequest)
 	// Act
 	result, err := client.CreateDomain(input)
 	// Assert
@@ -46,7 +46,7 @@ func TestDomainGetSystems(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "domain/child_systems", requests...)
+	client := BestTestClient(t, "domain/child_systems", requests...)
 	domain := ol.DomainId{
 		Id: id2,
 	}
@@ -75,7 +75,7 @@ func TestDomainGetTags(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "domain/tags", requests...)
+	client := BestTestClient(t, "domain/tags", requests...)
 	domain := ol.DomainId{
 		Id: id1,
 	}
@@ -101,7 +101,7 @@ func TestDomainAssignSystem(t *testing.T) {
 		`{"data": {"domainChildAssign": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "domain/assign_system", testRequest)
+	client := BestTestClient(t, "domain/assign_system", testRequest)
 	// Act
 	domain := ol.Domain{
 		DomainId: ol.DomainId{
@@ -121,7 +121,7 @@ func TestDomainGetId(t *testing.T) {
 		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "domain/get_id", testRequest)
+	client := BestTestClient(t, "domain/get_id", testRequest)
 	// Act
 	result, err := client.GetDomain(string(id1))
 	// Assert
@@ -137,7 +137,7 @@ func TestDomainGetAlias(t *testing.T) {
 		`{"data": {"account": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "domain/get_alias", testRequest)
+	client := BestTestClient(t, "domain/get_alias", testRequest)
 	// Act
 	result, err := client.GetDomain("my-domain")
 	// Assert
@@ -159,7 +159,7 @@ func TestDomainList(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "domain/list", requests...)
+	client := BestTestClient(t, "domain/list", requests...)
 	// Act
 	response, err := client.ListDomains(nil)
 	result := response.Nodes
@@ -187,7 +187,7 @@ func TestDomainUpdate(t *testing.T) {
 		`{"data": {"domainUpdate": {"domain": {{ template "domain1_response" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "domain/update", testRequest)
+	client := BestTestClient(t, "domain/update", testRequest)
 	// Act
 	result, err := client.UpdateDomain(string(id1), input)
 	// Assert
@@ -204,7 +204,7 @@ func TestDomainDelete(t *testing.T) {
 		`{"data": {"domainDelete": {"errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "domain/delete", testRequest)
+	client := BestTestClient(t, "domain/delete", testRequest)
 	// Act
 	err := client.DeleteDomain("platformdomain3")
 	// Assert

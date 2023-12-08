@@ -16,7 +16,7 @@ func TestCreateFilter(t *testing.T) {
 		`{"data": {"filterCreate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/create", testRequest)
+	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
@@ -42,7 +42,7 @@ func TestCreateFilterNested(t *testing.T) {
 		`{"data": {"filterCreate": {"filter": { {{ template "create_filter_nested_response" }} }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/create_nested", testRequest)
+	client := BestTestClient(t, "filter/create_nested", testRequest)
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
@@ -80,7 +80,7 @@ func TestGetFilter(t *testing.T) {
 		`{"data": {"account": {"filter": { {{ template "filter_tier1service_response" }} }}}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/get", testRequest)
+	client := BestTestClient(t, "filter/get", testRequest)
 	// Act
 	result, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -97,7 +97,7 @@ func TestGetMissingFilter(t *testing.T) {
 		`{"data": {"account": {"filter": null }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/get_missing", testRequest)
+	client := BestTestClient(t, "filter/get_missing", testRequest)
 	// Act
 	_, err := client.GetFilter("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf")
 	// Assert
@@ -118,7 +118,7 @@ func TestListFilters(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "filter/list", requests...)
+	client := BestTestClient(t, "filter/list", requests...)
 	// Act
 	response, err := client.ListFilters(nil)
 	result := response.Nodes
@@ -139,7 +139,7 @@ func TestUpdateFilter(t *testing.T) {
 		`{"data": {"filterUpdate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/update", testRequest)
+	client := BestTestClient(t, "filter/update", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -164,7 +164,7 @@ func TestUpdateFilterNested(t *testing.T) {
 		`{"data": {"filterUpdate": {"filter": { {{ template "update_filter_nested_response" }} }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/update_nested", testRequest)
+	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
@@ -221,7 +221,7 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
       }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/update_case_sensitive_true", testRequest)
+	client := BestTestClient(t, "filter/update_case_sensitive_true", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -266,7 +266,7 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
       }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/update_case_sensitive_false", testRequest)
+	client := BestTestClient(t, "filter/update_case_sensitive_false", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
@@ -293,7 +293,7 @@ func TestDeleteFilter(t *testing.T) {
 		`{"data": {"filterDelete": {"deletedId": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyNQ", "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "filter/delete", testRequest)
+	client := BestTestClient(t, "filter/delete", testRequest)
 	// Act
 	err := client.DeleteFilter("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert

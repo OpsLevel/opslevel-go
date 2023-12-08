@@ -34,7 +34,7 @@ func TestConnectServiceRepository(t *testing.T) {
         "errors": []
     }}}`,
 	)
-	client := AutopilotTestClient(t, "repository/connect", testRequest)
+	client := BestTestClient(t, "repository/connect", testRequest)
 	service := ol.ServiceId{
 		Id: id1,
 	}
@@ -57,7 +57,7 @@ func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 		`{ "repo": "github.com:rocktavious/autopilot" }`,
 		`{"data": { "account": { "repository": null }}}`,
 	)
-	client := AutopilotTestClient(t, "repository/get_not_found", testRequest)
+	client := BestTestClient(t, "repository/get_not_found", testRequest)
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -73,7 +73,7 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repository/get_with_alias", testRequest)
+	client := BestTestClient(t, "repository/get_with_alias", testRequest)
 	// Act
 	result, err := client.GetRepositoryWithAlias("github.com:rocktavious/autopilot")
 	// Assert
@@ -93,7 +93,7 @@ func TestGetRepository(t *testing.T) {
 		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repository/get", testRequest)
+	client := BestTestClient(t, "repository/get", testRequest)
 	// Act
 	result, err := client.GetRepository("Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk")
 	// Assert
@@ -119,7 +119,7 @@ func TestListRepositories(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "repositories/list", requests...)
+	client := BestTestClient(t, "repositories/list", requests...)
 	// Act
 	resp, err := client.ListRepositories(nil)
 	result := resp.Nodes
@@ -144,7 +144,7 @@ func TestListRepositoriesWithTier(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "repositories/list_with_tier", requests...)
+	client := BestTestClient(t, "repositories/list_with_tier", requests...)
 	// Act
 	resp, err := client.ListRepositoriesWithTier("tier_1", nil)
 	result := resp.Nodes
@@ -163,7 +163,7 @@ func TestUpdateRepository(t *testing.T) {
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repositories/update", testRequest)
+	client := BestTestClient(t, "repositories/update", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:    id1,
@@ -182,7 +182,7 @@ func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_2" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repositories/update_owner_not_present", testRequest)
+	client := BestTestClient(t, "repositories/update_owner_not_present", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id: *ol.NewID(string(id1)),
@@ -200,7 +200,7 @@ func TestRepositoryUpdateOwnerNull(t *testing.T) {
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_3" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repositories/update_owner_null", testRequest)
+	client := BestTestClient(t, "repositories/update_owner_null", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:    *ol.NewID(string(id1)),
@@ -238,7 +238,7 @@ func TestUpdateServiceRepository(t *testing.T) {
     }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repository/service_update", testRequest)
+	client := BestTestClient(t, "repository/service_update", testRequest)
 	// Act
 	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
 		Id:          id1,
@@ -257,7 +257,7 @@ func TestDeleteServiceRepository(t *testing.T) {
 		`{"data": { "serviceRepositoryDelete": { "deletedId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3", "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "repository/service_delete", testRequest)
+	client := BestTestClient(t, "repository/service_delete", testRequest)
 	// Act
 	err := client.DeleteServiceRepository("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
 	// Assert
@@ -455,7 +455,7 @@ func TestGetServices(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "repository/services", requests...)
+	client := BestTestClient(t, "repository/services", requests...)
 	// Act
 	repository := ol.Repository{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",
@@ -530,7 +530,7 @@ func TestGetTags(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "repository/tags", requests...)
+	client := BestTestClient(t, "repository/tags", requests...)
 	// Act
 	repository := ol.Repository{
 		Id: "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRsYWIvMTA5ODc",

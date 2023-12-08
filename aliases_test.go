@@ -14,7 +14,7 @@ func TestCreateAliases(t *testing.T) {
 		`{"data": { "aliasCreate": { "aliases": [ "MyCoolService", "MyAwesomeAlias" ], "ownerId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "aliases/create", testRequest)
+	client := BestTestClient(t, "aliases/create", testRequest)
 	// Act
 	result, err := client.CreateAliases("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", []string{"MyAwesomeAlias"})
 	// Assert
@@ -33,7 +33,7 @@ func TestDeleteServiceAlias(t *testing.T) {
 		`{"data": { "aliasDelete": { "deletedAlias": "MyAwesomeAlias", "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "aliases/delete_service", testRequest)
+	client := BestTestClient(t, "aliases/delete_service", testRequest)
 	// Act
 	err := client.DeleteServiceAlias("MyAwesomeAlias")
 	// Assert
@@ -48,7 +48,7 @@ func TestDeleteTeamAlias(t *testing.T) {
 		`{"data": { "aliasDelete": { "deletedAlias": "MyAwesomeAlias", "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "aliases/delete_team", testRequest)
+	client := BestTestClient(t, "aliases/delete_team", testRequest)
 	// Act
 	err := client.DeleteTeamAlias("MyAwesomeAlias")
 	// Assert

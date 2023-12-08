@@ -31,7 +31,7 @@ func TestCreateAWSIntegration(t *testing.T) {
         "errors": []
       }}}`,
 	)
-	client := AutopilotTestClient(t, "integration/create_aws", testRequest)
+	client := BestTestClient(t, "integration/create_aws", testRequest)
 	// Act
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
 		IAMRole:    opslevel.NewString("arn:aws:iam::XXXX:role/aws-integration-role"),
@@ -62,7 +62,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
         "errors": []
       }}}`,
 	)
-	client := AutopilotTestClient(t, "integration/create_new_relic", testRequest)
+	client := BestTestClient(t, "integration/create_new_relic", testRequest)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
 		ApiKey:     opslevel.NewString("123456789"),
@@ -89,7 +89,7 @@ func TestGetIntegration(t *testing.T) {
         }
       }}}`,
 	)
-	client := AutopilotTestClient(t, "integration/get", testRequest)
+	client := BestTestClient(t, "integration/get", testRequest)
 	// Act
 	result, err := client.GetIntegration(id1)
 	// Assert
@@ -105,7 +105,7 @@ func TestGetMissingIntegraion(t *testing.T) {
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "integration": null }}}`,
 	)
-	client := AutopilotTestClient(t, "integration/get_missing", testRequest)
+	client := BestTestClient(t, "integration/get_missing", testRequest)
 	// Act
 	_, err := client.GetIntegration(id2)
 	// Assert
@@ -126,7 +126,7 @@ func TestListIntegrations(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "integration/list", requests...)
+	client := BestTestClient(t, "integration/list", requests...)
 	// Act
 	response, err := client.ListIntegrations(nil)
 	result := response.Nodes
@@ -160,7 +160,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
       "errors": []
     }}}`,
 	)
-	client := AutopilotTestClient(t, "integration/update_aws", testRequest)
+	client := BestTestClient(t, "integration/update_aws", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationAWS(string(id1), opslevel.AWSIntegrationInput{
 		Name:       opslevel.NewString("Dev2"),
@@ -192,7 +192,7 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
     }}}`,
 	)
 
-	client := AutopilotTestClient(t, "integration/update_new_relic", testRequest)
+	client := BestTestClient(t, "integration/update_new_relic", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationNewRelic(
 		string(id1),
@@ -213,7 +213,7 @@ func TestDeleteIntegration(t *testing.T) {
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "integrationDelete": { "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "integration/delete", testRequest)
+	client := BestTestClient(t, "integration/delete", testRequest)
 	// Act
 	err := client.DeleteIntegration(string(id1))
 	// Assert

@@ -130,7 +130,7 @@ func TestCreateTeam(t *testing.T) {
     }}}`,
 	)
 
-	client := AutopilotTestClient(t, "team/create", testRequest)
+	client := BestTestClient(t, "team/create", testRequest)
 	// Act
 	result, err := client.CreateTeam(input)
 	// Assert
@@ -232,7 +232,7 @@ func TestGetTeam(t *testing.T) {
       }}}}`,
 	)
 
-	client := AutopilotTestClient(t, "team/get", testRequest)
+	client := BestTestClient(t, "team/get", testRequest)
 	// Act
 	result, err := client.GetTeam(id1)
 	// Assert
@@ -258,7 +258,7 @@ func TestTeamMembers(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "team/members", requests...)
+	client := BestTestClient(t, "team/members", requests...)
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
@@ -287,7 +287,7 @@ func TestTeamTags(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "team/tags", requests...)
+	client := BestTestClient(t, "team/tags", requests...)
 	// Act
 	team := ol.Team{
 		TeamId: ol.TeamId{
@@ -307,7 +307,7 @@ func TestTeamTags(t *testing.T) {
 
 func TestGetTeamWithAlias(t *testing.T) {
 	// Arrange
-	client := AutopilotTestClient(t, "team/get_with_alias", getTestRequestWithAlias())
+	client := BestTestClient(t, "team/get_with_alias", getTestRequestWithAlias())
 	// Act
 	result, err := client.GetTeamWithAlias("example")
 	// Assert
@@ -446,7 +446,7 @@ func TestListTeams(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "team/list", requests...)
+	client := BestTestClient(t, "team/list", requests...)
 	// Act
 	response, err := client.ListTeams(nil)
 	result := response.Nodes
@@ -588,7 +588,7 @@ func TestListTeamsWithManager(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "team/list_with_manager", requests...)
+	client := BestTestClient(t, "team/list_with_manager", requests...)
 	// Act
 	response, err := client.ListTeamsWithManager("kyle@opslevel.com", nil)
 	result := response.Nodes
@@ -663,7 +663,7 @@ func TestUpdateTeam(t *testing.T) {
         "errors": []
        }}}`,
 	)
-	client := AutopilotTestClient(t, "team/update", testRequest)
+	client := BestTestClient(t, "team/update", testRequest)
 	// Act
 	result, err := client.UpdateTeam(input)
 	// Assert
@@ -681,7 +681,7 @@ func TestDeleteTeam(t *testing.T) {
 		`{"input": { {{ template "id3" }} } }`,
 		`{"data": {"teamDelete": {"deletedTeamId": "{{ template "id3_string" }}", "deletedTeamAlias": "example", "errors": [] } }}`,
 	)
-	client := AutopilotTestClient(t, "team/delete", testRequest)
+	client := BestTestClient(t, "team/delete", testRequest)
 	// Act
 	err := client.DeleteTeam(id3)
 	// Assert
@@ -695,7 +695,7 @@ func TestDeleteTeamWithAlias(t *testing.T) {
 		`{"input": {"alias": "example" }}`,
 		`{"data": {"teamDelete": {"deletedTeamId": "{{ template "id3_string" }}", "deletedTeamAlias": "example", "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "team/delete_with_alias", testRequest)
+	client := BestTestClient(t, "team/delete_with_alias", testRequest)
 	// Act
 	err := client.DeleteTeamWithAlias("example")
 	// Assert
@@ -710,8 +710,8 @@ func TestTeamAddMemberhip(t *testing.T) {
 		`{"data": {"teamMembershipCreate": {"memberships": [ {{ template "team_membership_1" }} ], "errors": [] }}}`,
 	)
 
-	clientWithTeamId := AutopilotTestClient(t, "team/add_member", testRequestWithTeamId)
-	clientWithAlias := AutopilotTestClient(t, "team/get_with_alias_add_member", getTestRequestWithAlias())
+	clientWithTeamId := BestTestClient(t, "team/add_member", testRequestWithTeamId)
+	clientWithAlias := BestTestClient(t, "team/get_with_alias_add_member", getTestRequestWithAlias())
 
 	// Act
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
@@ -743,8 +743,8 @@ func TestTeamRemoveMemberhip(t *testing.T) {
       "errors": []
     }}}`,
 	)
-	client1 := AutopilotTestClient(t, "team/get_with_alias_rm_member", getTestRequestWithAlias())
-	client2 := AutopilotTestClient(t, "team/remove_member", testRequest)
+	client1 := BestTestClient(t, "team/get_with_alias_rm_member", getTestRequestWithAlias())
+	client2 := BestTestClient(t, "team/remove_member", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
 	membershipToDelete := ol.TeamMembershipUserInput{
@@ -765,8 +765,8 @@ func TestTeamAddContact(t *testing.T) {
 		`{"input": {"type":"slack", "address":"#general", "teamId": "{{ template "id1_string" }}" }}`,
 		`{"data": {"contactCreate": {"contact": {"address": "#general", "displayName": "Slack", {{ template "id2" }}, "type": "slack"}, "errors": [] } }}`,
 	)
-	client1 := AutopilotTestClient(t, "team/get_with_alias_add_contact", getTestRequestWithAlias())
-	client2 := AutopilotTestClient(t, "team/alias_add_contact", testRequest)
+	client1 := BestTestClient(t, "team/get_with_alias_add_contact", getTestRequestWithAlias())
+	client2 := BestTestClient(t, "team/alias_add_contact", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
 	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", ol.NewString("")))
@@ -792,7 +792,7 @@ func TestTeamUpdateContact(t *testing.T) {
 		`{"input":  {{ template "contact_update_input_slack" }} }`,
 		`{"data": {"contactUpdate":  {"contact": {"address": "#general", "displayName": "Main Channel", {{ template "id2" }}, "type": "slack" }, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "team/update_contact", testRequest)
+	client := BestTestClient(t, "team/update_contact", testRequest)
 	// Act
 	result, err := client.UpdateContact(id1, input)
 	// Assert
@@ -816,7 +816,7 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 		`{ "input": {{ template "contact_update_input" }} }`,
 		`{"data": {"contactUpdate": {"contact": {"address": "#general", "displayName": "Main Channel", {{ template "id2" }}, "type": "slack" }, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "team/update_contact_nil_type", testRequest)
+	client := BestTestClient(t, "team/update_contact_nil_type", testRequest)
 	// Act
 	result, err := client.UpdateContact(id2, input)
 	// Assert
@@ -831,7 +831,7 @@ func TestTeamRemoveContact(t *testing.T) {
 		`{"input": { {{ template "id3" }} }}`,
 		`{"data": {"contactDelete": {"deletedContactId": "{{ template "id2_string" }}", "errors": [] } }}`,
 	)
-	client := AutopilotTestClient(t, "team/remove_contact", testRequest)
+	client := BestTestClient(t, "team/remove_contact", testRequest)
 	// Act
 	err := client.RemoveContact(id3)
 	// Assert

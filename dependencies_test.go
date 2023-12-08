@@ -14,7 +14,7 @@ func TestCreateServiceDependency(t *testing.T) {
 		`{ "input": { "dependencyKey": { "destinationIdentifier": {"alias": "example_3"}, "sourceIdentifier": {"alias": "example_2"} }, "notes": "An example description" }}`,
 		`{"data": { "serviceDependencyCreate": { "serviceDependency": {{ template "serviceDependency" }}, "errors": [] } }}`,
 	)
-	client := AutopilotTestClient(t, "serviceDependencyCreate", testRequest)
+	client := BestTestClient(t, "serviceDependencyCreate", testRequest)
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
 		Key: ol.ServiceDependencyKey{
@@ -45,7 +45,7 @@ func TestGetServiceDependencies(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/get_dependencies", requests...)
+	client := BestTestClient(t, "service/get_dependencies", requests...)
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -74,7 +74,7 @@ func TestGetServiceDependents(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/get_dependents", requests...)
+	client := BestTestClient(t, "service/get_dependents", requests...)
 	// Act
 	resource := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -96,7 +96,7 @@ func TestDeleteServiceDependency(t *testing.T) {
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "serviceDependencyDelete": { "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "serviceDependencyDelete", testRequest)
+	client := BestTestClient(t, "serviceDependencyDelete", testRequest)
 	// Act
 	err := client.DeleteServiceDependency(id1)
 	// Assert

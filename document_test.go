@@ -16,7 +16,7 @@ func TestServiceApiDocSettingsUpdate(t *testing.T) {
 		`{"data": {"serviceApiDocSettingsUpdate": {"service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "service/api_doc_settings_update", testRequest)
+	client := BestTestClient(t, "service/api_doc_settings_update", testRequest)
 	// Act
 	docSource := ol.ApiDocumentSourceEnumPull
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", &docSource)
@@ -35,7 +35,7 @@ func TestServiceApiDocSettingsUpdateDocSourceNull(t *testing.T) {
 		`{"data": { "serviceApiDocSettingsUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "service/api_doc_settings_update_doc_source_null", testRequest)
+	client := BestTestClient(t, "service/api_doc_settings_update_doc_source_null", testRequest)
 	// Act
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", nil)
 	// Assert
@@ -53,7 +53,7 @@ func TestServiceApiDocSettingsUpdateDocPathNull(t *testing.T) {
 		`{"data": { "serviceApiDocSettingsUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "service/api_doc_settings_update_doc_path_null", testRequest)
+	client := BestTestClient(t, "service/api_doc_settings_update_doc_path_null", testRequest)
 	// Act
 	docSource := ol.ApiDocumentSourceEnumPull
 	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "", &docSource)

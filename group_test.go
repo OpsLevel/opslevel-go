@@ -18,7 +18,7 @@ func getGroupWithAliasTestClient(t *testing.T) *ol.Client {
 			`{ "group": "test_group_1" }`,
 			`{ "data": { "account": { "group": { "alias": "test_group_1", "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", "description": null, "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1", "name": "test_group_1", "parent": null } } } }`,
 		)
-		getGroupWithAliasClient = AutopilotTestClient(t, "group/get_with_alias", testRequest)
+		getGroupWithAliasClient = BestTestClient(t, "group/get_with_alias", testRequest)
 	}
 	return getGroupWithAliasClient
 }
@@ -30,7 +30,7 @@ func TestDeleteGroup(t *testing.T) {
 		`{"input": { {{ template "id2" }} }}`,
 		`{"data": {"groupDelete": {"errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "group/delete", testRequest)
+	client := BestTestClient(t, "group/delete", testRequest)
 	// Act
 	err := client.DeleteGroup(string(id2))
 	// Assert
@@ -44,7 +44,7 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 		`{"input": {"alias": "platform"}}`,
 		`{"data": {"groupDelete": {"errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "group/delete_with_alias", testRequest)
+	client := BestTestClient(t, "group/delete_with_alias", testRequest)
 	// Act
 	err := client.DeleteGroup("platform")
 	// Assert
@@ -65,7 +65,7 @@ func TestChildTeams(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "group/child_teams", requests...)
+	client := BestTestClient(t, "group/child_teams", requests...)
 	group := ol.Group{
 		GroupId: ol.GroupId{
 			Id: "123456789",
@@ -95,7 +95,7 @@ func TestDescendantTeams(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "group/descendant_teams", requests...)
+	client := BestTestClient(t, "group/descendant_teams", requests...)
 	// Act
 	group := ol.Group{
 		GroupId: ol.GroupId{
@@ -125,7 +125,7 @@ func TestDescendantRepositories(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "group/descendant_repositories", requests...)
+	client := BestTestClient(t, "group/descendant_repositories", requests...)
 	// Act
 	group := ol.Group{
 		GroupId: ol.GroupId{
@@ -154,7 +154,7 @@ func TestDescendantServices(t *testing.T) {
 		`{ "data": { "account": { "group": { "descendantServices": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
-	client := AutopilotTestClient(t, "group/descendant_services", requests...)
+	client := BestTestClient(t, "group/descendant_services", requests...)
 
 	// Act
 	group := ol.Group{
@@ -185,7 +185,7 @@ func TestDescendantSubgroups(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "group/descendant_subgroups", requests...)
+	client := BestTestClient(t, "group/descendant_subgroups", requests...)
 	// Act
 	group := ol.Group{
 		GroupId: ol.GroupId{
@@ -208,7 +208,7 @@ func TestGetGroup(t *testing.T) {
 		`{ "group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI" }`,
 		`{ "data": { "account": { "group": { "alias": "test_group_1", "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", "description": null, "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1", "name": "test_group_1", "parent": null } } } }`,
 	)
-	client := AutopilotTestClient(t, "group/get", testRequest)
+	client := BestTestClient(t, "group/get", testRequest)
 	// Act
 	result, err := client.GetGroup(id4)
 	// Assert
@@ -286,7 +286,7 @@ func TestListGroups(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "group/list", requests...)
+	client := BestTestClient(t, "group/list", requests...)
 	// Act
 	response, err := client.ListGroups(nil)
 	result := response.Nodes
@@ -312,7 +312,7 @@ func TestMembers(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "group/members", requests...)
+	client := BestTestClient(t, "group/members", requests...)
 	// Act
 	group := ol.Group{
 		GroupId: ol.GroupId{

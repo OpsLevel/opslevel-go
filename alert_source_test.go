@@ -15,7 +15,7 @@ func TestCreateAlertSourceService(t *testing.T) {
 		`{"data": { "alertSourceServiceCreate": { "alertSourceService": { "service": { "aliases": ["example"] }}}}}`,
 	)
 
-	client := AutopilotTestClient(t, "alert_source/create", testRequest)
+	client := BestTestClient(t, "alert_source/create", testRequest)
 	// Act
 	result, _ := client.CreateAlertSourceService(ol.AlertSourceServiceCreateInput{
 		Service:    *ol.NewIdentifier("example"),
@@ -48,7 +48,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
         }}}`,
 	)
 
-	client := AutopilotTestClient(t, "alert_source/get_with_external_identifier", testRequest)
+	client := BestTestClient(t, "alert_source/get_with_external_identifier", testRequest)
 	// Act
 	result, err := client.GetAlertSourceWithExternalIdentifier(ol.AlertSourceExternalIdentifier{
 		Type:       ol.AlertSourceTypeEnumDatadog,
@@ -83,7 +83,7 @@ func TestGetAlertSource(t *testing.T) {
           }
         }}}`,
 	)
-	client := AutopilotTestClient(t, "alert_source/get", testRequest)
+	client := BestTestClient(t, "alert_source/get", testRequest)
 	// Act
 	result, err := client.GetAlertSource("Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE")
 	// Assert
@@ -101,7 +101,7 @@ func TestDeleteAlertSourceService(t *testing.T) {
 		`{"data": { "alertSourceServiceDelete": { "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "alert_source/delete", testRequest)
+	client := BestTestClient(t, "alert_source/delete", testRequest)
 	// Act
 	err := client.DeleteAlertSourceService("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz")
 	// Assert

@@ -15,7 +15,7 @@ func TestCreateSecret(t *testing.T) {
 		`{{ template "secret_create_vars" }}`,
 		`{{ template "secret_create_response" }}`,
 	)
-	client := AutopilotTestClient(t, "secrets/create", testRequest)
+	client := BestTestClient(t, "secrets/create", testRequest)
 	fmt.Println(client)
 	// Act
 	secretInput := opslevel.SecretInput{
@@ -36,7 +36,7 @@ func TestGetSecret(t *testing.T) {
 		`{{ template "secret_get_vars" }}`,
 		`{{ template "secret_get_response" }}`,
 	)
-	client := AutopilotTestClient(t, "secret/get", testRequest)
+	client := BestTestClient(t, "secret/get", testRequest)
 	// Act
 	result, err := client.GetSecret(string(id2))
 	// Assert
@@ -58,7 +58,7 @@ func TestListSecrets(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "secrets/list", requests...)
+	client := BestTestClient(t, "secrets/list", requests...)
 	// Act
 	secretsVaultsSecretConnection, err := client.ListSecretsVaultsSecret(nil)
 	secretNode := secretsVaultsSecretConnection.Nodes
@@ -76,7 +76,7 @@ func TestUpdateSecret(t *testing.T) {
 		`{{ template "secret_update_vars" }}`,
 		`{{ template "secret_update_response" }}`,
 	)
-	client := AutopilotTestClient(t, "secrets/update", testRequest)
+	client := BestTestClient(t, "secrets/update", testRequest)
 	// Act
 	secretInput := opslevel.SecretInput{
 		Owner: opslevel.IdentifierInput{Id: &id2},
@@ -97,7 +97,7 @@ func TestDeleteSecrets(t *testing.T) {
 		`{{ template "secret_delete_response" }}`,
 	)
 
-	client := AutopilotTestClient(t, "secrets/delete", testRequest)
+	client := BestTestClient(t, "secrets/delete", testRequest)
 	// Act
 	err := client.DeleteSecret(string(id1))
 	// Assert

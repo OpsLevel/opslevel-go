@@ -21,7 +21,7 @@ func TestListLifecycles(t *testing.T) {
 		]
     }}}`,
 	)
-	client := AutopilotTestClient(t, "lifecycles", testRequest)
+	client := BestTestClient(t, "lifecycles", testRequest)
 	// Act
 	result, err := client.ListLifecycles()
 	// Assert

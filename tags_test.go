@@ -16,7 +16,7 @@ func TestAssignTagForAlias(t *testing.T) {
 		`{"data": {"tagAssign": { "tags": [ { {{ template "id1" }}, "key": "hello", "value": "world" } ], "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "tagAssignWithAlias", testRequest)
+	client := BestTestClient(t, "tagAssignWithAlias", testRequest)
 	// Act
 	result, err := client.AssignTags("example", map[string]string{"hello": "world"})
 	// Assert
@@ -34,7 +34,7 @@ func TestAssignTagForId(t *testing.T) {
 		`{"data": { "tagAssign": { "tags": [ { {{ template "id1" }}, "key": "hello", "value": "world" } ], "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "tagAssignWithId", testRequest)
+	client := BestTestClient(t, "tagAssignWithId", testRequest)
 	// Act
 	result, err := client.AssignTags(string(id1), map[string]string{"hello": "world"})
 	// Assert
@@ -52,7 +52,7 @@ func TestCreateTag(t *testing.T) {
 		`{"data": { "tagCreate": { "tag": { {{ template "id1" }}, "key": "hello", "value": "world" }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "tagCreate", testRequest)
+	client := BestTestClient(t, "tagCreate", testRequest)
 	// Act
 	result, err := client.CreateTags(string(id1), map[string]string{"hello": "world"})
 	// Assert
@@ -70,7 +70,7 @@ func TestUpdateTag(t *testing.T) {
 		`{"data": { "tagUpdate": { "tag": { {{ template "id1" }}, "key": "hello", "value": "world!" }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "tagUpdate", testRequest)
+	client := BestTestClient(t, "tagUpdate", testRequest)
 	// Act
 	result, err := client.UpdateTag(ol.TagUpdateInput{
 		Id:    id1,
@@ -91,7 +91,7 @@ func TestDeleteTag(t *testing.T) {
 		`{"data": { "tagDelete": { "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "tagDelete", testRequest)
+	client := BestTestClient(t, "tagDelete", testRequest)
 	// Act
 	err := client.DeleteTag(id1)
 	// Assert

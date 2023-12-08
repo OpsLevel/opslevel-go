@@ -130,7 +130,7 @@ func IsValidJson(data string) bool {
 	return json.Valid([]byte(data))
 }
 
-func AutopilotTestClient(t *testing.T, endpoint string, requests ...autopilot.TestRequest) *ol.Client {
+func BestTestClient(t *testing.T, endpoint string, requests ...autopilot.TestRequest) *ol.Client {
 	urlToRegister := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
 	registeredUrl := autopilot.RegisterPaginatedEndpoint(t, urlToRegister, requests...)
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(registeredUrl))

@@ -14,7 +14,7 @@ func TestCreateTool(t *testing.T) {
 		`{ "input": { "category": "other", "displayName": "example", "serviceId": "{{ template "id1_string" }}", "url": "https://example.com" }}`,
 		`{"data": { "toolCreate": { "tool": {{ template "tool_1" }}, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "toolCreate", testRequest)
+	client := BestTestClient(t, "toolCreate", testRequest)
 	// Act
 	result, err := client.CreateTool(ol.ToolCreateInput{
 		Category:    ol.ToolCategoryOther,
@@ -37,7 +37,7 @@ func TestUpdateTool(t *testing.T) {
 		`{ "input": { {{ template "id1" }}, "category": "deployment" }}`,
 		`{"data": { "toolUpdate": { "tool": {{ template "tool_1_update" }}, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "toolUpdate", testRequest)
+	client := BestTestClient(t, "toolUpdate", testRequest)
 	// Act
 	result, err := client.UpdateTool(ol.ToolUpdateInput{
 		Id:       id1,
@@ -56,7 +56,7 @@ func TestDeleteTool(t *testing.T) {
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "toolDelete": { "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "toolDelete", testRequest)
+	client := BestTestClient(t, "toolDelete", testRequest)
 	// Act
 	err := client.DeleteTool(id1)
 	// Assert
