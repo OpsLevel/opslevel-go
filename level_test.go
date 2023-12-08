@@ -8,8 +8,8 @@ import (
 )
 
 func TestCreateRubricLevels(t *testing.T) {
-	testRequest := NewTestRequest(
-		`"mutation LevelCreate($input:LevelCreateInput!){levelCreate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation LevelCreate($input:LevelCreateInput!){levelCreate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
 		`{"input": { "name": "Kyle", "description": "Created By Kyle", "index": 4 }}`,
 		`{"data": { "levelCreate": { "level": { "alias": "kyle", "description": "Created By Kyle", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw", "index": 4, "name": "Kyle" }, "errors": [] }}}`,
 	)
@@ -28,8 +28,8 @@ func TestCreateRubricLevels(t *testing.T) {
 
 func TestGetRubricLevel(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": {
         "account": {
@@ -52,8 +52,8 @@ func TestGetRubricLevel(t *testing.T) {
 
 func TestGetMissingRubricLevel(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": { "account": { "level": null }}}`,
 	)
@@ -67,8 +67,8 @@ func TestGetMissingRubricLevel(t *testing.T) {
 
 func TestListRubricLevels(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"{account{rubric{levels{nodes{alias,description,id,index,name},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`{account{rubric{levels{nodes{alias,description,id,index,name},{{ template "pagination_request" }},totalCount}}}}`,
 		`{}`,
 		`{
     "data": {
@@ -121,8 +121,8 @@ func TestListRubricLevels(t *testing.T) {
 
 func TestUpdateRubricLevel(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": "{{ template "description" }}" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
@@ -142,8 +142,8 @@ func TestUpdateRubricLevel(t *testing.T) {
 
 func TestUpdateRubricLevelNoName(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "description": "{{ template "description" }}" } }`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
@@ -162,8 +162,8 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 
 func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": "" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
@@ -183,8 +183,8 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 
 func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
@@ -203,8 +203,8 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 
 func TestDeleteRubricLevels(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation LevelDelete($input:LevelDeleteInput!){levelDelete(input: $input){deletedLevelId,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation LevelDelete($input:LevelDeleteInput!){levelDelete(input: $input){deletedLevelId,errors{message,path}}}`,
 		`{"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw" }}`,
 		`{"data": { "levelDelete": { "deletedLevelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw", "errors": [] }}}`,
 	)

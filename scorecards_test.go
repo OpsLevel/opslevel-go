@@ -16,7 +16,7 @@ var (
 )
 
 func TestCreateScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_create_request" }}`,
 		`{{ template "scorecard_create_request_vars" }}`,
 		`{{ template "scorecard_create_response" }}`,
@@ -42,7 +42,7 @@ func TestCreateScorecard(t *testing.T) {
 }
 
 func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_create_request" }}`,
 		`{{ template "scorecard_create_request_vars_affects_service_levels_false" }}`,
 		`{{ template "scorecard_create_response_affects_service_levels_false" }}`,
@@ -68,7 +68,7 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 }
 
 func TestUpdateScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_update_request" }}`,
 		`{{ template "scorecard_update_request_vars" }}`,
 		`{{ template "scorecard_update_response" }}`,
@@ -95,7 +95,7 @@ func TestUpdateScorecard(t *testing.T) {
 }
 
 func TestDeleteScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_delete_request" }}`,
 		`{{ template "scorecard_delete_request_vars" }}`,
 		`{{ template "scorecard_delete_response" }}`,
@@ -108,7 +108,7 @@ func TestDeleteScorecard(t *testing.T) {
 }
 
 func TestGetScorecard(t *testing.T) {
-	testRequest := NewTestRequest(
+	testRequest := autopilot.NewTestRequest(
 		`{{ template "scorecard_get_request" }}`,
 		`{{ template "scorecard_get_request_vars" }}`,
 		`{{ template "scorecard_get_response" }}`,
@@ -132,17 +132,17 @@ func TestGetScorecard(t *testing.T) {
 
 func TestListScorecards(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"{{ template "scorecard_list_query" }}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`{{ template "scorecard_list_query" }}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_1_response" }} }, { {{ template "scorecard_2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"{{ template "scorecard_list_query" }}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`{{ template "scorecard_list_query" }}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "scorecards/list_scorecards", requests...)
 	// Act

@@ -13,8 +13,8 @@ var getGroupWithAliasClient *ol.Client
 
 func getGroupWithAliasTestClient(t *testing.T) *ol.Client {
 	if getGroupWithAliasClient == nil {
-		testRequest := NewTestRequest(
-			`"query GroupGet($group:String!){account{group(alias: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}"`,
+		testRequest := autopilot.NewTestRequest(
+			`query GroupGet($group:String!){account{group(alias: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}`,
 			`{ "group": "test_group_1" }`,
 			`{ "data": { "account": { "group": { "alias": "test_group_1", "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", "description": null, "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1", "name": "test_group_1", "parent": null } } } }`,
 		)
@@ -25,8 +25,8 @@ func getGroupWithAliasTestClient(t *testing.T) *ol.Client {
 
 func TestDeleteGroup(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation GroupDelete($input:IdentifierInput!){groupDelete(resource: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation GroupDelete($input:IdentifierInput!){groupDelete(resource: $input){errors{message,path}}}`,
 		`{"input": { {{ template "id2" }} }}`,
 		`{"data": {"groupDelete": {"errors": [] }}}`,
 	)
@@ -39,8 +39,8 @@ func TestDeleteGroup(t *testing.T) {
 
 func TestDeleteGroupWithAlias(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation GroupDelete($input:IdentifierInput!){groupDelete(resource: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation GroupDelete($input:IdentifierInput!){groupDelete(resource: $input){errors{message,path}}}`,
 		`{"input": {"alias": "platform"}}`,
 		`{"data": {"groupDelete": {"errors": [] }}}`,
 	)
@@ -53,17 +53,17 @@ func TestDeleteGroupWithAlias(t *testing.T) {
 
 func TestChildTeams(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "group": "123456789" }`,
 		`{ "data": { "account": { "group": { "childTeams": { "nodes": [ {{ template "team_1" }}, {{ template "team_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query GroupChildTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){childTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "group": "123456789" }`,
 		`{ "data": { "account": { "group": { "childTeams": { "nodes": [ {{ template "team_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "group/child_teams", requests...)
 	group := ol.Group{
@@ -83,17 +83,17 @@ func TestChildTeams(t *testing.T) {
 
 func TestDescendantTeams(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantTeams": { "nodes": [ {{ template "team_1" }}, {{ template "team_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query GroupDescendantTeamsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantTeams(after: $after, first: $first){nodes{alias,id,aliases,contacts{address,displayName,id,type},group{alias,id},htmlUrl,manager{id,email,htmlUrl,name,role},members{nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantTeams": { "nodes": [ {{ template "team_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "group/descendant_teams", requests...)
 	// Act
@@ -113,17 +113,17 @@ func TestDescendantTeams(t *testing.T) {
 
 func TestDescendantRepositories(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantRepositories": { "nodes": [ {{ template "repository_1"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query GroupDescendantRepositoriesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantRepositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantRepositories": { "nodes": [ {{ template "repository_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "group/descendant_repositories", requests...)
 	// Act
@@ -143,17 +143,17 @@ func TestDescendantRepositories(t *testing.T) {
 
 func TestDescendantServices(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantServices": { "nodes": [ {{ template "service_1"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query GroupDescendantServicesList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantServices": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "group/descendant_services", requests...)
 
 	// Act
@@ -173,17 +173,17 @@ func TestDescendantServices(t *testing.T) {
 
 func TestDescendantSubgroups(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantSubgroups": { "nodes": [ {{ template "group_1"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query GroupDescendantSubgroupsList($after:String!$first:Int!$group:ID!){account{group(id: $group){descendantSubgroups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "descendantSubgroups": { "nodes": [ {{ template "group_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "group/descendant_subgroups", requests...)
 	// Act
@@ -203,8 +203,8 @@ func TestDescendantSubgroups(t *testing.T) {
 
 func TestGetGroup(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query GroupGet($group:ID!){account{group(id: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query GroupGet($group:ID!){account{group(id: $group){alias,id,description,htmlUrl,name,parent{alias,id}}}}`,
 		`{ "group": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI" }`,
 		`{ "data": { "account": { "group": { "alias": "test_group_1", "id": "Z2lkOi8vb3BzbGV2ZWwvTmFtZXNwYWNlczo6R3JvdXAvMTI", "description": null, "htmlUrl": "https://app.opslevel-staging.com/groups/test_group_1", "name": "test_group_1", "parent": null } } } }`,
 	)
@@ -230,8 +230,8 @@ func TestGetGroupWithAlias(t *testing.T) {
 
 func TestListGroups(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": {
     "account": {
@@ -261,8 +261,8 @@ func TestListGroups(t *testing.T) {
         "totalCount": 2
       }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ($after:String!$first:Int!){account{groups(after: $after, first: $first){nodes{alias,id,description,htmlUrl,name,parent{alias,id}},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{"data": {
     "account": {
@@ -284,7 +284,7 @@ func TestListGroups(t *testing.T) {
         "totalCount": 1
       }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "group/list", requests...)
 	// Act
@@ -300,17 +300,17 @@ func TestListGroups(t *testing.T) {
 
 func TestMembers(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "members": { "nodes": [ {{ template "user_1"}}, {{ template "user_2"}} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 } }}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query GroupMembersList($after:String!$first:Int!$group:ID!){account{group(id: $group){members(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "group": "{{ template "id4_string" }}" }`,
 		`{ "data": { "account": { "group": { "members": { "nodes": [ {{ template "user_3"}} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "group/members", requests...)
 	// Act

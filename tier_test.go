@@ -8,8 +8,8 @@ import (
 
 func TestListTiers(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query TierList{account{tiers{alias,description,id,index,name}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query TierList{account{tiers{alias,description,id,index,name}}}`,
 		`{}`,
 		`{"data": { "account": { "tiers": [ {{ template "tier_1" }}, {{ template "tier_2" }}, {{ template "tier_3" }}, {{ template "tier_4" }} ] }}}`)
 	client := BestTestClient(t, "tiers", testRequest)

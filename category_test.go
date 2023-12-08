@@ -9,8 +9,8 @@ import (
 
 func TestCreateRubricCategory(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}`,
 		`{ "input": { "name": "Kyle" }}`,
 		`{"data": { "categoryCreate": { "category": { {{ template "id1" }}, "name": "Kyle" }, "errors": [] } }}`,
 	)
@@ -26,8 +26,8 @@ func TestCreateRubricCategory(t *testing.T) {
 
 func TestGetRubricCategory(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query CategoryGet($id:ID!){account{category(id: $id){id,name}}}`,
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "category": { {{ template "id3" }}, "name": "Reliability" } }}}`,
 	)
@@ -42,8 +42,8 @@ func TestGetRubricCategory(t *testing.T) {
 
 func TestGetMissingRubricCategory(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query CategoryGet($id:ID!){account{category(id: $id){id,name}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query CategoryGet($id:ID!){account{category(id: $id){id,name}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"data": { "account": { "category": null }}}`,
 	)
@@ -56,17 +56,17 @@ func TestGetMissingRubricCategory(t *testing.T) {
 
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
-	testRequestOne := NewTestRequest(
-		`"query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestOne := autopilot.NewTestRequest(
+		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response1" }} }, { {{ template "rubric_categories_response2" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
-	testRequestTwo := NewTestRequest(
-		`"query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}"`,
+	testRequestTwo := autopilot.NewTestRequest(
+		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response3" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
-	requests := []TestRequest{testRequestOne, testRequestTwo}
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "rubric/category_list", requests...)
 	// Act
@@ -84,8 +84,8 @@ func TestListRubricCategories(t *testing.T) {
 
 func TestUpdateRubricCategory(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{id,name},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{id,name},errors{message,path}}}`,
 		`{ "input": { {{ template "id4" }}, "name": "Emily" }}`,
 		`{"data": { "categoryUpdate": { "category": { {{ template "id4" }}, "name": "Emily" }, "errors": [] }}}`,
 	)
@@ -103,8 +103,8 @@ func TestUpdateRubricCategory(t *testing.T) {
 
 func TestDeleteRubricCategory(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation CategoryDelete($input:CategoryDeleteInput!){categoryDelete(input: $input){deletedCategoryId,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation CategoryDelete($input:CategoryDeleteInput!){categoryDelete(input: $input){deletedCategoryId,errors{message,path}}}`,
 		`{ "input": { {{ template "id2" }} }}`,
 		`{"data": { "categoryDelete": { "deletedCategoryId": "{{ template "id2_string" }}", "errors": [] }}}`,
 	)

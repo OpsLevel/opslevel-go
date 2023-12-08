@@ -8,8 +8,8 @@ import (
 
 func TestListLifecycles(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query LifecycleList{account{lifecycles{alias,description,id,index,name}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query LifecycleList{account{lifecycles{alias,description,id,index,name}}}`,
 		`{}`,
 		`{"data": { "account": {
 		"lifecycles": [

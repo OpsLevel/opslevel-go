@@ -9,8 +9,8 @@ import (
 
 func TestCreateTool(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
 		`{ "input": { "category": "other", "displayName": "example", "serviceId": "{{ template "id1_string" }}", "url": "https://example.com" }}`,
 		`{"data": { "toolCreate": { "tool": {{ template "tool_1" }}, "errors": [] }}}`,
 	)
@@ -32,8 +32,8 @@ func TestCreateTool(t *testing.T) {
 
 func TestUpdateTool(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
 		`{ "input": { {{ template "id1" }}, "category": "deployment" }}`,
 		`{"data": { "toolUpdate": { "tool": {{ template "tool_1_update" }}, "errors": [] }}}`,
 	)
@@ -51,8 +51,8 @@ func TestUpdateTool(t *testing.T) {
 
 func TestDeleteTool(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation ToolDelete($input:ToolDeleteInput!){toolDelete(input: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation ToolDelete($input:ToolDeleteInput!){toolDelete(input: $input){errors{message,path}}}`,
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "toolDelete": { "errors": [] }}}`,
 	)

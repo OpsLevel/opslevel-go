@@ -9,8 +9,8 @@ import (
 
 func TestCreateAlertSourceService(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{name,description,id,type,externalId,integration{id,name,type},url},id,service{id,aliases},status},errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{name,description,id,type,externalId,integration{id,name,type},url},id,service{id,aliases},status},errors{message,path}}}`,
 		`{"input": { "alertSourceExternalIdentifier": { "externalId": "QWERTY", "type": "datadog" }, "service": { "alias": "example" }}}`,
 		`{"data": { "alertSourceServiceCreate": { "alertSourceService": { "service": { "aliases": ["example"] }}}}}`,
 	)
@@ -27,8 +27,8 @@ func TestCreateAlertSourceService(t *testing.T) {
 
 func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}`,
 		`{"externalIdentifier": { "type": "datadog", "externalId": "12345678" }}`,
 		`{"data": {
         "account": {
@@ -63,8 +63,8 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 
 func TestGetAlertSource(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
 		`{"data": {
         "account": {
@@ -95,8 +95,8 @@ func TestGetAlertSource(t *testing.T) {
 
 func TestDeleteAlertSourceService(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AlertSourceServiceDelete($input:AlertSourceDeleteInput!){alertSourceServiceDelete(input: $input){errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AlertSourceServiceDelete($input:AlertSourceDeleteInput!){alertSourceServiceDelete(input: $input){errors{message,path}}}`,
 		`{"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvODYz" }}`,
 		`{"data": { "alertSourceServiceDelete": { "errors": [] }}}`,
 	)

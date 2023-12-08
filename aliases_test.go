@@ -8,8 +8,8 @@ import (
 
 func TestCreateAliases(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AliasCreate($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AliasCreate($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}`,
 		`{"input": { "alias": "MyAwesomeAlias", "ownerId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2" }}`,
 		`{"data": { "aliasCreate": { "aliases": [ "MyCoolService", "MyAwesomeAlias" ], "ownerId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS80MTc2", "errors": [] }}}`,
 	)
@@ -27,8 +27,8 @@ func TestCreateAliases(t *testing.T) {
 
 func TestDeleteServiceAlias(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
 		`{"input": { "alias": "MyAwesomeAlias", "ownerType": "service" }}`,
 		`{"data": { "aliasDelete": { "deletedAlias": "MyAwesomeAlias", "errors": [] }}}`,
 	)
@@ -42,8 +42,8 @@ func TestDeleteServiceAlias(t *testing.T) {
 
 func TestDeleteTeamAlias(t *testing.T) {
 	// Arrange
-	testRequest := NewTestRequest(
-		`"mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}"`,
+	testRequest := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
 		`{"input": { "alias": "MyAwesomeAlias", "ownerType": "team" }}`,
 		`{"data": { "aliasDelete": { "deletedAlias": "MyAwesomeAlias", "errors": [] }}}`,
 	)
