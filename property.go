@@ -3,15 +3,15 @@ package opslevel
 import "fmt"
 
 type PropertyDefinitionInput struct {
-	Name   string `json:"name"`
-	Schema JSON   `json:"schema"`
+	Name   string     `json:"name"`
+	Schema JSONString `json:"schema"`
 }
 
 type PropertyDefinition struct {
-	Aliases []string   `graphql:"aliases" json:"aliases"`
-	Id      ID         `graphql:"id" json:"id"`
-	Name    string     `graphql:"name" json:"name"`
-	Schema  JSONString `json:"schema" scalar:"true"`
+	Aliases []string `graphql:"aliases" json:"aliases"`
+	Id      ID       `graphql:"id" json:"id"`
+	Name    string   `graphql:"name" json:"name"`
+	Schema  JSON     `json:"schema" scalar:"true"` // Do not add graphql struct tag here
 }
 
 type PropertyDefinitionConnection struct {

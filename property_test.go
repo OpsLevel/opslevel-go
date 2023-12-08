@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
@@ -11,20 +12,21 @@ const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
+	schema := ol.NewJSON(schemaString)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases: []string{"my_prop"},
 		Id:      "XXX",
 		Name:    "my-prop",
-		Schema:  ol.JSONString(schemaString),
+		Schema:  schema,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   "my-prop",
-		Schema: ol.NewJSON(schemaString),
+		Schema: ol.JSONString(schemaString),
 	})
 	testRequest := NewTestRequest(
 		`"mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}"`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		`{"data":{"propertyDefinitionCreate":{"definition":{{ template "expected_property_definition" }}, "errors":[] }}}`,
+		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schema.ToJSON()),
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
@@ -34,8 +36,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, expectedPropertyDefinition, *actualPropertyDefinition)
-	autopilot.Equals(t, propertyDefinitionInput.Name, actualPropertyDefinition.Name)
-	autopilot.Equals(t, propertyDefinitionInput.Schema, ol.JSON(actualPropertyDefinition.Schema.Map()))
+	autopilot.Equals(t, ol.JSON(propertyDefinitionInput.Schema.Map()), actualPropertyDefinition.Schema)
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {
@@ -56,17 +57,18 @@ func TestDeletePropertyDefinition(t *testing.T) {
 
 func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
+	schema := ol.NewJSON(schemaString)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition",
 		ol.PropertyDefinition{
 			Aliases: []string{"my_prop"},
 			Id:      "XXX",
 			Name:    "my-prop",
-			Schema:  ol.JSONString(schemaString),
+			Schema:  schema,
 		})
 	testRequest := NewTestRequest(
 		`"query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,id,name,schema}}}"`,
 		`{"input":{"alias":"my_prop"}}`,
-		`{"data":{"account":{"propertyDefinition": {{ template "expected_property_definition" }} }}}`,
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s }}}}`, schema.ToJSON()),
 	)
 	client := BestTestClient(t, "properties/definition_get", testRequest)
 
@@ -78,39 +80,41 @@ func TestGetPropertyDefinition(t *testing.T) {
 	autopilot.Equals(t, "XXX", string(property.Id))
 	autopilot.Equals(t, expectedPropertyDefinition, *property)
 	autopilot.Equals(t, "my-prop", property.Name)
+	autopilot.Equals(t, schema, property.Schema)
 }
 
 func TestListPropertyDefinitions(t *testing.T) {
 	// Arrange
+	schema := ol.NewJSON(schemaString)
 	expectedPropDefsPageOne := autopilot.Register[[]ol.PropertyDefinition]("property_definitions", []ol.PropertyDefinition{
 		{
 			Aliases: []string{"prop1"},
 			Id:      "XXX",
 			Name:    "prop1",
-			Schema:  ol.JSONString(schemaString),
+			Schema:  ol.NewJSON(schemaString),
 		},
 		{
 			Aliases: []string{"prop2"},
 			Id:      "XXX",
 			Name:    "prop2",
-			Schema:  ol.JSONString(schemaString),
+			Schema:  ol.NewJSON(schemaString),
 		},
 	})
 	expectedPropDefPageTwo := autopilot.Register[ol.PropertyDefinition]("property_definition_3", ol.PropertyDefinition{
 		Aliases: []string{"prop3"},
 		Id:      "XXX",
 		Name:    "prop3",
-		Schema:  ol.JSONString(schemaString),
+		Schema:  ol.NewJSON(schemaString),
 	})
 	testRequestOne := NewTestRequest(
 		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{"data":{"account":{"propertyDefinitions":{"nodes": {{ template "property_definitions" }},{{ template "pagination_initial_pageInfo_response" }}}}}}`,
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
 	)
 	testRequestTwo := NewTestRequest(
 		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{"data":{"account":{"propertyDefinitions":{"nodes":[{{ template "property_definition_3" }}],{{ template "pagination_second_pageInfo_response" }}}}}}`,
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "properties/definition_list", requests...)
@@ -125,4 +129,7 @@ func TestListPropertyDefinitions(t *testing.T) {
 	autopilot.Equals(t, expectedPropDefsPageOne[0], result[0])
 	autopilot.Equals(t, expectedPropDefsPageOne[1], result[1])
 	autopilot.Equals(t, expectedPropDefPageTwo, result[2])
+	autopilot.Equals(t, expectedPropDefsPageOne[0].Schema, result[0].Schema)
+	autopilot.Equals(t, expectedPropDefsPageOne[1].Schema, result[1].Schema)
+	autopilot.Equals(t, expectedPropDefPageTwo.Schema, result[2].Schema)
 }
