@@ -121,7 +121,7 @@ func TestGetServiceMaturityWithAlias(t *testing.T) {
   }
 }`,
 	)
-	client := AutopilotTestClient(t, "maturity/get_service_maturity_with_alias", testRequest)
+	client := BestTestClient(t, "maturity/get_service_maturity_with_alias", testRequest)
 	// Act
 	result, err := client.GetServiceMaturityWithAlias("cert-manager")
 	// Assert
@@ -227,7 +227,7 @@ func TestListServicesMaturity(t *testing.T) {
   }
 }`,
 	)
-	client := AutopilotTestClient(t, "maturity/services", testRequest)
+	client := BestTestClient(t, "maturity/services", testRequest)
 	// Act
 	result, err := client.ListServicesMaturity()
 	// Assert

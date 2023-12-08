@@ -14,7 +14,7 @@ func TestCreateRubricCategory(t *testing.T) {
 		`{ "input": { "name": "Kyle" }}`,
 		`{"data": { "categoryCreate": { "category": { {{ template "id1" }}, "name": "Kyle" }, "errors": [] } }}`,
 	)
-	client := AutopilotTestClient(t, "rubric/category_create", testRequest)
+	client := BestTestClient(t, "rubric/category_create", testRequest)
 	// Act
 	result, _ := client.CreateCategory(ol.CategoryCreateInput{
 		Name: "Kyle",
@@ -31,7 +31,7 @@ func TestGetRubricCategory(t *testing.T) {
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "category": { {{ template "id3" }}, "name": "Reliability" } }}}`,
 	)
-	client := AutopilotTestClient(t, "rubric/category_get", testRequest)
+	client := BestTestClient(t, "rubric/category_get", testRequest)
 	// Act
 	result, err := client.GetCategory(id2)
 	// Assert
@@ -47,7 +47,7 @@ func TestGetMissingRubricCategory(t *testing.T) {
 		`{ {{ template "id1" }} }`,
 		`{"data": { "account": { "category": null }}}`,
 	)
-	client := AutopilotTestClient(t, "rubric/category_get_missing", testRequest)
+	client := BestTestClient(t, "rubric/category_get_missing", testRequest)
 	// Act
 	_, err := client.GetCategory(id1)
 	// Assert
@@ -68,7 +68,7 @@ func TestListRubricCategories(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "rubric/category_list", requests...)
+	client := BestTestClient(t, "rubric/category_list", requests...)
 	// Act
 	response, err := client.ListCategories(nil)
 	result := response.Nodes
@@ -89,7 +89,7 @@ func TestUpdateRubricCategory(t *testing.T) {
 		`{ "input": { {{ template "id4" }}, "name": "Emily" }}`,
 		`{"data": { "categoryUpdate": { "category": { {{ template "id4" }}, "name": "Emily" }, "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "rubric/category_update", testRequest)
+	client := BestTestClient(t, "rubric/category_update", testRequest)
 	// Act
 	result, err := client.UpdateCategory(ol.CategoryUpdateInput{
 		Id:   id4,
@@ -108,7 +108,7 @@ func TestDeleteRubricCategory(t *testing.T) {
 		`{ "input": { {{ template "id2" }} }}`,
 		`{"data": { "categoryDelete": { "deletedCategoryId": "{{ template "id2_string" }}", "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "rubric/category_delete", testRequest)
+	client := BestTestClient(t, "rubric/category_delete", testRequest)
 	// Act
 	err := client.DeleteCategory(id2)
 	// Assert

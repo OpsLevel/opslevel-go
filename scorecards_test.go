@@ -24,7 +24,7 @@ func TestCreateScorecard(t *testing.T) {
 	name := "new scorecard"
 	description := "a new scorecard with an attached filter id"
 
-	client := AutopilotTestClient(t, "scorecards/create_scorecard", testRequest)
+	client := BestTestClient(t, "scorecards/create_scorecard", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
 		Description:                 &description,
@@ -50,7 +50,7 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 	name := "new scorecard"
 	description := "a new scorecard with an attached filter id"
 
-	client := AutopilotTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
+	client := BestTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
 		Description:                 &description,
@@ -77,7 +77,7 @@ func TestUpdateScorecard(t *testing.T) {
 	name := "updated scorecard"
 	description := "this scorecard was updated"
 
-	client := AutopilotTestClient(t, "scorecards/update_scorecard", testRequest)
+	client := BestTestClient(t, "scorecards/update_scorecard", testRequest)
 	sc, err := client.UpdateScorecard(scorecardId, ol.ScorecardInput{
 		Description: &description,
 		Name:        name,
@@ -100,7 +100,7 @@ func TestDeleteScorecard(t *testing.T) {
 		`{{ template "scorecard_delete_request_vars" }}`,
 		`{{ template "scorecard_delete_response" }}`,
 	)
-	client := AutopilotTestClient(t, "scorecards/delete_scorecard", testRequest)
+	client := BestTestClient(t, "scorecards/delete_scorecard", testRequest)
 	deletedScorecardId, err := client.DeleteScorecard(scorecardId)
 
 	autopilot.Ok(t, err)
@@ -116,7 +116,7 @@ func TestGetScorecard(t *testing.T) {
 	name := "fetched scorecard"
 	description := "hello there!"
 
-	client := AutopilotTestClient(t, "scorecards/get_scorecard", testRequest)
+	client := BestTestClient(t, "scorecards/get_scorecard", testRequest)
 	sc, err := client.GetScorecard(scorecardId)
 
 	autopilot.Ok(t, err)
@@ -144,7 +144,7 @@ func TestListScorecards(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "scorecards/list_scorecards", requests...)
+	client := BestTestClient(t, "scorecards/list_scorecards", requests...)
 	// Act
 	response, err := client.ListScorecards(nil)
 	result := response.Nodes

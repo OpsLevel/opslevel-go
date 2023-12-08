@@ -69,8 +69,8 @@ func TestCache(t *testing.T) {
 		testRequestTen,
 	}
 
-	client1 := AutopilotTestClient(t, "cache1", requests...)
-	client2 := AutopilotTestClient(t, "cache2", requests...)
+	client1 := BestTestClient(t, "cache1", requests...)
+	client2 := BestTestClient(t, "cache2", requests...)
 
 	// Act
 	ol.Cache.CacheAll(client1)

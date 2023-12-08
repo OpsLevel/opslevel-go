@@ -28,7 +28,7 @@ func TestCreateInfra(t *testing.T) {
     }}`,
 		`{ "data": { "infrastructureResourceCreate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "infra/create", testRequest)
+	client := BestTestClient(t, "infra/create", testRequest)
 	// Act
 	result, err := client.CreateInfrastructure(opslevel.InfraInput{
 		Schema: "Database",
@@ -63,7 +63,7 @@ func TestGetInfra(t *testing.T) {
 		`{"all": true, "input":{ {{ template "id1" }} }}`,
 		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
 	)
-	client := AutopilotTestClient(t, "infra/get", testRequest)
+	client := BestTestClient(t, "infra/get", testRequest)
 	// Act
 	result, err := client.GetInfrastructure(string(id1))
 	// Assert
@@ -86,7 +86,7 @@ func TestListInfraSchemas(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "infra/list_schemas", requests...)
+	client := BestTestClient(t, "infra/list_schemas", requests...)
 	// Act
 	response, err := client.ListInfrastructureSchemas(nil)
 	result := response.Nodes
@@ -112,7 +112,7 @@ func TestListInfra(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "infra/list", requests...)
+	client := BestTestClient(t, "infra/list", requests...)
 	// Act
 	response, err := client.ListInfrastructure(nil)
 	result := response.Nodes
@@ -130,7 +130,7 @@ func TestUpdateInfra(t *testing.T) {
 		`{"all": true, "identifier": { {{ template "id1" }}}, "input": { "ownerId": "{{ template "id1_string" }}", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
 		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "infra/update", testRequest)
+	client := BestTestClient(t, "infra/update", testRequest)
 	// Act
 	result, err := client.UpdateInfrastructure(string(id1), opslevel.InfraInput{
 		Owner: &id1,
@@ -154,7 +154,7 @@ func TestDeleteInfra(t *testing.T) {
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "infrastructureResourceDelete": { "errors": [] }}}`,
 	)
-	client := AutopilotTestClient(t, "infra/delete", testRequest)
+	client := BestTestClient(t, "infra/delete", testRequest)
 	// Act
 	err := client.DeleteInfrastructure(string(id1))
 	// Assert
@@ -220,7 +220,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                 }`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
-	client := AutopilotTestClient(t, "infrastructureResource/tags", requests...)
+	client := BestTestClient(t, "infrastructureResource/tags", requests...)
 	// Act
 	infra := opslevel.InfrastructureResource{Id: string(id1)}
 	resp, err := infra.GetTags(client, nil)

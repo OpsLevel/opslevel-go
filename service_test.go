@@ -21,7 +21,7 @@ func TestServiceTags(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/tags", requests...)
+	client := BestTestClient(t, "service/tags", requests...)
 	// Act
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -98,7 +98,7 @@ func TestServiceTools(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/tools", requests...)
+	client := BestTestClient(t, "service/tools", requests...)
 	// Act
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -210,7 +210,7 @@ func TestServiceRepositories(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/repositories", requests...)
+	client := BestTestClient(t, "service/repositories", requests...)
 	// Act
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
@@ -233,7 +233,7 @@ func TestCreateService(t *testing.T) {
 		`{ "input": { "name": "Foo", "description": "Foo service" } }`,
 		`{ "data": { "serviceCreate": { "service": {{ template "service_1" }}, "errors": [] } }}`,
 	)
-	client := AutopilotTestClient(t, "service/create", testRequest)
+	client := BestTestClient(t, "service/create", testRequest)
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
@@ -252,7 +252,7 @@ func TestUpdateService(t *testing.T) {
 		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "service/update", testRequest)
+	client := BestTestClient(t, "service/update", testRequest)
 
 	// Act
 	result, err := client.UpdateService(ol.ServiceUpdateInput{
@@ -271,7 +271,7 @@ func TestGetServiceIdWithAlias(t *testing.T) {
 		`{ "service": "coredns" }`,
 		`{ "data": { "account": { "service": { "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx" } } } }`,
 	)
-	client := AutopilotTestClient(t, "service/get_id_with_alias", testRequest)
+	client := BestTestClient(t, "service/get_id_with_alias", testRequest)
 	// Act
 	result, err := client.GetServiceIdWithAlias("coredns")
 	// Assert
@@ -436,7 +436,7 @@ func TestGetServiceWithAlias(t *testing.T) {
   }
 }`,
 	)
-	client := AutopilotTestClient(t, "service/get_with_alias", testRequest)
+	client := BestTestClient(t, "service/get_with_alias", testRequest)
 	// Act
 	result, err := client.GetServiceWithAlias("coredns")
 	// Assert
@@ -612,7 +612,7 @@ func TestGetService(t *testing.T) {
   }
 }`,
 	)
-	client := AutopilotTestClient(t, "service/get", testRequest)
+	client := BestTestClient(t, "service/get", testRequest)
 	// Act
 	result, err := client.GetService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx")
 	// Assert
@@ -637,7 +637,7 @@ func TestGetServiceDocuments(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/get_documents", requests...)
+	client := BestTestClient(t, "service/get_documents", requests...)
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
 			Id: id1,
@@ -666,7 +666,7 @@ func TestListServices(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list", requests...)
+	client := BestTestClient(t, "service/list", requests...)
 	// Act
 	resp, err := client.ListServices(nil)
 	result := resp.Nodes
@@ -691,7 +691,7 @@ func TestListServicesWithFramework(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_framework", requests...)
+	client := BestTestClient(t, "service/list_with_framework", requests...)
 	// Act
 	response, err := client.ListServicesWithFramework("postgres", nil)
 	result := response.Nodes
@@ -716,7 +716,7 @@ func TestListServicesWithLanguage(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_language", requests...)
+	client := BestTestClient(t, "service/list_with_language", requests...)
 	// Act
 	response, err := client.ListServicesWithLanguage("postgres", nil)
 	result := response.Nodes
@@ -741,7 +741,7 @@ func TestListServicesWithOwner(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_owner", requests...)
+	client := BestTestClient(t, "service/list_with_owner", requests...)
 	// Act
 	response, err := client.ListServicesWithOwner("postgres", nil)
 	result := response.Nodes
@@ -766,7 +766,7 @@ func TestListServicesWithTag(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_tag", requests...)
+	client := BestTestClient(t, "service/list_with_tag", requests...)
 	// Act
 	response, err := client.ListServicesWithTag(ol.NewTagArgs("app:worker"), nil)
 	result := response.Nodes
@@ -791,7 +791,7 @@ func TestListServicesWithTier(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_tier", requests...)
+	client := BestTestClient(t, "service/list_with_tier", requests...)
 	// Act
 	response, err := client.ListServicesWithTier("tier_1", nil)
 	result := response.Nodes
@@ -816,7 +816,7 @@ func TestListServicesWithLifecycle(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_lifecycle", requests...)
+	client := BestTestClient(t, "service/list_with_lifecycle", requests...)
 	// Act
 	response, err := client.ListServicesWithLifecycle("alpha", nil)
 	result := response.Nodes
@@ -841,7 +841,7 @@ func TestListServicesWithProduct(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "service/list_with_product", requests...)
+	client := BestTestClient(t, "service/list_with_product", requests...)
 	// Act
 	response, err := client.ListServicesWithProduct("test", nil)
 	result := response.Nodes
@@ -859,7 +859,7 @@ func TestDeleteService(t *testing.T) {
 		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3" } }`,
 		`{ "data": { "serviceDelete": { "deletedServiceId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3", "deletedServiceAlias": "db", "errors": [] } } }`,
 	)
-	client := AutopilotTestClient(t, "service/delete", testRequest)
+	client := BestTestClient(t, "service/delete", testRequest)
 	// Act
 	err := client.DeleteService(ol.ServiceDeleteInput{Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"})
 	// Assert
@@ -873,7 +873,7 @@ func TestDeleteServicesWithAlias(t *testing.T) {
 		`{ "input": { "alias": "db" } }`,
 		`{ "data": { "serviceDelete": { "deletedServiceId": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3", "deletedServiceAlias": "db", "errors": [] } } }`,
 	)
-	client := AutopilotTestClient(t, "service/delete_with_alias", testRequest)
+	client := BestTestClient(t, "service/delete_with_alias", testRequest)
 	// Act
 	err := client.DeleteServiceWithAlias("db")
 	// Assert

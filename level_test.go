@@ -14,7 +14,7 @@ func TestCreateRubricLevels(t *testing.T) {
 		`{"data": { "levelCreate": { "level": { "alias": "kyle", "description": "Created By Kyle", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw", "index": 4, "name": "Kyle" }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_create", testRequest)
+	client := BestTestClient(t, "rubric/level_create", testRequest)
 	// Act
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
@@ -42,7 +42,7 @@ func TestGetRubricLevel(t *testing.T) {
           }}}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_get", testRequest)
+	client := BestTestClient(t, "rubric/level_get", testRequest)
 	// Act
 	result, err := client.GetLevel("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -58,7 +58,7 @@ func TestGetMissingRubricLevel(t *testing.T) {
 		`{"data": { "account": { "level": null }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_get_missing", testRequest)
+	client := BestTestClient(t, "rubric/level_get_missing", testRequest)
 	// Act
 	_, err := client.GetLevel("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg")
 	// Assert
@@ -111,7 +111,7 @@ func TestListRubricLevels(t *testing.T) {
     }
   }`,
 	)
-	client := AutopilotTestClient(t, "rubric/level/list", testRequest)
+	client := BestTestClient(t, "rubric/level/list", testRequest)
 	// Act
 	result, _ := client.ListLevels()
 	// Assert
@@ -127,7 +127,7 @@ func TestUpdateRubricLevel(t *testing.T) {
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_update", testRequest)
+	client := BestTestClient(t, "rubric/level_update", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
@@ -148,7 +148,7 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_update_noname", testRequest)
+	client := BestTestClient(t, "rubric/level_update_noname", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
@@ -168,7 +168,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_update_emptydescription", testRequest)
+	client := BestTestClient(t, "rubric/level_update_emptydescription", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
@@ -189,7 +189,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_update_nodescription", testRequest)
+	client := BestTestClient(t, "rubric/level_update_nodescription", testRequest)
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:   id1,
@@ -209,7 +209,7 @@ func TestDeleteRubricLevels(t *testing.T) {
 		`{"data": { "levelDelete": { "deletedLevelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw", "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "rubric/level_delete", testRequest)
+	client := BestTestClient(t, "rubric/level_delete", testRequest)
 	// Act
 	err := client.DeleteLevel("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDgw")
 	// Assert

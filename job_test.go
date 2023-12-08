@@ -15,7 +15,7 @@ func TestRunnerRegister(t *testing.T) {
 		`{"data": {"runnerRegister": { "runner": { "id": "1234", "status": "registered" }, "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "job/register", testRequest)
+	client := BestTestClient(t, "job/register", testRequest)
 	// Act
 	result, err := client.RunnerRegister()
 	// Assert
@@ -31,7 +31,7 @@ func TestRunnerGetScale(t *testing.T) {
 		`{"data": { "account": { "runnerScale": { "recommendedReplicaCount": 6 }}}}`,
 	)
 
-	client := AutopilotTestClient(t, "job/scale", testRequest)
+	client := BestTestClient(t, "job/scale", testRequest)
 	// Act
 	result, err := client.RunnerScale("1234567890", 2, 3)
 	// Assert
@@ -68,7 +68,7 @@ func TestRunnerGetPendingJobs(t *testing.T) {
       }}}`,
 	)
 
-	client := AutopilotTestClient(t, "job/get_pending", testRequest)
+	client := BestTestClient(t, "job/get_pending", testRequest)
 	// Act
 	result, token, err := client.RunnerGetPendingJob("1234567890", "1234")
 	// Assert
@@ -86,7 +86,7 @@ func TestRunnerAppendJobLog(t *testing.T) {
 		`{"data": { "runnerAppendJobLog": { "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "job/append_log", testRequest)
+	client := BestTestClient(t, "job/append_log", testRequest)
 	// Act
 	err := client.RunnerAppendJobLog(ol.RunnerAppendJobLogInput{
 		RunnerId:    "1234",
@@ -106,7 +106,7 @@ func TestRunnerReportJobOutcome(t *testing.T) {
 		`{"data": { "runnerReportJobOutcome": { "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "job/report_outcome", testRequest)
+	client := BestTestClient(t, "job/report_outcome", testRequest)
 	// Act
 	err := client.RunnerReportJobOutcome(ol.RunnerReportJobOutcomeInput{
 		RunnerId:    "1234567890",
@@ -125,7 +125,7 @@ func TestRunnerUnregister(t *testing.T) {
 		`{"data": { "runnerUnregister": { "errors": [] }}}`,
 	)
 
-	client := AutopilotTestClient(t, "job/unregister", testRequest)
+	client := BestTestClient(t, "job/unregister", testRequest)
 	// Act
 	err := client.RunnerUnregister("1234")
 	// Assert

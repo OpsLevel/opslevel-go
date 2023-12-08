@@ -638,7 +638,7 @@ func TestChecks(t *testing.T) {
 	for name, tc := range getCheckTestCases() {
 		t.Run(name, func(t *testing.T) {
 			// Arrange
-			client := AutopilotTestClient(t, name, tc.fixture)
+			client := BestTestClient(t, name, tc.fixture)
 			// Act
 			result, err := tc.body(client)
 			// Assert
@@ -677,7 +677,7 @@ func TestCanUpdateFilterToNull(t *testing.T) {
         "errors": []
       }}}`,
 	)
-	client := AutopilotTestClient(t, "check/can_update_filter_to_null", testRequest)
+	client := BestTestClient(t, "check/can_update_filter_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 		CheckUpdateInput: ol.CheckUpdateInput{
@@ -717,7 +717,7 @@ func TestCanUpdateNotesToNull(t *testing.T) {
         "errors": []
       }}}`,
 	)
-	client := AutopilotTestClient(t, "check/can_update_notes_to_null", testRequest)
+	client := BestTestClient(t, "check/can_update_notes_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 		CheckUpdateInput: ol.CheckUpdateInput{
@@ -745,7 +745,7 @@ func TestListChecks(t *testing.T) {
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-	client := AutopilotTestClient(t, "check/list", requests...)
+	client := BestTestClient(t, "check/list", requests...)
 	// Act
 	response, err := client.ListChecks(nil)
 	result := response.Nodes
@@ -765,7 +765,7 @@ func TestGetMissingCheck(t *testing.T) {
 		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
 		`{ "data": { "account": { "check": null } } }`,
 	)
-	client := AutopilotTestClient(t, "check/get_missing", testRequest)
+	client := BestTestClient(t, "check/get_missing", testRequest)
 	// Act
 	_, err := client.GetCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf")
 	// Assert
@@ -779,7 +779,7 @@ func TestDeleteCheck(t *testing.T) {
 		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzIxNzI" } }`,
 		`{ "data": { "checkDelete": { "errors": [] } } }`,
 	)
-	client := AutopilotTestClient(t, "check/delete", testRequest)
+	client := BestTestClient(t, "check/delete", testRequest)
 	// Act
 	err := client.DeleteCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzIxNzI")
 	// Assert
