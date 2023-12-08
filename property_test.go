@@ -1,7 +1,6 @@
 package opslevel_test
 
 import (
-	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2023"
@@ -12,25 +11,31 @@ const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	propertyDefinition := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
+		Aliases: []string{"my_prop"},
+		Id:      "XXX",
+		Name:    "my-prop",
+		Schema:  ol.JSONString(schemaString),
+	})
+	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   "my-prop",
-		Schema: ol.NewJSONInput(schemaString),
+		Schema: ol.NewJSON(schemaString),
 	})
 	testRequest := NewTestRequest(
 		`"mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}"`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		`{"data":{"propertyDefinitionCreate":{"definition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": {{ template "property_definition_input" }}},"errors":[]}}}`,
+		`{"data":{"propertyDefinitionCreate":{"definition":{{ template "expected_property_definition" }}, "errors":[] }}}`,
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
 	// Act
-	property, err := client.CreatePropertyDefinition(propertyDefinition)
+	actualPropertyDefinition, err := client.CreatePropertyDefinition(propertyDefinitionInput)
 
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "XXX", string(property.Id))
-	autopilot.Equals(t, propertyDefinition.Name, property.Name)
-	autopilot.Equals(t, string(propertyDefinition.Schema), property.Schema["schema"])
+	autopilot.Equals(t, expectedPropertyDefinition, *actualPropertyDefinition)
+	autopilot.Equals(t, propertyDefinitionInput.Name, actualPropertyDefinition.Name)
+	autopilot.Equals(t, propertyDefinitionInput.Schema, ol.JSON(actualPropertyDefinition.Schema.Map()))
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {
@@ -51,11 +56,17 @@ func TestDeletePropertyDefinition(t *testing.T) {
 
 func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition",
+		ol.PropertyDefinition{
+			Aliases: []string{"my_prop"},
+			Id:      "XXX",
+			Name:    "my-prop",
+			Schema:  ol.JSONString(schemaString),
+		})
 	testRequest := NewTestRequest(
 		`"query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,id,name,schema}}}"`,
 		`{"input":{"alias":"my_prop"}}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinition":{"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}}}}`, schema.ToJSON()),
+		`{"data":{"account":{"propertyDefinition": {{ template "expected_property_definition" }} }}}`,
 	)
 	client := BestTestClient(t, "properties/definition_get", testRequest)
 
@@ -65,22 +76,41 @@ func TestGetPropertyDefinition(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "XXX", string(property.Id))
+	autopilot.Equals(t, expectedPropertyDefinition, *property)
 	autopilot.Equals(t, "my-prop", property.Name)
-	autopilot.Equals(t, schema, property.Schema)
 }
 
 func TestListPropertyDefinitions(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	expectedPropDefsPageOne := autopilot.Register[[]ol.PropertyDefinition]("property_definitions", []ol.PropertyDefinition{
+		{
+			Aliases: []string{"prop1"},
+			Id:      "XXX",
+			Name:    "prop1",
+			Schema:  ol.JSONString(schemaString),
+		},
+		{
+			Aliases: []string{"prop2"},
+			Id:      "XXX",
+			Name:    "prop2",
+			Schema:  ol.JSONString(schemaString),
+		},
+	})
+	expectedPropDefPageTwo := autopilot.Register[ol.PropertyDefinition]("property_definition_3", ol.PropertyDefinition{
+		Aliases: []string{"prop3"},
+		Id:      "XXX",
+		Name:    "prop3",
+		Schema:  ol.JSONString(schemaString),
+	})
 	testRequestOne := NewTestRequest(
 		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
+		`{"data":{"account":{"propertyDefinitions":{"nodes": {{ template "property_definitions" }},{{ template "pagination_initial_pageInfo_response" }}}}}}`,
 	)
 	testRequestTwo := NewTestRequest(
 		`"query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,schema},{{ template "pagination_request" }}}}}"`,
 		`{{ template "pagination_second_query_variables" }}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
+		`{"data":{"account":{"propertyDefinitions":{"nodes":[{{ template "property_definition_3" }}],{{ template "pagination_second_pageInfo_response" }}}}}}`,
 	)
 	requests := []TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "properties/definition_list", requests...)
@@ -92,7 +122,7 @@ func TestListPropertyDefinitions(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, len(result))
-	autopilot.Equals(t, "prop1", result[0].Name)
-	autopilot.Equals(t, "prop2", result[1].Name)
-	autopilot.Equals(t, "prop3", result[2].Name)
+	autopilot.Equals(t, expectedPropDefsPageOne[0], result[0])
+	autopilot.Equals(t, expectedPropDefsPageOne[1], result[1])
+	autopilot.Equals(t, expectedPropDefPageTwo, result[2])
 }
