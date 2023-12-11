@@ -5,7 +5,7 @@ import (
 )
 
 // Generate example yaml files for OpsLevel resources
-func GenYamlFromStruct[T any](opslevelResource T) (string, error) {
+func GenYamlFrom[T any](opslevelResource T) (string, error) {
 	out, err := yaml.Marshal(opslevelResource)
 	if err != nil {
 		return "", err
