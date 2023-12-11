@@ -11,6 +11,7 @@ require (
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
 	github.com/rs/zerolog v1.31.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
