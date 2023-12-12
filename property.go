@@ -7,6 +7,21 @@ type PropertyDefinitionInput struct {
 	Schema JSONString `json:"schema"`
 }
 
+func (p *PropertyDefinitionInput) Example() PropertyDefinitionInput {
+	return PropertyDefinitionInput{
+		Name:   ExampleName,
+		Schema: JSONString(`{}`),
+	}
+}
+
+func (p *PropertyDefinitionInput) ExampleJson() string {
+	return GenJsonFrom[PropertyDefinitionInput](p.Example())
+}
+
+func (p *PropertyDefinitionInput) ExampleYaml() string {
+	return GenYamlFrom[PropertyDefinitionInput](p.Example())
+}
+
 type PropertyDefinition struct {
 	Aliases []string `graphql:"aliases" json:"aliases"`
 	Id      ID       `graphql:"id" json:"id"`

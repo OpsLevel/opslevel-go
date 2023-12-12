@@ -9,6 +9,18 @@ type MemberInput struct {
 	Email string `json:"email"`
 }
 
+func (m *MemberInput) Example() MemberInput {
+	return MemberInput{Email: ExampleEmail}
+}
+
+func (m *MemberInput) ExampleJson() string {
+	return GenJsonFrom[MemberInput](m.Example())
+}
+
+func (m *MemberInput) ExampleYaml() string {
+	return GenYamlFrom[MemberInput](m.Example())
+}
+
 type UserId struct {
 	Id    ID
 	Email string
@@ -34,10 +46,41 @@ type UserIdentifierInput struct {
 	Email *string `graphql:"email" json:"email,omitempty"`
 }
 
+func (u *UserIdentifierInput) Example() UserIdentifierInput {
+	return UserIdentifierInput{
+		Id:    NewID(ExampleId),
+		Email: NewString(ExampleEmail),
+	}
+}
+
+func (u *UserIdentifierInput) ExampleJson() string {
+	return GenJsonFrom[UserIdentifierInput](u.Example())
+}
+
+func (u *UserIdentifierInput) ExampleYaml() string {
+	return GenYamlFrom[UserIdentifierInput](u.Example())
+}
+
 type UserInput struct {
 	Name             string   `json:"name,omitempty"`
 	Role             UserRole `json:"role,omitempty"`
-	SkipWelcomeEmail bool     `json:"skipWelcomeEmail"`
+	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail"`
+}
+
+func (u *UserInput) Example() UserInput {
+	return UserInput{
+		Name:             ExampleName,
+		Role:             UserRoleAdmin,
+		SkipWelcomeEmail: true,
+	}
+}
+
+func (u *UserInput) ExampleJson() string {
+	return GenJsonFrom[UserInput](u.Example())
+}
+
+func (u *UserInput) ExampleYaml() string {
+	return GenYamlFrom[UserInput](u.Example())
 }
 
 func (u *User) ResourceId() ID {
