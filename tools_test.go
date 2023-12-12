@@ -9,19 +9,16 @@ import (
 
 func TestCreateTool(t *testing.T) {
 	// Arrange
+	var toolCreateInput ol.ToolCreateInput
+	toolCreateInput = autopilot.Register[ol.ToolCreateInput]("tool_create_input", toolCreateInput.Example())
 	testRequest := autopilot.NewTestRequest(
 		`mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
-		`{ "input": { "category": "other", "displayName": "example", "serviceId": "{{ template "id1_string" }}", "url": "https://example.com" }}`,
+		`{ "input": {{ template "tool_create_input" }}}`,
 		`{"data": { "toolCreate": { "tool": {{ template "tool_1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "toolCreate", testRequest)
 	// Act
-	result, err := client.CreateTool(ol.ToolCreateInput{
-		Category:    ol.ToolCategoryOther,
-		DisplayName: "example",
-		ServiceId:   id1,
-		Url:         "https://example.com",
-	})
+	result, err := client.CreateTool(toolCreateInput)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Service.Id)
@@ -32,17 +29,16 @@ func TestCreateTool(t *testing.T) {
 
 func TestUpdateTool(t *testing.T) {
 	// Arrange
+	var toolUpdateInput ol.ToolUpdateInput
+	toolUpdateInput = autopilot.Register[ol.ToolUpdateInput]("tool_update_input", toolUpdateInput.Example())
 	testRequest := autopilot.NewTestRequest(
 		`mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
-		`{ "input": { {{ template "id1" }}, "category": "deployment" }}`,
+		`{ "input": {{ template "tool_update_input" }} }`,
 		`{"data": { "toolUpdate": { "tool": {{ template "tool_1_update" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "toolUpdate", testRequest)
 	// Act
-	result, err := client.UpdateTool(ol.ToolUpdateInput{
-		Id:       id1,
-		Category: ol.ToolCategoryDeployment,
-	})
+	result, err := client.UpdateTool(toolUpdateInput)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, ol.ToolCategoryDeployment, result.Category)

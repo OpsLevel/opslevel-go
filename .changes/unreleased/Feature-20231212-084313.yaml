@@ -1,0 +1,3 @@
+kind: Feature
+body: add Example,ExampleJson,ExampleYaml member funcs to structs
+time: 2023-12-12T08:43:13.539155-06:00
