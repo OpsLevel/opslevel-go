@@ -20,17 +20,17 @@ type ToolCreateInput struct {
 	Category     ToolCategory `json:"category" validate:"required" default:"logs"`
 	DisplayName  string       `json:"displayName" yaml:"displayName" default:"John Doe"`
 	Url          string       `json:"url" default:"john.doe@example.com"`
-	Environment  string       `json:"environment,omitempty" yaml:"environment,omitempty" default:"-"`
-	ServiceId    ID           `json:"serviceId,omitempty" yaml:"serviceId,omitempty" default:"-"`
-	ServiceAlias string       `json:"serviceAlias,omitempty" yaml:"serviceId,omitempty" default:"-"`
+	Environment  string       `json:"environment,omitempty" yaml:"environment,omitempty"`
+	ServiceId    ID           `json:"serviceId,omitempty" yaml:"serviceId,omitempty"`
+	ServiceAlias string       `json:"serviceAlias,omitempty" yaml:"serviceId,omitempty"`
 }
 
 type ToolUpdateInput struct {
 	Id          ID           `json:"id" default:"Z2lkOi8vMTIzNDU2Nzg5MTAK"`
-	Category    ToolCategory `json:"category,omitempty" default:"-"`
+	Category    ToolCategory `json:"category,omitempty"`
 	DisplayName string       `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"John Doe"`
 	Url         string       `json:"url,omitempty" yaml:"url,omitempty" default:"john.doe@example.com"`
-	Environment string       `json:"environment,omitempty" yaml:"environment,omitempty" default:"-"`
+	Environment string       `json:"environment,omitempty" yaml:"environment,omitempty"`
 }
 
 type ToolDeleteInput struct {
