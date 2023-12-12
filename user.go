@@ -30,14 +30,14 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    *ID     `graphql:"id" json:"id,omitempty" default:"-"`
-	Email *string `graphql:"email" json:"email,omitempty" default:"-"`
+	Id    *ID     `graphql:"id" json:"id,omitempty"`
+	Email *string `graphql:"email" json:"email,omitempty"`
 }
 
 type UserInput struct {
-	Name             string   `json:"name,omitempty" default:"-"`
-	Role             UserRole `json:"role,omitempty" default:"-"`
-	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail" default:"false"`
+	Name             string   `json:"name,omitempty"`
+	Role             UserRole `json:"role,omitempty"`
+	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail"`
 }
 
 func (u *User) ResourceId() ID {
