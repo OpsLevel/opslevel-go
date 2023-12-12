@@ -9,8 +9,7 @@ import (
 
 func TestCreateTool(t *testing.T) {
 	// Arrange
-	var toolCreateInput ol.ToolCreateInput
-	toolCreateInput = autopilot.Register[ol.ToolCreateInput]("tool_create_input", toolCreateInput.Example())
+	toolCreateInput := autopilot.Register[ol.ToolCreateInput]("tool_create_input", ol.NewExampleOf[ol.ToolCreateInput]())
 	testRequest := autopilot.NewTestRequest(
 		`mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
 		`{ "input": {{ template "tool_create_input" }}}`,
@@ -29,8 +28,7 @@ func TestCreateTool(t *testing.T) {
 
 func TestUpdateTool(t *testing.T) {
 	// Arrange
-	var toolUpdateInput ol.ToolUpdateInput
-	toolUpdateInput = autopilot.Register[ol.ToolUpdateInput]("tool_update_input", toolUpdateInput.Example())
+	toolUpdateInput := autopilot.Register[ol.ToolUpdateInput]("tool_update_input", ol.NewExampleOf[ol.ToolUpdateInput]())
 	testRequest := autopilot.NewTestRequest(
 		`mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
 		`{ "input": {{ template "tool_update_input" }} }`,
