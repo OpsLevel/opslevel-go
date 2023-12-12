@@ -244,6 +244,25 @@ func TestCreateService(t *testing.T) {
 	autopilot.Equals(t, 1, len(result.Aliases))
 }
 
+func TestCreateServiceWithParentSystem(t *testing.T) {
+	// Arrange
+	testRequest := NewTestRequest(
+		`"mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`{ "input": { "name": "Foo", "description": "Foo service", "parent": {"alias": "FooSystem"} } }`,
+		`{ "data": { "serviceCreate": { "service": {{ template "service_1" }}, "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "service/create_with_system", testRequest)
+	// Act
+	result, err := client.CreateService(ol.ServiceCreateInput{
+		Name:        "Foo",
+		Description: "Foo service",
+		Parent:      ol.NewIdentifier("FooSystem"),
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, len(result.Aliases))
+}
+
 func TestUpdateService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
@@ -257,6 +276,27 @@ func TestUpdateService(t *testing.T) {
 	// Act
 	result, err := client.UpdateService(ol.ServiceUpdateInput{
 		Id: "123456789",
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Foo", result.Name)
+}
+
+func TestUpdateServiceWithSystem(t *testing.T) {
+	// Arrange
+	testRequest := NewTestRequest(
+		`"mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}"`,
+		`{"input":{"id": "123456789", "parent": {"alias": "FooSystem"}}}`,
+		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "service/update_with_system", testRequest)
+
+	// Act
+	result, err := client.UpdateService(ol.ServiceUpdateInput{
+		Id:     "123456789",
+		Parent: ol.NewIdentifier("FooSystem"),
 	})
 
 	// Assert
