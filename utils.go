@@ -11,7 +11,7 @@ import (
 var structValidator = validator.New(validator.WithRequiredStructEnabled())
 
 // Validates resource's `validate:""` struct tags
-func IsResourceValidate[T any](opslevelResource T) error {
+func IsResourceValid[T any](opslevelResource T) error {
 	return structValidator.Struct(opslevelResource)
 }
 
