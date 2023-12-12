@@ -17,57 +17,20 @@ type ToolConnection struct {
 }
 
 type ToolCreateInput struct {
-	Category     ToolCategory `json:"category"`
-	DisplayName  string       `json:"displayName" yaml:"displayName"`
-	Url          string       `json:"url"`
-	Environment  string       `json:"environment,omitempty" yaml:"environment,omitempty"`
-	ServiceId    ID           `json:"serviceId,omitempty" yaml:"serviceId,omitempty"`
-	ServiceAlias string       `json:"serviceAlias,omitempty" yaml:"serviceId,omitempty"`
-}
-
-func (t *ToolCreateInput) Example() ToolCreateInput {
-	return ToolCreateInput{
-		Category:     ToolCategoryLogs,
-		DisplayName:  ExampleName,
-		Url:          ExampleUrl,
-		Environment:  ExampleEnvironment,
-		ServiceId:    *NewID(ExampleId),
-		ServiceAlias: ExampleAlias,
-	}
-}
-
-func (t *ToolCreateInput) ExampleJson() string {
-	return GenJsonFrom[ToolCreateInput](t.Example())
-}
-
-func (t *ToolCreateInput) ExampleYaml() string {
-	return GenYamlFrom[ToolCreateInput](t.Example())
+	Category     ToolCategory `json:"category" validate:"required" default:"logs"`
+	DisplayName  string       `json:"displayName" yaml:"displayName" default:"John Doe"`
+	Url          string       `json:"url" default:"john.doe@example.com"`
+	Environment  string       `json:"environment,omitempty" yaml:"environment,omitempty" default:"-"`
+	ServiceId    ID           `json:"serviceId,omitempty" yaml:"serviceId,omitempty" default:"-"`
+	ServiceAlias string       `json:"serviceAlias,omitempty" yaml:"serviceId,omitempty" default:"-"`
 }
 
 type ToolUpdateInput struct {
-	Id          ID           `json:"id"`
-	Category    ToolCategory `json:"category,omitempty"`
-	DisplayName string       `json:"displayName,omitempty" yaml:"displayName,omitempty"`
-	Url         string       `json:"url,omitempty" yaml:"url,omitempty"`
-	Environment string       `json:"environment,omitempty" yaml:"environment,omitempty"`
-}
-
-func (t *ToolUpdateInput) Example() ToolUpdateInput {
-	return ToolUpdateInput{
-		Id:          ExampleId,
-		Category:    ToolCategoryLogs,
-		DisplayName: ExampleName,
-		Url:         ExampleUrl,
-		Environment: ExampleEnvironment,
-	}
-}
-
-func (t *ToolUpdateInput) ExampleJson() string {
-	return GenJsonFrom[ToolUpdateInput](t.Example())
-}
-
-func (t *ToolUpdateInput) ExampleYaml() string {
-	return GenYamlFrom[ToolUpdateInput](t.Example())
+	Id          ID           `json:"id" default:"Z2lkOi8vMTIzNDU2Nzg5MTAK"`
+	Category    ToolCategory `json:"category,omitempty" default:"-"`
+	DisplayName string       `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"John Doe"`
+	Url         string       `json:"url,omitempty" yaml:"url,omitempty" default:"john.doe@example.com"`
+	Environment string       `json:"environment,omitempty" yaml:"environment,omitempty" default:"-"`
 }
 
 type ToolDeleteInput struct {

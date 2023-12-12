@@ -6,19 +6,7 @@ import (
 )
 
 type MemberInput struct {
-	Email string `json:"email"`
-}
-
-func (m *MemberInput) Example() MemberInput {
-	return MemberInput{Email: ExampleEmail}
-}
-
-func (m *MemberInput) ExampleJson() string {
-	return GenJsonFrom[MemberInput](m.Example())
-}
-
-func (m *MemberInput) ExampleYaml() string {
-	return GenYamlFrom[MemberInput](m.Example())
+	Email string `json:"email" defaults:"john.doe@example.com"`
 }
 
 type UserId struct {
@@ -42,45 +30,14 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    *ID     `graphql:"id" json:"id,omitempty"`
-	Email *string `graphql:"email" json:"email,omitempty"`
-}
-
-func (u *UserIdentifierInput) Example() UserIdentifierInput {
-	return UserIdentifierInput{
-		Id:    NewID(ExampleId),
-		Email: NewString(ExampleEmail),
-	}
-}
-
-func (u *UserIdentifierInput) ExampleJson() string {
-	return GenJsonFrom[UserIdentifierInput](u.Example())
-}
-
-func (u *UserIdentifierInput) ExampleYaml() string {
-	return GenYamlFrom[UserIdentifierInput](u.Example())
+	Id    *ID     `graphql:"id" json:"id,omitempty" defaults:"-"`
+	Email *string `graphql:"email" json:"email,omitempty" defaults:"-"`
 }
 
 type UserInput struct {
-	Name             string   `json:"name,omitempty"`
-	Role             UserRole `json:"role,omitempty"`
-	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail"`
-}
-
-func (u *UserInput) Example() UserInput {
-	return UserInput{
-		Name:             ExampleName,
-		Role:             UserRoleAdmin,
-		SkipWelcomeEmail: true,
-	}
-}
-
-func (u *UserInput) ExampleJson() string {
-	return GenJsonFrom[UserInput](u.Example())
-}
-
-func (u *UserInput) ExampleYaml() string {
-	return GenYamlFrom[UserInput](u.Example())
+	Name             string   `json:"name,omitempty" defaults:"-"`
+	Role             UserRole `json:"role,omitempty" defaults:"-"`
+	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail" defaults:"false"`
 }
 
 func (u *User) ResourceId() ID {
