@@ -8,21 +8,23 @@ on:
 
 jobs:
   generate-changelog:
+    env:
+      MAIN_BRANCH: ${{ github.event.workflow_run.pull_requests[0].base.ref }}
+      PR_BRANCH: ${{ github.event.workflow_run.pull_requests[0].head.ref }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout branch that Dependabot labeled
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.workflow_run.pull_requests[0].head.ref }}
+        ref: ${{ env.PR_BRANCH }}
         token: ${{ secrets.ORG_GITHUB_TOKEN }}
 
     - name: Check if changelog file exists already
       shell: bash
       id: changelog_check
       run: |
-        git fetch origin ${{ github.event.workflow_run.pull_requests[0].base.ref }}
-        RESULT=$(git diff --name-only ${{ github.event.workflow_run.pull_requests[0].head.ref }} ${{ github.event.workflow_run.pull_requests[0].base.ref }})
-        if echo $RESULT | grep '.changes/unreleased/.*.yaml'; then
+        git fetch origin ${{ env.MAIN_BRANCH }}
+        if [[ -n $(git diff --name-only main -- .changes/unreleased/*.yaml) ]]; then
           echo "exists=true" >> $GITHUB_OUTPUT
           echo "Changelog already exists for this PR, skip creating a new one"
         else
