@@ -58,6 +58,7 @@ type ServiceCreateInput struct {
 	Tier        string           `json:"tierAlias,omitempty"`
 	Owner       *IdentifierInput `json:"ownerInput,omitempty"`
 	Lifecycle   string           `json:"lifecycleAlias,omitempty"`
+	Parent      *IdentifierInput `json:"parent,omitempty"`
 }
 
 type ServiceUpdateInput struct {
@@ -71,6 +72,7 @@ type ServiceUpdateInput struct {
 	Tier        string           `json:"tierAlias,omitempty"`
 	Owner       *IdentifierInput `json:"ownerInput,omitempty"`
 	Lifecycle   string           `json:"lifecycleAlias,omitempty"`
+	Parent      *IdentifierInput `json:"parent,omitempty"`
 }
 
 type ServiceDeleteInput struct {
