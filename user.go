@@ -6,7 +6,7 @@ import (
 )
 
 type MemberInput struct {
-	Email string `json:"email"`
+	Email string `json:"email" defaults:"john.doe@example.com"`
 }
 
 type UserId struct {
@@ -30,14 +30,14 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    *ID     `graphql:"id" json:"id,omitempty"`
-	Email *string `graphql:"email" json:"email,omitempty"`
+	Id    *ID     `graphql:"id" json:"id,omitempty" defaults:"-"`
+	Email *string `graphql:"email" json:"email,omitempty" defaults:"-"`
 }
 
 type UserInput struct {
-	Name             string   `json:"name,omitempty"`
-	Role             UserRole `json:"role,omitempty"`
-	SkipWelcomeEmail bool     `json:"skipWelcomeEmail"`
+	Name             string   `json:"name,omitempty" defaults:"-"`
+	Role             UserRole `json:"role,omitempty" defaults:"-"`
+	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail" defaults:"false"`
 }
 
 func (u *User) ResourceId() ID {

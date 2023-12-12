@@ -3,15 +3,15 @@ package opslevel
 import "fmt"
 
 type PropertyDefinitionInput struct {
-	Name   string     `json:"name"`
-	Schema JSONString `json:"schema"`
+	Name   string     `json:"name" defaults:"John Doe"`
+	Schema JSONString `json:"schema" defaults:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"},},\"required\":[\"name\",\"version\"],},\"minItems\":0,\"uniqueItems\":true}"`
 }
 
 type PropertyDefinition struct {
-	Aliases []string `graphql:"aliases" json:"aliases"`
-	Id      ID       `graphql:"id" json:"id"`
-	Name    string   `graphql:"name" json:"name"`
-	Schema  JSON     `json:"schema" scalar:"true"` // Do not add graphql struct tag here
+	Aliases []string `graphql:"aliases" json:"aliases" defaults:"-"`
+	Id      ID       `graphql:"id" json:"id" defaults:"-"`
+	Name    string   `graphql:"name" json:"name" defaults:"-"`
+	Schema  JSON     `json:"schema" scalar:"true" defaults:"-"` // Do not add graphql struct tag here
 }
 
 type PropertyDefinitionConnection struct {
