@@ -4,7 +4,7 @@ import "fmt"
 
 type PropertyDefinitionInput struct {
 	Name   string     `json:"name" default:"John Doe"`
-	Schema JSONString `json:"schema,string" default:"\"{\\\"$schema\\\":\\\"https://json-schema.org/draft/2020-12/schema\\\",\\\"title\\\":\\\"Packages\\\",\\\"description\\\":\\\"A list of packages.\\\",\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"name\\\":{\\\"type\\\":\\\"string\\\"},\\\"version\\\":{\\\"type\\\":\\\"string\\\"},\\\"lock_file\\\":{\\\"type\\\":\\\"string\\\"},\\\"manager\\\":{\\\"type\\\":\\\"string\\\"},},\\\"required\\\":[\\\"name\\\",\\\"version\\\"],},\\\"minItems\\\":0,\\\"uniqueItems\\\":true}\""`
+	Schema JSONString `json:"schema,string" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"},},\"required\":[\"name\",\"version\"],},\"minItems\":0,\"uniqueItems\":true}"`
 }
 
 type PropertyDefinition struct {
