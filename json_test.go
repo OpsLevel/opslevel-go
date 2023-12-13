@@ -148,13 +148,13 @@ func TestUnmarshalJSONString(t *testing.T) {
 	data4 := []any{"foo", "bar"}
 	data5 := map[string]any{"foo": "bar"}
 	// Act
-	result1 := ol.NewJSONInput(data1).Bool()
-	result1a := ol.NewJSONInput(data1a).Bool()
-	result2 := ol.NewJSONInput(data2).Float64()
-	result2a := ol.NewJSONInput(data2a).Int()
-	result3 := ol.NewJSONInput(data3).String()
-	result4 := ol.NewJSONInput(data4).Array()
-	result5 := ol.NewJSONInput(data5).Map()
+	result1 := ol.NewJSONInput(data1).AsBool()
+	result1a := ol.NewJSONInput(data1a).AsBool()
+	result2 := ol.NewJSONInput(data2).AsFloat64()
+	result2a := ol.NewJSONInput(data2a).AsInt()
+	result3 := ol.NewJSONInput(data3).AsString()
+	result4 := ol.NewJSONInput(data4).AsArray()
+	result5 := ol.NewJSONInput(data5).AsMap()
 	_, err := ol.JsonStringAs[float32](ol.NewJSONInput(data1))
 	// Assert
 	autopilot.Equals(t, data1, result1)
