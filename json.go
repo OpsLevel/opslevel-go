@@ -60,32 +60,32 @@ func JsonStringAs[T any](data JSONString) (T, error) {
 	return result, nil
 }
 
-func (s JSONString) Bool() bool {
+func (s JSONString) AsBool() bool {
 	value, _ := JsonStringAs[bool](s)
 	return value
 }
 
-func (s JSONString) Int() int {
+func (s JSONString) AsInt() int {
 	value, _ := JsonStringAs[int](s)
 	return value
 }
 
-func (s JSONString) Float64() float64 {
+func (s JSONString) AsFloat64() float64 {
 	value, _ := JsonStringAs[float64](s)
 	return value
 }
 
-func (s JSONString) String() string {
+func (s JSONString) AsString() string {
 	value, _ := JsonStringAs[string](s)
 	return value
 }
 
-func (s JSONString) Array() []any {
+func (s JSONString) AsArray() []any {
 	value, _ := JsonStringAs[[]any](s)
 	return value
 }
 
-func (s JSONString) Map() map[string]any {
+func (s JSONString) AsMap() map[string]any {
 	value, _ := JsonStringAs[map[string]any](s)
 	return value
 }
