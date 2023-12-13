@@ -36,7 +36,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, expectedPropertyDefinition, *actualPropertyDefinition)
-	autopilot.Equals(t, ol.JSON(propertyDefinitionInput.Schema.Map()), actualPropertyDefinition.Schema)
+	autopilot.Equals(t, ol.JSON(propertyDefinitionInput.Schema.AsMap()), actualPropertyDefinition.Schema)
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {
