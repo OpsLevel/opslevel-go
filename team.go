@@ -75,7 +75,7 @@ type TeamConnection struct {
 }
 
 type TeamCreateInput struct {
-	Name             string           `json:"name" default:"Platform"`
+	Name             string           `json:"name" yaml:"name" default:"Platform"`
 	ManagerEmail     string           `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" default:"manager@example.com"`
 	Responsibilities string           `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"Makes Tools"`
 	Contacts         *[]ContactInput  `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[{\"Type\":\"slack\",\"DisplayName\":\"Team Eng\",\"Address\":\"#team-engineering\"}]"`
@@ -109,8 +109,8 @@ type TeamMembershipConnection struct {
 }
 
 type TeamMembershipUserInput struct {
-	User UserIdentifierInput `json:"user"`
-	Role string              `json:"role" default:"admin"`
+	User UserIdentifierInput `json:"user" yaml:"user"`
+	Role string              `json:"role" yaml:"role" default:"admin"`
 }
 
 type TeamMembershipCreateInput struct {
