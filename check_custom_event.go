@@ -11,11 +11,11 @@ type CustomEventCheckFragment struct {
 type CheckCustomEventCreateInput struct {
 	CheckCreateInput
 
-	Integration      ID     `json:"integrationId"`
-	ServiceSelector  string `json:"serviceSelector"`
-	SuccessCondition string `json:"successCondition"`
-	Message          string `json:"resultMessage,omitempty"`
-	PassPending      *bool  `json:"passPending,omitempty"`
+	Integration      ID     `json:"integrationId" yaml:"integrationId" default:"XXX_integration_id_XXX"`
+	ServiceSelector  string `json:"serviceSelector" yaml:"serviceSelector" default:".metadata.name"`
+	SuccessCondition string `json:"successCondition" yaml:"successCondition" default:".metadata.name"`
+	Message          string `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" default:"#Hello World"`
+	PassPending      *bool  `json:"passPending,omitempty" yaml:"passPending,omitempty" default:"false"`
 }
 
 type CheckCustomEventUpdateInput struct {

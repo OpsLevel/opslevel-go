@@ -42,35 +42,35 @@ type InfrastructureResourceConnection struct {
 }
 
 type InfrastructureResourceSchemaInput struct {
-	Type string `json:"type" yaml:"type"`
+	Type string `json:"type" yaml:"type" default:"Database"`
 }
 
 type InfrastructureResourceProviderInput struct {
-	AccountName  string `json:"accountName" yaml:"accountName"`
-	ExternalURL  string `json:"externalUrl" yaml:"externalUrl"`
-	ProviderName string `json:"providerName" yaml:"providerName"`
+	AccountName  string `json:"accountName" yaml:"accountName" default:"Dev - 123456789"`
+	ExternalURL  string `json:"externalUrl" yaml:"externalUrl" default:"https://google.com"`
+	ProviderName string `json:"providerName" yaml:"providerName" default:"Google"`
 }
 
 type InfrastructureResourceInput struct {
-	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty"`
-	ProviderType *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType"`
-	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData"`
-	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"owner"`
-	Data         JSON                                 `json:"data,omitempty" yaml:"data" scalar:"true"`
+	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty" yaml:"schema,omitempty"`
+	ProviderType *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType,omitempty" default:"BigQuery"`
+	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData,omitempty"`
+	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"owner,omitempty"`
+	Data         JSON                                 `json:"data,omitempty" yaml:"data,omitempty" scalar:"true" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false,\"storage_size\":{\"value\":1024,\"unit\": \"GB\"}}"`
 }
 
 type InfraProviderInput struct {
-	Account string `json:"account" yaml:"account"`
-	Name    string `json:"name" yaml:"name"`
-	Type    string `json:"type" yaml:"type"`
-	URL     string `json:"url" yaml:"url"`
+	Account string `json:"account" yaml:"account" default:"Dev - 123456789"`
+	Name    string `json:"name" yaml:"name" default:"Google"`
+	Type    string `json:"type" yaml:"type" default:"BigQuery"`
+	URL     string `json:"url" yaml:"url" default:"https://google.com"`
 }
 
 type InfraInput struct {
-	Schema   string              `json:"schema" yaml:"schema"`
-	Owner    *ID                 `json:"owner" yaml:"owner"`
+	Schema   string              `json:"schema" yaml:"schema" default:"Database"`
+	Owner    *ID                 `json:"owner" yaml:"owner" default:"XXX_owner_id_XXX"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
-	Data     map[string]any      `json:"data" yaml:"data"`
+	Data     map[string]any      `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
 func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

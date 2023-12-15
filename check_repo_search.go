@@ -8,8 +8,8 @@ type RepositorySearchCheckFragment struct {
 type CheckRepositorySearchCreateInput struct {
 	CheckCreateInput
 
-	FileExtensions        []string       `json:"fileExtensions,omitempty"`
-	FileContentsPredicate PredicateInput `json:"fileContentsPredicate"`
+	FileExtensions        []string       `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" default:"[\"py\",\"js\",\"ts\"]"`
+	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`
 }
 
 type CheckRepositorySearchUpdateInput struct {
