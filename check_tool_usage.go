@@ -10,10 +10,10 @@ type ToolUsageCheckFragment struct {
 type CheckToolUsageCreateInput struct {
 	CheckCreateInput
 
-	ToolCategory         ToolCategory    `json:"toolCategory"`
-	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty"`
-	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty"`
-	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty"`
+	ToolCategory         ToolCategory    `json:"toolCategory" yaml:"toolCategory" default:"backlog"`
+	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`
+	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`
+	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"`
 }
 
 type CheckToolUsageUpdateInput struct {

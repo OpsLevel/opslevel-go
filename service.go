@@ -50,15 +50,15 @@ type ServiceDocumentsConnection struct {
 }
 
 type ServiceCreateInput struct {
-	Name        string           `json:"name"`
-	Product     string           `json:"product,omitempty"`
-	Description string           `json:"description,omitempty"`
-	Language    string           `json:"language,omitempty"`
-	Framework   string           `json:"framework,omitempty"`
-	Tier        string           `json:"tierAlias,omitempty"`
-	Owner       *IdentifierInput `json:"ownerInput,omitempty"`
-	Lifecycle   string           `json:"lifecycleAlias,omitempty"`
-	Parent      *IdentifierInput `json:"parent,omitempty"`
+	Name        string           `json:"name" yaml:"name" default:"Hello World"`
+	Product     string           `json:"product,omitempty" yaml:"product,omitempty" default:"OSS"`
+	Description string           `json:"description,omitempty" yaml:"description,omitempty" default:"Hello World Service"`
+	Language    string           `json:"language,omitempty" yaml:"language,omitempty" default:"Go"`
+	Framework   string           `json:"framework,omitempty" yaml:"framework,omitempty" default:"fasthttp"`
+	Tier        string           `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" default:"tier_4"`
+	Owner       *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty" default:"{\"alias\":\"Platform\"}"`
+	Lifecycle   string           `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" default:"beta"`
+	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty" default:"{\"alias\":\"Engineering\"}"`
 }
 
 type ServiceUpdateInput struct {

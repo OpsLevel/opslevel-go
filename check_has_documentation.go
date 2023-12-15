@@ -8,8 +8,8 @@ type HasDocumentationCheckFragment struct {
 type CheckHasDocumentationCreateInput struct {
 	CheckCreateInput
 
-	DocumentType    HasDocumentationTypeEnum    `json:"documentType"`
-	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype"`
+	DocumentType    HasDocumentationTypeEnum    `json:"documentType" yaml:"documentType" default:"api"`
+	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype" yaml:"documentSubtype" default:"openapi"`
 }
 
 type CheckHasDocumentationUpdateInput struct {

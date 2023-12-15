@@ -14,9 +14,9 @@ type ManualCheckFrequency struct {
 }
 
 type ManualCheckFrequencyInput struct {
-	StartingDate       iso8601.Time       `json:"startingDate"`
-	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale"`
-	FrequencyValue     int                `json:"frequencyValue"`
+	StartingDate       iso8601.Time       `json:"startingDate" yaml:"startingDate" default:"2023-11-05T20:22:44.427Z"`
+	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale" yaml:"frequencyTimeScale" default:"day"`
+	FrequencyValue     int                `json:"frequencyValue" yaml:"frequencyValue" default:"1"`
 }
 
 func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeScale, value int) *ManualCheckFrequencyInput {
@@ -30,8 +30,8 @@ func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeSc
 type CheckManualCreateInput struct {
 	CheckCreateInput
 
-	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty"`
-	UpdateRequiresComment bool                       `json:"updateRequiresComment"`
+	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`
+	UpdateRequiresComment bool                       `json:"updateRequiresComment" yaml:"updateRequiresComment" default:"false"`
 }
 
 type CheckManualUpdateInput struct {

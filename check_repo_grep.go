@@ -9,9 +9,9 @@ type RepositoryGrepCheckFragment struct {
 type CheckRepositoryGrepCreateInput struct {
 	CheckCreateInput
 
-	DirectorySearch       bool            `json:"directorySearch"`
-	Filepaths             []string        `json:"filePaths"`
-	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
+	DirectorySearch       bool            `json:"directorySearch" yaml:"directorySearch" default:"false"`
+	Filepaths             []string        `json:"filePaths" yaml:"filePaths" default:"[\"**/hello.go\", \"src/**\"]"`
+	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`
 }
 
 type CheckRepositoryGrepUpdateInput struct {

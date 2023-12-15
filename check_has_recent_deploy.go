@@ -7,7 +7,7 @@ type HasRecentDeployCheckFragment struct {
 type CheckHasRecentDeployCreateInput struct {
 	CheckCreateInput
 
-	Days int `json:"days"`
+	Days int `json:"days" yaml:"days" default:"12"`
 }
 
 type CheckHasRecentDeployUpdateInput struct {

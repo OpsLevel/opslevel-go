@@ -20,6 +20,7 @@ func TestCreateWebhookAction(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
+	// TODO: does CustomActionsWebhookActionCreateInput.LiquidTemplate work as ol.JSONString?
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}",

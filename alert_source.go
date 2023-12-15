@@ -1,8 +1,8 @@
 package opslevel
 
 type AlertSourceExternalIdentifier struct {
-	Type       AlertSourceTypeEnum `json:"type"`
-	ExternalId string              `json:"externalId"`
+	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`
+	ExternalId string              `json:"externalId" yaml:"externalId"`
 }
 
 type AlertSource struct {
@@ -23,9 +23,9 @@ type AlertSourceService struct {
 }
 
 type AlertSourceServiceCreateInput struct {
-	Service    IdentifierInput                `json:"service"`
-	Id         ID                             `json:"alertSourceId,omitempty"`
-	ExternalID *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty"`
+	Service    IdentifierInput                `json:"service" yaml:"service" default:"{\"alias\":\"sound-the-alarm\"}"`
+	Id         ID                             `json:"alertSourceId,omitempty" yaml:"alertSourceId,omitempty"`
+	ExternalID *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty" yaml:"alertSourceExternalIdentifier,omitempty"`
 }
 
 type AlertSourceDeleteInput struct {

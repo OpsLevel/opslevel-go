@@ -8,8 +8,8 @@ type TagDefinedCheckFragment struct {
 type CheckTagDefinedCreateInput struct {
 	CheckCreateInput
 
-	TagKey       string          `json:"tagKey"`
-	TagPredicate *PredicateInput `json:"tagPredicate,omitempty"`
+	TagKey       string          `json:"tagKey" yaml:"tagKey" default:"app"`
+	TagPredicate *PredicateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty" default:"{\"TagKey\":\"equals\", \"Value\":\"postgres\"}"`
 }
 
 type CheckTagDefinedUpdateInput struct {
