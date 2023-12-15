@@ -70,8 +70,7 @@ type InfraInput struct {
 	Schema   string              `json:"schema" yaml:"schema" default:"Database"`
 	Owner    *ID                 `json:"owner" yaml:"owner" default:"XXX_owner_id_XXX"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
-	// TODO: should InfraInput.Data be JSON type?
-	Data map[string]any `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
+	Data     map[string]any      `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
 func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
