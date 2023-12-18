@@ -213,3 +213,19 @@ func TestAssignProperty(t *testing.T) {
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, "true", string(property.Value))
 }
+
+func TestUnassignProperty(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation PropertyUnassign($definition:IdentifierInput!$owner:IdentifierInput!){propertyUnassign(owner: $owner, definition: $definition){errors{message,path}}}`,
+		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
+		`{"data":{"propertyUnassign":{"errors":[]}}}`,
+	)
+	client := BestTestClient(t, "properties/property_unassign", testRequest)
+
+	// Act
+	err := client.PropertyUnassign("monolith", "is_beta_feature")
+
+	// Assert
+	autopilot.Ok(t, err)
+}
