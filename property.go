@@ -35,9 +35,9 @@ type PropertyInput struct {
 
 type Property struct {
 	Definition       PropertyDefinition `graphql:"definition"`
+	Owner            Service            `graphql:"owner,...on Service"`
 	ValidationErrors []OpsLevelErrors   `graphql:"validationErrors"`
 	Value            JSONString         `graphql:"value"`
-	// TODO: add field owner HasProperties?
 }
 
 func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*PropertyDefinition, error) {
@@ -123,6 +123,23 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
+	var q struct {
+		Account struct {
+			Property Property `graphql:"property(owner: $owner, $definition: definition)"`
+		}
+	}
+	v := PayloadVariables{
+		"owner":      NewIdentifier(owner),
+		"definition": NewIdentifier(definition),
+	}
+	err := client.Query(&q, v, WithName("PropertyGet"))
+	if q.Account.Property.Definition.Id == "" {
+		err = fmt.Errorf("Property with ID or alias matching '%s' on Service with ID or alias matching '%s' not found", owner, definition)
+	}
+	return &q.Account.Property, HandleErrors(err, nil)
+}
+
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 	var m struct {
 		Payload struct {
@@ -133,7 +150,6 @@ func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	// TODO: full payload?
 	err := client.Mutate(&m, v, WithName("PropertyAssign"))
 	return &m.Payload.Property, HandleErrors(err, m.Payload.Errors)
 }
@@ -151,5 +167,3 @@ func (client *Client) PropertyUnassign(owner string, definition string) error {
 	err := client.Mutate(&m, v, WithName("PropertyUnassign"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-// TODO: list properties
