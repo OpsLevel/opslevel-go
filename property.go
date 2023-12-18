@@ -42,6 +42,17 @@ type Property struct {
 	Value            JSONString       `graphql:"value"`
 }
 
+type ServicePropertiesEdge struct {
+	Cursor string    `graphql:"cursor"`
+	Node   *Property `graphql:"node"`
+}
+
+type ServicePropertiesConnection struct {
+	Edges      []ServicePropertiesEdge
+	PageInfo   PageInfo
+	TotalCount int `graphql:"-"`
+}
+
 func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*PropertyDefinition, error) {
 	var m struct {
 		Payload struct {
@@ -168,4 +179,38 @@ func (client *Client) PropertyUnassign(owner string, definition string) error {
 	}
 	err := client.Mutate(&m, v, WithName("PropertyUnassign"))
 	return HandleErrors(err, m.Payload.Errors)
+}
+
+func (service *Service) GetProperties(client *Client, variables *PayloadVariables) (*ServicePropertiesConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Properties ServicePropertiesConnection `graphql:"properties(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+
+	if service.Id == "" {
+		return nil, fmt.Errorf("Unable to get properties, invalid Service id: '%s'", service.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = service.Id
+	if err := client.Query(&q, *variables, WithName("ServicePropertiesList")); err != nil {
+		return nil, err
+	}
+	if service.Properties == nil {
+		service.Properties = &ServicePropertiesConnection{}
+	}
+	service.Properties.Edges = append(service.Properties.Edges, q.Account.Service.Properties.Edges...)
+	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo
+	for service.Properties.PageInfo.HasNextPage {
+		(*variables)["after"] = service.Properties.PageInfo.End
+		_, err := service.GetProperties(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return service.Properties, nil
 }

@@ -229,3 +229,59 @@ func TestUnassignProperty(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 }
+
+func TestGetServiceProperties(t *testing.T) {
+	// Arrange
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: id1,
+		},
+	}
+	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
+		{
+			Definition:       *ol.NewIdentifier("propdef1"),
+			Owner:            *ol.NewIdentifier(string(service.Id)),
+			ValidationErrors: []ol.OpsLevelErrors{},
+			Value:            ol.JSONString("true"),
+		},
+		{
+			Definition:       *ol.NewIdentifier("propdef2"),
+			Owner:            *ol.NewIdentifier(string(service.Id)),
+			ValidationErrors: []ol.OpsLevelErrors{},
+			Value:            ol.JSONString("false"),
+		},
+	})
+	expectedPropsPageTwo := autopilot.Register[[]ol.Property]("service_properties_3", []ol.Property{
+		{
+			Definition:       *ol.NewIdentifier("propdef3"),
+			Owner:            *ol.NewIdentifier(string(service.Id)),
+			ValidationErrors: []ol.OpsLevelErrors{},
+			Value:            ol.JSONString("\"Hello World!\""),
+		},
+	})
+	// log.Debug().Msg(`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_1" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}`))
+	testRequestOne := autopilot.NewTestRequest(
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,alias},owner{id,alias},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
+		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
+		`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_1" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}}`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,alias},owner{id,alias},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
+		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
+		`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_3" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "service/get_properties", requests...)
+
+	// Act
+	properties, err := service.GetProperties(client, nil)
+	result := properties.Edges
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, expectedPropsPageOne[0].Definition.Alias, result[0].Node.Definition.Alias)
+	autopilot.Equals(t, expectedPropsPageOne[1].Definition.Alias, result[1].Node.Definition.Alias)
+	autopilot.Equals(t, expectedPropsPageTwo[0].Definition.Alias, result[2].Node.Definition.Alias)
+	// TODO: expectations here.
+}
