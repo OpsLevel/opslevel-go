@@ -174,7 +174,7 @@ func TestGetProperty(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,alias},owner{id,alias},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
-		`{"data":{"account":{"property": {"definition":{"id":"XXX_PROPERTY_DEFINITION_ID_XXX"},"owner":{"id":"XXX_SERVICE_ID_XXX"},"validationErrors":[],"value":"true" }}}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"XXX_PROPERTY_DEFINITION_ID_XXX"},"owner":{"id":"XXX_SERVICE_ID_XXX"},"validationErrors":[],"value":"true"}}}}`,
 	)
 	client := BestTestClient(t, "properties/property_get", testRequest)
 
@@ -185,6 +185,31 @@ func TestGetProperty(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "XXX_PROPERTY_DEFINITION_ID_XXX", string(*property.Definition.Id))
 	autopilot.Equals(t, "XXX_SERVICE_ID_XXX", string(*property.Owner.Id))
+	autopilot.Equals(t, 0, len(property.ValidationErrors))
+	autopilot.Equals(t, "true", string(property.Value))
+}
+
+func TestAssignProperty(t *testing.T) {
+	// Arrange
+	input := ol.PropertyInput{
+		Owner:      *ol.NewIdentifier("monolith"),
+		Definition: *ol.NewIdentifier("is_beta_feature"),
+		Value:      "true",
+	}
+	testRequest := autopilot.NewTestRequest(
+		`mutation PropertyAssign($input:PropertyInput!){propertyAssign(input: $input){property{definition{id,alias},owner{id,alias},validationErrors{message,path},value},errors{message,path}}}`,
+		`{"input": {{ template "property_assign_input" }} }`,
+		`{"data":{"propertyAssign":{"property":{"definition":{"alias":"is_beta_feature"},"owner":{"alias":"monolith"},"validationErrors":[],"value":"true"},"errors":[]}}}`,
+	)
+	client := BestTestClient(t, "properties/property_assign", testRequest)
+
+	// Act
+	property, err := client.PropertyAssign(input)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "is_beta_feature", string(*property.Definition.Alias))
+	autopilot.Equals(t, "monolith", string(*property.Owner.Alias))
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, "true", string(property.Value))
 }
