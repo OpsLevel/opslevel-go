@@ -33,11 +33,13 @@ type PropertyInput struct {
 	RunValidation *bool           `json:"runValidation,omitempty"`
 }
 
+// Treating Definition (PropertyDefinition) as an IdentifierInput
+// Treating Owner (... on Service) as an IdentifierInput
 type Property struct {
-	Definition       PropertyDefinition `graphql:"definition"`
-	Owner            Service            `graphql:"owner,...on Service"`
-	ValidationErrors []OpsLevelErrors   `graphql:"validationErrors"`
-	Value            JSONString         `graphql:"value"`
+	Definition       IdentifierInput  `graphql:"definition"`
+	Owner            IdentifierInput  `graphql:"owner"`
+	ValidationErrors []OpsLevelErrors `graphql:"validationErrors"`
+	Value            JSONString       `graphql:"value"`
 }
 
 func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*PropertyDefinition, error) {
@@ -126,15 +128,15 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {
-			Property Property `graphql:"property(owner: $owner, $definition: definition)"`
+			Property Property `graphql:"property(owner: $owner, definition: $definition)"`
 		}
 	}
 	v := PayloadVariables{
-		"owner":      NewIdentifier(owner),
-		"definition": NewIdentifier(definition),
+		"owner":      *NewIdentifier(owner),
+		"definition": *NewIdentifier(definition),
 	}
 	err := client.Query(&q, v, WithName("PropertyGet"))
-	if q.Account.Property.Definition.Id == "" {
+	if q.Account.Property.Definition.Id == nil {
 		err = fmt.Errorf("Property with ID or alias matching '%s' on Service with ID or alias matching '%s' not found", owner, definition)
 	}
 	return &q.Account.Property, HandleErrors(err, nil)
