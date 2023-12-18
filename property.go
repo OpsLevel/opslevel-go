@@ -26,6 +26,20 @@ type PropertyDefinitionConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
+type PropertyInput struct {
+	Owner         IdentifierInput `json:"owner"`
+	Definition    IdentifierInput `json:"definition"`
+	Value         JSONString      `json:"value"`
+	RunValidation *bool           `json:"runValidation,omitempty"`
+}
+
+type Property struct {
+	Definition       PropertyDefinition `graphql:"definition"`
+	ValidationErrors []OpsLevelErrors   `graphql:"validationErrors"`
+	Value            JSONString         `graphql:"value"`
+	// TODO: add field owner HasProperties?
+}
+
 func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*PropertyDefinition, error) {
 	var m struct {
 		Payload struct {
@@ -108,3 +122,34 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 	err := client.Mutate(&m, v, WithName("PropertyDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
+
+func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
+	var m struct {
+		Payload struct {
+			Property Property         `graphql:"property"`
+			Errors   []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"propertyAssign(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	// TODO: full payload?
+	err := client.Mutate(&m, v, WithName("PropertyAssign"))
+	return &m.Payload.Property, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) PropertyUnassign(owner string, definition string) error {
+	var m struct {
+		Payload struct {
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"propertyUnassign(owner: $owner, definition: $definition)"`
+	}
+	v := PayloadVariables{
+		"owner":      *NewIdentifier(owner),
+		"definition": *NewIdentifier(definition),
+	}
+	err := client.Mutate(&m, v, WithName("PropertyUnassign"))
+	return HandleErrors(err, m.Payload.Errors)
+}
+
+// TODO: list properties

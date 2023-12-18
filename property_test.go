@@ -168,3 +168,48 @@ func TestListPropertyDefinitions(t *testing.T) {
 	autopilot.Equals(t, expectedPropDefsPageOne[1].Schema, result[1].Schema)
 	autopilot.Equals(t, expectedPropDefPageTwo.Schema, result[2].Schema)
 }
+
+func TestAssignProperty(t *testing.T) {
+	// Arrange
+	schema := ol.NewJSON(schemaString)
+	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
+		Aliases: []string{"my_prop"},
+		Id:      "XXX",
+		Name:    "my-prop",
+		Schema:  schema,
+	})
+	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+		Name:   "my-prop",
+		Schema: ol.JSONString(schemaString),
+	})
+	testRequest := autopilot.NewTestRequest(
+		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}`,
+		`{"input": {{ template "property_definition_input" }} }`,
+		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schema.ToJSON()),
+	)
+	client := BestTestClient(t, "properties/definition_create", testRequest)
+
+	// Act
+	actualPropertyDefinition, err := client.CreatePropertyDefinition(propertyDefinitionInput)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, expectedPropertyDefinition, *actualPropertyDefinition)
+	autopilot.Equals(t, ol.JSON(propertyDefinitionInput.Schema.AsMap()), actualPropertyDefinition.Schema)
+}
+
+func TestUnassignProperty(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation PropertyDefinitionDelete($input:IdentifierInput!){propertyDefinitionDelete(resource: $input){errors{message,path}}}`,
+		`{"input":{"alias":"my_prop"}}`,
+		`{"data":{"propertyDefinitionDelete":{"errors":[]}}}`,
+	)
+	client := BestTestClient(t, "properties/definition_delete", testRequest)
+
+	// Act
+	err := client.DeletePropertyDefinition("my_prop")
+
+	// Assert
+	autopilot.Ok(t, err)
+}
