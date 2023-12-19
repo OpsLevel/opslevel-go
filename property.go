@@ -40,7 +40,7 @@ type PropertyInput struct {
 
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
-	Owner            ServiceId            `graphql:"owner"`
+	Owner            EntityOwnerService   `graphql:"owner"`
 	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
 	Value            JSONString           `graphql:"value"`
 }
