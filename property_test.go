@@ -172,9 +172,9 @@ func TestListPropertyDefinitions(t *testing.T) {
 func TestGetProperty(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,alias},owner{id,alias},validationErrors{message,path},value}}}`,
+		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{id,aliases},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
-		`{"data":{"account":{"property":{"definition":{"id":"XXX_PROPERTY_DEFINITION_ID_XXX"},"owner":{"id":"XXX_SERVICE_ID_XXX"},"validationErrors":[],"value":"true"}}}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"}}}}`,
 	)
 	client := BestTestClient(t, "properties/property_get", testRequest)
 
@@ -183,8 +183,8 @@ func TestGetProperty(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "XXX_PROPERTY_DEFINITION_ID_XXX", string(*property.Definition.Id))
-	autopilot.Equals(t, "XXX_SERVICE_ID_XXX", string(*property.Owner.Id))
+	autopilot.Equals(t, string(id1), string(property.Owner.Id))
+	autopilot.Equals(t, string(id2), string(property.Definition.Id))
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, "true", string(property.Value))
 }
@@ -192,14 +192,14 @@ func TestGetProperty(t *testing.T) {
 func TestAssignProperty(t *testing.T) {
 	// Arrange
 	input := ol.PropertyInput{
-		Owner:      *ol.NewIdentifier("monolith"),
-		Definition: *ol.NewIdentifier("is_beta_feature"),
+		Owner:      *ol.NewIdentifier(string(id1)),
+		Definition: *ol.NewIdentifier(string(id2)),
 		Value:      "true",
 	}
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyAssign($input:PropertyInput!){propertyAssign(input: $input){property{definition{id,alias},owner{id,alias},validationErrors{message,path},value},errors{message,path}}}`,
+		`mutation PropertyAssign($input:PropertyInput!){propertyAssign(input: $input){property{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value},errors{message,path}}}`,
 		`{"input": {{ template "property_assign_input" }} }`,
-		`{"data":{"propertyAssign":{"property":{"definition":{"alias":"is_beta_feature"},"owner":{"alias":"monolith"},"validationErrors":[],"value":"true"},"errors":[]}}}`,
+		`{"data":{"propertyAssign":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"},"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/property_assign", testRequest)
 
@@ -208,8 +208,8 @@ func TestAssignProperty(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "is_beta_feature", string(*property.Definition.Alias))
-	autopilot.Equals(t, "monolith", string(*property.Owner.Alias))
+	autopilot.Equals(t, string(id1), string(property.Owner.Id))
+	autopilot.Equals(t, string(id2), string(property.Definition.Id))
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, "true", string(property.Value))
 }
@@ -232,40 +232,47 @@ func TestUnassignProperty(t *testing.T) {
 
 func TestGetServiceProperties(t *testing.T) {
 	// Arrange
+	serviceId := ol.ServiceId{
+		Id: id1,
+	}
 	service := ol.Service{
-		ServiceId: ol.ServiceId{
-			Id: id1,
-		},
+		ServiceId: serviceId,
 	}
 	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
 		{
-			Definition:       *ol.NewIdentifier("propdef1"),
-			Owner:            *ol.NewIdentifier(string(service.Id)),
+			Definition: ol.PropertyDefinitionId{
+				Id: id2,
+			},
+			Owner:            serviceId,
 			ValidationErrors: []ol.OpsLevelErrors{},
 			Value:            ol.JSONString("true"),
 		},
 		{
-			Definition:       *ol.NewIdentifier("propdef2"),
-			Owner:            *ol.NewIdentifier(string(service.Id)),
+			Definition: ol.PropertyDefinitionId{
+				Id: id3,
+			},
+			Owner:            serviceId,
 			ValidationErrors: []ol.OpsLevelErrors{},
 			Value:            ol.JSONString("false"),
 		},
 	})
 	expectedPropsPageTwo := autopilot.Register[[]ol.Property]("service_properties_3", []ol.Property{
 		{
-			Definition:       *ol.NewIdentifier("propdef3"),
-			Owner:            *ol.NewIdentifier(string(service.Id)),
+			Definition: ol.PropertyDefinitionId{
+				Id: id4,
+			},
+			Owner:            serviceId,
 			ValidationErrors: []ol.OpsLevelErrors{},
 			Value:            ol.JSONString("\"Hello World!\""),
 		},
 	})
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,alias},owner{id,alias},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_1" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,alias},owner{id,alias},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_3" }}],{{ template "pagination_second_pageInfo_response" }}}}}}}`,
 	)
@@ -279,6 +286,9 @@ func TestGetServiceProperties(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, expectedPropsPageOne[0], *result[0].Node)
+	autopilot.Equals(t, expectedPropsPageOne[1], *result[1].Node)
+	autopilot.Equals(t, expectedPropsPageTwo[0], *result[2].Node)
 	autopilot.Equals(t, expectedPropsPageOne[0].Value, result[0].Node.Value)
 	autopilot.Equals(t, expectedPropsPageOne[1].Value, result[1].Node.Value)
 	autopilot.Equals(t, expectedPropsPageTwo[0].Value, result[2].Node.Value)

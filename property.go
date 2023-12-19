@@ -26,6 +26,11 @@ type PropertyDefinitionConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
+type PropertyDefinitionId struct {
+	Id      ID       `json:"id"`
+	Aliases []string `json:"aliases,omitempty"`
+}
+
 type PropertyInput struct {
 	Owner         IdentifierInput `json:"owner"`
 	Definition    IdentifierInput `json:"definition"`
@@ -33,13 +38,11 @@ type PropertyInput struct {
 	RunValidation *bool           `json:"runValidation,omitempty"`
 }
 
-// Treating Definition (PropertyDefinition) as an IdentifierInput
-// Treating Owner (... on Service) as an IdentifierInput
 type Property struct {
-	Definition       IdentifierInput  `graphql:"definition"`
-	Owner            IdentifierInput  `graphql:"owner"`
-	ValidationErrors []OpsLevelErrors `graphql:"validationErrors"`
-	Value            JSONString       `graphql:"value"`
+	Definition       PropertyDefinitionId `graphql:"definition"`
+	Owner            ServiceId            `graphql:"owner"`
+	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
+	Value            JSONString           `graphql:"value"`
 }
 
 type ServicePropertiesEdge struct {
@@ -147,7 +150,7 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 		"definition": *NewIdentifier(definition),
 	}
 	err := client.Query(&q, v, WithName("PropertyGet"))
-	if q.Account.Property.Definition.Id == nil {
+	if q.Account.Property.Definition.Id == "" {
 		err = fmt.Errorf("Property with ID or alias matching '%s' on Service with ID or alias matching '%s' not found", owner, definition)
 	}
 	return &q.Account.Property, HandleErrors(err, nil)

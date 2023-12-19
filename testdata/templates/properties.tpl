@@ -1,14 +1,14 @@
-{{- define "property_assign_input" }}{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"},"value":"true"}{{ end }}
+{{- define "property_assign_input" }}{"owner":{"id":"{{ template "id1_string" }}"},"definition":{"id":"{{ template "id2_string" }}"},"value":"true"}{{ end }}
 
 {{- define "service_property_edge_1" }}
 {
     "cursor": "",
     "node": {
         "definition": {
-            "alias": "propdef1"
+            "id": "{{ template "id2_string" }}"
         },
         "owner": {
-            "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+            "id": "{{ template "id1_string" }}"
         },
         "validationErrors": [],
         "value": "true"
@@ -18,10 +18,10 @@
     "cursor": "",
     "node": {
         "definition": {
-            "alias": "propdef2"
+            "id": "{{ template "id3_string" }}"
         },
         "owner": {
-            "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+            "id": "{{ template "id1_string" }}"
         },
         "validationErrors": [],
         "value": "false"
@@ -34,10 +34,10 @@
     "cursor": "",
     "node": {
         "definition": {
-            "alias": "propdef3"
+            "id": "{{ template "id4_string" }}"
         },
         "owner": {
-            "id": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx"
+            "id": "{{ template "id1_string" }}"
         },
         "validationErrors": [],
         "value": "\"Hello World!\""
