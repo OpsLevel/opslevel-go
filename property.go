@@ -45,13 +45,8 @@ type Property struct {
 	Value            JSONString           `graphql:"value"`
 }
 
-type ServicePropertiesEdge struct {
-	Cursor string    `graphql:"cursor"`
-	Node   *Property `graphql:"node"`
-}
-
 type ServicePropertiesConnection struct {
-	Edges      []ServicePropertiesEdge
+	Nodes      []Property
 	PageInfo   PageInfo
 	TotalCount int `graphql:"-"`
 }
@@ -206,7 +201,7 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 	if service.Properties == nil {
 		service.Properties = &ServicePropertiesConnection{}
 	}
-	service.Properties.Edges = append(service.Properties.Edges, q.Account.Service.Properties.Edges...)
+	service.Properties.Nodes = append(service.Properties.Nodes, q.Account.Service.Properties.Nodes...)
 	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo
 	for service.Properties.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Properties.PageInfo.End

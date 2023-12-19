@@ -267,29 +267,29 @@ func TestGetServiceProperties(t *testing.T) {
 		},
 	})
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){nodes{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
-		`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_1" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}}`,
+		`{"data":{"account":{"service":{"properties":{"nodes":[{{ template "service_properties_page_1" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){edges{cursor,node{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value}},{{ template "pagination_request" }}}}}}`,
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){nodes{definition{id,aliases},owner{id,aliases},validationErrors{message,path},value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
-		`{"data":{"account":{"service":{"properties":{"edges":[{{ template "service_property_edge_3" }}],{{ template "pagination_second_pageInfo_response" }}}}}}}`,
+		`{"data":{"account":{"service":{"properties":{"nodes":[{{ template "service_properties_page_2" }}],{{ template "pagination_second_pageInfo_response" }}}}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "service/get_properties", requests...)
 
 	// Act
 	properties, err := service.GetProperties(client, nil)
-	result := properties.Edges
+	result := properties.Nodes
 
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, len(result))
-	autopilot.Equals(t, expectedPropsPageOne[0], *result[0].Node)
-	autopilot.Equals(t, expectedPropsPageOne[1], *result[1].Node)
-	autopilot.Equals(t, expectedPropsPageTwo[0], *result[2].Node)
-	autopilot.Equals(t, expectedPropsPageOne[0].Value, result[0].Node.Value)
-	autopilot.Equals(t, expectedPropsPageOne[1].Value, result[1].Node.Value)
-	autopilot.Equals(t, expectedPropsPageTwo[0].Value, result[2].Node.Value)
+	autopilot.Equals(t, expectedPropsPageOne[0], result[0])
+	autopilot.Equals(t, expectedPropsPageOne[1], result[1])
+	autopilot.Equals(t, expectedPropsPageTwo[0], result[2])
+	autopilot.Equals(t, expectedPropsPageOne[0].Value, result[0].Value)
+	autopilot.Equals(t, expectedPropsPageOne[1].Value, result[1].Value)
+	autopilot.Equals(t, expectedPropsPageTwo[0].Value, result[2].Value)
 }

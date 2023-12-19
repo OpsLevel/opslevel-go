@@ -1,46 +1,37 @@
 {{- define "property_assign_input" }}{"owner":{"id":"{{ template "id1_string" }}"},"definition":{"id":"{{ template "id2_string" }}"},"value":"true"}{{ end }}
 
-{{- define "service_property_edge_1" }}
+{{- define "service_properties_page_1" }}
 {
-    "cursor": "",
-    "node": {
-        "definition": {
-            "id": "{{ template "id2_string" }}"
-        },
-        "owner": {
-            "id": "{{ template "id1_string" }}"
-        },
-        "validationErrors": [],
-        "value": "true"
-    }
+    "definition": {
+        "id": "{{ template "id2_string" }}"
+    },
+    "owner": {
+        "id": "{{ template "id1_string" }}"
+    },
+    "validationErrors": [],
+    "value": "true"
 },
 {
-    "cursor": "",
-    "node": {
-        "definition": {
-            "id": "{{ template "id3_string" }}"
-        },
-        "owner": {
-            "id": "{{ template "id1_string" }}"
-        },
-        "validationErrors": [],
-        "value": "false"
-    }
+    "definition": {
+        "id": "{{ template "id3_string" }}"
+    },
+    "owner": {
+        "id": "{{ template "id1_string" }}"
+    },
+    "validationErrors": [],
+    "value": "false"
 }
 {{ end }}
 
-{{- define "service_property_edge_3" }}
+{{- define "service_properties_page_2" }}
 {
-    "cursor": "",
-    "node": {
-        "definition": {
-            "id": "{{ template "id4_string" }}"
-        },
-        "owner": {
-            "id": "{{ template "id1_string" }}"
-        },
-        "validationErrors": [],
-        "value": "\"Hello World!\""
-    }
+    "definition": {
+        "id": "{{ template "id4_string" }}"
+    },
+    "owner": {
+        "id": "{{ template "id1_string" }}"
+    },
+    "validationErrors": [],
+    "value": "\"Hello World!\""
 }
 {{ end }}
