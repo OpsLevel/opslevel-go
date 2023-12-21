@@ -41,7 +41,7 @@ func (s JSON) MarshalJSON() ([]byte, error) {
 // JSONString is a specialized input type to support serialization to JSON for input to graphql
 type JSONString string
 
-func (s JSONString) GetGraphQLType() string { return "JsonString" }
+func (s JSONString) GetGraphQLType() string { return "JSONSchema" }
 
 func NewJSONInput(data any) JSONString {
 	bytes, err := json.Marshal(data)

@@ -3,8 +3,9 @@ package opslevel
 import "fmt"
 
 type PropertyDefinitionInput struct {
-	Name   string     `json:"name" yaml:"name" default:"Example Package Schema"`
-	Schema JSONString `json:"schema,string" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
+	Name        string     `json:"name" yaml:"name" default:"Example Package Schema"`
+	Description string     `json:"description" yaml:"description" default:"Description goes here"`
+	Schema      JSONString `json:"schema,string" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
 }
 
 type PropertyDefinition struct {
