@@ -223,7 +223,7 @@ func TestGetPropertyHasNullValue(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
-		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"null"}}}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":null}}}}`,
 	)
 	client := BestTestClient(t, "properties/property_get_has_null_value", testRequest)
 
@@ -235,7 +235,7 @@ func TestGetPropertyHasNullValue(t *testing.T) {
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
-	autopilot.Equals(t, "null", string(*property.Value))
+	autopilot.Equals(t, true, property.Value == nil)
 }
 
 func TestAssignProperty(t *testing.T) {
