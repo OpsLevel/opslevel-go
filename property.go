@@ -5,7 +5,7 @@ import "fmt"
 type PropertyDefinitionInput struct {
 	Name                  string                    `json:"name,omitempty" yaml:"name" default:"Example Package Schema"`
 	Description           string                    `json:"description,omitempty" yaml:"description" default:"Place description here"`
-	Schema                JSONString                `json:"schema,string,omitempty" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
+	Schema                JSON                      `json:"schema,string,omitempty" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
 	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus" default:"visible"`
 }
 
@@ -17,7 +17,7 @@ type PropertyDefinition struct {
 	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`
 	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`
 	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"`
-	Schema                JSONString                        `json:"schema" scalar:"true"`
+	Schema                JSON                              `json:"schema" scalar:"true"`
 }
 
 type PropertyDefinitionConnection struct {
