@@ -12,21 +12,21 @@ const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	encoded := ol.NewJSONInput(schemaString)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases: []string{"my_prop"},
 		Id:      "XXX",
 		Name:    "my-prop",
-		Schema:  schema,
+		Schema:  encoded,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   "my-prop",
-		Schema: ol.JSONString(schemaString),
+		Schema: encoded,
 	})
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,schema},errors{message,path}}}`,
+		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schema.ToJSON()),
+		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, ol.NewJSONInput(encoded)), // double encoding here because we need to put a string into a string
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
@@ -36,7 +36,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, expectedPropertyDefinition, *actualPropertyDefinition)
-	autopilot.Equals(t, ol.JSON(propertyDefinitionInput.Schema.AsMap()), actualPropertyDefinition.Schema)
+	autopilot.Equals(t, expectedPropertyDefinition.Schema, actualPropertyDefinition.Schema)
 }
 
 func TestDeletePropertyDefinition(t *testing.T) {
