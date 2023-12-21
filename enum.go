@@ -446,6 +446,7 @@ const (
 	PredicateKeyEnumAliases        PredicateKeyEnum = "aliases"         // Filter by Alias attached to this service, if any.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
 	PredicateKeyEnumSystemID       PredicateKeyEnum = "system_id"       // Filter by System that this service is assigned to, if any.
+	PredicateKeyEnumProperties     PredicateKeyEnum = "properties"      // Filter by custom-defined properties.
 )
 
 // All PredicateKeyEnum as []string
@@ -466,6 +467,7 @@ var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumAliases),
 	string(PredicateKeyEnumDomainID),
 	string(PredicateKeyEnumSystemID),
+	string(PredicateKeyEnumProperties),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
@@ -510,6 +512,42 @@ var AllPredicateTypeEnum = []string{
 	string(PredicateTypeEnumMatches),
 	string(PredicateTypeEnumDoesNotMatch),
 	string(PredicateTypeEnumSatisfiesJqExpression),
+}
+
+// PropertyDefinitionDisplayTypeEnum represents the set of possible display types of a property definition schema.
+type PropertyDefinitionDisplayTypeEnum string
+
+const (
+	PropertyDefinitionDisplayTypeEnumArray    PropertyDefinitionDisplayTypeEnum = "ARRAY"    // An array.
+	PropertyDefinitionDisplayTypeEnumBoolean  PropertyDefinitionDisplayTypeEnum = "BOOLEAN"  // A boolean.
+	PropertyDefinitionDisplayTypeEnumDropdown PropertyDefinitionDisplayTypeEnum = "DROPDOWN" // A dropdown.
+	PropertyDefinitionDisplayTypeEnumNumber   PropertyDefinitionDisplayTypeEnum = "NUMBER"   // A number.
+	PropertyDefinitionDisplayTypeEnumObject   PropertyDefinitionDisplayTypeEnum = "OBJECT"   // An object.
+	PropertyDefinitionDisplayTypeEnumText     PropertyDefinitionDisplayTypeEnum = "TEXT"     // A text string.
+)
+
+// All PropertyDefinitionDisplayTypeEnum as []string
+var AllPropertyDefinitionDisplayTypeEnum = []string{
+	string(PropertyDefinitionDisplayTypeEnumArray),
+	string(PropertyDefinitionDisplayTypeEnumBoolean),
+	string(PropertyDefinitionDisplayTypeEnumDropdown),
+	string(PropertyDefinitionDisplayTypeEnumNumber),
+	string(PropertyDefinitionDisplayTypeEnumObject),
+	string(PropertyDefinitionDisplayTypeEnumText),
+}
+
+// PropertyDisplayStatusEnum represents the display status of a custom property on service pages.
+type PropertyDisplayStatusEnum string
+
+const (
+	PropertyDisplayStatusEnumHidden  PropertyDisplayStatusEnum = "hidden"  // The property is not shown on the service page.
+	PropertyDisplayStatusEnumVisible PropertyDisplayStatusEnum = "visible" // The property is shown on the service page.
+)
+
+// All PropertyDisplayStatusEnum as []string
+var AllPropertyDisplayStatusEnum = []string{
+	string(PropertyDisplayStatusEnumHidden),
+	string(PropertyDisplayStatusEnumVisible),
 }
 
 // RelatedResourceRelationshipTypeEnum represents the type of the relationship between two resources.
@@ -623,6 +661,7 @@ const (
 	ServicePropertyTypeEnumTierIndex      ServicePropertyTypeEnum = "tier_index"      // The index of the tier a service belongs to.
 	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            // Additional information about the service.
 	ServicePropertyTypeEnumSystem         ServicePropertyTypeEnum = "system"          // The system that the service belongs to.
+	ServicePropertyTypeEnumCustomProperty ServicePropertyTypeEnum = "custom_property" // A custom property that is associated with the service.
 )
 
 // All ServicePropertyTypeEnum as []string
@@ -636,6 +675,7 @@ var AllServicePropertyTypeEnum = []string{
 	string(ServicePropertyTypeEnumTierIndex),
 	string(ServicePropertyTypeEnumNote),
 	string(ServicePropertyTypeEnumSystem),
+	string(ServicePropertyTypeEnumCustomProperty),
 }
 
 // ServiceSortEnum represents sort possibilities for services.
