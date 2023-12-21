@@ -3,16 +3,21 @@ package opslevel
 import "fmt"
 
 type PropertyDefinitionInput struct {
-	Name        string     `json:"name" yaml:"name" default:"Example Package Schema"`
-	Description string     `json:"description" yaml:"description" default:"Description goes here"`
-	Schema      JSONString `json:"schema,string" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
+	Name                  string                    `json:"name" yaml:"name" default:"Example Package Schema"`
+	Description           string                    `json:"description" yaml:"description" default:"Place description here"`
+	Schema                JSONString                `json:"schema,string" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
+	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus" yaml:"propertyDisplayStatus" default:"visible"`
 }
 
 type PropertyDefinition struct {
-	Aliases []string `graphql:"aliases" json:"aliases"`
-	Id      ID       `graphql:"id" json:"id"`
-	Name    string   `graphql:"name" json:"name"`
-	Schema  JSON     `json:"schema" scalar:"true"`
+	Aliases               []string                          `graphql:"aliases" json:"aliases"`
+	Id                    ID                                `graphql:"id" json:"id"`
+	Name                  string                            `graphql:"name" json:"name"`
+	Description           string                            `graphql:"description" json:"description"`
+	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`
+	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`
+	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"`
+	Schema                JSONString                        `json:"schema" scalar:"true"`
 }
 
 type PropertyDefinitionConnection struct {
