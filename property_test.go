@@ -9,6 +9,7 @@ import (
 )
 
 const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"name":{"type":"string","title":"the name","description":"The name of a friend","default":"alex","examples":["joe","lucy"]}},"additionalProperties":false,"type":"object","required":["name"]}}}`
+const schemaString2 = `{"enum": ["red","green","blue"],"type": "string"}`
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
@@ -32,6 +33,38 @@ func TestCreatePropertyDefinition(t *testing.T) {
 
 	// Act
 	actualPropertyDefinition, err := client.CreatePropertyDefinition(propertyDefinitionInput)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, expectedPropertyDefinition, *actualPropertyDefinition)
+	autopilot.Equals(t, expectedPropertyDefinition.Schema, actualPropertyDefinition.Schema)
+}
+
+func TestUpdatePropertyDefinition(t *testing.T) {
+	// Arrange
+	schema := ol.NewJSON(schemaString2)
+	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
+		Aliases:               []string{"my_prop"},
+		Id:                    "XXX",
+		Name:                  "my-prop",
+		Description:           "this description was added",
+		Schema:                schema,
+		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
+	})
+	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+		Description:           "this description was added",
+		Schema:                schema,
+		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
+	})
+	testRequest := autopilot.NewTestRequest(
+		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
+		`{"propertyDefinition":{"alias":"my_prop"}, "input": {{ template "property_definition_input" }} }`,
+		fmt.Sprintf(`{"data":{"propertyDefinitionUpdate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","description":"this description was added","propertyDisplayStatus":"hidden","schema": %s}, "errors":[] }}}`, schemaString2),
+	)
+	client := BestTestClient(t, "properties/definition_update", testRequest)
+
+	// Act
+	actualPropertyDefinition, err := client.UpdatePropertyDefinition("my_prop", propertyDefinitionInput)
 
 	// Assert
 	autopilot.Ok(t, err)
