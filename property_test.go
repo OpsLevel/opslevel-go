@@ -11,22 +11,23 @@ import (
 const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"name":{"type":"string","title":"the name","description":"The name of a friend","default":"alex","examples":["joe","lucy"]}},"additionalProperties":false,"type":"object","required":["name"]}}}`
 
 func TestCreatePropertyDefinition(t *testing.T) {
+	schema := ol.NewJSON(schemaString)
+
 	// Arrange
-	encoded := ol.NewJSONInput(schemaString)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases: []string{"my_prop"},
 		Id:      "XXX",
 		Name:    "my-prop",
-		Schema:  encoded,
+		Schema:  schema,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   "my-prop",
-		Schema: encoded,
+		Schema: schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, ol.NewJSONInput(encoded)), // double encoding here because we need to put a string into a string
+		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schemaString),
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
