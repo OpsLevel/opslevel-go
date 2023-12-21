@@ -189,6 +189,55 @@ func TestGetProperty(t *testing.T) {
 	autopilot.Equals(t, "true", string(*property.Value))
 }
 
+func TestGetPropertyHasErrors(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
+		`{"owner":{"alias":"monolith"},"definition":{"alias":"dropdown"}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[{"message":"vmessage1","path":["vmp1","vmp2"]},{"message":"vmessage2","path":["vmp3"]}],"value":"\"orange\""}}}}`,
+	)
+	client := BestTestClient(t, "properties/property_get_has_errors", testRequest)
+
+	// Act
+	property, err := client.GetProperty("monolith", "dropdown")
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
+	autopilot.Equals(t, string(id2), string(property.Definition.Id))
+	autopilot.Equals(t, 2, len(property.ValidationErrors))
+	// validation error 1
+	autopilot.Equals(t, "vmessage1", property.ValidationErrors[0].Message)
+	autopilot.Equals(t, 2, len(property.ValidationErrors[0].Path))
+	autopilot.Equals(t, "vmp1", property.ValidationErrors[0].Path[0])
+	autopilot.Equals(t, "vmp2", property.ValidationErrors[0].Path[1])
+	// validation error 2
+	autopilot.Equals(t, "vmessage2", property.ValidationErrors[1].Message)
+	autopilot.Equals(t, 1, len(property.ValidationErrors[1].Path))
+	autopilot.Equals(t, "vmp3", property.ValidationErrors[1].Path[0])
+	autopilot.Equals(t, "\"orange\"", string(*property.Value))
+}
+
+func TestGetPropertyHasNullValue(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
+		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"null"}}}}`,
+	)
+	client := BestTestClient(t, "properties/property_get_has_null_value", testRequest)
+
+	// Act
+	property, err := client.GetProperty("monolith", "is_beta_feature")
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
+	autopilot.Equals(t, string(id2), string(property.Definition.Id))
+	autopilot.Equals(t, 0, len(property.ValidationErrors))
+	autopilot.Equals(t, "null", string(*property.Value))
+}
+
 func TestAssignProperty(t *testing.T) {
 	// Arrange
 	input := ol.PropertyInput{
