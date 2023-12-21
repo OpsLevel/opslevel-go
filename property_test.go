@@ -8,8 +8,10 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-const schemaString = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"name":{"type":"string","title":"the name","description":"The name of a friend","default":"alex","examples":["joe","lucy"]}},"additionalProperties":false,"type":"object","required":["name"]}}}`
-const schemaString2 = `{"enum": ["red","green","blue"],"type": "string"}`
+const (
+	schemaString  = `{"$ref":"#/$defs/MyProp","$defs":{"MyProp":{"properties":{"name":{"type":"string","title":"the name","description":"The name of a friend","default":"alex","examples":["joe","lucy"]}},"additionalProperties":false,"type":"object","required":["name"]}}}`
+	schemaString2 = `{"enum": ["red","green","blue"],"type": "string"}`
+)
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
