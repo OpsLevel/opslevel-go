@@ -42,7 +42,7 @@ type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
 	Owner            EntityOwnerService   `graphql:"owner"`
 	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
-	Value            JSONString           `graphql:"value"`
+	Value            *JSONString          `graphql:"value"`
 }
 
 type ServicePropertiesConnection struct {

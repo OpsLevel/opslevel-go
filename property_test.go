@@ -186,7 +186,7 @@ func TestGetProperty(t *testing.T) {
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
-	autopilot.Equals(t, "true", string(property.Value))
+	autopilot.Equals(t, "true", string(*property.Value))
 }
 
 func TestAssignProperty(t *testing.T) {
@@ -211,7 +211,7 @@ func TestAssignProperty(t *testing.T) {
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
 	autopilot.Equals(t, 0, len(property.ValidationErrors))
-	autopilot.Equals(t, "true", string(property.Value))
+	autopilot.Equals(t, "true", string(*property.Value))
 }
 
 func TestUnassignProperty(t *testing.T) {
@@ -241,6 +241,9 @@ func TestGetServiceProperties(t *testing.T) {
 	owner := ol.EntityOwnerService{
 		OnService: serviceId,
 	}
+	value1 := ol.JSONString("true")
+	value2 := ol.JSONString("false")
+	value3 := ol.JSONString("\"Hello World!\"")
 	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
 		{
 			Definition: ol.PropertyDefinitionId{
@@ -248,7 +251,7 @@ func TestGetServiceProperties(t *testing.T) {
 			},
 			Owner:            owner,
 			ValidationErrors: []ol.OpsLevelErrors{},
-			Value:            ol.JSONString("true"),
+			Value:            &value1,
 		},
 		{
 			Definition: ol.PropertyDefinitionId{
@@ -256,7 +259,7 @@ func TestGetServiceProperties(t *testing.T) {
 			},
 			Owner:            owner,
 			ValidationErrors: []ol.OpsLevelErrors{},
-			Value:            ol.JSONString("false"),
+			Value:            &value2,
 		},
 	})
 	expectedPropsPageTwo := autopilot.Register[[]ol.Property]("service_properties_3", []ol.Property{
@@ -266,7 +269,7 @@ func TestGetServiceProperties(t *testing.T) {
 			},
 			Owner:            owner,
 			ValidationErrors: []ol.OpsLevelErrors{},
-			Value:            ol.JSONString("\"Hello World!\""),
+			Value:            &value3,
 		},
 	})
 	testRequestOne := autopilot.NewTestRequest(
