@@ -3,15 +3,21 @@ package opslevel
 import "fmt"
 
 type PropertyDefinitionInput struct {
-	Name   string     `json:"name" yaml:"name" default:"Example Package Schema"`
-	Schema JSONString `json:"schema,string" yaml:"schema" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
+	Name                  string                    `json:"name,omitempty" yaml:"name,omitempty" default:"Example Package Schema"`
+	Description           string                    `json:"description,omitempty" yaml:"description,omitempty" default:"Place description here"`
+	Schema                JSON                      `json:"schema,omitempty" yaml:"schema,omitempty" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
+	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" default:"visible"`
 }
 
 type PropertyDefinition struct {
-	Aliases []string `graphql:"aliases" json:"aliases"`
-	Id      ID       `graphql:"id" json:"id"`
-	Name    string   `graphql:"name" json:"name"`
-	Schema  JSON     `json:"schema" scalar:"true"`
+	Aliases               []string                          `graphql:"aliases" json:"aliases"`
+	Id                    ID                                `graphql:"id" json:"id"`
+	Name                  string                            `graphql:"name" json:"name"`
+	Description           string                            `graphql:"description" json:"description"`
+	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`
+	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`
+	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"`
+	Schema                JSON                              `json:"schema" scalar:"true"`
 }
 
 type PropertyDefinitionConnection struct {
@@ -31,6 +37,21 @@ func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("PropertyDefinitionCreate"))
+	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdatePropertyDefinition(identifier string, input PropertyDefinitionInput) (*PropertyDefinition, error) {
+	var m struct {
+		Payload struct {
+			Definition PropertyDefinition `graphql:"definition"`
+			Errors     []OpsLevelErrors   `graphql:"errors"`
+		} `graphql:"propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input)"`
+	}
+	v := PayloadVariables{
+		"propertyDefinition": *NewIdentifier(identifier),
+		"input":              input,
+	}
+	err := client.Mutate(&m, v, WithName("PropertyDefinitionUpdate"))
 	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
 }
 
