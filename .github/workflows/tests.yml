@@ -18,16 +18,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version-file: 'go.mod'
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Lint code
-        run: |-
-          task setup
-          task lint
+      - name: Run quality checks and tests
+        run: task ci
       - name: Test code
         run: task test
       - name: Upload Coverage
