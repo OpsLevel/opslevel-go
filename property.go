@@ -145,9 +145,6 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 		"definition": *NewIdentifier(definition),
 	}
 	err := client.Query(&q, v, WithName("PropertyGet"))
-	if q.Account.Property.Definition.Id == "" {
-		err = fmt.Errorf("Property with ID or alias matching '%s' on Service with ID or alias matching '%s' not found", definition, owner)
-	}
 	return &q.Account.Property, HandleErrors(err, nil)
 }
 
