@@ -32,10 +32,10 @@ type PropertyDefinitionId struct {
 }
 
 type PropertyInput struct {
-	Owner         IdentifierInput `json:"owner"`
-	Definition    IdentifierInput `json:"definition"`
-	Value         JSONString      `json:"value"`
-	RunValidation *bool           `json:"runValidation,omitempty"`
+	Owner         IdentifierInput `json:"owner" yaml:"owner" default:"{\"id\":\"XXX_SERVICE_ID_XXX\"}"`
+	Definition    IdentifierInput `json:"definition" yaml:"definition" default:"{\"alias\":\"prop_def_alias\"}"`
+	Value         JSONString      `json:"value" yaml:"value" default:"[\"any\",\"valid\",\"JSON\",1.23,{\"nested\":true}]"`
+	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty" default:"true"`
 }
 
 type Property struct {
