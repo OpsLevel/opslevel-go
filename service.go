@@ -35,6 +35,8 @@ type Service struct {
 
 	Dependencies *ServiceDependenciesConnection `graphql:"-"`
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
+
+	Properties *ServicePropertiesConnection `graphql:"-"`
 }
 
 type ServiceConnection struct {

@@ -23,3 +23,15 @@ func (s *EntityOwnerTeam) AsTeam() TeamId {
 		Id:    s.Id,
 	}
 }
+
+type EntityOwnerService struct {
+	OnService ServiceId `graphql:"... on Service"`
+}
+
+func (s *EntityOwnerService) Aliases() []string {
+	return s.OnService.Aliases
+}
+
+func (s *EntityOwnerService) Id() ID {
+	return s.OnService.Id
+}
