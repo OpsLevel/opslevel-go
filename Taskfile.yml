@@ -3,6 +3,13 @@
 version: '3'
 
 tasks:
+  ci:
+    desc: Workflow to run in CI
+    deps: [setup]
+    cmds:
+      - task: lint
+      - task: test
+
   generate:
     desc: Generate code based on public GraphQL Interface
     aliases: [gen]
@@ -12,15 +19,13 @@ tasks:
 
   lint:
     desc: Formatting and linting
-    deps: [install-gofumpt]
     cmds:
       - test -z "$(gofumpt -d -e . | tee /dev/stderr)"
       - go vet ./...
       - golangci-lint run
 
-  lintfix:
+  fix:
     desc: Fix formatting and linting
-    deps: [install-gofumpt]
     cmds:
       - gofumpt -w .
       - go mod tidy
@@ -29,8 +34,10 @@ tasks:
   setup:
     desc: Setup linter, formatter, etc. for local testing and CI
     cmds:
-      - task: install-gofumpt
-      - task: install-golangci-lint
+      - task: install-go-tool
+        vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
+      - task: install-go-tool
+        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
 
   test:
     desc: Run tests
@@ -51,21 +58,6 @@ tasks:
       - test -z "{{.IS_TOOL_INSTALLED}}" || echo "Installing {{.GO_TOOL}}..."
       - test -z "{{.IS_TOOL_INSTALLED}}" || go install {{.GO_TOOL_PATH}}
       - test -n $(go env GOBIN) || go env -w GOBIN=$(go env GOPATH)/bin
+      - echo "  '{{.GO_TOOL}}' is installed."
     requires:
       vars: [GO_TOOL, GO_TOOL_PATH]
-
-  install-gofumpt:
-    desc: go install "gofumpt" and set GOBIN if not set
-    silent: true
-    cmds:
-      - task: install-go-tool
-        vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
-      - echo "  'gofumpt' is installed."
-
-  install-golangci-lint:
-    desc: go install "golangci-lint" and set GOBIN if not set
-    silent: true
-    cmds:
-      - task: install-go-tool
-        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
-      - echo "  'golangci-lint' is installed."
