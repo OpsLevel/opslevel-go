@@ -35,15 +35,19 @@ type IdentifierInput struct {
 	Alias *string `graphql:"alias" json:"alias,omitempty" yaml:"alias,omitempty"`
 }
 
-func NewIdentifier(value string) *IdentifierInput {
-	if IsID(value) {
+func NewIdentifier(value ...string) *IdentifierInput {
+	var output *IdentifierInput
+	if len(value) == 1 {
+		if IsID(value[0]) {
+			return &IdentifierInput{
+				Id: NewID(value[0]),
+			}
+		}
 		return &IdentifierInput{
-			Id: NewID(value),
+			Alias: NewString(value[0]),
 		}
 	}
-	return &IdentifierInput{
-		Alias: NewString(value),
-	}
+	return output
 }
 
 func NewIdentifierArray(values []string) []IdentifierInput {
