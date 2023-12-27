@@ -50,19 +50,18 @@ func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) 
 	return &m.Payload.Scorecard, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetScorecard(identifier string) (*Scorecard, error) {
+func (client *Client) GetScorecard(input string) (*Scorecard, error) {
 	var q struct {
 		Account struct {
 			Scorecard Scorecard `graphql:"scorecard(input: $input)"`
 		}
 	}
-	input := *NewIdentifier(identifier)
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ScorecardGet"))
 	if q.Account.Scorecard.Id == "" {
-		err = fmt.Errorf("Scorecard with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
+		err = fmt.Errorf("Scorecard with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Scorecard, HandleErrors(err, nil)
 }

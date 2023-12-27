@@ -154,18 +154,18 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetCustomAction(input IdentifierInput) (*CustomActionsExternalAction, error) {
+func (client *Client) GetCustomAction(input string) (*CustomActionsExternalAction, error) {
 	var q struct {
 		Account struct {
 			Action CustomActionsExternalAction `graphql:"customActionsExternalAction(input: $input)"`
 		}
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
 	if q.Account.Action.Id == "" {
-		err = fmt.Errorf("CustomActionsExternalAction with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
+		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)
 }
@@ -208,14 +208,14 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteWebhookAction(input IdentifierInput) error {
+func (client *Client) DeleteWebhookAction(input string) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"customActionsWebhookActionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Mutate(&m, v, WithName("WebhookActionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
@@ -241,18 +241,18 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomActionsTriggerDefinition, error) {
+func (client *Client) GetTriggerDefinition(input string) (*CustomActionsTriggerDefinition, error) {
 	var q struct {
 		Account struct {
 			Definition CustomActionsTriggerDefinition `graphql:"customActionsTriggerDefinition(input: $input)"`
 		}
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("TriggerDefinitionGet"))
 	if q.Account.Definition.Id == "" {
-		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
+		err = fmt.Errorf("CustomActionsTriggerDefinition with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
@@ -296,14 +296,14 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteTriggerDefinition(input IdentifierInput) error {
+func (client *Client) DeleteTriggerDefinition(input string) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Mutate(&m, v, WithName("TriggerDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
