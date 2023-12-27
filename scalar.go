@@ -32,11 +32,12 @@ type Identifier struct {
 }
 
 type IdentifierInput struct {
-	id    *ID     `graphql:"id" json:"id,omitempty" yaml:"id,omitempty"`
-	alias *string `graphql:"alias" json:"alias,omitempty" yaml:"alias,omitempty"`
+	id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`
+	alias *string `json:"alias,omitempty" yaml:"alias,omitempty"`
 }
 
 func (i IdentifierInput) MarshalJSON() ([]byte, error) {
+	// this case can only occur by using an EmptyIdentifier()
 	if i.id == nil && i.alias == nil {
 		return []byte("null"), nil
 	}
@@ -57,19 +58,20 @@ func (i *IdentifierInput) Alias() *string {
 	return i.alias
 }
 
-func NewIdentifier(value ...string) *IdentifierInput {
-	var output *IdentifierInput
-	if len(value) == 1 {
-		if IsID(value[0]) {
-			return &IdentifierInput{
-				id: NewID(value[0]),
-			}
-		}
+func NewIdentifier(value string) *IdentifierInput {
+	if IsID(value) {
 		return &IdentifierInput{
-			alias: NewString(value[0]),
+			id: NewID(value),
 		}
 	}
-	return output
+	return &IdentifierInput{
+		alias: NewString(value),
+	}
+}
+
+func EmptyIdentifier() *IdentifierInput {
+	var output IdentifierInput
+	return &output
 }
 
 func NewIdentifierArray(values []string) []IdentifierInput {

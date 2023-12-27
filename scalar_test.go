@@ -88,51 +88,84 @@ func TestConstructMutationID(t *testing.T) {
 	autopilot.Equals(t, `mutation MyMutation($id1:ID!$id2:ID){account{myMutation(id1: $id1 id2: $id2){id}}}`, query)
 }
 
-type IdentifierTester struct {
-	IdInputConcrete          ol.IdentifierInput  `json:"idInputConcrete"`
-	IdInputConcreteOmitEmpty ol.IdentifierInput  `json:"idInputConcreteNullable,omitempty"`
-	IdInputPointer           *ol.IdentifierInput `json:"idInputPointer"`
-	IdInputPointerOmitEmpty  *ol.IdentifierInput `json:"idInputPointerNullable,omitempty"`
+func TestMarshalIdentifiers(t *testing.T) {
+	type TestCase struct {
+		Name         string
+		Identifier   *ol.IdentifierInput
+		OutputBuffer string
+	}
+	testCases := []TestCase{
+		{
+			Name:         "the special empty identifier",
+			Identifier:   ol.EmptyIdentifier(),
+			OutputBuffer: `null`,
+		},
+		{
+			Name:         "identifier with empty arg",
+			Identifier:   ol.NewIdentifier(""),
+			OutputBuffer: `{"alias":""}`,
+		},
+		{
+			Name:         "identifier with valid ID",
+			Identifier:   ol.NewIdentifier("Z2lkOi8vb3BzbGV2ZWwvSGVsbG9Xb3JsZC8xMDEw"),
+			OutputBuffer: `{"id":"Z2lkOi8vb3BzbGV2ZWwvSGVsbG9Xb3JsZC8xMDEw"}`,
+		},
+		{
+			Name:         "identifier with valid alias",
+			Identifier:   ol.NewIdentifier("hello_world"),
+			OutputBuffer: `{"alias":"hello_world"}`,
+		},
+	}
+
+	for _, testCase := range testCases {
+		buf, err := json.Marshal(testCase.Identifier)
+		autopilot.Ok(t, err)
+		autopilot.Equals(t, testCase.OutputBuffer, string(buf))
+	}
 }
 
-func TestMarshalIdentifier(t *testing.T) {
-	// Arrange
-	id1 := ol.NewIdentifier("")
-	id2 := ol.NewIdentifier("my-service")
-	id3 := ol.NewIdentifier("Z2lkOi8vMTIzNDU2Nzg5")
-	case1 := IdentifierTester{}
-	case2 := IdentifierTester{
-		IdInputConcrete:          *id1,
-		IdInputConcreteOmitEmpty: *id1,
-		IdInputPointer:           id1,
-		IdInputPointerOmitEmpty:  id1,
+func TestMarshalIdentifiersOmitBehavior(t *testing.T) {
+	type TestCase struct {
+		Name         string
+		Owner        *ol.IdentifierInput
+		Maintainer   *ol.IdentifierInput
+		OutputBuffer string
 	}
-	case3 := IdentifierTester{
-		IdInputConcrete:          *id2,
-		IdInputConcreteOmitEmpty: *id2,
-		IdInputPointer:           id2,
-		IdInputPointerOmitEmpty:  id2,
+	testCases := []TestCase{
+		{
+			Name:         "pass nil, owner should omitempty",
+			Owner:        nil,
+			Maintainer:   nil,
+			OutputBuffer: `{"maintainer":null}`,
+		},
+		{
+			Name:         "pass empty identifier, owner should null",
+			Owner:        ol.EmptyIdentifier(),
+			Maintainer:   ol.EmptyIdentifier(),
+			OutputBuffer: `{"owner":null,"maintainer":null}`,
+		},
+		{
+			Name:         "pass normal identifiers",
+			Owner:        ol.NewIdentifier("Z2lkOi8vb3BzbGV2ZWwvSGVsbG9Xb3JsZC8xMDEw"),
+			Maintainer:   ol.NewIdentifier("team2"),
+			OutputBuffer: `{"owner":{"id":"Z2lkOi8vb3BzbGV2ZWwvSGVsbG9Xb3JsZC8xMDEw"},"maintainer":{"alias":"team2"}}`,
+		},
 	}
-	case4 := IdentifierTester{
-		IdInputConcrete:          *id3,
-		IdInputConcreteOmitEmpty: *id3,
-		IdInputPointer:           id3,
-		IdInputPointerOmitEmpty:  id3,
+
+	for _, testCase := range testCases {
+		type SomethingUpdateInput struct {
+			Owner      *ol.IdentifierInput `json:"owner,omitempty"`
+			Maintainer *ol.IdentifierInput `json:"maintainer"`
+		}
+		input := SomethingUpdateInput{
+			Owner:      testCase.Owner,
+			Maintainer: testCase.Maintainer,
+		}
+
+		buf, err := json.Marshal(input)
+		autopilot.Ok(t, err)
+		autopilot.Equals(t, testCase.OutputBuffer, string(buf))
 	}
-	// Act
-	buf1, err1 := json.Marshal(case1)
-	buf2, err2 := json.Marshal(case2)
-	buf3, err3 := json.Marshal(case3)
-	buf4, err4 := json.Marshal(case4)
-	// Assert
-	autopilot.Ok(t, err1)
-	autopilot.Equals(t, `{"idInputConcrete":{},"idInputConcreteNullable":{},"idInputPointer":null}`, string(buf1))
-	autopilot.Ok(t, err2)
-	autopilot.Equals(t, `{"idInputConcrete":{"alias":""},"idInputConcreteNullable":{"alias":""},"idInputPointer":{"alias":""},"idInputPointerNullable":{"alias":""}}`, string(buf2))
-	autopilot.Ok(t, err3)
-	autopilot.Equals(t, `{"idInputConcrete":{"alias":"my-service"},"idInputConcreteNullable":{"alias":"my-service"},"idInputPointer":{"alias":"my-service"},"idInputPointerNullable":{"alias":"my-service"}}`, string(buf3))
-	autopilot.Ok(t, err4)
-	autopilot.Equals(t, `{"idInputConcrete":{"id":"Z2lkOi8vMTIzNDU2Nzg5"},"idInputConcreteNullable":{"id":"Z2lkOi8vMTIzNDU2Nzg5"},"idInputPointer":{"id":"Z2lkOi8vMTIzNDU2Nzg5"},"idInputPointerNullable":{"id":"Z2lkOi8vMTIzNDU2Nzg5"}}`, string(buf4))
 }
 
 func TestConstructQueryIdentifier(t *testing.T) {
