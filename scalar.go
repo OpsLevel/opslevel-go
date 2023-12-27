@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -35,7 +36,20 @@ type IdentifierInput struct {
 	alias *string `graphql:"alias" json:"alias,omitempty" yaml:"alias,omitempty"`
 }
 
-func (i *IdentifierInput) ID() *ID {
+func (i IdentifierInput) MarshalJSON() ([]byte, error) {
+	if i.id == nil && i.alias == nil {
+		return []byte("null"), nil
+	}
+	return json.Marshal(struct {
+		Id    *ID     `json:"id,omitempty"`
+		Alias *string `json:"alias,omitempty"`
+	}{
+		Id:    i.id,
+		Alias: i.alias,
+	})
+}
+
+func (i *IdentifierInput) Id() *ID {
 	return i.id
 }
 

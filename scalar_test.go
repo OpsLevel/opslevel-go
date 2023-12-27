@@ -185,5 +185,5 @@ func TestNewIdentifierArray(t *testing.T) {
 	result := ol.NewIdentifierArray(s)
 	// Assert
 	autopilot.Equals(t, "my-service", *result[0].Alias())
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].ID())
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id())
 }
