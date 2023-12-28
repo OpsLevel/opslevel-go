@@ -32,8 +32,8 @@ type Identifier struct {
 }
 
 type IdentifierInput struct {
-	id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`
-	alias *string `json:"alias,omitempty" yaml:"alias,omitempty"`
+	id    *ID
+	alias *string
 }
 
 func (i IdentifierInput) MarshalJSON() ([]byte, error) {
