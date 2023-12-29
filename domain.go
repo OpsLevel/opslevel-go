@@ -25,7 +25,7 @@ type DomainConnection struct {
 type DomainInput struct {
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
-	Owner       *ID     `json:"ownerId,omitempty"`
+	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
 	Note        *string `json:"note,omitempty"`
 }
 

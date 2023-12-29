@@ -127,9 +127,9 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	Id          ID      `json:"id"`
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
-	Owner       *ID     `json:"ownerId,omitempty"`
-	Action      *ID     `json:"actionId,omitempty"`
-	Filter      *ID     `json:"filterId,omitempty"`
+	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+	Action      *ID     `json:"actionId,omitempty" yaml:"actionId,omitempty"`
+	Filter      *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
 	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"`

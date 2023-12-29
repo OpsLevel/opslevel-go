@@ -55,7 +55,7 @@ type InfrastructureResourceInput struct {
 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty" yaml:"schema,omitempty"`
 	ProviderType *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType,omitempty" default:"BigQuery"`
 	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData,omitempty"`
-	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"owner,omitempty"`
+	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
 	Data         JSON                                 `json:"data,omitempty" yaml:"data,omitempty" scalar:"true" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false,\"storage_size\":{\"value\":1024,\"unit\": \"GB\"}}"`
 }
 
@@ -68,7 +68,7 @@ type InfraProviderInput struct {
 
 type InfraInput struct {
 	Schema   string              `json:"schema" yaml:"schema" default:"Database"`
-	Owner    *ID                 `json:"owner" yaml:"owner" default:"XXX_owner_id_XXX"`
+	Owner    *ID                 `json:"owner,omitempty" yaml:"owner,omitempty" default:"XXX_owner_id_XXX"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
 	Data     map[string]any      `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }

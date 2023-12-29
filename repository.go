@@ -44,7 +44,7 @@ type Repository struct {
 
 type RepositoryUpdateInput struct {
 	Id    ID  `json:"id"`
-	Owner *ID `json:"ownerId,omitempty"`
+	Owner *ID `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
 }
 
 type RepositoryPath struct {

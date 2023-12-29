@@ -88,7 +88,7 @@ type TeamUpdateInput struct {
 	Name             string           `json:"name,omitempty"`
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty"`
+	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`
 }
 
 type TeamDeleteInput struct {

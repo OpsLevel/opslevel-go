@@ -72,9 +72,9 @@ type ServiceUpdateInput struct {
 	Language    string           `json:"language,omitempty"`
 	Framework   string           `json:"framework,omitempty"`
 	Tier        string           `json:"tierAlias,omitempty"`
-	Owner       *IdentifierInput `json:"ownerInput,omitempty"`
+	Owner       *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`
 	Lifecycle   string           `json:"lifecycleAlias,omitempty"`
-	Parent      *IdentifierInput `json:"parent,omitempty"`
+	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`
 }
 
 type ServiceDeleteInput struct {

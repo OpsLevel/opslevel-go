@@ -136,8 +136,8 @@ type CheckUpdateInput struct {
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
 	Category ID            `json:"categoryId,omitempty"`
 	Level    ID            `json:"levelId,omitempty"`
-	Owner    *ID           `json:"ownerId,omitempty"`
-	Filter   *ID           `json:"filterId,omitempty"`
+	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`
 	Notes    *string       `json:"notes,omitempty"`
 }
 
