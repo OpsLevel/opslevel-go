@@ -1,4 +1,0 @@
-kind: Refactor
-body: '[BREAKING CHANGE] Restrict access to IdentifierInput fields, only allow use
-  of identifiers through NewIdentifier()'
-time: 2023-12-28T10:23:50.129816-05:00

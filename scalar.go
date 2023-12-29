@@ -2,7 +2,7 @@ package opslevel
 
 import (
 	"encoding/base64"
-	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -32,40 +32,33 @@ type Identifier struct {
 }
 
 type IdentifierInput struct {
-	id    *ID
-	alias *string
+	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`
+	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty"`
 }
 
 func (i IdentifierInput) MarshalJSON() ([]byte, error) {
 	// this case can only occur by using an EmptyIdentifier()
-	if i.id == nil && i.alias == nil {
+	if i.Id == nil && i.Alias == nil {
 		return []byte("null"), nil
 	}
-	return json.Marshal(struct {
-		Id    *ID     `json:"id,omitempty"`
-		Alias *string `json:"alias,omitempty"`
-	}{
-		Id:    i.id,
-		Alias: i.alias,
-	})
-}
 
-func (i *IdentifierInput) Id() *ID {
-	return i.id
-}
-
-func (i *IdentifierInput) Alias() *string {
-	return i.alias
+	var out string
+	if i.Id != nil {
+		out = fmt.Sprintf(`{"id":"%s"}`, string(*i.Id))
+	} else {
+		out = fmt.Sprintf(`{"alias":"%s"}`, string(*i.Alias))
+	}
+	return []byte(out), nil
 }
 
 func NewIdentifier(value string) *IdentifierInput {
 	if IsID(value) {
 		return &IdentifierInput{
-			id: NewID(value),
+			Id: NewID(value),
 		}
 	}
 	return &IdentifierInput{
-		alias: NewString(value),
+		Alias: NewString(value),
 	}
 }
 
