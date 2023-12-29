@@ -110,16 +110,14 @@ func TestDeleteWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation WebhookActionDelete($input:IdentifierInput!){customActionsWebhookActionDelete(resource: $input){errors{message,path}}}`,
-		`{"input":{"id": "123456789"}}`,
+		`{"input":{"alias": "123456789"}}`,
 		`{"data": {"customActionsWebhookActionDelete": { "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "custom_actions/delete_action", testRequest)
 
 	// Act
-	err := client.DeleteWebhookAction(ol.IdentifierInput{
-		Id: newID,
-	})
+	err := client.DeleteWebhookAction("123456789")
 
 	// Assert
 	autopilot.Ok(t, err)
@@ -201,13 +199,13 @@ func TestGetTriggerDefinition(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`query TriggerDefinitionGet($input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){{ template "custom_actions_trigger_request" }}}}`,
-		`{"input":{"id":"123456789"}}`,
+		`{"input":{"alias":"123456789"}}`,
 		`{"data": {"account": { "customActionsTriggerDefinition": {{ template "custom_action_trigger2" }} }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/get_trigger", testRequest)
 
 	// Act
-	trigger, err := client.GetTriggerDefinition(ol.IdentifierInput{Id: newID})
+	trigger, err := client.GetTriggerDefinition("123456789")
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Release", trigger.Name)
@@ -312,12 +310,12 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	// Arrange
 	request := `{"query":
 		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
-		{"input":{"id":"123456789"}}
+		{"input":{"alias":"123456789"}}
 	}`
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}`,
-		`{"input":{"id":"123456789"}}`,
+		`{"input":{"alias":"123456789"}}`,
 		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [] }}}`,
 	)
 	testRequestError := autopilot.NewTestRequest(
@@ -330,9 +328,9 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	clientErr := BestTestClient(t, "custom_actions/delete_trigger_err", testRequestError)
 	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
 	// Act
-	err := client.DeleteTriggerDefinition(ol.IdentifierInput{Id: newID})
-	err2 := clientErr.DeleteTriggerDefinition(ol.IdentifierInput{Id: newID})
-	err3 := clientErr2.DeleteTriggerDefinition(ol.IdentifierInput{Id: newID})
+	err := client.DeleteTriggerDefinition("123456789")
+	err2 := clientErr.DeleteTriggerDefinition("123456789")
+	err3 := clientErr2.DeleteTriggerDefinition("123456789")
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `OpsLevel API Errors:

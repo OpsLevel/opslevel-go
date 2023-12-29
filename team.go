@@ -79,7 +79,7 @@ type TeamCreateInput struct {
 	ManagerEmail     string           `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" default:"manager@example.com"`
 	Responsibilities string           `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"Makes Tools"`
 	Contacts         *[]ContactInput  `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[{\"Type\":\"slack\",\"DisplayName\":\"Team Eng\",\"Address\":\"#team-engineering\"}]"`
-	ParentTeam       *IdentifierInput `json:"parentTeam" yaml:"parentTeam" default:"{\"alias\":\"Engineering\"}"`
+	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty" default:"{\"alias\":\"Engineering\"}"`
 }
 
 type TeamUpdateInput struct {
@@ -88,7 +88,7 @@ type TeamUpdateInput struct {
 	Name             string           `json:"name,omitempty"`
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam"`
+	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`
 }
 
 type TeamDeleteInput struct {

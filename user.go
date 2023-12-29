@@ -30,8 +30,8 @@ type UserConnection struct {
 }
 
 type UserIdentifierInput struct {
-	Id    *ID     `graphql:"id" json:"id,omitempty"`
-	Email *string `graphql:"email" json:"email,omitempty"`
+	Id    *ID     `graphql:"id" json:"id,omitempty" yaml:"id,omitempty"`
+	Email *string `graphql:"email" json:"email,omitempty" yaml:"email,omitempty"`
 }
 
 type UserInput struct {

@@ -44,7 +44,7 @@ type Repository struct {
 
 type RepositoryUpdateInput struct {
 	Id    ID  `json:"id"`
-	Owner *ID `json:"ownerId,omitempty"`
+	Owner *ID `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
 }
 
 type RepositoryPath struct {
@@ -230,8 +230,8 @@ func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagC
 
 func (client *Client) ConnectServiceRepository(service *ServiceId, repository *Repository) (*ServiceRepository, error) {
 	input := ServiceRepositoryCreateInput{
-		Service:       IdentifierInput{Id: &service.Id},
-		Repository:    IdentifierInput{Id: &repository.Id},
+		Service:       *NewIdentifier(string(service.Id)),
+		Repository:    *NewIdentifier(string(repository.Id)),
 		BaseDirectory: "/",
 		DisplayName:   fmt.Sprintf("%s/%s", repository.Organization, repository.Name),
 	}

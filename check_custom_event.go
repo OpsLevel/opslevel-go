@@ -25,7 +25,7 @@ type CheckCustomEventUpdateInput struct {
 	SuccessCondition string  `json:"successCondition,omitempty"`
 	Message          *string `json:"resultMessage,omitempty"`
 	PassPending      *bool   `json:"passPending,omitempty"`
-	Integration      *ID     `json:"integrationId,omitempty"`
+	Integration      *ID     `json:"integrationId,omitempty" yaml:"integrationId,omitempty"`
 }
 
 func (client *Client) CreateCheckCustomEvent(input CheckCustomEventCreateInput) (*Check, error) {

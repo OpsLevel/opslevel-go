@@ -1,0 +1,4 @@
+kind: Bugfix
+body: Fix bug where optional IdentifierInput fields could never be unset - this can
+  now be done by passing NewIdentifier() with no args
+time: 2023-12-29T11:47:51.66582-05:00
