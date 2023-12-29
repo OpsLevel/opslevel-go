@@ -37,11 +37,9 @@ type IdentifierInput struct {
 }
 
 func (i IdentifierInput) MarshalJSON() ([]byte, error) {
-	// this case can only occur by using an EmptyIdentifier()
 	if i.Id == nil && i.Alias == nil {
 		return []byte("null"), nil
 	}
-
 	var out string
 	if i.Id != nil {
 		out = fmt.Sprintf(`{"id":"%s"}`, string(*i.Id))
@@ -51,18 +49,17 @@ func (i IdentifierInput) MarshalJSON() ([]byte, error) {
 	return []byte(out), nil
 }
 
-func NewIdentifier(value string) *IdentifierInput {
-	if IsID(value) {
+func NewIdentifier(value ...string) *IdentifierInput {
+	if len(value) == 1 {
+		if IsID(value[0]) {
+			return &IdentifierInput{
+				Id: NewID(value[0]),
+			}
+		}
 		return &IdentifierInput{
-			Id: NewID(value),
+			Alias: NewString(value[0]),
 		}
 	}
-	return &IdentifierInput{
-		Alias: NewString(value),
-	}
-}
-
-func EmptyIdentifier() *IdentifierInput {
 	var output IdentifierInput
 	return &output
 }

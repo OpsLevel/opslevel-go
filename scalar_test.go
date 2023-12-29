@@ -96,8 +96,8 @@ func TestMarshalIdentifiers(t *testing.T) {
 	}
 	testCases := []TestCase{
 		{
-			Name:         "the special empty identifier",
-			Identifier:   ol.EmptyIdentifier(),
+			Name:         "empty identifier",
+			Identifier:   ol.NewIdentifier(),
 			OutputBuffer: `null`,
 		},
 		{
@@ -140,8 +140,8 @@ func TestMarshalIdentifiersOmitBehavior(t *testing.T) {
 		},
 		{
 			Name:         "pass empty identifier, owner should null",
-			Owner:        ol.EmptyIdentifier(),
-			Maintainer:   ol.EmptyIdentifier(),
+			Owner:        ol.NewIdentifier(),
+			Maintainer:   ol.NewIdentifier(),
 			OutputBuffer: `{"owner":null,"maintainer":null}`,
 		},
 		{
