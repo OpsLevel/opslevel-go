@@ -119,19 +119,20 @@ func (i *InfrastructureResource) ResourceType() TaggableResource {
 }
 
 func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {
+	data := JSON(input.Data)
 	i := InfrastructureResourceInput{
 		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
-		Data:   input.Data,
+		Data:   &data,
 	}
 	if input.Owner != nil {
 		i.OwnerId = input.Owner
 	}
 	if input.Provider != nil {
 		i.ProviderResourceType = &input.Provider.Type
-		i.ProviderData = &InfrastructureResourceProviderInput{
+		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalURL:  input.Provider.URL,
-			ProviderName: input.Provider.Name,
+			ExternalUrl:  NewString(input.Provider.URL),
+			ProviderName: NewString(input.Provider.Name),
 		}
 	}
 	var m struct {
@@ -219,18 +220,19 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 }
 
 func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) (*InfrastructureResource, error) {
+	data := JSON(input.Data)
 	i := InfrastructureResourceInput{
-		Data: input.Data,
+		Data: &data,
 	}
 	if input.Owner != nil {
-		i.Owner = input.Owner
+		i.OwnerId = input.Owner
 	}
 	if input.Provider != nil {
 		i.ProviderResourceType = &input.Provider.Type
-		i.ProviderData = &InfrastructureResourceProviderInput{
+		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalURL:  input.Provider.URL,
-			ProviderName: input.Provider.Name,
+			ExternalUrl:  NewString(input.Provider.URL),
+			ProviderName: NewString(input.Provider.Name),
 		}
 	}
 	var m struct {

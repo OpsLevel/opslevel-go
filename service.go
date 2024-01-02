@@ -608,16 +608,16 @@ func NewTagArgs(tag string) TagArgs {
 	switch len(kv) {
 	case 1:
 		return TagArgs{
-			Key: kv[0],
+			Key: NewString(kv[0]),
 		}
 	case 2:
 		return TagArgs{
-			Key:   kv[0],
-			Value: kv[1],
+			Key:   NewString(kv[0]),
+			Value: NewString(kv[1]),
 		}
 	default: // TODO: is this the best we can do?
 		return TagArgs{
-			Key: tag,
+			Key: NewString(tag),
 		}
 	}
 }
@@ -733,7 +733,7 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 
 func (client *Client) DeleteServiceWithAlias(alias string) error {
 	return client.DeleteService(ServiceDeleteInput{
-		Alias: alias,
+		Alias: NewString(alias),
 	})
 }
 

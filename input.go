@@ -654,9 +654,9 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	FilterId               *ID                                              `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The filter that will determine which services apply to the Trigger Definition. (Optional.)
 	ManualInputsDefinition *string                                          `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"` // The YAML definition of custom inputs for the Trigger Definition. (Optional.)
 	Published              *bool                                            `json:"published,omitempty" yaml:"published,omitempty"`                           // The published state of the action; true if the definition is ready for use; false if it is a draft. (Optional.)
-	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
 	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`             // The liquid template used to parse the response from the External Action. (Optional.)
-	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
+	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
 	ExtendedTeamAccess     *string                                          `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
 }
 
