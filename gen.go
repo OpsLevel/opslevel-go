@@ -337,7 +337,7 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- if hasSuffix "Id" .Name }}ID
     {{- else if .Type.Name }}{{ template "converted_type" .Type }}
     {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}}
-    ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
+    ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + ` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
 		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
 }
