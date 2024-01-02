@@ -87,12 +87,12 @@ type CustomActionsTriggerDefinitionsConnection struct {
 }
 
 type CustomActionsWebhookActionCreateInput struct {
-	Name           string                      `json:"name"`
-	Description    *string                     `json:"description,omitempty"`
-	LiquidTemplate string                      `json:"liquidTemplate"`
-	WebhookURL     string                      `json:"webhookUrl"`
-	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod"`
-	Headers        JSON                        `json:"headers"`
+	Name           string                      `json:"name" yaml:"name" default:"Page The On Call"`
+	Description    *string                     `json:"description,omitempty" yaml:"description,omitempty" default:"Pages The On Call"`
+	LiquidTemplate string                      `json:"liquidTemplate" yaml:"liquidTemplate" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"`
+	WebhookURL     string                      `json:"webhookUrl" yaml:"webhookUrl" default:"https://api.pagerduty.com/incidents"`
+	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" default:"POST"`
+	Headers        JSON                        `json:"headers" yaml:"headers" default:"{\"accept\": \"application/vnd.pagerduty+json;version=2\",\"authorization\":\"Token token=XXXXXXXXXXXXX\",\"from\":\"someone@example.com\"}"`
 }
 
 type CustomActionsWebhookActionUpdateInput struct {
@@ -106,38 +106,38 @@ type CustomActionsWebhookActionUpdateInput struct {
 }
 
 type CustomActionsTriggerDefinitionCreateInput struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description,omitempty"`
-	Owner       ID      `json:"ownerId"`
+	Name        string  `json:"name" yaml:"name" default:"Page The On Call"`
+	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"Pages the On Call"`
+	Owner       ID      `json:"ownerId" yaml:"ownerId" default:"XXX_owner_id_XXX"`
 	// In the API actionID is `ID!` but that's because of the CustomActionsWebhookActionCreateInput
 	// But we are not implementing that because it is used for the UI, so we need to enforce an actionId is given
-	Action ID  `json:"actionId"`
-	Filter *ID `json:"filterId,omitempty"`
+	Action ID  `json:"actionId" yaml:"actionId"`
+	Filter *ID `json:"filterId,omitempty" yaml:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition string                                          `json:"manualInputsDefinition"`
-	Published              *bool                                           `json:"published,omitempty"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl"`
-	ResponseTemplate       string                                          `json:"responseTemplate"`
-	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType"`
-	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty"`
+	ManualInputsDefinition string                                          `json:"manualInputsDefinition" yaml:"manualInputsDefinition"`
+	Published              *bool                                           `json:"published,omitempty" yaml:"published,omitempty"`
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl" yaml:"accessControl"`
+	ResponseTemplate       string                                          `json:"responseTemplate" yaml:"responseTemplate"`
+	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType" yaml:"entityType"`
+	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`
 }
 
 type CustomActionsTriggerDefinitionUpdateInput struct {
 	Id          ID      `json:"id"`
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
-	Owner       *ID     `json:"ownerId,omitempty"`
-	Action      *ID     `json:"actionId,omitempty"`
-	Filter      *ID     `json:"filterId,omitempty"`
+	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+	Action      *ID     `json:"actionId,omitempty" yaml:"actionId,omitempty"`
+	Filter      *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty"`
 	// This is being explicitly left out to reduce the complexity of the implementation
 	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty"`
-	Published              *bool                                           `json:"published,omitempty"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty"`
-	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty"`
-	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty"`
-	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty"`
+	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"`
+	Published              *bool                                           `json:"published,omitempty" yaml:"published,omitempty"`
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" default:"service_owners"`
+	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`
+	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`
+	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" default:"[\"alias\":\"team_alias_1\",\"id\":\"XXX_team_id_XXX\"]"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
@@ -154,18 +154,18 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetCustomAction(input IdentifierInput) (*CustomActionsExternalAction, error) {
+func (client *Client) GetCustomAction(input string) (*CustomActionsExternalAction, error) {
 	var q struct {
 		Account struct {
 			Action CustomActionsExternalAction `graphql:"customActionsExternalAction(input: $input)"`
 		}
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
 	if q.Account.Action.Id == "" {
-		err = fmt.Errorf("CustomActionsExternalAction with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
+		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)
 }
@@ -208,14 +208,14 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteWebhookAction(input IdentifierInput) error {
+func (client *Client) DeleteWebhookAction(input string) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"customActionsWebhookActionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Mutate(&m, v, WithName("WebhookActionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
@@ -241,18 +241,18 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) GetTriggerDefinition(input IdentifierInput) (*CustomActionsTriggerDefinition, error) {
+func (client *Client) GetTriggerDefinition(input string) (*CustomActionsTriggerDefinition, error) {
 	var q struct {
 		Account struct {
 			Definition CustomActionsTriggerDefinition `graphql:"customActionsTriggerDefinition(input: $input)"`
 		}
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("TriggerDefinitionGet"))
 	if q.Account.Definition.Id == "" {
-		err = fmt.Errorf("CustomActionsTriggerDefinition with ID '%s' or Alias '%s' not found", string(*input.Id), *input.Alias)
+		err = fmt.Errorf("CustomActionsTriggerDefinition with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
@@ -296,14 +296,14 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 	return &m.Payload.TriggerDefinition, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteTriggerDefinition(input IdentifierInput) error {
+func (client *Client) DeleteTriggerDefinition(input string) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
 		} `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": *NewIdentifier(input),
 	}
 	err := client.Mutate(&m, v, WithName("TriggerDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)

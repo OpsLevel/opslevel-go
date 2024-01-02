@@ -12,8 +12,8 @@ type Predicate struct {
 }
 
 type PredicateInput struct {
-	Type  PredicateTypeEnum `json:"type"`
-	Value string            `json:"value,omitempty"`
+	Type  PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
+	Value string            `json:"value,omitempty" yaml:"value,omitempty" default:"Requests"`
 }
 
 type PredicateUpdateInput struct {
@@ -34,11 +34,11 @@ type Filter struct {
 }
 
 type FilterPredicate struct {
-	Key           PredicateKeyEnum  `json:"key"`
-	KeyData       string            `json:"keyData,omitempty"`
-	Type          PredicateTypeEnum `json:"type"`
-	Value         string            `json:"value,omitempty"`
-	CaseSensitive *bool             `json:"caseSensitive,omitempty"`
+	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
+	KeyData       string            `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"null"`
+	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
+	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
+	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
 }
 
 type FilterConnection struct {
@@ -48,9 +48,9 @@ type FilterConnection struct {
 }
 
 type FilterCreateInput struct {
-	Name       string            `json:"name"`
-	Predicates []FilterPredicate `json:"predicates"`
-	Connective ConnectiveEnum    `json:"connective,omitempty"`
+	Name       string            `json:"name" yaml:"name" default:"Kubernetes"`
+	Predicates []FilterPredicate `json:"predicates" yaml:"predicates"`
+	Connective ConnectiveEnum    `json:"connective,omitempty" yaml:"connective,omitempty" default:"and"`
 }
 
 type FilterUpdateInput struct {

@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"encoding/base64"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -31,19 +32,36 @@ type Identifier struct {
 }
 
 type IdentifierInput struct {
-	Id    *ID     `graphql:"id" json:"id,omitempty"`
-	Alias *string `graphql:"alias" json:"alias,omitempty"`
+	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`
+	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty"`
 }
 
-func NewIdentifier(value string) *IdentifierInput {
-	if IsID(value) {
+func (i IdentifierInput) MarshalJSON() ([]byte, error) {
+	if i.Id == nil && i.Alias == nil {
+		return []byte("null"), nil
+	}
+	var out string
+	if i.Id != nil {
+		out = fmt.Sprintf(`{"id":"%s"}`, string(*i.Id))
+	} else {
+		out = fmt.Sprintf(`{"alias":"%s"}`, string(*i.Alias))
+	}
+	return []byte(out), nil
+}
+
+func NewIdentifier(value ...string) *IdentifierInput {
+	if len(value) == 1 {
+		if IsID(value[0]) {
+			return &IdentifierInput{
+				Id: NewID(value[0]),
+			}
+		}
 		return &IdentifierInput{
-			Id: NewID(value),
+			Alias: NewString(value[0]),
 		}
 	}
-	return &IdentifierInput{
-		Alias: NewString(value),
-	}
+	var output IdentifierInput
+	return &output
 }
 
 func NewIdentifierArray(values []string) []IdentifierInput {

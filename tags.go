@@ -36,23 +36,23 @@ type TagConnection struct {
 }
 
 type TagInput struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string `json:"key" yaml:"key" default:"environment"`
+	Value string `json:"value" yaml:"value" default:"production"`
 }
 
 type TagAssignInput struct {
-	Id    ID               `json:"id,omitempty"`
-	Alias string           `json:"alias,omitempty"`
-	Type  TaggableResource `json:"type,omitempty"`
-	Tags  []TagInput       `json:"tags"`
+	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
+	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty" default:"my-team-alias"`
+	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Team"`
+	Tags  []TagInput       `json:"tags" yaml:"tags"`
 }
 
 type TagCreateInput struct {
-	Id    ID               `json:"id,omitempty"`
-	Alias string           `json:"alias,omitempty"`
-	Type  TaggableResource `json:"type,omitempty"`
-	Key   string           `json:"key"`
-	Value string           `json:"value"`
+	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
+	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty"`
+	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Repository"`
+	Key   string           `json:"key" yaml:"key" default:"environment"`
+	Value string           `json:"value" yaml:"value" default:"production"`
 }
 
 type TagUpdateInput struct {

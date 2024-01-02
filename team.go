@@ -14,17 +14,17 @@ type Contact struct {
 }
 
 type ContactInput struct {
-	Type        ContactType `json:"type"`
-	DisplayName *string     `json:"displayName,omitempty"`
-	Address     string      `json:"address"`
+	Type        ContactType `json:"type" yaml:"type" default:"email"`
+	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty"`
+	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
 }
 
 type ContactCreateInput struct {
-	Type        ContactType `json:"type"`
-	DisplayName string      `json:"displayName,omitempty"`
-	Address     string      `json:"address"`
-	TeamId      *ID         `json:"teamId,omitempty"`
-	TeamAlias   string      `json:"teamAlias,omitempty"`
+	Type        ContactType `json:"type" yaml:"type" default:"email"`
+	DisplayName string      `json:"displayName,omitempty" yaml:"displayName,omitempty"`
+	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
+	TeamId      *ID         `json:"teamId,omitempty" yaml:"teamId,omitempty"`
+	TeamAlias   string      `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty"`
 }
 
 type ContactUpdateInput struct {
@@ -75,11 +75,11 @@ type TeamConnection struct {
 }
 
 type TeamCreateInput struct {
-	Name             string           `json:"name"`
-	ManagerEmail     string           `json:"managerEmail,omitempty"`
-	Responsibilities string           `json:"responsibilities,omitempty"`
-	Contacts         *[]ContactInput  `json:"contacts,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam"`
+	Name             string           `json:"name" yaml:"name" default:"Platform"`
+	ManagerEmail     string           `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" default:"manager@example.com"`
+	Responsibilities string           `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"Makes Tools"`
+	Contacts         *[]ContactInput  `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[{\"Type\":\"slack\",\"DisplayName\":\"Team Eng\",\"Address\":\"#team-engineering\"}]"`
+	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty" default:"{\"alias\":\"Engineering\"}"`
 }
 
 type TeamUpdateInput struct {
@@ -88,7 +88,7 @@ type TeamUpdateInput struct {
 	Name             string           `json:"name,omitempty"`
 	ManagerEmail     string           `json:"managerEmail,omitempty"`
 	Responsibilities string           `json:"responsibilities,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam"`
+	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`
 }
 
 type TeamDeleteInput struct {
@@ -109,17 +109,17 @@ type TeamMembershipConnection struct {
 }
 
 type TeamMembershipUserInput struct {
-	User UserIdentifierInput `json:"user"`
-	Role string              `json:"role"`
+	User UserIdentifierInput `json:"user" yaml:"user"`
+	Role string              `json:"role" yaml:"role" default:"admin"`
 }
 
 type TeamMembershipCreateInput struct {
-	TeamId  ID                        `json:"teamId"`
+	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
 	Members []TeamMembershipUserInput `json:"members"`
 }
 
 type TeamMembershipDeleteInput struct {
-	TeamId  ID                        `json:"teamId"`
+	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
 	Members []TeamMembershipUserInput `json:"members"`
 }
 

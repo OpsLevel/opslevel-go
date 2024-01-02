@@ -1,0 +1,3 @@
+kind: Feature
+body: add yaml and default struct tags to Input structs
+time: 2023-12-15T07:08:46.1384-08:00

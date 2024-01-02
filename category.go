@@ -18,7 +18,7 @@ type CategoryConnection struct {
 }
 
 type CategoryCreateInput struct {
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name" default:"Example Category"`
 }
 
 type CategoryUpdateInput struct {

@@ -26,8 +26,8 @@ type SystemConnection struct {
 type SystemInput struct {
 	Name        *string          `json:"name,omitempty"`
 	Description *string          `json:"description,omitempty"`
-	Owner       *ID              `json:"ownerId,omitempty"`
-	Parent      *IdentifierInput `json:"parent,omitempty"`
+	Owner       *ID              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`
 	Note        *string          `json:"note,omitempty"`
 }
 

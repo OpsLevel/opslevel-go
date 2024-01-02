@@ -106,22 +106,22 @@ func (j *RunnerJob) Number() string {
 }
 
 type RunnerAppendJobLogInput struct {
-	RunnerId    ID           `json:"runnerId"`
-	RunnerJobId ID           `json:"runnerJobId"`
-	SentAt      iso8601.Time `json:"sentAt"`
-	Logs        []string     `json:"logChunk"`
+	RunnerId    ID           `json:"runnerId" yaml:"runnerId" default:"46290"`
+	RunnerJobId ID           `json:"runnerJobId" yaml:"runnerJobId" default:"4133720"`
+	SentAt      iso8601.Time `json:"sentAt" yaml:"sentAt" default:"2023-11-05T01:00:00.000Z"`
+	Logs        []string     `json:"logChunk" yaml:"logChunk" default:"[\"LogRoger\",\"LogDodger\"]"`
 }
 
 type RunnerJobOutcomeVariable struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string `json:"key" yaml:"key" default:"job_task"`
+	Value string `json:"value" yaml:"value" default:"job_status"`
 }
 
 type RunnerReportJobOutcomeInput struct {
-	RunnerId         ID                         `json:"runnerId"`
-	RunnerJobId      ID                         `json:"runnerJobId"`
-	Outcome          RunnerJobOutcomeEnum       `json:"outcome"`
-	OutcomeVariables []RunnerJobOutcomeVariable `json:"outcomeVariables,omitempty"`
+	RunnerId         ID                         `json:"runnerId" yaml:"runnerId" default:"42690"`
+	RunnerJobId      ID                         `json:"runnerJobId" yaml:"runnerJobId" default:"4213370"`
+	Outcome          RunnerJobOutcomeEnum       `json:"outcome" yaml:"outcome" default:"pod_timeout"`
+	OutcomeVariables []RunnerJobOutcomeVariable `json:"outcomeVariables,omitempty" yaml:"outcomeVariables,omitempty"`
 }
 
 type RunnerScale struct {

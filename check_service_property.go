@@ -8,8 +8,8 @@ type ServicePropertyCheckFragment struct {
 type CheckServicePropertyCreateInput struct {
 	CheckCreateInput
 
-	Property  ServicePropertyTypeEnum `json:"serviceProperty"`
-	Predicate *PredicateInput         `json:"propertyValuePredicate,omitempty"`
+	Property  ServicePropertyTypeEnum `json:"serviceProperty" yaml:"serviceProperty" default:"framework"`
+	Predicate *PredicateInput         `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"`
 }
 
 type CheckServicePropertyUpdateInput struct {

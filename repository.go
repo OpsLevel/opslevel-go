@@ -44,7 +44,7 @@ type Repository struct {
 
 type RepositoryUpdateInput struct {
 	Id    ID  `json:"id"`
-	Owner *ID `json:"ownerId,omitempty"`
+	Owner *ID `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
 }
 
 type RepositoryPath struct {
@@ -95,10 +95,10 @@ type ServiceRepositoryConnection struct {
 }
 
 type ServiceRepositoryCreateInput struct {
-	Service       IdentifierInput `json:"service"`
-	Repository    IdentifierInput `json:"repository"`
-	BaseDirectory string          `json:"baseDirectory"`
-	DisplayName   string          `json:"displayName,omitempty"`
+	Service       IdentifierInput `json:"service" yaml:"service" default:"{\"alias\":\"service-alias\"}"`
+	Repository    IdentifierInput `json:"repository" yaml:"repository" default:"{\"alias\":\"repository-alias\"}"`
+	BaseDirectory string          `json:"baseDirectory" yaml:"baseDirectory" default:"/"`
+	DisplayName   string          `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"OpsLevel/opslevel-go"`
 }
 
 type ServiceRepositoryUpdateInput struct {
@@ -230,8 +230,8 @@ func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagC
 
 func (client *Client) ConnectServiceRepository(service *ServiceId, repository *Repository) (*ServiceRepository, error) {
 	input := ServiceRepositoryCreateInput{
-		Service:       IdentifierInput{Id: &service.Id},
-		Repository:    IdentifierInput{Id: &repository.Id},
+		Service:       *NewIdentifier(string(service.Id)),
+		Repository:    *NewIdentifier(string(repository.Id)),
 		BaseDirectory: "/",
 		DisplayName:   fmt.Sprintf("%s/%s", repository.Organization, repository.Name),
 	}

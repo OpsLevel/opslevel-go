@@ -111,14 +111,14 @@ type CheckCreateInputProvider interface {
 }
 
 type CheckCreateInput struct {
-	Name     string        `json:"name"`
-	Enabled  bool          `json:"enabled"`
-	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category ID            `json:"categoryId"`
-	Level    ID            `json:"levelId"`
-	Owner    *ID           `json:"ownerId,omitempty"`
-	Filter   *ID           `json:"filterId,omitempty"`
-	Notes    string        `json:"notes"`
+	Name     string        `json:"name" yaml:"name" default:"Example Check to create"`
+	Enabled  bool          `json:"enabled" yaml:"enabled" default:"true"`
+	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`
+	Category ID            `json:"categoryId" yaml:"categoryId" default:"XXX_category_id_XXX"`
+	Level    ID            `json:"levelId" yaml:"levelId" default:"XXX_rubric_level_id_XXX"`
+	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"XXX_owner_id_XXX"`
+	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
+	Notes    string        `json:"notes" yaml:"notes" default:"Notes on Example Check"`
 }
 
 func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
@@ -136,8 +136,8 @@ type CheckUpdateInput struct {
 	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
 	Category ID            `json:"categoryId,omitempty"`
 	Level    ID            `json:"levelId,omitempty"`
-	Owner    *ID           `json:"ownerId,omitempty"`
-	Filter   *ID           `json:"filterId,omitempty"`
+	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`
 	Notes    *string       `json:"notes,omitempty"`
 }
 
