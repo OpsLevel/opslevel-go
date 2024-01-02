@@ -160,9 +160,9 @@ func (client *Client) AssignTags(identifier string, tags map[string]string) ([]T
 		})
 	}
 	if IsID(identifier) {
-		input.Id = ID(identifier)
+		input.Id = NewID(identifier)
 	} else {
-		input.Alias = identifier
+		input.Alias = &identifier
 	}
 	return client.AssignTag(input)
 }
@@ -196,9 +196,9 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 			Value: value,
 		}
 		if IsID(identifier) {
-			input.Id = ID(identifier)
+			input.Id = NewID(identifier)
 		} else {
-			input.Alias = identifier
+			input.Alias = &identifier
 		}
 		newTag, err := client.CreateTag(input)
 		if err != nil {
@@ -271,7 +271,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 			Errors []OpsLevelErrors
 		} `graphql:"tagUpdate(input: $input)"`
 	}
-	if err := ValidateTagKey(input.Key); err != nil {
+	if err := ValidateTagKey(*input.Key); err != nil {
 		return nil, err
 	}
 	v := PayloadVariables{
