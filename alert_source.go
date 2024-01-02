@@ -1,9 +1,9 @@
 package opslevel
 
-type AlertSourceExternalIdentifier struct {
-	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`
-	ExternalId string              `json:"externalId" yaml:"externalId"`
-}
+// type AlertSourceExternalIdentifier struct {
+// 	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`
+// 	ExternalId string              `json:"externalId" yaml:"externalId"`
+// }
 
 type AlertSource struct {
 	Name        string              `graphql:"name"`
@@ -22,11 +22,11 @@ type AlertSourceService struct {
 	Status      AlertSourceStatusTypeEnum `graphql:"status"`
 }
 
-type AlertSourceServiceCreateInput struct {
-	Service    IdentifierInput                `json:"service" yaml:"service" default:"{\"alias\":\"sound-the-alarm\"}"`
-	Id         ID                             `json:"alertSourceId,omitempty" yaml:"alertSourceId,omitempty"`
-	ExternalID *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty" yaml:"alertSourceExternalIdentifier,omitempty"`
-}
+// type AlertSourceServiceCreateInput struct {
+// 	Service    IdentifierInput                `json:"service" yaml:"service" default:"{\"alias\":\"sound-the-alarm\"}"`
+// 	Id         ID                             `json:"alertSourceId,omitempty" yaml:"alertSourceId,omitempty"`
+// 	ExternalID *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty" yaml:"alertSourceExternalIdentifier,omitempty"`
+// }
 
 type AlertSourceDeleteInput struct {
 	Id ID `json:"id"`
@@ -35,7 +35,7 @@ type AlertSourceDeleteInput struct {
 func NewAlertSource(kind AlertSourceTypeEnum, id string) *AlertSourceExternalIdentifier {
 	output := AlertSourceExternalIdentifier{
 		Type:       kind,
-		ExternalId: id,
+		ExternalId: ID(id),
 	}
 	return &output
 }

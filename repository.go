@@ -42,10 +42,10 @@ type Repository struct {
 	Visible            bool
 }
 
-type RepositoryUpdateInput struct {
-	Id    ID  `json:"id"`
-	Owner *ID `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-}
+// type RepositoryUpdateInput struct {
+// 	Id    ID  `json:"id"`
+// 	Owner *ID `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+// }
 
 type RepositoryPath struct {
 	Href string
@@ -94,18 +94,18 @@ type ServiceRepositoryConnection struct {
 	TotalCount int
 }
 
-type ServiceRepositoryCreateInput struct {
-	Service       IdentifierInput `json:"service" yaml:"service" default:"{\"alias\":\"service-alias\"}"`
-	Repository    IdentifierInput `json:"repository" yaml:"repository" default:"{\"alias\":\"repository-alias\"}"`
-	BaseDirectory string          `json:"baseDirectory" yaml:"baseDirectory" default:"/"`
-	DisplayName   string          `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"OpsLevel/opslevel-go"`
-}
+// type ServiceRepositoryCreateInput struct {
+// 	Service       IdentifierInput `json:"service" yaml:"service" default:"{\"alias\":\"service-alias\"}"`
+// 	Repository    IdentifierInput `json:"repository" yaml:"repository" default:"{\"alias\":\"repository-alias\"}"`
+// 	BaseDirectory string          `json:"baseDirectory" yaml:"baseDirectory" default:"/"`
+// 	DisplayName   string          `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"OpsLevel/opslevel-go"`
+// }
 
-type ServiceRepositoryUpdateInput struct {
-	Id            ID     `json:"id"`
-	BaseDirectory string `json:"baseDirectory,omitempty"`
-	DisplayName   string `json:"displayName,omitempty"`
-}
+// type ServiceRepositoryUpdateInput struct {
+// 	Id            ID     `json:"id"`
+// 	BaseDirectory string `json:"baseDirectory,omitempty"`
+// 	DisplayName   string `json:"displayName,omitempty"`
+// }
 
 func (r *Repository) ResourceId() ID {
 	return r.Id
@@ -232,8 +232,8 @@ func (client *Client) ConnectServiceRepository(service *ServiceId, repository *R
 	input := ServiceRepositoryCreateInput{
 		Service:       *NewIdentifier(string(service.Id)),
 		Repository:    *NewIdentifier(string(repository.Id)),
-		BaseDirectory: "/",
-		DisplayName:   fmt.Sprintf("%s/%s", repository.Organization, repository.Name),
+		BaseDirectory: NewString("/"),
+		DisplayName:   NewString(fmt.Sprintf("%s/%s", repository.Organization, repository.Name)),
 	}
 	return client.CreateServiceRepository(input)
 }

@@ -28,13 +28,13 @@ type ScorecardConnection struct {
 	TotalCount int         `graphql:"totalCount"`
 }
 
-type ScorecardInput struct {
-	AffectsOverallServiceLevels *bool   `graphql:"affectsOverallServiceLevels" json:"affectsOverallServiceLevels,omitempty" yaml:"affectsOverallServiceLevels,omitempty" default:"false"`
-	Name                        string  `graphql:"name" json:"name" yaml:"name" default:"new scorecard"`
-	Description                 *string `graphql:"description" json:"description,omitempty" yaml:"description,omitempty" default:"a newly created scorecard"`
-	OwnerId                     ID      `graphql:"ownerId" json:"ownerId" yaml:"ownerId" default:"XXX_team_id_XXX"`
-	FilterId                    *ID     `graphql:"filterId" json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
-}
+// type ScorecardInput struct {
+// 	AffectsOverallServiceLevels *bool   `graphql:"affectsOverallServiceLevels" json:"affectsOverallServiceLevels,omitempty" yaml:"affectsOverallServiceLevels,omitempty" default:"false"`
+// 	Name                        string  `graphql:"name" json:"name" yaml:"name" default:"new scorecard"`
+// 	Description                 *string `graphql:"description" json:"description,omitempty" yaml:"description,omitempty" default:"a newly created scorecard"`
+// 	OwnerId                     ID      `graphql:"ownerId" json:"ownerId" yaml:"ownerId" default:"XXX_team_id_XXX"`
+// 	FilterId                    *ID     `graphql:"filterId" json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
+// }
 
 func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) {
 	var m struct {

@@ -4,17 +4,17 @@ type HasRecentDeployCheckFragment struct {
 	Days int `graphql:"days"`
 }
 
-type CheckHasRecentDeployCreateInput struct {
-	CheckCreateInput
+// type CheckHasRecentDeployCreateInput struct {
+// 	CheckCreateInput
 
-	Days int `json:"days" yaml:"days" default:"12"`
-}
+// 	Days int `json:"days" yaml:"days" default:"12"`
+// }
 
-type CheckHasRecentDeployUpdateInput struct {
-	CheckUpdateInput
+// type CheckHasRecentDeployUpdateInput struct {
+// 	CheckUpdateInput
 
-	Days *int `json:"days,omitempty"`
-}
+// 	Days *int `json:"days,omitempty"`
+// }
 
 func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreateInput) (*Check, error) {
 	var m struct {

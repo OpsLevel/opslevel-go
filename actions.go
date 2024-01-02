@@ -86,59 +86,59 @@ type CustomActionsTriggerDefinitionsConnection struct {
 	TotalCount int
 }
 
-type CustomActionsWebhookActionCreateInput struct {
-	Name           string                      `json:"name" yaml:"name" default:"Page The On Call"`
-	Description    *string                     `json:"description,omitempty" yaml:"description,omitempty" default:"Pages The On Call"`
-	LiquidTemplate string                      `json:"liquidTemplate" yaml:"liquidTemplate" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"`
-	WebhookURL     string                      `json:"webhookUrl" yaml:"webhookUrl" default:"https://api.pagerduty.com/incidents"`
-	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" default:"POST"`
-	Headers        JSON                        `json:"headers" yaml:"headers" default:"{\"accept\": \"application/vnd.pagerduty+json;version=2\",\"authorization\":\"Token token=XXXXXXXXXXXXX\",\"from\":\"someone@example.com\"}"`
-}
+// type CustomActionsWebhookActionCreateInput struct {
+// 	Name           string                      `json:"name" yaml:"name" default:"Page The On Call"`
+// 	Description    *string                     `json:"description,omitempty" yaml:"description,omitempty" default:"Pages The On Call"`
+// 	LiquidTemplate string                      `json:"liquidTemplate" yaml:"liquidTemplate" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"`
+// 	WebhookURL     string                      `json:"webhookUrl" yaml:"webhookUrl" default:"https://api.pagerduty.com/incidents"`
+// 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" default:"POST"`
+// 	Headers        JSON                        `json:"headers" yaml:"headers" default:"{\"accept\": \"application/vnd.pagerduty+json;version=2\",\"authorization\":\"Token token=XXXXXXXXXXXXX\",\"from\":\"someone@example.com\"}"`
+// }
 
-type CustomActionsWebhookActionUpdateInput struct {
-	Id             ID                          `json:"id"`
-	Name           *string                     `json:"name,omitempty"`
-	Description    *string                     `json:"description,omitempty"`
-	LiquidTemplate *string                     `json:"liquidTemplate,omitempty"`
-	WebhookURL     *string                     `json:"webhookUrl,omitempty"`
-	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
-	Headers        *JSON                       `json:"headers,omitempty"`
-}
+// type CustomActionsWebhookActionUpdateInput struct {
+// 	Id             ID                          `json:"id"`
+// 	Name           *string                     `json:"name,omitempty"`
+// 	Description    *string                     `json:"description,omitempty"`
+// 	LiquidTemplate *string                     `json:"liquidTemplate,omitempty"`
+// 	WebhookURL     *string                     `json:"webhookUrl,omitempty"`
+// 	HTTPMethod     CustomActionsHttpMethodEnum `json:"httpMethod,omitempty"`
+// 	Headers        *JSON                       `json:"headers,omitempty"`
+// }
 
-type CustomActionsTriggerDefinitionCreateInput struct {
-	Name        string  `json:"name" yaml:"name" default:"Page The On Call"`
-	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"Pages the On Call"`
-	Owner       ID      `json:"ownerId" yaml:"ownerId" default:"XXX_owner_id_XXX"`
-	// In the API actionID is `ID!` but that's because of the CustomActionsWebhookActionCreateInput
-	// But we are not implementing that because it is used for the UI, so we need to enforce an actionId is given
-	Action ID  `json:"actionId" yaml:"actionId"`
-	Filter *ID `json:"filterId,omitempty" yaml:"filterId,omitempty"`
-	// This is being explicitly left out to reduce the complexity of the implementation
-	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition string                                          `json:"manualInputsDefinition" yaml:"manualInputsDefinition"`
-	Published              *bool                                           `json:"published,omitempty" yaml:"published,omitempty"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl" yaml:"accessControl"`
-	ResponseTemplate       string                                          `json:"responseTemplate" yaml:"responseTemplate"`
-	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType" yaml:"entityType"`
-	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`
-}
+// type CustomActionsTriggerDefinitionCreateInput struct {
+// 	Name        string  `json:"name" yaml:"name" default:"Page The On Call"`
+// 	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"Pages the On Call"`
+// 	Owner       ID      `json:"ownerId" yaml:"ownerId" default:"XXX_owner_id_XXX"`
+// 	// In the API actionID is `ID!` but that's because of the CustomActionsWebhookActionCreateInput
+// 	// But we are not implementing that because it is used for the UI, so we need to enforce an actionId is given
+// 	Action ID  `json:"actionId" yaml:"actionId"`
+// 	Filter *ID `json:"filterId,omitempty" yaml:"filterId,omitempty"`
+// 	// This is being explicitly left out to reduce the complexity of the implementation
+// 	// action *CustomActionsWebhookActionCreateInput
+// 	ManualInputsDefinition string                                          `json:"manualInputsDefinition" yaml:"manualInputsDefinition"`
+// 	Published              *bool                                           `json:"published,omitempty" yaml:"published,omitempty"`
+// 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl" yaml:"accessControl"`
+// 	ResponseTemplate       string                                          `json:"responseTemplate" yaml:"responseTemplate"`
+// 	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType" yaml:"entityType"`
+// 	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`
+// }
 
-type CustomActionsTriggerDefinitionUpdateInput struct {
-	Id          ID      `json:"id"`
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-	Action      *ID     `json:"actionId,omitempty" yaml:"actionId,omitempty"`
-	Filter      *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty"`
-	// This is being explicitly left out to reduce the complexity of the implementation
-	// action *CustomActionsWebhookActionCreateInput
-	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"`
-	Published              *bool                                           `json:"published,omitempty" yaml:"published,omitempty"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" default:"service_owners"`
-	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`
-	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`
-	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" default:"[\"alias\":\"team_alias_1\",\"id\":\"XXX_team_id_XXX\"]"`
-}
+// type CustomActionsTriggerDefinitionUpdateInput struct {
+// 	Id          ID      `json:"id"`
+// 	Name        *string `json:"name,omitempty"`
+// 	Description *string `json:"description,omitempty"`
+// 	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+// 	Action      *ID     `json:"actionId,omitempty" yaml:"actionId,omitempty"`
+// 	Filter      *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty"`
+// 	// This is being explicitly left out to reduce the complexity of the implementation
+// 	// action *CustomActionsWebhookActionCreateInput
+// 	ManualInputsDefinition *string                                         `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"`
+// 	Published              *bool                                           `json:"published,omitempty" yaml:"published,omitempty"`
+// 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" default:"service_owners"`
+// 	ResponseTemplate       *string                                         `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`
+// 	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`
+// 	ExtendedTeamAccess     *[]IdentifierInput                              `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" default:"[\"alias\":\"team_alias_1\",\"id\":\"XXX_team_id_XXX\"]"`
+// }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
 	var m struct {

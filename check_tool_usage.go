@@ -7,23 +7,23 @@ type ToolUsageCheckFragment struct {
 	EnvironmentPredicate *Predicate   `graphql:"environmentPredicate"`
 }
 
-type CheckToolUsageCreateInput struct {
-	CheckCreateInput
+// type CheckToolUsageCreateInput struct {
+// 	CheckCreateInput
 
-	ToolCategory         ToolCategory    `json:"toolCategory" yaml:"toolCategory" default:"backlog"`
-	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`
-	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`
-	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"`
-}
+// 	ToolCategory         ToolCategory    `json:"toolCategory" yaml:"toolCategory" default:"backlog"`
+// 	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`
+// 	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`
+// 	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"`
+// }
 
-type CheckToolUsageUpdateInput struct {
-	CheckUpdateInput
+// type CheckToolUsageUpdateInput struct {
+// 	CheckUpdateInput
 
-	ToolCategory         ToolCategory    `json:"toolCategory,omitempty"`
-	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty"`
-	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty"`
-	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty"`
-}
+// 	ToolCategory         ToolCategory    `json:"toolCategory,omitempty"`
+// 	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty"`
+// 	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty"`
+// 	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty"`
+// }
 
 func (client *Client) CreateCheckToolUsage(input CheckToolUsageCreateInput) (*Check, error) {
 	var m struct {

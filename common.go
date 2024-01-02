@@ -17,9 +17,9 @@ type PageInfo struct {
 
 type PayloadVariables map[string]interface{}
 
-type DeleteInput struct {
-	Id ID `json:"id"`
-}
+// type DeleteInput struct {
+// 	Id ID `json:"id"`
+// }
 
 type OpsLevelWarnings struct {
 	Message string

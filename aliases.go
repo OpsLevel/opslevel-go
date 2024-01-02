@@ -5,15 +5,15 @@ import (
 	"strings"
 )
 
-type AliasCreateInput struct {
-	Alias   string `json:"alias"`
-	OwnerId ID     `json:"ownerId"`
-}
+// type AliasCreateInput struct {
+// 	Alias   string `json:"alias"`
+// 	OwnerId ID     `json:"ownerId"`
+// }
 
-type AliasDeleteInput struct {
-	Alias     string             `json:"alias"`
-	OwnerType AliasOwnerTypeEnum `json:"ownerType"`
-}
+// type AliasDeleteInput struct {
+// 	Alias     string             `json:"alias"`
+// 	OwnerType AliasOwnerTypeEnum `json:"ownerType"`
+// }
 
 // #region Create
 // TODO: make sure duplicate aliases throw an error that we can catch

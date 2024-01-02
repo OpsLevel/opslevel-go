@@ -108,6 +108,36 @@ var AllCampaignFilterEnum = []string{
 	string(CampaignFilterEnumStatus),
 }
 
+// CampaignReminderChannelEnum represents the possible communication channels through which a campaign reminder can be delivered.
+type CampaignReminderChannelEnum string
+
+const (
+	CampaignReminderChannelEnumSlack CampaignReminderChannelEnum = "slack" // A cloud-based team communication platform developed by Slack Technologies.
+	CampaignReminderChannelEnumEmail CampaignReminderChannelEnum = "email" // A system for sending messages to one or more recipients via telecommunications links between computers using dedicated software or a web-based service.
+)
+
+// All CampaignReminderChannelEnum as []string
+var AllCampaignReminderChannelEnum = []string{
+	string(CampaignReminderChannelEnumSlack),
+	string(CampaignReminderChannelEnumEmail),
+}
+
+// CampaignReminderFrequencyUnitEnum represents possible time units for the frequency at which campaign reminders are delivered.
+type CampaignReminderFrequencyUnitEnum string
+
+const (
+	CampaignReminderFrequencyUnitEnumDay   CampaignReminderFrequencyUnitEnum = "day"   // A period of twenty-four hours as a unit of time, reckoned from one midnight to the next, corresponding to a rotation of the earth on its axis.
+	CampaignReminderFrequencyUnitEnumWeek  CampaignReminderFrequencyUnitEnum = "week"  // A period of seven days.
+	CampaignReminderFrequencyUnitEnumMonth CampaignReminderFrequencyUnitEnum = "month" // Each of the twelve named periods into which a year is divided.
+)
+
+// All CampaignReminderFrequencyUnitEnum as []string
+var AllCampaignReminderFrequencyUnitEnum = []string{
+	string(CampaignReminderFrequencyUnitEnumDay),
+	string(CampaignReminderFrequencyUnitEnumWeek),
+	string(CampaignReminderFrequencyUnitEnumMonth),
+}
+
 // CampaignReminderTypeEnum represents type/Format of the notification.
 type CampaignReminderTypeEnum string
 
@@ -364,6 +394,30 @@ var AllCustomActionsTriggerEventStatusEnum = []string{
 	string(CustomActionsTriggerEventStatusEnumFailure),
 }
 
+// DayOfWeekEnum represents possible days of the week.
+type DayOfWeekEnum string
+
+const (
+	DayOfWeekEnumMonday    DayOfWeekEnum = "monday"    // Monday is the day of the week that takes place between Sunday and Tuesday.
+	DayOfWeekEnumTuesday   DayOfWeekEnum = "tuesday"   // Tuesday is the day of the week between Monday and Wednesday.
+	DayOfWeekEnumWednesday DayOfWeekEnum = "wednesday" // The day of the week before Thursday and following Tuesday.
+	DayOfWeekEnumThursday  DayOfWeekEnum = "thursday"  // The day of the week before Friday and following Wednesday.
+	DayOfWeekEnumFriday    DayOfWeekEnum = "friday"    // Yesterday was Thursday. Tomorrow is Saturday. We so excited.
+	DayOfWeekEnumSaturday  DayOfWeekEnum = "saturday"  // The day of the week before Sunday and following Friday, and (together with Sunday) forming part of the weekend.
+	DayOfWeekEnumSunday    DayOfWeekEnum = "sunday"    // The day of the week before Monday and following Saturday, (together with Saturday) forming part of the weekend.
+)
+
+// All DayOfWeekEnum as []string
+var AllDayOfWeekEnum = []string{
+	string(DayOfWeekEnumMonday),
+	string(DayOfWeekEnumTuesday),
+	string(DayOfWeekEnumWednesday),
+	string(DayOfWeekEnumThursday),
+	string(DayOfWeekEnumFriday),
+	string(DayOfWeekEnumSaturday),
+	string(DayOfWeekEnumSunday),
+}
+
 // FrequencyTimeScale represents the time scale type for the frequency.
 type FrequencyTimeScale string
 
@@ -446,7 +500,6 @@ const (
 	PredicateKeyEnumAliases        PredicateKeyEnum = "aliases"         // Filter by Alias attached to this service, if any.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
 	PredicateKeyEnumSystemID       PredicateKeyEnum = "system_id"       // Filter by System that this service is assigned to, if any.
-	PredicateKeyEnumProperties     PredicateKeyEnum = "properties"      // Filter by custom-defined properties.
 )
 
 // All PredicateKeyEnum as []string
@@ -467,7 +520,6 @@ var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumAliases),
 	string(PredicateKeyEnumDomainID),
 	string(PredicateKeyEnumSystemID),
-	string(PredicateKeyEnumProperties),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
@@ -514,42 +566,6 @@ var AllPredicateTypeEnum = []string{
 	string(PredicateTypeEnumSatisfiesJqExpression),
 }
 
-// PropertyDefinitionDisplayTypeEnum represents the set of possible display types of a property definition schema.
-type PropertyDefinitionDisplayTypeEnum string
-
-const (
-	PropertyDefinitionDisplayTypeEnumArray    PropertyDefinitionDisplayTypeEnum = "ARRAY"    // An array.
-	PropertyDefinitionDisplayTypeEnumBoolean  PropertyDefinitionDisplayTypeEnum = "BOOLEAN"  // A boolean.
-	PropertyDefinitionDisplayTypeEnumDropdown PropertyDefinitionDisplayTypeEnum = "DROPDOWN" // A dropdown.
-	PropertyDefinitionDisplayTypeEnumNumber   PropertyDefinitionDisplayTypeEnum = "NUMBER"   // A number.
-	PropertyDefinitionDisplayTypeEnumObject   PropertyDefinitionDisplayTypeEnum = "OBJECT"   // An object.
-	PropertyDefinitionDisplayTypeEnumText     PropertyDefinitionDisplayTypeEnum = "TEXT"     // A text string.
-)
-
-// All PropertyDefinitionDisplayTypeEnum as []string
-var AllPropertyDefinitionDisplayTypeEnum = []string{
-	string(PropertyDefinitionDisplayTypeEnumArray),
-	string(PropertyDefinitionDisplayTypeEnumBoolean),
-	string(PropertyDefinitionDisplayTypeEnumDropdown),
-	string(PropertyDefinitionDisplayTypeEnumNumber),
-	string(PropertyDefinitionDisplayTypeEnumObject),
-	string(PropertyDefinitionDisplayTypeEnumText),
-}
-
-// PropertyDisplayStatusEnum represents the display status of a custom property on service pages.
-type PropertyDisplayStatusEnum string
-
-const (
-	PropertyDisplayStatusEnumHidden  PropertyDisplayStatusEnum = "hidden"  // The property is not shown on the service page.
-	PropertyDisplayStatusEnumVisible PropertyDisplayStatusEnum = "visible" // The property is shown on the service page.
-)
-
-// All PropertyDisplayStatusEnum as []string
-var AllPropertyDisplayStatusEnum = []string{
-	string(PropertyDisplayStatusEnumHidden),
-	string(PropertyDisplayStatusEnumVisible),
-}
-
 // RelatedResourceRelationshipTypeEnum represents the type of the relationship between two resources.
 type RelatedResourceRelationshipTypeEnum string
 
@@ -586,9 +602,10 @@ var AllRelationshipTypeEnum = []string{
 type RepositoryVisibilityEnum string
 
 const (
-	RepositoryVisibilityEnumPrivate  RepositoryVisibilityEnum = "PRIVATE"  // Repositories that are private to the user.
-	RepositoryVisibilityEnumInternal RepositoryVisibilityEnum = "INTERNAL" // Repositories that are only accessible to organization users.
-	RepositoryVisibilityEnumPublic   RepositoryVisibilityEnum = "PUBLIC"   // Repositories that are publically accessible.
+	RepositoryVisibilityEnumPrivate      RepositoryVisibilityEnum = "PRIVATE"      // Repositories that are private to the user.
+	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (Github, Gitlab).
+	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publically accessible.
+	RepositoryVisibilityEnumOrganization RepositoryVisibilityEnum = "ORGANIZATION" // Repositories that are only accessible to organization users (ADO).
 )
 
 // All RepositoryVisibilityEnum as []string
@@ -596,6 +613,7 @@ var AllRepositoryVisibilityEnum = []string{
 	string(RepositoryVisibilityEnumPrivate),
 	string(RepositoryVisibilityEnumInternal),
 	string(RepositoryVisibilityEnumPublic),
+	string(RepositoryVisibilityEnumOrganization),
 }
 
 // ResourceDocumentStatusTypeEnum represents status of a document on a resource.
@@ -661,7 +679,6 @@ const (
 	ServicePropertyTypeEnumTierIndex      ServicePropertyTypeEnum = "tier_index"      // The index of the tier a service belongs to.
 	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            // Additional information about the service.
 	ServicePropertyTypeEnumSystem         ServicePropertyTypeEnum = "system"          // The system that the service belongs to.
-	ServicePropertyTypeEnumCustomProperty ServicePropertyTypeEnum = "custom_property" // A custom property that is associated with the service.
 )
 
 // All ServicePropertyTypeEnum as []string
@@ -675,7 +692,6 @@ var AllServicePropertyTypeEnum = []string{
 	string(ServicePropertyTypeEnumTierIndex),
 	string(ServicePropertyTypeEnumNote),
 	string(ServicePropertyTypeEnumSystem),
-	string(ServicePropertyTypeEnumCustomProperty),
 }
 
 // ServiceSortEnum represents sort possibilities for services.
@@ -812,16 +828,14 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleUser      UserRole = "user"       // A regular user on the account.
-	UserRoleAdmin     UserRole = "admin"      // An administrator on the account.
-	UserRoleBasicUser UserRole = "basic_user" // A basic user on the account with limited access.
+	UserRoleUser  UserRole = "user"  // A regular user on the account.
+	UserRoleAdmin UserRole = "admin" // An administrator on the account.
 )
 
 // All UserRole as []string
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
-	string(UserRoleBasicUser),
 }
 
 // UsersFilterEnum represents fields that can be used as part of filter for users.

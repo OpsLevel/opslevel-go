@@ -35,35 +35,35 @@ type TagConnection struct {
 	TotalCount int
 }
 
-type TagInput struct {
-	Key   string `json:"key" yaml:"key" default:"environment"`
-	Value string `json:"value" yaml:"value" default:"production"`
-}
+// type TagInput struct {
+// 	Key   string `json:"key" yaml:"key" default:"environment"`
+// 	Value string `json:"value" yaml:"value" default:"production"`
+// }
 
-type TagAssignInput struct {
-	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
-	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty" default:"my-team-alias"`
-	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Team"`
-	Tags  []TagInput       `json:"tags" yaml:"tags"`
-}
+// type TagAssignInput struct {
+// 	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
+// 	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty" default:"my-team-alias"`
+// 	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Team"`
+// 	Tags  []TagInput       `json:"tags" yaml:"tags"`
+// }
 
-type TagCreateInput struct {
-	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
-	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty"`
-	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Repository"`
-	Key   string           `json:"key" yaml:"key" default:"environment"`
-	Value string           `json:"value" yaml:"value" default:"production"`
-}
+// type TagCreateInput struct {
+// 	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
+// 	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty"`
+// 	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Repository"`
+// 	Key   string           `json:"key" yaml:"key" default:"environment"`
+// 	Value string           `json:"value" yaml:"value" default:"production"`
+// }
 
-type TagUpdateInput struct {
-	Id    ID     `json:"id"`
-	Key   string `json:"key,omitempty"`
-	Value string `json:"value,omitempty"`
-}
+// type TagUpdateInput struct {
+// 	Id    ID     `json:"id"`
+// 	Key   string `json:"key,omitempty"`
+// 	Value string `json:"value,omitempty"`
+// }
 
-type TagDeleteInput struct {
-	Id ID `json:"id"`
-}
+// type TagDeleteInput struct {
+// 	Id ID `json:"id"`
+// }
 
 func (client *Client) GetTaggableResource(resourceType TaggableResource, identifier string) (TaggableResourceInterface, error) {
 	var err error

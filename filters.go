@@ -11,15 +11,15 @@ type Predicate struct {
 	Value string            `graphql:"value"`
 }
 
-type PredicateInput struct {
-	Type  PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
-	Value string            `json:"value,omitempty" yaml:"value,omitempty" default:"Requests"`
-}
+// type PredicateInput struct {
+// 	Type  PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
+// 	Value string            `json:"value,omitempty" yaml:"value,omitempty" default:"Requests"`
+// }
 
-type PredicateUpdateInput struct {
-	Type  PredicateTypeEnum `json:"type,omitempty"`
-	Value string            `json:"value,omitempty"`
-}
+// type PredicateUpdateInput struct {
+// 	Type  PredicateTypeEnum `json:"type,omitempty"`
+// 	Value string            `json:"value,omitempty"`
+// }
 
 type FilterId struct {
 	Id   ID
@@ -47,18 +47,18 @@ type FilterConnection struct {
 	TotalCount int
 }
 
-type FilterCreateInput struct {
-	Name       string            `json:"name" yaml:"name" default:"Kubernetes"`
-	Predicates []FilterPredicate `json:"predicates" yaml:"predicates"`
-	Connective ConnectiveEnum    `json:"connective,omitempty" yaml:"connective,omitempty" default:"and"`
-}
+// type FilterCreateInput struct {
+// 	Name       string            `json:"name" yaml:"name" default:"Kubernetes"`
+// 	Predicates []FilterPredicate `json:"predicates" yaml:"predicates"`
+// 	Connective ConnectiveEnum    `json:"connective,omitempty" yaml:"connective,omitempty" default:"and"`
+// }
 
-type FilterUpdateInput struct {
-	Id         ID                `json:"id"`
-	Name       string            `json:"name,omitempty"`
-	Predicates []FilterPredicate `json:"predicates"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
-	Connective ConnectiveEnum    `json:"connective,omitempty"`
-}
+// type FilterUpdateInput struct {
+// 	Id         ID                `json:"id"`
+// 	Name       string            `json:"name,omitempty"`
+// 	Predicates []FilterPredicate `json:"predicates"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates.
+// 	Connective ConnectiveEnum    `json:"connective,omitempty"`
+// }
 
 func (self *Filter) Alias() string {
 	return slug.Make(self.Name)

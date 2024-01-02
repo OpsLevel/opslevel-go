@@ -65,9 +65,10 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_new_relic", testRequest)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
-		ApiKey:     opslevel.NewString("123456789"),
-		BaseUrl:    opslevel.NewString("https://api.newrelic.com/graphql"),
-		AccountKey: opslevel.NewString("XXXX"),
+		ApiKey:  opslevel.NewString("123456789"),
+		BaseUrl: opslevel.NewString("https://api.newrelic.com/graphql"),
+		// TODO: found in internal API only. Keep or remove?
+		// AccountKey: opslevel.NewString("XXXX"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)

@@ -23,13 +23,13 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-type SystemInput struct {
-	Name        *string          `json:"name,omitempty"`
-	Description *string          `json:"description,omitempty"`
-	Owner       *ID              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`
-	Note        *string          `json:"note,omitempty"`
-}
+// type SystemInput struct {
+// 	Name        *string          `json:"name,omitempty"`
+// 	Description *string          `json:"description,omitempty"`
+// 	Owner       *ID              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+// 	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`
+// 	Note        *string          `json:"note,omitempty"`
+// }
 
 func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	return s.Tags(client, variables)

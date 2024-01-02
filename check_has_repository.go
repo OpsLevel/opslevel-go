@@ -1,12 +1,12 @@
 package opslevel
 
-type CheckRepositoryIntegratedCreateInput struct {
-	CheckCreateInput
-}
+// type CheckRepositoryIntegratedCreateInput struct {
+// 	CheckCreateInput
+// }
 
-type CheckRepositoryIntegratedUpdateInput struct {
-	CheckUpdateInput
-}
+// type CheckRepositoryIntegratedUpdateInput struct {
+// 	CheckUpdateInput
+// }
 
 func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryIntegratedCreateInput) (*Check, error) {
 	var m struct {

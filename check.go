@@ -145,9 +145,9 @@ func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
 	return c
 }
 
-type CheckDeleteInput struct {
-	Id ID `json:"id"`
-}
+// type CheckDeleteInput struct {
+// 	Id ID `json:"id"`
+// }
 
 // Encompass CheckCreatePayload and CheckUpdatePayload into 1 struct
 type CheckResponsePayload struct {
@@ -297,7 +297,7 @@ func (client *Client) DeleteCheck(id ID) error {
 		} `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": CheckDeleteInput{Id: id},
+		"input": CheckDeleteInput{Id: &id},
 	}
 	err := client.Mutate(&m, v, WithName("CheckDelete"))
 	return HandleErrors(err, m.Payload.Errors)

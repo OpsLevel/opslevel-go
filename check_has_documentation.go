@@ -5,19 +5,19 @@ type HasDocumentationCheckFragment struct {
 	DocumentSubtype HasDocumentationSubtypeEnum `graphql:"documentSubtype"`
 }
 
-type CheckHasDocumentationCreateInput struct {
-	CheckCreateInput
+// type CheckHasDocumentationCreateInput struct {
+// 	CheckCreateInput
 
-	DocumentType    HasDocumentationTypeEnum    `json:"documentType" yaml:"documentType" default:"api"`
-	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype" yaml:"documentSubtype" default:"openapi"`
-}
+// 	DocumentType    HasDocumentationTypeEnum    `json:"documentType" yaml:"documentType" default:"api"`
+// 	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype" yaml:"documentSubtype" default:"openapi"`
+// }
 
-type CheckHasDocumentationUpdateInput struct {
-	CheckUpdateInput
+// type CheckHasDocumentationUpdateInput struct {
+// 	CheckUpdateInput
 
-	DocumentType    HasDocumentationTypeEnum    `json:"documentType"`
-	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype"`
-}
+// 	DocumentType    HasDocumentationTypeEnum    `json:"documentType"`
+// 	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype"`
+// }
 
 func (client *Client) CreateCheckHasDocumentation(input CheckHasDocumentationCreateInput) (*Check, error) {
 	var m struct {

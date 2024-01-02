@@ -22,12 +22,12 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-type DomainInput struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-	Note        *string `json:"note,omitempty"`
-}
+// type DomainInput struct {
+// 	Name        *string `json:"name,omitempty"`
+// 	Description *string `json:"description,omitempty"`
+// 	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
+// 	Note        *string `json:"note,omitempty"`
+// }
 
 func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	return d.Tags(client, variables)

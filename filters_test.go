@@ -18,6 +18,7 @@ func TestCreateFilter(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
+	// TODO: Fix FilterCreateInput generation.
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
 		Connective: ol.ConnectiveEnumAnd,

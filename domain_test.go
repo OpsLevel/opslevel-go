@@ -13,7 +13,7 @@ func TestDomainCreate(t *testing.T) {
 		ol.DomainInput{
 			Name:        ol.NewString("platform-test"),
 			Description: ol.NewString("Domain created for testing."),
-			Owner:       &id1,
+			OwnerId:     &id1,
 			Note:        ol.NewString("additional note about platform-test domain"),
 		})
 
@@ -177,7 +177,7 @@ func TestDomainUpdate(t *testing.T) {
 		ol.DomainInput{
 			Name:        ol.NewString("platform-test-4"),
 			Description: ol.NewString("Domain created for testing."),
-			Owner:       &id3,
+			OwnerId:     &id3,
 			Note:        ol.NewString("Please delete me"),
 		})
 

@@ -33,15 +33,15 @@ type ServiceDependentsConnection struct {
 	PageInfo PageInfo
 }
 
-type ServiceDependencyKey struct {
-	Service   IdentifierInput `json:"sourceIdentifier" yaml:"sourceIdentifier" default:"{\"alias\":\"service-alias\"}"`
-	DependsOn IdentifierInput `json:"destinationIdentifier" yaml:"destinationIdentifier" default:"{\"id\":\"XXX_deponds_on_id_XXX\"}"`
-}
+// type ServiceDependencyKey struct {
+// 	Service   IdentifierInput `json:"sourceIdentifier" yaml:"sourceIdentifier" default:"{\"alias\":\"service-alias\"}"`
+// 	DependsOn IdentifierInput `json:"destinationIdentifier" yaml:"destinationIdentifier" default:"{\"id\":\"XXX_deponds_on_id_XXX\"}"`
+// }
 
-type ServiceDependencyCreateInput struct {
-	Key   ServiceDependencyKey `json:"dependencyKey" yaml:"dependencyKey"`
-	Notes string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"An example description"`
-}
+// type ServiceDependencyCreateInput struct {
+// 	Key   ServiceDependencyKey `json:"dependencyKey" yaml:"dependencyKey"`
+// 	Notes string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"An example description"`
+// }
 
 //#region Create
 

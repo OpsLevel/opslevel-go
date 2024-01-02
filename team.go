@@ -13,30 +13,30 @@ type Contact struct {
 	Type        ContactType
 }
 
-type ContactInput struct {
-	Type        ContactType `json:"type" yaml:"type" default:"email"`
-	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty"`
-	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
-}
+// type ContactInput struct {
+// 	Type        ContactType `json:"type" yaml:"type" default:"email"`
+// 	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty"`
+// 	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
+// }
 
-type ContactCreateInput struct {
-	Type        ContactType `json:"type" yaml:"type" default:"email"`
-	DisplayName string      `json:"displayName,omitempty" yaml:"displayName,omitempty"`
-	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
-	TeamId      *ID         `json:"teamId,omitempty" yaml:"teamId,omitempty"`
-	TeamAlias   string      `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty"`
-}
+// type ContactCreateInput struct {
+// 	Type        ContactType `json:"type" yaml:"type" default:"email"`
+// 	DisplayName string      `json:"displayName,omitempty" yaml:"displayName,omitempty"`
+// 	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
+// 	TeamId      *ID         `json:"teamId,omitempty" yaml:"teamId,omitempty"`
+// 	TeamAlias   string      `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty"`
+// }
 
-type ContactUpdateInput struct {
-	Id          ID           `json:"id"`
-	Type        *ContactType `json:"type,omitempty"`
-	DisplayName string       `json:"displayName,omitempty"`
-	Address     string       `json:"address,omitempty"`
-}
+// type ContactUpdateInput struct {
+// 	Id          ID           `json:"id"`
+// 	Type        *ContactType `json:"type,omitempty"`
+// 	DisplayName string       `json:"displayName,omitempty"`
+// 	Address     string       `json:"address,omitempty"`
+// }
 
-type ContactDeleteInput struct {
-	Id ID `json:"id"`
-}
+// type ContactDeleteInput struct {
+// 	Id ID `json:"id"`
+// }
 
 // Has no json struct tags as this is nested in returned data structs
 type TeamId struct {
@@ -74,27 +74,27 @@ type TeamConnection struct {
 	TotalCount int
 }
 
-type TeamCreateInput struct {
-	Name             string           `json:"name" yaml:"name" default:"Platform"`
-	ManagerEmail     string           `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" default:"manager@example.com"`
-	Responsibilities string           `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"Makes Tools"`
-	Contacts         *[]ContactInput  `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[{\"Type\":\"slack\",\"DisplayName\":\"Team Eng\",\"Address\":\"#team-engineering\"}]"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty" default:"{\"alias\":\"Engineering\"}"`
-}
+// type TeamCreateInput struct {
+// 	Name             string           `json:"name" yaml:"name" default:"Platform"`
+// 	ManagerEmail     string           `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" default:"manager@example.com"`
+// 	Responsibilities string           `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"Makes Tools"`
+// 	Contacts         *[]ContactInput  `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[{\"Type\":\"slack\",\"DisplayName\":\"Team Eng\",\"Address\":\"#team-engineering\"}]"`
+// 	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty" default:"{\"alias\":\"Engineering\"}"`
+// }
 
-type TeamUpdateInput struct {
-	Id               ID               `json:"id"`
-	Alias            string           `json:"alias,omitempty"`
-	Name             string           `json:"name,omitempty"`
-	ManagerEmail     string           `json:"managerEmail,omitempty"`
-	Responsibilities string           `json:"responsibilities,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`
-}
+// type TeamUpdateInput struct {
+// 	Id               ID               `json:"id"`
+// 	Alias            string           `json:"alias,omitempty"`
+// 	Name             string           `json:"name,omitempty"`
+// 	ManagerEmail     string           `json:"managerEmail,omitempty"`
+// 	Responsibilities string           `json:"responsibilities,omitempty"`
+// 	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`
+// }
 
-type TeamDeleteInput struct {
-	Id    ID     `json:"id,omitempty"`
-	Alias string `json:"alias,omitempty"`
-}
+// type TeamDeleteInput struct {
+// 	Id    ID     `json:"id,omitempty"`
+// 	Alias string `json:"alias,omitempty"`
+// }
 
 type TeamMembership struct {
 	Team TeamId `graphql:"team"`
@@ -108,20 +108,20 @@ type TeamMembershipConnection struct {
 	TotalCount int
 }
 
-type TeamMembershipUserInput struct {
-	User UserIdentifierInput `json:"user" yaml:"user"`
-	Role string              `json:"role" yaml:"role" default:"admin"`
-}
+// type TeamMembershipUserInput struct {
+// 	User UserIdentifierInput `json:"user" yaml:"user"`
+// 	Role string              `json:"role" yaml:"role" default:"admin"`
+// }
 
-type TeamMembershipCreateInput struct {
-	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
-	Members []TeamMembershipUserInput `json:"members"`
-}
+// type TeamMembershipCreateInput struct {
+// 	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
+// 	Members []TeamMembershipUserInput `json:"members"`
+// }
 
-type TeamMembershipDeleteInput struct {
-	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
-	Members []TeamMembershipUserInput `json:"members"`
-}
+// type TeamMembershipDeleteInput struct {
+// 	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
+// 	Members []TeamMembershipUserInput `json:"members"`
+// }
 
 func (t *Team) ResourceId() ID {
 	return t.Id

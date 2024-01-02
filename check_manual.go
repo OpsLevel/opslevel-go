@@ -13,11 +13,11 @@ type ManualCheckFrequency struct {
 	FrequencyValue     int                `graphql:"frequencyValue"`
 }
 
-type ManualCheckFrequencyInput struct {
-	StartingDate       iso8601.Time       `json:"startingDate" yaml:"startingDate" default:"2023-11-05T20:22:44.427Z"`
-	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale" yaml:"frequencyTimeScale" default:"day"`
-	FrequencyValue     int                `json:"frequencyValue" yaml:"frequencyValue" default:"1"`
-}
+// type ManualCheckFrequencyInput struct {
+// 	StartingDate       iso8601.Time       `json:"startingDate" yaml:"startingDate" default:"2023-11-05T20:22:44.427Z"`
+// 	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale" yaml:"frequencyTimeScale" default:"day"`
+// 	FrequencyValue     int                `json:"frequencyValue" yaml:"frequencyValue" default:"1"`
+// }
 
 func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeScale, value int) *ManualCheckFrequencyInput {
 	return &ManualCheckFrequencyInput{
@@ -27,19 +27,19 @@ func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeSc
 	}
 }
 
-type CheckManualCreateInput struct {
-	CheckCreateInput
+// type CheckManualCreateInput struct {
+// 	CheckCreateInput
 
-	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`
-	UpdateRequiresComment bool                       `json:"updateRequiresComment" yaml:"updateRequiresComment" default:"false"`
-}
+// 	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`
+// 	UpdateRequiresComment bool                       `json:"updateRequiresComment" yaml:"updateRequiresComment" default:"false"`
+// }
 
-type CheckManualUpdateInput struct {
-	CheckUpdateInput
+// type CheckManualUpdateInput struct {
+// 	CheckUpdateInput
 
-	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty"`
-	UpdateRequiresComment bool                       `json:"updateRequiresComment,omitempty"`
-}
+// 	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty"`
+// 	UpdateRequiresComment bool                       `json:"updateRequiresComment,omitempty"`
+// }
 
 func (client *Client) CreateCheckManual(input CheckManualCreateInput) (*Check, error) {
 	var m struct {

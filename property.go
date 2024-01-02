@@ -2,6 +2,7 @@ package opslevel
 
 import "fmt"
 
+// NOTE: not found in generated input.go
 type PropertyDefinitionInput struct {
 	Name                  string                    `json:"name,omitempty" yaml:"name,omitempty" default:"Example Package Schema"`
 	Description           string                    `json:"description,omitempty" yaml:"description,omitempty" default:"Place description here"`

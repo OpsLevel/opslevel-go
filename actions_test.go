@@ -22,7 +22,7 @@ func TestCreateWebhookAction(t *testing.T) {
 	// Act
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
-		LiquidTemplate: "{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}",
+		LiquidTemplate: ol.NewString("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
 		Headers: ol.JSON{
 			"Content-Type": "application/json",
 		},

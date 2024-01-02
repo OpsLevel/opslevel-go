@@ -7,10 +7,10 @@ type Secret struct {
 	Timestamps Timestamps `json:"timestamps"`
 }
 
-type SecretInput struct {
-	Owner IdentifierInput `json:"owner" yaml:"owner" default:"{\"alias\":\"devs\"}"`
-	Value string          `json:"value" yaml:"value" default:"my-really-secure-secret-shhhh"`
-}
+// type SecretInput struct {
+// 	Owner IdentifierInput `json:"owner" yaml:"owner" default:"{\"alias\":\"devs\"}"`
+// 	Value string          `json:"value" yaml:"value" default:"my-really-secure-secret-shhhh"`
+// }
 
 type SecretsVaultsSecretConnection struct {
 	Nodes      []Secret

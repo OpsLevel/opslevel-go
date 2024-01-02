@@ -166,8 +166,8 @@ func TestUpdateRepository(t *testing.T) {
 	client := BestTestClient(t, "repositories/update", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
-		Id:    id1,
-		Owner: ol.NewID(string(id1)),
+		Id:      id1,
+		OwnerId: ol.NewID(string(id1)),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -203,8 +203,8 @@ func TestRepositoryUpdateOwnerNull(t *testing.T) {
 	client := BestTestClient(t, "repositories/update_owner_null", testRequest)
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
-		Id:    *ol.NewID(string(id1)),
-		Owner: ol.NewID(""),
+		Id:      *ol.NewID(string(id1)),
+		OwnerId: ol.NewID(""),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -242,7 +242,7 @@ func TestUpdateServiceRepository(t *testing.T) {
 	// Act
 	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
 		Id:          id1,
-		DisplayName: "Foobar",
+		DisplayName: ol.NewString("Foobar"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

@@ -93,7 +93,7 @@ func TestUpdateRubricCategory(t *testing.T) {
 	// Act
 	result, err := client.UpdateCategory(ol.CategoryUpdateInput{
 		Id:   id4,
-		Name: "Emily",
+		Name: ol.NewString("Emily"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

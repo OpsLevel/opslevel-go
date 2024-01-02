@@ -18,7 +18,7 @@ func TestCreateRubricLevels(t *testing.T) {
 	// Act
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
-		Description: "Created By Kyle",
+		Description: ol.NewString("Created By Kyle"),
 		Index:       ol.NewInt(4),
 	})
 	// Assert
@@ -131,7 +131,7 @@ func TestUpdateRubricLevel(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
-		Name:        "Example",
+		Name:        ol.NewString("Example"),
 		Description: ol.NewString("An example description"),
 	})
 	// Assert
@@ -172,7 +172,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
-		Name:        "Example",
+		Name:        ol.NewString("Example"),
 		Description: ol.NewString(""),
 	})
 	// Assert
@@ -193,7 +193,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:   id1,
-		Name: "Example",
+		Name: ol.NewString("Example"),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
