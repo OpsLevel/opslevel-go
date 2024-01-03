@@ -18,7 +18,7 @@ func TestSystemCreate(t *testing.T) {
 	input := ol.SystemInput{
 		Name:        ol.NewString("PlatformSystem3"),
 		Description: ol.NewString("creating this for testing purposes"),
-		Owner:       &id4,
+		OwnerId:     &id4,
 		Note:        ol.NewString("hello world"),
 	}
 	// Act
@@ -179,7 +179,7 @@ func TestSystemUpdate(t *testing.T) {
 	input := ol.SystemInput{
 		Name:        ol.NewString("PlatformSystem1"),
 		Description: ol.NewString("Yolo!"),
-		Owner:       &id4,
+		OwnerId:     &id4,
 		Note:        ol.NewString("Please delete me"),
 	}
 	// Act

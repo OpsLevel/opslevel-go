@@ -43,72 +43,6 @@ type AwsIntegrationInput struct {
 	AwsTagsOverrideOwnership *bool     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty"` // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
 }
 
-// CampaignCreateInput specifies the input fields used to create a campaign.
-type CampaignCreateInput struct {
-	Name           string                 `json:"name" yaml:"name"`                                         // The name of the campaign. (Required.)
-	OwnerId        ID                     `json:"ownerId" yaml:"ownerId"`                                   // The ID of the team that owns this campaigns. (Required.)
-	FilterId       *ID                    `json:"filterId,omitempty" yaml:"filterId,omitempty"`             // The ID of the filter applied to this campaign. (Optional.)
-	ProjectBrief   *string                `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty"`     // The project brief of the campaign. (Optional.)
-	CheckIdsToCopy *string                `json:"checkIdsToCopy,omitempty" yaml:"checkIdsToCopy,omitempty"` // The IDs of the existing rubric checks to be copied. (Optional.)
-	Reminder       *CampaignReminderInput `json:"reminder,omitempty" yaml:"reminder,omitempty"`             // Configuration of an optional campaign reminder. (Optional.)
-}
-
-// CampaignEndInput specifies the input fields used to end a campaign and promote checks to the rubric.
-type CampaignEndInput struct {
-	Id              ID      `json:"id" yaml:"id"`                                               // he ID of the campaign to be ended. (Required.)
-	ChecksToPromote *string `json:"checksToPromote,omitempty" yaml:"checksToPromote,omitempty"` // The list of campaign checks to be promoted to the rubric. (Optional.)
-}
-
-// CampaignFilterInput represents input to be used to filter campaigns.
-type CampaignFilterInput struct {
-	Key        *CampaignFilterEnum `json:"key,omitempty" yaml:"key,omitempty"`               // Field to be filtered. (Optional.)
-	Arg        *string             `json:"arg,omitempty" yaml:"arg,omitempty"`               // Value to be filtered. (Optional.)
-	Type       *BasicTypeEnum      `json:"type,omitempty" yaml:"type,omitempty"`             // Type of operation to be applied to value on the field. (Optional.)
-	Predicates *[]string           `json:"predicates,omitempty" yaml:"predicates,omitempty"` // A list of campaign filter input. (Optional.)
-	Connective *ConnectiveEnum     `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with multiple filters (requires predicates to be supplied). (Optional.)
-}
-
-// CampaignReminderInput represents configuration of an optional campaign reminder.
-type CampaignReminderInput struct {
-	Message       *string                           `json:"message,omitempty" yaml:"message,omitempty"`       // The message that will be delivered as the reminder. (Optional.)
-	Frequency     int                               `json:"frequency" yaml:"frequency"`                       // The interval at which reminders will be delivered. (Required.)
-	FrequencyUnit CampaignReminderFrequencyUnitEnum `json:"frequencyUnit" yaml:"frequencyUnit"`               // The time unit of the value in the 'frequency' field. (Required.)
-	DaysOfWeek    *string                           `json:"daysOfWeek,omitempty" yaml:"daysOfWeek,omitempty"` // A list of weekdays on which the reminders will be delivered. Only available with weekly frequency. (Optional.)
-	TimeOfDay     string                            `json:"timeOfDay" yaml:"timeOfDay"`                       // The time of day at which the reminder will be delivered. Format: "HH:MM". (Required.)
-	Timezone      string                            `json:"timezone" yaml:"timezone"`                         // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")). (Required.)
-	Channels      *[]string                         `json:"channels,omitempty" yaml:"channels,omitempty"`     // The communication channels through which the reminder will be delivered. (Optional.)
-}
-
-// CampaignScheduleUpdateInput specifies the input fields used to update a campaign schedule.
-type CampaignScheduleUpdateInput struct {
-	Id         ID           `json:"id" yaml:"id"`                 // The id of the campaign to be updated. (Required.)
-	StartDate  iso8601.Time `json:"startDate" yaml:"startDate"`   // The date the campaign will start. (Required.)
-	TargetDate iso8601.Time `json:"targetDate" yaml:"targetDate"` // The target date the campaign should end. (Required.)
-}
-
-// CampaignSendReminderInput specifies the input fields used to coordinate sending notifications to team members about a campaign.
-type CampaignSendReminderInput struct {
-	Id            ID        `json:"id" yaml:"id"`                                           // The ID of the campaign about which to notify team members. (Required.)
-	TeamIds       *[]string `json:"teamIds,omitempty" yaml:"teamIds,omitempty"`             // The list of team ids to receive the notifications. (Optional.)
-	CustomMessage *string   `json:"customMessage,omitempty" yaml:"customMessage,omitempty"` // A custom message to include in the notification. (Optional.)
-	ReminderTypes []string  `json:"reminderTypes" yaml:"reminderTypes"`                     // The list of the types of notifications to be sent. (Required.)
-}
-
-// CampaignUnscheduleInput represents specifices the input fields used to unschedule a campaign.
-type CampaignUnscheduleInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the campaign to be unscheduled. (Required.)
-}
-
-// CampaignUpdateInput specifies the input fields used to update a campaign.
-type CampaignUpdateInput struct {
-	Id           ID                     `json:"id" yaml:"id"`                                         // The id of the campaign to be updated. (Required.)
-	Name         *string                `json:"name,omitempty" yaml:"name,omitempty"`                 // The name of the campaign. (Optional.)
-	OwnerId      *ID                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`           // The ID of the team that owns this campaigns. (Optional.)
-	FilterId     *ID                    `json:"filterId,omitempty" yaml:"filterId,omitempty"`         // The ID of the filter applied to this campaign. (Optional.)
-	ProjectBrief *string                `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty"` // The project brief of the campaign. (Optional.)
-	Reminder     *CampaignReminderInput `json:"reminder,omitempty" yaml:"reminder,omitempty"`         // Configuration of an optional campaign reminder. (Optional.)
-}
-
 // CategoryCreateInput specifies the input fields used to create a category.
 type CategoryCreateInput struct {
 	Name        string  `json:"name" yaml:"name"`                                   // The display name of the category. (Required.)
@@ -260,7 +194,7 @@ type CheckHasRecentDeployCreateInput struct {
 	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
 	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
 	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
-	Days       []int         `json:"days" yaml:"days"`                             // The number of days to check since the last deploy. (Required.)
+	Days       int           `json:"days" yaml:"days"`                             // The number of days to check since the last deploy. (Required.)
 }
 
 // CheckHasRecentDeployUpdateInput specifies the input fields used to update a has recent deploy check.
@@ -274,7 +208,7 @@ type CheckHasRecentDeployUpdateInput struct {
 	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`     // The date when the check will be automatically enabled. (Optional.)
 	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`           // Additional information about the check. (Optional.)
 	Id         ID            `json:"id" yaml:"id"`                                     // The id of the check to be updated. (Required.)
-	Days       *[]int        `json:"days,omitempty" yaml:"days,omitempty"`             // The number of days to check since the last deploy. (Optional.)
+	Days       *int          `json:"days,omitempty" yaml:"days,omitempty"`             // The number of days to check since the last deploy. (Optional.)
 }
 
 // CheckManualCreateInput specifies the input fields used to create a manual check.
@@ -654,10 +588,10 @@ type CustomActionsTriggerDefinitionCreateInput struct {
 	FilterId               *ID                                              `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The filter that will determine which services apply to the Trigger Definition. (Optional.)
 	ManualInputsDefinition *string                                          `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"` // The YAML definition of custom inputs for the Trigger Definition. (Optional.)
 	Published              *bool                                            `json:"published,omitempty" yaml:"published,omitempty"`                           // The published state of the action; true if the definition is ready for use; false if it is a draft. (Optional.)
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
+	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
 	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`             // The liquid template used to parse the response from the External Action. (Optional.)
-	EntityType             CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
-	ExtendedTeamAccess     *string                                          `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
+	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
+	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
 }
 
 // CustomActionsTriggerDefinitionUpdateInput specifies the input fields used in the `customActionsTriggerDefinitionUpdate` mutation.
@@ -674,7 +608,7 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
 	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`             // The liquid template used to parse the response from the External Action. (Optional.)
 	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
-	ExtendedTeamAccess     *string                                          `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
+	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
 }
 
 // CustomActionsWebhookActionCreateInput specifies the input fields used in the `customActionsWebhookActionCreate` mutation.
@@ -718,9 +652,9 @@ type ExternalUuidMutationInput struct {
 
 // FilterCreateInput specifies the input fields used to create a filter.
 type FilterCreateInput struct {
-	Name       string          `json:"name" yaml:"name"`                                 // The display name of the filter. (Required.)
-	Predicates *[]string       `json:"predicates,omitempty" yaml:"predicates,omitempty"` // The list of predicates used to select which services apply to the filter. (Optional.)
-	Connective *ConnectiveEnum `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
+	Name       string                  `json:"name" yaml:"name"`                                 // The display name of the filter. (Required.)
+	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty"` // The list of predicates used to select which services apply to the filter. (Optional.)
+	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
 }
 
 // FilterPredicateInput represents a condition that should be satisfied.
@@ -734,10 +668,10 @@ type FilterPredicateInput struct {
 
 // FilterUpdateInput specifies the input fields used to update a filter.
 type FilterUpdateInput struct {
-	Id         ID              `json:"id" yaml:"id"`                                     // The id of the filter. (Required.)
-	Name       *string         `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the filter. (Optional.)
-	Predicates *[]string       `json:"predicates,omitempty" yaml:"predicates,omitempty"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates. (Optional.)
-	Connective *ConnectiveEnum `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
+	Id         ID                      `json:"id" yaml:"id"`                                     // The id of the filter. (Required.)
+	Name       *string                 `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the filter. (Optional.)
+	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates. (Optional.)
+	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
 }
 
 // GroupInput specifies the input fields used to create and update a group.
@@ -858,7 +792,7 @@ type ScorecardInput struct {
 	Description                 *string `json:"description,omitempty" yaml:"description,omitempty"`                                 // Description of the scorecard. (Optional.)
 	OwnerId                     ID      `json:"ownerId" yaml:"ownerId"`                                                             // Owner of the scorecard. Can currently be a team or a group. (Required.)
 	FilterId                    *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty"`                                       // Filter used by the scorecard to restrict services. (Optional.)
-	AffectsOverallServiceLevels *[]bool `json:"affectsOverallServiceLevels,omitempty" yaml:"affectsOverallServiceLevels,omitempty"` // . (Optional.)
+	AffectsOverallServiceLevels *bool   `json:"affectsOverallServiceLevels,omitempty" yaml:"affectsOverallServiceLevels,omitempty"` // . (Optional.)
 }
 
 // SecretInput represents arguments for secret operations.
@@ -956,7 +890,7 @@ type TagAssignInput struct {
 	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the resource that the tags will be assigned to. (Optional.)
 	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty"` // The alias of the resource that tags will be added to. (Optional.)
 	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty"`   // The type of resource `alias` refers to, if `alias` is provided. (Optional.)
-	Tags  []string          `json:"tags" yaml:"tags"`                       // The desired tags to assign to the resource. (Required.)
+	Tags  []TagInput        `json:"tags" yaml:"tags"`                       // The desired tags to assign to the resource. (Required.)
 }
 
 // TagCreateInput specifies the input fields used to create a tag.
@@ -988,12 +922,12 @@ type TagUpdateInput struct {
 
 // TeamCreateInput specifies the input fields used to create a team.
 type TeamCreateInput struct {
-	Responsibilities *[]string        `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	Group            *IdentifierInput `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members          *[]string        `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
-	Name             string           `json:"name" yaml:"name"`                                             // The team's display name. (Required.)
-	Contacts         *[]string        `json:"contacts,omitempty" yaml:"contacts,omitempty"`                 // The contacts for the team. (Optional.)
+	Responsibilities *[]string                  `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
+	Name             string                     `json:"name" yaml:"name"`                                             // The team's display name. (Required.)
+	Contacts         *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty"`                 // The contacts for the team. (Optional.)
 }
 
 // TeamDeleteInput specifies the input fields used to delete a team.
@@ -1004,14 +938,14 @@ type TeamDeleteInput struct {
 
 // TeamMembershipCreateInput represents input for adding members to a team.
 type TeamMembershipCreateInput struct {
-	TeamId  ID       `json:"teamId" yaml:"teamId"`   // The ID of the team to add members. (Required.)
-	Members []string `json:"members" yaml:"members"` // A set of emails that identify users in OpsLevel. (Required.)
+	TeamId  ID                        `json:"teamId" yaml:"teamId"`   // The ID of the team to add members. (Required.)
+	Members []TeamMembershipUserInput `json:"members" yaml:"members"` // A set of emails that identify users in OpsLevel. (Required.)
 }
 
 // TeamMembershipDeleteInput represents input for removing members from a team.
 type TeamMembershipDeleteInput struct {
-	TeamId  ID       `json:"teamId" yaml:"teamId"`   // The ID of the team to remove members from. (Required.)
-	Members []string `json:"members" yaml:"members"` // A set of emails that identify users in OpsLevel. (Required.)
+	TeamId  ID                        `json:"teamId" yaml:"teamId"`   // The ID of the team to remove members from. (Required.)
+	Members []TeamMembershipUserInput `json:"members" yaml:"members"` // A set of emails that identify users in OpsLevel. (Required.)
 }
 
 // TeamMembershipUserInput represents input for specifiying members on a team.

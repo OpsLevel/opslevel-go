@@ -328,8 +328,9 @@ var All{{$.Name}} = []string {
 import "github.com/relvacode/iso8601"
 
 {{range .Types | sortByName}}{{if and (eq .Kind "INPUT_OBJECT") (not (internal .Name))}}
+{{ if not (hasPrefix "Campaign" .Name) -}}
 {{template "input_object" .}}
-{{end}}{{end}}
+{{end}}{{end}}{{end}}
 
 {{- define "input_object" -}}
 {{ template "type_comment_description" . }}
@@ -682,7 +683,7 @@ func renameMutation(s string) string {
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
 	// Examples: "alias", "address", "status"
-	if value == "notes" ||
+	if value == "notes" || value == "days" ||
 		strings.HasSuffix(value, "ias") ||
 		strings.HasSuffix(value, "ss") ||
 		strings.HasSuffix(value, "us") {

@@ -40,6 +40,10 @@ func NullString() *string {
 	return output
 }
 
+func NewEnum[T ~string](value T) *T {
+	return (*T)(&value)
+}
+
 func NewString(value string) *string {
 	return &value
 }

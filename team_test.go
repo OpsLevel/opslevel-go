@@ -90,8 +90,7 @@ func TestCreateTeam(t *testing.T) {
 	input := autopilot.Register[ol.TeamCreateInput]("team_create_input",
 		ol.TeamCreateInput{
 			Name:             "Example",
-			ManagerEmail:     "john@example.com",
-			Responsibilities: "Foo & bar",
+			Responsibilities: &[]string{"Foo & bar"},
 			Contacts:         &contacts,
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		})
@@ -606,9 +605,8 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.TeamUpdateInput]("team_update_input",
 		ol.TeamUpdateInput{
-			Id:               id1,
-			ManagerEmail:     "ken@example.com",
-			Responsibilities: "Foo & bar",
+			Id:               &id1,
+			Responsibilities: &[]string{"Foo & bar"},
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		},
 	)
@@ -716,8 +714,8 @@ func TestTeamAddMemberhip(t *testing.T) {
 	// Act
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
 	newMembership := ol.TeamMembershipUserInput{
-		Role: "user",
-		User: ol.UserIdentifierInput{Id: &id1, Email: ol.NewString("kyle@opslevel.com")},
+		Role: ol.NewString("user"),
+		User: &ol.UserIdentifierInput{Id: &id1, Email: ol.NewString("kyle@opslevel.com")},
 	}
 	result, err := clientWithTeamId.AddMemberships(&team.TeamId, newMembership)
 	// Assert
@@ -748,8 +746,8 @@ func TestTeamRemoveMemberhip(t *testing.T) {
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
 	membershipToDelete := ol.TeamMembershipUserInput{
-		Role: "user",
-		User: ol.UserIdentifierInput{Id: &id1, Email: ol.NewString("kyle@opslevel.com")},
+		Role: ol.NewString("user"),
+		User: &ol.UserIdentifierInput{Id: &id1, Email: ol.NewString("kyle@opslevel.com")},
 	}
 
 	result, err := client2.RemoveMemberships(&team.TeamId, membershipToDelete)
@@ -762,14 +760,14 @@ func TestTeamAddContact(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation ContactCreate($input:ContactCreateInput!){contactCreate(input: $input){contact{address,displayName,id,type},errors{message,path}}}`,
-		`{"input": {"type":"slack", "address":"#general", "teamId": "{{ template "id1_string" }}" }}`,
+		`{"input": {"type":"slack", "address":"#general", "teamAlias": "{{ template "id1_string" }}" }}`,
 		`{"data": {"contactCreate": {"contact": {"address": "#general", "displayName": "Slack", {{ template "id2" }}, "type": "slack"}, "errors": [] } }}`,
 	)
 	client1 := BestTestClient(t, "team/get_with_alias_add_contact", getTestRequestWithAlias())
 	client2 := BestTestClient(t, "team/alias_add_contact", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", ol.NewString("")))
+	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", nil))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "#general", result.Address)
@@ -783,8 +781,8 @@ func TestTeamUpdateContact(t *testing.T) {
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input_slack",
 		ol.ContactUpdateInput{
 			Id:          id1,
-			DisplayName: *input.DisplayName,
-			Address:     input.Address,
+			DisplayName: ol.NewString(*input.DisplayName),
+			Address:     ol.NewString(input.Address),
 			Type:        &input.Type,
 		})
 	testRequest := autopilot.NewTestRequest(
@@ -808,8 +806,8 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input",
 		ol.ContactUpdateInput{
 			Id:          id2,
-			DisplayName: *input.DisplayName,
-			Address:     input.Address,
+			DisplayName: ol.NewString(*input.DisplayName),
+			Address:     ol.NewString(input.Address),
 		})
 	testRequest := autopilot.NewTestRequest(
 		`mutation ContactUpdate($input:ContactUpdateInput!){contactUpdate(input: $input){contact{address,displayName,id,type},errors{message,path}}}`,

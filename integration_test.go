@@ -47,7 +47,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
-		`{ "input": { "apiKey": "123456789", "baseUrl": "https://api.newrelic.com/graphql", "accountKey": "XXXX" }}`,
+		`{ "input": { "apiKey": "123456789", "baseUrl": "https://api.newrelic.com/graphql" }}`,
 		`{"data": {
       "newRelicIntegrationCreate": {
         "integration": {
@@ -67,8 +67,6 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
 		ApiKey:  opslevel.NewString("123456789"),
 		BaseUrl: opslevel.NewString("https://api.newrelic.com/graphql"),
-		// TODO: found in internal API only. Keep or remove?
-		// AccountKey: opslevel.NewString("XXXX"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)

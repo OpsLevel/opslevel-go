@@ -10,8 +10,8 @@ import (
 var checkCreateInput = ol.CheckCreateInput{
 	Name:     "Hello World",
 	Enabled:  true,
-	Category: "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
-	Level:    "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
+	Category: ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
+	Level:    ol.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
 	Notes:    "Hello World Check",
 }
 
@@ -44,11 +44,15 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_alert_source_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckAlertSourceUsage(ol.CheckAlertSourceUsageCreateInput{
-					CheckCreateInput: checkCreateInput,
-					AlertSourceType:  ol.AlertSourceTypeEnumDatadog,
+					Name:            checkCreateInput.Name,
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      checkCreateInput.Category,
+					LevelId:         checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					AlertSourceType: ol.NewEnum[ol.AlertSourceTypeEnum](ol.AlertSourceTypeEnumDatadog),
 					AlertSourceNamePredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "Requests",
+						Value: ol.NewString("Requests"),
 					},
 				})
 			},
@@ -62,11 +66,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_alert_source_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckAlertSourceUsage(ol.CheckAlertSourceUsageUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					AlertSourceType:  ol.AlertSourceTypeEnumDatadog,
+					Id:              checkUpdateInput.Id,
+					Name:            ol.NewString(checkCreateInput.Name),
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      &checkCreateInput.Category,
+					LevelId:         &checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					AlertSourceType: ol.NewEnum[ol.AlertSourceTypeEnum](ol.AlertSourceTypeEnumDatadog),
 					AlertSourceNamePredicate: &ol.PredicateUpdateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "Requests",
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("Requests"),
 					},
 				})
 			},
@@ -81,7 +90,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_git_branch_protection",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckGitBranchProtection(ol.CheckGitBranchProtectionCreateInput{
-					CheckCreateInput: checkCreateInput,
+					Name:       checkCreateInput.Name,
+					Enabled:    &checkCreateInput.Enabled,
+					CategoryId: checkCreateInput.Category,
+					LevelId:    checkCreateInput.Level,
+					Notes:      &checkCreateInput.Notes,
 				})
 			},
 		},
@@ -94,7 +107,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_git_branch_protection",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckGitBranchProtection(ol.CheckGitBranchProtectionUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
+					Id:         checkUpdateInput.Id,
+					Name:       &checkUpdateInput.Name,
+					Enabled:    checkUpdateInput.Enabled,
+					CategoryId: &checkUpdateInput.Category,
+					LevelId:    &checkUpdateInput.Level,
+					Notes:      &checkUpdateNotes,
 				})
 			},
 		},
@@ -108,8 +126,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_has_recent_deploy",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckHasRecentDeploy(ol.CheckHasRecentDeployCreateInput{
-					CheckCreateInput: checkCreateInput,
-					Days:             5,
+					Name:       checkCreateInput.Name,
+					Enabled:    &checkCreateInput.Enabled,
+					CategoryId: checkCreateInput.Category,
+					LevelId:    checkCreateInput.Level,
+					Notes:      &checkCreateInput.Notes,
+					Days:       5,
 				})
 			},
 		},
@@ -122,8 +144,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_has_recent_deploy",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckHasRecentDeploy(ol.CheckHasRecentDeployUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					Days:             ol.NewInt(5),
+					Id:         checkUpdateInput.Id,
+					Name:       &checkUpdateInput.Name,
+					Enabled:    checkUpdateInput.Enabled,
+					CategoryId: &checkUpdateInput.Category,
+					LevelId:    &checkUpdateInput.Level,
+					Notes:      &checkUpdateNotes,
+					Days:       ol.NewInt(5),
 				})
 			},
 		},
@@ -137,9 +164,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_has_documentation",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckHasDocumentation(ol.CheckHasDocumentationCreateInput{
-					CheckCreateInput: checkCreateInput,
-					DocumentType:     "api",
-					DocumentSubtype:  "openapi",
+					Name:            checkCreateInput.Name,
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      checkCreateInput.Category,
+					LevelId:         checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					DocumentType:    "api",
+					DocumentSubtype: "openapi",
 				})
 			},
 		},
@@ -152,9 +183,14 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_has_documentation",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckHasDocumentation(ol.CheckHasDocumentationUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					DocumentType:     "api",
-					DocumentSubtype:  "openapi",
+					Id:              checkUpdateInput.Id,
+					Name:            &checkUpdateInput.Name,
+					Enabled:         checkUpdateInput.Enabled,
+					CategoryId:      &checkUpdateInput.Category,
+					LevelId:         &checkUpdateInput.Level,
+					Notes:           &checkUpdateNotes,
+					DocumentType:    ol.NewEnum[ol.HasDocumentationTypeEnum](ol.HasDocumentationTypeEnumAPI),
+					DocumentSubtype: ol.NewEnum[ol.HasDocumentationSubtypeEnum](ol.HasDocumentationSubtypeEnumOpenapi),
 				})
 			},
 		},
@@ -168,11 +204,15 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_custom_event",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckCustomEvent(ol.CheckCustomEventCreateInput{
-					CheckCreateInput: checkCreateInput,
+					Name:             checkCreateInput.Name,
+					Enabled:          &checkCreateInput.Enabled,
+					CategoryId:       checkCreateInput.Category,
+					LevelId:          checkCreateInput.Level,
+					Notes:            &checkCreateInput.Notes,
 					ServiceSelector:  ".metadata.name",
 					SuccessCondition: ".metadata.name",
-					Message:          "#Hello World",
-					Integration:      "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg",
+					ResultMessage:    ol.NewString("#Hello World"),
+					IntegrationId:    ol.ID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
 					PassPending:      ol.Bool(false),
 				})
 			},
@@ -187,11 +227,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				message := "#Hello World"
 				return c.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					ServiceSelector:  ".metadata.name",
-					SuccessCondition: ".metadata.name",
-					Message:          &message,
-					Integration:      ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+					Id:               checkUpdateInput.Id,
+					Name:             &checkUpdateInput.Name,
+					Enabled:          checkUpdateInput.Enabled,
+					CategoryId:       &checkUpdateInput.Category,
+					LevelId:          &checkUpdateInput.Level,
+					Notes:            &checkUpdateNotes,
+					ServiceSelector:  ol.NewString(".metadata.name"),
+					SuccessCondition: ol.NewString(".metadata.name"),
+					ResultMessage:    &message,
+					IntegrationId:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
 					PassPending:      ol.Bool(false),
 				})
 			},
@@ -206,11 +251,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				message := ""
 				return c.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					ServiceSelector:  ".metadata.name",
-					SuccessCondition: ".metadata.name",
-					Message:          &message,
-					Integration:      ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
+					Id:               checkUpdateInput.Id,
+					Name:             &checkUpdateInput.Name,
+					Enabled:          checkUpdateInput.Enabled,
+					CategoryId:       &checkUpdateInput.Category,
+					LevelId:          &checkUpdateInput.Level,
+					Notes:            &checkUpdateNotes,
+					ServiceSelector:  ol.NewString(".metadata.name"),
+					SuccessCondition: ol.NewString(".metadata.name"),
+					ResultMessage:    &message,
+					IntegrationId:    ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg"),
 					PassPending:      ol.Bool(false),
 				})
 			},
@@ -224,8 +274,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_manual",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckManual(ol.CheckManualCreateInput{
-					CheckCreateInput: checkCreateInput,
-					UpdateFrequency:  ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
+					Name:            checkCreateInput.Name,
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      checkCreateInput.Category,
+					LevelId:         checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					UpdateFrequency: ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
 				})
 			},
 		},
@@ -238,8 +292,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_manual",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckManual(ol.CheckManualUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					UpdateFrequency:  ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
+					Id:              checkUpdateInput.Id,
+					Name:            &checkUpdateInput.Name,
+					Enabled:         checkUpdateInput.Enabled,
+					CategoryId:      &checkUpdateInput.Category,
+					LevelId:         &checkUpdateInput.Level,
+					Notes:           &checkUpdateNotes,
+					UpdateFrequency: ol.NewManualCheckFrequencyUpdateInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
 				})
 			},
 		},
@@ -252,14 +311,18 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_repo_file",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckRepositoryFile(ol.CheckRepositoryFileCreateInput{
-					CheckCreateInput: checkCreateInput,
-					DirectorySearch:  true,
-					Filepaths:        []string{"/src", "/test"},
+					Name:            checkCreateInput.Name,
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      checkCreateInput.Category,
+					LevelId:         checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					DirectorySearch: ol.Bool(true),
+					FilePaths:       []string{"/src", "/test"},
 					FileContentsPredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "postgres",
+						Value: ol.NewString("postgres"),
 					},
-					UseAbsoluteRoot: true,
+					UseAbsoluteRoot: ol.Bool(true),
 				})
 			},
 		},
@@ -272,14 +335,19 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_repo_file",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckRepositoryFile(ol.CheckRepositoryFileUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					DirectorySearch:  true,
-					Filepaths:        []string{"/src", "/test"},
-					FileContentsPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "postgres",
+					Id:              checkUpdateInput.Id,
+					Name:            &checkUpdateInput.Name,
+					Enabled:         checkUpdateInput.Enabled,
+					CategoryId:      &checkUpdateInput.Category,
+					LevelId:         &checkUpdateInput.Level,
+					Notes:           &checkUpdateNotes,
+					DirectorySearch: ol.Bool(true),
+					FilePaths:       &[]string{"/src", "/test"},
+					FileContentsPredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("postgres"),
 					},
-					UseAbsoluteRoot: false,
+					UseAbsoluteRoot: ol.Bool(false),
 				})
 			},
 		},
@@ -292,12 +360,15 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_repo_grep",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckRepositoryGrep(ol.CheckRepositoryGrepCreateInput{
-					CheckCreateInput: checkCreateInput,
-					DirectorySearch:  true,
-					Filepaths:        []string{"**/hello.go"},
-					FileContentsPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumExists,
-						Value: "",
+					Name:            checkCreateInput.Name,
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      checkCreateInput.Category,
+					LevelId:         checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					DirectorySearch: ol.Bool(true),
+					FilePaths:       []string{"**/hello.go"},
+					FileContentsPredicate: ol.PredicateInput{
+						Type: ol.PredicateTypeEnumExists,
 					},
 				})
 			},
@@ -311,12 +382,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_repo_grep",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckRepositoryGrep(ol.CheckRepositoryGrepUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					DirectorySearch:  true,
-					Filepaths:        []string{"**/go.mod"},
-					FileContentsPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumExists,
-						Value: "",
+					Id:              checkUpdateInput.Id,
+					Name:            &checkUpdateInput.Name,
+					Enabled:         checkUpdateInput.Enabled,
+					CategoryId:      &checkUpdateInput.Category,
+					LevelId:         &checkUpdateInput.Level,
+					Notes:           &checkUpdateNotes,
+					DirectorySearch: ol.Bool(true),
+					FilePaths:       &[]string{"**/go.mod"},
+					FileContentsPredicate: &ol.PredicateUpdateInput{
+						Type: ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumExists),
 					},
 				})
 			},
@@ -330,11 +405,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_repo_grep_missing_directory_search",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckRepositoryGrep(ol.CheckRepositoryGrepUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					Filepaths:        []string{"**/go.mod"},
-					FileContentsPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumExists,
-						Value: "",
+					Id:              checkUpdateInput.Id,
+					Name:            &checkUpdateInput.Name,
+					Enabled:         checkUpdateInput.Enabled,
+					CategoryId:      &checkUpdateInput.Category,
+					LevelId:         &checkUpdateInput.Level,
+					Notes:           &checkUpdateNotes,
+					DirectorySearch: ol.Bool(false),
+					FilePaths:       &[]string{"**/go.mod"},
+					FileContentsPredicate: &ol.PredicateUpdateInput{
+						Type: ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumExists),
 					},
 				})
 			},
@@ -348,7 +428,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_repo_integrated",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckRepositoryIntegrated(ol.CheckRepositoryIntegratedCreateInput{
-					CheckCreateInput: checkCreateInput,
+					Name:       checkCreateInput.Name,
+					Enabled:    &checkCreateInput.Enabled,
+					CategoryId: checkCreateInput.Category,
+					LevelId:    checkCreateInput.Level,
+					Notes:      &checkCreateInput.Notes,
 				})
 			},
 		},
@@ -361,7 +445,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_repo_integrated",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckRepositoryIntegrated(ol.CheckRepositoryIntegratedUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
+					Id:         checkUpdateInput.Id,
+					Name:       &checkUpdateInput.Name,
+					Enabled:    checkUpdateInput.Enabled,
+					CategoryId: &checkUpdateInput.Category,
+					LevelId:    &checkUpdateInput.Level,
+					Notes:      &checkUpdateNotes,
 				})
 			},
 		},
@@ -374,11 +463,15 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_repo_search",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckRepositorySearch(ol.CheckRepositorySearchCreateInput{
-					CheckCreateInput: checkCreateInput,
-					FileExtensions:   []string{"sbt", "py"},
+					Name:           checkCreateInput.Name,
+					Enabled:        &checkCreateInput.Enabled,
+					CategoryId:     checkCreateInput.Category,
+					LevelId:        checkCreateInput.Level,
+					Notes:          &checkCreateInput.Notes,
+					FileExtensions: &[]string{"sbt", "py"},
 					FileContentsPredicate: ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumContains,
-						Value: "postgres",
+						Value: ol.NewString("postgres"),
 					},
 				})
 			},
@@ -392,11 +485,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_repo_search",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckRepositorySearch(ol.CheckRepositorySearchUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					FileExtensions:   []string{"sbt", "py"},
-					FileContentsPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumContains,
-						Value: "postgres",
+					Id:             checkUpdateInput.Id,
+					Name:           &checkUpdateInput.Name,
+					Enabled:        checkUpdateInput.Enabled,
+					CategoryId:     &checkUpdateInput.Category,
+					LevelId:        &checkUpdateInput.Level,
+					Notes:          &checkUpdateNotes,
+					FileExtensions: &[]string{"sbt", "py"},
+					FileContentsPredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumContains),
+						Value: ol.NewString("postgres"),
 					},
 				})
 			},
@@ -410,7 +508,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_service_dependency",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckServiceDependency(ol.CheckServiceDependencyCreateInput{
-					CheckCreateInput: checkCreateInput,
+					Name:       checkCreateInput.Name,
+					Enabled:    &checkCreateInput.Enabled,
+					CategoryId: checkCreateInput.Category,
+					LevelId:    checkCreateInput.Level,
+					Notes:      &checkCreateInput.Notes,
 				})
 			},
 		},
@@ -423,7 +525,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_service_dependency",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckServiceDependency(ol.CheckServiceDependencyUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
+					Id:         checkUpdateInput.Id,
+					Name:       &checkUpdateInput.Name,
+					Enabled:    checkUpdateInput.Enabled,
+					CategoryId: &checkUpdateInput.Category,
+					LevelId:    &checkUpdateInput.Level,
+					Notes:      &checkUpdateNotes,
 				})
 			},
 		},
@@ -436,7 +543,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_service_configuration",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckServiceConfiguration(ol.CheckServiceConfigurationCreateInput{
-					CheckCreateInput: checkCreateInput,
+					Name:       checkCreateInput.Name,
+					Enabled:    &checkCreateInput.Enabled,
+					CategoryId: checkCreateInput.Category,
+					LevelId:    checkCreateInput.Level,
+					Notes:      &checkCreateInput.Notes,
 				})
 			},
 		},
@@ -449,7 +560,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_service_configuration",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckServiceConfiguration(ol.CheckServiceConfigurationUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
+					Id:         checkUpdateInput.Id,
+					Name:       &checkUpdateInput.Name,
+					Enabled:    checkUpdateInput.Enabled,
+					CategoryId: &checkUpdateInput.Category,
+					LevelId:    &checkUpdateInput.Level,
+					Notes:      &checkUpdateNotes,
 				})
 			},
 		},
@@ -463,13 +579,17 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				slackType := ol.ContactTypeSlack
 				return c.CreateCheckServiceOwnership(ol.CheckServiceOwnershipCreateInput{
-					CheckCreateInput:     checkCreateInput,
+					Name:                 checkCreateInput.Name,
+					Enabled:              &checkCreateInput.Enabled,
+					CategoryId:           checkCreateInput.Category,
+					LevelId:              checkCreateInput.Level,
+					Notes:                &checkCreateInput.Notes,
 					RequireContactMethod: ol.Bool(true),
-					ContactMethod:        &slackType,
-					TeamTagKey:           "updated_at",
-					TeamTagPredicate: &ol.PredicateInput{
+					ContactMethod:        ol.NewString(string(slackType)),
+					TagKey:               ol.NewString("updated_at"),
+					TagPredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "2-11-2022",
+						Value: ol.NewString("2-11-2022"),
 					},
 				})
 			},
@@ -484,13 +604,18 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				emailType := ol.ContactTypeEmail
 				return c.UpdateCheckServiceOwnership(ol.CheckServiceOwnershipUpdateInput{
-					CheckUpdateInput:     checkUpdateInput,
+					Id:                   checkUpdateInput.Id,
+					Name:                 &checkUpdateInput.Name,
+					Enabled:              checkUpdateInput.Enabled,
+					CategoryId:           &checkUpdateInput.Category,
+					LevelId:              &checkUpdateInput.Level,
+					Notes:                &checkUpdateNotes,
 					RequireContactMethod: ol.Bool(true),
-					ContactMethod:        &emailType,
-					TeamTagKey:           "updated_at",
-					TeamTagPredicate: &ol.PredicateUpdateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "2-11-2022",
+					ContactMethod:        ol.NewString(string(emailType)),
+					TagKey:               ol.NewString("updated_at"),
+					TagPredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("2-11-2022"),
 					},
 				})
 			},
@@ -504,11 +629,15 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_service_property",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckServiceProperty(ol.CheckServicePropertyCreateInput{
-					CheckCreateInput: checkCreateInput,
-					Property:         ol.ServicePropertyTypeEnumFramework,
-					Predicate: &ol.PredicateInput{
+					Name:            checkCreateInput.Name,
+					Enabled:         &checkCreateInput.Enabled,
+					CategoryId:      checkCreateInput.Category,
+					LevelId:         checkCreateInput.Level,
+					Notes:           &checkCreateInput.Notes,
+					ServiceProperty: ol.ServicePropertyTypeEnumFramework,
+					PropertyValuePredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "postgres",
+						Value: ol.NewString("postgres"),
 					},
 				})
 			},
@@ -522,11 +651,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_service_property",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckServiceProperty(ol.CheckServicePropertyUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					Property:         ol.ServicePropertyTypeEnumFramework,
-					Predicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "postgres",
+					Id:              checkUpdateInput.Id,
+					Name:            &checkUpdateInput.Name,
+					Enabled:         checkUpdateInput.Enabled,
+					CategoryId:      &checkUpdateInput.Category,
+					LevelId:         &checkUpdateInput.Level,
+					Notes:           &checkUpdateNotes,
+					ServiceProperty: ol.NewEnum[ol.ServicePropertyTypeEnum](ol.ServicePropertyTypeEnumFramework),
+					PropertyValuePredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("postgres"),
 					},
 				})
 			},
@@ -540,11 +674,15 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_tag_defined",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckTagDefined(ol.CheckTagDefinedCreateInput{
-					CheckCreateInput: checkCreateInput,
-					TagKey:           "app",
+					Name:       checkCreateInput.Name,
+					Enabled:    &checkCreateInput.Enabled,
+					CategoryId: checkCreateInput.Category,
+					LevelId:    checkCreateInput.Level,
+					Notes:      &checkCreateInput.Notes,
+					TagKey:     "app",
 					TagPredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "postgres",
+						Value: ol.NewString("postgres"),
 					},
 				})
 			},
@@ -558,11 +696,16 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_tag_defined",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckTagDefined(ol.CheckTagDefinedUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					TagKey:           "app",
-					TagPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "postgres",
+					Id:         checkUpdateInput.Id,
+					Name:       &checkUpdateInput.Name,
+					Enabled:    checkUpdateInput.Enabled,
+					CategoryId: &checkUpdateInput.Category,
+					LevelId:    &checkUpdateInput.Level,
+					Notes:      &checkUpdateNotes,
+					TagKey:     ol.NewString("app"),
+					TagPredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("postgres"),
 					},
 				})
 			},
@@ -576,19 +719,23 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/create_tool_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.CreateCheckToolUsage(ol.CheckToolUsageCreateInput{
-					CheckCreateInput: checkCreateInput,
-					ToolCategory:     ol.ToolCategoryMetrics,
+					Name:         checkCreateInput.Name,
+					Enabled:      &checkCreateInput.Enabled,
+					CategoryId:   checkCreateInput.Category,
+					LevelId:      checkCreateInput.Level,
+					Notes:        &checkCreateInput.Notes,
+					ToolCategory: ol.ToolCategoryMetrics,
 					ToolNamePredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "datadog",
+						Value: ol.NewString("datadog"),
 					},
 					ToolUrlPredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumContains,
-						Value: "https://",
+						Value: ol.NewString("https://"),
 					},
 					EnvironmentPredicate: &ol.PredicateInput{
 						Type:  ol.PredicateTypeEnumEquals,
-						Value: "production",
+						Value: ol.NewString("production"),
 					},
 				})
 			},
@@ -602,19 +749,24 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			endpoint: "check/update_tool_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				return c.UpdateCheckToolUsage(ol.CheckToolUsageUpdateInput{
-					CheckUpdateInput: checkUpdateInput,
-					ToolCategory:     ol.ToolCategoryMetrics,
-					ToolNamePredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "datadog",
+					Id:           checkUpdateInput.Id,
+					Name:         &checkUpdateInput.Name,
+					Enabled:      checkUpdateInput.Enabled,
+					CategoryId:   &checkUpdateInput.Category,
+					LevelId:      &checkUpdateInput.Level,
+					Notes:        &checkUpdateNotes,
+					ToolCategory: ol.NewEnum[ol.ToolCategory](ol.ToolCategoryMetrics),
+					ToolNamePredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("datadog"),
 					},
-					ToolUrlPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumContains,
-						Value: "https://",
+					ToolUrlPredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumContains),
+						Value: ol.NewString("https://"),
 					},
-					EnvironmentPredicate: &ol.PredicateInput{
-						Type:  ol.PredicateTypeEnumEquals,
-						Value: "production",
+					EnvironmentPredicate: &ol.PredicateUpdateInput{
+						Type:  ol.NewEnum[ol.PredicateTypeEnum](ol.PredicateTypeEnumEquals),
+						Value: ol.NewString("production"),
 					},
 				})
 			},
@@ -680,10 +832,8 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 	client := BestTestClient(t, "check/can_update_filter_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-		CheckUpdateInput: ol.CheckUpdateInput{
-			Id:     "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-			Filter: ol.NewID(),
-		},
+		Id:       ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+		FilterId: ol.NewID(),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -720,10 +870,8 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 	client := BestTestClient(t, "check/can_update_notes_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-		CheckUpdateInput: ol.CheckUpdateInput{
-			Id:    "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-			Notes: ol.NewString(""),
-		},
+		Id:    "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
+		Notes: ol.NewString(""),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -794,10 +942,8 @@ func TestJsonUnmarshalCreateCheck(t *testing.T) {
 	"updateRequiresComment": false
 }`
 	output := ol.CheckManualCreateInput{
-		CheckCreateInput: ol.CheckCreateInput{
-			Name:  "Example",
-			Notes: "Example Notes",
-		},
+		Name:                  "Example",
+		Notes:                 ol.NewString("Example Notes"),
 		UpdateRequiresComment: false,
 	}
 	// Act
@@ -815,11 +961,9 @@ func TestJsonUnmarshalUpdateCheck(t *testing.T) {
 	"updateRequiresComment": true
 }`
 	output := ol.CheckManualUpdateInput{
-		CheckUpdateInput: ol.CheckUpdateInput{
-			Name:  "Example",
-			Notes: ol.NewString("Example Notes"),
-		},
-		UpdateRequiresComment: true,
+		Name:                  ol.NewString("Example"),
+		Notes:                 ol.NewString("Example Notes"),
+		UpdateRequiresComment: ol.Bool(true),
 	}
 	// Act
 	buf1, err1 := ol.UnmarshalCheckUpdateInput(ol.CheckTypeManual, []byte(data))

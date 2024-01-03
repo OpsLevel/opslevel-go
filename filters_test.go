@@ -21,11 +21,11 @@ func TestCreateFilter(t *testing.T) {
 	// TODO: Fix FilterCreateInput generation.
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ol.ConnectiveEnumAnd,
-		Predicates: []ol.FilterPredicate{{
+		Connective: ol.NewEnum[ol.ConnectiveEnum](ol.ConnectiveEnumAnd),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: "1",
+			Value: ol.NewString("1"),
 		}},
 	})
 	// Assert
@@ -47,17 +47,17 @@ func TestCreateFilterNested(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
-		Connective: ol.ConnectiveEnumOr,
-		Predicates: []ol.FilterPredicate{
+		Connective: ol.NewEnum[ol.ConnectiveEnum](ol.ConnectiveEnumOr),
+		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg",
+				Value: ol.NewString("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ",
+				Value: ol.NewString("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
 			},
 		},
 	})
@@ -143,12 +143,12 @@ func TestUpdateFilter(t *testing.T) {
 	client := BestTestClient(t, "filter/update", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: "Test Updated",
-		Predicates: []ol.FilterPredicate{{
+		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Name: ol.NewString("Test Updated"),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: "1",
+			Value: ol.NewString("1"),
 		}},
 	})
 	// Assert
@@ -168,19 +168,19 @@ func TestUpdateFilterNested(t *testing.T) {
 	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
-		Name:       "Tier 1-2 not deployed by us",
-		Connective: ol.ConnectiveEnumAnd,
-		Predicates: []ol.FilterPredicate{
+		Id:         ol.ID("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY"),
+		Name:       ol.NewString("Tier 1-2 not deployed by us"),
+		Connective: ol.NewEnum[ol.ConnectiveEnum](ol.ConnectiveEnumAnd),
+		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumDoesNotMatch,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg",
+				Value: ol.NewString("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY",
+				Value: ol.NewString("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
 			},
 		},
 	})
@@ -225,12 +225,12 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	client := BestTestClient(t, "filter/update_case_sensitive_true", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: "Test Updated",
-		Predicates: []ol.FilterPredicate{{
+		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Name: ol.NewString("Test Updated"),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         "1",
+			Value:         ol.NewString("1"),
 			CaseSensitive: ol.Bool(true),
 		}},
 	})
@@ -270,12 +270,12 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	client := BestTestClient(t, "filter/update_case_sensitive_false", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: "Test Updated",
-		Predicates: []ol.FilterPredicate{{
+		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Name: ol.NewString("Test Updated"),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         "1",
+			Value:         ol.NewString("1"),
 			CaseSensitive: ol.Bool(false),
 		}},
 	})

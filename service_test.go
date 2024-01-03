@@ -237,7 +237,7 @@ func TestCreateService(t *testing.T) {
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: "Foo service",
+		Description: ol.NewString("Foo service"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -255,7 +255,7 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: "Foo service",
+		Description: ol.NewString("Foo service"),
 		Parent:      ol.NewIdentifier("FooSystem"),
 	})
 	// Assert
@@ -275,7 +275,7 @@ func TestUpdateService(t *testing.T) {
 
 	// Act
 	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Id: "123456789",
+		Id: ol.NewID("123456789"),
 	})
 
 	// Assert
@@ -295,7 +295,7 @@ func TestUpdateServiceWithSystem(t *testing.T) {
 
 	// Act
 	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Id:     "123456789",
+		Id:     ol.NewID("123456789"),
 		Parent: ol.NewIdentifier("FooSystem"),
 	})
 
@@ -901,7 +901,7 @@ func TestDeleteService(t *testing.T) {
 	)
 	client := BestTestClient(t, "service/delete", testRequest)
 	// Act
-	err := client.DeleteService(ol.ServiceDeleteInput{Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3"})
+	err := client.DeleteService(ol.ServiceDeleteInput{Id: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")})
 	// Assert
 	autopilot.Ok(t, err)
 }

@@ -13,7 +13,7 @@ func TestCreateWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
-		`{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
+		`{"input":{"headers":["{\"Content-Type\":\"application/json\"}"],"httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
 		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
@@ -23,11 +23,9 @@ func TestCreateWebhookAction(t *testing.T) {
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: ol.NewString("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
-		Headers: ol.JSON{
-			"Content-Type": "application/json",
-		},
-		HTTPMethod: ol.CustomActionsHttpMethodEnumPost,
-		WebhookURL: "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
+		Headers:        &[]ol.JSON{{"Content-Type": "application/json"}},
+		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
+		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
 	})
 
 	// Assert
@@ -73,7 +71,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:         *newID,
-		HTTPMethod: ol.CustomActionsHttpMethodEnumPut,
+		HttpMethod: ol.NewEnum[ol.CustomActionsHttpMethodEnum](ol.CustomActionsHttpMethodEnumPut),
 	})
 
 	// Assert
@@ -85,7 +83,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
-		`{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}`,
+		`{"input":{"id": "123456789","description":"","headers":["{\"Accept\":\"application/json\"}"]}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
@@ -98,7 +96,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          *newID,
 		Description: ol.NewString(""),
-		Headers:     &headers,
+		Headers:     &[]ol.JSON{headers},
 	})
 
 	// Assert
@@ -134,11 +132,14 @@ func TestCreateTriggerDefinition(t *testing.T) {
 
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
-		Name:        "Deploy Rollback",
-		Description: ol.NewString("Disables the Deploy Freeze"),
-		Action:      *newID,
-		Owner:       *newID,
-		Filter:      ol.NewID("987654321"),
+		Name:                   "Deploy Rollback",
+		AccessControl:          ol.NewEnum[ol.CustomActionsTriggerDefinitionAccessControlEnum](ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		Description:            ol.NewString("Disables the Deploy Freeze"),
+		ResponseTemplate:       ol.NewString(""),
+		ManualInputsDefinition: ol.NewString(""),
+		ActionId:               newID,
+		OwnerId:                *newID,
+		FilterId:               ol.NewID("987654321"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -156,12 +157,15 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
-		Name:        "Deploy Rollback",
-		Description: ol.NewString("Disables the Deploy Freeze"),
-		Action:      *newID,
-		Owner:       *newID,
-		Filter:      ol.NewID("987654321"),
-		EntityType:  "GLOBAL",
+		Name:                   "Deploy Rollback",
+		AccessControl:          ol.NewEnum[ol.CustomActionsTriggerDefinitionAccessControlEnum](ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		Description:            ol.NewString("Disables the Deploy Freeze"),
+		ActionId:               newID,
+		ManualInputsDefinition: ol.NewString(""),
+		ResponseTemplate:       ol.NewString(""),
+		OwnerId:                *newID,
+		FilterId:               ol.NewID("987654321"),
+		EntityType:             ol.NewEnum[ol.CustomActionsEntityTypeEnum](ol.CustomActionsEntityTypeEnumGlobal),
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier("example_1"),
 			*ol.NewIdentifier("example_1"),
@@ -183,12 +187,15 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", testRequest)
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
-		Name:               "Deploy Rollback",
-		Description:        ol.NewString("Disables the Deploy Freeze"),
-		Action:             *newID,
-		Owner:              *newID,
-		Filter:             ol.NewID("987654321"),
-		ExtendedTeamAccess: &[]ol.IdentifierInput{},
+		Name:                   "Deploy Rollback",
+		Description:            ol.NewString("Disables the Deploy Freeze"),
+		AccessControl:          ol.NewEnum[ol.CustomActionsTriggerDefinitionAccessControlEnum](ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		ManualInputsDefinition: ol.NewString(""),
+		ResponseTemplate:       ol.NewString(""),
+		ActionId:               newID,
+		OwnerId:                *newID,
+		FilterId:               ol.NewID("987654321"),
+		ExtendedTeamAccess:     &[]ol.IdentifierInput{},
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -253,8 +260,8 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
-		Id:     *newID,
-		Filter: ol.NewID(),
+		Id:       *newID,
+		FilterId: ol.NewID(),
 	})
 	// Assert
 	autopilot.Ok(t, err)

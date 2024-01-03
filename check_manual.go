@@ -27,6 +27,15 @@ func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeSc
 	}
 }
 
+func NewManualCheckFrequencyUpdateInput(startingDate string, timeScale FrequencyTimeScale, value int) *ManualCheckFrequencyUpdateInput {
+	startingDateIso := NewISO8601Date(startingDate)
+	return &ManualCheckFrequencyUpdateInput{
+		StartingDate:       &startingDateIso,
+		FrequencyTimeScale: &timeScale,
+		FrequencyValue:     &value,
+	}
+}
+
 // type CheckManualCreateInput struct {
 // 	CheckCreateInput
 
