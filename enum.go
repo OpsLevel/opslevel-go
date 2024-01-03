@@ -566,6 +566,42 @@ var AllPredicateTypeEnum = []string{
 	string(PredicateTypeEnumSatisfiesJqExpression),
 }
 
+// PropertyDefinitionDisplayTypeEnum represents the set of possible display types of a property definition schema.
+type PropertyDefinitionDisplayTypeEnum string
+
+const (
+	PropertyDefinitionDisplayTypeEnumArray    PropertyDefinitionDisplayTypeEnum = "ARRAY"    // An array.
+	PropertyDefinitionDisplayTypeEnumBoolean  PropertyDefinitionDisplayTypeEnum = "BOOLEAN"  // A boolean.
+	PropertyDefinitionDisplayTypeEnumDropdown PropertyDefinitionDisplayTypeEnum = "DROPDOWN" // A dropdown.
+	PropertyDefinitionDisplayTypeEnumNumber   PropertyDefinitionDisplayTypeEnum = "NUMBER"   // A number.
+	PropertyDefinitionDisplayTypeEnumObject   PropertyDefinitionDisplayTypeEnum = "OBJECT"   // An object.
+	PropertyDefinitionDisplayTypeEnumText     PropertyDefinitionDisplayTypeEnum = "TEXT"     // A text string.
+)
+
+// All PropertyDefinitionDisplayTypeEnum as []string
+var AllPropertyDefinitionDisplayTypeEnum = []string{
+	string(PropertyDefinitionDisplayTypeEnumArray),
+	string(PropertyDefinitionDisplayTypeEnumBoolean),
+	string(PropertyDefinitionDisplayTypeEnumDropdown),
+	string(PropertyDefinitionDisplayTypeEnumNumber),
+	string(PropertyDefinitionDisplayTypeEnumObject),
+	string(PropertyDefinitionDisplayTypeEnumText),
+}
+
+// PropertyDisplayStatusEnum represents the display status of a custom property on service pages.
+type PropertyDisplayStatusEnum string
+
+const (
+	PropertyDisplayStatusEnumHidden  PropertyDisplayStatusEnum = "hidden"  // The property is not shown on the service page.
+	PropertyDisplayStatusEnumVisible PropertyDisplayStatusEnum = "visible" // The property is shown on the service page.
+)
+
+// All PropertyDisplayStatusEnum as []string
+var AllPropertyDisplayStatusEnum = []string{
+	string(PropertyDisplayStatusEnumHidden),
+	string(PropertyDisplayStatusEnumVisible),
+}
+
 // RelatedResourceRelationshipTypeEnum represents the type of the relationship between two resources.
 type RelatedResourceRelationshipTypeEnum string
 

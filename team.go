@@ -339,15 +339,12 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 			Errors  []OpsLevelErrors
 		} `graphql:"contactCreate(input: $input)"`
 	}
+	// TODO: there is no teamId field anymore
 	contactInput := ContactCreateInput{
 		Type:        contact.Type,
-		DisplayName: *contact.DisplayName,
+		DisplayName: contact.DisplayName,
 		Address:     contact.Address,
-	}
-	if IsID(team) {
-		contactInput.TeamId = NewID(team)
-	} else {
-		contactInput.TeamAlias = team
+		TeamAlias:   &team,
 	}
 	v := PayloadVariables{
 		"input": contactInput,
@@ -510,8 +507,8 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	}
 	input := ContactUpdateInput{
 		Id:          id,
-		DisplayName: *contact.DisplayName,
-		Address:     contact.Address,
+		DisplayName: contact.DisplayName,
+		Address:     &contact.Address,
 	}
 	if contact.Type == "" {
 		input.Type = nil
@@ -539,7 +536,7 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 	}
 	v := PayloadVariables{
 		"input": TeamDeleteInput{
-			Alias: alias,
+			Alias: &alias,
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
@@ -561,7 +558,7 @@ func (client *Client) DeleteTeam(id ID) error {
 	}
 	v := PayloadVariables{
 		"input": TeamDeleteInput{
-			Id: id,
+			Id: &id,
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
