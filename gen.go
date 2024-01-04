@@ -685,7 +685,7 @@ func isPlural(s string) bool {
 	// Examples: "alias", "address", "status"
 	if value == "notes" || value == "days" ||
 		strings.HasSuffix(value, "ias") ||
-		strings.HasSuffix(value, "ss") ||
+		(!strings.HasSuffix(value, "access") && strings.HasSuffix(value, "ss")) ||
 		strings.HasSuffix(value, "us") {
 		return false
 	}

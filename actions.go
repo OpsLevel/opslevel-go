@@ -174,7 +174,7 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 			Errors            []OpsLevelErrors
 		} `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
 	}
-	if input.AccessControl != nil {
+	if input.AccessControl == nil {
 		input.AccessControl = NewEnum[CustomActionsTriggerDefinitionAccessControlEnum](CustomActionsTriggerDefinitionAccessControlEnumEveryone)
 	}
 	if input.EntityType == nil {
