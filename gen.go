@@ -623,6 +623,18 @@ func makeSingular(s string) string {
 }
 
 func convertPayloadType(s string) string {
+	value := strings.ToLower(s)
+	if v, ok := knownTypeMappings[value]; ok {
+		return v
+	}
+	if strings.HasSuffix(value, "id") {
+		return "ID"
+	}
+	for _, knownStringTypeSuffix := range stringTypeSuffixes {
+		if strings.HasSuffix(value, knownStringTypeSuffix) {
+			return "string"
+		}
+	}
 	switch s {
 	case "Boolean":
 		return "bool"
@@ -634,18 +646,6 @@ func convertPayloadType(s string) string {
 		return "iso8601.Time"
 	case "":
 		return "string"
-	}
-	value := strings.ToLower(s)
-	if strings.HasSuffix(value, "id") {
-		return "ID"
-	}
-	if v, ok := knownTypeMappings[value]; ok {
-		return v
-	}
-	for _, knownStringTypeSuffix := range stringTypeSuffixes {
-		if strings.HasSuffix(value, knownStringTypeSuffix) {
-			return "string"
-		}
 	}
 	return makeSingular(s)
 }
