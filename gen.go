@@ -19,6 +19,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
+	logger "github.com/rs/zerolog/log"
 )
 
 const (
@@ -54,6 +55,16 @@ var stringTypeSuffixes = []string{
 	"updatedat",
 	"userdeletepayload",
 	"yaml",
+}
+
+// TODO: should this support regex as first key
+var knownScopedTypeMappings = map[string]map[string]string{
+	"AlertSourceExternalIdentifier": {
+		"externalid": "string",
+	},
+	"CustomActionsWebhookActionCreateInput": {
+		"headers": "string",
+	},
 }
 
 var knownTypeMappings = map[string]string{
@@ -622,16 +633,30 @@ func makeSingular(s string) string {
 	return s
 }
 
-func convertPayloadType(s string) string {
+// r = the name of the struct type the field is in, CustomActionsWebhookActionCreateInput
+// s = the name of the field, Headers
+// TODO: how do I set r and s?
+func convertPayloadType(r string, s string) string {
+	logger.Debug().Msgf("eval '%s'.'%s'", r, s)
 	value := strings.ToLower(s)
+
+	if _, ok := knownScopedTypeMappings[r]; ok {
+		if v, ok := knownScopedTypeMappings[r][value]; ok {
+			logger.Debug().Msgf("known scoped map '%s.%s' -> '%s'", r, s, v)
+			return v
+		}
+	}
 	if v, ok := knownTypeMappings[value]; ok {
+		logger.Debug().Msgf("known map '%s' -> '%s'", s, v)
 		return v
 	}
 	if strings.HasSuffix(value, "id") {
+		logger.Debug().Msgf("is ID '%s' -> 'ID'", s)
 		return "ID"
 	}
 	for _, knownStringTypeSuffix := range stringTypeSuffixes {
 		if strings.HasSuffix(value, knownStringTypeSuffix) {
+			logger.Debug().Msgf("known string suffix '%s' -> 'string'", s)
 			return "string"
 		}
 	}
@@ -647,6 +672,7 @@ func convertPayloadType(s string) string {
 	case "":
 		return "string"
 	}
+	logger.Debug().Msgf("make singular on '%s'", s)
 	return makeSingular(s)
 }
 
