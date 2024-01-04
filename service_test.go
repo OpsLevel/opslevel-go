@@ -237,7 +237,7 @@ func TestCreateService(t *testing.T) {
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: ol.NewString("Foo service"),
+		Description: ol.RefOf("Foo service"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -255,7 +255,7 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: ol.NewString("Foo service"),
+		Description: ol.RefOf("Foo service"),
 		Parent:      ol.NewIdentifier("FooSystem"),
 	})
 	// Assert

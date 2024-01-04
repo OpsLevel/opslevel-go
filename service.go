@@ -555,27 +555,21 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 	return q.Account.Services, nil
 }
 
-// NOTE: why is this special?
-// type TagArgs struct {
-// 	Key   string `json:"key,omitempty"`
-// 	Value string `json:"value,omitempty"`
-// }
-
 func NewTagArgs(tag string) TagArgs {
 	kv := strings.Split(tag, ":")
 	switch len(kv) {
 	case 1:
 		return TagArgs{
-			Key: NewString(kv[0]),
+			Key: RefOf(kv[0]),
 		}
 	case 2:
 		return TagArgs{
-			Key:   NewString(kv[0]),
-			Value: NewString(kv[1]),
+			Key:   RefOf(kv[0]),
+			Value: RefOf(kv[1]),
 		}
 	default: // TODO: is this the best we can do?
 		return TagArgs{
-			Key: NewString(tag),
+			Key: RefOf(tag),
 		}
 	}
 }
@@ -691,7 +685,7 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 
 func (client *Client) DeleteServiceWithAlias(alias string) error {
 	return client.DeleteService(ServiceDeleteInput{
-		Alias: NewString(alias),
+		Alias: RefOf(alias),
 	})
 }
 

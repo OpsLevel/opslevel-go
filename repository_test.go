@@ -242,7 +242,7 @@ func TestUpdateServiceRepository(t *testing.T) {
 	// Act
 	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
 		Id:          id1,
-		DisplayName: ol.NewString("Foobar"),
+		DisplayName: ol.RefOf("Foobar"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

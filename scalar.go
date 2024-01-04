@@ -52,7 +52,7 @@ func NewIdentifier(value ...string) *IdentifierInput {
 			}
 		}
 		return &IdentifierInput{
-			Alias: NewString(value[0]),
+			Alias: RefOf(value[0]),
 		}
 	}
 	var output IdentifierInput

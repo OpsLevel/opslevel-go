@@ -933,12 +933,12 @@ type TagUpdateInput struct {
 
 // TeamCreateInput specifies the input fields used to create a team.
 type TeamCreateInput struct {
-	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
-	Name             string                     `json:"name" yaml:"name"`                                             // The team's display name. (Required.)
-	Contacts         *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty"`                 // The contacts for the team. (Optional.)
+	Responsibilities *string `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	// Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
+	Members    *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`       // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"` // The parent team. (Optional.)
+	Name       string                     `json:"name" yaml:"name"`                                 // The team's display name. (Required.)
+	Contacts   *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty"`     // The contacts for the team. (Optional.)
 }
 
 // TeamDeleteInput specifies the input fields used to delete a team.
@@ -967,13 +967,13 @@ type TeamMembershipUserInput struct {
 
 // TeamUpdateInput specifies the input fields used to update a team.
 type TeamUpdateInput struct {
-	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
-	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty"`                             // The id of the team to be updated. (Optional.)
-	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty"`                       // The alias of the team to be updated. (Optional.)
-	Name             *string                    `json:"name,omitempty" yaml:"name,omitempty"`                         // The team's display name. (Optional.)
+	Responsibilities *string `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	// Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
+	Members    *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`       // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"` // The parent team. (Optional.)
+	Id         *ID                        `json:"id,omitempty" yaml:"id,omitempty"`                 // The id of the team to be updated. (Optional.)
+	Alias      *string                    `json:"alias,omitempty" yaml:"alias,omitempty"`           // The alias of the team to be updated. (Optional.)
+	Name       *string                    `json:"name,omitempty" yaml:"name,omitempty"`             // The team's display name. (Optional.)
 }
 
 // ToolCreateInput specifies the input fields used to create a tool.

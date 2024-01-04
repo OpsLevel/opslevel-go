@@ -18,8 +18,8 @@ func TestInviteUser(t *testing.T) {
 	client := BestTestClient(t, "user/invite", testRequest)
 	// Act
 	result, err := client.InviteUser("kyle@opslevel.com", ol.UserInput{
-		Name:             ol.NewString("Kyle Rockman"),
-		SkipWelcomeEmail: ol.Bool(false),
+		Name:             ol.RefOf("Kyle Rockman"),
+		SkipWelcomeEmail: ol.RefOf(false),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -114,8 +114,8 @@ func TestUpdateUser(t *testing.T) {
 	client := BestTestClient(t, "user/update", testRequest)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
-		Role:             ol.NewString(string(ol.UserRoleAdmin)),
-		SkipWelcomeEmail: ol.Bool(false),
+		Role:             ol.RefOf(string(ol.UserRoleAdmin)),
+		SkipWelcomeEmail: ol.RefOf(false),
 	})
 	// Assert
 	autopilot.Ok(t, err)

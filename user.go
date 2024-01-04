@@ -42,7 +42,7 @@ func NewUserIdentifier(value string) UserIdentifierInput {
 		}
 	}
 	return UserIdentifierInput{
-		Email: NewString(value),
+		Email: RefOf(value),
 	}
 }
 

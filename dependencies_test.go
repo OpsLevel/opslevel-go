@@ -21,7 +21,7 @@ func TestCreateServiceDependency(t *testing.T) {
 			SourceIdentifier:      ol.NewIdentifier("example_2"),
 			DestinationIdentifier: ol.NewIdentifier("example_3"),
 		},
-		Notes: ol.NewString("An example description"),
+		Notes: ol.RefOf("An example description"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

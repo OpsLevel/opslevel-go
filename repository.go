@@ -214,8 +214,8 @@ func (client *Client) ConnectServiceRepository(service *ServiceId, repository *R
 	input := ServiceRepositoryCreateInput{
 		Service:       *NewIdentifier(string(service.Id)),
 		Repository:    *NewIdentifier(string(repository.Id)),
-		BaseDirectory: NewString("/"),
-		DisplayName:   NewString(fmt.Sprintf("%s/%s", repository.Organization, repository.Name)),
+		BaseDirectory: RefOf("/"),
+		DisplayName:   RefOf(fmt.Sprintf("%s/%s", repository.Organization, repository.Name)),
 	}
 	return client.CreateServiceRepository(input)
 }

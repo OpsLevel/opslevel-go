@@ -16,10 +16,10 @@ func TestSystemCreate(t *testing.T) {
 	)
 	client := BestTestClient(t, "system/create", testRequest)
 	input := ol.SystemInput{
-		Name:        ol.NewString("PlatformSystem3"),
-		Description: ol.NewString("creating this for testing purposes"),
+		Name:        ol.RefOf("PlatformSystem3"),
+		Description: ol.RefOf("creating this for testing purposes"),
 		OwnerId:     &id4,
-		Note:        ol.NewString("hello world"),
+		Note:        ol.RefOf("hello world"),
 	}
 	// Act
 	result, err := client.CreateSystem(input)
@@ -177,10 +177,10 @@ func TestSystemUpdate(t *testing.T) {
 	)
 	client := BestTestClient(t, "system/update", testRequest)
 	input := ol.SystemInput{
-		Name:        ol.NewString("PlatformSystem1"),
-		Description: ol.NewString("Yolo!"),
+		Name:        ol.RefOf("PlatformSystem1"),
+		Description: ol.RefOf("Yolo!"),
 		OwnerId:     &id4,
-		Note:        ol.NewString("Please delete me"),
+		Note:        ol.RefOf("Please delete me"),
 	}
 	// Act
 	result, err := client.UpdateSystem(string(id1), input)

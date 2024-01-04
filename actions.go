@@ -175,10 +175,10 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 		} `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
 	}
 	if input.AccessControl == nil {
-		input.AccessControl = NewEnum[CustomActionsTriggerDefinitionAccessControlEnum](CustomActionsTriggerDefinitionAccessControlEnumEveryone)
+		input.AccessControl = RefOf(CustomActionsTriggerDefinitionAccessControlEnumEveryone)
 	}
 	if input.EntityType == nil {
-		input.EntityType = NewEnum[CustomActionsEntityTypeEnum](CustomActionsEntityTypeEnumService)
+		input.EntityType = RefOf(CustomActionsEntityTypeEnumService)
 	}
 	v := PayloadVariables{
 		"input": input,

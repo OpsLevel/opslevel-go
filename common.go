@@ -36,17 +36,7 @@ func NullString() *string {
 	return output
 }
 
-func NewEnum[T ~string](value T) *T {
-	return (*T)(&value)
-}
-
-func NewString(value string) *string {
-	return &value
-}
-
-// Bool is a helper routine that allocates a new bool value
-// to store v and returns a pointer to it.
-func Bool(v bool) *bool {
+func RefOf[T any](v T) *T {
 	return &v
 }
 
@@ -74,10 +64,10 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return fmt.Errorf(sb.String())
 }
 
-func NewInt(i int) *int {
-	output := i
-	return &output
-}
+// func NewInt(i int) *int {
+// 	output := i
+// 	return &output
+// }
 
 func NewISO8601Date(datetime string) iso8601.Time {
 	date, _ := iso8601.ParseString(datetime)

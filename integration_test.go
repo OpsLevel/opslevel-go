@@ -34,8 +34,8 @@ func TestCreateAWSIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_aws", testRequest)
 	// Act
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
-		IAMRole:    opslevel.NewString("arn:aws:iam::XXXX:role/aws-integration-role"),
-		ExternalID: opslevel.NewString("123456789"),
+		IAMRole:    opslevel.RefOf("arn:aws:iam::XXXX:role/aws-integration-role"),
+		ExternalID: opslevel.RefOf("123456789"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -65,8 +65,8 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_new_relic", testRequest)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
-		ApiKey:  opslevel.NewString("123456789"),
-		BaseUrl: opslevel.NewString("https://api.newrelic.com/graphql"),
+		ApiKey:  opslevel.RefOf("123456789"),
+		BaseUrl: opslevel.RefOf("https://api.newrelic.com/graphql"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -162,8 +162,8 @@ func TestUpdateAWSIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/update_aws", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationAWS(string(id1), opslevel.AWSIntegrationInput{
-		Name:       opslevel.NewString("Dev2"),
-		ExternalID: opslevel.NewString("123456789"),
+		Name:       opslevel.RefOf("Dev2"),
+		ExternalID: opslevel.RefOf("123456789"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -196,7 +196,7 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	result, err := client.UpdateIntegrationNewRelic(
 		string(id1),
 		opslevel.NewRelicIntegrationInput{
-			BaseUrl: opslevel.NewString("https://api-test.newrelic.com/graphql"),
+			BaseUrl: opslevel.RefOf("https://api-test.newrelic.com/graphql"),
 		},
 	)
 	// Assert

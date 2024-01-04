@@ -119,8 +119,8 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 		i.ProviderResourceType = &input.Provider.Type
 		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalUrl:  NewString(input.Provider.URL),
-			ProviderName: NewString(input.Provider.Name),
+			ExternalUrl:  RefOf(input.Provider.URL),
+			ProviderName: RefOf(input.Provider.Name),
 		}
 	}
 	var m struct {
@@ -219,8 +219,8 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		i.ProviderResourceType = &input.Provider.Type
 		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalUrl:  NewString(input.Provider.URL),
-			ProviderName: NewString(input.Provider.Name),
+			ExternalUrl:  RefOf(input.Provider.URL),
+			ProviderName: RefOf(input.Provider.Name),
 		}
 	}
 	var m struct {
