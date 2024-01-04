@@ -64,11 +64,6 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return fmt.Errorf(sb.String())
 }
 
-// func NewInt(i int) *int {
-// 	output := i
-// 	return &output
-// }
-
 func NewISO8601Date(datetime string) iso8601.Time {
 	date, _ := iso8601.ParseString(datetime)
 	return iso8601.Time{Time: date}

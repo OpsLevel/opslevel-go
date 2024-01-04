@@ -41,12 +41,6 @@ type InfrastructureResourceConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
-type InfrastructureResourceProviderInput struct {
-	AccountName  string `json:"accountName" yaml:"accountName" default:"Dev - 123456789"`
-	ExternalURL  string `json:"externalUrl" yaml:"externalUrl" default:"https://google.com"`
-	ProviderName string `json:"providerName" yaml:"providerName" default:"Google"`
-}
-
 type InfraProviderInput struct {
 	Account string `json:"account" yaml:"account" default:"Dev - 123456789"`
 	Name    string `json:"name" yaml:"name" default:"Google"`

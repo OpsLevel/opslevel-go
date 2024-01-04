@@ -733,7 +733,7 @@ func TestTeamAddContact(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation ContactCreate($input:ContactCreateInput!){contactCreate(input: $input){contact{address,displayName,id,type},errors{message,path}}}`,
-		`{"input": {"type":"slack", "address":"#general", "teamAlias": "{{ template "id1_string" }}" }}`,
+		`{"input": {"type":"slack", "address":"#general", "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": {"contactCreate": {"contact": {"address": "#general", "displayName": "Slack", {{ template "id2" }}, "type": "slack"}, "errors": [] } }}`,
 	)
 	client1 := BestTestClient(t, "team/get_with_alias_add_contact", getTestRequestWithAlias())

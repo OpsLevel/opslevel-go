@@ -260,13 +260,17 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 			Errors  []OpsLevelErrors
 		} `graphql:"contactCreate(input: $input)"`
 	}
-	// TODO: there is no teamId field anymore
 	contactInput := ContactCreateInput{
 		Type:        contact.Type,
 		DisplayName: contact.DisplayName,
 		Address:     contact.Address,
-		TeamAlias:   &team,
 	}
+	if IsID(team) {
+		contactInput.OwnerId = NewID(team)
+	} else {
+		contactInput.TeamAlias = &team
+	}
+
 	v := PayloadVariables{
 		"input": contactInput,
 	}
