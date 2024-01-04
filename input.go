@@ -7,7 +7,7 @@ import "github.com/relvacode/iso8601"
 // AlertSourceExternalIdentifier specifies the input needed to find an alert source with external information.
 type AlertSourceExternalIdentifier struct {
 	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`             // The type of the alert. (Required.)
-	ExternalId ID                  `json:"externalId" yaml:"externalId"` // The external id of the alert. (Required.)
+	ExternalId string              `json:"externalId" yaml:"externalId"` // The external id of the alert. (Required.)
 }
 
 // AlertSourceServiceCreateInput specifies the input used for attaching an alert source to a service.
@@ -38,7 +38,7 @@ type AliasDeleteInput struct {
 type AwsIntegrationInput struct {
 	Name                     *string   `json:"name,omitempty" yaml:"name,omitempty"`                                         // The name of the integration. (Optional.)
 	IamRole                  *string   `json:"iamRole,omitempty" yaml:"iamRole,omitempty"`                                   // The IAM role OpsLevel uses in order to access the AWS account. (Optional.)
-	ExternalId               *ID       `json:"externalId,omitempty" yaml:"externalId,omitempty"`                             // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https:/docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
+	ExternalId               *string   `json:"externalId,omitempty" yaml:"externalId,omitempty"`                             // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https:/docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
 	OwnershipTagKeys         *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty"`                 // An Array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
 	AwsTagsOverrideOwnership *bool     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty"` // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
 }
@@ -555,7 +555,7 @@ type ContactCreateInput struct {
 	TeamAlias   *string     `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty"`     // The alias of the team the contact belongs to. (Optional.)
 	OwnerId     *ID         `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`         // The id of the owner of this contact. (Optional.)
 	DisplayType *string     `json:"displayType,omitempty" yaml:"displayType,omitempty"` // The type shown in the UI for the contact. (Optional.)
-	ExternalId  *ID         `json:"externalId,omitempty" yaml:"externalId,omitempty"`   // The remote identifier of the contact method. (Optional.)
+	ExternalId  *string     `json:"externalId,omitempty" yaml:"externalId,omitempty"`   // The remote identifier of the contact method. (Optional.)
 }
 
 // ContactDeleteInput specifies the input fields used to delete a contact.
@@ -577,7 +577,7 @@ type ContactUpdateInput struct {
 	Address     *string      `json:"address,omitempty" yaml:"address,omitempty"`         // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Optional.)
 	DisplayName *string      `json:"displayName,omitempty" yaml:"displayName,omitempty"` // The name shown in the UI for the contact. (Optional.)
 	DisplayType *string      `json:"displayType,omitempty" yaml:"displayType,omitempty"` // The type shown in the UI for the contact. (Optional.)
-	ExternalId  *ID          `json:"externalId,omitempty" yaml:"externalId,omitempty"`   // The remote identifier of the contact method. (Optional.)
+	ExternalId  *string      `json:"externalId,omitempty" yaml:"externalId,omitempty"`   // The remote identifier of the contact method. (Optional.)
 	MakeDefault *bool        `json:"makeDefault,omitempty" yaml:"makeDefault,omitempty"` // Makes the contact the default for the given type. Only available for team contacts. (Optional.)
 }
 
@@ -620,7 +620,7 @@ type CustomActionsWebhookActionCreateInput struct {
 	LiquidTemplate *string                     `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty"` // Template that can be used to generate a Webhook payload. (Optional.)
 	WebhookUrl     string                      `json:"webhookUrl" yaml:"webhookUrl"`                             // The URL that you wish to send the Webhook to when triggered. (Required.)
 	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod"`                             // HTTP used when the Webhook is triggered. Either POST or PUT. (Required.)
-	Headers        *[]JSON                     `json:"headers,omitempty" yaml:"headers,omitempty"`               // HTTP headers be passed along with your Webhook when triggered. (Optional.)
+	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty"`               // HTTP headers be passed along with your Webhook when triggered. (Optional.)
 }
 
 // CustomActionsWebhookActionUpdateInput represents inputs that specify the details of a Webhook Action you wish to update.
@@ -631,7 +631,7 @@ type CustomActionsWebhookActionUpdateInput struct {
 	LiquidTemplate *string                      `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty"` // Template that can be used to generate a Webhook payload. (Optional.)
 	WebhookUrl     *string                      `json:"webhookUrl,omitempty" yaml:"webhookUrl,omitempty"`         // The URL that you wish to send the Webhook too when triggered. (Optional.)
 	HttpMethod     *CustomActionsHttpMethodEnum `json:"httpMethod,omitempty" yaml:"httpMethod,omitempty"`         // HTTP used when the Webhook is triggered. Either POST or PUT. (Optional.)
-	Headers        *[]JSON                      `json:"headers,omitempty" yaml:"headers,omitempty"`               // HTTP headers be passed along with your Webhook when triggered. (Optional.)
+	Headers        *JSON                        `json:"headers,omitempty" yaml:"headers,omitempty"`               // HTTP headers be passed along with your Webhook when triggered. (Optional.)
 }
 
 // DeleteInput specifies the input fields used to delete an entity.
@@ -774,12 +774,11 @@ type PropertyDefinitionInput struct {
 	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty"` // . (Optional.)
 }
 
-// NOTE: JsonString here is JSONString in our code
 // PropertyInput represents the input for setting a property.
 type PropertyInput struct {
 	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                     // The entity that the property has been assigned to. (Required.)
 	Definition    IdentifierInput `json:"definition" yaml:"definition"`                           // The definition of the property. (Required.)
-	Value         JSONString      `json:"value" yaml:"value"`                                     // The value of the property. (Required.)
+	Value         JsonString      `json:"value" yaml:"value"`                                     // The value of the property. (Required.)
 	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty"` // Validate the property value against the schema. On by default. (Optional.)
 }
 
@@ -933,12 +932,12 @@ type TagUpdateInput struct {
 
 // TeamCreateInput specifies the input fields used to create a team.
 type TeamCreateInput struct {
-	Responsibilities *string `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	// Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members    *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`       // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"` // The parent team. (Optional.)
-	Name       string                     `json:"name" yaml:"name"`                                 // The team's display name. (Required.)
-	Contacts   *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty"`     // The contacts for the team. (Optional.)
+	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
+	Name             string                     `json:"name" yaml:"name"`                                             // The team's display name. (Required.)
+	Contacts         *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty"`                 // The contacts for the team. (Optional.)
 }
 
 // TeamDeleteInput specifies the input fields used to delete a team.
@@ -967,13 +966,13 @@ type TeamMembershipUserInput struct {
 
 // TeamUpdateInput specifies the input fields used to update a team.
 type TeamUpdateInput struct {
-	Responsibilities *string `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	// Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members    *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`       // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"` // The parent team. (Optional.)
-	Id         *ID                        `json:"id,omitempty" yaml:"id,omitempty"`                 // The id of the team to be updated. (Optional.)
-	Alias      *string                    `json:"alias,omitempty" yaml:"alias,omitempty"`           // The alias of the team to be updated. (Optional.)
-	Name       *string                    `json:"name,omitempty" yaml:"name,omitempty"`             // The team's display name. (Optional.)
+	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
+	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty"`                             // The id of the team to be updated. (Optional.)
+	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty"`                       // The alias of the team to be updated. (Optional.)
+	Name             *string                    `json:"name,omitempty" yaml:"name,omitempty"`                         // The team's display name. (Optional.)
 }
 
 // ToolCreateInput specifies the input fields used to create a tool.

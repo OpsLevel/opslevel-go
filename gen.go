@@ -337,7 +337,7 @@ import "github.com/relvacode/iso8601"
 type {{.Name}} struct { {{range .InputFields }}
   {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
     {{- if isListType .Name }}[]{{ end -}}
-    {{- if hasSuffix "Id" .Name }}ID
+    {{- if and (hasSuffix "Id" .Name) (not (eq .Name "externalId")) }}ID
     {{- else if hasSuffix "Access" .Name }}IdentifierInput
     {{- else if eq .Name "predicates" }}FilterPredicateInput
     {{- else if eq .Name "tags" }}TagInput
@@ -688,7 +688,7 @@ func renameMutation(s string) string {
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
 	// Examples: "alias", "address", "status", "levels", "responsibilities"
-	if value == "notes" || value == "days" ||
+	if value == "notes" || value == "days" || value == "headers" ||
 		strings.HasSuffix(value, "ies") ||
 		strings.HasSuffix(value, "ias") ||
 		strings.HasSuffix(value, "ls") ||

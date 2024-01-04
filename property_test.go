@@ -290,9 +290,9 @@ func TestGetServiceProperties(t *testing.T) {
 	owner := ol.EntityOwnerService{
 		OnService: serviceId,
 	}
-	value1 := ol.JSONString("true")
-	value2 := ol.JSONString("false")
-	value3 := ol.JSONString("\"Hello World!\"")
+	value1 := ol.JsonString("true")
+	value2 := ol.JsonString("false")
+	value3 := ol.JsonString("\"Hello World!\"")
 	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
 		{
 			Definition: ol.PropertyDefinitionId{

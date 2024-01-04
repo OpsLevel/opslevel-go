@@ -13,7 +13,7 @@ func TestCreateWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
-		`{"input":{"headers":["{\"Content-Type\":\"application/json\"}"],"httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
+		`{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
 		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
@@ -23,7 +23,7 @@ func TestCreateWebhookAction(t *testing.T) {
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: ol.RefOf("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
-		Headers:        &[]ol.JSON{{"Content-Type": "application/json"}},
+		Headers:        &ol.JSON{"Content-Type": "application/json"},
 		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
 		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
 	})
@@ -83,20 +83,17 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
-		`{"input":{"id": "123456789","description":"","headers":["{\"Accept\":\"application/json\"}"]}}`,
+		`{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "custom_actions/update_action2", testRequest)
-	headers := ol.JSON{
-		"Accept": "application/json",
-	}
 
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          *newID,
 		Description: ol.RefOf(""),
-		Headers:     &[]ol.JSON{headers},
+		Headers:     &ol.JSON{"Accept": "application/json"},
 	})
 
 	// Assert

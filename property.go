@@ -31,18 +31,11 @@ type PropertyDefinitionId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
-// type PropertyInput struct {
-// 	Owner         IdentifierInput `json:"owner" yaml:"owner" default:"{\"id\":\"XXX_SERVICE_ID_XXX\"}"`
-// 	Definition    IdentifierInput `json:"definition" yaml:"definition" default:"{\"alias\":\"prop_def_alias\"}"`
-// 	Value         JSONString      `json:"value" yaml:"value" default:"[\"any\",\"valid\",\"JSON\",1.23,{\"nested\":true}]"`
-// 	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty" default:"true"`
-// }
-
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
 	Owner            EntityOwnerService   `graphql:"owner"`
 	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
-	Value            *JSONString          `graphql:"value"`
+	Value            *JsonString          `graphql:"value"`
 }
 
 type ServicePropertiesConnection struct {
