@@ -355,7 +355,7 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- else if eq .Name "members" }}TeamMembershipUserInput
     {{- else if eq .Name "contacts" }}ContactInput
     {{- else if .Type.Name }}{{ template "converted_type" .Type }}
-    {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}}
+    {{- else }}{{ convertPayloadType "parent" .Type.OfType.OfTypeName }}{{ end -}}
     ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + ` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
 		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
@@ -636,6 +636,7 @@ func makeSingular(s string) string {
 // r = the name of the struct type the field is in, CustomActionsWebhookActionCreateInput
 // s = the name of the field, Headers
 // TODO: how do I set r and s?
+// can use ... (one or more args)
 func convertPayloadType(r string, s string) string {
 	logger.Debug().Msgf("eval '%s'.'%s'", r, s)
 	value := strings.ToLower(s)
