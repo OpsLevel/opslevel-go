@@ -500,6 +500,7 @@ const (
 	PredicateKeyEnumAliases        PredicateKeyEnum = "aliases"         // Filter by Alias attached to this service, if any.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
 	PredicateKeyEnumSystemID       PredicateKeyEnum = "system_id"       // Filter by System that this service is assigned to, if any.
+	PredicateKeyEnumProperties     PredicateKeyEnum = "properties"      // Filter by custom-defined properties.
 )
 
 // All PredicateKeyEnum as []string
@@ -520,6 +521,7 @@ var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumAliases),
 	string(PredicateKeyEnumDomainID),
 	string(PredicateKeyEnumSystemID),
+	string(PredicateKeyEnumProperties),
 }
 
 // PredicateTypeEnum represents operations that can be used on predicates.
@@ -715,6 +717,7 @@ const (
 	ServicePropertyTypeEnumTierIndex      ServicePropertyTypeEnum = "tier_index"      // The index of the tier a service belongs to.
 	ServicePropertyTypeEnumNote           ServicePropertyTypeEnum = "note"            // Additional information about the service.
 	ServicePropertyTypeEnumSystem         ServicePropertyTypeEnum = "system"          // The system that the service belongs to.
+	ServicePropertyTypeEnumCustomProperty ServicePropertyTypeEnum = "custom_property" // A custom property that is associated with the service.
 )
 
 // All ServicePropertyTypeEnum as []string
@@ -728,6 +731,7 @@ var AllServicePropertyTypeEnum = []string{
 	string(ServicePropertyTypeEnumTierIndex),
 	string(ServicePropertyTypeEnumNote),
 	string(ServicePropertyTypeEnumSystem),
+	string(ServicePropertyTypeEnumCustomProperty),
 }
 
 // ServiceSortEnum represents sort possibilities for services.

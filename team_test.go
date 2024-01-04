@@ -90,7 +90,7 @@ func TestCreateTeam(t *testing.T) {
 	input := autopilot.Register[ol.TeamCreateInput]("team_create_input",
 		ol.TeamCreateInput{
 			Name:             "Example",
-			Responsibilities: &[]string{"Foo & bar"},
+			Responsibilities: ol.NewString("Foo & bar"),
 			Contacts:         &contacts,
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		})
@@ -606,7 +606,7 @@ func TestUpdateTeam(t *testing.T) {
 	input := autopilot.Register[ol.TeamUpdateInput]("team_update_input",
 		ol.TeamUpdateInput{
 			Id:               &id1,
-			Responsibilities: &[]string{"Foo & bar"},
+			Responsibilities: ol.NewString("Foo & bar"),
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		},
 	)

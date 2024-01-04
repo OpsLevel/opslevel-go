@@ -23,8 +23,8 @@ func TestCreatePropertyDefinition(t *testing.T) {
 		Schema:  schema,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
-		Name:   "my-prop",
-		Schema: schema,
+		Name:   ol.NewString("my-prop"),
+		Schema: &schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
@@ -54,9 +54,9 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
-		Description:           "this description was added",
-		Schema:                schema,
-		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
+		Description:           ol.NewString("this description was added"),
+		Schema:                &schema,
+		PropertyDisplayStatus: ol.NewEnum[ol.PropertyDisplayStatusEnum](ol.PropertyDisplayStatusEnumHidden),
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,

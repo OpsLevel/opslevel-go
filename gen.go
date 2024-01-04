@@ -328,7 +328,7 @@ var All{{$.Name}} = []string {
 import "github.com/relvacode/iso8601"
 
 {{range .Types | sortByName}}{{if and (eq .Kind "INPUT_OBJECT") (not (internal .Name))}}
-{{ if not (hasPrefix "Campaign" .Name) -}}
+{{ if and (not (hasPrefix "Campaign" .Name)) (not (hasPrefix "Group" .Name)) -}}
 {{template "input_object" .}}
 {{end}}{{end}}{{end}}
 
@@ -338,6 +338,11 @@ type {{.Name}} struct { {{range .InputFields }}
   {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
     {{- if isListType .Name }}[]{{ end -}}
     {{- if hasSuffix "Id" .Name }}ID
+    {{- else if hasSuffix "Access" .Name }}IdentifierInput
+    {{- else if eq .Name "predicates" }}FilterPredicateInput
+    {{- else if eq .Name "tags" }}TagInput
+    {{- else if eq .Name "members" }}TeamMembershipUserInput
+    {{- else if eq .Name "contacts" }}ContactInput
     {{- else if .Type.Name }}{{ template "converted_type" .Type }}
     {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}}
     ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + ` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
@@ -682,9 +687,11 @@ func renameMutation(s string) string {
 
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
-	// Examples: "alias", "address", "status"
+	// Examples: "alias", "address", "status", "levels", "responsibilities"
 	if value == "notes" || value == "days" ||
+		strings.HasSuffix(value, "ies") ||
 		strings.HasSuffix(value, "ias") ||
+		strings.HasSuffix(value, "ls") ||
 		(!strings.HasSuffix(value, "access") && strings.HasSuffix(value, "ss")) ||
 		strings.HasSuffix(value, "us") {
 		return false

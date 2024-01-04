@@ -452,6 +452,7 @@ type CheckServicePropertyCreateInput struct {
 	FilterId               *ID                     `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The id of the filter of the check. (Optional.)
 	Notes                  *string                 `json:"notes,omitempty" yaml:"notes,omitempty"`                                   // Additional information about the check. (Optional.)
 	ServiceProperty        ServicePropertyTypeEnum `json:"serviceProperty" yaml:"serviceProperty"`                                   // The property of the service that the check will verify. (Required.)
+	PropertyDefinition     *IdentifierInput        `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`         // The secondary key of the property that the check will verify (e.g. the specific custom property). (Optional.)
 	PropertyValuePredicate *PredicateInput         `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"` // The condition that should be satisfied by the service property value. (Optional.)
 }
 
@@ -467,6 +468,7 @@ type CheckServicePropertyUpdateInput struct {
 	Notes                  *string                  `json:"notes,omitempty" yaml:"notes,omitempty"`                                   // Additional information about the check. (Optional.)
 	Id                     ID                       `json:"id" yaml:"id"`                                                             // The id of the check to be updated. (Required.)
 	ServiceProperty        *ServicePropertyTypeEnum `json:"serviceProperty,omitempty" yaml:"serviceProperty,omitempty"`               // The property of the service that the check will verify. (Optional.)
+	PropertyDefinition     *IdentifierInput         `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`         // The secondary key of the property that the check will verify (e.g. the specific custom property). (Optional.)
 	PropertyValuePredicate *PredicateUpdateInput    `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"` // The condition that should be satisfied by the service property value. (Optional.)
 }
 
@@ -674,15 +676,6 @@ type FilterUpdateInput struct {
 	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
 }
 
-// GroupInput specifies the input fields used to create and update a group.
-type GroupInput struct {
-	Name        *string          `json:"name,omitempty" yaml:"name,omitempty"`               // The name of the group. (Optional.)
-	Description *string          `json:"description,omitempty" yaml:"description,omitempty"` // The description of the group. (Optional.)
-	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`           // The parent of the group. (Optional.)
-	Members     *[]string        `json:"members,omitempty" yaml:"members,omitempty"`         // The users who are members of the group. (Optional.)
-	Teams       *[]string        `json:"teams,omitempty" yaml:"teams,omitempty"`             // The teams where this group is the direct parent. (Optional.)
-}
-
 // IdentifierInput specifies the input fields used to identify a resource.
 type IdentifierInput struct {
 	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the resource. (Optional.)
@@ -770,6 +763,24 @@ type PredicateInput struct {
 type PredicateUpdateInput struct {
 	Type  *PredicateTypeEnum `json:"type,omitempty" yaml:"type,omitempty"`   // The condition type used by the predicate. (Optional.)
 	Value *string            `json:"value,omitempty" yaml:"value,omitempty"` // The condition value used by the predicate. (Optional.)
+}
+
+// NOTE: Schema here should be JSON (our code differs)
+// PropertyDefinitionInput represents the input for defining a property.
+type PropertyDefinitionInput struct {
+	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty"`                                   // The name of the property definition. (Optional.)
+	Schema                *JSON                      `json:"schema,omitempty" yaml:"schema,omitempty"`                               // The schema of the property definition. (Optional.)
+	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty"`                     // The schema of the property definition. (Optional.)
+	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty"` // . (Optional.)
+}
+
+// NOTE: JsonString here is JSONString in our code
+// PropertyInput represents the input for setting a property.
+type PropertyInput struct {
+	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                     // The entity that the property has been assigned to. (Required.)
+	Definition    IdentifierInput `json:"definition" yaml:"definition"`                           // The definition of the property. (Required.)
+	Value         JSONString      `json:"value" yaml:"value"`                                     // The value of the property. (Required.)
+	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty"` // Validate the property value against the schema. On by default. (Optional.)
 }
 
 // RelationshipDefinition represents a source, target and relationship type specifying a relationship between two resources.
@@ -922,7 +933,7 @@ type TagUpdateInput struct {
 
 // TeamCreateInput specifies the input fields used to create a team.
 type TeamCreateInput struct {
-	Responsibilities *[]string                  `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
 	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
 	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
 	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
@@ -956,13 +967,13 @@ type TeamMembershipUserInput struct {
 
 // TeamUpdateInput specifies the input fields used to update a team.
 type TeamUpdateInput struct {
-	Responsibilities *[]string        `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	Group            *IdentifierInput `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members          *[]string        `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
-	Id               *ID              `json:"id,omitempty" yaml:"id,omitempty"`                             // The id of the team to be updated. (Optional.)
-	Alias            *string          `json:"alias,omitempty" yaml:"alias,omitempty"`                       // The alias of the team to be updated. (Optional.)
-	Name             *string          `json:"name,omitempty" yaml:"name,omitempty"`                         // The team's display name. (Optional.)
+	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
+	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty"`                             // The id of the team to be updated. (Optional.)
+	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty"`                       // The alias of the team to be updated. (Optional.)
+	Name             *string                    `json:"name,omitempty" yaml:"name,omitempty"`                         // The team's display name. (Optional.)
 }
 
 // ToolCreateInput specifies the input fields used to create a tool.
