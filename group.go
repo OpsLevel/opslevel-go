@@ -269,11 +269,6 @@ func (g *Group) Members(client *Client, variables *PayloadVariables) (*UserConne
 
 //#region Delete
 
-// Deprecated: Please use DeleteGroup instead
-func (client *Client) DeleteGroupWithAlias(alias string) error {
-	return client.DeleteGroup(alias)
-}
-
 func (client *Client) DeleteGroup(identifier string) error {
 	var m struct {
 		Payload struct {

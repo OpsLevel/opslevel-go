@@ -5,10 +5,6 @@ import (
 	"slices"
 )
 
-// type MemberInput struct {
-// 	Email string `json:"email" default:"john.doe@example.com"`
-// }
-
 type UserId struct {
 	Id    ID
 	Email string
@@ -28,17 +24,6 @@ type UserConnection struct {
 	PageInfo   PageInfo
 	TotalCount int
 }
-
-// type UserIdentifierInput struct {
-// 	Id    *ID     `graphql:"id" json:"id,omitempty" yaml:"id,omitempty"`
-// 	Email *string `graphql:"email" json:"email,omitempty" yaml:"email,omitempty"`
-// }
-
-// type UserInput struct {
-// 	Name             string   `json:"name,omitempty"`
-// 	Role             UserRole `json:"role,omitempty"`
-// 	SkipWelcomeEmail bool     `json:"skipWelcomeEmail" yaml:"skipWelcomeEmail"`
-// }
 
 func (u *User) ResourceId() ID {
 	return u.Id

@@ -50,12 +50,6 @@ type AWSIntegrationInput struct {
 	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
 }
 
-// type NewRelicIntegrationInput struct {
-// 	ApiKey     *string `json:"apiKey,omitempty"`
-// 	BaseUrl    *string `json:"baseUrl,omitempty"`
-// 	AccountKey *string `json:"accountKey,omitempty"`
-// }
-
 func (s AWSIntegrationInput) GetGraphQLType() string      { return "AwsIntegrationInput" }
 func (s NewRelicIntegrationInput) GetGraphQLType() string { return "NewRelicIntegrationInput" }
 

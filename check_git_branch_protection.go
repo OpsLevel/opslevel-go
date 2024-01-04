@@ -2,14 +2,6 @@ package opslevel
 
 type GitBranchProtectionCheckFragment struct{}
 
-// type CheckGitBranchProtectionCreateInput struct {
-// 	CheckCreateInput
-// }
-
-// type CheckGitBranchProtectionUpdateInput struct {
-// 	CheckUpdateInput
-// }
-
 func (client *Client) CreateCheckGitBranchProtection(input CheckGitBranchProtectionCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkGitBranchProtectionCreate(input: $input)"`

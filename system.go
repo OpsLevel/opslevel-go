@@ -23,16 +23,41 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-// type SystemInput struct {
-// 	Name        *string          `json:"name,omitempty"`
-// 	Description *string          `json:"description,omitempty"`
-// 	Owner       *ID              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-// 	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`
-// 	Note        *string          `json:"note,omitempty"`
-// }
-
 func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return s.Tags(client, variables)
+	var q struct {
+		Account struct {
+			System struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"system(input: $system)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid system id: '%s'", s.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["system"] = *NewIdentifier(string(s.Id))
+
+	if err := client.Query(&q, *variables, WithName("SystemTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.System.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.System.Tags.PageInfo.End
+		resp, err := s.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		// Add unique tags only
+		for _, resp := range resp.Nodes {
+			if !slices.Contains[[]Tag, Tag](q.Account.System.Tags.Nodes, resp) {
+				q.Account.System.Tags.Nodes = append(q.Account.System.Tags.Nodes, resp)
+			}
+		}
+		q.Account.System.Tags.PageInfo = resp.PageInfo
+		q.Account.System.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.System.Tags, nil
 }
 
 func (s *SystemId) ResourceId() ID {
@@ -74,44 +99,6 @@ func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*
 		q.Account.System.ChildServices.TotalCount += resp.TotalCount
 	}
 	return &q.Account.System.ChildServices, nil
-}
-
-// Deprecated: Please use GetTags instead
-func (s *SystemId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	var q struct {
-		Account struct {
-			System struct {
-				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
-			} `graphql:"system(input: $system)"`
-		}
-	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid system id: '%s'", s.Id)
-	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
-	(*variables)["system"] = *NewIdentifier(string(s.Id))
-
-	if err := client.Query(&q, *variables, WithName("SystemTagsList")); err != nil {
-		return nil, err
-	}
-	for q.Account.System.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.System.Tags.PageInfo.End
-		resp, err := s.Tags(client, variables)
-		if err != nil {
-			return nil, err
-		}
-		// Add unique tags only
-		for _, resp := range resp.Nodes {
-			if !slices.Contains[[]Tag, Tag](q.Account.System.Tags.Nodes, resp) {
-				q.Account.System.Tags.Nodes = append(q.Account.System.Tags.Nodes, resp)
-			}
-		}
-		q.Account.System.Tags.PageInfo = resp.PageInfo
-		q.Account.System.Tags.TotalCount += resp.TotalCount
-	}
-	return &q.Account.System.Tags, nil
 }
 
 func (s *SystemId) AssignService(client *Client, services ...string) error {

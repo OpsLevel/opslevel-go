@@ -1,13 +1,5 @@
 package opslevel
 
-// type CheckServiceConfigurationCreateInput struct {
-// 	CheckCreateInput
-// }
-
-// type CheckServiceConfigurationUpdateInput struct {
-// 	CheckUpdateInput
-// }
-
 func (client *Client) CreateCheckServiceConfiguration(input CheckServiceConfigurationCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkServiceConfigurationCreate(input: $input)"`

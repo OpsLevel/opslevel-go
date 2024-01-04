@@ -145,10 +145,6 @@ func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
 	return c
 }
 
-// type CheckDeleteInput struct {
-// 	Id ID `json:"id"`
-// }
-
 // Encompass CheckCreatePayload and CheckUpdatePayload into 1 struct
 type CheckResponsePayload struct {
 	Check  Check

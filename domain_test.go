@@ -80,7 +80,7 @@ func TestDomainGetTags(t *testing.T) {
 		Id: id1,
 	}
 	// Act
-	resp, err := domain.Tags(client, nil)
+	resp, err := domain.GetTags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)

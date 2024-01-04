@@ -78,7 +78,7 @@ func TestSystemGetTags(t *testing.T) {
 		Id: id3,
 	}
 	// Act
-	resp, err := system.Tags(client, nil)
+	resp, err := system.GetTags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)

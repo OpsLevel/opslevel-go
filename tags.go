@@ -35,36 +35,6 @@ type TagConnection struct {
 	TotalCount int
 }
 
-// type TagInput struct {
-// 	Key   string `json:"key" yaml:"key" default:"environment"`
-// 	Value string `json:"value" yaml:"value" default:"production"`
-// }
-
-// type TagAssignInput struct {
-// 	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
-// 	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty" default:"my-team-alias"`
-// 	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Team"`
-// 	Tags  []TagInput       `json:"tags" yaml:"tags"`
-// }
-
-// type TagCreateInput struct {
-// 	Id    ID               `json:"id,omitempty" yaml:"id,omitempty"`
-// 	Alias string           `json:"alias,omitempty" yaml:"alias,omitempty"`
-// 	Type  TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"Repository"`
-// 	Key   string           `json:"key" yaml:"key" default:"environment"`
-// 	Value string           `json:"value" yaml:"value" default:"production"`
-// }
-
-// type TagUpdateInput struct {
-// 	Id    ID     `json:"id"`
-// 	Key   string `json:"key,omitempty"`
-// 	Value string `json:"value,omitempty"`
-// }
-
-// type TagDeleteInput struct {
-// 	Id ID `json:"id"`
-// }
-
 func (client *Client) GetTaggableResource(resourceType TaggableResource, identifier string) (TaggableResourceInterface, error) {
 	var err error
 	var taggableResource TaggableResourceInterface
@@ -125,26 +95,6 @@ func ValidateTagKey(key string) error {
 }
 
 //#region Assign
-
-// Deprecated: Use AssignTagsFor instead
-func (client *Client) AssignTagsForAlias(alias string, tags map[string]string) ([]Tag, error) {
-	return client.AssignTags(alias, tags)
-}
-
-// Deprecated: Use AssignTagFor instead
-func (client *Client) AssignTagForAlias(alias string, key string, value string) ([]Tag, error) {
-	return client.AssignTags(alias, map[string]string{key: value})
-}
-
-// Deprecated: Use AssignTagsFor instead
-func (client *Client) AssignTagsForId(id ID, tags map[string]string) ([]Tag, error) {
-	return client.AssignTags(string(id), tags)
-}
-
-// Deprecated: Use AssignTagFor instead
-func (client *Client) AssignTagForId(id ID, key string, value string) ([]Tag, error) {
-	return client.AssignTags(string(id), map[string]string{key: value})
-}
 
 func (client *Client) AssignTags(identifier string, tags map[string]string) ([]Tag, error) {
 	input := TagAssignInput{
@@ -210,11 +160,6 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 	return output, nil
 }
 
-// Deprecated: Use CreateTags instead
-func (client *Client) CreateTagsForId(id ID, tags map[string]string) ([]Tag, error) {
-	return client.CreateTags(string(id), tags)
-}
-
 func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	var m struct {
 		Payload struct {
@@ -230,34 +175,6 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	}
 	err := client.Mutate(&m, v, WithName("TagCreate"))
 	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
-}
-
-//#endregion
-
-//#region Retrieve
-
-// Deprecated: use client.GetServiceWithAlias(alias).Tags instead
-func (client *Client) GetTagsForServiceWithAlias(alias string) ([]Tag, error) {
-	service, err := client.GetServiceWithAlias(alias)
-	return service.Tags.Nodes, err
-}
-
-// Deprecated: use client.GetService(id).Tags instead
-func (client *Client) GetTagsForServiceWithId(id ID) ([]Tag, error) {
-	service, err := client.GetService(id)
-	return service.Tags.Nodes, err
-}
-
-// Deprecated: use client.GetService(id).Tags instead
-func (client *Client) GetTagsForService(id ID) ([]Tag, error) {
-	service, err := client.GetService(id)
-	return service.Tags.Nodes, err
-}
-
-// Deprecated: use client.GetService(id).Tags.TotalCount instead
-func (client *Client) GetTagCount(id ID) (int, error) {
-	service, err := client.GetService(id)
-	return service.Tags.TotalCount, err
 }
 
 //#endregion

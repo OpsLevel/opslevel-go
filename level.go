@@ -20,22 +20,6 @@ type LevelConnection struct {
 	TotalCount graphql.Int
 }
 
-// type LevelCreateInput struct {
-// 	Name        string `json:"name" yaml:"name" default:"Gold"`
-// 	Description string `json:"description,omitempty" yaml:"description,omitempty" default:"Go for it"`
-// 	Index       *int   `json:"index,omitempty" yaml:"index,omitempty" default:"3"`
-// }
-
-// type LevelUpdateInput struct {
-// 	Id          ID      `json:"id"`
-// 	Name        string  `json:"name,omitempty"`
-// 	Description *string `json:"description,omitempty"`
-// }
-
-// type LevelDeleteInput struct {
-// 	Id ID `json:"id"`
-// }
-
 func (conn *LevelConnection) Hydrate(client *Client) error {
 	var q struct {
 		Account struct {

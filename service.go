@@ -51,37 +51,6 @@ type ServiceDocumentsConnection struct {
 	TotalCount int
 }
 
-// type ServiceCreateInput struct {
-// 	Name        string           `json:"name" yaml:"name" default:"Hello World"`
-// 	Product     string           `json:"product,omitempty" yaml:"product,omitempty" default:"OSS"`
-// 	Description string           `json:"description,omitempty" yaml:"description,omitempty" default:"Hello World Service"`
-// 	Language    string           `json:"language,omitempty" yaml:"language,omitempty" default:"Go"`
-// 	Framework   string           `json:"framework,omitempty" yaml:"framework,omitempty" default:"fasthttp"`
-// 	Tier        string           `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" default:"tier_4"`
-// 	Owner       *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty" default:"{\"alias\":\"Platform\"}"`
-// 	Lifecycle   string           `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" default:"beta"`
-// 	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty" default:"{\"alias\":\"Engineering\"}"`
-// }
-
-// type ServiceUpdateInput struct {
-// 	Id          ID               `json:"id,omitempty"`
-// 	Alias       string           `json:"alias,omitempty"`
-// 	Name        string           `json:"name,omitempty"`
-// 	Product     string           `json:"product,omitempty"`
-// 	Description string           `json:"description,omitempty"`
-// 	Language    string           `json:"language,omitempty"`
-// 	Framework   string           `json:"framework,omitempty"`
-// 	Tier        string           `json:"tierAlias,omitempty"`
-// 	Owner       *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`
-// 	Lifecycle   string           `json:"lifecycleAlias,omitempty"`
-// 	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`
-// }
-
-// type ServiceDeleteInput struct {
-// 	Id    ID     `json:"id,omitempty"`
-// 	Alias string `json:"alias,omitempty"`
-// }
-
 func (s *Service) ResourceId() ID {
 	return s.Id
 }
@@ -268,12 +237,6 @@ func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (
 	return s.Repositories, nil
 }
 
-// Deprecated use GetDocuments(client) instead
-func (s *Service) Documents(client *Client) ([]ServiceDocument, error) {
-	resp, err := s.GetDocuments(client, nil)
-	return resp.Nodes, err
-}
-
 func (s *Service) GetDocuments(client *Client, variables *PayloadVariables) (*ServiceDocumentsConnection, error) {
 	var q struct {
 		Account struct {
@@ -363,11 +326,6 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 		return &q.Account.Service, err
 	}
 	return &q.Account.Service, nil
-}
-
-// Deprecated: Use GetService instead
-func (client *Client) GetServiceWithId(id ID) (*Service, error) {
-	return client.GetService(id)
 }
 
 func (client *Client) GetService(id ID) (*Service, error) {

@@ -41,23 +41,11 @@ type InfrastructureResourceConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
-// type InfrastructureResourceSchemaInput struct {
-// 	Type string `json:"type" yaml:"type" default:"Database"`
-// }
-
 type InfrastructureResourceProviderInput struct {
 	AccountName  string `json:"accountName" yaml:"accountName" default:"Dev - 123456789"`
 	ExternalURL  string `json:"externalUrl" yaml:"externalUrl" default:"https://google.com"`
 	ProviderName string `json:"providerName" yaml:"providerName" default:"Google"`
 }
-
-// type InfrastructureResourceInput struct {
-// 	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty" yaml:"schema,omitempty"`
-// 	ProviderType *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType,omitempty" default:"BigQuery"`
-// 	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData,omitempty"`
-// 	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-// 	Data         JSON                                 `json:"data,omitempty" yaml:"data,omitempty" scalar:"true" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false,\"storage_size\":{\"value\":1024,\"unit\": \"GB\"}}"`
-// }
 
 type InfraProviderInput struct {
 	Account string `json:"account" yaml:"account" default:"Dev - 123456789"`
