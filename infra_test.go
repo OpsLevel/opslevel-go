@@ -39,7 +39,7 @@ func TestCreateInfra(t *testing.T) {
 			Type:    "BigQuery",
 			URL:     "https://google.com",
 		},
-		Data: opslevel.JSON{
+		Data: &opslevel.JSON{
 			"name":     "my-big-query",
 			"engine":   "BigQuery",
 			"endpoint": "https://google.com",
@@ -134,7 +134,7 @@ func TestUpdateInfra(t *testing.T) {
 	// Act
 	result, err := client.UpdateInfrastructure(string(id1), opslevel.InfraInput{
 		Owner: &id1,
-		Data: opslevel.JSON{
+		Data: &opslevel.JSON{
 			"name":     "my-big-query",
 			"engine":   "BigQuery",
 			"endpoint": "https://google.com",
