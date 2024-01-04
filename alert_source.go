@@ -24,7 +24,7 @@ type AlertSourceDeleteInput struct {
 func NewAlertSource(kind AlertSourceTypeEnum, id string) *AlertSourceExternalIdentifier {
 	output := AlertSourceExternalIdentifier{
 		Type:       kind,
-		ExternalId: ID(id),
+		ExternalId: id,
 	}
 	return &output
 }
