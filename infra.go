@@ -52,7 +52,7 @@ type InfraInput struct {
 	Schema   string              `json:"schema" yaml:"schema" default:"Database"`
 	Owner    *ID                 `json:"owner,omitempty" yaml:"owner,omitempty" default:"XXX_owner_id_XXX"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
-	Data     map[string]any      `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
+	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
 func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -101,10 +101,9 @@ func (i *InfrastructureResource) ResourceType() TaggableResource {
 }
 
 func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {
-	data := JSON(input.Data)
 	i := InfrastructureResourceInput{
 		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
-		Data:   &data,
+		Data:   input.Data,
 	}
 	if input.Owner != nil {
 		i.OwnerId = input.Owner
@@ -202,9 +201,8 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 }
 
 func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) (*InfrastructureResource, error) {
-	data := JSON(input.Data)
 	i := InfrastructureResourceInput{
-		Data: &data,
+		Data: input.Data,
 	}
 	if input.Owner != nil {
 		i.OwnerId = input.Owner
