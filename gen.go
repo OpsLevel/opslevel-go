@@ -639,10 +639,8 @@ func convertPayloadType(s string) string {
 	if strings.HasSuffix(value, "id") {
 		return "ID"
 	}
-	for k, v := range knownTypeMappings {
-		if value == k {
-			return v
-		}
+	if v, ok := knownTypeMappings[value]; ok {
+		return v
 	}
 	for _, knownStringTypeSuffix := range stringTypeSuffixes {
 		if strings.HasSuffix(value, knownStringTypeSuffix) {
