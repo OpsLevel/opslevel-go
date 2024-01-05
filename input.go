@@ -4,18 +4,6 @@ package opslevel
 
 import "github.com/relvacode/iso8601"
 
-// CheckCreateInput has common fields used by other CheckTypeCreateInputs
-type CheckCreateInput struct {
-	Name     string        `json:"name" yaml:"name" default:"Example Check to create"`
-	Enabled  *bool         `json:"enabled" yaml:"enabled" default:"true"`
-	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`
-	Category ID            `json:"categoryId" yaml:"categoryId" default:"XXX_category_id_XXX"`
-	Level    ID            `json:"levelId" yaml:"levelId" default:"XXX_rubric_level_id_XXX"`
-	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"XXX_owner_id_XXX"`
-	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
-	Notes    *string       `json:"notes" yaml:"notes" default:"Notes on Example Check"`
-}
-
 // AlertSourceExternalIdentifier specifies the input needed to find an alert source with external information.
 type AlertSourceExternalIdentifier struct {
 	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`             // The type of the alert. (Required.)
@@ -777,11 +765,10 @@ type PredicateUpdateInput struct {
 	Value *string            `json:"value,omitempty" yaml:"value,omitempty"` // The condition value used by the predicate. (Optional.)
 }
 
-// NOTE: Schema here should be JSON (our code differs)
 // PropertyDefinitionInput represents the input for defining a property.
 type PropertyDefinitionInput struct {
 	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty"`                                   // The name of the property definition. (Optional.)
-	Schema                *JSON                      `json:"schema,omitempty" yaml:"schema,omitempty"`                               // The schema of the property definition. (Optional.)
+	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty"`                               // The schema of the property definition. (Optional.)
 	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty"`                     // The schema of the property definition. (Optional.)
 	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty"` // . (Optional.)
 }

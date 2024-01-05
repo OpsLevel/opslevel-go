@@ -868,14 +868,16 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleUser  UserRole = "user"  // A regular user on the account.
-	UserRoleAdmin UserRole = "admin" // An administrator on the account.
+	UserRoleUser      UserRole = "user"       // A regular user on the account.
+	UserRoleAdmin     UserRole = "admin"      // An administrator on the account.
+	UserRoleBasicUser UserRole = "basic_user" // A basic user on the account with limited access.
 )
 
 // All UserRole as []string
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
+	string(UserRoleBasicUser),
 }
 
 // UsersFilterEnum represents fields that can be used as part of filter for users.

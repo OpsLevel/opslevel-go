@@ -8,7 +8,38 @@ import (
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
-type JSON map[string]any
+type (
+	JSON       map[string]any
+	JSONSchema JSON
+)
+
+func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
+
+func NewJSONSchema(data string) JSONSchema {
+	result := make(JSONSchema)
+	if err := json.Unmarshal([]byte(data), &result); err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (s JSONSchema) ToJSON() string {
+	dto := map[string]any{}
+	for k, v := range s {
+		dto[k] = v
+	}
+	b, _ := json.Marshal(dto)
+	return string(b)
+}
+
+func (s JSONSchema) MarshalJSON() ([]byte, error) {
+	dto := map[string]any{}
+	for k, v := range s {
+		dto[k] = v
+	}
+	b, err := json.Marshal(dto)
+	return []byte(strconv.Quote(string(b))), err
+}
 
 func (s JSON) GetGraphQLType() string { return "JSON" }
 

@@ -15,12 +15,13 @@ const (
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	schema := ol.NewJSONSchema(schemaString)
+	schemaAsJSON := ol.NewJSON(schemaString)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases: []string{"my_prop"},
 		Id:      "XXX",
 		Name:    "my-prop",
-		Schema:  schema,
+		Schema:  schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   ol.RefOf("my-prop"),
@@ -44,13 +45,14 @@ func TestCreatePropertyDefinition(t *testing.T) {
 
 func TestUpdatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString2)
+	schema := ol.NewJSONSchema(schemaString)
+	schemaAsJSON := ol.NewJSON(schemaString2)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases:               []string{"my_prop"},
 		Id:                    "XXX",
 		Name:                  "my-prop",
 		Description:           "this description was added",
-		Schema:                schema,
+		Schema:                schemaAsJSON,
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
