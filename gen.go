@@ -344,8 +344,68 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- else if eq .Name "members" }}TeamMembershipUserInput
     {{- else if eq .Name "contacts" }}ContactInput
     {{- else if .Type.Name }}{{ template "converted_type" .Type }}
-    {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}}
-    ` + "`" + `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + ` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
+    {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
+		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
+		` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + `
+  {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} default:"
+   {{- if isListType .Name }}[{{ end -}}
+    {{- if or (eq .Type.Name "Boolean") (eq .Type.OfType.OfTypeName "Boolean") }}false
+      {{- else if or (eq .Type.Name "Int") (eq .Type.OfType.OfTypeName "Int") }}3
+      {{- else if eq .Type.Name "JSON" }}{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}
+      {{- else if or (hasSuffix "Time" .Type.Name) (hasSuffix "Time" .Type.OfType.OfTypeName) }}2024-01-05T01:00:00.000Z
+      {{- else if or (eq "FrequencyTimeScale" .Type.Name) (eq "FrequencyTimeScale" .Type.OfType.OfTypeName) }}week
+      {{- else if or (eq "ContactType" .Type.Name) (eq "ContactType" .Type.OfType.OfTypeName) }}slack
+      {{- else if or (eq "AlertSourceTypeEnum" .Type.Name) (hasSuffix "AlertSourceTypeEnum" .Type.OfType.OfTypeName) }}pagerduty
+      {{- else if or (eq "AliasOwnerTypeEnum" .Type.Name) (hasSuffix "AliasOwnerTypeEnum" .Type.OfType.OfTypeName) }}scorecard
+      {{- else if or (eq "BasicTypeEnum" .Type.Name) (hasSuffix "BasicTypeEnum" .Type.OfType.OfTypeName) }}does_not_equal
+      {{- else if or (eq "ConnectiveEnum" .Type.Name) (hasSuffix "ConnectiveEnum" .Type.OfType.OfTypeName) }}or
+      {{- else if or (eq "CustomActionsEntityTypeEnum" .Type.Name) (hasSuffix "CustomActionsEntityTypeEnum" .Type.OfType.OfTypeName) }}GLOBAL
+      {{- else if or (eq "CustomActionsHttpMethodEnum" .Type.Name) (hasSuffix "CustomActionsHttpMethodEnum" .Type.OfType.OfTypeName) }}GET
+      {{- else if or (eq "CustomActionsTriggerDefinitionAccessControlEnum" .Type.Name) (hasSuffix "CustomActionsTriggerDefinitionAccessControlEnum" .Type.OfType.OfTypeName) }}service_owners
+      {{- else if or (eq "HasDocumentationTypeEnum" .Type.Name) (hasSuffix "HasDocumentationTypeEnum" .Type.OfType.OfTypeName) }}api
+      {{- else if eq .Name "documentSubtype" }}openapi
+      {{- else if or (eq "RelationshipTypeEnum" .Type.Name) (hasSuffix "RelationshipTypeEnum" .Type.OfType.OfTypeName) }}depends_on
+      {{- else if or (eq "PredicateKeyEnum" .Type.Name) (hasSuffix "PredicateKeyEnum" .Type.OfType.OfTypeName) }}filter_id
+      {{- else if or (eq "PredicateTypeEnum" .Type.Name) (hasSuffix "PredicateTypeEnum" .Type.OfType.OfTypeName) }}satisfies_jq_expression
+      {{- else if or (eq "ServicePropertyTypeEnum" .Type.Name) (hasSuffix "ServicePropertyTypeEnum" .Type.OfType.OfTypeName) }}language
+      {{- else if or (eq "UsersFilterEnum" .Type.Name) (hasSuffix "UsersFilterEnum" .Type.OfType.OfTypeName) }}last_sign_in_at
+      {{- else if or (hasSuffix "Enum" .Type.Name) (hasSuffix "Enum" .Type.OfType.OfTypeName) }}NEW_ENUM_SET_DEFAULT
+      {{- else if or (hasSuffix "ToolCategory" .Type.Name) (hasSuffix "ToolCategory" .Type.OfType.OfTypeName) }}api_documentation
+      {{- else if or (eq "type" .Name) (hasSuffix "Type" .Name) }}example_type
+      {{- else if eq "address" .Name }}support@company.com
+      {{- else if or (eq "id" .Name) (hasSuffix "Id" .Name) }}Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk
+      {{- else if or (eq "definition" .Name) (hasSuffix "Definition" .Name) }}example_definition
+      {{- else if hasSuffix "Template" .Name }}{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}
+      {{- else if or (eq "name" .Name) (hasSuffix "Name" .Name) }}example_name
+      {{- else if or (eq "language" .Name) (hasSuffix "Language" .Name) }}example_language
+      {{- else if or (eq "alias" .Name) (hasSuffix "Alias" .Name) }}example_alias
+      {{- else if or (eq "description" .Name) (hasSuffix "Description" .Name) }}example_description
+      {{- else if or (eq "key" .Name) (hasSuffix "Key" .Name) }}XXX_example_key_XXX
+      {{- else if or (eq "email" .Name) (hasSuffix "Email" .Name) }}first.last@domain.com
+      {{- else if or (eq "data" .Name) (hasSuffix "Data" .Name) }}example_data
+      {{- else if or (eq "note" .Name) (hasSuffix "Note" .Name) }}example_note
+      {{- else if or (eq "role" .Name) (hasSuffix "Role" .Name) }}example_role
+      {{- else if or (eq "notes" .Name) (hasSuffix "Notes" .Name) }}example_notes
+      {{- else if or (eq "value" .Name) (hasSuffix "Value" .Name) }}example_value
+      {{- else if or (eq "product" .Name) (hasSuffix "Product" .Name) }}example_product
+      {{- else if or (eq "framework" .Name) (hasSuffix "Framework" .Name) }}example_framework
+      {{- else if or (eq "url" .Name) (hasSuffix "Url" .Name) }}john.doe@example.com
+      {{- else if eq "baseDirectory" .Name }}/home/opslevel.yaml
+      {{- else if eq "externalUrl" .Name }}https://google.com
+      {{- else if eq "responsibilities" .Name }}example description of responsibilities
+      {{- else if eq "environment" .Name }}environment that tool belongs to
+      {{- else if eq "arg" .Name }}example_arg
+      {{- else if hasSuffix "Extensions" .Name }}'go', 'py', 'rb'
+      {{- else if hasSuffix "Paths" .Name }}'/usr/local/bin', '/home/opslevel'
+      {{- else if hasSuffix "Ids" .Name }}'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'
+      {{- else if hasSuffix "TagKeys" .Name }}'tag_key1', 'tag_key2'
+      {{- else if hasSuffix "Selector" .Name }}example_selector
+      {{- else if hasSuffix "Condition" .Name }}example_condition
+      {{- else if hasSuffix "Message" .Name }}example_message
+      {{- else if hasSuffix "Method" .Name }}example_method
+      {{- else if hasSuffix "Identifier" .Name}}example_identifier
+    {{- end}}
+   {{- if isListType .Name }}]{{ end -}}"{{- end}}` +
 		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
 }

@@ -6,834 +6,834 @@ import "github.com/relvacode/iso8601"
 
 // AlertSourceExternalIdentifier specifies the input needed to find an alert source with external information.
 type AlertSourceExternalIdentifier struct {
-	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`             // The type of the alert. (Required.)
-	ExternalId string              `json:"externalId" yaml:"externalId"` // The external id of the alert. (Required.)
+	Type       AlertSourceTypeEnum `json:"type" yaml:"type" default:"pagerduty"`                                   // The type of the alert. (Required.)
+	ExternalId string              `json:"externalId" yaml:"externalId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The external id of the alert. (Required.)
 }
 
 // AlertSourceServiceCreateInput specifies the input used for attaching an alert source to a service.
 type AlertSourceServiceCreateInput struct {
-	Service                       IdentifierInput                `json:"service" yaml:"service"`                                                                 // The service that the alert source will be attached to. (Required.)
-	AlertSourceId                 *ID                            `json:"alertSourceId,omitempty" yaml:"alertSourceId,omitempty"`                                 // Specifies the input needed to find an alert source with external information. (Optional.)
-	AlertSourceExternalIdentifier *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty" yaml:"alertSourceExternalIdentifier,omitempty"` // Specifies the input needed to find an alert source with external information. (Optional.)
+	Service                       IdentifierInput                `json:"service" yaml:"service"`                                                                                              // The service that the alert source will be attached to. (Required.)
+	AlertSourceId                 *ID                            `json:"alertSourceId,omitempty" yaml:"alertSourceId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                    // Specifies the input needed to find an alert source with external information. (Optional.)
+	AlertSourceExternalIdentifier *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty" yaml:"alertSourceExternalIdentifier,omitempty" default:"example_identifier"` // Specifies the input needed to find an alert source with external information. (Optional.)
 }
 
 // AlertSourceServiceDeleteInput specifies the input fields used in the `alertSourceServiceDelete` mutation.
 type AlertSourceServiceDeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the alert source service to be deleted. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the alert source service to be deleted. (Required.)
 }
 
 // AliasCreateInput represents the input for the `aliasCreate` mutation.
 type AliasCreateInput struct {
-	Alias   string `json:"alias" yaml:"alias"`     // The alias you wish to create. (Required.)
-	OwnerId ID     `json:"ownerId" yaml:"ownerId"` // The ID of the resource you want to create the alias on. Services, teams, groups, systems, and domains are supported. (Required.)
+	Alias   string `json:"alias" yaml:"alias" default:"example_alias"`                       // The alias you wish to create. (Required.)
+	OwnerId ID     `json:"ownerId" yaml:"ownerId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the resource you want to create the alias on. Services, teams, groups, systems, and domains are supported. (Required.)
 }
 
 // AliasDeleteInput represents the input for the `aliasDelete` mutation.
 type AliasDeleteInput struct {
-	Alias     string             `json:"alias" yaml:"alias"`         // The alias you wish to delete. (Required.)
-	OwnerType AliasOwnerTypeEnum `json:"ownerType" yaml:"ownerType"` // The resource the alias you wish to delete belongs to. (Required.)
+	Alias     string             `json:"alias" yaml:"alias" default:"example_alias"`     // The alias you wish to delete. (Required.)
+	OwnerType AliasOwnerTypeEnum `json:"ownerType" yaml:"ownerType" default:"scorecard"` // The resource the alias you wish to delete belongs to. (Required.)
 }
 
 // AwsIntegrationInput specifies the input fields used to create and update an AWS integration.
 type AwsIntegrationInput struct {
-	Name                     *string   `json:"name,omitempty" yaml:"name,omitempty"`                                         // The name of the integration. (Optional.)
-	IamRole                  *string   `json:"iamRole,omitempty" yaml:"iamRole,omitempty"`                                   // The IAM role OpsLevel uses in order to access the AWS account. (Optional.)
-	ExternalId               *string   `json:"externalId,omitempty" yaml:"externalId,omitempty"`                             // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https:/docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
-	OwnershipTagKeys         *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty"`                 // An Array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
-	AwsTagsOverrideOwnership *bool     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty"` // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
+	Name                     *string   `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                     // The name of the integration. (Optional.)
+	IamRole                  *string   `json:"iamRole,omitempty" yaml:"iamRole,omitempty" default:"example_role"`                               // The IAM role OpsLevel uses in order to access the AWS account. (Optional.)
+	ExternalId               *string   `json:"externalId,omitempty" yaml:"externalId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https:/docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
+	OwnershipTagKeys         *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" default:"['tag_key1', 'tag_key2']"` // An Array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
+	AwsTagsOverrideOwnership *bool     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty" default:"false"`    // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
 }
 
 // CategoryCreateInput specifies the input fields used to create a category.
 type CategoryCreateInput struct {
-	Name        string  `json:"name" yaml:"name"`                                   // The display name of the category. (Required.)
-	Description *string `json:"description,omitempty" yaml:"description,omitempty"` // The description of the category. (Optional.)
+	Name        string  `json:"name" yaml:"name" default:"example_name"`                                          // The display name of the category. (Required.)
+	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"` // The description of the category. (Optional.)
 }
 
 // CategoryDeleteInput specifies the input fields used to delete a category.
 type CategoryDeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the category to be deleted. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category to be deleted. (Required.)
 }
 
 // CategoryUpdateInput specifies the input fields used to update a category.
 type CategoryUpdateInput struct {
-	Id          ID      `json:"id" yaml:"id"`                                       // The id of the category to be updated. (Required.)
-	Name        *string `json:"name,omitempty" yaml:"name,omitempty"`               // The display name of the category. (Optional.)
-	Description *string `json:"description,omitempty" yaml:"description,omitempty"` // The description of the category. (Optional.)
+	Id          ID      `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                           // The id of the category to be updated. (Required.)
+	Name        *string `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                      // The display name of the category. (Optional.)
+	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"` // The description of the category. (Optional.)
 }
 
 // CheckAlertSourceUsageCreateInput specifies the input fields used to create an alert source usage check.
 type CheckAlertSourceUsageCreateInput struct {
-	Name                     string               `json:"name" yaml:"name"`                                                             // The display name of the check. (Required.)
-	Enabled                  *bool                `json:"enabled,omitempty" yaml:"enabled,omitempty"`                                   // Whether the check is enabled or not. (Optional.)
-	EnableOn                 *iso8601.Time        `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                                 // The date when the check will be automatically enabled. (Optional.)
-	CategoryId               ID                   `json:"categoryId" yaml:"categoryId"`                                                 // The id of the category the check belongs to. (Required.)
-	LevelId                  ID                   `json:"levelId" yaml:"levelId"`                                                       // The id of the level the check belongs to. (Required.)
-	OwnerId                  *ID                  `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                                   // The id of the team that owns the check. (Optional.)
-	FilterId                 *ID                  `json:"filterId,omitempty" yaml:"filterId,omitempty"`                                 // The id of the filter of the check. (Optional.)
-	Notes                    *string              `json:"notes,omitempty" yaml:"notes,omitempty"`                                       // Additional information about the check. (Optional.)
-	AlertSourceType          *AlertSourceTypeEnum `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty"`                   // The type of the alert source. (Optional.)
-	AlertSourceNamePredicate *PredicateInput      `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"` // The condition that the alert source name should satisfy to be evaluated. (Optional.)
+	Name                     string               `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled                  *bool                `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn                 *iso8601.Time        `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId               ID                   `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId                  ID                   `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId                  *ID                  `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId                 *ID                  `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                    *string              `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	AlertSourceType          *AlertSourceTypeEnum `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty" default:"pagerduty"`         // The type of the alert source. (Optional.)
+	AlertSourceNamePredicate *PredicateInput      `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`           // The condition that the alert source name should satisfy to be evaluated. (Optional.)
 }
 
 // CheckAlertSourceUsageUpdateInput specifies the input fields used to update an alert source usage check.
 type CheckAlertSourceUsageUpdateInput struct {
-	Name                     *string               `json:"name,omitempty" yaml:"name,omitempty"`                                         // The display name of the check. (Optional.)
-	CategoryId               *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                             // The id of the category the check belongs to. (Optional.)
-	LevelId                  *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`                                   // The id of the level the check belongs to. (Optional.)
-	OwnerId                  *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                                   // The id of the owner of the check. (Optional.)
-	FilterId                 *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`                                 // The id of the filter the check belongs to. (Optional.)
-	Enabled                  *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`                                   // Whether the check is enabled or not. (Optional.)
-	EnableOn                 *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                                 // The date when the check will be automatically enabled. (Optional.)
-	Notes                    *string               `json:"notes,omitempty" yaml:"notes,omitempty"`                                       // Additional information about the check. (Optional.)
-	Id                       ID                    `json:"id" yaml:"id"`                                                                 // The id of the check to be updated. (Required.)
-	AlertSourceType          *AlertSourceTypeEnum  `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty"`                   // The type of the alert source. (Optional.)
-	AlertSourceNamePredicate *PredicateUpdateInput `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"` // The condition that the alert source name should satisfy to be evaluated. (Optional.)
+	Name                     *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId               *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId                  *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId                  *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId                 *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled                  *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn                 *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                    *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                       ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	AlertSourceType          *AlertSourceTypeEnum  `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty" default:"pagerduty"`             // The type of the alert source. (Optional.)
+	AlertSourceNamePredicate *PredicateUpdateInput `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`               // The condition that the alert source name should satisfy to be evaluated. (Optional.)
 }
 
 // CheckCustomEventCreateInput represents creates a custom event check.
 type CheckCustomEventCreateInput struct {
-	Name             string        `json:"name" yaml:"name"`                                       // The display name of the check. (Required.)
-	Enabled          *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`             // Whether the check is enabled or not. (Optional.)
-	EnableOn         *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`           // The date when the check will be automatically enabled. (Optional.)
-	CategoryId       ID            `json:"categoryId" yaml:"categoryId"`                           // The id of the category the check belongs to. (Required.)
-	LevelId          ID            `json:"levelId" yaml:"levelId"`                                 // The id of the level the check belongs to. (Required.)
-	OwnerId          *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`             // The id of the team that owns the check. (Optional.)
-	FilterId         *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`           // The id of the filter of the check. (Optional.)
-	Notes            *string       `json:"notes,omitempty" yaml:"notes,omitempty"`                 // Additional information about the check. (Optional.)
-	ServiceSelector  string        `json:"serviceSelector" yaml:"serviceSelector"`                 // A jq expression that will be ran against your payload. This will parse out the service identifier. [More info about jq](https:/jqplay.org/). (Required.)
-	SuccessCondition string        `json:"successCondition" yaml:"successCondition"`               // A jq expression that will be ran against your payload. A truthy value will result in the check passing. [More info about jq](https:/jqplay.org/). (Required.)
-	ResultMessage    *string       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty"` // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https:/docs.opslevel.com/docs/checks/payload-checks/#liquid-templating). (Optional.)
-	PassPending      *bool         `json:"passPending,omitempty" yaml:"passPending,omitempty"`     // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure. (Optional.)
-	IntegrationId    ID            `json:"integrationId" yaml:"integrationId"`                     // The integration id this check will use. (Required.)
+	Name             string        `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled          *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn         *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId       ID            `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId          ID            `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId          *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId         *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes            *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	ServiceSelector  string        `json:"serviceSelector" yaml:"serviceSelector" default:"example_selector"`                      // A jq expression that will be ran against your payload. This will parse out the service identifier. [More info about jq](https:/jqplay.org/). (Required.)
+	SuccessCondition string        `json:"successCondition" yaml:"successCondition" default:"example_condition"`                   // A jq expression that will be ran against your payload. A truthy value will result in the check passing. [More info about jq](https:/jqplay.org/). (Required.)
+	ResultMessage    *string       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" default:"example_message"`       // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https:/docs.opslevel.com/docs/checks/payload-checks/#liquid-templating). (Optional.)
+	PassPending      *bool         `json:"passPending,omitempty" yaml:"passPending,omitempty" default:"false"`                     // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure. (Optional.)
+	IntegrationId    ID            `json:"integrationId" yaml:"integrationId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The integration id this check will use. (Required.)
 }
 
 // CheckCustomEventUpdateInput specifies the input fields used to update a custom event check.
 type CheckCustomEventUpdateInput struct {
-	Name             *string       `json:"name,omitempty" yaml:"name,omitempty"`                         // The display name of the check. (Optional.)
-	CategoryId       *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`             // The id of the category the check belongs to. (Optional.)
-	LevelId          *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty"`                   // The id of the level the check belongs to. (Optional.)
-	OwnerId          *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                   // The id of the owner of the check. (Optional.)
-	FilterId         *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`                 // The id of the filter the check belongs to. (Optional.)
-	Enabled          *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`                   // Whether the check is enabled or not. (Optional.)
-	EnableOn         *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                 // The date when the check will be automatically enabled. (Optional.)
-	Notes            *string       `json:"notes,omitempty" yaml:"notes,omitempty"`                       // Additional information about the check. (Optional.)
-	Id               ID            `json:"id" yaml:"id"`                                                 // The id of the check to be updated. (Required.)
-	ServiceSelector  *string       `json:"serviceSelector,omitempty" yaml:"serviceSelector,omitempty"`   // A jq expression that will be ran against your payload. This will parse out the service identifier. [More info about jq](https:/jqplay.org/). (Optional.)
-	SuccessCondition *string       `json:"successCondition,omitempty" yaml:"successCondition,omitempty"` // A jq expression that will be ran against your payload. A truthy value will result in the check passing. [More info about jq](https:/jqplay.org/). (Optional.)
-	ResultMessage    *string       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty"`       // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https:/docs.opslevel.com/docs/checks/payload-checks/#liquid-templating). (Optional.)
-	PassPending      *bool         `json:"passPending,omitempty" yaml:"passPending,omitempty"`           // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure. (Optional.)
-	IntegrationId    *ID           `json:"integrationId,omitempty" yaml:"integrationId,omitempty"`       // The integration id this check will use. (Optional.)
+	Name             *string       `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                      // The display name of the check. (Optional.)
+	CategoryId       *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the category the check belongs to. (Optional.)
+	LevelId          *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the level the check belongs to. (Optional.)
+	OwnerId          *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the owner of the check. (Optional.)
+	FilterId         *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The id of the filter the check belongs to. (Optional.)
+	Enabled          *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                       // Whether the check is enabled or not. (Optional.)
+	EnableOn         *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`                  // The date when the check will be automatically enabled. (Optional.)
+	Notes            *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                                   // Additional information about the check. (Optional.)
+	Id               ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                           // The id of the check to be updated. (Required.)
+	ServiceSelector  *string       `json:"serviceSelector,omitempty" yaml:"serviceSelector,omitempty" default:"example_selector"`            // A jq expression that will be ran against your payload. This will parse out the service identifier. [More info about jq](https:/jqplay.org/). (Optional.)
+	SuccessCondition *string       `json:"successCondition,omitempty" yaml:"successCondition,omitempty" default:"example_condition"`         // A jq expression that will be ran against your payload. A truthy value will result in the check passing. [More info about jq](https:/jqplay.org/). (Optional.)
+	ResultMessage    *string       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" default:"example_message"`                 // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https:/docs.opslevel.com/docs/checks/payload-checks/#liquid-templating). (Optional.)
+	PassPending      *bool         `json:"passPending,omitempty" yaml:"passPending,omitempty" default:"false"`                               // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure. (Optional.)
+	IntegrationId    *ID           `json:"integrationId,omitempty" yaml:"integrationId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The integration id this check will use. (Optional.)
 }
 
 // CheckDeleteInput specifies the input fields used to delete a check.
 type CheckDeleteInput struct {
-	Id *ID `json:"id,omitempty" yaml:"id,omitempty"` // The id of the check to be deleted. (Optional.)
+	Id *ID `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the check to be deleted. (Optional.)
 }
 
 // CheckGitBranchProtectionCreateInput specifies the input fields used to create a branch protection check.
 type CheckGitBranchProtectionCreateInput struct {
-	Name       string        `json:"name" yaml:"name"`                             // The display name of the check. (Required.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`   // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"` // The date when the check will be automatically enabled. (Optional.)
-	CategoryId ID            `json:"categoryId" yaml:"categoryId"`                 // The id of the category the check belongs to. (Required.)
-	LevelId    ID            `json:"levelId" yaml:"levelId"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
+	Name       string        `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId ID            `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId    ID            `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
 }
 
 // CheckGitBranchProtectionUpdateInput specifies the input fields used to update a branch protection check.
 type CheckGitBranchProtectionUpdateInput struct {
-	Name       *string       `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the check. (Optional.)
-	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty"` // The id of the category the check belongs to. (Optional.)
-	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty"`       // The id of the level the check belongs to. (Optional.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`       // The id of the owner of the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`     // The id of the filter the check belongs to. (Optional.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`       // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`     // The date when the check will be automatically enabled. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`           // Additional information about the check. (Optional.)
-	Id         ID            `json:"id" yaml:"id"`                                     // The id of the check to be updated. (Required.)
+	Name       *string       `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id         ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
 }
 
 // CheckHasDocumentationCreateInput specifies the input fields used to create a documentation check.
 type CheckHasDocumentationCreateInput struct {
-	Name            string                      `json:"name" yaml:"name"`                             // The display name of the check. (Required.)
-	Enabled         *bool                       `json:"enabled,omitempty" yaml:"enabled,omitempty"`   // Whether the check is enabled or not. (Optional.)
-	EnableOn        *iso8601.Time               `json:"enableOn,omitempty" yaml:"enableOn,omitempty"` // The date when the check will be automatically enabled. (Optional.)
-	CategoryId      ID                          `json:"categoryId" yaml:"categoryId"`                 // The id of the category the check belongs to. (Required.)
-	LevelId         ID                          `json:"levelId" yaml:"levelId"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId         *ID                         `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
-	FilterId        *ID                         `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
-	Notes           *string                     `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
-	DocumentType    HasDocumentationTypeEnum    `json:"documentType" yaml:"documentType"`             // The type of the document. (Required.)
-	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype" yaml:"documentSubtype"`       // The subtype of the document. (Required.)
+	Name            string                      `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled         *bool                       `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn        *iso8601.Time               `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId      ID                          `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId         ID                          `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId         *ID                         `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId        *ID                         `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes           *string                     `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	DocumentType    HasDocumentationTypeEnum    `json:"documentType" yaml:"documentType" default:"api"`                                         // The type of the document. (Required.)
+	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype" yaml:"documentSubtype" default:"openapi"`                               // The subtype of the document. (Required.)
 }
 
 // CheckHasDocumentationUpdateInput specifies the input fields used to update a documentation check.
 type CheckHasDocumentationUpdateInput struct {
-	Name            *string                      `json:"name,omitempty" yaml:"name,omitempty"`                       // The display name of the check. (Optional.)
-	CategoryId      *ID                          `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`           // The id of the category the check belongs to. (Optional.)
-	LevelId         *ID                          `json:"levelId,omitempty" yaml:"levelId,omitempty"`                 // The id of the level the check belongs to. (Optional.)
-	OwnerId         *ID                          `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                 // The id of the owner of the check. (Optional.)
-	FilterId        *ID                          `json:"filterId,omitempty" yaml:"filterId,omitempty"`               // The id of the filter the check belongs to. (Optional.)
-	Enabled         *bool                        `json:"enabled,omitempty" yaml:"enabled,omitempty"`                 // Whether the check is enabled or not. (Optional.)
-	EnableOn        *iso8601.Time                `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`               // The date when the check will be automatically enabled. (Optional.)
-	Notes           *string                      `json:"notes,omitempty" yaml:"notes,omitempty"`                     // Additional information about the check. (Optional.)
-	Id              ID                           `json:"id" yaml:"id"`                                               // The id of the check to be updated. (Required.)
-	DocumentType    *HasDocumentationTypeEnum    `json:"documentType,omitempty" yaml:"documentType,omitempty"`       // The type of the document. (Optional.)
-	DocumentSubtype *HasDocumentationSubtypeEnum `json:"documentSubtype,omitempty" yaml:"documentSubtype,omitempty"` // The subtype of the document. (Optional.)
+	Name            *string                      `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId      *ID                          `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId         *ID                          `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId         *ID                          `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId        *ID                          `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled         *bool                        `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn        *iso8601.Time                `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes           *string                      `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id              ID                           `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	DocumentType    *HasDocumentationTypeEnum    `json:"documentType,omitempty" yaml:"documentType,omitempty" default:"api"`                         // The type of the document. (Optional.)
+	DocumentSubtype *HasDocumentationSubtypeEnum `json:"documentSubtype,omitempty" yaml:"documentSubtype,omitempty" default:"openapi"`               // The subtype of the document. (Optional.)
 }
 
 // CheckHasRecentDeployCreateInput specifies the input fields used to create a recent deploys check.
 type CheckHasRecentDeployCreateInput struct {
-	Name       string        `json:"name" yaml:"name"`                             // The display name of the check. (Required.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`   // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"` // The date when the check will be automatically enabled. (Optional.)
-	CategoryId ID            `json:"categoryId" yaml:"categoryId"`                 // The id of the category the check belongs to. (Required.)
-	LevelId    ID            `json:"levelId" yaml:"levelId"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
-	Days       int           `json:"days" yaml:"days"`                             // The number of days to check since the last deploy. (Required.)
+	Name       string        `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId ID            `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId    ID            `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	Days       int           `json:"days" yaml:"days" default:"3"`                                                           // The number of days to check since the last deploy. (Required.)
 }
 
 // CheckHasRecentDeployUpdateInput specifies the input fields used to update a has recent deploy check.
 type CheckHasRecentDeployUpdateInput struct {
-	Name       *string       `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the check. (Optional.)
-	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty"` // The id of the category the check belongs to. (Optional.)
-	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty"`       // The id of the level the check belongs to. (Optional.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`       // The id of the owner of the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`     // The id of the filter the check belongs to. (Optional.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`       // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`     // The date when the check will be automatically enabled. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`           // Additional information about the check. (Optional.)
-	Id         ID            `json:"id" yaml:"id"`                                     // The id of the check to be updated. (Required.)
-	Days       *int          `json:"days,omitempty" yaml:"days,omitempty"`             // The number of days to check since the last deploy. (Optional.)
+	Name       *string       `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id         ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	Days       *int          `json:"days,omitempty" yaml:"days,omitempty" default:"3"`                                           // The number of days to check since the last deploy. (Optional.)
 }
 
 // CheckManualCreateInput specifies the input fields used to create a manual check.
 type CheckManualCreateInput struct {
-	Name                  string                     `json:"name" yaml:"name"`                                           // The display name of the check. (Required.)
-	Enabled               *bool                      `json:"enabled,omitempty" yaml:"enabled,omitempty"`                 // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time              `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`               // The date when the check will be automatically enabled. (Optional.)
-	CategoryId            ID                         `json:"categoryId" yaml:"categoryId"`                               // The id of the category the check belongs to. (Required.)
-	LevelId               ID                         `json:"levelId" yaml:"levelId"`                                     // The id of the level the check belongs to. (Required.)
-	OwnerId               *ID                        `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                 // The id of the team that owns the check. (Optional.)
-	FilterId              *ID                        `json:"filterId,omitempty" yaml:"filterId,omitempty"`               // The id of the filter of the check. (Optional.)
-	Notes                 *string                    `json:"notes,omitempty" yaml:"notes,omitempty"`                     // Additional information about the check. (Optional.)
-	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"` // Defines the minimum frequency of the updates. (Optional.)
-	UpdateRequiresComment bool                       `json:"updateRequiresComment" yaml:"updateRequiresComment"`         // Whether the check requires a comment or not. (Required.)
+	Name                  string                     `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled               *bool                      `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time              `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId            ID                         `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId               ID                         `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId               *ID                        `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId              *ID                        `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                 *string                    `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`                             // Defines the minimum frequency of the updates. (Optional.)
+	UpdateRequiresComment bool                       `json:"updateRequiresComment" yaml:"updateRequiresComment" default:"false"`                     // Whether the check requires a comment or not. (Required.)
 }
 
 // CheckManualUpdateInput specifies the input fields used to update a manual check.
 type CheckManualUpdateInput struct {
-	Name                  *string                          `json:"name,omitempty" yaml:"name,omitempty"`                                   // The display name of the check. (Optional.)
-	CategoryId            *ID                              `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                       // The id of the category the check belongs to. (Optional.)
-	LevelId               *ID                              `json:"levelId,omitempty" yaml:"levelId,omitempty"`                             // The id of the level the check belongs to. (Optional.)
-	OwnerId               *ID                              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                             // The id of the owner of the check. (Optional.)
-	FilterId              *ID                              `json:"filterId,omitempty" yaml:"filterId,omitempty"`                           // The id of the filter the check belongs to. (Optional.)
-	Enabled               *bool                            `json:"enabled,omitempty" yaml:"enabled,omitempty"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time                    `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                           // The date when the check will be automatically enabled. (Optional.)
-	Notes                 *string                          `json:"notes,omitempty" yaml:"notes,omitempty"`                                 // Additional information about the check. (Optional.)
-	Id                    ID                               `json:"id" yaml:"id"`                                                           // The id of the check to be updated. (Required.)
-	UpdateFrequency       *ManualCheckFrequencyUpdateInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`             // Defines the minimum frequency of the updates. (Optional.)
-	UpdateRequiresComment *bool                            `json:"updateRequiresComment,omitempty" yaml:"updateRequiresComment,omitempty"` // Whether the check requires a comment or not. (Optional.)
+	Name                  *string                          `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId            *ID                              `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId               *ID                              `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId               *ID                              `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId              *ID                              `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled               *bool                            `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time                    `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                 *string                          `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                    ID                               `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	UpdateFrequency       *ManualCheckFrequencyUpdateInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`                                 // Defines the minimum frequency of the updates. (Optional.)
+	UpdateRequiresComment *bool                            `json:"updateRequiresComment,omitempty" yaml:"updateRequiresComment,omitempty" default:"false"`     // Whether the check requires a comment or not. (Optional.)
 }
 
 // CheckRepositoryFileCreateInput specifies the input fields used to create a repo file check.
 type CheckRepositoryFileCreateInput struct {
-	Name                  string          `json:"name" yaml:"name"`                                                       // The display name of the check. (Required.)
-	Enabled               *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                           // The date when the check will be automatically enabled. (Optional.)
-	CategoryId            ID              `json:"categoryId" yaml:"categoryId"`                                           // The id of the category the check belongs to. (Required.)
-	LevelId               ID              `json:"levelId" yaml:"levelId"`                                                 // The id of the level the check belongs to. (Required.)
-	OwnerId               *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                             // The id of the team that owns the check. (Optional.)
-	FilterId              *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty"`                           // The id of the filter of the check. (Optional.)
-	Notes                 *string         `json:"notes,omitempty" yaml:"notes,omitempty"`                                 // Additional information about the check. (Optional.)
-	DirectorySearch       *bool           `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
-	FilePaths             []string        `json:"filePaths" yaml:"filePaths"`                                             // Restrict the search to certain file paths. (Required.)
-	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"` // Condition to match the file content. (Optional.)
-	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service). (Optional.)
+	Name                  string          `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled               *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId            ID              `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId               ID              `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId               *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId              *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                 *string         `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	DirectorySearch       *bool           `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" default:"false"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
+	FilePaths             []string        `json:"filePaths" yaml:"filePaths" default:"['/usr/local/bin', '/home/opslevel']"`              // Restrict the search to certain file paths. (Required.)
+	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                 // Condition to match the file content. (Optional.)
+	UseAbsoluteRoot       *bool           `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" default:"false"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service). (Optional.)
 }
 
 // CheckRepositoryFileUpdateInput specifies the input fields used to update a repo file check.
 type CheckRepositoryFileUpdateInput struct {
-	Name                  *string               `json:"name,omitempty" yaml:"name,omitempty"`                                   // The display name of the check. (Optional.)
-	CategoryId            *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                       // The id of the category the check belongs to. (Optional.)
-	LevelId               *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`                             // The id of the level the check belongs to. (Optional.)
-	OwnerId               *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                             // The id of the owner of the check. (Optional.)
-	FilterId              *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`                           // The id of the filter the check belongs to. (Optional.)
-	Enabled               *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                           // The date when the check will be automatically enabled. (Optional.)
-	Notes                 *string               `json:"notes,omitempty" yaml:"notes,omitempty"`                                 // Additional information about the check. (Optional.)
-	Id                    ID                    `json:"id" yaml:"id"`                                                           // The id of the check to be updated. (Required.)
-	DirectorySearch       *bool                 `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
-	FilePaths             *[]string             `json:"filePaths,omitempty" yaml:"filePaths,omitempty"`                         // Restrict the search to certain file paths. (Optional.)
-	FileContentsPredicate *PredicateUpdateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"` // Condition to match the file content. (Optional.)
-	UseAbsoluteRoot       *bool                 `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service). (Optional.)
+	Name                  *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                   // The display name of the check. (Optional.)
+	CategoryId            *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`    // The id of the category the check belongs to. (Optional.)
+	LevelId               *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the level the check belongs to. (Optional.)
+	OwnerId               *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the owner of the check. (Optional.)
+	FilterId              *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`        // The id of the filter the check belongs to. (Optional.)
+	Enabled               *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                    // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`               // The date when the check will be automatically enabled. (Optional.)
+	Notes                 *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                                // Additional information about the check. (Optional.)
+	Id                    ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the check to be updated. (Required.)
+	DirectorySearch       *bool                 `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" default:"false"`                    // Whether the check looks for the existence of a directory instead of a file. (Optional.)
+	FilePaths             *[]string             `json:"filePaths,omitempty" yaml:"filePaths,omitempty" default:"['/usr/local/bin', '/home/opslevel']"` // Restrict the search to certain file paths. (Optional.)
+	FileContentsPredicate *PredicateUpdateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                        // Condition to match the file content. (Optional.)
+	UseAbsoluteRoot       *bool                 `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" default:"false"`                    // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service). (Optional.)
 }
 
 // CheckRepositoryGrepCreateInput specifies the input fields used to create a repo grep check.
 type CheckRepositoryGrepCreateInput struct {
-	Name                  string         `json:"name" yaml:"name"`                                           // The display name of the check. (Required.)
-	Enabled               *bool          `json:"enabled,omitempty" yaml:"enabled,omitempty"`                 // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time  `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`               // The date when the check will be automatically enabled. (Optional.)
-	CategoryId            ID             `json:"categoryId" yaml:"categoryId"`                               // The id of the category the check belongs to. (Required.)
-	LevelId               ID             `json:"levelId" yaml:"levelId"`                                     // The id of the level the check belongs to. (Required.)
-	OwnerId               *ID            `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                 // The id of the team that owns the check. (Optional.)
-	FilterId              *ID            `json:"filterId,omitempty" yaml:"filterId,omitempty"`               // The id of the filter of the check. (Optional.)
-	Notes                 *string        `json:"notes,omitempty" yaml:"notes,omitempty"`                     // Additional information about the check. (Optional.)
-	DirectorySearch       *bool          `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty"` // Whether the check looks for the existence of a directory instead of a file. (Optional.)
-	FilePaths             []string       `json:"filePaths" yaml:"filePaths"`                                 // Restrict the search to certain file paths. (Required.)
-	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`         // Condition to match the file content. (Required.)
+	Name                  string         `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled               *bool          `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time  `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId            ID             `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId               ID             `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId               *ID            `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId              *ID            `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                 *string        `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	DirectorySearch       *bool          `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" default:"false"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
+	FilePaths             []string       `json:"filePaths" yaml:"filePaths" default:"['/usr/local/bin', '/home/opslevel']"`              // Restrict the search to certain file paths. (Required.)
+	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the file content. (Required.)
 }
 
 // CheckRepositoryGrepUpdateInput specifies the input fields used to update a repo file check.
 type CheckRepositoryGrepUpdateInput struct {
-	Name                  *string               `json:"name,omitempty" yaml:"name,omitempty"`                                   // The display name of the check. (Optional.)
-	CategoryId            *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                       // The id of the category the check belongs to. (Optional.)
-	LevelId               *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`                             // The id of the level the check belongs to. (Optional.)
-	OwnerId               *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                             // The id of the owner of the check. (Optional.)
-	FilterId              *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`                           // The id of the filter the check belongs to. (Optional.)
-	Enabled               *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                           // The date when the check will be automatically enabled. (Optional.)
-	Notes                 *string               `json:"notes,omitempty" yaml:"notes,omitempty"`                                 // Additional information about the check. (Optional.)
-	Id                    ID                    `json:"id" yaml:"id"`                                                           // The id of the check to be updated. (Required.)
-	DirectorySearch       *bool                 `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
-	FilePaths             *[]string             `json:"filePaths,omitempty" yaml:"filePaths,omitempty"`                         // Restrict the search to certain file paths. (Optional.)
-	FileContentsPredicate *PredicateUpdateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"` // Condition to match the file content. (Optional.)
+	Name                  *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                   // The display name of the check. (Optional.)
+	CategoryId            *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`    // The id of the category the check belongs to. (Optional.)
+	LevelId               *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the level the check belongs to. (Optional.)
+	OwnerId               *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the owner of the check. (Optional.)
+	FilterId              *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`        // The id of the filter the check belongs to. (Optional.)
+	Enabled               *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                    // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`               // The date when the check will be automatically enabled. (Optional.)
+	Notes                 *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                                // Additional information about the check. (Optional.)
+	Id                    ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the check to be updated. (Required.)
+	DirectorySearch       *bool                 `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" default:"false"`                    // Whether the check looks for the existence of a directory instead of a file. (Optional.)
+	FilePaths             *[]string             `json:"filePaths,omitempty" yaml:"filePaths,omitempty" default:"['/usr/local/bin', '/home/opslevel']"` // Restrict the search to certain file paths. (Optional.)
+	FileContentsPredicate *PredicateUpdateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                        // Condition to match the file content. (Optional.)
 }
 
 // CheckRepositoryIntegratedCreateInput specifies the input fields used to create a repository integrated check.
 type CheckRepositoryIntegratedCreateInput struct {
-	Name       string        `json:"name" yaml:"name"`                             // The display name of the check. (Required.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`   // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"` // The date when the check will be automatically enabled. (Optional.)
-	CategoryId ID            `json:"categoryId" yaml:"categoryId"`                 // The id of the category the check belongs to. (Required.)
-	LevelId    ID            `json:"levelId" yaml:"levelId"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
+	Name       string        `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId ID            `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId    ID            `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
 }
 
 // CheckRepositoryIntegratedUpdateInput specifies the input fields used to update a repository integrated check.
 type CheckRepositoryIntegratedUpdateInput struct {
-	Name       *string       `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the check. (Optional.)
-	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty"` // The id of the category the check belongs to. (Optional.)
-	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty"`       // The id of the level the check belongs to. (Optional.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`       // The id of the owner of the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`     // The id of the filter the check belongs to. (Optional.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`       // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`     // The date when the check will be automatically enabled. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`           // Additional information about the check. (Optional.)
-	Id         ID            `json:"id" yaml:"id"`                                     // The id of the check to be updated. (Required.)
+	Name       *string       `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id         ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
 }
 
 // CheckRepositorySearchCreateInput specifies the input fields used to create a repo search check.
 type CheckRepositorySearchCreateInput struct {
-	Name                  string         `json:"name" yaml:"name"`                                         // The display name of the check. (Required.)
-	Enabled               *bool          `json:"enabled,omitempty" yaml:"enabled,omitempty"`               // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time  `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`             // The date when the check will be automatically enabled. (Optional.)
-	CategoryId            ID             `json:"categoryId" yaml:"categoryId"`                             // The id of the category the check belongs to. (Required.)
-	LevelId               ID             `json:"levelId" yaml:"levelId"`                                   // The id of the level the check belongs to. (Required.)
-	OwnerId               *ID            `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`               // The id of the team that owns the check. (Optional.)
-	FilterId              *ID            `json:"filterId,omitempty" yaml:"filterId,omitempty"`             // The id of the filter of the check. (Optional.)
-	Notes                 *string        `json:"notes,omitempty" yaml:"notes,omitempty"`                   // Additional information about the check. (Optional.)
-	FileExtensions        *[]string      `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty"` // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
-	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`       // Condition to match the text content. (Required.)
+	Name                  string         `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled               *bool          `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time  `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId            ID             `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId               ID             `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId               *ID            `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId              *ID            `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                 *string        `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	FileExtensions        *[]string      `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" default:"['go', 'py', 'rb']"`  // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
+	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the text content. (Required.)
 }
 
 // CheckRepositorySearchUpdateInput specifies the input fields used to update a repo search check.
 type CheckRepositorySearchUpdateInput struct {
-	Name                  *string               `json:"name,omitempty" yaml:"name,omitempty"`                                   // The display name of the check. (Optional.)
-	CategoryId            *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                       // The id of the category the check belongs to. (Optional.)
-	LevelId               *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`                             // The id of the level the check belongs to. (Optional.)
-	OwnerId               *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                             // The id of the owner of the check. (Optional.)
-	FilterId              *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`                           // The id of the filter the check belongs to. (Optional.)
-	Enabled               *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                           // The date when the check will be automatically enabled. (Optional.)
-	Notes                 *string               `json:"notes,omitempty" yaml:"notes,omitempty"`                                 // Additional information about the check. (Optional.)
-	Id                    ID                    `json:"id" yaml:"id"`                                                           // The id of the check to be updated. (Required.)
-	FileExtensions        *[]string             `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty"`               // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
-	FileContentsPredicate *PredicateUpdateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"` // Condition to match the text content. (Optional.)
+	Name                  *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId            *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId               *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId               *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId              *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled               *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                 *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                    ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	FileExtensions        *[]string             `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" default:"['go', 'py', 'rb']"`      // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
+	FileContentsPredicate *PredicateUpdateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                     // Condition to match the text content. (Optional.)
 }
 
 // CheckServiceConfigurationCreateInput specifies the input fields used to create a configuration check.
 type CheckServiceConfigurationCreateInput struct {
-	Name       string        `json:"name" yaml:"name"`                             // The display name of the check. (Required.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`   // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"` // The date when the check will be automatically enabled. (Optional.)
-	CategoryId ID            `json:"categoryId" yaml:"categoryId"`                 // The id of the category the check belongs to. (Required.)
-	LevelId    ID            `json:"levelId" yaml:"levelId"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
+	Name       string        `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId ID            `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId    ID            `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
 }
 
 // CheckServiceConfigurationUpdateInput specifies the input fields used to update a configuration check.
 type CheckServiceConfigurationUpdateInput struct {
-	Name       *string       `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the check. (Optional.)
-	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty"` // The id of the category the check belongs to. (Optional.)
-	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty"`       // The id of the level the check belongs to. (Optional.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`       // The id of the owner of the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`     // The id of the filter the check belongs to. (Optional.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`       // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`     // The date when the check will be automatically enabled. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`           // Additional information about the check. (Optional.)
-	Id         ID            `json:"id" yaml:"id"`                                     // The id of the check to be updated. (Required.)
+	Name       *string       `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id         ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
 }
 
 // CheckServiceDependencyCreateInput specifies the input fields used to create a service dependency check.
 type CheckServiceDependencyCreateInput struct {
-	Name       string        `json:"name" yaml:"name"`                             // The display name of the check. (Required.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`   // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"` // The date when the check will be automatically enabled. (Optional.)
-	CategoryId ID            `json:"categoryId" yaml:"categoryId"`                 // The id of the category the check belongs to. (Required.)
-	LevelId    ID            `json:"levelId" yaml:"levelId"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`   // The id of the team that owns the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"` // The id of the filter of the check. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`       // Additional information about the check. (Optional.)
+	Name       string        `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId ID            `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId    ID            `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
 }
 
 // CheckServiceDependencyUpdateInput specifies the input fields used to update a service dependency check.
 type CheckServiceDependencyUpdateInput struct {
-	Name       *string       `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the check. (Optional.)
-	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty"` // The id of the category the check belongs to. (Optional.)
-	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty"`       // The id of the level the check belongs to. (Optional.)
-	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`       // The id of the owner of the check. (Optional.)
-	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`     // The id of the filter the check belongs to. (Optional.)
-	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty"`       // Whether the check is enabled or not. (Optional.)
-	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`     // The date when the check will be automatically enabled. (Optional.)
-	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty"`           // Additional information about the check. (Optional.)
-	Id         ID            `json:"id" yaml:"id"`                                     // The id of the check to be updated. (Required.)
+	Name       *string       `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId *ID           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId    *ID           `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled    *bool         `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn   *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes      *string       `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id         ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
 }
 
 // CheckServiceOwnershipCreateInput specifies the input fields used to create an ownership check.
 type CheckServiceOwnershipCreateInput struct {
-	Name                 string          `json:"name" yaml:"name"`                                                     // The display name of the check. (Required.)
-	Enabled              *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty"`                           // Whether the check is enabled or not. (Optional.)
-	EnableOn             *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                         // The date when the check will be automatically enabled. (Optional.)
-	CategoryId           ID              `json:"categoryId" yaml:"categoryId"`                                         // The id of the category the check belongs to. (Required.)
-	LevelId              ID              `json:"levelId" yaml:"levelId"`                                               // The id of the level the check belongs to. (Required.)
-	OwnerId              *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                           // The id of the team that owns the check. (Optional.)
-	FilterId             *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty"`                         // The id of the filter of the check. (Optional.)
-	Notes                *string         `json:"notes,omitempty" yaml:"notes,omitempty"`                               // Additional information about the check. (Optional.)
-	RequireContactMethod *bool           `json:"requireContactMethod,omitempty" yaml:"requireContactMethod,omitempty"` // Whether to require a contact method for a service owner or not. (Optional.)
-	ContactMethod        *string         `json:"contactMethod,omitempty" yaml:"contactMethod,omitempty"`               // The type of contact method that an owner should provide. (Optional.)
-	TagKey               *string         `json:"tagKey,omitempty" yaml:"tagKey,omitempty"`                             // The tag key that should exist for a service owner. (Optional.)
-	TagPredicate         *PredicateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                 // The condition that should be satisfied by the tag value. (Optional.)
+	Name                 string          `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled              *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn             *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId           ID              `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId              ID              `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId              *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId             *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                *string         `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	RequireContactMethod *bool           `json:"requireContactMethod,omitempty" yaml:"requireContactMethod,omitempty" default:"false"`   // Whether to require a contact method for a service owner or not. (Optional.)
+	ContactMethod        *string         `json:"contactMethod,omitempty" yaml:"contactMethod,omitempty" default:"example_method"`        // The type of contact method that an owner should provide. (Optional.)
+	TagKey               *string         `json:"tagKey,omitempty" yaml:"tagKey,omitempty" default:"XXX_example_key_XXX"`                 // The tag key that should exist for a service owner. (Optional.)
+	TagPredicate         *PredicateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                                   // The condition that should be satisfied by the tag value. (Optional.)
 }
 
 // CheckServiceOwnershipUpdateInput specifies the input fields used to update an ownership check.
 type CheckServiceOwnershipUpdateInput struct {
-	Name                 *string               `json:"name,omitempty" yaml:"name,omitempty"`                                 // The display name of the check. (Optional.)
-	CategoryId           *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                     // The id of the category the check belongs to. (Optional.)
-	LevelId              *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`                           // The id of the level the check belongs to. (Optional.)
-	OwnerId              *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                           // The id of the owner of the check. (Optional.)
-	FilterId             *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`                         // The id of the filter the check belongs to. (Optional.)
-	Enabled              *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`                           // Whether the check is enabled or not. (Optional.)
-	EnableOn             *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                         // The date when the check will be automatically enabled. (Optional.)
-	Notes                *string               `json:"notes,omitempty" yaml:"notes,omitempty"`                               // Additional information about the check. (Optional.)
-	Id                   ID                    `json:"id" yaml:"id"`                                                         // The id of the check to be updated. (Required.)
-	RequireContactMethod *bool                 `json:"requireContactMethod,omitempty" yaml:"requireContactMethod,omitempty"` // Whether to require a contact method for a service owner or not. (Optional.)
-	ContactMethod        *string               `json:"contactMethod,omitempty" yaml:"contactMethod,omitempty"`               // The type of contact method that an owner should provide. (Optional.)
-	TagKey               *string               `json:"tagKey,omitempty" yaml:"tagKey,omitempty"`                             // The tag key that should exist for a service owner. (Optional.)
-	TagPredicate         *PredicateUpdateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                 // The condition that should be satisfied by the tag value. (Optional.)
+	Name                 *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId           *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId              *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId              *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId             *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled              *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn             *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                   ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	RequireContactMethod *bool                 `json:"requireContactMethod,omitempty" yaml:"requireContactMethod,omitempty" default:"false"`       // Whether to require a contact method for a service owner or not. (Optional.)
+	ContactMethod        *string               `json:"contactMethod,omitempty" yaml:"contactMethod,omitempty" default:"example_method"`            // The type of contact method that an owner should provide. (Optional.)
+	TagKey               *string               `json:"tagKey,omitempty" yaml:"tagKey,omitempty" default:"XXX_example_key_XXX"`                     // The tag key that should exist for a service owner. (Optional.)
+	TagPredicate         *PredicateUpdateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                                       // The condition that should be satisfied by the tag value. (Optional.)
 }
 
 // CheckServicePropertyCreateInput specifies the input fields used to create a service property check.
 type CheckServicePropertyCreateInput struct {
-	Name                   string                  `json:"name" yaml:"name"`                                                         // The display name of the check. (Required.)
-	Enabled                *bool                   `json:"enabled,omitempty" yaml:"enabled,omitempty"`                               // Whether the check is enabled or not. (Optional.)
-	EnableOn               *iso8601.Time           `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                             // The date when the check will be automatically enabled. (Optional.)
-	CategoryId             ID                      `json:"categoryId" yaml:"categoryId"`                                             // The id of the category the check belongs to. (Required.)
-	LevelId                ID                      `json:"levelId" yaml:"levelId"`                                                   // The id of the level the check belongs to. (Required.)
-	OwnerId                *ID                     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                               // The id of the team that owns the check. (Optional.)
-	FilterId               *ID                     `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The id of the filter of the check. (Optional.)
-	Notes                  *string                 `json:"notes,omitempty" yaml:"notes,omitempty"`                                   // Additional information about the check. (Optional.)
-	ServiceProperty        ServicePropertyTypeEnum `json:"serviceProperty" yaml:"serviceProperty"`                                   // The property of the service that the check will verify. (Required.)
-	PropertyDefinition     *IdentifierInput        `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`         // The secondary key of the property that the check will verify (e.g. the specific custom property). (Optional.)
-	PropertyValuePredicate *PredicateInput         `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"` // The condition that should be satisfied by the service property value. (Optional.)
+	Name                   string                  `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled                *bool                   `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn               *iso8601.Time           `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId             ID                      `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId                ID                      `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId                *ID                     `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId               *ID                     `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                  *string                 `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	ServiceProperty        ServicePropertyTypeEnum `json:"serviceProperty" yaml:"serviceProperty" default:"language"`                              // The property of the service that the check will verify. (Required.)
+	PropertyDefinition     *IdentifierInput        `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`                       // The secondary key of the property that the check will verify (e.g. the specific custom property). (Optional.)
+	PropertyValuePredicate *PredicateInput         `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"`               // The condition that should be satisfied by the service property value. (Optional.)
 }
 
 // CheckServicePropertyUpdateInput specifies the input fields used to update a service property check.
 type CheckServicePropertyUpdateInput struct {
-	Name                   *string                  `json:"name,omitempty" yaml:"name,omitempty"`                                     // The display name of the check. (Optional.)
-	CategoryId             *ID                      `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                         // The id of the category the check belongs to. (Optional.)
-	LevelId                *ID                      `json:"levelId,omitempty" yaml:"levelId,omitempty"`                               // The id of the level the check belongs to. (Optional.)
-	OwnerId                *ID                      `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                               // The id of the owner of the check. (Optional.)
-	FilterId               *ID                      `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The id of the filter the check belongs to. (Optional.)
-	Enabled                *bool                    `json:"enabled,omitempty" yaml:"enabled,omitempty"`                               // Whether the check is enabled or not. (Optional.)
-	EnableOn               *iso8601.Time            `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                             // The date when the check will be automatically enabled. (Optional.)
-	Notes                  *string                  `json:"notes,omitempty" yaml:"notes,omitempty"`                                   // Additional information about the check. (Optional.)
-	Id                     ID                       `json:"id" yaml:"id"`                                                             // The id of the check to be updated. (Required.)
-	ServiceProperty        *ServicePropertyTypeEnum `json:"serviceProperty,omitempty" yaml:"serviceProperty,omitempty"`               // The property of the service that the check will verify. (Optional.)
-	PropertyDefinition     *IdentifierInput         `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`         // The secondary key of the property that the check will verify (e.g. the specific custom property). (Optional.)
-	PropertyValuePredicate *PredicateUpdateInput    `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"` // The condition that should be satisfied by the service property value. (Optional.)
+	Name                   *string                  `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId             *ID                      `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId                *ID                      `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId                *ID                      `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId               *ID                      `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled                *bool                    `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn               *iso8601.Time            `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                  *string                  `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                     ID                       `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	ServiceProperty        *ServicePropertyTypeEnum `json:"serviceProperty,omitempty" yaml:"serviceProperty,omitempty" default:"language"`              // The property of the service that the check will verify. (Optional.)
+	PropertyDefinition     *IdentifierInput         `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`                           // The secondary key of the property that the check will verify (e.g. the specific custom property). (Optional.)
+	PropertyValuePredicate *PredicateUpdateInput    `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"`                   // The condition that should be satisfied by the service property value. (Optional.)
 }
 
 // CheckTagDefinedCreateInput specifies the input fields used to create a tag check.
 type CheckTagDefinedCreateInput struct {
-	Name         string          `json:"name" yaml:"name"`                                     // The display name of the check. (Required.)
-	Enabled      *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty"`           // Whether the check is enabled or not. (Optional.)
-	EnableOn     *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`         // The date when the check will be automatically enabled. (Optional.)
-	CategoryId   ID              `json:"categoryId" yaml:"categoryId"`                         // The id of the category the check belongs to. (Required.)
-	LevelId      ID              `json:"levelId" yaml:"levelId"`                               // The id of the level the check belongs to. (Required.)
-	OwnerId      *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`           // The id of the team that owns the check. (Optional.)
-	FilterId     *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty"`         // The id of the filter of the check. (Optional.)
-	Notes        *string         `json:"notes,omitempty" yaml:"notes,omitempty"`               // Additional information about the check. (Optional.)
-	TagKey       string          `json:"tagKey" yaml:"tagKey"`                                 // The tag key where the tag predicate should be applied. (Required.)
-	TagPredicate *PredicateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"` // The condition that should be satisfied by the tag value. (Optional.)
+	Name         string          `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled      *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn     *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId   ID              `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId      ID              `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId      *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId     *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes        *string         `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	TagKey       string          `json:"tagKey" yaml:"tagKey" default:"XXX_example_key_XXX"`                                     // The tag key where the tag predicate should be applied. (Required.)
+	TagPredicate *PredicateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                                   // The condition that should be satisfied by the tag value. (Optional.)
 }
 
 // CheckTagDefinedUpdateInput specifies the input fields used to update a tag defined check.
 type CheckTagDefinedUpdateInput struct {
-	Name         *string               `json:"name,omitempty" yaml:"name,omitempty"`                 // The display name of the check. (Optional.)
-	CategoryId   *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`     // The id of the category the check belongs to. (Optional.)
-	LevelId      *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`           // The id of the level the check belongs to. (Optional.)
-	OwnerId      *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`           // The id of the owner of the check. (Optional.)
-	FilterId     *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`         // The id of the filter the check belongs to. (Optional.)
-	Enabled      *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`           // Whether the check is enabled or not. (Optional.)
-	EnableOn     *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`         // The date when the check will be automatically enabled. (Optional.)
-	Notes        *string               `json:"notes,omitempty" yaml:"notes,omitempty"`               // Additional information about the check. (Optional.)
-	Id           ID                    `json:"id" yaml:"id"`                                         // The id of the check to be updated. (Required.)
-	TagKey       *string               `json:"tagKey,omitempty" yaml:"tagKey,omitempty"`             // The tag key where the tag predicate should be applied. (Optional.)
-	TagPredicate *PredicateUpdateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"` // The condition that should be satisfied by the tag value. (Optional.)
+	Name         *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId   *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId      *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId      *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId     *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled      *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn     *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes        *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id           ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	TagKey       *string               `json:"tagKey,omitempty" yaml:"tagKey,omitempty" default:"XXX_example_key_XXX"`                     // The tag key where the tag predicate should be applied. (Optional.)
+	TagPredicate *PredicateUpdateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                                       // The condition that should be satisfied by the tag value. (Optional.)
 }
 
 // CheckToPromoteInput specifies the input fields used to promote a campaign check to the rubric.
 type CheckToPromoteInput struct {
-	CheckId    ID `json:"checkId" yaml:"checkId"`       // The ID of the check to be promoted to the rubric. (Required.)
-	CategoryId ID `json:"categoryId" yaml:"categoryId"` // The ID of the category that the promoted check will be linked to. (Required.)
-	LevelId    ID `json:"levelId" yaml:"levelId"`       // The ID of the level that the promoted check will be linked to. (Required.)
+	CheckId    ID `json:"checkId" yaml:"checkId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The ID of the check to be promoted to the rubric. (Required.)
+	CategoryId ID `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the category that the promoted check will be linked to. (Required.)
+	LevelId    ID `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The ID of the level that the promoted check will be linked to. (Required.)
 }
 
 // CheckToolUsageCreateInput specifies the input fields used to create a tool usage check.
 type CheckToolUsageCreateInput struct {
-	Name                 string          `json:"name" yaml:"name"`                                                     // The display name of the check. (Required.)
-	Enabled              *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty"`                           // Whether the check is enabled or not. (Optional.)
-	EnableOn             *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                         // The date when the check will be automatically enabled. (Optional.)
-	CategoryId           ID              `json:"categoryId" yaml:"categoryId"`                                         // The id of the category the check belongs to. (Required.)
-	LevelId              ID              `json:"levelId" yaml:"levelId"`                                               // The id of the level the check belongs to. (Required.)
-	OwnerId              *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                           // The id of the team that owns the check. (Optional.)
-	FilterId             *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty"`                         // The id of the filter of the check. (Optional.)
-	Notes                *string         `json:"notes,omitempty" yaml:"notes,omitempty"`                               // Additional information about the check. (Optional.)
-	ToolCategory         ToolCategory    `json:"toolCategory" yaml:"toolCategory"`                                     // The category that the tool belongs to. (Required.)
-	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`       // The condition that the tool name should satisfy to be evaluated. (Optional.)
-	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`         // The condition that the tool url should satisfy to be evaluated. (Optional.)
-	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"` // The condition that the environment should satisfy to be evaluated. (Optional.)
+	Name                 string          `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled              *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn             *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId           ID              `json:"categoryId" yaml:"categoryId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId              ID              `json:"levelId" yaml:"levelId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId              *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId             *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                *string         `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                         // Additional information about the check. (Optional.)
+	ToolCategory         ToolCategory    `json:"toolCategory" yaml:"toolCategory" default:"api_documentation"`                           // The category that the tool belongs to. (Required.)
+	ToolNamePredicate    *PredicateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`                         // The condition that the tool name should satisfy to be evaluated. (Optional.)
+	ToolUrlPredicate     *PredicateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`                           // The condition that the tool url should satisfy to be evaluated. (Optional.)
+	EnvironmentPredicate *PredicateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"`                   // The condition that the environment should satisfy to be evaluated. (Optional.)
 }
 
 // CheckToolUsageUpdateInput specifies the input fields used to update a tool usage check.
 type CheckToolUsageUpdateInput struct {
-	Name                 *string               `json:"name,omitempty" yaml:"name,omitempty"`                                 // The display name of the check. (Optional.)
-	CategoryId           *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty"`                     // The id of the category the check belongs to. (Optional.)
-	LevelId              *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty"`                           // The id of the level the check belongs to. (Optional.)
-	OwnerId              *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                           // The id of the owner of the check. (Optional.)
-	FilterId             *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty"`                         // The id of the filter the check belongs to. (Optional.)
-	Enabled              *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty"`                           // Whether the check is enabled or not. (Optional.)
-	EnableOn             *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`                         // The date when the check will be automatically enabled. (Optional.)
-	Notes                *string               `json:"notes,omitempty" yaml:"notes,omitempty"`                               // Additional information about the check. (Optional.)
-	Id                   ID                    `json:"id" yaml:"id"`                                                         // The id of the check to be updated. (Required.)
-	ToolCategory         *ToolCategory         `json:"toolCategory,omitempty" yaml:"toolCategory,omitempty"`                 // The category that the tool belongs to. (Optional.)
-	ToolNamePredicate    *PredicateUpdateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`       // The condition that the tool name should satisfy to be evaluated. (Optional.)
-	ToolUrlPredicate     *PredicateUpdateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`         // The condition that the tool url should satisfy to be evaluated. (Optional.)
-	EnvironmentPredicate *PredicateUpdateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"` // The condition that the environment should satisfy to be evaluated. (Optional.)
+	Name                 *string               `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId           *ID                   `json:"categoryId,omitempty" yaml:"categoryId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId              *ID                   `json:"levelId,omitempty" yaml:"levelId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId              *ID                   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId             *ID                   `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled              *bool                 `json:"enabled,omitempty" yaml:"enabled,omitempty" default:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn             *iso8601.Time         `json:"enableOn,omitempty" yaml:"enableOn,omitempty" default:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                *string               `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                   ID                    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	ToolCategory         *ToolCategory         `json:"toolCategory,omitempty" yaml:"toolCategory,omitempty" default:"api_documentation"`           // The category that the tool belongs to. (Optional.)
+	ToolNamePredicate    *PredicateUpdateInput `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`                             // The condition that the tool name should satisfy to be evaluated. (Optional.)
+	ToolUrlPredicate     *PredicateUpdateInput `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`                               // The condition that the tool url should satisfy to be evaluated. (Optional.)
+	EnvironmentPredicate *PredicateUpdateInput `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"`                       // The condition that the environment should satisfy to be evaluated. (Optional.)
 }
 
 // ChecksCopyToCampaignInput specifies the input fields used to copy selected rubric checks to an existing campaign.
 type ChecksCopyToCampaignInput struct {
-	CampaignId ID       `json:"campaignId" yaml:"campaignId"` // The ID of the existing campaign. (Required.)
-	CheckIds   []string `json:"checkIds" yaml:"checkIds"`     // The IDs of the existing rubric checks to be copied. (Required.)
+	CampaignId ID       `json:"campaignId" yaml:"campaignId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                    // The ID of the existing campaign. (Required.)
+	CheckIds   []string `json:"checkIds" yaml:"checkIds" default:"['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']"` // The IDs of the existing rubric checks to be copied. (Required.)
 }
 
 // ContactCreateInput specifies the input fields used to create a contact.
 type ContactCreateInput struct {
-	Type        ContactType `json:"type" yaml:"type"`                                   // The method of contact [email, slack, slack_handle, web]. (Required.)
-	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty"` // The name shown in the UI for the contact. (Optional.)
-	Address     string      `json:"address" yaml:"address"`                             // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Required.)
-	TeamAlias   *string     `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty"`     // The alias of the team the contact belongs to. (Optional.)
-	OwnerId     *ID         `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`         // The id of the owner of this contact. (Optional.)
-	DisplayType *string     `json:"displayType,omitempty" yaml:"displayType,omitempty"` // The type shown in the UI for the contact. (Optional.)
-	ExternalId  *string     `json:"externalId,omitempty" yaml:"externalId,omitempty"`   // The remote identifier of the contact method. (Optional.)
+	Type        ContactType `json:"type" yaml:"type" default:"slack"`                                                           // The method of contact [email, slack, slack_handle, web]. (Required.)
+	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"example_name"`                  // The name shown in the UI for the contact. (Optional.)
+	Address     string      `json:"address" yaml:"address" default:"support@company.com"`                                       // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Required.)
+	TeamAlias   *string     `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty" default:"example_alias"`                     // The alias of the team the contact belongs to. (Optional.)
+	OwnerId     *ID         `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of this contact. (Optional.)
+	DisplayType *string     `json:"displayType,omitempty" yaml:"displayType,omitempty" default:"example_type"`                  // The type shown in the UI for the contact. (Optional.)
+	ExternalId  *string     `json:"externalId,omitempty" yaml:"externalId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The remote identifier of the contact method. (Optional.)
 }
 
 // ContactDeleteInput specifies the input fields used to delete a contact.
 type ContactDeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The `id` of the contact you wish to delete. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The `id` of the contact you wish to delete. (Required.)
 }
 
 // ContactInput specifies the input fields used to create a contact.
 type ContactInput struct {
-	Type        ContactType `json:"type" yaml:"type"`                                   // The method of contact [email, slack, slack_handle, web]. (Required.)
-	Address     string      `json:"address" yaml:"address"`                             // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Required.)
-	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty"` // The name shown in the UI for the contact. (Optional.)
+	Type        ContactType `json:"type" yaml:"type" default:"slack"`                                          // The method of contact [email, slack, slack_handle, web]. (Required.)
+	Address     string      `json:"address" yaml:"address" default:"support@company.com"`                      // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Required.)
+	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"example_name"` // The name shown in the UI for the contact. (Optional.)
 }
 
 // ContactUpdateInput specifies the input fields used to update a contact.
 type ContactUpdateInput struct {
-	Id          ID           `json:"id" yaml:"id"`                                       // The unique identifier for the contact. (Required.)
-	Type        *ContactType `json:"type,omitempty" yaml:"type,omitempty"`               // The method of contact [email, slack, slack_handle, web]. (Optional.)
-	Address     *string      `json:"address,omitempty" yaml:"address,omitempty"`         // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Optional.)
-	DisplayName *string      `json:"displayName,omitempty" yaml:"displayName,omitempty"` // The name shown in the UI for the contact. (Optional.)
-	DisplayType *string      `json:"displayType,omitempty" yaml:"displayType,omitempty"` // The type shown in the UI for the contact. (Optional.)
-	ExternalId  *string      `json:"externalId,omitempty" yaml:"externalId,omitempty"`   // The remote identifier of the contact method. (Optional.)
-	MakeDefault *bool        `json:"makeDefault,omitempty" yaml:"makeDefault,omitempty"` // Makes the contact the default for the given type. Only available for team contacts. (Optional.)
+	Id          ID           `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The unique identifier for the contact. (Required.)
+	Type        *ContactType `json:"type,omitempty" yaml:"type,omitempty" default:"slack"`                                       // The method of contact [email, slack, slack_handle, web]. (Optional.)
+	Address     *string      `json:"address,omitempty" yaml:"address,omitempty" default:"support@company.com"`                   // The contact address. Examples: support@company.com for type `email`, https:/opslevel.com for type `web`. (Optional.)
+	DisplayName *string      `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"example_name"`                  // The name shown in the UI for the contact. (Optional.)
+	DisplayType *string      `json:"displayType,omitempty" yaml:"displayType,omitempty" default:"example_type"`                  // The type shown in the UI for the contact. (Optional.)
+	ExternalId  *string      `json:"externalId,omitempty" yaml:"externalId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The remote identifier of the contact method. (Optional.)
+	MakeDefault *bool        `json:"makeDefault,omitempty" yaml:"makeDefault,omitempty" default:"false"`                         // Makes the contact the default for the given type. Only available for team contacts. (Optional.)
 }
 
 // CustomActionsTriggerDefinitionCreateInput specifies the input fields used in the `customActionsTriggerDefinitionCreate` mutation.
 type CustomActionsTriggerDefinitionCreateInput struct {
-	Name                   string                                           `json:"name" yaml:"name"`                                                         // The name of the Trigger Definition. (Required.)
-	Description            *string                                          `json:"description,omitempty" yaml:"description,omitempty"`                       // The description of what the Trigger Definition will do, supports Markdown. (Optional.)
-	OwnerId                ID                                               `json:"ownerId" yaml:"ownerId"`                                                   // The owner of the Trigger Definition. (Required.)
-	ActionId               *ID                                              `json:"actionId,omitempty" yaml:"actionId,omitempty"`                             // The action that will be triggered by the Trigger Definition. (Optional.)
-	FilterId               *ID                                              `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The filter that will determine which services apply to the Trigger Definition. (Optional.)
-	ManualInputsDefinition *string                                          `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"` // The YAML definition of custom inputs for the Trigger Definition. (Optional.)
-	Published              *bool                                            `json:"published,omitempty" yaml:"published,omitempty"`                           // The published state of the action; true if the definition is ready for use; false if it is a draft. (Optional.)
-	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
-	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`             // The liquid template used to parse the response from the External Action. (Optional.)
-	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
-	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
+	Name                   string                                           `json:"name" yaml:"name" default:"example_name"`                                                                                                 // The name of the Trigger Definition. (Required.)
+	Description            *string                                          `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`                                                        // The description of what the Trigger Definition will do, supports Markdown. (Optional.)
+	OwnerId                ID                                               `json:"ownerId" yaml:"ownerId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                        // The owner of the Trigger Definition. (Required.)
+	ActionId               *ID                                              `json:"actionId,omitempty" yaml:"actionId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                  // The action that will be triggered by the Trigger Definition. (Optional.)
+	FilterId               *ID                                              `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                  // The filter that will determine which services apply to the Trigger Definition. (Optional.)
+	ManualInputsDefinition *string                                          `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty" default:"example_definition"`                                   // The YAML definition of custom inputs for the Trigger Definition. (Optional.)
+	Published              *bool                                            `json:"published,omitempty" yaml:"published,omitempty" default:"false"`                                                                          // The published state of the action; true if the definition is ready for use; false if it is a draft. (Optional.)
+	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" default:"service_owners"`                                                         // The set of users that should be able to use the trigger definition. (Optional.)
+	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"` // The liquid template used to parse the response from the External Action. (Optional.)
+	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty" default:"GLOBAL"`                                                                       // The entity type to associate with the Trigger Definition. (Optional.)
+	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" default:"[]"`                                                           // The set of additional teams who can invoke this Trigger Definition. (Optional.)
 }
 
 // CustomActionsTriggerDefinitionUpdateInput specifies the input fields used in the `customActionsTriggerDefinitionUpdate` mutation.
 type CustomActionsTriggerDefinitionUpdateInput struct {
-	Id                     ID                                               `json:"id" yaml:"id"`                                                             // The ID of the trigger definition. (Required.)
-	Name                   *string                                          `json:"name,omitempty" yaml:"name,omitempty"`                                     // The name of the Trigger Definition. (Optional.)
-	Description            *string                                          `json:"description,omitempty" yaml:"description,omitempty"`                       // The description of what the Trigger Definition will do, support Markdown. (Optional.)
-	OwnerId                *ID                                              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                               // The owner of the Trigger Definition. (Optional.)
-	ActionId               *ID                                              `json:"actionId,omitempty" yaml:"actionId,omitempty"`                             // The action that will be triggered by the Trigger Definition. (Optional.)
-	FilterId               *ID                                              `json:"filterId,omitempty" yaml:"filterId,omitempty"`                             // The filter that will determine which services apply to the Trigger Definition. (Optional.)
-	Action                 *CustomActionsWebhookActionUpdateInput           `json:"action,omitempty" yaml:"action,omitempty"`                                 // The details for the action to update for the Trigger Definition. (Optional.)
-	ManualInputsDefinition *string                                          `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty"` // The YAML definition of custom inputs for the Trigger Definition. (Optional.)
-	Published              *bool                                            `json:"published,omitempty" yaml:"published,omitempty"`                           // The published state of the action; true if the definition is ready for use; false if it is a draft. (Optional.)
-	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty"`                   // The set of users that should be able to use the trigger definition. (Optional.)
-	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty"`             // The liquid template used to parse the response from the External Action. (Optional.)
-	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty"`                         // The entity type to associate with the Trigger Definition. (Optional.)
-	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty"`         // The set of additional teams who can invoke this Trigger Definition. (Optional.)
+	Id                     ID                                               `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                                  // The ID of the trigger definition. (Required.)
+	Name                   *string                                          `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                                                             // The name of the Trigger Definition. (Optional.)
+	Description            *string                                          `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`                                                        // The description of what the Trigger Definition will do, support Markdown. (Optional.)
+	OwnerId                *ID                                              `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                    // The owner of the Trigger Definition. (Optional.)
+	ActionId               *ID                                              `json:"actionId,omitempty" yaml:"actionId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                  // The action that will be triggered by the Trigger Definition. (Optional.)
+	FilterId               *ID                                              `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                  // The filter that will determine which services apply to the Trigger Definition. (Optional.)
+	Action                 *CustomActionsWebhookActionUpdateInput           `json:"action,omitempty" yaml:"action,omitempty"`                                                                                                // The details for the action to update for the Trigger Definition. (Optional.)
+	ManualInputsDefinition *string                                          `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty" default:"example_definition"`                                   // The YAML definition of custom inputs for the Trigger Definition. (Optional.)
+	Published              *bool                                            `json:"published,omitempty" yaml:"published,omitempty" default:"false"`                                                                          // The published state of the action; true if the definition is ready for use; false if it is a draft. (Optional.)
+	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" default:"service_owners"`                                                         // The set of users that should be able to use the trigger definition. (Optional.)
+	ResponseTemplate       *string                                          `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"` // The liquid template used to parse the response from the External Action. (Optional.)
+	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty" default:"GLOBAL"`                                                                       // The entity type to associate with the Trigger Definition. (Optional.)
+	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" default:"[]"`                                                           // The set of additional teams who can invoke this Trigger Definition. (Optional.)
 }
 
 // CustomActionsWebhookActionCreateInput specifies the input fields used in the `customActionsWebhookActionCreate` mutation.
 type CustomActionsWebhookActionCreateInput struct {
-	Name           string                      `json:"name" yaml:"name"`                                         // The name that gets assigned to the Webhook Action you're creating. (Required.)
-	Description    *string                     `json:"description,omitempty" yaml:"description,omitempty"`       // The description that gets assigned to the Webhook Action you're creating. (Optional.)
-	LiquidTemplate *string                     `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty"` // Template that can be used to generate a Webhook payload. (Optional.)
-	WebhookUrl     string                      `json:"webhookUrl" yaml:"webhookUrl"`                             // The URL that you wish to send the Webhook to when triggered. (Required.)
-	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod"`                             // HTTP used when the Webhook is triggered. Either POST or PUT. (Required.)
-	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty"`               // HTTP headers be passed along with your Webhook when triggered. (Optional.)
+	Name           string                      `json:"name" yaml:"name" default:"example_name"`                                                                                                                        // The name that gets assigned to the Webhook Action you're creating. (Required.)
+	Description    *string                     `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`                                                                               // The description that gets assigned to the Webhook Action you're creating. (Optional.)
+	LiquidTemplate *string                     `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"`                            // Template that can be used to generate a Webhook payload. (Optional.)
+	WebhookUrl     string                      `json:"webhookUrl" yaml:"webhookUrl" default:"john.doe@example.com"`                                                                                                    // The URL that you wish to send the Webhook to when triggered. (Required.)
+	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" default:"GET"`                                                                                                                     // HTTP used when the Webhook is triggered. Either POST or PUT. (Required.)
+	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered. (Optional.)
 }
 
 // CustomActionsWebhookActionUpdateInput represents inputs that specify the details of a Webhook Action you wish to update.
 type CustomActionsWebhookActionUpdateInput struct {
-	Id             ID                           `json:"id" yaml:"id"`                                             // The ID of the Webhook Action you wish to update. (Required.)
-	Name           *string                      `json:"name,omitempty" yaml:"name,omitempty"`                     // The name that gets assigned to the Webhook Action you're creating. (Optional.)
-	Description    *string                      `json:"description,omitempty" yaml:"description,omitempty"`       // The description that gets assigned to the Webhook Action you're creating. (Optional.)
-	LiquidTemplate *string                      `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty"` // Template that can be used to generate a Webhook payload. (Optional.)
-	WebhookUrl     *string                      `json:"webhookUrl,omitempty" yaml:"webhookUrl,omitempty"`         // The URL that you wish to send the Webhook too when triggered. (Optional.)
-	HttpMethod     *CustomActionsHttpMethodEnum `json:"httpMethod,omitempty" yaml:"httpMethod,omitempty"`         // HTTP used when the Webhook is triggered. Either POST or PUT. (Optional.)
-	Headers        *JSON                        `json:"headers,omitempty" yaml:"headers,omitempty"`               // HTTP headers be passed along with your Webhook when triggered. (Optional.)
+	Id             ID                           `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                                                         // The ID of the Webhook Action you wish to update. (Required.)
+	Name           *string                      `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                                                                                    // The name that gets assigned to the Webhook Action you're creating. (Optional.)
+	Description    *string                      `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`                                                                               // The description that gets assigned to the Webhook Action you're creating. (Optional.)
+	LiquidTemplate *string                      `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty" default:"{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"`                            // Template that can be used to generate a Webhook payload. (Optional.)
+	WebhookUrl     *string                      `json:"webhookUrl,omitempty" yaml:"webhookUrl,omitempty" default:"john.doe@example.com"`                                                                                // The URL that you wish to send the Webhook too when triggered. (Optional.)
+	HttpMethod     *CustomActionsHttpMethodEnum `json:"httpMethod,omitempty" yaml:"httpMethod,omitempty" default:"GET"`                                                                                                 // HTTP used when the Webhook is triggered. Either POST or PUT. (Optional.)
+	Headers        *JSON                        `json:"headers,omitempty" yaml:"headers,omitempty" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered. (Optional.)
 }
 
 // DeleteInput specifies the input fields used to delete an entity.
 type DeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the entity to be deleted. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the entity to be deleted. (Required.)
 }
 
 // DomainInput specifies the input fields for a domain.
 type DomainInput struct {
-	Name        *string `json:"name,omitempty" yaml:"name,omitempty"`               // The name for the domain. (Optional.)
-	Description *string `json:"description,omitempty" yaml:"description,omitempty"` // The description for the domain. (Optional.)
-	OwnerId     *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`         // The id of the owner for the domain. (Optional.)
-	Note        *string `json:"note,omitempty" yaml:"note,omitempty"`               // Additional information about the domain. (Optional.)
+	Name        *string `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                          // The name for the domain. (Optional.)
+	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`     // The description for the domain. (Optional.)
+	OwnerId     *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the owner for the domain. (Optional.)
+	Note        *string `json:"note,omitempty" yaml:"note,omitempty" default:"example_note"`                          // Additional information about the domain. (Optional.)
 }
 
 // ExternalUuidMutationInput specifies the input used for modifying a resource's external UUID.
 type ExternalUuidMutationInput struct {
-	ResourceId ID `json:"resourceId" yaml:"resourceId"` // The id of the resource. (Required.)
+	ResourceId ID `json:"resourceId" yaml:"resourceId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource. (Required.)
 }
 
 // FilterCreateInput specifies the input fields used to create a filter.
 type FilterCreateInput struct {
-	Name       string                  `json:"name" yaml:"name"`                                 // The display name of the filter. (Required.)
-	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty"` // The list of predicates used to select which services apply to the filter. (Optional.)
-	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
+	Name       string                  `json:"name" yaml:"name" default:"example_name"`                       // The display name of the filter. (Required.)
+	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty" default:"[]"` // The list of predicates used to select which services apply to the filter. (Optional.)
+	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty" default:"or"` // The logical operator to be used in conjunction with predicates. (Optional.)
 }
 
 // FilterPredicateInput represents a condition that should be satisfied.
 type FilterPredicateInput struct {
-	Type          PredicateTypeEnum `json:"type" yaml:"type"`                                       // The condition type used by the predicate. (Required.)
-	Value         *string           `json:"value,omitempty" yaml:"value,omitempty"`                 // The condition value used by the predicate. (Optional.)
-	Key           PredicateKeyEnum  `json:"key" yaml:"key"`                                         // The condition key used by the predicate. (Required.)
-	KeyData       *string           `json:"keyData,omitempty" yaml:"keyData,omitempty"`             // Additional data used by the predicate. This field is used by predicates with key = 'tags' to specify the tag key. For example, to create a predicate for services containing the tag 'db:mysql', set keyData = 'db' and value = 'mysql'. (Optional.)
-	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty"` // . (Optional.)
+	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"satisfies_jq_expression"`                     // The condition type used by the predicate. (Required.)
+	Value         *string           `json:"value,omitempty" yaml:"value,omitempty" default:"example_value"`         // The condition value used by the predicate. (Optional.)
+	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"filter_id"`                                     // The condition key used by the predicate. (Required.)
+	KeyData       *string           `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"example_data"`      // Additional data used by the predicate. This field is used by predicates with key = 'tags' to specify the tag key. For example, to create a predicate for services containing the tag 'db:mysql', set keyData = 'db' and value = 'mysql'. (Optional.)
+	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"` // . (Optional.)
 }
 
 // FilterUpdateInput specifies the input fields used to update a filter.
 type FilterUpdateInput struct {
-	Id         ID                      `json:"id" yaml:"id"`                                     // The id of the filter. (Required.)
-	Name       *string                 `json:"name,omitempty" yaml:"name,omitempty"`             // The display name of the filter. (Optional.)
-	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates. (Optional.)
-	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty"` // The logical operator to be used in conjunction with predicates. (Optional.)
+	Id         ID                      `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`        // The id of the filter. (Required.)
+	Name       *string                 `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`   // The display name of the filter. (Optional.)
+	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty" default:"[]"` // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates. (Optional.)
+	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty" default:"or"` // The logical operator to be used in conjunction with predicates. (Optional.)
 }
 
 // IdentifierInput specifies the input fields used to identify a resource.
 type IdentifierInput struct {
-	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the resource. (Optional.)
-	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty"` // The human-friendly, unique identifier for the resource. (Optional.)
+	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource. (Optional.)
+	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`             // The human-friendly, unique identifier for the resource. (Optional.)
 }
 
 // InfrastructureResourceInput specifies the input fields for a infrastructure resource.
 type InfrastructureResourceInput struct {
-	OwnerId              *ID                                      `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`                           // The id of the owner for the infrastructure_resource. (Optional.)
-	Data                 *JSON                                    `json:"data,omitempty" yaml:"data,omitempty"`                                 // The data for the infrastructure_resource. (Optional.)
-	Schema               *InfrastructureResourceSchemaInput       `json:"schema,omitempty" yaml:"schema,omitempty"`                             // The schema for the infrastructure_resource that determines its type. (Optional.)
-	ProviderData         *InfrastructureResourceProviderDataInput `json:"providerData,omitempty" yaml:"providerData,omitempty"`                 // Data about the provider of the infrastructure resource. (Optional.)
-	ProviderResourceType *string                                  `json:"providerResourceType,omitempty" yaml:"providerResourceType,omitempty"` // The type of the infrastructure resource in its provider. (Optional.)
+	OwnerId              *ID                                      `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                     // The id of the owner for the infrastructure_resource. (Optional.)
+	Data                 *JSON                                    `json:"data,omitempty" yaml:"data,omitempty" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // The data for the infrastructure_resource. (Optional.)
+	Schema               *InfrastructureResourceSchemaInput       `json:"schema,omitempty" yaml:"schema,omitempty"`                                                                                                                 // The schema for the infrastructure_resource that determines its type. (Optional.)
+	ProviderData         *InfrastructureResourceProviderDataInput `json:"providerData,omitempty" yaml:"providerData,omitempty"`                                                                                                     // Data about the provider of the infrastructure resource. (Optional.)
+	ProviderResourceType *string                                  `json:"providerResourceType,omitempty" yaml:"providerResourceType,omitempty" default:"example_type"`                                                              // The type of the infrastructure resource in its provider. (Optional.)
 }
 
 // InfrastructureResourceProviderDataInput specifies the input fields for data about an infrastructure resource's provider.
 type InfrastructureResourceProviderDataInput struct {
-	AccountName  string  `json:"accountName" yaml:"accountName"`                       // The account name of the provider. (Required.)
-	ExternalUrl  *string `json:"externalUrl,omitempty" yaml:"externalUrl,omitempty"`   // The external URL of the infrastructure resource in its provider. (Optional.)
-	ProviderName *string `json:"providerName,omitempty" yaml:"providerName,omitempty"` // The name of the provider (e.g. AWS, GCP, Azure). (Optional.)
+	AccountName  string  `json:"accountName" yaml:"accountName" default:"example_name"`                             // The account name of the provider. (Required.)
+	ExternalUrl  *string `json:"externalUrl,omitempty" yaml:"externalUrl,omitempty" default:"john.doe@example.com"` // The external URL of the infrastructure resource in its provider. (Optional.)
+	ProviderName *string `json:"providerName,omitempty" yaml:"providerName,omitempty" default:"example_name"`       // The name of the provider (e.g. AWS, GCP, Azure). (Optional.)
 }
 
 // InfrastructureResourceSchemaInput specifies the schema for an infrastructure resource.
 type InfrastructureResourceSchemaInput struct {
-	Type string `json:"type" yaml:"type"` // The type of the infrastructure resource. (Required.)
+	Type string `json:"type" yaml:"type" default:"example_type"` // The type of the infrastructure resource. (Required.)
 }
 
 // LevelCreateInput specifies the input fields used to create a level. The new level will be added as the highest level (greatest level index).
 type LevelCreateInput struct {
-	Name        string  `json:"name" yaml:"name"`                                   // The display name of the level. (Required.)
-	Description *string `json:"description,omitempty" yaml:"description,omitempty"` // The description of the level. (Optional.)
-	Index       *int    `json:"index,omitempty" yaml:"index,omitempty"`             // an integer allowing this level to be inserted between others. Must be unique per Rubric. (Optional.)
+	Name        string  `json:"name" yaml:"name" default:"example_name"`                                          // The display name of the level. (Required.)
+	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"` // The description of the level. (Optional.)
+	Index       *int    `json:"index,omitempty" yaml:"index,omitempty" default:"3"`                               // an integer allowing this level to be inserted between others. Must be unique per Rubric. (Optional.)
 }
 
 // LevelDeleteInput specifies the input fields used to delete a level.
 type LevelDeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the level to be deleted. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the level to be deleted. (Required.)
 }
 
 // LevelUpdateInput specifies the input fields used to update a level.
 type LevelUpdateInput struct {
-	Id          ID      `json:"id" yaml:"id"`                                       // The id of the level to be updated. (Required.)
-	Name        *string `json:"name,omitempty" yaml:"name,omitempty"`               // The display name of the level. (Optional.)
-	Description *string `json:"description,omitempty" yaml:"description,omitempty"` // The description of the level. (Optional.)
+	Id          ID      `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                           // The id of the level to be updated. (Required.)
+	Name        *string `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                      // The display name of the level. (Optional.)
+	Description *string `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"` // The description of the level. (Optional.)
 }
 
 // ManualCheckFrequencyInput represents defines a frequency for the check update.
 type ManualCheckFrequencyInput struct {
-	StartingDate       iso8601.Time       `json:"startingDate" yaml:"startingDate"`             // The date that the check will start to evaluate. (Required.)
-	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale" yaml:"frequencyTimeScale"` // The time scale type for the frequency. (Required.)
-	FrequencyValue     int                `json:"frequencyValue" yaml:"frequencyValue"`         // The value to be used together with the frequency scale. (Required.)
+	StartingDate       iso8601.Time       `json:"startingDate" yaml:"startingDate" default:"2024-01-05T01:00:00.000Z"` // The date that the check will start to evaluate. (Required.)
+	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale" yaml:"frequencyTimeScale" default:"week"`         // The time scale type for the frequency. (Required.)
+	FrequencyValue     int                `json:"frequencyValue" yaml:"frequencyValue" default:"3"`                    // The value to be used together with the frequency scale. (Required.)
 }
 
 // ManualCheckFrequencyUpdateInput represents defines a frequency for the check update.
 type ManualCheckFrequencyUpdateInput struct {
-	StartingDate       *iso8601.Time       `json:"startingDate,omitempty" yaml:"startingDate,omitempty"`             // The date that the check will start to evaluate. (Optional.)
-	FrequencyTimeScale *FrequencyTimeScale `json:"frequencyTimeScale,omitempty" yaml:"frequencyTimeScale,omitempty"` // The time scale type for the frequency. (Optional.)
-	FrequencyValue     *int                `json:"frequencyValue,omitempty" yaml:"frequencyValue,omitempty"`         // The value to be used together with the frequency scale. (Optional.)
+	StartingDate       *iso8601.Time       `json:"startingDate,omitempty" yaml:"startingDate,omitempty" default:"2024-01-05T01:00:00.000Z"` // The date that the check will start to evaluate. (Optional.)
+	FrequencyTimeScale *FrequencyTimeScale `json:"frequencyTimeScale,omitempty" yaml:"frequencyTimeScale,omitempty" default:"week"`         // The time scale type for the frequency. (Optional.)
+	FrequencyValue     *int                `json:"frequencyValue,omitempty" yaml:"frequencyValue,omitempty" default:"3"`                    // The value to be used together with the frequency scale. (Optional.)
 }
 
 // MemberInput represents input for specifiying members on a group.
 type MemberInput struct {
-	Email string `json:"email" yaml:"email"` // The user's email. (Required.)
+	Email string `json:"email" yaml:"email" default:"first.last@domain.com"` // The user's email. (Required.)
 }
 
 // NewRelicIntegrationAccountsInput represents .
 type NewRelicIntegrationAccountsInput struct {
-	ApiKey  string `json:"apiKey" yaml:"apiKey"`   // The API Key for the New Relic API. (Required.)
-	BaseUrl string `json:"baseUrl" yaml:"baseUrl"` // The API URL for New Relic API. (Required.)
+	ApiKey  string `json:"apiKey" yaml:"apiKey" default:"XXX_example_key_XXX"`    // The API Key for the New Relic API. (Required.)
+	BaseUrl string `json:"baseUrl" yaml:"baseUrl" default:"john.doe@example.com"` // The API URL for New Relic API. (Required.)
 }
 
 // NewRelicIntegrationInput represents .
 type NewRelicIntegrationInput struct {
-	ApiKey  *string `json:"apiKey,omitempty" yaml:"apiKey,omitempty"`   // The API Key for the New Relic API. (Optional.)
-	BaseUrl *string `json:"baseUrl,omitempty" yaml:"baseUrl,omitempty"` // The API URL for New Relic API. (Optional.)
+	ApiKey  *string `json:"apiKey,omitempty" yaml:"apiKey,omitempty" default:"XXX_example_key_XXX"`    // The API Key for the New Relic API. (Optional.)
+	BaseUrl *string `json:"baseUrl,omitempty" yaml:"baseUrl,omitempty" default:"john.doe@example.com"` // The API URL for New Relic API. (Optional.)
 }
 
 // PredicateInput represents a condition that should be satisfied.
 type PredicateInput struct {
-	Type  PredicateTypeEnum `json:"type" yaml:"type"`                       // The condition type used by the predicate. (Required.)
-	Value *string           `json:"value,omitempty" yaml:"value,omitempty"` // The condition value used by the predicate. (Optional.)
+	Type  PredicateTypeEnum `json:"type" yaml:"type" default:"satisfies_jq_expression"`             // The condition type used by the predicate. (Required.)
+	Value *string           `json:"value,omitempty" yaml:"value,omitempty" default:"example_value"` // The condition value used by the predicate. (Optional.)
 }
 
 // PredicateUpdateInput represents a condition that should be satisfied.
 type PredicateUpdateInput struct {
-	Type  *PredicateTypeEnum `json:"type,omitempty" yaml:"type,omitempty"`   // The condition type used by the predicate. (Optional.)
-	Value *string            `json:"value,omitempty" yaml:"value,omitempty"` // The condition value used by the predicate. (Optional.)
+	Type  *PredicateTypeEnum `json:"type,omitempty" yaml:"type,omitempty" default:"satisfies_jq_expression"` // The condition type used by the predicate. (Optional.)
+	Value *string            `json:"value,omitempty" yaml:"value,omitempty" default:"example_value"`         // The condition value used by the predicate. (Optional.)
 }
 
 // PropertyDefinitionInput represents the input for defining a property.
 type PropertyDefinitionInput struct {
-	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty"`                                   // The name of the property definition. (Optional.)
-	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty"`                               // The schema of the property definition. (Optional.)
-	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty"`                     // The schema of the property definition. (Optional.)
-	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty"` // . (Optional.)
+	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                           // The name of the property definition. (Optional.)
+	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" default:""`                                                   // The schema of the property definition. (Optional.)
+	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`                      // The schema of the property definition. (Optional.)
+	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" default:"NEW_ENUM_SET_DEFAULT"` // . (Optional.)
 }
 
 // PropertyInput represents the input for setting a property.
 type PropertyInput struct {
-	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                     // The entity that the property has been assigned to. (Required.)
-	Definition    IdentifierInput `json:"definition" yaml:"definition"`                           // The definition of the property. (Required.)
-	Value         JsonString      `json:"value" yaml:"value"`                                     // The value of the property. (Required.)
-	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty"` // Validate the property value against the schema. On by default. (Optional.)
+	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                                     // The entity that the property has been assigned to. (Required.)
+	Definition    IdentifierInput `json:"definition" yaml:"definition"`                                           // The definition of the property. (Required.)
+	Value         JsonString      `json:"value" yaml:"value" default:"example_value"`                             // The value of the property. (Required.)
+	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty" default:"false"` // Validate the property value against the schema. On by default. (Optional.)
 }
 
 // RelationshipDefinition represents a source, target and relationship type specifying a relationship between two resources.
 type RelationshipDefinition struct {
-	Source IdentifierInput      `json:"source" yaml:"source"` // The resource that is the source of the relationship. alias is ambiguous in this context and is not supported. Please supply an id. (Required.)
-	Target IdentifierInput      `json:"target" yaml:"target"` // The resource that is the target of the relationship. alias is ambiguous in this context and is not supported. Please supply an id. (Required.)
-	Type   RelationshipTypeEnum `json:"type" yaml:"type"`     // The type of the relationship between source and target. (Required.)
+	Source IdentifierInput      `json:"source" yaml:"source"`                  // The resource that is the source of the relationship. alias is ambiguous in this context and is not supported. Please supply an id. (Required.)
+	Target IdentifierInput      `json:"target" yaml:"target"`                  // The resource that is the target of the relationship. alias is ambiguous in this context and is not supported. Please supply an id. (Required.)
+	Type   RelationshipTypeEnum `json:"type" yaml:"type" default:"depends_on"` // The type of the relationship between source and target. (Required.)
 }
 
 // RepositoryUpdateInput specifies the input fields used to update a repository.
 type RepositoryUpdateInput struct {
-	Id      ID    `json:"id" yaml:"id"`                               // The id of the repository to be updated. (Required.)
-	Visible *bool `json:"visible,omitempty" yaml:"visible,omitempty"` // Indicates if the repository is visible. (Optional.)
-	OwnerId *ID   `json:"ownerId,omitempty" yaml:"ownerId,omitempty"` // The team that owns the repository. (Optional.)
+	Id      ID    `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                               // The id of the repository to be updated. (Required.)
+	Visible *bool `json:"visible,omitempty" yaml:"visible,omitempty" default:"false"`                           // Indicates if the repository is visible. (Optional.)
+	OwnerId *ID   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The team that owns the repository. (Optional.)
 }
 
 // ScorecardInput represents input used to create scorecards.
 type ScorecardInput struct {
-	Name                        string  `json:"name" yaml:"name"`                                                                   // Name of the scorecard. (Required.)
-	Description                 *string `json:"description,omitempty" yaml:"description,omitempty"`                                 // Description of the scorecard. (Optional.)
-	OwnerId                     ID      `json:"ownerId" yaml:"ownerId"`                                                             // Owner of the scorecard. Can currently be a team or a group. (Required.)
-	FilterId                    *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty"`                                       // Filter used by the scorecard to restrict services. (Optional.)
-	AffectsOverallServiceLevels *bool   `json:"affectsOverallServiceLevels,omitempty" yaml:"affectsOverallServiceLevels,omitempty"` // . (Optional.)
+	Name                        string  `json:"name" yaml:"name" default:"example_name"`                                                            // Name of the scorecard. (Required.)
+	Description                 *string `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`                   // Description of the scorecard. (Optional.)
+	OwnerId                     ID      `json:"ownerId" yaml:"ownerId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                   // Owner of the scorecard. Can currently be a team or a group. (Required.)
+	FilterId                    *ID     `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // Filter used by the scorecard to restrict services. (Optional.)
+	AffectsOverallServiceLevels *bool   `json:"affectsOverallServiceLevels,omitempty" yaml:"affectsOverallServiceLevels,omitempty" default:"false"` // . (Optional.)
 }
 
 // SecretInput represents arguments for secret operations.
 type SecretInput struct {
-	Value *string          `json:"value,omitempty" yaml:"value,omitempty"` // A sensitive value. (Optional.)
-	Owner *IdentifierInput `json:"owner,omitempty" yaml:"owner,omitempty"` // The owner of this secret. (Optional.)
+	Value *string          `json:"value,omitempty" yaml:"value,omitempty" default:"example_value"` // A sensitive value. (Optional.)
+	Owner *IdentifierInput `json:"owner,omitempty" yaml:"owner,omitempty"`                         // The owner of this secret. (Optional.)
 }
 
 // ServiceCreateInput specifies the input fields used in the `serviceCreate` mutation.
 type ServiceCreateInput struct {
-	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                               // The parent system for the service. (Optional.)
-	Name                  string           `json:"name" yaml:"name"`                                                       // The display name of the service. (Required.)
-	Product               *string          `json:"product,omitempty" yaml:"product,omitempty"`                             // A product is an application that your end user interacts with. Multiple services can work together to power a single product. (Optional.)
-	Description           *string          `json:"description,omitempty" yaml:"description,omitempty"`                     // A brief description of the service. (Optional.)
-	Language              *string          `json:"language,omitempty" yaml:"language,omitempty"`                           // The primary programming language that the service is written in. (Optional.)
-	Framework             *string          `json:"framework,omitempty" yaml:"framework,omitempty"`                         // The primary software development framework that the service uses. (Optional.)
-	TierAlias             *string          `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty"`                         // The software tier that the service belongs to. (Optional.)
-	OwnerInput            *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                       // The owner for this service. (Optional.)
-	LifecycleAlias        *string          `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty"`               // The lifecycle stage of the service. (Optional.)
-	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty"` // Allows for the creation of a service with invalid aliases. (Optional.)
+	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service. (Optional.)
+	Name                  string           `json:"name" yaml:"name" default:"example_name"`                                                // The display name of the service. (Required.)
+	Product               *string          `json:"product,omitempty" yaml:"product,omitempty" default:"example_product"`                   // A product is an application that your end user interacts with. Multiple services can work together to power a single product. (Optional.)
+	Description           *string          `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`       // A brief description of the service. (Optional.)
+	Language              *string          `json:"language,omitempty" yaml:"language,omitempty" default:"example_language"`                // The primary programming language that the service is written in. (Optional.)
+	Framework             *string          `json:"framework,omitempty" yaml:"framework,omitempty" default:"example_framework"`             // The primary software development framework that the service uses. (Optional.)
+	TierAlias             *string          `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" default:"example_alias"`                 // The software tier that the service belongs to. (Optional.)
+	OwnerInput            *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for this service. (Optional.)
+	LifecycleAlias        *string          `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" default:"example_alias"`       // The lifecycle stage of the service. (Optional.)
+	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" default:"false"` // Allows for the creation of a service with invalid aliases. (Optional.)
 }
 
 // ServiceDeleteInput specifies the input fields used in the `serviceDelete` mutation.
 type ServiceDeleteInput struct {
-	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the service to be deleted. (Optional.)
-	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty"` // The alias of the service to be deleted. (Optional.)
+	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the service to be deleted. (Optional.)
+	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`             // The alias of the service to be deleted. (Optional.)
 }
 
 // ServiceDependencyCreateInput specifies the input fields used for creating a service dependency.
 type ServiceDependencyCreateInput struct {
-	DependencyKey ServiceDependencyKey `json:"dependencyKey" yaml:"dependencyKey"`     // A source, destination pair specifying a dependency between services. (Required.)
-	Notes         *string              `json:"notes,omitempty" yaml:"notes,omitempty"` // Notes for service dependency. (Optional.)
+	DependencyKey ServiceDependencyKey `json:"dependencyKey" yaml:"dependencyKey" default:"XXX_example_key_XXX"` // A source, destination pair specifying a dependency between services. (Required.)
+	Notes         *string              `json:"notes,omitempty" yaml:"notes,omitempty" default:"example_notes"`   // Notes for service dependency. (Optional.)
 }
 
 // ServiceDependencyKey represents a source, destination pair specifying a dependency between services.
@@ -844,176 +844,176 @@ type ServiceDependencyKey struct {
 
 // ServiceNoteUpdateInput specifies the input fields used in the `serviceNoteUpdate` mutation.
 type ServiceNoteUpdateInput struct {
-	Service IdentifierInput `json:"service" yaml:"service"`               // The identifier for the service. (Required.)
-	Note    *string         `json:"note,omitempty" yaml:"note,omitempty"` // Note about the service. (Optional.)
+	Service IdentifierInput `json:"service" yaml:"service"`                                      // The identifier for the service. (Required.)
+	Note    *string         `json:"note,omitempty" yaml:"note,omitempty" default:"example_note"` // Note about the service. (Optional.)
 }
 
 // ServiceRepositoryCreateInput specifies the input fields used in the `serviceRepositoryCreate` mutation.
 type ServiceRepositoryCreateInput struct {
-	Service       IdentifierInput `json:"service" yaml:"service"`                                 // The identifier for the service. (Required.)
-	Repository    IdentifierInput `json:"repository" yaml:"repository"`                           // The identifier for the repository. (Required.)
-	BaseDirectory *string         `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty"` // The directory in the repository containing opslevel.yml. (Optional.)
-	DisplayName   *string         `json:"displayName,omitempty" yaml:"displayName,omitempty"`     // The name displayed in the UI for the service repository. (Optional.)
+	Service       IdentifierInput `json:"service" yaml:"service"`                                                               // The identifier for the service. (Required.)
+	Repository    IdentifierInput `json:"repository" yaml:"repository"`                                                         // The identifier for the repository. (Required.)
+	BaseDirectory *string         `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty" default:"/home/opslevel.yaml"` // The directory in the repository containing opslevel.yml. (Optional.)
+	DisplayName   *string         `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"example_name"`            // The name displayed in the UI for the service repository. (Optional.)
 }
 
 // ServiceRepositoryUpdateInput specifies the input fields used to update a service repository.
 type ServiceRepositoryUpdateInput struct {
-	Id            ID      `json:"id" yaml:"id"`                                           // The ID of the service repository to be updated. (Required.)
-	BaseDirectory *string `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty"` // The directory in the repository containing opslevel.yml. (Optional.)
-	DisplayName   *string `json:"displayName,omitempty" yaml:"displayName,omitempty"`     // The name displayed in the UI for the service repository. (Optional.)
+	Id            ID      `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                               // The ID of the service repository to be updated. (Required.)
+	BaseDirectory *string `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty" default:"/home/opslevel.yaml"` // The directory in the repository containing opslevel.yml. (Optional.)
+	DisplayName   *string `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"example_name"`            // The name displayed in the UI for the service repository. (Optional.)
 }
 
 // ServiceUpdateInput specifies the input fields used in the `serviceUpdate` mutation.
 type ServiceUpdateInput struct {
-	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                               // The parent system for the service. (Optional.)
-	Id                    *ID              `json:"id,omitempty" yaml:"id,omitempty"`                                       // The id of the service to be updated. (Optional.)
-	Alias                 *string          `json:"alias,omitempty" yaml:"alias,omitempty"`                                 // The alias of the service to be updated. (Optional.)
-	Name                  *string          `json:"name,omitempty" yaml:"name,omitempty"`                                   // The display name of the service. (Optional.)
-	Product               *string          `json:"product,omitempty" yaml:"product,omitempty"`                             // A product is an application that your end user interacts with. Multiple services can work together to power a single product. (Optional.)
-	Description           *string          `json:"description,omitempty" yaml:"description,omitempty"`                     // A brief description of the service. (Optional.)
-	Language              *string          `json:"language,omitempty" yaml:"language,omitempty"`                           // The primary programming language that the service is written in. (Optional.)
-	Framework             *string          `json:"framework,omitempty" yaml:"framework,omitempty"`                         // The primary software development framework that the service uses. (Optional.)
-	TierAlias             *string          `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty"`                         // The software tier that the service belongs to. (Optional.)
-	OwnerInput            *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                       // The owner for the service. (Optional.)
-	LifecycleAlias        *string          `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty"`               // The lifecycle stage of the service. (Optional.)
-	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty"` // Allows updating a service with invalid aliases. (Optional.)
+	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service. (Optional.)
+	Id                    *ID              `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the service to be updated. (Optional.)
+	Alias                 *string          `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`                         // The alias of the service to be updated. (Optional.)
+	Name                  *string          `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                            // The display name of the service. (Optional.)
+	Product               *string          `json:"product,omitempty" yaml:"product,omitempty" default:"example_product"`                   // A product is an application that your end user interacts with. Multiple services can work together to power a single product. (Optional.)
+	Description           *string          `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`       // A brief description of the service. (Optional.)
+	Language              *string          `json:"language,omitempty" yaml:"language,omitempty" default:"example_language"`                // The primary programming language that the service is written in. (Optional.)
+	Framework             *string          `json:"framework,omitempty" yaml:"framework,omitempty" default:"example_framework"`             // The primary software development framework that the service uses. (Optional.)
+	TierAlias             *string          `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" default:"example_alias"`                 // The software tier that the service belongs to. (Optional.)
+	OwnerInput            *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for the service. (Optional.)
+	LifecycleAlias        *string          `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" default:"example_alias"`       // The lifecycle stage of the service. (Optional.)
+	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" default:"false"` // Allows updating a service with invalid aliases. (Optional.)
 }
 
 // SystemInput specifies the input fields for a system.
 type SystemInput struct {
-	Name        *string          `json:"name,omitempty" yaml:"name,omitempty"`               // The name for the system. (Optional.)
-	Description *string          `json:"description,omitempty" yaml:"description,omitempty"` // The description for the system. (Optional.)
-	OwnerId     *ID              `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`         // The id of the owner for the system. (Optional.)
-	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`           // The parent domain for the system. (Optional.)
-	Note        *string          `json:"note,omitempty" yaml:"note,omitempty"`               // Additional information about the system. (Optional.)
+	Name        *string          `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                          // The name for the system. (Optional.)
+	Description *string          `json:"description,omitempty" yaml:"description,omitempty" default:"example_description"`     // The description for the system. (Optional.)
+	OwnerId     *ID              `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the owner for the system. (Optional.)
+	Parent      *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                                             // The parent domain for the system. (Optional.)
+	Note        *string          `json:"note,omitempty" yaml:"note,omitempty" default:"example_note"`                          // Additional information about the system. (Optional.)
 }
 
 // TagArgs represents arguments used to query with a certain tag.
 type TagArgs struct {
-	Key   *string `json:"key,omitempty" yaml:"key,omitempty"`     // The key of a tag. (Optional.)
-	Value *string `json:"value,omitempty" yaml:"value,omitempty"` // The value of a tag. (Optional.)
+	Key   *string `json:"key,omitempty" yaml:"key,omitempty" default:"XXX_example_key_XXX"` // The key of a tag. (Optional.)
+	Value *string `json:"value,omitempty" yaml:"value,omitempty" default:"example_value"`   // The value of a tag. (Optional.)
 }
 
 // TagAssignInput specifies the input fields used to assign tags.
 type TagAssignInput struct {
-	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the resource that the tags will be assigned to. (Optional.)
-	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty"` // The alias of the resource that tags will be added to. (Optional.)
-	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty"`   // The type of resource `alias` refers to, if `alias` is provided. (Optional.)
-	Tags  []TagInput        `json:"tags" yaml:"tags"`                       // The desired tags to assign to the resource. (Required.)
+	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource that the tags will be assigned to. (Optional.)
+	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`             // The alias of the resource that tags will be added to. (Optional.)
+	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"example_type"`                // The type of resource `alias` refers to, if `alias` is provided. (Optional.)
+	Tags  []TagInput        `json:"tags" yaml:"tags" default:"[]"`                                              // The desired tags to assign to the resource. (Required.)
 }
 
 // TagCreateInput specifies the input fields used to create a tag.
 type TagCreateInput struct {
-	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the resource that this tag will be added to. (Optional.)
-	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty"` // The alias of the resource that this tag will be added to. (Optional.)
-	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty"`   // The type of resource `alias` refers to, if `alias` is provided. (Optional.)
-	Key   string            `json:"key" yaml:"key"`                         // The tag's key. (Required.)
-	Value string            `json:"value" yaml:"value"`                     // The tag's value. (Required.)
+	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource that this tag will be added to. (Optional.)
+	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`             // The alias of the resource that this tag will be added to. (Optional.)
+	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" default:"example_type"`                // The type of resource `alias` refers to, if `alias` is provided. (Optional.)
+	Key   string            `json:"key" yaml:"key" default:"XXX_example_key_XXX"`                               // The tag's key. (Required.)
+	Value string            `json:"value" yaml:"value" default:"example_value"`                                 // The tag's value. (Required.)
 }
 
 // TagDeleteInput specifies the input fields used to delete a tag.
 type TagDeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the tag to be deleted. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the tag to be deleted. (Required.)
 }
 
 // TagInput specifies the basic input fields used to construct a tag.
 type TagInput struct {
-	Key   string `json:"key" yaml:"key"`     // The tag's key. (Required.)
-	Value string `json:"value" yaml:"value"` // The tag's value. (Required.)
+	Key   string `json:"key" yaml:"key" default:"XXX_example_key_XXX"` // The tag's key. (Required.)
+	Value string `json:"value" yaml:"value" default:"example_value"`   // The tag's value. (Required.)
 }
 
 // TagUpdateInput specifies the input fields used to update a tag.
 type TagUpdateInput struct {
-	Id    ID      `json:"id" yaml:"id"`                           // The id of the tag to be updated. (Required.)
-	Key   *string `json:"key,omitempty" yaml:"key,omitempty"`     // The tag's key. (Optional.)
-	Value *string `json:"value,omitempty" yaml:"value,omitempty"` // The tag's value. (Optional.)
+	Id    ID      `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The id of the tag to be updated. (Required.)
+	Key   *string `json:"key,omitempty" yaml:"key,omitempty" default:"XXX_example_key_XXX"` // The tag's key. (Optional.)
+	Value *string `json:"value,omitempty" yaml:"value,omitempty" default:"example_value"`   // The tag's value. (Optional.)
 }
 
 // TeamCreateInput specifies the input fields used to create a team.
 type TeamCreateInput struct {
-	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
-	Name             string                     `json:"name" yaml:"name"`                                             // The team's display name. (Required.)
-	Contacts         *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty"`                 // The contacts for the team. (Optional.)
+	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"example description of responsibilities"` // A description of what the team is responsible for. (Optional.)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                                                                         // The group this team belongs to. (Optional.)
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty" default:"[]"`                                                        // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`                                                               // The parent team. (Optional.)
+	Name             string                     `json:"name" yaml:"name" default:"example_name"`                                                                        // The team's display name. (Required.)
+	Contacts         *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[]"`                                                      // The contacts for the team. (Optional.)
 }
 
 // TeamDeleteInput specifies the input fields used to delete a team.
 type TeamDeleteInput struct {
-	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`       // The id of the team to be deleted. (Optional.)
-	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty"` // The alias of the team to be deleted. (Optional.)
+	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the team to be deleted. (Optional.)
+	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`             // The alias of the team to be deleted. (Optional.)
 }
 
 // TeamMembershipCreateInput represents input for adding members to a team.
 type TeamMembershipCreateInput struct {
-	TeamId  ID                        `json:"teamId" yaml:"teamId"`   // The ID of the team to add members. (Required.)
-	Members []TeamMembershipUserInput `json:"members" yaml:"members"` // A set of emails that identify users in OpsLevel. (Required.)
+	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the team to add members. (Required.)
+	Members []TeamMembershipUserInput `json:"members" yaml:"members" default:"[]"`                            // A set of emails that identify users in OpsLevel. (Required.)
 }
 
 // TeamMembershipDeleteInput represents input for removing members from a team.
 type TeamMembershipDeleteInput struct {
-	TeamId  ID                        `json:"teamId" yaml:"teamId"`   // The ID of the team to remove members from. (Required.)
-	Members []TeamMembershipUserInput `json:"members" yaml:"members"` // A set of emails that identify users in OpsLevel. (Required.)
+	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the team to remove members from. (Required.)
+	Members []TeamMembershipUserInput `json:"members" yaml:"members" default:"[]"`                            // A set of emails that identify users in OpsLevel. (Required.)
 }
 
 // TeamMembershipUserInput represents input for specifiying members on a team.
 type TeamMembershipUserInput struct {
-	User *UserIdentifierInput `json:"user,omitempty" yaml:"user,omitempty"` // The email address or ID of the user to add to a team. (Optional.)
-	Role *string              `json:"role,omitempty" yaml:"role,omitempty"` // The type of relationship this membership implies. (Optional.)
+	User *UserIdentifierInput `json:"user,omitempty" yaml:"user,omitempty"`                        // The email address or ID of the user to add to a team. (Optional.)
+	Role *string              `json:"role,omitempty" yaml:"role,omitempty" default:"example_role"` // The type of relationship this membership implies. (Optional.)
 }
 
 // TeamUpdateInput specifies the input fields used to update a team.
 type TeamUpdateInput struct {
-	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty"` // A description of what the team is responsible for. (Optional.)
-	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                       // The group this team belongs to. (Optional.)
-	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty"`                   // A set of emails that identify users in OpsLevel. (Optional.)
-	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`             // The parent team. (Optional.)
-	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty"`                             // The id of the team to be updated. (Optional.)
-	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty"`                       // The alias of the team to be updated. (Optional.)
-	Name             *string                    `json:"name,omitempty" yaml:"name,omitempty"`                         // The team's display name. (Optional.)
+	Responsibilities *string                    `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"example description of responsibilities"` // A description of what the team is responsible for. (Optional.)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                                                                         // The group this team belongs to. (Optional.)
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty" default:"[]"`                                                        // A set of emails that identify users in OpsLevel. (Optional.)
+	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`                                                               // The parent team. (Optional.)
+	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the team to be updated. (Optional.)
+	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty" default:"example_alias"`                                                 // The alias of the team to be updated. (Optional.)
+	Name             *string                    `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                                                    // The team's display name. (Optional.)
 }
 
 // ToolCreateInput specifies the input fields used to create a tool.
 type ToolCreateInput struct {
-	Category     ToolCategory `json:"category" yaml:"category"`                             // The category that the tool belongs to. (Required.)
-	DisplayName  string       `json:"displayName" yaml:"displayName"`                       // The display name of the tool. (Required.)
-	Url          string       `json:"url" yaml:"url"`                                       // The URL of the tool. (Required.)
-	Environment  *string      `json:"environment,omitempty" yaml:"environment,omitempty"`   // The environment that the tool belongs to. (Optional.)
-	ServiceId    *ID          `json:"serviceId,omitempty" yaml:"serviceId,omitempty"`       // The id of the service the tool will be assigned to. (Optional.)
-	ServiceAlias *string      `json:"serviceAlias,omitempty" yaml:"serviceAlias,omitempty"` // The alias of the service the tool will be assigned to. (Optional.)
+	Category     ToolCategory `json:"category" yaml:"category" default:"api_documentation"`                                          // The category that the tool belongs to. (Required.)
+	DisplayName  string       `json:"displayName" yaml:"displayName" default:"example_name"`                                         // The display name of the tool. (Required.)
+	Url          string       `json:"url" yaml:"url" default:"john.doe@example.com"`                                                 // The URL of the tool. (Required.)
+	Environment  *string      `json:"environment,omitempty" yaml:"environment,omitempty" default:"environment that tool belongs to"` // The environment that the tool belongs to. (Optional.)
+	ServiceId    *ID          `json:"serviceId,omitempty" yaml:"serviceId,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The id of the service the tool will be assigned to. (Optional.)
+	ServiceAlias *string      `json:"serviceAlias,omitempty" yaml:"serviceAlias,omitempty" default:"example_alias"`                  // The alias of the service the tool will be assigned to. (Optional.)
 }
 
 // ToolDeleteInput specifies the input fields used to delete a tool.
 type ToolDeleteInput struct {
-	Id ID `json:"id" yaml:"id"` // The id of the tool to be deleted. (Required.)
+	Id ID `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the tool to be deleted. (Required.)
 }
 
 // ToolUpdateInput specifies the input fields used to update a tool.
 type ToolUpdateInput struct {
-	Id          ID            `json:"id" yaml:"id"`                                       // The id of the tool to be updated. (Required.)
-	Category    *ToolCategory `json:"category,omitempty" yaml:"category,omitempty"`       // The category that the tool belongs to. (Optional.)
-	DisplayName *string       `json:"displayName,omitempty" yaml:"displayName,omitempty"` // The display name of the tool. (Optional.)
-	Url         *string       `json:"url,omitempty" yaml:"url,omitempty"`                 // The URL of the tool. (Optional.)
-	Environment *string       `json:"environment,omitempty" yaml:"environment,omitempty"` // The environment that the tool belongs to. (Optional.)
+	Id          ID            `json:"id" yaml:"id" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the tool to be updated. (Required.)
+	Category    *ToolCategory `json:"category,omitempty" yaml:"category,omitempty" default:"api_documentation"`                      // The category that the tool belongs to. (Optional.)
+	DisplayName *string       `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"example_name"`                     // The display name of the tool. (Optional.)
+	Url         *string       `json:"url,omitempty" yaml:"url,omitempty" default:"john.doe@example.com"`                             // The URL of the tool. (Optional.)
+	Environment *string       `json:"environment,omitempty" yaml:"environment,omitempty" default:"environment that tool belongs to"` // The environment that the tool belongs to. (Optional.)
 }
 
 // UserIdentifierInput specifies the input fields used to identify a user. Exactly one field should be provided.
 type UserIdentifierInput struct {
-	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`       // The ID of the user. (Optional.)
-	Email *string `json:"email,omitempty" yaml:"email,omitempty"` // The email address of the user. (Optional.)
+	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty" default:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the user. (Optional.)
+	Email *string `json:"email,omitempty" yaml:"email,omitempty" default:"first.last@domain.com"`     // The email address of the user. (Optional.)
 }
 
 // UserInput specifies the input fields used to create and update a user.
 type UserInput struct {
-	Name             *string `json:"name,omitempty" yaml:"name,omitempty"`                         // The name of the user. (Optional.)
-	Role             *string `json:"role,omitempty" yaml:"role,omitempty"`                         // The access role (e.g. user vs admin) of the user. (Optional.)
-	SkipWelcomeEmail *bool   `json:"skipWelcomeEmail,omitempty" yaml:"skipWelcomeEmail,omitempty"` // Don't send an email welcoming the user to OpsLevel. (Optional.)
+	Name             *string `json:"name,omitempty" yaml:"name,omitempty" default:"example_name"`                  // The name of the user. (Optional.)
+	Role             *string `json:"role,omitempty" yaml:"role,omitempty" default:"example_role"`                  // The access role (e.g. user vs admin) of the user. (Optional.)
+	SkipWelcomeEmail *bool   `json:"skipWelcomeEmail,omitempty" yaml:"skipWelcomeEmail,omitempty" default:"false"` // Don't send an email welcoming the user to OpsLevel. (Optional.)
 }
 
 // UsersFilterInput represents the input for filtering users.
 type UsersFilterInput struct {
-	Key  UsersFilterEnum `json:"key" yaml:"key"`                       // Field to be filtered. (Required.)
-	Arg  *string         `json:"arg,omitempty" yaml:"arg,omitempty"`   // Value to be filtered. (Optional.)
-	Type *BasicTypeEnum  `json:"type,omitempty" yaml:"type,omitempty"` // The operation applied to value on the field. (Optional.)
+	Key  UsersFilterEnum `json:"key" yaml:"key" default:"last_sign_in_at"`                      // Field to be filtered. (Required.)
+	Arg  *string         `json:"arg,omitempty" yaml:"arg,omitempty" default:"example_arg"`      // Value to be filtered. (Optional.)
+	Type *BasicTypeEnum  `json:"type,omitempty" yaml:"type,omitempty" default:"does_not_equal"` // The operation applied to value on the field. (Optional.)
 }
