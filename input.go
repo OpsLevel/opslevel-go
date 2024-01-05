@@ -7,13 +7,13 @@ import "github.com/relvacode/iso8601"
 // CheckCreateInput has common fields used by other CheckTypeCreateInputs
 type CheckCreateInput struct {
 	Name     string        `json:"name" yaml:"name" default:"Example Check to create"`
-	Enabled  bool          `json:"enabled" yaml:"enabled" default:"true"`
+	Enabled  *bool         `json:"enabled" yaml:"enabled" default:"true"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`
 	Category ID            `json:"categoryId" yaml:"categoryId" default:"XXX_category_id_XXX"`
 	Level    ID            `json:"levelId" yaml:"levelId" default:"XXX_rubric_level_id_XXX"`
 	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"XXX_owner_id_XXX"`
 	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
-	Notes    string        `json:"notes" yaml:"notes" default:"Notes on Example Check"`
+	Notes    *string       `json:"notes" yaml:"notes" default:"Notes on Example Check"`
 }
 
 // AlertSourceExternalIdentifier specifies the input needed to find an alert source with external information.
