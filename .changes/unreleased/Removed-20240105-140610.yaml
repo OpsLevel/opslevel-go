@@ -1,0 +1,4 @@
+kind: Removed
+body: Client member funcs - GetServiceWithId, GetTagsForServiceWithAlias, GetTagsForServiceWithId,
+  GetTagsForService, GetTagCount
+time: 2024-01-05T14:06:10.674968-06:00

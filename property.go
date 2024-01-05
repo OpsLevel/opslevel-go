@@ -2,13 +2,6 @@ package opslevel
 
 import "fmt"
 
-// type PropertyDefinitionInput struct {
-// 	Name                  string                    `json:"name,omitempty" yaml:"name,omitempty" default:"Example Package Schema"`
-// 	Description           string                    `json:"description,omitempty" yaml:"description,omitempty" default:"Place description here"`
-// 	Schema                JSON                      `json:"schema,omitempty" yaml:"schema,omitempty" default:"{\"$schema\":\"https://json-schema.org/draft/2020-12/schema\",\"title\":\"Packages\",\"description\":\"A list of packages.\",\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"version\":{\"type\":\"string\"},\"lock_file\":{\"type\":\"string\"},\"manager\":{\"type\":\"string\"}},\"required\":[\"name\",\"version\"]},\"minItems\":0,\"uniqueItems\":true}"`
-// 	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" default:"visible"`
-// }
-
 type PropertyDefinition struct {
 	Aliases               []string                          `graphql:"aliases" json:"aliases"`
 	Id                    ID                                `graphql:"id" json:"id"`

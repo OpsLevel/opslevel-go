@@ -10,7 +10,7 @@ import (
 // JSON is a specialized map[string]string to support proper graphql serialization
 type (
 	JSON       map[string]any
-	JSONSchema JSON
+	JSONSchema map[string]any
 )
 
 func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
