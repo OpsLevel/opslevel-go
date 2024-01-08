@@ -5,20 +5,6 @@ type TagDefinedCheckFragment struct {
 	TagPredicate *Predicate `graphql:"tagPredicate"`
 }
 
-type CheckTagDefinedCreateInput struct {
-	CheckCreateInput
-
-	TagKey       string          `json:"tagKey" yaml:"tagKey" default:"app"`
-	TagPredicate *PredicateInput `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty" default:"{\"TagKey\":\"equals\", \"Value\":\"postgres\"}"`
-}
-
-type CheckTagDefinedUpdateInput struct {
-	CheckUpdateInput
-
-	TagKey       string          `json:"tagKey,omitempty"`
-	TagPredicate *PredicateInput `json:"tagPredicate,omitempty"`
-}
-
 func (client *Client) CreateCheckTagDefined(input CheckTagDefinedCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkTagDefinedCreate(input: $input)"`

@@ -17,19 +17,6 @@ type CategoryConnection struct {
 	TotalCount int
 }
 
-type CategoryCreateInput struct {
-	Name string `json:"name" yaml:"name" default:"Example Category"`
-}
-
-type CategoryUpdateInput struct {
-	Id   ID     `json:"id"`
-	Name string `json:"name"`
-}
-
-type CategoryDeleteInput struct {
-	Id ID `json:"id"`
-}
-
 func (self *Category) Alias() string {
 	return slug.Make(self.Name)
 }

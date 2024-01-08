@@ -17,10 +17,6 @@ type PageInfo struct {
 
 type PayloadVariables map[string]interface{}
 
-type DeleteInput struct {
-	Id ID `json:"id"`
-}
-
 type OpsLevelWarnings struct {
 	Message string
 }
@@ -40,13 +36,19 @@ func NullString() *string {
 	return output
 }
 
+// DEPRECATED: use RefOf() instead
 func NewString(value string) *string {
 	return &value
 }
 
 // Bool is a helper routine that allocates a new bool value
 // to store v and returns a pointer to it.
+// DEPRECATED: use RefOf() instead
 func Bool(v bool) *bool {
+	return &v
+}
+
+func RefOf[T any](v T) *T {
 	return &v
 }
 
@@ -74,6 +76,7 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return fmt.Errorf(sb.String())
 }
 
+// DEPRECATED: use RefOf() instead
 func NewInt(i int) *int {
 	output := i
 	return &output

@@ -112,13 +112,13 @@ type CheckCreateInputProvider interface {
 
 type CheckCreateInput struct {
 	Name     string        `json:"name" yaml:"name" default:"Example Check to create"`
-	Enabled  bool          `json:"enabled" yaml:"enabled" default:"true"`
+	Enabled  *bool         `json:"enabled" yaml:"enabled" default:"true"`
 	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`
 	Category ID            `json:"categoryId" yaml:"categoryId" default:"XXX_category_id_XXX"`
 	Level    ID            `json:"levelId" yaml:"levelId" default:"XXX_rubric_level_id_XXX"`
 	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"XXX_owner_id_XXX"`
 	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
-	Notes    string        `json:"notes" yaml:"notes" default:"Notes on Example Check"`
+	Notes    *string       `json:"notes" yaml:"notes" default:"Notes on Example Check"`
 }
 
 func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
@@ -143,10 +143,6 @@ type CheckUpdateInput struct {
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
 	return c
-}
-
-type CheckDeleteInput struct {
-	Id ID `json:"id"`
 }
 
 // Encompass CheckCreatePayload and CheckUpdatePayload into 1 struct
@@ -297,7 +293,7 @@ func (client *Client) DeleteCheck(id ID) error {
 		} `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": CheckDeleteInput{Id: id},
+		"input": CheckDeleteInput{Id: &id},
 	}
 	err := client.Mutate(&m, v, WithName("CheckDelete"))
 	return HandleErrors(err, m.Payload.Errors)

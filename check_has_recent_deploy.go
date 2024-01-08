@@ -4,18 +4,6 @@ type HasRecentDeployCheckFragment struct {
 	Days int `graphql:"days"`
 }
 
-type CheckHasRecentDeployCreateInput struct {
-	CheckCreateInput
-
-	Days int `json:"days" yaml:"days" default:"12"`
-}
-
-type CheckHasRecentDeployUpdateInput struct {
-	CheckUpdateInput
-
-	Days *int `json:"days,omitempty"`
-}
-
 func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkHasRecentDeployCreate(input: $input)"`

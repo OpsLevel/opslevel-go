@@ -11,10 +11,10 @@ func TestDomainCreate(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.DomainInput]("domain_create_input",
 		ol.DomainInput{
-			Name:        ol.NewString("platform-test"),
-			Description: ol.NewString("Domain created for testing."),
-			Owner:       &id1,
-			Note:        ol.NewString("additional note about platform-test domain"),
+			Name:        ol.RefOf("platform-test"),
+			Description: ol.RefOf("Domain created for testing."),
+			OwnerId:     &id1,
+			Note:        ol.RefOf("additional note about platform-test domain"),
 		})
 
 	testRequest := autopilot.NewTestRequest(
@@ -80,7 +80,7 @@ func TestDomainGetTags(t *testing.T) {
 		Id: id1,
 	}
 	// Act
-	resp, err := domain.Tags(client, nil)
+	resp, err := domain.GetTags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
@@ -175,10 +175,10 @@ func TestDomainUpdate(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.DomainInput]("domain_update_input",
 		ol.DomainInput{
-			Name:        ol.NewString("platform-test-4"),
-			Description: ol.NewString("Domain created for testing."),
-			Owner:       &id3,
-			Note:        ol.NewString("Please delete me"),
+			Name:        ol.RefOf("platform-test-4"),
+			Description: ol.RefOf("Domain created for testing."),
+			OwnerId:     &id3,
+			Note:        ol.RefOf("Please delete me"),
 		})
 
 	testRequest := autopilot.NewTestRequest(

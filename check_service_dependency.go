@@ -1,13 +1,5 @@
 package opslevel
 
-type CheckServiceDependencyCreateInput struct {
-	CheckCreateInput
-}
-
-type CheckServiceDependencyUpdateInput struct {
-	CheckUpdateInput
-}
-
 func (client *Client) CreateCheckServiceDependency(input CheckServiceDependencyCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkServiceDependencyCreate(input: $input)"`

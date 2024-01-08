@@ -22,15 +22,41 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-type DomainInput struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Owner       *ID     `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-	Note        *string `json:"note,omitempty"`
-}
-
 func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	return d.Tags(client, variables)
+	var q struct {
+		Account struct {
+			Domain struct {
+				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
+			} `graphql:"domain(input: $domain)"`
+		}
+	}
+	if d.Id == "" {
+		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", d.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["domain"] = *NewIdentifier(string(d.Id))
+
+	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
+		return nil, err
+	}
+	for q.Account.Domain.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.End
+		resp, err := d.GetTags(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		// Add unique tags only
+		for _, resp := range resp.Nodes {
+			if !slices.Contains[[]Tag, Tag](q.Account.Domain.Tags.Nodes, resp) {
+				q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp)
+			}
+		}
+		q.Account.Domain.Tags.PageInfo = resp.PageInfo
+		q.Account.Domain.Tags.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Domain.Tags, nil
 }
 
 func (d *DomainId) ResourceId() ID {
@@ -72,44 +98,6 @@ func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 	}
 	q.Account.Domain.ChildSystems.TotalCount = len(q.Account.Domain.ChildSystems.Nodes)
 	return &q.Account.Domain.ChildSystems, nil
-}
-
-// Deprecated: Please use GetTags instead
-func (s *DomainId) Tags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
-	var q struct {
-		Account struct {
-			Domain struct {
-				Tags TagConnection `graphql:"tags(after: $after, first: $first)"`
-			} `graphql:"domain(input: $domain)"`
-		}
-	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", s.Id)
-	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
-	(*variables)["domain"] = *NewIdentifier(string(s.Id))
-
-	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
-		return nil, err
-	}
-	for q.Account.Domain.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.End
-		resp, err := s.Tags(client, variables)
-		if err != nil {
-			return nil, err
-		}
-		// Add unique tags only
-		for _, resp := range resp.Nodes {
-			if !slices.Contains[[]Tag, Tag](q.Account.Domain.Tags.Nodes, resp) {
-				q.Account.Domain.Tags.Nodes = append(q.Account.Domain.Tags.Nodes, resp)
-			}
-		}
-		q.Account.Domain.Tags.PageInfo = resp.PageInfo
-		q.Account.Domain.Tags.TotalCount += resp.TotalCount
-	}
-	return &q.Account.Domain.Tags, nil
 }
 
 func (s *DomainId) AssignSystem(client *Client, systems ...string) error {

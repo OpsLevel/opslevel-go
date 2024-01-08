@@ -18,13 +18,14 @@ func TestCreateFilter(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
+	// TODO: Fix FilterCreateInput generation.
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ol.ConnectiveEnumAnd,
-		Predicates: []ol.FilterPredicate{{
+		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: "1",
+			Value: ol.RefOf("1"),
 		}},
 	})
 	// Assert
@@ -46,17 +47,17 @@ func TestCreateFilterNested(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
-		Connective: ol.ConnectiveEnumOr,
-		Predicates: []ol.FilterPredicate{
+		Connective: ol.RefOf(ol.ConnectiveEnumOr),
+		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg",
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ",
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
 			},
 		},
 	})
@@ -142,12 +143,12 @@ func TestUpdateFilter(t *testing.T) {
 	client := BestTestClient(t, "filter/update", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: "Test Updated",
-		Predicates: []ol.FilterPredicate{{
+		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Name: ol.RefOf("Test Updated"),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: "1",
+			Value: ol.RefOf("1"),
 		}},
 	})
 	// Assert
@@ -167,19 +168,19 @@ func TestUpdateFilterNested(t *testing.T) {
 	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
-		Name:       "Tier 1-2 not deployed by us",
-		Connective: ol.ConnectiveEnumAnd,
-		Predicates: []ol.FilterPredicate{
+		Id:         ol.ID("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY"),
+		Name:       ol.RefOf("Tier 1-2 not deployed by us"),
+		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
+		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumDoesNotMatch,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg",
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY",
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
 			},
 		},
 	})
@@ -224,20 +225,20 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	client := BestTestClient(t, "filter/update_case_sensitive_true", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: "Test Updated",
-		Predicates: []ol.FilterPredicate{{
+		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Name: ol.RefOf("Test Updated"),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         "1",
-			CaseSensitive: ol.Bool(true),
+			Value:         ol.RefOf("1"),
+			CaseSensitive: ol.RefOf(true),
 		}},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.Bool(true), result.Predicates[0].CaseSensitive)
+	autopilot.Equals(t, ol.RefOf(true), result.Predicates[0].CaseSensitive)
 }
 
 func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
@@ -269,20 +270,20 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	client := BestTestClient(t, "filter/update_case_sensitive_false", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: "Test Updated",
-		Predicates: []ol.FilterPredicate{{
+		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Name: ol.RefOf("Test Updated"),
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         "1",
-			CaseSensitive: ol.Bool(false),
+			Value:         ol.RefOf("1"),
+			CaseSensitive: ol.RefOf(false),
 		}},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.Bool(false), result.Predicates[0].CaseSensitive)
+	autopilot.Equals(t, ol.RefOf(false), result.Predicates[0].CaseSensitive)
 }
 
 func TestDeleteFilter(t *testing.T) {

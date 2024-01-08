@@ -1,0 +1,4 @@
+kind: Removed
+body: Client member funcs - AddMember, AddMembers, RemoveMembers, RemoveMembers, DeleteTeamWithId,
+  GetTeamWithId
+time: 2024-01-05T14:05:53.297073-06:00

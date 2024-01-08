@@ -15,16 +15,17 @@ const (
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	schema := ol.NewJSONSchema(schemaString)
+	schemaAsJSON := ol.NewJSON(schemaString)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases: []string{"my_prop"},
 		Id:      "XXX",
 		Name:    "my-prop",
-		Schema:  schema,
+		Schema:  schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
-		Name:   "my-prop",
-		Schema: schema,
+		Name:   ol.RefOf("my-prop"),
+		Schema: &schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
@@ -44,19 +45,20 @@ func TestCreatePropertyDefinition(t *testing.T) {
 
 func TestUpdatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString2)
+	schema := ol.NewJSONSchema(schemaString)
+	schemaAsJSON := ol.NewJSON(schemaString2)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases:               []string{"my_prop"},
 		Id:                    "XXX",
 		Name:                  "my-prop",
 		Description:           "this description was added",
-		Schema:                schema,
+		Schema:                schemaAsJSON,
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
-		Description:           "this description was added",
-		Schema:                schema,
-		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
+		Description:           ol.RefOf("this description was added"),
+		Schema:                &schema,
+		PropertyDisplayStatus: ol.RefOf(ol.PropertyDisplayStatusEnumHidden),
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
@@ -290,9 +292,9 @@ func TestGetServiceProperties(t *testing.T) {
 	owner := ol.EntityOwnerService{
 		OnService: serviceId,
 	}
-	value1 := ol.JSONString("true")
-	value2 := ol.JSONString("false")
-	value3 := ol.JSONString("\"Hello World!\"")
+	value1 := ol.JsonString("true")
+	value2 := ol.JsonString("false")
+	value3 := ol.JsonString("\"Hello World!\"")
 	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
 		{
 			Definition: ol.PropertyDefinitionId{

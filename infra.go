@@ -41,24 +41,6 @@ type InfrastructureResourceConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
-type InfrastructureResourceSchemaInput struct {
-	Type string `json:"type" yaml:"type" default:"Database"`
-}
-
-type InfrastructureResourceProviderInput struct {
-	AccountName  string `json:"accountName" yaml:"accountName" default:"Dev - 123456789"`
-	ExternalURL  string `json:"externalUrl" yaml:"externalUrl" default:"https://google.com"`
-	ProviderName string `json:"providerName" yaml:"providerName" default:"Google"`
-}
-
-type InfrastructureResourceInput struct {
-	Schema       *InfrastructureResourceSchemaInput   `json:"schema,omitempty" yaml:"schema,omitempty"`
-	ProviderType *string                              `json:"providerResourceType,omitempty" yaml:"providerResourceType,omitempty" default:"BigQuery"`
-	ProviderData *InfrastructureResourceProviderInput `json:"providerData,omitempty" yaml:"providerData,omitempty"`
-	Owner        *ID                                  `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-	Data         JSON                                 `json:"data,omitempty" yaml:"data,omitempty" scalar:"true" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false,\"storage_size\":{\"value\":1024,\"unit\": \"GB\"}}"`
-}
-
 type InfraProviderInput struct {
 	Account string `json:"account" yaml:"account" default:"Dev - 123456789"`
 	Name    string `json:"name" yaml:"name" default:"Google"`
@@ -70,7 +52,7 @@ type InfraInput struct {
 	Schema   string              `json:"schema" yaml:"schema" default:"Database"`
 	Owner    *ID                 `json:"owner,omitempty" yaml:"owner,omitempty" default:"XXX_owner_id_XXX"`
 	Provider *InfraProviderInput `json:"provider" yaml:"provider"`
-	Data     map[string]any      `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
+	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
 func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -124,14 +106,14 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 		Data:   input.Data,
 	}
 	if input.Owner != nil {
-		i.Owner = input.Owner
+		i.OwnerId = input.Owner
 	}
 	if input.Provider != nil {
-		i.ProviderType = &input.Provider.Type
-		i.ProviderData = &InfrastructureResourceProviderInput{
+		i.ProviderResourceType = &input.Provider.Type
+		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalURL:  input.Provider.URL,
-			ProviderName: input.Provider.Name,
+			ExternalUrl:  RefOf(input.Provider.URL),
+			ProviderName: RefOf(input.Provider.Name),
 		}
 	}
 	var m struct {
@@ -223,14 +205,14 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		Data: input.Data,
 	}
 	if input.Owner != nil {
-		i.Owner = input.Owner
+		i.OwnerId = input.Owner
 	}
 	if input.Provider != nil {
-		i.ProviderType = &input.Provider.Type
-		i.ProviderData = &InfrastructureResourceProviderInput{
+		i.ProviderResourceType = &input.Provider.Type
+		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalURL:  input.Provider.URL,
-			ProviderName: input.Provider.Name,
+			ExternalUrl:  RefOf(input.Provider.URL),
+			ProviderName: RefOf(input.Provider.Name),
 		}
 	}
 	var m struct {

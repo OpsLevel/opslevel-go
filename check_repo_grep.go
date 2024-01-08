@@ -6,22 +6,6 @@ type RepositoryGrepCheckFragment struct {
 	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
 }
 
-type CheckRepositoryGrepCreateInput struct {
-	CheckCreateInput
-
-	DirectorySearch       bool            `json:"directorySearch" yaml:"directorySearch" default:"false"`
-	Filepaths             []string        `json:"filePaths" yaml:"filePaths" default:"[\"**/hello.go\", \"src/**\"]"`
-	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`
-}
-
-type CheckRepositoryGrepUpdateInput struct {
-	CheckUpdateInput
-
-	DirectorySearch       bool            `json:"directorySearch"`
-	Filepaths             []string        `json:"filePaths,omitempty"`
-	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
-}
-
 func (client *Client) CreateCheckRepositoryGrep(input CheckRepositoryGrepCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositoryGrepCreate(input: $input)"`

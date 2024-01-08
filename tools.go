@@ -16,27 +16,6 @@ type ToolConnection struct {
 	TotalCount int
 }
 
-type ToolCreateInput struct {
-	Category     ToolCategory `json:"category" validate:"required" default:"logs"`
-	DisplayName  string       `json:"displayName" yaml:"displayName" default:"John Doe"`
-	Url          string       `json:"url" default:"john.doe@example.com"`
-	Environment  string       `json:"environment,omitempty" yaml:"environment,omitempty"`
-	ServiceId    ID           `json:"serviceId,omitempty" yaml:"serviceId,omitempty"`
-	ServiceAlias string       `json:"serviceAlias,omitempty" yaml:"serviceId,omitempty"`
-}
-
-type ToolUpdateInput struct {
-	Id          ID           `json:"id" default:"Z2lkOi8vMTIzNDU2Nzg5MTAK"`
-	Category    ToolCategory `json:"category,omitempty"`
-	DisplayName string       `json:"displayName,omitempty" yaml:"displayName,omitempty" default:"John Doe"`
-	Url         string       `json:"url,omitempty" yaml:"url,omitempty" default:"john.doe@example.com"`
-	Environment string       `json:"environment,omitempty" yaml:"environment,omitempty"`
-}
-
-type ToolDeleteInput struct {
-	Id ID `json:"id"`
-}
-
 //#region Create
 
 func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
@@ -52,33 +31,6 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	}
 	err := client.Mutate(&m, v, WithName("ToolCreate"))
 	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
-}
-
-//#endregion
-
-//#region Retrieve
-
-// Deprecated: Use client.GetServiceWithAlias(alias).Tools instead
-func (client *Client) GetToolsForServiceWithAlias(alias string) ([]Tool, error) {
-	service, serviceErr := client.GetServiceWithAlias(alias)
-	return service.Tools.Nodes, serviceErr
-}
-
-// Deprecated: Use GetToolsForService instead
-func (client *Client) GetToolsForServiceWithId(id ID) ([]Tool, error) {
-	return client.GetToolsForService(id, nil)
-}
-
-// Deprecated: Use client.GetService(id).Tools instead
-func (client *Client) GetToolsForService(id ID, variables *PayloadVariables) ([]Tool, error) {
-	service, serviceErr := client.GetService(id)
-	return service.Tools.Nodes, serviceErr
-}
-
-// Deprecated: Use client.GetService(id).Tools.TotalCount instead
-func (client *Client) GetToolCount(id ID) (int, error) {
-	service, serviceErr := client.GetService(id)
-	return service.Tools.TotalCount, serviceErr
 }
 
 //#endregion

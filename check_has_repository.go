@@ -1,13 +1,5 @@
 package opslevel
 
-type CheckRepositoryIntegratedCreateInput struct {
-	CheckCreateInput
-}
-
-type CheckRepositoryIntegratedUpdateInput struct {
-	CheckUpdateInput
-}
-
 func (client *Client) CreateCheckRepositoryIntegrated(input CheckRepositoryIntegratedCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositoryIntegratedCreate(input: $input)"`

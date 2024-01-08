@@ -31,11 +31,6 @@ type Identifier struct {
 	Aliases []string `graphql:"aliases"`
 }
 
-type IdentifierInput struct {
-	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty"`
-	Alias *string `json:"alias,omitempty" yaml:"alias,omitempty"`
-}
-
 func (i IdentifierInput) MarshalJSON() ([]byte, error) {
 	if i.Id == nil && i.Alias == nil {
 		return []byte("null"), nil
@@ -57,7 +52,7 @@ func NewIdentifier(value ...string) *IdentifierInput {
 			}
 		}
 		return &IdentifierInput{
-			Alias: NewString(value[0]),
+			Alias: RefOf(value[0]),
 		}
 	}
 	var output IdentifierInput

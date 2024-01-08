@@ -13,31 +13,6 @@ type Contact struct {
 	Type        ContactType
 }
 
-type ContactInput struct {
-	Type        ContactType `json:"type" yaml:"type" default:"email"`
-	DisplayName *string     `json:"displayName,omitempty" yaml:"displayName,omitempty"`
-	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
-}
-
-type ContactCreateInput struct {
-	Type        ContactType `json:"type" yaml:"type" default:"email"`
-	DisplayName string      `json:"displayName,omitempty" yaml:"displayName,omitempty"`
-	Address     string      `json:"address" yaml:"address" default:"team@example.com"`
-	TeamId      *ID         `json:"teamId,omitempty" yaml:"teamId,omitempty"`
-	TeamAlias   string      `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty"`
-}
-
-type ContactUpdateInput struct {
-	Id          ID           `json:"id"`
-	Type        *ContactType `json:"type,omitempty"`
-	DisplayName string       `json:"displayName,omitempty"`
-	Address     string       `json:"address,omitempty"`
-}
-
-type ContactDeleteInput struct {
-	Id ID `json:"id"`
-}
-
 // Has no json struct tags as this is nested in returned data structs
 type TeamId struct {
 	Alias string
@@ -50,10 +25,8 @@ type Team struct {
 	Aliases  []string
 	Contacts []Contact
 
-	Group            GroupId // Deprecated: Group field will be removed in a future release
 	HTMLUrl          string
 	Manager          User
-	Members          *UserConnection // Deprecated: Members field will be removed in a future release
 	Memberships      *TeamMembershipConnection
 	Name             string
 	ParentTeam       TeamId
@@ -74,28 +47,6 @@ type TeamConnection struct {
 	TotalCount int
 }
 
-type TeamCreateInput struct {
-	Name             string           `json:"name" yaml:"name" default:"Platform"`
-	ManagerEmail     string           `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" default:"manager@example.com"`
-	Responsibilities string           `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" default:"Makes Tools"`
-	Contacts         *[]ContactInput  `json:"contacts,omitempty" yaml:"contacts,omitempty" default:"[{\"Type\":\"slack\",\"DisplayName\":\"Team Eng\",\"Address\":\"#team-engineering\"}]"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty" default:"{\"alias\":\"Engineering\"}"`
-}
-
-type TeamUpdateInput struct {
-	Id               ID               `json:"id"`
-	Alias            string           `json:"alias,omitempty"`
-	Name             string           `json:"name,omitempty"`
-	ManagerEmail     string           `json:"managerEmail,omitempty"`
-	Responsibilities string           `json:"responsibilities,omitempty"`
-	ParentTeam       *IdentifierInput `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`
-}
-
-type TeamDeleteInput struct {
-	Id    ID     `json:"id,omitempty"`
-	Alias string `json:"alias,omitempty"`
-}
-
 type TeamMembership struct {
 	Team TeamId `graphql:"team"`
 	Role string `graphql:"role"`
@@ -106,21 +57,6 @@ type TeamMembershipConnection struct {
 	Nodes      []TeamMembership
 	PageInfo   PageInfo
 	TotalCount int
-}
-
-type TeamMembershipUserInput struct {
-	User UserIdentifierInput `json:"user" yaml:"user"`
-	Role string              `json:"role" yaml:"role" default:"admin"`
-}
-
-type TeamMembershipCreateInput struct {
-	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
-	Members []TeamMembershipUserInput `json:"members"`
-}
-
-type TeamMembershipDeleteInput struct {
-	TeamId  ID                        `json:"teamId" yaml:"teamId" default:"XXX_team_id_XXX"`
-	Members []TeamMembershipUserInput `json:"members"`
 }
 
 func (t *Team) ResourceId() ID {
@@ -195,11 +131,6 @@ func (t *Team) GetMemberships(client *Client, variables *PayloadVariables) (*Tea
 		}
 	}
 	return t.Memberships, nil
-}
-
-// Deprecated: use GetMemberships instead
-func (t *Team) GetMembers(client *Client, variables *PayloadVariables) (*UserConnection, error) {
-	return nil, fmt.Errorf("Deprecated, use GetMemberships instead")
 }
 
 func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -322,16 +253,6 @@ func (client *Client) AddMemberships(team *TeamId, memberships ...TeamMembership
 	return m.Payload.Memberships, HandleErrors(err, m.Payload.Errors)
 }
 
-// Deprecated: use AddMemberships instead
-func (client *Client) AddMembers(team *TeamId, emails []string) ([]TeamMembership, error) {
-	return nil, fmt.Errorf("Deprecated, use AddMemberships instead")
-}
-
-// Deprecated: use AddMemberships instead
-func (client *Client) AddMember(team *TeamId, email string) ([]TeamMembership, error) {
-	return nil, fmt.Errorf("Deprecated, use AddMemberships instead")
-}
-
 func (client *Client) AddContact(team string, contact ContactInput) (*Contact, error) {
 	var m struct {
 		Payload struct {
@@ -341,14 +262,15 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 	}
 	contactInput := ContactCreateInput{
 		Type:        contact.Type,
-		DisplayName: *contact.DisplayName,
+		DisplayName: contact.DisplayName,
 		Address:     contact.Address,
 	}
 	if IsID(team) {
-		contactInput.TeamId = NewID(team)
+		contactInput.OwnerId = NewID(team)
 	} else {
-		contactInput.TeamAlias = team
+		contactInput.TeamAlias = &team
 	}
+
 	v := PayloadVariables{
 		"input": contactInput,
 	}
@@ -376,11 +298,6 @@ func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 		return &q.Account.Team, err
 	}
 	return &q.Account.Team, nil
-}
-
-// Deprecated: use GetTeam instead
-func (client *Client) GetTeamWithId(id ID) (*Team, error) {
-	return client.GetTeam(id)
 }
 
 func (client *Client) GetTeam(id ID) (*Team, error) {
@@ -510,8 +427,8 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	}
 	input := ContactUpdateInput{
 		Id:          id,
-		DisplayName: *contact.DisplayName,
-		Address:     contact.Address,
+		DisplayName: contact.DisplayName,
+		Address:     &contact.Address,
 	}
 	if contact.Type == "" {
 		input.Type = nil
@@ -539,16 +456,11 @@ func (client *Client) DeleteTeamWithAlias(alias string) error {
 	}
 	v := PayloadVariables{
 		"input": TeamDeleteInput{
-			Alias: alias,
+			Alias: &alias,
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
 	return HandleErrors(err, m.Payload.Errors)
-}
-
-// Deprecated: use DeleteTeam instead
-func (client *Client) DeleteTeamWithId(id ID) error {
-	return client.DeleteTeam(id)
 }
 
 func (client *Client) DeleteTeam(id ID) error {
@@ -561,7 +473,7 @@ func (client *Client) DeleteTeam(id ID) error {
 	}
 	v := PayloadVariables{
 		"input": TeamDeleteInput{
-			Id: id,
+			Id: &id,
 		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
@@ -583,16 +495,6 @@ func (client *Client) RemoveMemberships(team *TeamId, memberships ...TeamMembers
 	}
 	err := client.Mutate(&m, v, WithName("TeamMembershipDelete"))
 	return m.Payload.Members, HandleErrors(err, m.Payload.Errors)
-}
-
-// Deprecated: use RemoveMembers instead
-func (client *Client) RemoveMembers(team *TeamId, emails []string) ([]User, error) {
-	return nil, fmt.Errorf("Deprecated, use RemoveMemberships instead")
-}
-
-// Deprecated: use RemoveMembers instead
-func (client *Client) RemoveMember(team *TeamId, membership TeamMembershipUserInput) ([]User, error) {
-	return nil, fmt.Errorf("Deprecated, use RemoveMemberships instead")
 }
 
 func (client *Client) RemoveContact(contact ID) error {

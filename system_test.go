@@ -16,10 +16,10 @@ func TestSystemCreate(t *testing.T) {
 	)
 	client := BestTestClient(t, "system/create", testRequest)
 	input := ol.SystemInput{
-		Name:        ol.NewString("PlatformSystem3"),
-		Description: ol.NewString("creating this for testing purposes"),
-		Owner:       &id4,
-		Note:        ol.NewString("hello world"),
+		Name:        ol.RefOf("PlatformSystem3"),
+		Description: ol.RefOf("creating this for testing purposes"),
+		OwnerId:     &id4,
+		Note:        ol.RefOf("hello world"),
 	}
 	// Act
 	result, err := client.CreateSystem(input)
@@ -78,7 +78,7 @@ func TestSystemGetTags(t *testing.T) {
 		Id: id3,
 	}
 	// Act
-	resp, err := system.Tags(client, nil)
+	resp, err := system.GetTags(client, nil)
 	result := resp.Nodes
 	// Assert
 	autopilot.Ok(t, err)
@@ -177,10 +177,10 @@ func TestSystemUpdate(t *testing.T) {
 	)
 	client := BestTestClient(t, "system/update", testRequest)
 	input := ol.SystemInput{
-		Name:        ol.NewString("PlatformSystem1"),
-		Description: ol.NewString("Yolo!"),
-		Owner:       &id4,
-		Note:        ol.NewString("Please delete me"),
+		Name:        ol.RefOf("PlatformSystem1"),
+		Description: ol.RefOf("Yolo!"),
+		OwnerId:     &id4,
+		Note:        ol.RefOf("Please delete me"),
 	}
 	// Act
 	result, err := client.UpdateSystem(string(id1), input)

@@ -7,24 +7,6 @@ type RepositoryFileCheckFragment struct {
 	UseAbsoluteRoot       bool       `graphql:"useAbsoluteRoot"`
 }
 
-type CheckRepositoryFileCreateInput struct {
-	CheckCreateInput
-
-	DirectorySearch       bool            `json:"directorySearch" yaml:"directorySearch" default:"false"`
-	Filepaths             []string        `json:"filePaths" yaml:"filePaths" default:"[\"**/hello.go\", \"src/**\"]"`
-	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`
-	UseAbsoluteRoot       bool            `json:"useAbsoluteRoot" yaml:"useAbsoluteRoot" default:"false"`
-}
-
-type CheckRepositoryFileUpdateInput struct {
-	CheckUpdateInput
-
-	DirectorySearch       bool            `json:"directorySearch"`
-	Filepaths             []string        `json:"filePaths,omitempty"`
-	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate,omitempty"`
-	UseAbsoluteRoot       bool            `json:"useAbsoluteRoot"`
-}
-
 func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkRepositoryFileCreate(input: $input)"`

@@ -1,0 +1,4 @@
+kind: Removed
+body: Client member funcs - AssignTagsForAlias, AssignTagForAlias, AssignTagsForId,
+  AssignTagForId, CreateTagsForId
+time: 2024-01-05T14:04:38.369212-06:00

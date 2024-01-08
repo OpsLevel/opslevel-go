@@ -8,7 +8,38 @@ import (
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
-type JSON map[string]any
+type (
+	JSON       map[string]any
+	JSONSchema map[string]any
+)
+
+func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
+
+func NewJSONSchema(data string) JSONSchema {
+	result := make(JSONSchema)
+	if err := json.Unmarshal([]byte(data), &result); err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (s JSONSchema) AsString() string {
+	dto := map[string]any{}
+	for k, v := range s {
+		dto[k] = v
+	}
+	b, _ := json.Marshal(dto)
+	return string(b)
+}
+
+func (s JSONSchema) MarshalJSON() ([]byte, error) {
+	dto := map[string]any{}
+	for k, v := range s {
+		dto[k] = v
+	}
+	b, err := json.Marshal(dto)
+	return []byte(strconv.Quote(string(b))), err
+}
 
 func (s JSON) GetGraphQLType() string { return "JSON" }
 
@@ -38,20 +69,20 @@ func (s JSON) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.Quote(string(b))), err
 }
 
-// JSONString is a specialized input type to support serialization to JSON for input to graphql
-type JSONString string
+// JsonString is a specialized input type to support serialization to JSON for input to graphql
+type JsonString string
 
-func (s JSONString) GetGraphQLType() string { return "JsonString" }
+func (s JsonString) GetGraphQLType() string { return "JsonString" }
 
-func NewJSONInput(data any) JSONString {
+func NewJSONInput(data any) JsonString {
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
-	return JSONString(bytes)
+	return JsonString(bytes)
 }
 
-func JsonStringAs[T any](data JSONString) (T, error) {
+func JsonStringAs[T any](data JsonString) (T, error) {
 	var result T
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
 		log.Warn().Err(err).Msgf("unable to marshal json as %T", result)
@@ -60,32 +91,32 @@ func JsonStringAs[T any](data JSONString) (T, error) {
 	return result, nil
 }
 
-func (s JSONString) AsBool() bool {
+func (s JsonString) AsBool() bool {
 	value, _ := JsonStringAs[bool](s)
 	return value
 }
 
-func (s JSONString) AsInt() int {
+func (s JsonString) AsInt() int {
 	value, _ := JsonStringAs[int](s)
 	return value
 }
 
-func (s JSONString) AsFloat64() float64 {
+func (s JsonString) AsFloat64() float64 {
 	value, _ := JsonStringAs[float64](s)
 	return value
 }
 
-func (s JSONString) AsString() string {
+func (s JsonString) AsString() string {
 	value, _ := JsonStringAs[string](s)
 	return value
 }
 
-func (s JSONString) AsArray() []any {
+func (s JsonString) AsArray() []any {
 	value, _ := JsonStringAs[[]any](s)
 	return value
 }
 
-func (s JSONString) AsMap() map[string]any {
+func (s JsonString) AsMap() map[string]any {
 	value, _ := JsonStringAs[map[string]any](s)
 	return value
 }

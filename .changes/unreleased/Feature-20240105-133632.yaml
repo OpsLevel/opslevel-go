@@ -1,0 +1,3 @@
+kind: Feature
+body: add NewManualCheckFrequencyUpdateInput() factory function
+time: 2024-01-05T13:36:32.968602-06:00

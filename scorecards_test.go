@@ -30,7 +30,7 @@ func TestCreateScorecard(t *testing.T) {
 		Description:                 &description,
 		OwnerId:                     *fakeOwnerId,
 		FilterId:                    fakeFilterId,
-		AffectsOverallServiceLevels: ol.Bool(true),
+		AffectsOverallServiceLevels: ol.RefOf(true),
 	})
 
 	autopilot.Ok(t, err)
@@ -56,7 +56,7 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 		Description:                 &description,
 		OwnerId:                     *fakeOwnerId,
 		FilterId:                    fakeFilterId,
-		AffectsOverallServiceLevels: ol.Bool(false),
+		AffectsOverallServiceLevels: ol.RefOf(false),
 	})
 
 	autopilot.Ok(t, err)

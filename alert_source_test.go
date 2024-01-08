@@ -18,8 +18,8 @@ func TestCreateAlertSourceService(t *testing.T) {
 	client := BestTestClient(t, "alert_source/create", testRequest)
 	// Act
 	result, _ := client.CreateAlertSourceService(ol.AlertSourceServiceCreateInput{
-		Service:    *ol.NewIdentifier("example"),
-		ExternalID: ol.NewAlertSource(ol.AlertSourceTypeEnumDatadog, "QWERTY"),
+		Service:                       *ol.NewIdentifier("example"),
+		AlertSourceExternalIdentifier: ol.NewAlertSource(ol.AlertSourceTypeEnumDatadog, "QWERTY"),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Service.Aliases[0])

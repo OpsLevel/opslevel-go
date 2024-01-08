@@ -5,20 +5,6 @@ type ServicePropertyCheckFragment struct {
 	Predicate *Predicate              `graphql:"propertyValuePredicate"`
 }
 
-type CheckServicePropertyCreateInput struct {
-	CheckCreateInput
-
-	Property  ServicePropertyTypeEnum `json:"serviceProperty" yaml:"serviceProperty" default:"framework"`
-	Predicate *PredicateInput         `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"`
-}
-
-type CheckServicePropertyUpdateInput struct {
-	CheckUpdateInput
-
-	Property  ServicePropertyTypeEnum `json:"serviceProperty,omitempty"`
-	Predicate *PredicateInput         `json:"propertyValuePredicate,omitempty"`
-}
-
 func (client *Client) CreateCheckServiceProperty(input CheckServicePropertyCreateInput) (*Check, error) {
 	var m struct {
 		Payload CheckResponsePayload `graphql:"checkServicePropertyCreate(input: $input)"`

@@ -1,10 +1,5 @@
 package opslevel
 
-type AlertSourceExternalIdentifier struct {
-	Type       AlertSourceTypeEnum `json:"type" yaml:"type"`
-	ExternalId string              `json:"externalId" yaml:"externalId"`
-}
-
 type AlertSource struct {
 	Name        string              `graphql:"name"`
 	Description string              `graphql:"description"`
@@ -20,12 +15,6 @@ type AlertSourceService struct {
 	Id          ID                        `graphql:"id"`
 	Service     ServiceId                 `graphql:"service"`
 	Status      AlertSourceStatusTypeEnum `graphql:"status"`
-}
-
-type AlertSourceServiceCreateInput struct {
-	Service    IdentifierInput                `json:"service" yaml:"service" default:"{\"alias\":\"sound-the-alarm\"}"`
-	Id         ID                             `json:"alertSourceId,omitempty" yaml:"alertSourceId,omitempty"`
-	ExternalID *AlertSourceExternalIdentifier `json:"alertSourceExternalIdentifier,omitempty" yaml:"alertSourceExternalIdentifier,omitempty"`
 }
 
 type AlertSourceDeleteInput struct {

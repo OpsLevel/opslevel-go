@@ -17,11 +17,11 @@ func TestCreateServiceDependency(t *testing.T) {
 	client := BestTestClient(t, "serviceDependencyCreate", testRequest)
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
-		Key: ol.ServiceDependencyKey{
-			Service:   *ol.NewIdentifier("example_2"),
-			DependsOn: *ol.NewIdentifier("example_3"),
+		DependencyKey: ol.ServiceDependencyKey{
+			SourceIdentifier:      ol.NewIdentifier("example_2"),
+			DestinationIdentifier: ol.NewIdentifier("example_3"),
 		},
-		Notes: "An example description",
+		Notes: ol.RefOf("An example description"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

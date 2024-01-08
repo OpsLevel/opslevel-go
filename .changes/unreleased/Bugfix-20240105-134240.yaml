@@ -1,0 +1,3 @@
+kind: Refactor
+body: BREAKING CHANGE renamed JSONString type to JsonString to match GraphQL API
+time: 2024-01-05T13:42:40.421171-06:00
