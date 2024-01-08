@@ -23,7 +23,7 @@ func NewJSONSchema(data string) JSONSchema {
 	return result
 }
 
-func (s JSONSchema) ToJSON() string {
+func (s JSONSchema) AsString() string {
 	dto := map[string]any{}
 	for k, v := range s {
 		dto[k] = v

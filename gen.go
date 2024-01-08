@@ -347,7 +347,7 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
 		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
 		` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + `
-  {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} default:"
+  {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} example:"
    {{- if isListType .Name }}[{{ end -}}
     {{- if or (eq .Type.Name "Boolean") (eq .Type.OfType.OfTypeName "Boolean") }}false
       {{- else if or (eq .Type.Name "Int") (eq .Type.OfType.OfTypeName "Int") }}3
