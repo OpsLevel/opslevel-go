@@ -52,7 +52,7 @@ func TestDeleteTool(t *testing.T) {
 	)
 	client := BestTestClient(t, "toolDelete", testRequest)
 	// Act
-	err := client.DeleteTool(id1)
+	err := client.DeleteTool(string(id1))
 	// Assert
 	autopilot.Ok(t, err)
 }

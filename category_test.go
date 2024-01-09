@@ -27,13 +27,13 @@ func TestCreateRubricCategory(t *testing.T) {
 func TestGetRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CategoryGet($id:ID!){account{category(id: $id){id,name}}}`,
+		`query CategoryGet($id:String!){account{category(id: $id){id,name}}}`,
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "category": { {{ template "id3" }}, "name": "Reliability" } }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_get", testRequest)
 	// Act
-	result, err := client.GetCategory(id2)
+	result, err := client.GetCategory(string(id2))
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id3, result.Id)
@@ -43,13 +43,13 @@ func TestGetRubricCategory(t *testing.T) {
 func TestGetMissingRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CategoryGet($id:ID!){account{category(id: $id){id,name}}}`,
+		`query CategoryGet($id:String!){account{category(id: $id){id,name}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"data": { "account": { "category": null }}}`,
 	)
 	client := BestTestClient(t, "rubric/category_get_missing", testRequest)
 	// Act
-	_, err := client.GetCategory(id1)
+	_, err := client.GetCategory(string(id1))
 	// Assert
 	autopilot.Assert(t, err != nil, "This test should throw an error.")
 }
@@ -110,7 +110,7 @@ func TestDeleteRubricCategory(t *testing.T) {
 	)
 	client := BestTestClient(t, "rubric/category_delete", testRequest)
 	// Act
-	err := client.DeleteCategory(id2)
+	err := client.DeleteCategory(string(id2))
 	// Assert
 	autopilot.Equals(t, nil, err)
 }

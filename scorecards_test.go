@@ -104,7 +104,7 @@ func TestDeleteScorecard(t *testing.T) {
 	deletedScorecardId, err := client.DeleteScorecard(scorecardId)
 
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.ID(scorecardId), deletedScorecardId)
+	autopilot.Equals(t, ol.NewID(scorecardId), deletedScorecardId)
 }
 
 func TestGetScorecard(t *testing.T) {
