@@ -1,0 +1,43 @@
+{
+    "resource": "User",
+    "update": {
+        "func": "UpdateUser",
+        "input": [
+            "string",
+            "UserInput"
+        ],
+        "output": [
+            "*User",
+            "error"
+        ]
+    },
+    "get": {
+        "func": "GetUser",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*User",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteUser",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "list": {
+        "func": "ListUsers",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "UserConnection",
+            "error"
+        ]
+    }
+}

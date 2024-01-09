@@ -1,0 +1,14 @@
+{
+    "resource": "Property",
+    "get": {
+        "func": "GetProperty",
+        "input": [
+            "string",
+            "string"
+        ],
+        "output": [
+            "*Property",
+            "error"
+        ]
+    }
+}

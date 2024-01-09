@@ -1,0 +1,22 @@
+{
+    "resource": "AlertSourceService",
+    "create": {
+        "func": "CreateAlertSourceService",
+        "input": [
+            "AlertSourceServiceCreateInput"
+        ],
+        "output": [
+            "*AlertSourceService",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteAlertSourceService",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    }
+}

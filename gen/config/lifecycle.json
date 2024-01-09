@@ -1,0 +1,11 @@
+{
+    "resource": "Lifecycle",
+    "list": {
+        "func": "ListLifecycles",
+        "input": null,
+        "output": [
+            "[]Lifecycle",
+            "error"
+        ]
+    }
+}

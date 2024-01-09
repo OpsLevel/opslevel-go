@@ -1,0 +1,42 @@
+{
+    "resource": "Tag",
+    "create": {
+        "func": "CreateTag",
+        "input": [
+            "TagCreateInput"
+        ],
+        "output": [
+            "*Tag",
+            "error"
+        ]
+    },
+    "update": {
+        "func": "UpdateTag",
+        "input": [
+            "TagUpdateInput"
+        ],
+        "output": [
+            "*Tag",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteTag",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "assign": {
+        "func": "AssignTag",
+        "input": [
+            "TagAssignInput"
+        ],
+        "output": [
+            "[]Tag",
+            "error"
+        ]
+    }
+}

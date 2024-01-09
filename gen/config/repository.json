@@ -1,0 +1,23 @@
+{
+    "resource": "Repository",
+    "update": {
+        "func": "UpdateRepository",
+        "input": [
+            "RepositoryUpdateInput"
+        ],
+        "output": [
+            "*Repository",
+            "error"
+        ]
+    },
+    "get": {
+        "func": "GetRepository",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*Repository",
+            "error"
+        ]
+    }
+}

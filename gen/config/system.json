@@ -1,0 +1,53 @@
+{
+    "resource": "System",
+    "create": {
+        "func": "CreateSystem",
+        "input": [
+            "SystemInput"
+        ],
+        "output": [
+            "*System",
+            "error"
+        ]
+    },
+    "update": {
+        "func": "UpdateSystem",
+        "input": [
+            "string",
+            "SystemInput"
+        ],
+        "output": [
+            "*System",
+            "error"
+        ]
+    },
+    "get": {
+        "func": "GetSystem",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*System",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteSystem",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "list": {
+        "func": "ListSystems",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "*SystemConnection",
+            "error"
+        ]
+    }
+}

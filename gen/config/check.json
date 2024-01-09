@@ -1,0 +1,52 @@
+{
+    "resource": "Check",
+    "create": {
+        "func": "CreateCheck",
+        "input": [
+            "any"
+        ],
+        "output": [
+            "*Check",
+            "error"
+        ]
+    },
+    "update": {
+        "func": "UpdateCheck",
+        "input": [
+            "any"
+        ],
+        "output": [
+            "*Check",
+            "error"
+        ]
+    },
+    "get": {
+        "func": "GetCheck",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*Check",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteCheck",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "list": {
+        "func": "ListChecks",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "CheckConnection",
+            "error"
+        ]
+    }
+}

@@ -121,7 +121,7 @@ func outputLenTwo(fn *Function) {
 }
 
 func complain(fn *Function, msg string) {
-	fmt.Printf("%s\n\t%s\n", fn, msg)
+	fmt.Printf("%s\t\t%s\n", msg, fn)
 }
 
 func isPointer(s string) bool {

@@ -1,0 +1,50 @@
+{
+    "resource": "Level",
+    "create": {
+        "func": "CreateLevel",
+        "input": [
+            "LevelCreateInput"
+        ],
+        "output": [
+            "*Level",
+            "error"
+        ]
+    },
+    "update": {
+        "func": "UpdateLevel",
+        "input": [
+            "LevelUpdateInput"
+        ],
+        "output": [
+            "*Level",
+            "error"
+        ]
+    },
+    "get": {
+        "func": "GetLevel",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*Level",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteLevel",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "list": {
+        "func": "ListLevels",
+        "input": null,
+        "output": [
+            "[]Level",
+            "error"
+        ]
+    }
+}
