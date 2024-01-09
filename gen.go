@@ -24,6 +24,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
+	localparser "github.com/opslevel/opslevel-go/v2023/parser"
 	"golang.org/x/exp/maps"
 )
 
@@ -151,8 +152,19 @@ func GetSchema(client *opslevel.Client) (*GraphQLSchema, error) {
 }
 
 func main() {
-	var err error
+	var (
+		err     error
+		parsing *bool = flag.Bool("parse", false, "parse code and generate .json files")
+	)
 	flag.Parse()
+
+	if *parsing {
+		err = localparser.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
 
 	err = run()
 	if err != nil {
