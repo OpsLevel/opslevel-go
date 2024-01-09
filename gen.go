@@ -14,6 +14,7 @@ import (
 	"go/types"
 	"log"
 	"os"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -23,6 +24,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
+	"golang.org/x/exp/maps"
 )
 
 const (
@@ -958,8 +960,11 @@ func runPostInputs() error {
 		parsedDeleteInputs[structName] = []string{parsedIdType, parsedAliasType}
 		return true
 	})
-	for key, value := range parsedDeleteInputs {
-		if err := appendNewDeleteInput(file, key, value); err != nil {
+	// ordering is important since ast is not in a consistent order
+	sorted := maps.Keys(parsedDeleteInputs)
+	slices.Sort[[]string](sorted)
+	for _, key := range sorted {
+		if err := appendNewDeleteInput(file, key, parsedDeleteInputs[key]); err != nil {
 			return err
 		}
 	}

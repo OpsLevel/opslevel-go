@@ -1025,6 +1025,13 @@ func NewAlertSourceServiceDeleteInput(value string) *AlertSourceServiceDeleteInp
 	}
 }
 
+// create a new CategoryDeleteInput by passing an ID string
+func NewCategoryDeleteInput(value string) *CategoryDeleteInput {
+	return &CategoryDeleteInput{
+		Id: *NewID(value),
+	}
+}
+
 // create a new CheckDeleteInput by passing an ID string
 func NewCheckDeleteInput(value string) *CheckDeleteInput {
 	return &CheckDeleteInput{
@@ -1039,35 +1046,16 @@ func NewContactDeleteInput(value string) *ContactDeleteInput {
 	}
 }
 
-// create a new LevelDeleteInput by passing an ID string
-func NewLevelDeleteInput(value string) *LevelDeleteInput {
-	return &LevelDeleteInput{
-		Id: *NewID(value),
-	}
-}
-
-// create a new TeamDeleteInput by passing an ID or alias string
-func NewTeamDeleteInput(value string) *TeamDeleteInput {
-	if IsID(value) {
-		return &TeamDeleteInput{
-			Id: NewID(value),
-		}
-	}
-	return &TeamDeleteInput{
-		Alias: RefOf(value),
-	}
-}
-
-// create a new CategoryDeleteInput by passing an ID string
-func NewCategoryDeleteInput(value string) *CategoryDeleteInput {
-	return &CategoryDeleteInput{
-		Id: *NewID(value),
-	}
-}
-
 // create a new DeleteInput by passing an ID string
 func NewDeleteInput(value string) *DeleteInput {
 	return &DeleteInput{
+		Id: *NewID(value),
+	}
+}
+
+// create a new LevelDeleteInput by passing an ID string
+func NewLevelDeleteInput(value string) *LevelDeleteInput {
+	return &LevelDeleteInput{
 		Id: *NewID(value),
 	}
 }
@@ -1088,6 +1076,18 @@ func NewServiceDeleteInput(value string) *ServiceDeleteInput {
 func NewTagDeleteInput(value string) *TagDeleteInput {
 	return &TagDeleteInput{
 		Id: *NewID(value),
+	}
+}
+
+// create a new TeamDeleteInput by passing an ID or alias string
+func NewTeamDeleteInput(value string) *TeamDeleteInput {
+	if IsID(value) {
+		return &TeamDeleteInput{
+			Id: NewID(value),
+		}
+	}
+	return &TeamDeleteInput{
+		Alias: RefOf(value),
 	}
 }
 
