@@ -3,7 +3,7 @@
     "get": {
         "func": "GetIntegration",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Integration",

@@ -23,7 +23,7 @@
     "get": {
         "func": "GetTeam",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Team",
@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteTeam",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"

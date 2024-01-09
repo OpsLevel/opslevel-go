@@ -23,7 +23,7 @@
     "get": {
         "func": "GetLevel",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Level",
@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteLevel",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"

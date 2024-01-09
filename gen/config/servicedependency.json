@@ -13,7 +13,7 @@
     "delete": {
         "func": "DeleteServiceDependency",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"

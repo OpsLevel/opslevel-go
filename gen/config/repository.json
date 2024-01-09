@@ -13,7 +13,7 @@
     "get": {
         "func": "GetRepository",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Repository",

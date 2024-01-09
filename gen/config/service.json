@@ -23,7 +23,7 @@
     "get": {
         "func": "GetService",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Service",
@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteService",
         "input": [
-            "string"
+            "ServiceDeleteInput"
         ],
         "output": [
             "error"
