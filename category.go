@@ -41,10 +41,7 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 
 //#region Retrieve
 
-func (client *Client) GetCategory(id string) (*Category, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) GetCategory(id ID) (*Category, error) {
 	var q struct {
 		Account struct {
 			Category Category `graphql:"category(id: $id)"`
@@ -55,7 +52,7 @@ func (client *Client) GetCategory(id string) (*Category, error) {
 	}
 	err := client.Query(&q, v, WithName("CategoryGet"))
 	if q.Account.Category.Id == "" {
-		err = fmt.Errorf("Category with ID '%s' not found", id)
+		err = fmt.Errorf("Category with ID '%s' not found!", id)
 	}
 	return &q.Account.Category, HandleErrors(err, nil)
 }
@@ -109,10 +106,7 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 
 //#region Delete
 
-func (client *Client) DeleteCategory(id string) error {
-	if !IsID(id) {
-		return NewInvalidIdError(id)
-	}
+func (client *Client) DeleteCategory(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedCategoryId"`
@@ -120,7 +114,7 @@ func (client *Client) DeleteCategory(id string) error {
 		} `graphql:"categoryDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": CategoryDeleteInput{Id: *NewID(id)},
+		"input": CategoryDeleteInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("CategoryDelete"))
 	return HandleErrors(err, m.Payload.Errors)

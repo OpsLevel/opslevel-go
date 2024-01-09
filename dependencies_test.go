@@ -98,7 +98,7 @@ func TestDeleteServiceDependency(t *testing.T) {
 	)
 	client := BestTestClient(t, "serviceDependencyDelete", testRequest)
 	// Act
-	err := client.DeleteServiceDependency(string(id1))
+	err := client.DeleteServiceDependency(id1)
 	// Assert
 	autopilot.Ok(t, err)
 }

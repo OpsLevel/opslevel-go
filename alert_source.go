@@ -63,10 +63,7 @@ func (client *Client) GetAlertSourceWithExternalIdentifier(input AlertSourceExte
 	return &q.Account.AlertSource, HandleErrors(err, nil)
 }
 
-func (client *Client) GetAlertSource(id string) (*AlertSource, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 	var q struct {
 		Account struct {
 			AlertSource AlertSource `graphql:"alertSource(id: $id)"`
@@ -84,17 +81,14 @@ func (client *Client) GetAlertSource(id string) (*AlertSource, error) {
 
 //#region delete
 
-func (client *Client) DeleteAlertSourceService(id string) error {
-	if !IsID(id) {
-		return NewInvalidIdError(id)
-	}
+func (client *Client) DeleteAlertSourceService(id ID) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
 		} `graphql:"alertSourceServiceDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": AlertSourceDeleteInput{Id: *NewID(id)},
+		"input": AlertSourceDeleteInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("AlertSourceServiceDelete"))
 	return HandleErrors(err, m.Payload.Errors)

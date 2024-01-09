@@ -300,11 +300,7 @@ func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 	return &q.Account.Team, nil
 }
 
-// TODO: support alias
-func (client *Client) GetTeam(id string) (*Team, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) GetTeam(id ID) (*Team, error) {
 	var q struct {
 		Account struct {
 			Team Team `graphql:"team(id: $id)"`
@@ -422,10 +418,7 @@ func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
 }
 
-func (client *Client) UpdateContact(id string, contact ContactInput) (*Contact, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, error) {
 	var m struct {
 		Payload struct {
 			Contact Contact
@@ -433,7 +426,7 @@ func (client *Client) UpdateContact(id string, contact ContactInput) (*Contact, 
 		} `graphql:"contactUpdate(input: $input)"`
 	}
 	input := ContactUpdateInput{
-		Id:          *NewID(id),
+		Id:          id,
 		DisplayName: contact.DisplayName,
 		Address:     &contact.Address,
 	}
@@ -453,14 +446,7 @@ func (client *Client) UpdateContact(id string, contact ContactInput) (*Contact, 
 
 //#region Delete
 
-func (client *Client) DeleteTeam(identifier string) error {
-	var input TeamDeleteInput
-	if IsID(identifier) {
-		input.Id = NewID(identifier)
-	} else {
-		input.Alias = &identifier
-	}
-
+func (client *Client) DeleteTeamWithAlias(alias string) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
@@ -469,7 +455,26 @@ func (client *Client) DeleteTeam(identifier string) error {
 		} `graphql:"teamDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": input,
+		"input": TeamDeleteInput{
+			Alias: &alias,
+		},
+	}
+	err := client.Mutate(&m, v, WithName("TeamDelete"))
+	return HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) DeleteTeam(id ID) error {
+	var m struct {
+		Payload struct {
+			Id     ID               `graphql:"deletedTeamId"`
+			Alias  string           `graphql:"deletedTeamAlias"`
+			Errors []OpsLevelErrors `graphql:"errors"`
+		} `graphql:"teamDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": TeamDeleteInput{
+			Id: &id,
+		},
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
 	return HandleErrors(err, m.Payload.Errors)

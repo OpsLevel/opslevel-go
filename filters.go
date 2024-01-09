@@ -61,10 +61,7 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 
 //#region Retrieve
 
-func (client *Client) GetFilter(id string) (*Filter, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) GetFilter(id ID) (*Filter, error) {
 	var q struct {
 		Account struct {
 			Filter Filter `graphql:"filter(id: $id)"`
@@ -75,7 +72,7 @@ func (client *Client) GetFilter(id string) (*Filter, error) {
 	}
 	err := client.Query(&q, v, WithName("FilterGet"))
 	if q.Account.Filter.Id == "" {
-		err = fmt.Errorf("Filter with ID '%s' not found", id)
+		err = fmt.Errorf("Filter with ID '%s' not found!", id)
 	}
 	return &q.Account.Filter, HandleErrors(err, nil)
 }
@@ -127,11 +124,7 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 
 //#region Delete
 
-func (client *Client) DeleteFilter(id string) error {
-	if !IsID(id) {
-		return NewInvalidIdError(id)
-	}
-
+func (client *Client) DeleteFilter(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedId"`
@@ -139,7 +132,7 @@ func (client *Client) DeleteFilter(id string) error {
 		} `graphql:"filterDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": DeleteInput{Id: *NewID(id)},
+		"input": DeleteInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("FilterDelete"))
 	return HandleErrors(err, m.Payload.Errors)

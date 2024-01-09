@@ -76,7 +76,7 @@ func TestCreateFilterNested(t *testing.T) {
 func TestGetFilter(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query FilterGet($id:String!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}`,
+		`query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": {"account": {"filter": { {{ template "filter_tier1service_response" }} }}}}`,
 	)
@@ -93,7 +93,7 @@ func TestGetFilter(t *testing.T) {
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query FilterGet($id:String!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}`,
+		`query FilterGet($id:ID!){account{filter(id: $id){connective,htmlUrl,id,name,predicates{key,keyData,type,value,caseSensitive}}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"}`,
 		`{"data": {"account": {"filter": null }}}`,
 	)

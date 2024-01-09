@@ -62,10 +62,7 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 
 //#region Retrieve
 
-func (client *Client) GetLevel(id string) (*Level, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) GetLevel(id ID) (*Level, error) {
 	var q struct {
 		Account struct {
 			Level Level `graphql:"level(id: $id)"`
@@ -76,7 +73,7 @@ func (client *Client) GetLevel(id string) (*Level, error) {
 	}
 	err := client.Query(&q, v, WithName("LevelGet"))
 	if q.Account.Level.Id == "" {
-		err = fmt.Errorf("Level with ID '%s' not found", id)
+		err = fmt.Errorf("Level with ID '%s' not found!", id)
 	}
 	return &q.Account.Level, HandleErrors(err, nil)
 }
@@ -120,10 +117,7 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 
 //#region Delete
 
-func (client *Client) DeleteLevel(id string) error {
-	if !IsID(id) {
-		return NewInvalidIdError(id)
-	}
+func (client *Client) DeleteLevel(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedLevelId"`
@@ -131,7 +125,7 @@ func (client *Client) DeleteLevel(id string) error {
 		} `graphql:"levelDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": LevelDeleteInput{Id: *NewID(id)},
+		"input": LevelDeleteInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("LevelDelete"))
 	return HandleErrors(err, m.Payload.Errors)

@@ -64,7 +64,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 func TestGetAlertSource(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($id:String!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}`,
+		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
 		`{"data": {
         "account": {

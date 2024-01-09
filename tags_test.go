@@ -93,7 +93,7 @@ func TestDeleteTag(t *testing.T) {
 
 	client := BestTestClient(t, "tagDelete", testRequest)
 	// Act
-	err := client.DeleteTag(string(id1))
+	err := client.DeleteTag(id1)
 	// Assert
 	autopilot.Ok(t, err)
 }

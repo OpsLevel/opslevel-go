@@ -498,7 +498,7 @@ func TestGetServiceWithAlias(t *testing.T) {
 func TestGetService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query ServiceGet($service:String!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx" }`,
 		`{ "data": {
     "account": {
@@ -901,7 +901,7 @@ func TestDeleteService(t *testing.T) {
 	)
 	client := BestTestClient(t, "service/delete", testRequest)
 	// Act
-	err := client.DeleteService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
+	err := client.DeleteService(ol.ServiceDeleteInput{Id: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")})
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -915,7 +915,7 @@ func TestDeleteServicesWithAlias(t *testing.T) {
 	)
 	client := BestTestClient(t, "service/delete_with_alias", testRequest)
 	// Act
-	err := client.DeleteService("db")
+	err := client.DeleteServiceWithAlias("db")
 	// Assert
 	autopilot.Ok(t, err)
 }
