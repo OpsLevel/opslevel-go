@@ -17,6 +17,12 @@ tasks:
       - go generate
       - gofumpt -w .
 
+  parse:
+    desc: Generate config files
+    cmds:
+      - go run gen.go -parse
+      - gofumpt -w .
+
   lint:
     desc: Formatting and linting
     cmds:
