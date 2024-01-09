@@ -55,14 +55,17 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 
 //#region Delete
 
-func (client *Client) DeleteTool(id ID) error {
+func (client *Client) DeleteTool(id string) error {
+	if !IsID(id) {
+		return NewInvalidIdError(id)
+	}
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
 		} `graphql:"toolDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": ToolDeleteInput{Id: id},
+		"input": ToolDeleteInput{Id: *NewID(id)},
 	}
 	err := client.Mutate(&m, v, WithName("ToolDelete"))
 	return HandleErrors(err, m.Payload.Errors)

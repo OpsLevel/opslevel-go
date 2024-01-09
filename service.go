@@ -328,7 +328,11 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	return &q.Account.Service, nil
 }
 
-func (client *Client) GetService(id ID) (*Service, error) {
+// TODO: support alias
+func (client *Client) GetService(id string) (*Service, error) {
+	if !IsID(id) {
+		return nil, NewInvalidIdError(id)
+	}
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`
@@ -337,6 +341,7 @@ func (client *Client) GetService(id ID) (*Service, error) {
 	v := PayloadVariables{
 		"service": id,
 	}
+
 	if err := client.Query(&q, v, WithName("ServiceGet")); err != nil {
 		return nil, err
 	}
@@ -667,8 +672,14 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 
 //#region Delete
 
-// TODO: we should have a method that takes and ID and that follows the convention of other delete functions
-func (client *Client) DeleteService(input ServiceDeleteInput) error {
+func (client *Client) DeleteService(identifier string) error {
+	var input ServiceDeleteInput
+	if IsID(identifier) {
+		input.Id = NewID(identifier)
+	} else {
+		input.Alias = &identifier
+	}
+
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedServiceId"`
@@ -681,12 +692,6 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	}
 	err := client.Mutate(&m, v, WithName("ServiceDelete"))
 	return HandleErrors(err, m.Payload.Errors)
-}
-
-func (client *Client) DeleteServiceWithAlias(alias string) error {
-	return client.DeleteService(ServiceDeleteInput{
-		Alias: RefOf(alias),
-	})
 }
 
 //#endregion

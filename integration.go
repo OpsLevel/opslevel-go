@@ -96,7 +96,10 @@ func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) 
 
 //#region Retrieve
 
-func (client *Client) GetIntegration(id ID) (*Integration, error) {
+func (client *Client) GetIntegration(id string) (*Integration, error) {
+	if !IsID(id) {
+		return nil, NewInvalidIdError(id)
+	}
 	var q struct {
 		Account struct {
 			Integration Integration `graphql:"integration(id: $id)"`
