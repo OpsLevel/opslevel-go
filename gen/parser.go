@@ -84,7 +84,12 @@ func cleanTypeName(s string) string {
 }
 
 func isResource(s string) bool {
+	var lower string
 	s = cleanTypeName(s)
+	lower = strings.ToLower(s)
+	if strings.Contains(lower, "id") || strings.Contains(lower, "interface") {
+		return false
+	}
 	if strings.HasSuffix(s, "Input") || strings.HasSuffix(s, "Connection") || strings.ToUpper(s)[0] != s[0] {
 		return false
 	}
