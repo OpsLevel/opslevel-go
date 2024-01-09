@@ -1,4 +1,4 @@
-package localparser
+package gen
 
 import (
 	"fmt"
