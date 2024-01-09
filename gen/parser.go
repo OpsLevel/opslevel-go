@@ -1,4 +1,4 @@
-package localparser
+package gen
 
 import (
 	"encoding/json"
@@ -279,7 +279,7 @@ func wipeConfigs() error {
 	return nil
 }
 
-func Run() error {
+func RunParser() error {
 	err := parse()
 	if err != nil {
 		return err

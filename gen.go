@@ -24,7 +24,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
-	localparser "github.com/opslevel/opslevel-go/v2023/parser"
+	"github.com/opslevel/opslevel-go/v2023/gen"
 	"golang.org/x/exp/maps"
 )
 
@@ -159,7 +159,7 @@ func main() {
 	flag.Parse()
 
 	if *parsing {
-		err = localparser.Run()
+		err = gen.RunParser()
 		if err != nil {
 			log.Fatal(err)
 		}
