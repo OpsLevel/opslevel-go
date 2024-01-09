@@ -215,7 +215,11 @@ func (client *Client) CreateCheck(input any) (*Check, error) {
 
 //#region Retrieve
 
-func (client *Client) GetCheck(id ID) (*Check, error) {
+func (client *Client) GetCheck(id string) (*Check, error) {
+	if !IsID(id) {
+		return nil, NewInvalidIdError(id)
+	}
+
 	var q struct {
 		Account struct {
 			Check Check `graphql:"check(id: $id)"`
@@ -304,14 +308,17 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 
 //#region Delete
 
-func (client *Client) DeleteCheck(id ID) error {
+func (client *Client) DeleteCheck(id string) error {
+	if !IsID(id) {
+		return NewInvalidIdError(id)
+	}
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
 		} `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": CheckDeleteInput{Id: &id},
+		"input": CheckDeleteInput{Id: NewID(id)},
 	}
 	err := client.Mutate(&m, v, WithName("CheckDelete"))
 	return HandleErrors(err, m.Payload.Errors)

@@ -123,14 +123,17 @@ func (s *Service) GetDependents(client *Client, variables *PayloadVariables) (*S
 
 //#region Delete
 
-func (client *Client) DeleteServiceDependency(id ID) error {
+func (client *Client) DeleteServiceDependency(id string) error {
+	if !IsID(id) {
+		return NewInvalidIdError(id)
+	}
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
 		} `graphql:"serviceDependencyDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": DeleteInput{Id: id},
+		"input": DeleteInput{Id: *NewID(id)},
 	}
 	err := client.Mutate(&m, v, WithName("ServiceDependencyDelete"))
 	return HandleErrors(err, m.Payload.Errors)

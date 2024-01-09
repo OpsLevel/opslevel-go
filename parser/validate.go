@@ -12,7 +12,7 @@ const (
 	INPUT_NOT_STRING          = "input is not string"
 	INPUT_NOT_INPUT_TYPE      = "input is not an Input"
 	OUTPUT_NOT_POINTER        = "output is not a pointer"
-	OUTPUT_NOT_ERROR          = "output is not a pointer"
+	OUTPUT_NOT_ERROR          = "output is not an error"
 	OUTPUT_NOT_LEN_ONE        = "output is not len 1"
 	OUTPUT_NOT_LEN_TWO        = "output is not len 2"
 	OUTPUT_NOT_LEN_ONE_OR_TWO = "output is not len 1 or len 2"
