@@ -1,0 +1,32 @@
+{
+    "resource": "Integration",
+    "get": {
+        "func": "GetIntegration",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*Integration",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteIntegration",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "list": {
+        "func": "ListIntegrations",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "IntegrationConnection",
+            "error"
+        ]
+    }
+}
