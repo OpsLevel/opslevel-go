@@ -972,7 +972,7 @@ func runPostInputs() error {
 		parsedDeleteInputs[structName] = []string{parsedIdType, parsedAliasType}
 		return true
 	})
-	// ordering is important since ast is not in a consistent order
+	// ordering is important since ASTs don't have a consistent order
 	sorted := maps.Keys(parsedDeleteInputs)
 	slices.Sort[[]string](sorted)
 	for _, key := range sorted {
