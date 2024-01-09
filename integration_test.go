@@ -77,7 +77,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 func TestGetIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
+		`query IntegrationGet($id:String!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"data": {
       "account": {
@@ -90,7 +90,7 @@ func TestGetIntegration(t *testing.T) {
 	)
 	client := BestTestClient(t, "integration/get", testRequest)
 	// Act
-	result, err := client.GetIntegration(id1)
+	result, err := client.GetIntegration(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id1, result.Id)
@@ -100,13 +100,13 @@ func TestGetIntegration(t *testing.T) {
 func TestGetMissingIntegraion(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
+		`query IntegrationGet($id:String!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "integration": null }}}`,
 	)
 	client := BestTestClient(t, "integration/get_missing", testRequest)
 	// Act
-	_, err := client.GetIntegration(id2)
+	_, err := client.GetIntegration(string(id2))
 	// Assert
 	autopilot.Assert(t, err != nil, "This test should throw an error.")
 }

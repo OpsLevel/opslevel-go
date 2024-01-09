@@ -142,7 +142,7 @@ func TestCreateTeam(t *testing.T) {
 func TestGetTeam(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query TeamGet($id:String!){account{team(id: $id){alias,id,aliases,contacts{address,displayName,id,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{team{alias,id},role,user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{ "data": {
     "account": {
@@ -206,7 +206,7 @@ func TestGetTeam(t *testing.T) {
 
 	client := BestTestClient(t, "team/get", testRequest)
 	// Act
-	result, err := client.GetTeam(id1)
+	result, err := client.GetTeam(string(id1))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
@@ -654,7 +654,7 @@ func TestDeleteTeam(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/delete", testRequest)
 	// Act
-	err := client.DeleteTeam(id3)
+	err := client.DeleteTeam(string(id3))
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -668,7 +668,7 @@ func TestDeleteTeamWithAlias(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/delete_with_alias", testRequest)
 	// Act
-	err := client.DeleteTeamWithAlias("example")
+	err := client.DeleteTeam("example")
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -765,7 +765,7 @@ func TestTeamUpdateContact(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/update_contact", testRequest)
 	// Act
-	result, err := client.UpdateContact(id1, input)
+	result, err := client.UpdateContact(string(id1), input)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
@@ -789,7 +789,7 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/update_contact_nil_type", testRequest)
 	// Act
-	result, err := client.UpdateContact(id2, input)
+	result, err := client.UpdateContact(string(id2), input)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Main Channel", result.DisplayName)
