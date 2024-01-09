@@ -7,7 +7,12 @@ import (
 	"go/parser"
 	"go/token"
 	"go/types"
+	"os"
+	"path/filepath"
+	"sort"
 	"strings"
+
+	"golang.org/x/exp/maps"
 )
 
 var (
@@ -182,7 +187,10 @@ func parse() error {
 func matchResourcesToFunctions() {
 	for _, res := range resources {
 		for _, verb := range verbs {
-			funcName := fmt.Sprintf("%s%s", verb, res.Name)
+			funcName := verb + res.Name // Try CreateRes, UpdateRes, GetRes, ...
+			if verb == "List" {
+				funcName += "s"
+			}
 			if v, ok := functions[funcName]; ok {
 				switch verb {
 				case "Create":
@@ -202,7 +210,6 @@ func matchResourcesToFunctions() {
 				default:
 					panic("hello world")
 				}
-				// delete(functions, funcName)
 			}
 		}
 	}
@@ -213,7 +220,6 @@ func validatedMatchedFunctions() {
 		if res.Score() == 0 {
 			continue
 		}
-
 		if res.Create != nil {
 			validateCreate(res.Create)
 		}
@@ -232,16 +238,63 @@ func validatedMatchedFunctions() {
 	}
 }
 
+func showRankings() {
+	ranked := maps.Keys(resources)
+	sort.Slice(ranked, func(i, j int) bool {
+		return resources[ranked[i]].Score() > resources[ranked[j]].Score()
+	})
+	fmt.Printf("SCORE\tRESOURCE\n")
+	for _, res := range ranked {
+		fmt.Printf("%d\t%s\n", resources[res].Score(), resources[res].Name)
+	}
+}
+
+func writeConfigs() error {
+	for _, res := range resources {
+		filename := fmt.Sprintf("./gen/config/%s.json", strings.ToLower(res.Name))
+		output, err := json.MarshalIndent(res, "", "    ")
+		if err != nil {
+			return err
+		}
+		err = os.WriteFile(filename, output, 0o644)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func wipeConfigs() error {
+	contents, err := filepath.Glob("./gen/config/*.json")
+	if err != nil {
+		return err
+	}
+	for _, item := range contents {
+		err = os.RemoveAll(item)
+		if err != nil {
+			return err
+		}
+	}
+	fmt.Println("completed writing configs")
+	return nil
+}
+
 func Run() error {
-	var err error
-	err = parse()
+	err := parse()
 	if err != nil {
 		return err
 	}
 	matchResourcesToFunctions()
+	showRankings()
 	validatedMatchedFunctions()
-
-	// TODO: write config files in this repo
+	err = wipeConfigs()
+	if err != nil {
+		panic(err)
+	}
+	err = writeConfigs()
+	if err != nil {
+		panic(err)
+	}
 
 	return err
 }
