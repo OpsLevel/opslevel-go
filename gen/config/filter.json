@@ -23,7 +23,7 @@
     "get": {
         "func": "GetFilter",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Filter",
@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteFilter",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"

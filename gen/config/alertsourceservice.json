@@ -13,7 +13,7 @@
     "delete": {
         "func": "DeleteAlertSourceService",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"

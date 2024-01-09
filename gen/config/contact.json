@@ -3,7 +3,7 @@
     "update": {
         "func": "UpdateContact",
         "input": [
-            "string",
+            "ID",
             "ContactInput"
         ],
         "output": [

@@ -23,7 +23,7 @@
     "get": {
         "func": "GetCheck",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Check",
@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteCheck",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"

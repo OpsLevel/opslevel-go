@@ -23,7 +23,7 @@
     "get": {
         "func": "GetCategory",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "*Category",
@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteCategory",
         "input": [
-            "string"
+            "ID"
         ],
         "output": [
             "error"
