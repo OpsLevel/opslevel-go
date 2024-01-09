@@ -42,19 +42,19 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	switch resourceType {
 	case TaggableResourceService:
 		if IsID(identifier) {
-			taggableResource, err = client.GetService(identifier)
+			taggableResource, err = client.GetService(ID(identifier))
 		} else {
 			taggableResource, err = client.GetServiceWithAlias(identifier)
 		}
 	case TaggableResourceRepository:
 		if IsID(identifier) {
-			taggableResource, err = client.GetRepository(identifier)
+			taggableResource, err = client.GetRepository(ID(identifier))
 		} else {
 			taggableResource, err = client.GetRepositoryWithAlias(identifier)
 		}
 	case TaggableResourceTeam:
 		if IsID(identifier) {
-			taggableResource, err = client.GetTeam(identifier)
+			taggableResource, err = client.GetTeam(ID(identifier))
 		} else {
 			taggableResource, err = client.GetTeamWithAlias(identifier)
 		}
@@ -202,17 +202,14 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 
 //#region Delete
 
-func (client *Client) DeleteTag(id string) error {
-	if !IsID(id) {
-		return NewInvalidIdError(id)
-	}
+func (client *Client) DeleteTag(id ID) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
 		} `graphql:"tagDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": TagDeleteInput{Id: *NewID(id)},
+		"input": TagDeleteInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("TagDelete"))
 	return HandleErrors(err, m.Payload.Errors)

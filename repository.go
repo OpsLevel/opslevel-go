@@ -256,11 +256,7 @@ func (client *Client) GetRepositoryWithAlias(alias string) (*Repository, error) 
 	return &q.Account.Repository, nil
 }
 
-// TODO: support alias
-func (client *Client) GetRepository(id string) (*Repository, error) {
-	if !IsID(id) {
-		return nil, NewInvalidIdError(id)
-	}
+func (client *Client) GetRepository(id ID) (*Repository, error) {
 	var q struct {
 		Account struct {
 			Repository Repository `graphql:"repository(id: $repo)"`
@@ -377,10 +373,7 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 
 //#region Delete
 
-func (client *Client) DeleteServiceRepository(id string) error {
-	if !IsID(id) {
-		return NewInvalidIdError(id)
-	}
+func (client *Client) DeleteServiceRepository(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedId"`
@@ -388,7 +381,7 @@ func (client *Client) DeleteServiceRepository(id string) error {
 		} `graphql:"serviceRepositoryDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": DeleteInput{Id: *NewID(id)},
+		"input": DeleteInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("ServiceRepositoryDelete"))
 	return HandleErrors(err, m.Payload.Errors)

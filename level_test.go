@@ -29,7 +29,7 @@ func TestCreateRubricLevels(t *testing.T) {
 func TestGetRubricLevel(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query LevelGet($id:String!){account{level(id: $id){alias,description,id,index,name}}}`,
+		`query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": {
         "account": {
@@ -53,7 +53,7 @@ func TestGetRubricLevel(t *testing.T) {
 func TestGetMissingRubricLevel(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query LevelGet($id:String!){account{level(id: $id){alias,description,id,index,name}}}`,
+		`query LevelGet($id:ID!){account{level(id: $id){alias,description,id,index,name}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": { "account": { "level": null }}}`,
 	)
