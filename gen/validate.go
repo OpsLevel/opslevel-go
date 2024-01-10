@@ -2,132 +2,105 @@ package gen
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
-const (
-	INPUT_NOT_LEN_ONE         = "input is not len 1"
-	INPUT_NOT_LEN_TWO         = "input is not len 2"
-	INPUT_NOT_LEN_ONE_OR_TWO  = "input is not len 1 or len 2"
-	INPUT_NOT_STRING          = "input is not string"
-	INPUT_NOT_INPUT_TYPE      = "input is not an Input"
-	OUTPUT_NOT_POINTER        = "output is not a pointer"
-	OUTPUT_NOT_ERROR          = "output is not an error"
-	OUTPUT_NOT_LEN_ONE        = "output is not len 1"
-	OUTPUT_NOT_LEN_TWO        = "output is not len 2"
-	OUTPUT_NOT_LEN_ONE_OR_TWO = "output is not len 1 or len 2"
+// outputs and inputs of client functions should match something like this
+// TODO:
+// TODO: what is the expectation for assign and unassign?
+// res, err := create(input)
+// res, err := update(input)
+// res, err := update(string|id, input)
+// res, err := get(string|id)
+// res, err := delete(string|id)
+// err := delete(string|id)
+var (
+	INPUT_LEN_1_STRING_OR_ID     = regexp.MustCompile(`^(string|ID)$`)
+	INPUT_LEN_1_INPUT_TYPE       = regexp.MustCompile(`^[A-Za-z]*Input$`)
+	INPUT_LEN_1_PAYLOAD_VARS_PTR = regexp.MustCompile(`^\*PayloadVariables$`)
+	INPUT_LEN_2                  = regexp.MustCompile(`^(string|ID), [A-Za-z]*Input$`)
+
+	OUTPUT_LEN_1_ERROR          = regexp.MustCompile(`^error$`)
+	OUTPUT_LEN_2                = regexp.MustCompile(`^\*[A-Z][A-Za-z]*, error$`)
+	OUTPUT_LEN_2_CONNECTION     = regexp.MustCompile(`^[A-Za-z]*Connection, error$`)
+	OUTPUT_LEN_2_CONNECTION_PTR = regexp.MustCompile(`^\*[A-Za-z]*Connection, error$`)
+	OUTPUT_LEN_2_ARRAY          = regexp.MustCompile(`^\[\][A-Za-z]*, error$`)
+
+	CREATE_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_INPUT_TYPE}
+	CREATE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2}
+
+	UPDATE_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_INPUT_TYPE, INPUT_LEN_2}
+	UPDATE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2}
+
+	GET_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_STRING_OR_ID}
+	GET_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2}
+
+	DELETE_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_STRING_OR_ID}
+	DELETE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_1_ERROR, OUTPUT_LEN_2_ARRAY}
+
+	// TODO: list should be more consistent
+	// TODO: also delete scorecard, deleteservice
+	// list has a special case where input is empty and the output is an array
+	LIST_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_PAYLOAD_VARS_PTR}
+	LIST_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2_CONNECTION, OUTPUT_LEN_2_CONNECTION_PTR, OUTPUT_LEN_2_ARRAY}
 )
 
-// res, err := create(input)
-func validateCreate(fn *Function) {
-	inputLenOneInputType(fn)
-	outputLenTwo(fn)
+func complain(res *Resource, fn *Function, msg string) {
+	fmt.Printf("%s - %s(%s) (%s)\n", msg, fn.Name, strings.Join(fn.Input, ", "), strings.Join(fn.Output, ", "))
 }
 
-// res, err := update(string, input)
-// res, err := update(input)
-func validateUpdate(fn *Function) {
-	if len(fn.Input) != 1 && len(fn.Input) != 2 {
-		complain(fn, INPUT_NOT_LEN_ONE_OR_TWO)
-	} else if len(fn.Input) == 1 {
-		inputLenOneInputType(fn)
-	} else {
-		inputLenTwo(fn)
-	}
-	outputLenTwo(fn)
-}
+func validateFunction(res *Resource, fn *Function, possibleInputs []*regexp.Regexp, possibleOutputs []*regexp.Regexp) {
+	var (
+		inputAsBytes  = []byte(strings.Join(fn.Input, ", "))
+		outputAsBytes = []byte(strings.Join(fn.Output, ", "))
+		inputIsValid  = false
+		outputIsValid = false
+	)
 
-// res, err := get(string)
-func validateGet(fn *Function) {
-	inputLenOneString(fn)
-	outputLenTwo(fn)
-}
-
-// res, err := delete(string)
-// err := delete(string)
-func validateDelete(fn *Function) {
-	inputLenOneString(fn)
-	if len(fn.Output) != 1 && len(fn.Output) != 2 {
-		complain(fn, OUTPUT_NOT_LEN_ONE_OR_TWO)
-	} else if len(fn.Output) == 1 {
-		outputLenOne(fn)
-	} else {
-		outputLenTwo(fn)
-	}
-}
-
-// res, err := list(nil)
-func validateList(fn *Function) {
-	if len(fn.Input) != 1 {
-		complain(fn, INPUT_NOT_LEN_ONE)
-	}
-	outputLenTwo(fn)
-}
-
-func inputLenOneString(fn *Function) {
-	if len(fn.Input) != 1 {
-		complain(fn, INPUT_NOT_LEN_ONE)
-	} else {
-		if fn.Input[0] != "string" {
-			complain(fn, INPUT_NOT_STRING)
+	for _, r := range possibleInputs {
+		if r.Match(inputAsBytes) {
+			inputIsValid = true
+			break
 		}
 	}
-}
-
-func inputLenOneInputType(fn *Function) {
-	if len(fn.Input) != 1 {
-		complain(fn, INPUT_NOT_LEN_ONE)
-	} else {
-		if !isInputType(fn.Input[0]) {
-			complain(fn, INPUT_NOT_INPUT_TYPE)
+	for _, r := range possibleOutputs {
+		if r.Match(outputAsBytes) {
+			outputIsValid = true
+			break
 		}
+	}
+
+	if !inputIsValid {
+		complain(res, fn, "unexpected input types")
+	}
+	if !outputIsValid {
+		complain(res, fn, "unexpected return types")
 	}
 }
 
-func inputLenTwo(fn *Function) {
-	if len(fn.Input) != 2 {
-		complain(fn, INPUT_NOT_LEN_TWO)
-	} else {
-		if fn.Input[0] != "string" {
-			complain(fn, INPUT_NOT_STRING)
-		}
-		if !isInputType(fn.Input[1]) {
-			complain(fn, INPUT_NOT_INPUT_TYPE)
+func validateResource(res *Resource) {
+	if res.Create != nil {
+		validateFunction(res, res.Create, CREATE_INPUTS, CREATE_OUTPUTS)
+	}
+	if res.Update != nil {
+		validateFunction(res, res.Update, UPDATE_INPUTS, UPDATE_OUTPUTS)
+	}
+	if res.Get != nil {
+		validateFunction(res, res.Get, GET_INPUTS, GET_OUTPUTS)
+	}
+	if res.Delete != nil {
+		validateFunction(res, res.Delete, DELETE_INPUTS, DELETE_OUTPUTS)
+	}
+	if res.List != nil {
+		outputAsBytes := []byte(strings.Join(res.List.Output, ", "))
+		// special case for list - ListTiers() ([]Tiers, empty)
+		if res.List.Input == nil {
+			if !OUTPUT_LEN_2_ARRAY.Match(outputAsBytes) {
+				complain(res, res.List, "unexpected list function with no input")
+			}
+		} else {
+			validateFunction(res, res.List, LIST_INPUTS, LIST_OUTPUTS)
 		}
 	}
-}
-
-func outputLenOne(fn *Function) {
-	if len(fn.Output) != 1 {
-		complain(fn, OUTPUT_NOT_LEN_ONE)
-	} else {
-		if fn.Output[0] != "error" {
-			complain(fn, OUTPUT_NOT_ERROR)
-		}
-	}
-}
-
-func outputLenTwo(fn *Function) {
-	if len(fn.Output) != 2 {
-		complain(fn, OUTPUT_NOT_LEN_TWO)
-	} else {
-		if !isPointer(fn.Output[0]) {
-			complain(fn, OUTPUT_NOT_POINTER)
-		}
-		if fn.Output[1] != "error" {
-			complain(fn, OUTPUT_NOT_ERROR)
-		}
-	}
-}
-
-func complain(fn *Function, msg string) {
-	fmt.Printf("%s\t\t%s\n", msg, fn)
-}
-
-func isPointer(s string) bool {
-	return s[0] == '*'
-}
-
-func isInputType(s string) bool {
-	return !isPointer(s) && strings.HasSuffix(s, "Input")
 }
