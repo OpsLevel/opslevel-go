@@ -37,7 +37,7 @@ var (
 	GET_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2}
 
 	DELETE_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_STRING_OR_ID}
-	DELETE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_1_ERROR, OUTPUT_LEN_2_ARRAY}
+	DELETE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_1_ERROR, OUTPUT_LEN_2}
 
 	// TODO: list should be more consistent
 	// list has a special case where input is empty and the output is an array
