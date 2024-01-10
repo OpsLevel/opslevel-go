@@ -446,24 +446,14 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 
 //#region Delete
 
-func (client *Client) DeleteTeamWithAlias(alias string) error {
-	var m struct {
-		Payload struct {
-			Id     ID               `graphql:"deletedTeamId"`
-			Alias  string           `graphql:"deletedTeamAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"teamDelete(input: $input)"`
+func (client *Client) DeleteTeam(identifier string) error {
+	input := TeamDeleteInput{}
+	if IsID(identifier) {
+		input.Id = NewID(identifier)
+	} else {
+		input.Alias = &identifier
 	}
-	v := PayloadVariables{
-		"input": TeamDeleteInput{
-			Alias: &alias,
-		},
-	}
-	err := client.Mutate(&m, v, WithName("TeamDelete"))
-	return HandleErrors(err, m.Payload.Errors)
-}
 
-func (client *Client) DeleteTeam(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
@@ -472,9 +462,7 @@ func (client *Client) DeleteTeam(id ID) error {
 		} `graphql:"teamDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": TeamDeleteInput{
-			Id: &id,
-		},
+		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
 	return HandleErrors(err, m.Payload.Errors)

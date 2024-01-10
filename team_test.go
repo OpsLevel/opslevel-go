@@ -654,7 +654,7 @@ func TestDeleteTeam(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/delete", testRequest)
 	// Act
-	err := client.DeleteTeam(id3)
+	err := client.DeleteTeam(string(id3))
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -668,7 +668,7 @@ func TestDeleteTeamWithAlias(t *testing.T) {
 	)
 	client := BestTestClient(t, "team/delete_with_alias", testRequest)
 	// Act
-	err := client.DeleteTeamWithAlias("example")
+	err := client.DeleteTeam("example")
 	// Assert
 	autopilot.Ok(t, err)
 }
