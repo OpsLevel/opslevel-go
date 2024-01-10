@@ -9,7 +9,7 @@ import (
 
 // JSON is a specialized map[string]string to support proper graphql serialization
 type (
-	JSON       map[string]any
+	JSON       map[string]any // TODO: should this be marked as deprecated?
 	JSONSchema map[string]any
 )
 
@@ -21,6 +21,14 @@ func NewJSONSchema(data string) JSONSchema {
 		panic(err)
 	}
 	return result
+}
+
+func NewJSONSchemaFromMap(data map[string]any) JSONSchema {
+	result, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	return NewJSONSchema(string(result))
 }
 
 func (s JSONSchema) AsString() string {
@@ -120,22 +128,3 @@ func (s JsonString) AsMap() map[string]any {
 	value, _ := JsonStringAs[map[string]any](s)
 	return value
 }
-
-//
-//func (s *JSON) UnmarshalJSON(data []byte) error {
-//	escaped, err := strconv.Unquote(string(data))
-//	if err != nil {
-//		return err
-//	}
-//	dto := map[string]string{}
-//	if err := json.Unmarshal([]byte(escaped), &dto); err != nil {
-//		return err
-//	}
-//	if (*s) == nil {
-//		(*s) = JSON{}
-//	}
-//	for k, v := range dto {
-//		(*s)[k] = v
-//	}
-//	return nil
-//}
