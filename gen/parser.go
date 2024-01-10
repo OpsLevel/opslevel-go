@@ -9,10 +9,7 @@ import (
 	"go/types"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
-
-	"golang.org/x/exp/maps"
 )
 
 var (
@@ -43,7 +40,6 @@ type Resource struct {
 	Unassign *Function `json:"unassign,omitempty"`
 }
 
-// for typical objects, 5 is perfect
 func (res *Resource) NumFunctions() int {
 	var i int
 	if res.Create != nil {
@@ -68,6 +64,28 @@ func (res *Resource) NumFunctions() int {
 		i++
 	}
 	return i
+}
+
+func (res *Resource) isPerfect() bool {
+	// general case
+	if res.NumFunctions() == 5 {
+		return true
+	}
+
+	// TODO: special cases - not all resources have the standard create/update/get/delete/list.
+	// TODO: update PR template to ask users to verify they checked the output of .json files
+	switch res.Name {
+	case "Tag":
+		return res.NumFunctions() == 4
+	case "Repository", "Property", "Contact":
+		return res.NumFunctions() == 3
+	case "AlertSourceService", "CreateServiceDependency":
+		return res.NumFunctions() == 2
+	case "Tiers", "Lifecycle":
+		return res.NumFunctions() == 1
+	}
+
+	return false
 }
 
 func (res *Resource) String() string {
@@ -190,10 +208,6 @@ func pluralize(s string) string {
 
 // useful grep command:
 // grep -RE '\*Client) [A-Za-z]*Categor[A-Za-z]*' *.go
-// TODO: more verbs to support:
-// Invite (create equiv for user)
-// Connect (service repos)
-// Add, Remove (contact)
 func mapResourcesToFunctions() {
 	for _, res := range resources {
 		for _, fn := range functions {
@@ -204,6 +218,7 @@ func mapResourcesToFunctions() {
 			if "Update"+res.Name == fn.Name {
 				res.Update = fn
 			}
+			// TODO: there are still some separate get with alias functions, like on Repository.
 			if "Get"+res.Name == fn.Name {
 				res.Get = fn
 			}
@@ -231,24 +246,25 @@ func validateResources() {
 	}
 }
 
-// TODO: show these as buckets
 func showRankings() {
-	ranked := maps.Keys(resources)
-	sort.Slice(ranked, func(i, j int) bool {
-		return resources[ranked[i]].NumFunctions() > resources[ranked[j]].NumFunctions()
-	})
-	for _, res := range ranked {
-		fmt.Printf("parsed %d functions for resource '%s'\n", resources[res].NumFunctions(), resources[res].Name)
+	buckets := make(map[int][]string)
+	for _, res := range resources {
+		if buckets[res.NumFunctions()] == nil {
+			buckets[res.NumFunctions()] = []string{}
+		}
+		buckets[res.NumFunctions()] = append(buckets[res.NumFunctions()], res.Name)
+	}
+	for i := len(buckets); i > 0; i-- {
+		if _, ok := buckets[i]; !ok {
+			continue
+		}
+		fmt.Printf("has %d functions: [%s]\n", i, strings.Join(buckets[i], ", "))
 	}
 	fmt.Println()
 }
 
 func writeConfigs() error {
 	for _, res := range resources {
-		// TODO: move this
-		if res.NumFunctions() < 1 {
-			continue
-		}
 		filename := fmt.Sprintf("./gen/config/%s.json", strings.ToLower(res.Name))
 		output, err := json.MarshalIndent(res, "", "    ")
 		if err != nil {
@@ -279,24 +295,19 @@ func wipeConfigs() error {
 
 func addManualOverrides() {
 	resources["Secret"].List = functions["ListSecretsVaultsSecret"]
-	// TODO: is this appropriate?
 	resources["User"].Create = functions["InviteUser"]
+	// TODO: should we add more verbs, like Connect and Invite?
+	// TODO: the following are not linked fully
+	// ServiceRepository - ConnectServiceRepository
+	// Integrations - CreateIntegrationAWS, CreateIntegrationNewRelic, UpdateIntegrationAWS, UpdateIntegrationNewRelic
+	// AlertSource - GetAlertSourceWithExternalIdentifier
 }
 
 func filterResources() {
 	for key, res := range resources {
-		if res.NumFunctions() == 5 {
-			break
+		if !res.isPerfect() {
+			delete(resources, key)
 		}
-		// TODO: noticed repository has sep. get and alias functions
-		// TODO: check this for other resources, make the gen code better.
-		// TODO: not complete, automate this by just grepping and seeing how many you got
-		switch res.Name {
-		case "Tag", "User", "Tool", "Property", "AlertSourceService", "ServiceDependency", "Lifecycle":
-			break
-		}
-
-		delete(resources, key)
 	}
 }
 
@@ -308,8 +319,8 @@ func RunParser() error {
 	mapResourcesToFunctions()
 	addManualOverrides()
 	showRankings()
-	validateResources() // shows warnings about only the mapped functions
-	// filterResources()   // this is an allow list made by hand
+	validateResources() // can only show warnings of functions that were mapped.
+	filterResources()
 	err = wipeConfigs()
 	if err != nil {
 		panic(err)
