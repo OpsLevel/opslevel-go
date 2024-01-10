@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteTeam",
         "input": [
-            "ID"
+            "string"
         ],
         "output": [
             "error"
