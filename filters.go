@@ -77,7 +77,7 @@ func (client *Client) GetFilter(id ID) (*Filter, error) {
 	return &q.Account.Filter, HandleErrors(err, nil)
 }
 
-func (client *Client) ListFilters(variables *PayloadVariables) (FilterConnection, error) {
+func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnection, error) {
 	var q struct {
 		Account struct {
 			Filters FilterConnection `graphql:"filters(after: $after, first: $first)"`
@@ -87,19 +87,19 @@ func (client *Client) ListFilters(variables *PayloadVariables) (FilterConnection
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("FilterList")); err != nil {
-		return FilterConnection{}, err
+		return &FilterConnection{}, err
 	}
 	for q.Account.Filters.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Filters.PageInfo.End
 		resp, err := client.ListFilters(variables)
 		if err != nil {
-			return FilterConnection{}, err
+			return &FilterConnection{}, err
 		}
 		q.Account.Filters.Nodes = append(q.Account.Filters.Nodes, resp.Nodes...)
 		q.Account.Filters.PageInfo = resp.PageInfo
 		q.Account.Filters.TotalCount += resp.TotalCount
 	}
-	return q.Account.Filters, nil
+	return &q.Account.Filters, nil
 }
 
 //#endregion

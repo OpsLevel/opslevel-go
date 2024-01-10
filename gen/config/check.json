@@ -45,7 +45,7 @@
             "*PayloadVariables"
         ],
         "output": [
-            "CheckConnection",
+            "*CheckConnection",
             "error"
         ]
     }

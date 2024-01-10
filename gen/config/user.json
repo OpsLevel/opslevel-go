@@ -36,7 +36,7 @@
             "*PayloadVariables"
         ],
         "output": [
-            "UserConnection",
+            "*UserConnection",
             "error"
         ]
     }

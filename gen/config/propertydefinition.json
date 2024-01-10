@@ -46,7 +46,7 @@
             "*PayloadVariables"
         ],
         "output": [
-            "PropertyDefinitionConnection",
+            "*PropertyDefinitionConnection",
             "error"
         ]
     }
