@@ -6,15 +6,6 @@ import (
 	"strings"
 )
 
-// outputs and inputs of client functions should match something like this
-// TODO:
-// TODO: what is the expectation for assign and unassign?
-// res, err := create(input)
-// res, err := update(input)
-// res, err := update(string|id, input)
-// res, err := get(string|id)
-// res, err := delete(string|id)
-// err := delete(string|id)
 var (
 	INPUT_LEN_1_STRING_OR_ID     = regexp.MustCompile(`^(string|ID)$`)
 	INPUT_LEN_1_INPUT_TYPE       = regexp.MustCompile(`^[A-Za-z]*Input$`)
@@ -23,7 +14,6 @@ var (
 
 	OUTPUT_LEN_1_ERROR          = regexp.MustCompile(`^error$`)
 	OUTPUT_LEN_2                = regexp.MustCompile(`^\*[A-Z][A-Za-z]*, error$`)
-	OUTPUT_LEN_2_CONNECTION     = regexp.MustCompile(`^[A-Za-z]*Connection, error$`)
 	OUTPUT_LEN_2_CONNECTION_PTR = regexp.MustCompile(`^\*[A-Za-z]*Connection, error$`)
 	OUTPUT_LEN_2_ARRAY          = regexp.MustCompile(`^\[\][A-Za-z]*, error$`)
 
@@ -39,10 +29,9 @@ var (
 	DELETE_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_STRING_OR_ID}
 	DELETE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_1_ERROR, OUTPUT_LEN_2}
 
-	// TODO: list should be more consistent
-	// list has a special case where input is empty and the output is an array
+	// note: list has a special case where input is empty and the output is an array
 	LIST_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_PAYLOAD_VARS_PTR}
-	LIST_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2_CONNECTION, OUTPUT_LEN_2_CONNECTION_PTR, OUTPUT_LEN_2_ARRAY}
+	LIST_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2_CONNECTION_PTR}
 )
 
 func complain(res *Resource, fn *Function, msg string) {

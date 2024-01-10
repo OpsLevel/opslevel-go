@@ -47,7 +47,7 @@
             "*PayloadVariables"
         ],
         "output": [
-            "ScorecardConnection",
+            "*ScorecardConnection",
             "error"
         ]
     }

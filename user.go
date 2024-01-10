@@ -150,7 +150,7 @@ func (client *Client) GetUser(value string) (*User, error) {
 	return &q.Account.User, HandleErrors(err, nil)
 }
 
-func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, error) {
+func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, error) {
 	var q struct {
 		Account struct {
 			Users UserConnection `graphql:"users(after: $after, first: $first)"`
@@ -161,20 +161,20 @@ func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, er
 	}
 
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
-		return UserConnection{}, err
+		return &UserConnection{}, err
 	}
 
 	for q.Account.Users.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Users.PageInfo.End
 		resp, err := client.ListUsers(variables)
 		if err != nil {
-			return UserConnection{}, err
+			return &UserConnection{}, err
 		}
 		q.Account.Users.Nodes = append(q.Account.Users.Nodes, resp.Nodes...)
 		q.Account.Users.PageInfo = resp.PageInfo
 		q.Account.Users.TotalCount += resp.TotalCount
 	}
-	return q.Account.Users, nil
+	return &q.Account.Users, nil
 }
 
 //#endregion

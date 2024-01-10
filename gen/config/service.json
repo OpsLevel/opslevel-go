@@ -45,7 +45,7 @@
             "*PayloadVariables"
         ],
         "output": [
-            "ServiceConnection",
+            "*ServiceConnection",
             "error"
         ]
     }

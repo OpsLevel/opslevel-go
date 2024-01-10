@@ -82,7 +82,7 @@ func (client *Client) GetPropertyDefinition(input string) (*PropertyDefinition, 
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
 
-func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (PropertyDefinitionConnection, error) {
+func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*PropertyDefinitionConnection, error) {
 	var q struct {
 		Account struct {
 			Definitions PropertyDefinitionConnection `graphql:"propertyDefinitions(after: $after, first: $first)"`
@@ -92,19 +92,19 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (Prop
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("PropertyDefinitionList")); err != nil {
-		return PropertyDefinitionConnection{}, err
+		return &PropertyDefinitionConnection{}, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListPropertyDefinitions(variables)
 		if err != nil {
-			return PropertyDefinitionConnection{}, err
+			return &PropertyDefinitionConnection{}, err
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo
 		q.Account.Definitions.TotalCount += len(q.Account.Definitions.Nodes)
 	}
-	return q.Account.Definitions, nil
+	return &q.Account.Definitions, nil
 }
 
 func (client *Client) DeletePropertyDefinition(input string) error {

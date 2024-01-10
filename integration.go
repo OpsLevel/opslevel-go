@@ -112,7 +112,7 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	return &q.Account.Integration, HandleErrors(err, nil)
 }
 
-func (client *Client) ListIntegrations(variables *PayloadVariables) (IntegrationConnection, error) {
+func (client *Client) ListIntegrations(variables *PayloadVariables) (*IntegrationConnection, error) {
 	var q struct {
 		Account struct {
 			Integrations IntegrationConnection `graphql:"integrations(after: $after, first: $first)"`
@@ -122,19 +122,19 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (Integration
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
-		return IntegrationConnection{}, err
+		return &IntegrationConnection{}, err
 	}
 	for q.Account.Integrations.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Integrations.PageInfo.End
 		resp, err := client.ListIntegrations(variables)
 		if err != nil {
-			return IntegrationConnection{}, err
+			return &IntegrationConnection{}, err
 		}
 		q.Account.Integrations.Nodes = append(q.Account.Integrations.Nodes, resp.Nodes...)
 		q.Account.Integrations.PageInfo = resp.PageInfo
 		q.Account.Integrations.TotalCount += resp.TotalCount
 	}
-	return q.Account.Integrations, nil
+	return &q.Account.Integrations, nil
 }
 
 //#endregion
