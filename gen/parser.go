@@ -67,14 +67,11 @@ func (res *Resource) NumFunctions() int {
 }
 
 func (res *Resource) isPerfect() bool {
-	// general case
-	if res.NumFunctions() == 5 {
-		return true
-	}
-
 	// TODO: special cases - not all resources have the standard create/update/get/delete/list.
 	// TODO: update PR template to ask users to verify they checked the output of .json files
 	switch res.Name {
+	case "Check":
+		return false // TODO: checks are very complicated, exclude them for now.
 	case "Tag":
 		return res.NumFunctions() == 4
 	case "Repository", "Property", "Contact":
@@ -85,7 +82,8 @@ func (res *Resource) isPerfect() bool {
 		return res.NumFunctions() == 1
 	}
 
-	return false
+	// general case
+	return res.NumFunctions() == 5
 }
 
 func (res *Resource) String() string {
