@@ -40,7 +40,6 @@ var (
 	DELETE_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_1_ERROR, OUTPUT_LEN_2_ARRAY}
 
 	// TODO: list should be more consistent
-	// TODO: also delete scorecard, deleteservice
 	// list has a special case where input is empty and the output is an array
 	LIST_INPUTS  = []*regexp.Regexp{INPUT_LEN_1_PAYLOAD_VARS_PTR}
 	LIST_OUTPUTS = []*regexp.Regexp{OUTPUT_LEN_2_CONNECTION, OUTPUT_LEN_2_CONNECTION_PTR, OUTPUT_LEN_2_ARRAY}

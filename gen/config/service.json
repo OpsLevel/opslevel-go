@@ -33,7 +33,7 @@
     "delete": {
         "func": "DeleteService",
         "input": [
-            "ServiceDeleteInput"
+            "string"
         ],
         "output": [
             "error"
