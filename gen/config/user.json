@@ -1,5 +1,16 @@
 {
     "resource": "User",
+    "create": {
+        "func": "InviteUser",
+        "input": [
+            "string",
+            "UserInput"
+        ],
+        "output": [
+            "*User",
+            "error"
+        ]
+    },
     "update": {
         "func": "UpdateUser",
         "input": [

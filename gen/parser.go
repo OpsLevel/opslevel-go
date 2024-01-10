@@ -18,7 +18,6 @@ import (
 var (
 	resources  = make(map[string]*Resource)
 	functions  = make(map[string]*Function)
-	verbs      = []string{"Create", "Update", "Get", "Delete", "List", "Assign", "Unassign"}
 	ignoreGlob = []string{}
 )
 
@@ -122,16 +121,6 @@ func parse() error {
 				return true
 			}
 			funcName = funcDecl.Name.Name
-			hasVerb := false
-			for _, v := range verbs {
-				if strings.Contains(funcName, v) {
-					hasVerb = true
-					break
-				}
-			}
-			if !hasVerb {
-				return true
-			}
 
 			// must be a receiver for client
 			if funcDecl.Recv == nil || len(funcDecl.Recv.List) == 0 {
@@ -189,32 +178,48 @@ func parse() error {
 	return nil
 }
 
-func matchResourcesToFunctions() {
+func pluralize(s string) string {
+	if strings.HasSuffix("s", s) {
+		return s + "es"
+	}
+	if strings.HasSuffix(s, "y") {
+		return s[:len(s)-1] + "ies"
+	}
+	return s + "s"
+}
+
+// useful grep command:
+// grep -RE '\*Client) [A-Za-z]*Categor[A-Za-z]*' *.go
+// TODO: more verbs to support:
+// Invite (create equiv for user)
+// Connect (service repos)
+// Add, Remove (contact)
+func mapResourcesToFunctions() {
 	for _, res := range resources {
-		for _, verb := range verbs {
-			funcName := verb + res.Name // Try CreateRes, UpdateRes, GetRes, ...
-			if verb == "List" {
-				funcName += "s"
+		for _, fn := range functions {
+			// Try CreateRes, UpdateRes, GetRes, ...
+			if "Create"+res.Name == fn.Name {
+				res.Create = fn
 			}
-			if v, ok := functions[funcName]; ok {
-				switch verb {
-				case "Create":
-					res.Create = v
-				case "Update":
-					res.Update = v
-				case "Get":
-					res.Get = v
-				case "Delete":
-					res.Delete = v
-				case "List":
-					res.List = v
-				case "Assign":
-					res.Assign = v
-				case "Unassign":
-					res.Unassign = v
-				default:
-					panic("hello world")
-				}
+			if "Update"+res.Name == fn.Name {
+				res.Update = fn
+			}
+			if "Get"+res.Name == fn.Name {
+				res.Get = fn
+			}
+			if "Delete"+res.Name == fn.Name {
+				res.Delete = fn
+			}
+			// list has multiple cases
+			if "List"+res.Name == fn.Name || "List"+pluralize(res.Name) == fn.Name {
+				res.List = fn
+			}
+			// these can be backwards
+			if "Assign"+res.Name == fn.Name || res.Name+"Assign" == fn.Name {
+				res.Assign = fn
+			}
+			if "Unassign"+res.Name == fn.Name || res.Name+"Unassign" == fn.Name {
+				res.Unassign = fn
 			}
 		}
 	}
@@ -226,6 +231,7 @@ func validateResources() {
 	}
 }
 
+// TODO: show these as buckets
 func showRankings() {
 	ranked := maps.Keys(resources)
 	sort.Slice(ranked, func(i, j int) bool {
@@ -234,10 +240,15 @@ func showRankings() {
 	for _, res := range ranked {
 		fmt.Printf("parsed %d functions for resource '%s'\n", resources[res].NumFunctions(), resources[res].Name)
 	}
+	fmt.Println()
 }
 
 func writeConfigs() error {
 	for _, res := range resources {
+		// TODO: move this
+		if res.NumFunctions() < 1 {
+			continue
+		}
 		filename := fmt.Sprintf("./gen/config/%s.json", strings.ToLower(res.Name))
 		output, err := json.MarshalIndent(res, "", "    ")
 		if err != nil {
@@ -266,14 +277,39 @@ func wipeConfigs() error {
 	return nil
 }
 
+func addManualOverrides() {
+	resources["Secret"].List = functions["ListSecretsVaultsSecret"]
+	// TODO: is this appropriate?
+	resources["User"].Create = functions["InviteUser"]
+}
+
+func filterResources() {
+	for key, res := range resources {
+		if res.NumFunctions() == 5 {
+			break
+		}
+		// TODO: noticed repository has sep. get and alias functions
+		// TODO: check this for other resources, make the gen code better.
+		// TODO: not complete, automate this by just grepping and seeing how many you got
+		switch res.Name {
+		case "Tag", "User", "Tool", "Property", "AlertSourceService", "ServiceDependency", "Lifecycle":
+			break
+		}
+
+		delete(resources, key)
+	}
+}
+
 func RunParser() error {
 	err := parse()
 	if err != nil {
 		return err
 	}
-	matchResourcesToFunctions()
+	mapResourcesToFunctions()
+	addManualOverrides()
 	showRankings()
-	validateResources() // shows warnings about only the parsed resource functions.
+	validateResources() // shows warnings about only the mapped functions
+	// filterResources()   // this is an allow list made by hand
 	err = wipeConfigs()
 	if err != nil {
 		panic(err)
