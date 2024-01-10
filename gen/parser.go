@@ -45,7 +45,7 @@ type Resource struct {
 }
 
 // for typical objects, 5 is perfect
-func (res *Resource) Score() int {
+func (res *Resource) NumFunctions() int {
 	var i int
 	if res.Create != nil {
 		i++
@@ -220,37 +220,19 @@ func matchResourcesToFunctions() {
 	}
 }
 
-func validatedMatchedFunctions() {
+func validateResources() {
 	for _, res := range resources {
-		if res.Score() == 0 {
-			continue
-		}
-		if res.Create != nil {
-			validateCreate(res.Create)
-		}
-		if res.Update != nil {
-			validateUpdate(res.Update)
-		}
-		if res.Get != nil {
-			validateGet(res.Get)
-		}
-		if res.Delete != nil {
-			validateDelete(res.Delete)
-		}
-		if res.List != nil {
-			validateList(res.List)
-		}
+		validateResource(res)
 	}
 }
 
 func showRankings() {
 	ranked := maps.Keys(resources)
 	sort.Slice(ranked, func(i, j int) bool {
-		return resources[ranked[i]].Score() > resources[ranked[j]].Score()
+		return resources[ranked[i]].NumFunctions() > resources[ranked[j]].NumFunctions()
 	})
-	fmt.Printf("SCORE\tRESOURCE\n")
 	for _, res := range ranked {
-		fmt.Printf("%d\t%s\n", resources[res].Score(), resources[res].Name)
+		fmt.Printf("parsed %d functions for resource '%s'\n", resources[res].NumFunctions(), resources[res].Name)
 	}
 }
 
@@ -291,7 +273,7 @@ func RunParser() error {
 	}
 	matchResourcesToFunctions()
 	showRankings()
-	validatedMatchedFunctions()
+	validateResources() // shows warnings about only the parsed resource functions.
 	err = wipeConfigs()
 	if err != nil {
 		panic(err)
