@@ -7,14 +7,9 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"go/ast"
 	"go/format"
-	"go/parser"
-	"go/token"
-	"go/types"
 	"log"
 	"os"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -25,7 +20,6 @@ import (
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
 	"github.com/opslevel/opslevel-go/v2023/gen"
-	"golang.org/x/exp/maps"
 )
 
 const (
@@ -167,10 +161,6 @@ func main() {
 	}
 
 	err = run()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = runPostInputs()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -851,135 +841,4 @@ var templFuncMap = template.FuncMap{
 		}
 		return s
 	},
-}
-
-// TODO: could probably do this so much faster with a template
-func appendNewDeleteInput(file *os.File, name string, types []string) error {
-	var (
-		prefixAlias string
-		prefixId    string
-		err         error
-		out         string
-	)
-	if !strings.HasPrefix(types[1], "*") {
-		prefixAlias = "*"
-	}
-	if !strings.HasPrefix(types[0], "*") {
-		prefixId = "*"
-	}
-	if types[0] == "" {
-		return fmt.Errorf("invalid parsed DeleteInput: %s", name)
-	}
-
-	if types[1] != "" {
-		out = fmt.Sprintf(`
-// create a new %s by passing an ID or alias string
-func New%s(value string) *%s {
-	if IsID(value) {
-		return &%s{
-			Id: %sNewID(value),
-		}
-	}
-	return &%s{
-		Alias: %sRefOf(value),
-	}
-}
-`, name, name, name, name, prefixId, name, prefixAlias)
-	} else {
-		out = fmt.Sprintf(`
-// create a new %s by passing an ID string
-func New%s(value string) *%s {
-	return &%s{
-		Id: %sNewID(value),
-	}
-}
-`, name, name, name, name, prefixId)
-	}
-
-	_, err = fmt.Fprintln(file, out)
-	return err
-}
-
-func runPostInputs() error {
-	var (
-		err                error
-		file               *os.File
-		root               *ast.File
-		parsedDeleteInputs = make(map[string][]string)
-	)
-
-	// append only - do not change what was there before.
-	file, err = os.OpenFile("./input.go", os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	root, err = parser.ParseFile(token.NewFileSet(), "./input.go", nil, parser.ParseComments)
-	if err != nil {
-		return err
-	}
-	// get names of simple DeleteInput structs that use (ID, string) as args
-	// generate New...DeleteInput(identifier string) functions from them.
-	ast.Inspect(root, func(n ast.Node) bool {
-		var (
-			ok              bool
-			structName      string
-			structType      *ast.StructType
-			typeSpec        *ast.TypeSpec
-			parsedIdType    string
-			parsedAliasType string
-		)
-
-		// look for struct
-		typeSpec, ok = n.(*ast.TypeSpec)
-		if !ok {
-			return true
-		}
-		structName = typeSpec.Name.Name
-		if !strings.HasSuffix(structName, "DeleteInput") {
-			return true
-		}
-		structType, ok = typeSpec.Type.(*ast.StructType)
-		if !ok {
-			return true
-		}
-
-		for _, field := range structType.Fields.List {
-			if len(field.Names) == 0 || field.Names[0] == nil {
-				return true
-			}
-
-			fieldName := field.Names[0].Name
-			switch fieldName {
-			case "Id", "Alias":
-			default:
-				fmt.Printf("unexpected field name: '%s.%s'\n", structName, fieldName)
-				return true
-			}
-
-			fieldType := types.ExprString(field.Type)
-			switch fieldType {
-			case "*ID", "ID":
-				parsedIdType = fieldType
-			case "*string", "string":
-				parsedAliasType = fieldType
-			default:
-				fmt.Printf("unexpected field type: '%s.%s' (is %s)\n", structName, fieldName, fieldType)
-				return true
-			}
-		}
-		parsedDeleteInputs[structName] = []string{parsedIdType, parsedAliasType}
-		return true
-	})
-	// ordering is important since ASTs don't have a consistent order
-	sorted := maps.Keys(parsedDeleteInputs)
-	slices.Sort[[]string](sorted)
-	for _, key := range sorted {
-		if err := appendNewDeleteInput(file, key, parsedDeleteInputs[key]); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
