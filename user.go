@@ -35,13 +35,13 @@ func (u *User) ResourceType() TaggableResource {
 
 //#region Helpers
 
-func NewUserIdentifier(value string) UserIdentifierInput {
+func NewUserIdentifier(value string) *UserIdentifierInput {
 	if IsID(value) {
-		return UserIdentifierInput{
+		return &UserIdentifierInput{
 			Id: NewID(value),
 		}
 	}
-	return UserIdentifierInput{
+	return &UserIdentifierInput{
 		Email: RefOf(value),
 	}
 }
@@ -144,7 +144,7 @@ func (client *Client) GetUser(value string) (*User, error) {
 		}
 	}
 	v := PayloadVariables{
-		"input": NewUserIdentifier(value),
+		"input": *NewUserIdentifier(value),
 	}
 	err := client.Query(&q, v, WithName("UserGet"))
 	return &q.Account.User, HandleErrors(err, nil)
@@ -189,7 +189,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 		} `graphql:"userUpdate(user: $user input: $input)"`
 	}
 	v := PayloadVariables{
-		"user":  NewUserIdentifier(user),
+		"user":  *NewUserIdentifier(user),
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("UserUpdate"))
@@ -207,7 +207,7 @@ func (client *Client) DeleteUser(user string) error {
 		} `graphql:"userDelete(user: $user)"`
 	}
 	v := PayloadVariables{
-		"user": NewUserIdentifier(user),
+		"user": *NewUserIdentifier(user),
 	}
 	err := client.Mutate(&m, v, WithName("UserDelete"))
 	return HandleErrors(err, m.Payload.Errors)
