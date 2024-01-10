@@ -38,5 +38,15 @@
         "output": [
             "error"
         ]
+    },
+    "list": {
+        "func": "ListCategories",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "*CategoryConnection",
+            "error"
+        ]
     }
 }

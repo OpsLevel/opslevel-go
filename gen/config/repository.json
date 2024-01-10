@@ -19,5 +19,15 @@
             "*Repository",
             "error"
         ]
+    },
+    "list": {
+        "func": "ListRepositories",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "*RepositoryConnection",
+            "error"
+        ]
     }
 }

@@ -10,5 +10,25 @@
             "*Property",
             "error"
         ]
+    },
+    "assign": {
+        "func": "PropertyAssign",
+        "input": [
+            "PropertyInput"
+        ],
+        "output": [
+            "*Property",
+            "error"
+        ]
+    },
+    "unassign": {
+        "func": "PropertyUnassign",
+        "input": [
+            "string",
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
     }
 }
