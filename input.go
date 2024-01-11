@@ -1006,9 +1006,9 @@ type UserIdentifierInput struct {
 
 // UserInput specifies the input fields used to create and update a user.
 type UserInput struct {
-	Name             *string `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                  // The name of the user. (Optional.)
-	Role             *string `json:"role,omitempty" yaml:"role,omitempty" example:"example_role"`                  // The access role (e.g. user vs admin) of the user. (Optional.)
-	SkipWelcomeEmail *bool   `json:"skipWelcomeEmail,omitempty" yaml:"skipWelcomeEmail,omitempty" example:"false"` // Don't send an email welcoming the user to OpsLevel. (Optional.)
+	Name             *string   `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                  // The name of the user. (Optional.)
+	Role             *UserRole `json:"role,omitempty" yaml:"role,omitempty" example:"admin"`                         // The access role (e.g. user vs admin) of the user. (Optional.)
+	SkipWelcomeEmail *bool     `json:"skipWelcomeEmail,omitempty" yaml:"skipWelcomeEmail,omitempty" example:"false"` // Don't send an email welcoming the user to OpsLevel. (Optional.)
 }
 
 // UsersFilterInput represents the input for filtering users.
