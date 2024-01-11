@@ -73,6 +73,10 @@ func (res *Resource) IsPerfect() bool {
 }
 
 func (res *Resource) PrefCreateInputType() string {
+	fmt.Println("hi from " + res.Name)
+	if res.Name == "Check" {
+		return res.Create.Input[0]
+	}
 	if strings.HasSuffix(res.Create.Input[0], "Input") {
 		return res.Create.Input[0]
 	}
@@ -80,6 +84,9 @@ func (res *Resource) PrefCreateInputType() string {
 }
 
 func (res *Resource) PrefCreateUpdateType() string {
+	if res.Name == "Check" {
+		return res.Update.Input[0]
+	}
 	if strings.HasSuffix(res.Update.Input[0], "Input") {
 		return res.Update.Input[0]
 	}
