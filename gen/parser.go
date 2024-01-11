@@ -33,6 +33,23 @@ var (
 	unmappedFunctions = make(map[string]*Function)
 )
 
+func MustImportGeneratedResources(relativePath string) map[string]*Resource {
+	var (
+		b        []byte
+		err      error
+		imported = make(map[string]*Resource)
+	)
+	b, err = os.ReadFile(relativePath)
+	if err != nil {
+		panic(err)
+	}
+	err = json.Unmarshal(b, &imported)
+	if err != nil {
+		panic(err)
+	}
+	return imported
+}
+
 func parse() error {
 	packages, err := parser.ParseDir(token.NewFileSet(), ".", nil, parser.ParseComments)
 	if err != nil {
