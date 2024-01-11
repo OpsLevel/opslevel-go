@@ -114,7 +114,7 @@ func TestUpdateUser(t *testing.T) {
 	client := BestTestClient(t, "user/update", testRequest)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
-		Role:             ol.RefOf(string(ol.UserRoleAdmin)),
+		Role:             ol.RefOf(ol.UserRoleAdmin),
 		SkipWelcomeEmail: ol.RefOf(false),
 	})
 	// Assert

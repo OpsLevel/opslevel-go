@@ -343,6 +343,7 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- else if eq .Name "tags" }}TagInput
     {{- else if eq .Name "members" }}TeamMembershipUserInput
     {{- else if eq .Name "contacts" }}ContactInput
+    {{- else if eq .Type.Name "UserRole" }}UserRole
     {{- else if .Type.Name }}{{ template "converted_type" .Type }}
     {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
 		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
@@ -369,6 +370,7 @@ type {{.Name}} struct { {{range .InputFields }}
       {{- else if or (eq "PredicateTypeEnum" .Type.Name) (hasSuffix "PredicateTypeEnum" .Type.OfType.OfTypeName) }}satisfies_jq_expression
       {{- else if or (eq "ServicePropertyTypeEnum" .Type.Name) (hasSuffix "ServicePropertyTypeEnum" .Type.OfType.OfTypeName) }}language
       {{- else if or (eq "UsersFilterEnum" .Type.Name) (hasSuffix "UsersFilterEnum" .Type.OfType.OfTypeName) }}last_sign_in_at
+      {{- else if or (eq "UserRole" .Type.Name) (hasSuffix "UserRole" .Type.OfType.OfTypeName) }}admin
       {{- else if or (hasSuffix "Enum" .Type.Name) (hasSuffix "Enum" .Type.OfType.OfTypeName) }}NEW_ENUM_SET_DEFAULT
       {{- else if or (hasSuffix "ToolCategory" .Type.Name) (hasSuffix "ToolCategory" .Type.OfType.OfTypeName) }}api_documentation
       {{- else if or (eq "type" .Name) (hasSuffix "Type" .Name) }}example_type
