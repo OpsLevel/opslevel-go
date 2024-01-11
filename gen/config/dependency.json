@@ -1,0 +1,22 @@
+{
+    "resource": "Dependency",
+    "create": {
+        "func": "CreateServiceDependency",
+        "input": [
+            "ServiceDependencyCreateInput"
+        ],
+        "output": [
+            "*ServiceDependency",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteServiceDependency",
+        "input": [
+            "ID"
+        ],
+        "output": [
+            "error"
+        ]
+    }
+}

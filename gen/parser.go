@@ -12,6 +12,12 @@ import (
 	"strings"
 )
 
+// TODO:
+// write hardcodes to custom.json
+// write generated to generated.json
+// only wipe generated.json
+// make CLI alert if unknown things are added or something changes.
+
 var (
 	resources  = make(map[string]*Resource)
 	functions  = make(map[string]*Function)
@@ -76,7 +82,7 @@ func (res *Resource) isPerfect() bool {
 		return res.NumFunctions() == 4
 	case "Repository", "Property", "Contact":
 		return res.NumFunctions() == 3
-	case "AlertSourceService", "CreateServiceDependency":
+	case "AlertSourceService", "Dependency", "Alias":
 		return res.NumFunctions() == 2
 	case "Tiers", "Lifecycle":
 		return res.NumFunctions() == 1
@@ -89,6 +95,18 @@ func (res *Resource) isPerfect() bool {
 func (res *Resource) String() string {
 	b, _ := json.Marshal(res)
 	return string(b)
+}
+
+func (res *Resource) PrefCreateInputType() string {
+	fmt.Println("I am a " + res.Name)
+	if res.Create == nil {
+		return ""
+	}
+	switch res.Name {
+	case "User", "Secret":
+		return res.Create.Input[1]
+	}
+	return res.Create.Input[0]
 }
 
 func cleanTypeName(s string) string {
@@ -242,6 +260,7 @@ func validateResources() {
 	for _, res := range resources {
 		validateResource(res)
 	}
+	fmt.Println()
 }
 
 func showRankings() {
@@ -292,21 +311,70 @@ func wipeConfigs() error {
 }
 
 func addManualOverrides() {
-	resources["Secret"].List = functions["ListSecretsVaultsSecret"]
-	resources["User"].Create = functions["InviteUser"]
 	// TODO: should we add more verbs, like Connect and Invite?
 	// TODO: the following are not linked fully
 	// ServiceRepository - ConnectServiceRepository
 	// Integrations - CreateIntegrationAWS, CreateIntegrationNewRelic, UpdateIntegrationAWS, UpdateIntegrationNewRelic
 	// AlertSource - GetAlertSourceWithExternalIdentifier
+
+	// Could not link part of resource
+	if resources["Secret"].List == nil {
+		resources["Secret"].List = functions["ListSecretsVaultsSecret"]
+	}
+	if resources["User"].List == nil {
+		resources["User"].Create = functions["InviteUser"]
+	}
+
+	// Could not link resource
+	if resources["Action"] == nil {
+		resources["Action"] = &Resource{
+			Name:   "Action",
+			Create: functions["CreateWebhookAction"],
+		}
+	}
+	if resources["Dependency"] == nil {
+		resources["Dependency"] = &Resource{
+			Name:   "Dependency", // TODO: this has a different name
+			Create: functions["CreateServiceDependency"],
+			Delete: functions["DeleteServiceDependency"],
+		}
+	}
+	if resources["Alias"] == nil {
+		resources["Alias"] = &Resource{
+			Name:   "Alias",
+			Create: functions["CreateAlias"],
+			Delete: functions["DeleteAlias"],
+		}
+	}
+	if resources["Infra"] == nil {
+		resources["Infra"] = &Resource{
+			Name:   "Infra", // TODO: this has a different name
+			Create: functions["CreateInfrastructure"],
+			Update: functions["UpdateInfrastructure"],
+			Get:    functions["GetInfrastructure"],
+			Delete: functions["DeleteInfrastructure"],
+			List:   functions["ListInfrastructure"],
+		}
+	}
+	if resources["Member"] == nil { // TODO: uses verbs add, remove
+		resources["Member"] = &Resource{
+			Name: "Member", // TODO: this has a different name
+		}
+		resources["Member"].Create = &Function{
+			Name:  "TODO: I am not real",
+			Input: []string{"TeamMembershipUserInput"},
+		}
+	}
 }
 
 func filterResources() {
 	for key, res := range resources {
 		if !res.isPerfect() {
-			delete(resources, key)
+			// delete(resources, key)
+			fmt.Println("not perfect - " + key)
 		}
 	}
+	fmt.Println()
 }
 
 func RunParser() error {

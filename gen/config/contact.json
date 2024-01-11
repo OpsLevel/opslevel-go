@@ -1,0 +1,14 @@
+{
+    "resource": "Contact",
+    "update": {
+        "func": "UpdateContact",
+        "input": [
+            "ID",
+            "ContactInput"
+        ],
+        "output": [
+            "*Contact",
+            "error"
+        ]
+    }
+}

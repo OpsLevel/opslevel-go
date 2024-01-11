@@ -1,0 +1,10 @@
+{
+    "resource": "Member",
+    "create": {
+        "func": "TODO: I am not real",
+        "input": [
+            "TeamMembershipUserInput"
+        ],
+        "output": null
+    }
+}
