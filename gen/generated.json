@@ -1,5 +1,5 @@
-{
-    "AlertSourceService": {
+[
+    {
         "resource": "AlertSourceService",
         "create": {
             "func": "CreateAlertSourceService",
@@ -21,7 +21,7 @@
             ]
         }
     },
-    "Category": {
+    {
         "resource": "Category",
         "create": {
             "func": "CreateCategory",
@@ -73,7 +73,7 @@
             ]
         }
     },
-    "Contact": {
+    {
         "resource": "Contact",
         "create": {
             "func": "AddContact",
@@ -107,7 +107,7 @@
             ]
         }
     },
-    "Domain": {
+    {
         "resource": "Domain",
         "create": {
             "func": "CreateDomain",
@@ -160,7 +160,7 @@
             ]
         }
     },
-    "Filter": {
+    {
         "resource": "Filter",
         "create": {
             "func": "CreateFilter",
@@ -212,7 +212,7 @@
             ]
         }
     },
-    "Infrastructure": {
+    {
         "resource": "Infrastructure",
         "create": {
             "func": "CreateInfrastructure",
@@ -265,7 +265,7 @@
             ]
         }
     },
-    "Level": {
+    {
         "resource": "Level",
         "create": {
             "func": "CreateLevel",
@@ -315,7 +315,7 @@
             ]
         }
     },
-    "Lifecycle": {
+    {
         "resource": "Lifecycle",
         "list": {
             "func": "ListLifecycles",
@@ -326,7 +326,7 @@
             ]
         }
     },
-    "Property": {
+    {
         "resource": "Property",
         "get": {
             "func": "GetProperty",
@@ -360,7 +360,7 @@
             ]
         }
     },
-    "PropertyDefinition": {
+    {
         "resource": "PropertyDefinition",
         "create": {
             "func": "CreatePropertyDefinition",
@@ -413,7 +413,7 @@
             ]
         }
     },
-    "Scorecard": {
+    {
         "resource": "Scorecard",
         "create": {
             "func": "CreateScorecard",
@@ -467,7 +467,7 @@
             ]
         }
     },
-    "Secret": {
+    {
         "resource": "Secret",
         "create": {
             "func": "CreateSecret",
@@ -521,7 +521,7 @@
             ]
         }
     },
-    "Service": {
+    {
         "resource": "Service",
         "create": {
             "func": "CreateService",
@@ -573,7 +573,7 @@
             ]
         }
     },
-    "ServiceDependency": {
+    {
         "resource": "ServiceDependency",
         "create": {
             "func": "CreateServiceDependency",
@@ -595,7 +595,7 @@
             ]
         }
     },
-    "System": {
+    {
         "resource": "System",
         "create": {
             "func": "CreateSystem",
@@ -648,7 +648,7 @@
             ]
         }
     },
-    "Tag": {
+    {
         "resource": "Tag",
         "create": {
             "func": "CreateTag",
@@ -690,7 +690,7 @@
             ]
         }
     },
-    "Team": {
+    {
         "resource": "Team",
         "create": {
             "func": "CreateTeam",
@@ -742,7 +742,7 @@
             ]
         }
     },
-    "Tier": {
+    {
         "resource": "Tier",
         "list": {
             "func": "ListTiers",
@@ -753,7 +753,7 @@
             ]
         }
     },
-    "Tool": {
+    {
         "resource": "Tool",
         "create": {
             "func": "CreateTool",
@@ -785,7 +785,7 @@
             ]
         }
     },
-    "TriggerDefinition": {
+    {
         "resource": "TriggerDefinition",
         "create": {
             "func": "CreateTriggerDefinition",
@@ -837,7 +837,7 @@
             ]
         }
     },
-    "User": {
+    {
         "resource": "User",
         "create": {
             "func": "InviteUser",
@@ -891,4 +891,4 @@
             ]
         }
     }
-}
+]

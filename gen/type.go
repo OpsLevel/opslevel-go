@@ -72,20 +72,6 @@ func (res *Resource) IsPerfect() bool {
 	return false
 }
 
-func (res *Resource) PrefCreateInputType() string {
-	if strings.HasSuffix(res.Create.Input[0], "Input") {
-		return res.Create.Input[0]
-	}
-	return res.Create.Input[1]
-}
-
-func (res *Resource) PrefCreateUpdateType() string {
-	if strings.HasSuffix(res.Update.Input[0], "Input") {
-		return res.Update.Input[0]
-	}
-	return res.Update.Input[1]
-}
-
 func cleanTypeName(s string) string {
 	s = strings.TrimPrefix(s, "*")
 	s = strings.TrimPrefix(s, "[]*")
