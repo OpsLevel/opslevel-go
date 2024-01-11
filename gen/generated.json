@@ -73,58 +73,6 @@
             ]
         }
     },
-    "Check": {
-        "resource": "Check",
-        "create": {
-            "func": "CreateCheck",
-            "input": [
-                "any"
-            ],
-            "output": [
-                "*Check",
-                "error"
-            ]
-        },
-        "update": {
-            "func": "UpdateCheck",
-            "input": [
-                "any"
-            ],
-            "output": [
-                "*Check",
-                "error"
-            ]
-        },
-        "get": {
-            "func": "GetCheck",
-            "input": [
-                "ID"
-            ],
-            "output": [
-                "*Check",
-                "error"
-            ]
-        },
-        "delete": {
-            "func": "DeleteCheck",
-            "input": [
-                "ID"
-            ],
-            "output": [
-                "error"
-            ]
-        },
-        "list": {
-            "func": "ListChecks",
-            "input": [
-                "*PayloadVariables"
-            ],
-            "output": [
-                "*CheckConnection",
-                "error"
-            ]
-        }
-    },
     "Contact": {
         "resource": "Contact",
         "create": {

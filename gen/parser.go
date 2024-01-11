@@ -23,7 +23,7 @@ var (
 	UNSUPPORTED = []string{
 		"ServiceId", "ID", "PayloadVariables", "ServiceMaturity", "Runner", "RunnerJob",
 		"RunnerScale", "AlertSource", "TeamMembership", "CustomActionsExternalAction", "Integration",
-		"Repository", "ServiceRepository",
+		"Repository", "ServiceRepository", "Check",
 	} // also: Alias (does not get parsed.)
 )
 
