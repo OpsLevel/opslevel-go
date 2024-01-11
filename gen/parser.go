@@ -33,11 +33,11 @@ var (
 	unmappedFunctions = make(map[string]*Function)
 )
 
-func MustImportGeneratedResources(relativePath string) map[string]*Resource {
+func MustImportGeneratedResources(relativePath string) []Resource {
 	var (
 		b        []byte
 		err      error
-		imported = make(map[string]*Resource)
+		imported = []Resource{}
 	)
 	b, err = os.ReadFile(relativePath)
 	if err != nil {
@@ -222,16 +222,16 @@ func writeFile() error {
 		err              error
 		name             = "./gen/generated.json"
 		orderedKeys      = maps.Keys(resources)
-		orderedResources = make([]*Resource, len(orderedKeys))
+		orderedResources = make([]Resource, len(orderedKeys))
 		output           []byte
 	)
 	sort.Slice(orderedKeys, func(i, j int) bool {
 		return orderedKeys[i] < orderedKeys[j]
 	})
 	for i, resName := range orderedKeys {
-		orderedResources[i] = resources[resName]
+		orderedResources[i] = *resources[resName]
 	}
-	output, err = json.MarshalIndent(resources, "", "    ")
+	output, err = json.MarshalIndent(orderedResources, "", "    ")
 	if err != nil {
 		return err
 	}
