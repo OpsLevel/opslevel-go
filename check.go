@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/mitchellh/mapstructure"
+
 	"github.com/relvacode/iso8601"
 )
 
@@ -111,14 +113,22 @@ type CheckCreateInputProvider interface {
 }
 
 type CheckCreateInput struct {
-	Name     string        `json:"name" yaml:"name" default:"Example Check to create"`
-	Enabled  *bool         `json:"enabled" yaml:"enabled" default:"true"`
-	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty"`
-	Category ID            `json:"categoryId" yaml:"categoryId" default:"XXX_category_id_XXX"`
-	Level    ID            `json:"levelId" yaml:"levelId" default:"XXX_rubric_level_id_XXX"`
-	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" default:"XXX_owner_id_XXX"`
-	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" default:"XXX_filter_id_XXX"`
-	Notes    *string       `json:"notes" yaml:"notes" default:"Notes on Example Check"`
+	Name     string        `json:"name" yaml:"name" mapstructure:"name"`
+	Enabled  *bool         `json:"enabled" yaml:"enabled" mapstructure:"enabled"`
+	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
+	Category ID            `json:"categoryId" yaml:"categoryId" mapstructure:"categoryId"`
+	Level    ID            `json:"levelId" yaml:"levelId" mapstructure:"levelId"`
+	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
+	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
+	Notes    *string       `json:"notes" yaml:"notes" default:"Notes on Example Check" mapstructure:"notes"`
+}
+
+func NewCheckCreateInputTypeOf[T any](checkCreateInput CheckCreateInput) *T {
+	newCheck := new(T)
+	if err := mapstructure.Decode(checkCreateInput, newCheck); err != nil {
+		panic(err)
+	}
+	return newCheck
 }
 
 func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
@@ -130,15 +140,23 @@ type CheckUpdateInputProvider interface {
 }
 
 type CheckUpdateInput struct {
-	Id       ID            `json:"id"`
-	Name     string        `json:"name,omitempty"`
-	Enabled  *bool         `json:"enabled,omitempty"`
-	EnableOn *iso8601.Time `json:"enableOn,omitempty"`
-	Category ID            `json:"categoryId,omitempty"`
-	Level    ID            `json:"levelId,omitempty"`
-	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty"`
-	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty"`
-	Notes    *string       `json:"notes,omitempty"`
+	Id       ID            `json:"id" mapstructure:"id"`
+	Name     string        `json:"name,omitempty" mapstructure:"name,omitempty"`
+	Enabled  *bool         `json:"enabled,omitempty" mapstructure:"enabled,omitempty"`
+	EnableOn *iso8601.Time `json:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
+	Category ID            `json:"categoryId,omitempty" mapstructure:"categoryId,omitempty"`
+	Level    ID            `json:"levelId,omitempty" mapstructure:"levelId,omitempty"`
+	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
+	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
+	Notes    *string       `json:"notes,omitempty" mapstructure:"notes,omitempty"`
+}
+
+func NewCheckUpdateInputTypeOf[T any](checkUpdateInput CheckUpdateInput) *T {
+	newCheck := new(T)
+	if err := mapstructure.Decode(checkUpdateInput, newCheck); err != nil {
+		panic(err)
+	}
+	return newCheck
 }
 
 func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
