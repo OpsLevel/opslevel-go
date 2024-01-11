@@ -3,8 +3,8 @@ package opslevel
 import (
 	"encoding/json"
 
-	"github.com/creasty/defaults"
 	"github.com/go-playground/validator/v10"
+	"github.com/taimoorgit/moredefaults"
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,9 +16,17 @@ func IsResourceValid[T any](opslevelResource T) error {
 }
 
 // Apply resource's `default:""` struct tags
-func SetDefaultsFor[T any](opslevelResource *T) {
+func SetDefaultsFor[T any](opslevelResource *T, key ...string) {
 	validator.New(validator.WithRequiredStructEnabled())
-	if err := defaults.Set(opslevelResource); err != nil {
+	if err := moredefaults.Set(opslevelResource); err != nil {
+		panic(err)
+	}
+}
+
+// Apply resource's `example:""` struct tags
+func SetExamplesFor[T any](opslevelResource *T, key ...string) {
+	validator.New(validator.WithRequiredStructEnabled())
+	if err := moredefaults.Set(opslevelResource, "example"); err != nil {
 		panic(err)
 	}
 }
@@ -26,13 +34,20 @@ func SetDefaultsFor[T any](opslevelResource *T) {
 // Make new OpsLevel resource with defaults set
 func NewExampleOf[T any]() T {
 	var opslevelResource T
-	SetDefaultsFor[T](&opslevelResource)
+	SetDefaultsFor[T](&opslevelResource, "example")
 	return opslevelResource
 }
 
 // Get JSON formatted string of an OpsLevel resource - also sets defaults
-func JsonOf[T any](opslevelResource T) string {
-	SetDefaultsFor[T](&opslevelResource)
+func JsonOf[T any](opslevelResource T, key ...string) string {
+	switch len(key) {
+	case 0:
+		SetDefaultsFor[T](&opslevelResource)
+	case 1:
+		SetDefaultsFor[T](&opslevelResource, key[0])
+	default:
+		panic("only one 'key' can be passed")
+	}
 	out, err := json.Marshal(opslevelResource)
 	if err != nil {
 		panic(err)
@@ -41,8 +56,15 @@ func JsonOf[T any](opslevelResource T) string {
 }
 
 // Generate yaml formatted string of an OpsLevel resource - also sets defaults
-func YamlOf[T any](opslevelResource T) string {
-	SetDefaultsFor[T](&opslevelResource)
+func YamlOf[T any](opslevelResource T, key ...string) string {
+	switch len(key) {
+	case 0:
+		SetDefaultsFor[T](&opslevelResource)
+	case 1:
+		SetDefaultsFor[T](&opslevelResource, key[0])
+	default:
+		panic("only one 'key' can be passed")
+	}
 	out, err := yaml.Marshal(opslevelResource)
 	if err != nil {
 		panic(err)

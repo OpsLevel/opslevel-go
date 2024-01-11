@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/creasty/defaults v1.7.0
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/gosimple/slug v1.13.1
@@ -13,6 +12,7 @@ require (
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
 	github.com/rs/zerolog v1.31.0
+	github.com/taimoorgit/moredefaults v0.0.0-20240111003248-c86940d48e96
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -36,7 +36,6 @@ require (
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
