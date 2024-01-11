@@ -9,20 +9,22 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var validStringContainingJSON = `{"name":"Taimoor","isIntern":false,"age":45,"access":{"aws":"admin","okta":"admin"},"tags":["org:engineering","team:platform"]}`
-var validMapContainingJSON = map[string]any{
-	"name":     "Taimoor",
-	"isIntern": false,
-	"age":      45,
-	"access": map[string]any{
-		"aws":  "admin",
-		"okta": "admin",
-	},
-	"tags": []string{
-		"org:engineering",
-		"team:platform",
-	},
-}
+var (
+	validStringContainingJSON = `{"name":"Taimoor","isIntern":false,"age":45,"access":{"aws":"admin","okta":"admin"},"tags":["org:engineering","team:platform"]}`
+	validMapContainingJSON    = map[string]any{
+		"name":     "Taimoor",
+		"isIntern": false,
+		"age":      45,
+		"access": map[string]any{
+			"aws":  "admin",
+			"okta": "admin",
+		},
+		"tags": []string{
+			"org:engineering",
+			"team:platform",
+		},
+	}
+)
 
 type JSONTester struct {
 	Key1 ol.JSON  `json:"key1"`

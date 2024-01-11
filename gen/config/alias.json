@@ -1,0 +1,22 @@
+{
+    "resource": "Alias",
+    "create": {
+        "func": "CreateAlias",
+        "input": [
+            "AliasCreateInput"
+        ],
+        "output": [
+            "[]string",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteAlias",
+        "input": [
+            "AliasDeleteInput"
+        ],
+        "output": [
+            "error"
+        ]
+    }
+}

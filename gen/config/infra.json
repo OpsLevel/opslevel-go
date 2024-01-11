@@ -1,0 +1,53 @@
+{
+    "resource": "Infra",
+    "create": {
+        "func": "CreateInfrastructure",
+        "input": [
+            "InfraInput"
+        ],
+        "output": [
+            "*InfrastructureResource",
+            "error"
+        ]
+    },
+    "update": {
+        "func": "UpdateInfrastructure",
+        "input": [
+            "string",
+            "InfraInput"
+        ],
+        "output": [
+            "*InfrastructureResource",
+            "error"
+        ]
+    },
+    "get": {
+        "func": "GetInfrastructure",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "*InfrastructureResource",
+            "error"
+        ]
+    },
+    "delete": {
+        "func": "DeleteInfrastructure",
+        "input": [
+            "string"
+        ],
+        "output": [
+            "error"
+        ]
+    },
+    "list": {
+        "func": "ListInfrastructure",
+        "input": [
+            "*PayloadVariables"
+        ],
+        "output": [
+            "*InfrastructureResourceConnection",
+            "error"
+        ]
+    }
+}

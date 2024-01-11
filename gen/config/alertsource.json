@@ -1,0 +1,13 @@
+{
+    "resource": "AlertSource",
+    "get": {
+        "func": "GetAlertSource",
+        "input": [
+            "ID"
+        ],
+        "output": [
+            "*AlertSource",
+            "error"
+        ]
+    }
+}
