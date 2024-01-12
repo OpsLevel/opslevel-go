@@ -1,7 +1,6 @@
 package opslevel_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/opslevel/opslevel-go/v2023"
@@ -16,7 +15,6 @@ func TestCreateSecret(t *testing.T) {
 		`{{ template "secret_create_response" }}`,
 	)
 	client := BestTestClient(t, "secrets/create", testRequest)
-	fmt.Println(client)
 	// Act
 	secretInput := opslevel.SecretInput{
 		Owner: opslevel.NewIdentifier(string(id2)),
