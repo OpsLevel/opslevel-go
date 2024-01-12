@@ -1,25 +1,40 @@
 package gen
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"go/types"
+	"sort"
 
 	"github.com/TwiN/go-color"
 )
 
 var (
-	functions = make(map[string]Function)
+	functions = []Function{}
 	resources = make(map[string]struct{}) // this is a set.
 )
 
-func GetFunctions() map[string]Function {
+func Keys[M ~map[K]V, K comparable, V any](m M) []K {
+	r := make([]K, 0, len(m))
+	for k := range m {
+		r = append(r, k)
+	}
+	return r
+}
+
+func GetFunctions() []Function {
+	sort.Slice(functions, func(i, j int) bool {
+		return functions[i].Name < functions[j].Name
+	})
 	return functions
 }
 
-func GetResources() map[string]struct{} {
-	return resources
+func GetResources() []string {
+	keys := Keys(resources)
+	sort.Strings(keys)
+	return keys
 }
 
 func parse() error {
@@ -88,17 +103,20 @@ func RunParser() error {
 	if err := parse(); err != nil {
 		return err
 	}
-	for _, fn := range functions {
-		if fn.Full() || fn.Resource == "" {
-			continue
-		}
-		println(color.InYellow(fn))
-	}
-	for _, fn := range functions {
+	for _, fn := range GetFunctions() {
 		if fn.Full() {
-			println(color.InGreen(fn))
 			continue
 		}
+		fmt.Println(color.InYellow(fn))
+	}
+	for _, fn := range GetFunctions() {
+		if fn.Full() {
+			fmt.Println(color.InGreen(fn))
+			continue
+		}
+	}
+	for _, res := range GetResources() {
+		fmt.Println(res)
 	}
 	return nil
 }
