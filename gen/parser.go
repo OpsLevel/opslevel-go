@@ -16,6 +16,12 @@ var (
 	resources = make(map[string]struct{}) // this is a set.
 )
 
+func sortFunctions() {
+	sort.Slice(functions, func(i, j int) bool {
+		return functions[i].Name < functions[j].Name
+	})
+}
+
 func Keys[M ~map[K]V, K comparable, V any](m M) []K {
 	r := make([]K, 0, len(m))
 	for k := range m {
@@ -24,17 +30,26 @@ func Keys[M ~map[K]V, K comparable, V any](m M) []K {
 	return r
 }
 
-func GetFunctions() []Function {
-	sort.Slice(functions, func(i, j int) bool {
-		return functions[i].Name < functions[j].Name
-	})
-	return functions
-}
-
-func GetResources() []string {
-	keys := Keys(resources)
-	sort.Strings(keys)
-	return keys
+// GetService = Function
+// verb[resource] = function
+func GetData() map[string]map[string]Function {
+	var (
+		localResources = Keys(resources)
+		result         = map[string]map[string]Function{}
+	)
+	sortFunctions()
+	sort.Strings(localResources)
+	for _, fn := range functions {
+		// add verb
+		if _, ok := result[fn.Verb]; !ok {
+			result[fn.Verb] = map[string]Function{}
+		}
+		// add resource
+		if _, ok := result[fn.Verb][fn.Resource]; !ok {
+			result[fn.Verb][fn.Resource] = fn
+		}
+	}
+	return result
 }
 
 func parse() error {
@@ -99,24 +114,35 @@ func parse() error {
 	return nil
 }
 
-func RunParser() error {
+func RunParser(verbose bool) error {
+	var countFnPartial, countFnFull, countRes int
+
 	if err := parse(); err != nil {
 		return err
 	}
-	for _, fn := range GetFunctions() {
-		if fn.Full() {
-			continue
+
+	sortFunctions()
+	if verbose {
+		for _, fn := range functions {
+			if !fn.Full() {
+				fmt.Println(color.InYellow(fn))
+				countFnPartial++
+			}
 		}
-		fmt.Println(color.InYellow(fn))
-	}
-	for _, fn := range GetFunctions() {
-		if fn.Full() {
-			fmt.Println(color.InGreen(fn))
-			continue
+		for _, fn := range functions {
+			if fn.Full() {
+				fmt.Println(color.InGreen(fn))
+				countFnFull++
+			}
+		}
+		for res := range resources {
+			fmt.Println(res)
+			countRes++
 		}
 	}
-	for _, res := range GetResources() {
-		fmt.Println(res)
-	}
+	fmt.Printf("partial functions     %d\n", countFnPartial)
+	fmt.Printf("full functions        %d\n", countFnFull)
+	fmt.Printf("resources             %d\n", countRes)
+
 	return nil
 }

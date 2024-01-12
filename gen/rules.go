@@ -69,7 +69,7 @@ func ToResourceName(s string) string {
 
 func setResourceName(fn *Function, resName string) {
 	validatedName := ToResourceName(resName)
-	if resName != "" && validatedName == "" {
+	if validatedName == "" {
 		complain("not a proper resource name: '%s'", resName)
 		return
 	}

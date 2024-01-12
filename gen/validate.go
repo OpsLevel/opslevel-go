@@ -48,9 +48,11 @@ type Combo struct {
 
 func GetCase(fn *Function) {
 	var (
-		input  = strings.Join(fn.Input, ", ")
-		output = strings.Join(fn.Output, ", ")
-		combos []Combo
+		input       = strings.Join(fn.Input, ", ")
+		output      = strings.Join(fn.Output, ", ")
+		inOk, outOk bool
+		err         error
+		combos      []Combo
 	)
 
 	if _, ok := Combos[fn.Verb]; !ok {
@@ -60,11 +62,6 @@ func GetCase(fn *Function) {
 		combos = Combos[fn.Verb]
 	}
 	for _, combo := range combos {
-		var (
-			inOk, outOk = false, false
-			err         error
-		)
-
 		inOk, err = regexp.MatchString(combo.Input, input)
 		if err != nil {
 			complain("GetCase: error ocurred on '%s'", fn.Name)

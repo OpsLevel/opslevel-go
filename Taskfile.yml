@@ -20,7 +20,7 @@ tasks:
   parse:
     desc: Generate config files
     cmds:
-      - go run gen.go -parse
+      - go run gen.go -parse -verbose
       - gofumpt -w .
 
   lint:

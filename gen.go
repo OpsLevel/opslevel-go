@@ -149,11 +149,12 @@ func main() {
 	var (
 		err     error
 		parsing *bool = flag.Bool("parse", false, "parse code and generate .json files")
+		verbose *bool = flag.Bool("verbose", false, "verbose mode")
 	)
 	flag.Parse()
 
 	if *parsing {
-		err = gen.RunParser()
+		err = gen.RunParser(*verbose)
 		if err != nil {
 			log.Fatal(err)
 		}
