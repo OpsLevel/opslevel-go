@@ -192,10 +192,11 @@ func TestUnmarshalJSONString(t *testing.T) {
 
 func TestNewJSONSchema(t *testing.T) {
 	res, err := ol.NewJSONSchema(validStringContainingJSON)
+	resVal := *res
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, ol.Deref(res)["name"], "Thomas")
-	autopilot.Equals(t, ol.Deref(res)["isIntern"], false)
-	autopilot.Equals(t, ol.Deref(res)["age"], float64(45)) // this is normal with encoding/json
-	autopilot.Equals(t, ol.Deref(res)["access"], map[string]interface{}{"aws": "admin", "okta": "admin"})
-	autopilot.Equals(t, ol.Deref(res)["tags"], []interface{}{"org:engineering", "team:platform"})
+	autopilot.Equals(t, resVal["name"], "Thomas")
+	autopilot.Equals(t, resVal["isIntern"], false)
+	autopilot.Equals(t, resVal["age"], float64(45)) // this is normal with encoding/json
+	autopilot.Equals(t, resVal["access"], map[string]interface{}{"aws": "admin", "okta": "admin"})
+	autopilot.Equals(t, resVal["tags"], []interface{}{"org:engineering", "team:platform"})
 }

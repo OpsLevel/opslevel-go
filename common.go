@@ -56,10 +56,6 @@ func RefTo[T any](v T) *T {
 	return &v
 }
 
-func Deref[T any](v *T) T {
-	return *v
-}
-
 func HandleErrors(err error, errs []OpsLevelErrors) error {
 	if err != nil {
 		return err
