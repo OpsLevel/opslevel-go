@@ -69,13 +69,13 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("CategoryList")); err != nil {
-		return &CategoryConnection{}, err
+		return nil, err
 	}
 	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Rubric.Categories.PageInfo.End
 		resp, err := client.ListCategories(variables)
 		if err != nil {
-			return &CategoryConnection{}, err
+			return nil, err
 		}
 		q.Account.Rubric.Categories.Nodes = append(q.Account.Rubric.Categories.Nodes, resp.Nodes...)
 		q.Account.Rubric.Categories.PageInfo = resp.PageInfo

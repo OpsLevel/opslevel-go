@@ -152,13 +152,13 @@ func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, er
 		variables = c.InitialPageVariablesPointer()
 	}
 	if err := c.Query(&q, *variables, WithName("DomainsList")); err != nil {
-		return &DomainConnection{}, err
+		return nil, err
 	}
 	for q.Account.Domains.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domains.PageInfo.End
 		resp, err := c.ListDomains(variables)
 		if err != nil {
-			return &DomainConnection{}, err
+			return nil, err
 		}
 		q.Account.Domains.Nodes = append(q.Account.Domains.Nodes, resp.Nodes...)
 		q.Account.Domains.PageInfo = resp.PageInfo

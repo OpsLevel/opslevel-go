@@ -92,13 +92,13 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*Pro
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("PropertyDefinitionList")); err != nil {
-		return &PropertyDefinitionConnection{}, err
+		return nil, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListPropertyDefinitions(variables)
 		if err != nil {
-			return &PropertyDefinitionConnection{}, err
+			return nil, err
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo

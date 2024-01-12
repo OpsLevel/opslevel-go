@@ -39,13 +39,13 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*Sec
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("SecretList")); err != nil {
-		return &SecretsVaultsSecretConnection{}, err
+		return nil, err
 	}
 	for q.Account.SecretsVaultsSecrets.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.SecretsVaultsSecrets.PageInfo.End
 		resp, err := client.ListSecretsVaultsSecret(variables)
 		if err != nil {
-			return &SecretsVaultsSecretConnection{}, err
+			return nil, err
 		}
 		q.Account.SecretsVaultsSecrets.Nodes = append(q.Account.SecretsVaultsSecrets.Nodes, resp.Nodes...)
 		q.Account.SecretsVaultsSecrets.PageInfo = resp.PageInfo

@@ -126,13 +126,13 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomAct
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("ExternalActionList")); err != nil {
-		return &CustomActionsExternalActionsConnection{}, err
+		return nil, err
 	}
 	for q.Account.Actions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Actions.PageInfo.End
 		resp, err := client.ListCustomActions(variables)
 		if err != nil {
-			return &CustomActionsExternalActionsConnection{}, err
+			return nil, err
 		}
 		q.Account.Actions.Nodes = append(q.Account.Actions.Nodes, resp.Nodes...)
 		q.Account.Actions.PageInfo = resp.PageInfo
@@ -213,13 +213,13 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*Cust
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("TriggerDefinitionList")); err != nil {
-		return &CustomActionsTriggerDefinitionsConnection{}, err
+		return nil, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListTriggerDefinitions(variables)
 		if err != nil {
-			return &CustomActionsTriggerDefinitionsConnection{}, err
+			return nil, err
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo

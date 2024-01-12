@@ -87,13 +87,13 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("FilterList")); err != nil {
-		return &FilterConnection{}, err
+		return nil, err
 	}
 	for q.Account.Filters.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Filters.PageInfo.End
 		resp, err := client.ListFilters(variables)
 		if err != nil {
-			return &FilterConnection{}, err
+			return nil, err
 		}
 		q.Account.Filters.Nodes = append(q.Account.Filters.Nodes, resp.Nodes...)
 		q.Account.Filters.PageInfo = resp.PageInfo

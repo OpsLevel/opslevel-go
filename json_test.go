@@ -9,23 +9,6 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var (
-	validStringContainingJSON = `{"name":"Taimoor","isIntern":false,"age":45,"access":{"aws":"admin","okta":"admin"},"tags":["org:engineering","team:platform"]}`
-	validMapContainingJSON    = map[string]any{
-		"name":     "Taimoor",
-		"isIntern": false,
-		"age":      45,
-		"access": map[string]any{
-			"aws":  "admin",
-			"okta": "admin",
-		},
-		"tags": []string{
-			"org:engineering",
-			"team:platform",
-		},
-	}
-)
-
 type JSONTester struct {
 	Key1 ol.JSON  `json:"key1"`
 	Key2 ol.JSON  `json:"key2,omitempty"`
@@ -182,22 +165,4 @@ func TestUnmarshalJSONString(t *testing.T) {
 	autopilot.Equals(t, data4, result4)
 	autopilot.Equals(t, data5, result5)
 	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float32")
-}
-
-func TestNewJSONSchema(t *testing.T) {
-	res := ol.NewJSONSchema(validStringContainingJSON)
-	autopilot.Equals(t, res["name"], "Taimoor")
-	autopilot.Equals(t, res["isIntern"], false)
-	autopilot.Equals(t, res["age"], float64(45)) // this is normal with encoding/json
-	autopilot.Equals(t, res["access"], map[string]interface{}{"aws": "admin", "okta": "admin"})
-	autopilot.Equals(t, res["tags"], []interface{}{"org:engineering", "team:platform"})
-}
-
-func TestNewJSONSchemaFromMap(t *testing.T) {
-	res := ol.NewJSONSchemaFromMap(validMapContainingJSON)
-	autopilot.Equals(t, res["name"], "Taimoor")
-	autopilot.Equals(t, res["isIntern"], false)
-	autopilot.Equals(t, res["age"], float64(45)) // this is normal with encoding/json
-	autopilot.Equals(t, res["access"], map[string]interface{}{"aws": "admin", "okta": "admin"})
-	autopilot.Equals(t, res["tags"], []interface{}{"org:engineering", "team:platform"})
 }

@@ -68,13 +68,13 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardCon
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("ScorecardsList")); err != nil {
-		return &ScorecardConnection{}, err
+		return nil, err
 	}
 	for q.Account.Scorecards.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Scorecards.PageInfo.End
 		resp, err := client.ListScorecards(variables)
 		if err != nil {
-			return &ScorecardConnection{}, err
+			return nil, err
 		}
 		q.Account.Scorecards.Nodes = append(q.Account.Scorecards.Nodes, resp.Nodes...)
 		q.Account.Scorecards.PageInfo = resp.PageInfo

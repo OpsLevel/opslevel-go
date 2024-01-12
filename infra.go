@@ -159,13 +159,13 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (*I
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
-		return &InfrastructureResourceSchemaConnection{}, err
+		return nil, err
 	}
 	for q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResourceSchemas.PageInfo.End
 		resp, err := client.ListInfrastructureSchemas(variables)
 		if err != nil {
-			return &InfrastructureResourceSchemaConnection{}, err
+			return nil, err
 		}
 		q.Account.InfrastructureResourceSchemas.Nodes = append(q.Account.InfrastructureResourceSchemas.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResourceSchemas.PageInfo = resp.PageInfo
@@ -185,13 +185,13 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (*Infrastr
 		(*variables)["all"] = true
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
-		return &InfrastructureResourceConnection{}, err
+		return nil, err
 	}
 	for q.Account.InfrastructureResource.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResource.PageInfo.End
 		resp, err := client.ListInfrastructure(variables)
 		if err != nil {
-			return &InfrastructureResourceConnection{}, err
+			return nil, err
 		}
 		q.Account.InfrastructureResource.Nodes = append(q.Account.InfrastructureResource.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResource.PageInfo = resp.PageInfo

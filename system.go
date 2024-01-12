@@ -153,13 +153,13 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 		variables = c.InitialPageVariablesPointer()
 	}
 	if err := c.Query(&q, *variables, WithName("SystemsList")); err != nil {
-		return &SystemConnection{}, err
+		return nil, err
 	}
 	for q.Account.Systems.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Systems.PageInfo.End
 		resp, err := c.ListSystems(variables)
 		if err != nil {
-			return &SystemConnection{}, err
+			return nil, err
 		}
 		q.Account.Systems.Nodes = append(q.Account.Systems.Nodes, resp.Nodes...)
 		q.Account.Systems.PageInfo = resp.PageInfo
