@@ -189,3 +189,13 @@ func TestUnmarshalJSONString(t *testing.T) {
 	autopilot.Equals(t, data5, result5.AsMap())
 	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float32")
 }
+
+func TestNewJSONSchema(t *testing.T) {
+	res, err := ol.NewJSONSchema(validStringContainingJSON)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, ol.Deref(res)["name"], "Thomas")
+	autopilot.Equals(t, ol.Deref(res)["isIntern"], false)
+	autopilot.Equals(t, ol.Deref(res)["age"], float64(45)) // this is normal with encoding/json
+	autopilot.Equals(t, ol.Deref(res)["access"], map[string]interface{}{"aws": "admin", "okta": "admin"})
+	autopilot.Equals(t, ol.Deref(res)["tags"], []interface{}{"org:engineering", "team:platform"})
+}
