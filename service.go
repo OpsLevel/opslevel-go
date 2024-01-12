@@ -358,7 +358,7 @@ func (client *Client) GetServiceCount() (int, error) {
 	return int(q.Account.Services.TotalCount), HandleErrors(err, nil)
 }
 
-func (client *Client) ListServices(variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
@@ -369,28 +369,28 @@ func (client *Client) ListServices(variables *PayloadVariables) (ServiceConnecti
 	}
 
 	if err := client.Query(&q, *variables, WithName("ServiceList")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServices(variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithFramework(framework string, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithFramework(framework string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(framework: $framework, after: $after, first: $first)"`
@@ -402,28 +402,28 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 	(*variables)["framework"] = framework
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithFramework")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithFramework(framework, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithLanguage(language string, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithLanguage(language string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(language: $language, after: $after, first: $first)"`
@@ -435,28 +435,28 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 	(*variables)["language"] = language
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithLanguage")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithLanguage(language, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(lifecycleAlias: $lifecycle, after: $after, first: $first)"`
@@ -468,28 +468,28 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 	(*variables)["lifecycle"] = lifecycle
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithLifecycle")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithLifecycle(lifecycle, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(ownerAlias: $owner, after: $after, first: $first)"`
@@ -501,28 +501,28 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 	(*variables)["owner"] = owner
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithOwner")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithOwner(owner, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithProduct(product string, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithProduct(product string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(product: $product, after: $after, first: $first)"`
@@ -534,25 +534,25 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 	(*variables)["product"] = product
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithProduct")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithProduct(product, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
 func NewTagArgs(tag string) TagArgs {
@@ -574,7 +574,7 @@ func NewTagArgs(tag string) TagArgs {
 	}
 }
 
-func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(tag: $tag, after: $after, first: $first)"`
@@ -586,28 +586,28 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 	(*variables)["tag"] = tag
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithTag")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithTag(tag, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariables) (ServiceConnection, error) {
+func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(tierAlias: $tier, after: $after, first: $first)"`
@@ -619,25 +619,25 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	(*variables)["tier"] = tier
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithTier")); err != nil {
-		return ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithTier(tier, variables)
 		if err != nil {
-			return ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
 		q.Account.Services.TotalCount += resp.TotalCount
 	}
-	return q.Account.Services, nil
+	return &q.Account.Services, nil
 }
 
 //#endregion
@@ -667,8 +667,14 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 
 //#region Delete
 
-// TODO: we should have a method that takes and ID and that follows the convention of other delete functions
-func (client *Client) DeleteService(input ServiceDeleteInput) error {
+func (client *Client) DeleteService(identifier string) error {
+	input := ServiceDeleteInput{}
+	if IsID(identifier) {
+		input.Id = NewID(identifier)
+	} else {
+		input.Alias = &identifier
+	}
+
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedServiceId"`
@@ -681,12 +687,6 @@ func (client *Client) DeleteService(input ServiceDeleteInput) error {
 	}
 	err := client.Mutate(&m, v, WithName("ServiceDelete"))
 	return HandleErrors(err, m.Payload.Errors)
-}
-
-func (client *Client) DeleteServiceWithAlias(alias string) error {
-	return client.DeleteService(ServiceDeleteInput{
-		Alias: RefOf(alias),
-	})
 }
 
 //#endregion

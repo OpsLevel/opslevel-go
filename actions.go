@@ -116,7 +116,7 @@ func (client *Client) GetCustomAction(input string) (*CustomActionsExternalActio
 	return &q.Account.Action, HandleErrors(err, nil)
 }
 
-func (client *Client) ListCustomActions(variables *PayloadVariables) (CustomActionsExternalActionsConnection, error) {
+func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomActionsExternalActionsConnection, error) {
 	var q struct {
 		Account struct {
 			Actions CustomActionsExternalActionsConnection `graphql:"customActionsExternalActions(after: $after, first: $first)"`
@@ -126,18 +126,18 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (CustomActi
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("ExternalActionList")); err != nil {
-		return CustomActionsExternalActionsConnection{}, err
+		return nil, err
 	}
 	for q.Account.Actions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Actions.PageInfo.End
 		resp, err := client.ListCustomActions(variables)
 		if err != nil {
-			return CustomActionsExternalActionsConnection{}, err
+			return nil, err
 		}
 		q.Account.Actions.Nodes = append(q.Account.Actions.Nodes, resp.Nodes...)
 		q.Account.Actions.PageInfo = resp.PageInfo
 	}
-	return q.Account.Actions, nil
+	return &q.Account.Actions, nil
 }
 
 func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdateInput) (*CustomActionsExternalAction, error) {
@@ -203,7 +203,7 @@ func (client *Client) GetTriggerDefinition(input string) (*CustomActionsTriggerD
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
 
-func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (CustomActionsTriggerDefinitionsConnection, error) {
+func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*CustomActionsTriggerDefinitionsConnection, error) {
 	var q struct {
 		Account struct {
 			Definitions CustomActionsTriggerDefinitionsConnection `graphql:"customActionsTriggerDefinitions(after: $after, first: $first)"`
@@ -213,19 +213,19 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (Custo
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("TriggerDefinitionList")); err != nil {
-		return CustomActionsTriggerDefinitionsConnection{}, err
+		return nil, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListTriggerDefinitions(variables)
 		if err != nil {
-			return CustomActionsTriggerDefinitionsConnection{}, err
+			return nil, err
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo
 		q.Account.Definitions.TotalCount += resp.TotalCount
 	}
-	return q.Account.Definitions, nil
+	return &q.Account.Definitions, nil
 }
 
 func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefinitionUpdateInput) (*CustomActionsTriggerDefinition, error) {

@@ -290,12 +290,12 @@ func (client *Client) ListRepositories(variables *PayloadVariables) (*Repository
 		(*variables)["after"] = q.Account.Repositories.PageInfo.End
 		resp, err := client.ListRepositories(variables)
 		if err != nil {
-			return &RepositoryConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			err := node.Hydrate(client)
 			if err != nil {
-				return &RepositoryConnection{}, err
+				return nil, err
 			}
 			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
 		}
@@ -322,12 +322,12 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 		(*variables)["after"] = q.Account.Repositories.PageInfo.End
 		resp, err := client.ListRepositoriesWithTier(tier, variables)
 		if err != nil {
-			return &RepositoryConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			err := node.Hydrate(client)
 			if err != nil {
-				return &RepositoryConnection{}, err
+				return nil, err
 			}
 			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
 		}

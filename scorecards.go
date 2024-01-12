@@ -58,7 +58,7 @@ func (client *Client) GetScorecard(input string) (*Scorecard, error) {
 	return &q.Account.Scorecard, HandleErrors(err, nil)
 }
 
-func (client *Client) ListScorecards(variables *PayloadVariables) (ScorecardConnection, error) {
+func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardConnection, error) {
 	var q struct {
 		Account struct {
 			Scorecards ScorecardConnection `graphql:"scorecards(after: $after, first: $first)"`
@@ -68,19 +68,19 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (ScorecardConn
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("ScorecardsList")); err != nil {
-		return ScorecardConnection{}, err
+		return nil, err
 	}
 	for q.Account.Scorecards.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Scorecards.PageInfo.End
 		resp, err := client.ListScorecards(variables)
 		if err != nil {
-			return ScorecardConnection{}, err
+			return nil, err
 		}
 		q.Account.Scorecards.Nodes = append(q.Account.Scorecards.Nodes, resp.Nodes...)
 		q.Account.Scorecards.PageInfo = resp.PageInfo
 		q.Account.Scorecards.TotalCount = len(q.Account.Scorecards.Nodes)
 	}
-	return q.Account.Scorecards, nil
+	return &q.Account.Scorecards, nil
 }
 
 func (client *Client) UpdateScorecard(identifier string, input ScorecardInput) (*Scorecard, error) {
@@ -99,7 +99,7 @@ func (client *Client) UpdateScorecard(identifier string, input ScorecardInput) (
 	return &m.Payload.Scorecard, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteScorecard(identifier string) (ID, error) {
+func (client *Client) DeleteScorecard(identifier string) (*ID, error) {
 	var m struct {
 		Payload struct {
 			DeletedScorecardId ID               `graphql:"deletedScorecardId"`
@@ -111,5 +111,5 @@ func (client *Client) DeleteScorecard(identifier string) (ID, error) {
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("ScorecardDelete"))
-	return m.Payload.DeletedScorecardId, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.DeletedScorecardId, HandleErrors(err, m.Payload.Errors)
 }

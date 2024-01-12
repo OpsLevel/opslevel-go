@@ -15,17 +15,19 @@ const (
 
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSONSchema(schemaString)
-	schemaAsJSON := ol.NewJSON(schemaString)
+	schema, schemaErr := ol.NewJSONSchema(schemaString)
+	schemaAsJSON, schemaAsJSONErr := ol.NewJSON(schemaString)
+	autopilot.Ok(t, schemaErr)
+	autopilot.Ok(t, schemaAsJSONErr)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases: []string{"my_prop"},
 		Id:      "XXX",
 		Name:    "my-prop",
-		Schema:  schemaAsJSON,
+		Schema:  *schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Name:   ol.RefOf("my-prop"),
-		Schema: &schema,
+		Schema: schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
@@ -45,19 +47,21 @@ func TestCreatePropertyDefinition(t *testing.T) {
 
 func TestUpdatePropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSONSchema(schemaString)
-	schemaAsJSON := ol.NewJSON(schemaString2)
+	schema, schemaErr := ol.NewJSONSchema(schemaString)
+	schemaAsJSON, schemaAsJSONErr := ol.NewJSON(schemaString2)
+	autopilot.Ok(t, schemaErr)
+	autopilot.Ok(t, schemaAsJSONErr)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases:               []string{"my_prop"},
 		Id:                    "XXX",
 		Name:                  "my-prop",
 		Description:           "this description was added",
-		Schema:                schemaAsJSON,
+		Schema:                *schemaAsJSON,
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		Description:           ol.RefOf("this description was added"),
-		Schema:                &schema,
+		Schema:                schema,
 		PropertyDisplayStatus: ol.RefOf(ol.PropertyDisplayStatusEnumHidden),
 	})
 	testRequest := autopilot.NewTestRequest(
@@ -94,13 +98,14 @@ func TestDeletePropertyDefinition(t *testing.T) {
 
 func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	schema, schemaErr := ol.NewJSON(schemaString)
+	autopilot.Ok(t, schemaErr)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition",
 		ol.PropertyDefinition{
 			Aliases: []string{"my_prop"},
 			Id:      "XXX",
 			Name:    "my-prop",
-			Schema:  schema,
+			Schema:  *schema,
 		})
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema}}}`,
@@ -117,31 +122,38 @@ func TestGetPropertyDefinition(t *testing.T) {
 	autopilot.Equals(t, "XXX", string(property.Id))
 	autopilot.Equals(t, expectedPropertyDefinition, *property)
 	autopilot.Equals(t, "my-prop", property.Name)
-	autopilot.Equals(t, schema, property.Schema)
+	autopilot.Equals(t, *schema, property.Schema)
 }
 
 func TestListPropertyDefinitions(t *testing.T) {
 	// Arrange
-	schema := ol.NewJSON(schemaString)
+	schema, schemaErr := ol.NewJSON(schemaString)
+	schemaPage1, schemaPage1Err := ol.NewJSON(schemaString)
+	schemaPage2, schemaPage2Err := ol.NewJSON(schemaString)
+	schemaPage3, schemaPage3Err := ol.NewJSON(schemaString)
+	autopilot.Ok(t, schemaErr)
+	autopilot.Ok(t, schemaPage1Err)
+	autopilot.Ok(t, schemaPage2Err)
+	autopilot.Ok(t, schemaPage3Err)
 	expectedPropDefsPageOne := autopilot.Register[[]ol.PropertyDefinition]("property_definitions", []ol.PropertyDefinition{
 		{
 			Aliases: []string{"prop1"},
 			Id:      "XXX",
 			Name:    "prop1",
-			Schema:  ol.NewJSON(schemaString),
+			Schema:  *schemaPage1,
 		},
 		{
 			Aliases: []string{"prop2"},
 			Id:      "XXX",
 			Name:    "prop2",
-			Schema:  ol.NewJSON(schemaString),
+			Schema:  *schemaPage2,
 		},
 	})
 	expectedPropDefPageTwo := autopilot.Register[ol.PropertyDefinition]("property_definition_3", ol.PropertyDefinition{
 		Aliases: []string{"prop3"},
 		Id:      "XXX",
 		Name:    "prop3",
-		Schema:  ol.NewJSON(schemaString),
+		Schema:  *schemaPage3,
 	})
 	testRequestOne := autopilot.NewTestRequest(
 		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,

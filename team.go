@@ -341,18 +341,18 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 	}
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-		return &TeamConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeams(variables)
 		if err != nil {
-			return &TeamConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &TeamConnection{}, err
+				return nil, err
 			}
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
@@ -374,18 +374,18 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	(*variables)["email"] = email
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-		return &TeamConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeamsWithManager(email, variables)
 		if err != nil {
-			return &TeamConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &TeamConnection{}, err
+				return nil, err
 			}
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
@@ -446,24 +446,14 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 
 //#region Delete
 
-func (client *Client) DeleteTeamWithAlias(alias string) error {
-	var m struct {
-		Payload struct {
-			Id     ID               `graphql:"deletedTeamId"`
-			Alias  string           `graphql:"deletedTeamAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"teamDelete(input: $input)"`
+func (client *Client) DeleteTeam(identifier string) error {
+	input := TeamDeleteInput{}
+	if IsID(identifier) {
+		input.Id = NewID(identifier)
+	} else {
+		input.Alias = &identifier
 	}
-	v := PayloadVariables{
-		"input": TeamDeleteInput{
-			Alias: &alias,
-		},
-	}
-	err := client.Mutate(&m, v, WithName("TeamDelete"))
-	return HandleErrors(err, m.Payload.Errors)
-}
 
-func (client *Client) DeleteTeam(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID               `graphql:"deletedTeamId"`
@@ -472,9 +462,7 @@ func (client *Client) DeleteTeam(id ID) error {
 		} `graphql:"teamDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": TeamDeleteInput{
-			Id: &id,
-		},
+		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("TeamDelete"))
 	return HandleErrors(err, m.Payload.Errors)

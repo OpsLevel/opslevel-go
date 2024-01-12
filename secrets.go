@@ -29,7 +29,7 @@ func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, er
 }
 
 // List all Secrets for your account.
-func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (SecretsVaultsSecretConnection, error) {
+func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*SecretsVaultsSecretConnection, error) {
 	var q struct {
 		Account struct {
 			SecretsVaultsSecrets SecretsVaultsSecretConnection `graphql:"secretsVaultsSecrets(after: $after, first: $first)"`
@@ -39,19 +39,19 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (Secr
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("SecretList")); err != nil {
-		return SecretsVaultsSecretConnection{}, err
+		return nil, err
 	}
 	for q.Account.SecretsVaultsSecrets.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.SecretsVaultsSecrets.PageInfo.End
 		resp, err := client.ListSecretsVaultsSecret(variables)
 		if err != nil {
-			return SecretsVaultsSecretConnection{}, err
+			return nil, err
 		}
 		q.Account.SecretsVaultsSecrets.Nodes = append(q.Account.SecretsVaultsSecrets.Nodes, resp.Nodes...)
 		q.Account.SecretsVaultsSecrets.PageInfo = resp.PageInfo
 	}
 	q.Account.SecretsVaultsSecrets.TotalCount = len(q.Account.SecretsVaultsSecrets.Nodes)
-	return q.Account.SecretsVaultsSecrets, nil
+	return &q.Account.SecretsVaultsSecrets, nil
 }
 
 func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (*Secret, error) {

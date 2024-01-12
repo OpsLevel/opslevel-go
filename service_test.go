@@ -901,7 +901,7 @@ func TestDeleteService(t *testing.T) {
 	)
 	client := BestTestClient(t, "service/delete", testRequest)
 	// Act
-	err := client.DeleteService(ol.ServiceDeleteInput{Id: ol.NewID("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")})
+	err := client.DeleteService("Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS82NzQ3")
 	// Assert
 	autopilot.Ok(t, err)
 }
@@ -915,7 +915,7 @@ func TestDeleteServicesWithAlias(t *testing.T) {
 	)
 	client := BestTestClient(t, "service/delete_with_alias", testRequest)
 	// Act
-	err := client.DeleteServiceWithAlias("db")
+	err := client.DeleteService("db")
 	// Assert
 	autopilot.Ok(t, err)
 }

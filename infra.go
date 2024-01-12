@@ -149,7 +149,7 @@ func (client *Client) GetInfrastructure(identifier string) (*InfrastructureResou
 	return &q.Account.InfrastructureResource, HandleErrors(err, nil)
 }
 
-func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (InfrastructureResourceSchemaConnection, error) {
+func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (*InfrastructureResourceSchemaConnection, error) {
 	var q struct {
 		Account struct {
 			InfrastructureResourceSchemas InfrastructureResourceSchemaConnection `graphql:"infrastructureResourceSchemas(after: $after, first: $first)"`
@@ -159,22 +159,22 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (In
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
-		return InfrastructureResourceSchemaConnection{}, err
+		return nil, err
 	}
 	for q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResourceSchemas.PageInfo.End
 		resp, err := client.ListInfrastructureSchemas(variables)
 		if err != nil {
-			return InfrastructureResourceSchemaConnection{}, err
+			return nil, err
 		}
 		q.Account.InfrastructureResourceSchemas.Nodes = append(q.Account.InfrastructureResourceSchemas.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResourceSchemas.PageInfo = resp.PageInfo
 	}
 	q.Account.InfrastructureResourceSchemas.TotalCount = len(q.Account.InfrastructureResourceSchemas.Nodes)
-	return q.Account.InfrastructureResourceSchemas, nil
+	return &q.Account.InfrastructureResourceSchemas, nil
 }
 
-func (client *Client) ListInfrastructure(variables *PayloadVariables) (InfrastructureResourceConnection, error) {
+func (client *Client) ListInfrastructure(variables *PayloadVariables) (*InfrastructureResourceConnection, error) {
 	var q struct {
 		Account struct {
 			InfrastructureResource InfrastructureResourceConnection `graphql:"infrastructureResources(after: $after, first: $first)"`
@@ -185,19 +185,19 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (Infrastru
 		(*variables)["all"] = true
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
-		return InfrastructureResourceConnection{}, err
+		return nil, err
 	}
 	for q.Account.InfrastructureResource.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResource.PageInfo.End
 		resp, err := client.ListInfrastructure(variables)
 		if err != nil {
-			return InfrastructureResourceConnection{}, err
+			return nil, err
 		}
 		q.Account.InfrastructureResource.Nodes = append(q.Account.InfrastructureResource.Nodes, resp.Nodes...)
 		q.Account.InfrastructureResource.PageInfo = resp.PageInfo
 	}
 	q.Account.InfrastructureResource.TotalCount = len(q.Account.InfrastructureResource.Nodes)
-	return q.Account.InfrastructureResource, nil
+	return &q.Account.InfrastructureResource, nil
 }
 
 func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) (*InfrastructureResource, error) {

@@ -231,7 +231,7 @@ func (client *Client) GetCheck(id ID) (*Check, error) {
 	return &q.Account.Check, HandleErrors(err, nil)
 }
 
-func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, error) {
+func (client *Client) ListChecks(variables *PayloadVariables) (*CheckConnection, error) {
 	var q struct {
 		Account struct {
 			Rubric struct {
@@ -243,19 +243,19 @@ func (client *Client) ListChecks(variables *PayloadVariables) (CheckConnection, 
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("CheckList")); err != nil {
-		return CheckConnection{}, err
+		return nil, err
 	}
 	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Rubric.Checks.PageInfo.End
 		resp, err := client.ListChecks(variables)
 		if err != nil {
-			return CheckConnection{}, err
+			return nil, err
 		}
 		q.Account.Rubric.Checks.Nodes = append(q.Account.Rubric.Checks.Nodes, resp.Nodes...)
 		q.Account.Rubric.Checks.PageInfo = resp.PageInfo
 		q.Account.Rubric.Checks.TotalCount += resp.TotalCount
 	}
-	return q.Account.Rubric.Checks, nil
+	return &q.Account.Rubric.Checks, nil
 }
 
 //#endregion

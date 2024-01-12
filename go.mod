@@ -4,16 +4,15 @@ go 1.21
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/creasty/defaults v1.7.0
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/gosimple/slug v1.13.1
 	github.com/hashicorp/go-retryablehttp v0.7.5
 	github.com/hasura/go-graphql-client v0.10.2
+	github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c
 	github.com/relvacode/iso8601 v1.3.0
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
 	github.com/rs/zerolog v1.31.0
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

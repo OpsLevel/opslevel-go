@@ -35,13 +35,13 @@ func (u *User) ResourceType() TaggableResource {
 
 //#region Helpers
 
-func NewUserIdentifier(value string) UserIdentifierInput {
+func NewUserIdentifier(value string) *UserIdentifierInput {
 	if IsID(value) {
-		return UserIdentifierInput{
+		return &UserIdentifierInput{
 			Id: NewID(value),
 		}
 	}
-	return UserIdentifierInput{
+	return &UserIdentifierInput{
 		Email: RefOf(value),
 	}
 }
@@ -144,13 +144,13 @@ func (client *Client) GetUser(value string) (*User, error) {
 		}
 	}
 	v := PayloadVariables{
-		"input": NewUserIdentifier(value),
+		"input": *NewUserIdentifier(value),
 	}
 	err := client.Query(&q, v, WithName("UserGet"))
 	return &q.Account.User, HandleErrors(err, nil)
 }
 
-func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, error) {
+func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, error) {
 	var q struct {
 		Account struct {
 			Users UserConnection `graphql:"users(after: $after, first: $first)"`
@@ -161,20 +161,20 @@ func (client *Client) ListUsers(variables *PayloadVariables) (UserConnection, er
 	}
 
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
-		return UserConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Users.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Users.PageInfo.End
 		resp, err := client.ListUsers(variables)
 		if err != nil {
-			return UserConnection{}, err
+			return nil, err
 		}
 		q.Account.Users.Nodes = append(q.Account.Users.Nodes, resp.Nodes...)
 		q.Account.Users.PageInfo = resp.PageInfo
 		q.Account.Users.TotalCount += resp.TotalCount
 	}
-	return q.Account.Users, nil
+	return &q.Account.Users, nil
 }
 
 //#endregion
@@ -189,7 +189,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 		} `graphql:"userUpdate(user: $user input: $input)"`
 	}
 	v := PayloadVariables{
-		"user":  NewUserIdentifier(user),
+		"user":  *NewUserIdentifier(user),
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("UserUpdate"))
@@ -207,7 +207,7 @@ func (client *Client) DeleteUser(user string) error {
 		} `graphql:"userDelete(user: $user)"`
 	}
 	v := PayloadVariables{
-		"user": NewUserIdentifier(user),
+		"user": *NewUserIdentifier(user),
 	}
 	err := client.Mutate(&m, v, WithName("UserDelete"))
 	return HandleErrors(err, m.Payload.Errors)
