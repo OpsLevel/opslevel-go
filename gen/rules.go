@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	BlockedGlobs   = []string{"execraw", "variables", "ctx", "with", "query"}
+	BlockedGlobs   = []string{"check", "execraw", "variables", "ctx", "with", "query"}
 	SupportedVerbs = []string{"Create", "Update", "Get", "Delete", "List", "Assign", "Unassign", "Invite"}
 	// TODO: add, remove, connect
 	// checks
@@ -36,7 +36,7 @@ func blocked(funcName string) bool {
 
 func complain(template string, args ...any) {
 	out := fmt.Sprintf(template, args...)
-	println(color.With(color.Red, out))
+	fmt.Println(color.With(color.Red, out))
 }
 
 func ParseVerb(fn *Function) {
@@ -51,17 +51,54 @@ func ParseVerb(fn *Function) {
 	}
 }
 
-func ParseResource(fn *Function) {
-	if fn.Resource != "" {
+func ToResourceName(s string) string {
+	for _, verb := range SupportedVerbs {
+		s = strings.TrimPrefix(s, verb)
+	}
+	s = strings.TrimSuffix(s, "CreateInput")
+	s = strings.TrimSuffix(s, "UpdateInput")
+	s = strings.TrimSuffix(s, "Input")
+	s = strings.TrimSuffix(s, "Connection")
+	s = strings.TrimSuffix(s, "s")
+	switch s {
+	case "ID":
+		return ""
+	}
+	return s
+}
+
+func setResourceName(fn *Function, resName string) {
+	validatedName := ToResourceName(resName)
+	if resName != "" && validatedName == "" {
+		complain("not a proper resource name: '%s'", resName)
 		return
 	}
-	// TODO: resource association
-	// attempt 1: get from output
-	// attempt 2: get from input
-	// attempt 2: get from verb
+	fn.Resource = validatedName
+	resources[validatedName] = struct{}{}
+}
+
+func ParseResource(fn *Function) {
+	var resourceName string
+	if fn.Resource != "" {
+		resources[fn.Resource] = struct{}{}
+		return
+	}
+	// TODO: try get from verb?
+	if len(fn.Input) == 1 {
+		if fn.Input[0][0] != '*' && strings.HasSuffix(fn.Input[0], "Input") {
+			setResourceName(fn, resourceName)
+			return
+		}
+	}
 	if len(fn.Output) == 2 {
+		// get from output
 		if fn.Output[0][0] == '*' {
-			fn.Resource = fn.Output[0][1:]
+			resourceName = fn.Output[0][1:]
+			setResourceName(fn, resourceName)
+			return
+		} else if fn.Output[0][0] == '[' {
+			resourceName = fn.Output[0][2:]
+			setResourceName(fn, resourceName)
 			return
 		}
 	}
@@ -77,12 +114,12 @@ type Function struct {
 }
 
 func (fn Function) String() string {
-	return fmt.Sprintf("func %s(%s) (%s) // resource '%s' case '%s' verb '%s'", fn.Name, strings.Join(fn.Input, ", "),
+	return fmt.Sprintf("%s(%s) (%s)\n\tresource '%s' case '%s' verb '%s'", fn.Name, strings.Join(fn.Input, ", "),
 		strings.Join(fn.Output, ", "), fn.Resource, fn.Case, fn.Verb)
 }
 
 func (fn Function) Full() bool {
-	return fn.Verb != "" && fn.Resource != ""
+	return fn.Verb != "" && fn.Resource != "" && fn.Case != ""
 }
 
 func addFunction(name string, input []string, output []string) {
@@ -107,7 +144,7 @@ func addFunction(name string, input []string, output []string) {
 			function.Verb)
 		return
 	}
-	ParseResource(function) // tries again after all functions are added
+	ParseResource(function)
 
-	functions[function.Name] = *function
+	functions = append(functions, *function)
 }
