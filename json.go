@@ -9,26 +9,18 @@ import (
 
 // JSON is a specialized map[string]string to support proper graphql serialization
 type (
-	JSON       map[string]any // TODO: should this be marked as deprecated?
+	JSON       map[string]any
 	JSONSchema map[string]any
 )
 
 func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
 
-func NewJSONSchema(data string) JSONSchema {
+func NewJSONSchema(data string) (*JSONSchema, error) {
 	result := make(JSONSchema)
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		panic(err)
+		return nil, err
 	}
-	return result
-}
-
-func NewJSONSchemaFromMap(data map[string]any) JSONSchema {
-	result, err := json.Marshal(data)
-	if err != nil {
-		panic(err)
-	}
-	return NewJSONSchema(string(result))
+	return &result, nil
 }
 
 func (s JSONSchema) AsString() string {
@@ -51,12 +43,12 @@ func (s JSONSchema) MarshalJSON() ([]byte, error) {
 
 func (s JSON) GetGraphQLType() string { return "JSON" }
 
-func NewJSON(data string) JSON {
+func NewJSON(data string) (JSON, error) {
 	result := make(JSON)
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		panic(err)
+		return JSON{}, err
 	}
-	return result
+	return result, nil
 }
 
 func (s JSON) ToJSON() string {
@@ -82,12 +74,12 @@ type JsonString string
 
 func (s JsonString) GetGraphQLType() string { return "JsonString" }
 
-func NewJSONInput(data any) JsonString {
+func NewJSONInput(data any) (JsonString, error) {
 	bytes, err := json.Marshal(data)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
-	return JsonString(bytes)
+	return JsonString(bytes), nil
 }
 
 func JsonStringAs[T any](data JsonString) (T, error) {
