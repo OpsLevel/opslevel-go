@@ -19,7 +19,6 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2023"
-	"github.com/opslevel/opslevel-go/v2023/gen"
 )
 
 const (
@@ -146,21 +145,9 @@ func GetSchema(client *opslevel.Client) (*GraphQLSchema, error) {
 }
 
 func main() {
-	var (
-		err     error
-		parsing *bool = flag.Bool("parse", false, "parse code and generate .json files")
-	)
 	flag.Parse()
 
-	if *parsing {
-		err = gen.RunParser()
-		if err != nil {
-			log.Fatal(err)
-		}
-		return
-	}
-
-	err = run()
+	err := run()
 	if err != nil {
 		log.Fatalln(err)
 	}

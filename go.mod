@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/TwiN/go-color v1.4.1
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/go-resty/resty/v2 v2.11.0
 	github.com/gosimple/slug v1.13.1
