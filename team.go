@@ -341,18 +341,18 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 	}
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-		return &TeamConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeams(variables)
 		if err != nil {
-			return &TeamConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &TeamConnection{}, err
+				return nil, err
 			}
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
@@ -374,18 +374,18 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	(*variables)["email"] = email
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
-		return &TeamConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeamsWithManager(email, variables)
 		if err != nil {
-			return &TeamConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &TeamConnection{}, err
+				return nil, err
 			}
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}

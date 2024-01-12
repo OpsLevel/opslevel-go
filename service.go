@@ -369,18 +369,18 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 	}
 
 	if err := client.Query(&q, *variables, WithName("ServiceList")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServices(variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -402,18 +402,18 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 	(*variables)["framework"] = framework
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithFramework")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithFramework(framework, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -435,18 +435,18 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 	(*variables)["language"] = language
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithLanguage")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithLanguage(language, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -468,18 +468,18 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 	(*variables)["lifecycle"] = lifecycle
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithLifecycle")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithLifecycle(lifecycle, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -501,18 +501,18 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 	(*variables)["owner"] = owner
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithOwner")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithOwner(owner, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -534,18 +534,18 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 	(*variables)["product"] = product
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithProduct")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithProduct(product, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -586,18 +586,18 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 	(*variables)["tag"] = tag
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithTag")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithTag(tag, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
@@ -619,18 +619,18 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	(*variables)["tier"] = tier
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithTier")); err != nil {
-		return &ServiceConnection{}, err
+		return nil, err
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithTier(tier, variables)
 		if err != nil {
-			return &ServiceConnection{}, err
+			return nil, err
 		}
 		for _, node := range resp.Nodes {
 			if err := node.Hydrate(client); err != nil {
-				return &ServiceConnection{}, err
+				return nil, err
 			}
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}

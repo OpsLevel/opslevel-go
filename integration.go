@@ -122,13 +122,13 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
-		return &IntegrationConnection{}, err
+		return nil, err
 	}
 	for q.Account.Integrations.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Integrations.PageInfo.End
 		resp, err := client.ListIntegrations(variables)
 		if err != nil {
-			return &IntegrationConnection{}, err
+			return nil, err
 		}
 		q.Account.Integrations.Nodes = append(q.Account.Integrations.Nodes, resp.Nodes...)
 		q.Account.Integrations.PageInfo = resp.PageInfo

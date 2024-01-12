@@ -15,12 +15,12 @@ type (
 
 func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
 
-func NewJSONSchema(data string) (*JSONSchema, error) {
+func NewJSONSchema(data string) JSONSchema {
 	result := make(JSONSchema)
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		return nil, err
+		panic(err)
 	}
-	return &result, nil
+	return result
 }
 
 func (s JSONSchema) AsString() string {
@@ -43,12 +43,12 @@ func (s JSONSchema) MarshalJSON() ([]byte, error) {
 
 func (s JSON) GetGraphQLType() string { return "JSON" }
 
-func NewJSON(data string) (JSON, error) {
+func NewJSON(data string) JSON {
 	result := make(JSON)
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		return JSON{}, err
+		panic(err)
 	}
-	return result, nil
+	return result
 }
 
 func (s JSON) ToJSON() string {
@@ -74,12 +74,12 @@ type JsonString string
 
 func (s JsonString) GetGraphQLType() string { return "JsonString" }
 
-func NewJSONInput(data any) (JsonString, error) {
+func NewJSONInput(data any) JsonString {
 	bytes, err := json.Marshal(data)
 	if err != nil {
-		return "", err
+		panic(err)
 	}
-	return JsonString(bytes), nil
+	return JsonString(bytes)
 }
 
 func JsonStringAs[T any](data JsonString) (T, error) {
