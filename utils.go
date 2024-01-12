@@ -2,7 +2,7 @@ package opslevel
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/taimoorgit/moredefaults"
+	"github.com/opslevel/moredefaults"
 )
 
 var structValidator = validator.New(validator.WithRequiredStructEnabled())
