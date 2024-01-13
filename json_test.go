@@ -2,10 +2,10 @@ package opslevel_test
 
 import (
 	"encoding/json"
+	"github.com/hasura/go-graphql-client"
 	"testing"
 
-	"github.com/hasura/go-graphql-client"
-	ol "github.com/opslevel/opslevel-go/v2023"
+	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
 

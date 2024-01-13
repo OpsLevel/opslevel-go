@@ -13,7 +13,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
-	ol "github.com/opslevel/opslevel-go/v2023"
+	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 
 	"github.com/rs/zerolog"

@@ -8,7 +8,7 @@ set of options if need-be:
 package opslevel_example
 
 import (
-	"github.com/opslevel/opslevel-go/v2023"
+	"github.com/opslevel/opslevel-go/v2024"
 )
 
 type Client struct {

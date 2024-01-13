@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/go-resty/resty/v2"
-	ol "github.com/opslevel/opslevel-go/v2023"
+	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
