@@ -1,4 +1,0 @@
-kind: Refactor
-body: '[BREAKING CHANGE] Use string as argument for all client request functions instead
-  of requiring an IdentifierInput'
-time: 2023-12-28T10:21:45.868667-05:00

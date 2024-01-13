@@ -1,3 +1,0 @@
-kind: Refactor
-body: Merge DeleteTeam(ID) and DeleteTeamWithAlias(string) into DeleteTeam(identifier string)
-time: 2024-01-09T21:42:05.208198-05:00

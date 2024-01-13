@@ -1,3 +1,0 @@
-kind: Deprecated
-body: deprecated NewString(), NewInt(), Bool() - use RefOf() instead
-time: 2024-01-05T13:32:39.996302-06:00

@@ -1,3 +1,0 @@
-kind: Bugfix
-body: Fix bug where Team inputs did not omit optional ParentTeam field
-time: 2023-12-28T15:22:33.376459-05:00

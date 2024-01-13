@@ -1,3 +1,0 @@
-kind: Feature
-body: update InfraProviderInput.Data to type JSON, was map[string]any
-time: 2024-01-05T13:40:16.289724-06:00

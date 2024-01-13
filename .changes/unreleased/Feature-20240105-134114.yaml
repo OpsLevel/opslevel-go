@@ -1,3 +1,0 @@
-kind: Feature
-body: add JSONSchema() type, similar to JSON type, needed to match GraphQL API
-time: 2024-01-05T13:41:14.962652-06:00
