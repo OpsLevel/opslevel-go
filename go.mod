@@ -1,4 +1,4 @@
-module github.com/opslevel/opslevel-go/v2023
+module github.com/opslevel/opslevel-go/v2024
 
 go 1.21
 
