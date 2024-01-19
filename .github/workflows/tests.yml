@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
   pull_request:
+    paths:
+      - '**.go'
+      - 'go.mod'
 
 jobs:
   test:
@@ -26,8 +29,9 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run quality checks and tests
         run: task ci
-      - name: Test code
-        run: task test
       - name: Upload Coverage
-        run: |-
-          bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./src/coverage.txt
+          fail_ci_if_error: false
+          verbose: true
