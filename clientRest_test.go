@@ -20,7 +20,7 @@ func testRestClientResponseWriter() autopilot.ResponseWriter {
 	}
 }
 
-func ATestRestClient(t *testing.T, endpoint string) *resty.Client {
+func ATestRestClient(endpoint string) *resty.Client {
 	return ol.NewRestClient(ol.SetURL(
 		autopilot.RegisterEndpoint(
 			fmt.Sprintf("/%s", endpoint),
@@ -33,7 +33,7 @@ func ATestRestClient(t *testing.T, endpoint string) *resty.Client {
 
 func TestRestClientQuery(t *testing.T) {
 	// Arrange
-	client := ATestRestClient(t, "rest/example")
+	client := ATestRestClient("rest/example")
 	resp := &ol.RestResponse{}
 	// Act
 	_, err := client.R().SetResult(resp).Get("")

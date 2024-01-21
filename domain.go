@@ -24,7 +24,7 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			Domain struct {
@@ -32,20 +32,20 @@ func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagCon
 			} `graphql:"domain(input: $domain)"`
 		}
 	}
-	if d.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid domain id: '%s'", d.Id)
+	if domainId.Id == "" {
+		return nil, fmt.Errorf("unable to get Tags, invalid domain id: '%s'", domainId.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["domain"] = *NewIdentifier(string(d.Id))
+	(*variables)["domain"] = *NewIdentifier(string(domainId.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.Domain.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.End
-		resp, err := d.GetTags(client, variables)
+		resp, err := domainId.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -61,15 +61,15 @@ func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagCon
 	return &q.Account.Domain.Tags, nil
 }
 
-func (d *DomainId) ResourceId() ID {
-	return d.Id
+func (domainId *DomainId) ResourceId() ID {
+	return domainId.Id
 }
 
-func (d *DomainId) ResourceType() TaggableResource {
+func (domainId *DomainId) ResourceType() TaggableResource {
 	return TaggableResourceDomain
 }
 
-func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
+func (domainId *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {
 	var q struct {
 		Account struct {
 			Domain struct {
@@ -77,21 +77,21 @@ func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 			} `graphql:"domain(input: $domain)"`
 		}
 	}
-	if d.Id == "" {
-		return nil, fmt.Errorf("Unable to get Systems, invalid domain id: '%s'", d.Id)
+	if domainId.Id == "" {
+		return nil, fmt.Errorf("unable to get Systems, invalid domain id: '%s'", domainId.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	(*variables)["domain"] = *NewIdentifier(string(d.Id))
+	(*variables)["domain"] = *NewIdentifier(string(domainId.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.Domain.ChildSystems.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domain.ChildSystems.PageInfo.End
-		resp, err := d.ChildSystems(client, variables)
+		resp, err := domainId.ChildSystems(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -102,7 +102,7 @@ func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 	return &q.Account.Domain.ChildSystems, nil
 }
 
-func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
+func (domainId *DomainId) AssignSystem(client *Client, systems ...string) error {
 	var m struct {
 		Payload struct {
 			Domain Domain
@@ -110,14 +110,14 @@ func (s *DomainId) AssignSystem(client *Client, systems ...string) error {
 		} `graphql:"domainChildAssign(domain:$domain, childSystems:$childSystems)"`
 	}
 	v := PayloadVariables{
-		"domain":       *NewIdentifier(string(s.Id)),
+		"domain":       *NewIdentifier(string(domainId.Id)),
 		"childSystems": NewIdentifierArray(systems),
 	}
 	err := client.Mutate(&m, v, WithName("DomainAssignSystem"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) CreateDomain(input DomainInput) (*Domain, error) {
+func (client *Client) CreateDomain(input DomainInput) (*Domain, error) {
 	var m struct {
 		Payload struct {
 			Domain Domain
@@ -127,11 +127,11 @@ func (c *Client) CreateDomain(input DomainInput) (*Domain, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := c.Mutate(&m, v, WithName("DomainCreate"))
+	err := client.Mutate(&m, v, WithName("DomainCreate"))
 	return &m.Payload.Domain, HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) GetDomain(identifier string) (*Domain, error) {
+func (client *Client) GetDomain(identifier string) (*Domain, error) {
 	var q struct {
 		Account struct {
 			Domain Domain `graphql:"domain(input: $input)"`
@@ -140,25 +140,25 @@ func (c *Client) GetDomain(identifier string) (*Domain, error) {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := c.Query(&q, v, WithName("DomainGet"))
+	err := client.Query(&q, v, WithName("DomainGet"))
 	return &q.Account.Domain, HandleErrors(err, nil)
 }
 
-func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, error) {
+func (client *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, error) {
 	var q struct {
 		Account struct {
 			Domains DomainConnection `graphql:"domains(after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {
-		variables = c.InitialPageVariablesPointer()
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := c.Query(&q, *variables, WithName("DomainsList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("DomainsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.Domains.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domains.PageInfo.End
-		resp, err := c.ListDomains(variables)
+		resp, err := client.ListDomains(variables)
 		if err != nil {
 			return nil, err
 		}
@@ -169,7 +169,7 @@ func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, er
 	return &q.Account.Domains, nil
 }
 
-func (c *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, error) {
+func (client *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, error) {
 	var m struct {
 		Payload struct {
 			Domain Domain
@@ -180,11 +180,11 @@ func (c *Client) UpdateDomain(identifier string, input DomainInput) (*Domain, er
 		"domain": *NewIdentifier(identifier),
 		"input":  input,
 	}
-	err := c.Mutate(&m, v, WithName("DomainUpdate"))
+	err := client.Mutate(&m, v, WithName("DomainUpdate"))
 	return &m.Payload.Domain, HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) DeleteDomain(identifier string) error {
+func (client *Client) DeleteDomain(identifier string) error {
 	var d struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
@@ -193,6 +193,6 @@ func (c *Client) DeleteDomain(identifier string) error {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := c.Mutate(&d, v, WithName("DomainDelete"))
+	err := client.Mutate(&d, v, WithName("DomainDelete"))
 	return HandleErrors(err, d.Payload.Errors)
 }

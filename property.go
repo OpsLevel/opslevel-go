@@ -172,7 +172,7 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 	}
 
 	if service.Id == "" {
-		return nil, fmt.Errorf("Unable to get properties, invalid Service id: '%s'", service.Id)
+		return nil, fmt.Errorf("unable to get properties, invalid Service id: '%s'", service.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()

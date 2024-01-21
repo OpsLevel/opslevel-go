@@ -13,7 +13,6 @@ type Contact struct {
 	Type        ContactType
 }
 
-// Has no json struct tags as this is nested in returned data structs
 type TeamId struct {
 	Alias string
 	Id    ID
@@ -35,7 +34,7 @@ type Team struct {
 	Tags             *TagConnection
 }
 
-// Had to create this to prevent circular references on User because Team has UserConnection
+// TeamIdConnection exists to prevent circular references on User because Team has a UserConnection
 type TeamIdConnection struct {
 	Nodes      []TeamId
 	PageInfo   PageInfo
@@ -60,38 +59,36 @@ type TeamMembershipConnection struct {
 	TotalCount int
 }
 
-func (t *Team) ResourceId() ID {
-	return t.Id
+func (team *Team) ResourceId() ID {
+	return team.Id
 }
 
-func (t *Team) ResourceType() TaggableResource {
+func (team *Team) ResourceType() TaggableResource {
 	return TaggableResourceTeam
 }
 
-//#region Helpers
+func (team *Team) Hydrate(client *Client) error {
+	team.Responsibilities = html.UnescapeString(team.Responsibilities)
 
-func (self *Team) Hydrate(client *Client) error {
-	self.Responsibilities = html.UnescapeString(self.Responsibilities)
-
-	if self.Memberships == nil {
-		self.Memberships = &TeamMembershipConnection{}
+	if team.Memberships == nil {
+		team.Memberships = &TeamMembershipConnection{}
 	}
-	if self.Memberships.PageInfo.HasNextPage {
+	if team.Memberships.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Memberships.PageInfo.End
-		_, err := self.GetMemberships(client, variables)
+		(*variables)["after"] = team.Memberships.PageInfo.End
+		_, err := team.GetMemberships(client, variables)
 		if err != nil {
 			return err
 		}
 	}
 
-	if self.Tags == nil {
-		self.Tags = &TagConnection{}
+	if team.Tags == nil {
+		team.Tags = &TagConnection{}
 	}
-	if self.Tags.PageInfo.HasNextPage {
+	if team.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Tags.PageInfo.End
-		_, err := self.GetTags(client, variables)
+		(*variables)["after"] = team.Tags.PageInfo.End
+		_, err := team.GetTags(client, variables)
 		if err != nil {
 			return err
 		}
@@ -99,9 +96,9 @@ func (self *Team) Hydrate(client *Client) error {
 	return nil
 }
 
-func (t *Team) GetMemberships(client *Client, variables *PayloadVariables) (*TeamMembershipConnection, error) {
-	if t.Id == "" {
-		return nil, fmt.Errorf("Unable to get Memberships, invalid team id: '%s'", t.Id)
+func (team *Team) GetMemberships(client *Client, variables *PayloadVariables) (*TeamMembershipConnection, error) {
+	if team.Id == "" {
+		return nil, fmt.Errorf("unable to get Memberships, invalid team id: '%s'", team.Id)
 	}
 	var q struct {
 		Account struct {
@@ -113,28 +110,28 @@ func (t *Team) GetMemberships(client *Client, variables *PayloadVariables) (*Tea
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["team"] = t.Id
+	(*variables)["team"] = team.Id
 	if err := client.Query(&q, *variables, WithName("TeamMembersList")); err != nil {
 		return nil, err
 	}
-	if t.Memberships == nil {
+	if team.Memberships == nil {
 		memberships := TeamMembershipConnection{}
-		t.Memberships = &memberships
+		team.Memberships = &memberships
 	}
-	t.Memberships.Nodes = append(t.Memberships.Nodes, q.Account.Team.Memberships.Nodes...)
-	t.Memberships.PageInfo = q.Account.Team.Memberships.PageInfo
-	t.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
-	for t.Memberships.PageInfo.HasNextPage {
-		(*variables)["after"] = t.Memberships.PageInfo.End
-		_, err := t.GetMemberships(client, variables)
+	team.Memberships.Nodes = append(team.Memberships.Nodes, q.Account.Team.Memberships.Nodes...)
+	team.Memberships.PageInfo = q.Account.Team.Memberships.PageInfo
+	team.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
+	for team.Memberships.PageInfo.HasNextPage {
+		(*variables)["after"] = team.Memberships.PageInfo.End
+		_, err := team.GetMemberships(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return t.Memberships, nil
+	return team.Memberships, nil
 }
 
-func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			Team struct {
@@ -142,35 +139,35 @@ func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnect
 			} `graphql:"team(id: $team)"`
 		}
 	}
-	if t.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid team id: '%s'", t.Id)
+	if team.Id == "" {
+		return nil, fmt.Errorf("unable to get Tags, invalid team id: '%s'", team.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["team"] = t.Id
+	(*variables)["team"] = team.Id
 	if err := client.Query(&q, *variables, WithName("TeamTagsList")); err != nil {
 		return nil, err
 	}
-	if t.Tags == nil {
-		t.Tags = &TagConnection{}
+	if team.Tags == nil {
+		team.Tags = &TagConnection{}
 	}
 	// Add unique tags only
 	for _, tagNode := range q.Account.Team.Tags.Nodes {
-		if !slices.Contains[[]Tag, Tag](t.Tags.Nodes, tagNode) {
-			t.Tags.Nodes = append(t.Tags.Nodes, tagNode)
+		if !slices.Contains[[]Tag, Tag](team.Tags.Nodes, tagNode) {
+			team.Tags.Nodes = append(team.Tags.Nodes, tagNode)
 		}
 	}
-	t.Tags.PageInfo = q.Account.Team.Tags.PageInfo
-	t.Tags.TotalCount += q.Account.Team.Tags.TotalCount
-	for t.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = t.Tags.PageInfo.End
-		_, err := t.GetTags(client, variables)
+	team.Tags.PageInfo = q.Account.Team.Tags.PageInfo
+	team.Tags.TotalCount += q.Account.Team.Tags.TotalCount
+	for team.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = team.Tags.PageInfo.End
+		_, err := team.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return t.Tags, nil
+	return team.Tags, nil
 }
 
 func CreateContactSlack(channel string, name *string) ContactInput {
@@ -205,18 +202,14 @@ func CreateContactWeb(address string, name *string) ContactInput {
 	}
 }
 
-func (s *Team) HasTag(key string, value string) bool {
-	for _, tag := range s.Tags.Nodes {
+func (team *Team) HasTag(key string, value string) bool {
+	for _, tag := range team.Tags.Nodes {
 		if tag.Key == key && tag.Value == value {
 			return true
 		}
 	}
 	return false
 }
-
-//#endregion
-
-//#region Create
 
 func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	var m struct {
@@ -279,10 +272,6 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
 func (client *Client) GetTeamWithAlias(alias string) (*Team, error) {
 	var q struct {
 		Account struct {
@@ -328,7 +317,7 @@ func (client *Client) GetTeamCount() (int, error) {
 		}
 	}
 	err := client.Query(&q, nil, WithName("TeamCount"))
-	return int(q.Account.Teams.TotalCount), HandleErrors(err, nil)
+	return q.Account.Teams.TotalCount, HandleErrors(err, nil)
 }
 
 func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, error) {
@@ -396,10 +385,6 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	return &q.Account.Teams, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	var m struct {
 		Payload struct {
@@ -442,10 +427,6 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	err := client.Mutate(&m, v, WithName("ContactUpdate"))
 	return &m.Payload.Contact, HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion
-
-//#region Delete
 
 func (client *Client) DeleteTeam(identifier string) error {
 	input := TeamDeleteInput{}
@@ -501,5 +482,3 @@ func (client *Client) RemoveContact(contact ID) error {
 	err := client.Mutate(&m, v, WithName("ContactDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

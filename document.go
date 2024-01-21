@@ -17,7 +17,7 @@ type ServiceDocumentContent struct {
 	Content string `graphql:"content" json:"content,omitempty"`
 }
 
-func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource *ApiDocumentSourceEnum) (*Service, error) {
+func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource *ApiDocumentSourceEnum) (*Service, error) {
 	var m struct {
 		Payload struct {
 			Service Service
@@ -32,6 +32,6 @@ func (c *Client) ServiceApiDocSettingsUpdate(service string, docPath string, doc
 	if docPath != "" {
 		v["docPath"] = RefOf(docPath)
 	}
-	err := c.Mutate(&m, v, WithName("ServiceApiDocSettingsUpdate"))
+	err := client.Mutate(&m, v, WithName("ServiceApiDocSettingsUpdate"))
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }

@@ -2,8 +2,6 @@ package opslevel
 
 import (
 	"fmt"
-
-	"github.com/hasura/go-graphql-client"
 )
 
 type Level struct {
@@ -17,7 +15,7 @@ type Level struct {
 type LevelConnection struct {
 	Nodes      []Level
 	PageInfo   PageInfo
-	TotalCount graphql.Int
+	TotalCount int
 }
 
 func (conn *LevelConnection) Hydrate(client *Client) error {
@@ -42,8 +40,6 @@ func (conn *LevelConnection) Hydrate(client *Client) error {
 	return nil
 }
 
-//#region Create
-
 func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 	var m struct {
 		Payload struct {
@@ -58,10 +54,6 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 	return &m.Payload.Level, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
 func (client *Client) GetLevel(id ID) (*Level, error) {
 	var q struct {
 		Account struct {
@@ -73,7 +65,7 @@ func (client *Client) GetLevel(id ID) (*Level, error) {
 	}
 	err := client.Query(&q, v, WithName("LevelGet"))
 	if q.Account.Level.Id == "" {
-		err = fmt.Errorf("Level with ID '%s' not found!", id)
+		err = fmt.Errorf("level with ID '%s' not found", id)
 	}
 	return &q.Account.Level, HandleErrors(err, nil)
 }
@@ -95,10 +87,6 @@ func (client *Client) ListLevels() ([]Level, error) {
 	return q.Account.Rubric.Levels.Nodes, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 	var m struct {
 		Payload struct {
@@ -113,10 +101,6 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 	return &m.Payload.Level, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteLevel(id ID) error {
 	var m struct {
 		Payload struct {
@@ -130,5 +114,3 @@ func (client *Client) DeleteLevel(id ID) error {
 	err := client.Mutate(&m, v, WithName("LevelDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

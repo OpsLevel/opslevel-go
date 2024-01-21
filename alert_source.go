@@ -29,8 +29,6 @@ func NewAlertSource(kind AlertSourceTypeEnum, id string) *AlertSourceExternalIde
 	return &output
 }
 
-//#region Create
-
 func (client *Client) CreateAlertSourceService(input AlertSourceServiceCreateInput) (*AlertSourceService, error) {
 	var m struct {
 		Payload struct {
@@ -44,10 +42,6 @@ func (client *Client) CreateAlertSourceService(input AlertSourceServiceCreateInp
 	err := client.Mutate(&m, v, WithName("AlertSourceServiceCreate"))
 	return &m.Payload.AlertSourceService, HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion
-
-//#region Retrieve
 
 func (client *Client) GetAlertSourceWithExternalIdentifier(input AlertSourceExternalIdentifier) (*AlertSource, error) {
 	var q struct {
@@ -77,10 +71,6 @@ func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 	return &q.Account.AlertSource, HandleErrors(err, nil)
 }
 
-//#endregion
-
-//#region delete
-
 func (client *Client) DeleteAlertSourceService(id ID) error {
 	var m struct {
 		Payload struct {
@@ -93,5 +83,3 @@ func (client *Client) DeleteAlertSourceService(id ID) error {
 	err := client.Mutate(&m, v, WithName("AlertSourceServiceDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

@@ -37,11 +37,9 @@ type FilterConnection struct {
 	TotalCount int
 }
 
-func (self *Filter) Alias() string {
-	return slug.Make(self.Name)
+func (filter *Filter) Alias() string {
+	return slug.Make(filter.Name)
 }
-
-//#region Create
 
 func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	var m struct {
@@ -57,10 +55,6 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	return &m.Payload.Filter, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
 func (client *Client) GetFilter(id ID) (*Filter, error) {
 	var q struct {
 		Account struct {
@@ -72,7 +66,7 @@ func (client *Client) GetFilter(id ID) (*Filter, error) {
 	}
 	err := client.Query(&q, v, WithName("FilterGet"))
 	if q.Account.Filter.Id == "" {
-		err = fmt.Errorf("Filter with ID '%s' not found!", id)
+		err = fmt.Errorf("filter with ID '%s' not found", id)
 	}
 	return &q.Account.Filter, HandleErrors(err, nil)
 }
@@ -102,10 +96,6 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 	return &q.Account.Filters, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	var m struct {
 		Payload struct {
@@ -120,10 +110,6 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	return &m.Payload.Filter, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteFilter(id ID) error {
 	var m struct {
 		Payload struct {
@@ -137,5 +123,3 @@ func (client *Client) DeleteFilter(id ID) error {
 	err := client.Mutate(&m, v, WithName("FilterDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

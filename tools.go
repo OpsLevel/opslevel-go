@@ -16,10 +16,7 @@ type ToolConnection struct {
 	TotalCount int
 }
 
-//#region Create
-
 func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
-	// TODO: validate - Category, DisplayName & Url are non nil - or throw err
 	var m struct {
 		Payload struct {
 			Tool   Tool
@@ -32,10 +29,6 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	err := client.Mutate(&m, v, WithName("ToolCreate"))
 	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion
-
-//#region Update
 
 func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	var m struct {
@@ -51,10 +44,6 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	return &m.Payload.Tool, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteTool(id ID) error {
 	var m struct {
 		Payload struct {
@@ -67,5 +56,3 @@ func (client *Client) DeleteTool(id ID) error {
 	err := client.Mutate(&m, v, WithName("ToolDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

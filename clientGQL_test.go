@@ -75,7 +75,7 @@ func ABetterTestClient(t *testing.T, endpoint string, request string, response s
 		GraphQLQueryTemplatedValidation(t, request))))
 }
 
-func NewTestDataTemplater(templateDirs ...string) *TestDataTemplater {
+func NewTestDataTemplater() *TestDataTemplater {
 	var templateFiles []string
 	for _, dir := range []string{"./testdata/templates"} {
 		err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -110,12 +110,12 @@ type TestDataTemplater struct {
 	rootTemplate *template.Template
 }
 
-func (t *TestDataTemplater) ParseValue(value string) string {
-	return t.ParseTemplatedString(`{{ template "` + value + `" }}`)
+func (testDataTemplater *TestDataTemplater) ParseValue(value string) string {
+	return testDataTemplater.ParseTemplatedString(`{{ template "` + value + `" }}`)
 }
 
-func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
-	target, err := t.rootTemplate.Parse(contents)
+func (testDataTemplater *TestDataTemplater) ParseTemplatedString(contents string) string {
+	target, err := testDataTemplater.rootTemplate.Parse(contents)
 	if err != nil {
 		panic(fmt.Errorf("error parsing template: %s", err))
 	}
@@ -124,10 +124,6 @@ func (t *TestDataTemplater) ParseTemplatedString(contents string) string {
 		panic(err)
 	}
 	return strings.TrimSpace(data.String())
-}
-
-func IsValidJson(data string) bool {
-	return json.Valid([]byte(data))
 }
 
 func BestTestClient(t *testing.T, endpoint string, requests ...autopilot.TestRequest) *ol.Client {

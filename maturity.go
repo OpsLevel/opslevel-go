@@ -16,8 +16,8 @@ type ServiceMaturity struct {
 }
 
 // Get Given a 'category' name returns the 'Level'
-func (s *MaturityReport) Get(category string) *Level {
-	for _, breakdown := range s.CategoryBreakdown {
+func (maturityReport *MaturityReport) Get(category string) *Level {
+	for _, breakdown := range maturityReport.CategoryBreakdown {
 		if category == breakdown.Category.Name {
 			return &breakdown.Level
 		}
@@ -25,7 +25,7 @@ func (s *MaturityReport) Get(category string) *Level {
 	return nil
 }
 
-func (c *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturity, error) {
+func (client *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturity, error) {
 	var q struct {
 		Account struct {
 			Service ServiceMaturity `graphql:"service(alias:$service)"`
@@ -34,11 +34,11 @@ func (c *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturity, er
 	v := PayloadVariables{
 		"service": alias,
 	}
-	err := c.Query(&q, v)
+	err := client.Query(&q, v)
 	return &q.Account.Service, HandleErrors(err, nil)
 }
 
-func (c *Client) ListServicesMaturity() ([]ServiceMaturity, error) {
+func (client *Client) ListServicesMaturity() ([]ServiceMaturity, error) {
 	var q struct {
 		Account struct {
 			Services struct {
@@ -47,16 +47,16 @@ func (c *Client) ListServicesMaturity() ([]ServiceMaturity, error) {
 			} `graphql:"services(after: $after, first: $first)"`
 		}
 	}
-	v := c.InitialPageVariables()
+	v := client.InitialPageVariables()
 
 	var output []ServiceMaturity
-	if err := c.Query(&q, v); err != nil {
+	if err := client.Query(&q, v); err != nil {
 		return nil, err
 	}
 	output = append(output, q.Account.Services.Nodes...)
 	for q.Account.Services.PageInfo.HasNextPage {
 		v["after"] = q.Account.Services.PageInfo.End
-		if err := c.Query(&q, v); err != nil {
+		if err := client.Query(&q, v); err != nil {
 			return nil, err
 		}
 		output = append(output, q.Account.Services.Nodes...)

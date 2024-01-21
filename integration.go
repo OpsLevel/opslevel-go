@@ -38,14 +38,14 @@ type AWSIntegrationInput struct {
 	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
 }
 
-func (s AWSIntegrationInput) GetGraphQLType() string      { return "AwsIntegrationInput" }
-func (s NewRelicIntegrationInput) GetGraphQLType() string { return "NewRelicIntegrationInput" }
-
-func (self *IntegrationId) Alias() string {
-	return fmt.Sprintf("%s-%s", slug.Make(self.Type), slug.Make(self.Name))
+func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
+func (newRelicIntegrationInput NewRelicIntegrationInput) GetGraphQLType() string {
+	return "NewRelicIntegrationInput"
 }
 
-//#region Create
+func (integrationId *IntegrationId) Alias() string {
+	return fmt.Sprintf("%s-%s", slug.Make(integrationId.Type), slug.Make(integrationId.Name))
+}
 
 func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integration, error) {
 	var m struct {
@@ -80,10 +80,6 @@ func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) 
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
 func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	var q struct {
 		Account struct {
@@ -95,7 +91,7 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	}
 	err := client.Query(&q, v, WithName("IntegrationGet"))
 	if q.Account.Integration.Id == "" {
-		err = fmt.Errorf("Integration with ID '%s' not found!", id)
+		err = fmt.Errorf("integration with ID '%s' not found", id)
 	}
 	return &q.Account.Integration, HandleErrors(err, nil)
 }
@@ -124,10 +120,6 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 	}
 	return &q.Account.Integrations, nil
 }
-
-//#endregion
-
-//#region Update
 
 func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrationInput) (*Integration, error) {
 	var m struct {
@@ -159,10 +151,6 @@ func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewReli
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteIntegration(identifier string) error {
 	var m struct {
 		Payload struct {
@@ -175,5 +163,3 @@ func (client *Client) DeleteIntegration(identifier string) error {
 	err := client.Mutate(&m, v, WithName("IntegrationDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

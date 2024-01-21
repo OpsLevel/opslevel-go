@@ -55,7 +55,7 @@ type InfraInput struct {
 	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
-func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (infrastructureResource *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			InfrastructureResource struct {
@@ -63,20 +63,20 @@ func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVaria
 			} `graphql:"infrastructureResource(input: $infrastructureResource)"`
 		}
 	}
-	if i.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid InfrastructureResource id: '%s'", i.Id)
+	if infrastructureResource.Id == "" {
+		return nil, fmt.Errorf("unable to get Tags, invalid InfrastructureResource id: '%s'", infrastructureResource.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["infrastructureResource"] = *NewIdentifier(string(i.Id))
+	(*variables)["infrastructureResource"] = *NewIdentifier(infrastructureResource.Id)
 
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceTags")); err != nil {
 		return nil, err
 	}
 	for q.Account.InfrastructureResource.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResource.Tags.PageInfo.End
-		resp, err := i.GetTags(client, variables)
+		resp, err := infrastructureResource.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -92,11 +92,11 @@ func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVaria
 	return &q.Account.InfrastructureResource.Tags, nil
 }
 
-func (i *InfrastructureResource) ResourceId() ID {
-	return *NewID(i.Id)
+func (infrastructureResource *InfrastructureResource) ResourceId() ID {
+	return *NewID(infrastructureResource.Id)
 }
 
-func (i *InfrastructureResource) ResourceType() TaggableResource {
+func (infrastructureResource *InfrastructureResource) ResourceType() TaggableResource {
 	return TaggableResourceInfrastructureresource
 }
 
@@ -119,7 +119,7 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
-			Warnings               []OpsLevelWarnings
+			Warnings               []OpsLevelWarnings // TODO: handle warnings somehow
 			Errors                 []OpsLevelErrors
 		} `graphql:"infrastructureResourceCreate(input: $input)"`
 	}
@@ -128,7 +128,6 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 		"all":   true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceCreate"))
-	// TODO: handle m.Payload.Warnings somehow
 	return &m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -218,7 +217,7 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
-			Warnings               []OpsLevelWarnings
+			Warnings               []OpsLevelWarnings // TODO: handle warnings somehow
 			Errors                 []OpsLevelErrors
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
@@ -228,7 +227,6 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		"all":        true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
-	// TODO: handle m.Payload.Warnings somehow
 	return &m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 

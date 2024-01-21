@@ -17,11 +17,9 @@ type CategoryConnection struct {
 	TotalCount int
 }
 
-func (self *Category) Alias() string {
-	return slug.Make(self.Name)
+func (category *Category) Alias() string {
+	return slug.Make(category.Name)
 }
-
-//#region Create
 
 func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, error) {
 	var m struct {
@@ -37,10 +35,6 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 	return &m.Payload.Category, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
 func (client *Client) GetCategory(id ID) (*Category, error) {
 	var q struct {
 		Account struct {
@@ -52,7 +46,7 @@ func (client *Client) GetCategory(id ID) (*Category, error) {
 	}
 	err := client.Query(&q, v, WithName("CategoryGet"))
 	if q.Account.Category.Id == "" {
-		err = fmt.Errorf("Category with ID '%s' not found!", id)
+		err = fmt.Errorf("category with ID '%s' not found", id)
 	}
 	return &q.Account.Category, HandleErrors(err, nil)
 }
@@ -84,10 +78,6 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 	return &q.Account.Rubric.Categories, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, error) {
 	var m struct {
 		Payload struct {
@@ -102,10 +92,6 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 	return &m.Payload.Category, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteCategory(id ID) error {
 	var m struct {
 		Payload struct {
@@ -119,5 +105,3 @@ func (client *Client) DeleteCategory(id ID) error {
 	err := client.Mutate(&m, v, WithName("CategoryDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

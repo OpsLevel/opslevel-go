@@ -7,7 +7,6 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-// TODO: not sure if there is a better way to handle reusing a client
 // Probably should be a feature of autopilot
 func getTestRequestWithAlias() autopilot.TestRequest {
 	return autopilot.NewTestRequest(
@@ -673,7 +672,7 @@ func TestDeleteTeamWithAlias(t *testing.T) {
 	autopilot.Ok(t, err)
 }
 
-func TestTeamAddMemberhip(t *testing.T) {
+func TestTeamAddMembership(t *testing.T) {
 	// Arrange
 	testRequestWithTeamId := autopilot.NewTestRequest(
 		`mutation TeamMembershipCreate($input:TeamMembershipCreateInput!){teamMembershipCreate(input: $input){memberships{role,team{alias,id},user{id,email}},errors{message,path}}}`,
@@ -696,7 +695,7 @@ func TestTeamAddMemberhip(t *testing.T) {
 	autopilot.Equals(t, 1, len(result))
 }
 
-func TestTeamRemoveMemberhip(t *testing.T) {
+func TestTeamRemoveMembership(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation TeamMembershipDelete($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,role},errors{message,path}}}`,

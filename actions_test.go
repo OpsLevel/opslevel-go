@@ -7,7 +7,7 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var newID *ol.ID = ol.NewID("123456789")
+var newID = ol.NewID("123456789")
 
 func TestCreateWebhookAction(t *testing.T) {
 	// Arrange

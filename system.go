@@ -23,7 +23,7 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			System struct {
@@ -31,20 +31,20 @@ func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagCon
 			} `graphql:"system(input: $system)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid system id: '%s'", s.Id)
+	if systemId.Id == "" {
+		return nil, fmt.Errorf("unable to get Tags, invalid system id: '%s'", systemId.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["system"] = *NewIdentifier(string(s.Id))
+	(*variables)["system"] = *NewIdentifier(string(systemId.Id))
 
 	if err := client.Query(&q, *variables, WithName("SystemTagsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.System.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.System.Tags.PageInfo.End
-		resp, err := s.GetTags(client, variables)
+		resp, err := systemId.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -60,15 +60,15 @@ func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagCon
 	return &q.Account.System.Tags, nil
 }
 
-func (s *SystemId) ResourceId() ID {
-	return s.Id
+func (systemId *SystemId) ResourceId() ID {
+	return systemId.Id
 }
 
-func (s *SystemId) ResourceType() TaggableResource {
+func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
 }
 
-func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
+func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			System struct {
@@ -76,21 +76,21 @@ func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*
 			} `graphql:"system(input: $system)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Services, invalid system id: '%s'", s.Id)
+	if systemId.Id == "" {
+		return nil, fmt.Errorf("unable to get Services, invalid system id: '%s'", systemId.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	(*variables)["system"] = *NewIdentifier(string(s.Id))
+	(*variables)["system"] = *NewIdentifier(string(systemId.Id))
 
 	if err := client.Query(&q, *variables, WithName("SystemChildServicesList")); err != nil {
 		return nil, err
 	}
 	for q.Account.System.ChildServices.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.System.ChildServices.PageInfo.End
-		resp, err := s.ChildServices(client, variables)
+		resp, err := systemId.ChildServices(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +101,7 @@ func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*
 	return &q.Account.System.ChildServices, nil
 }
 
-func (s *SystemId) AssignService(client *Client, services ...string) error {
+func (systemId *SystemId) AssignService(client *Client, services ...string) error {
 	var m struct {
 		Payload struct {
 			System System
@@ -109,14 +109,14 @@ func (s *SystemId) AssignService(client *Client, services ...string) error {
 		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
 	}
 	v := PayloadVariables{
-		"system":        *NewIdentifier(string(s.Id)),
+		"system":        *NewIdentifier(string(systemId.Id)),
 		"childServices": NewIdentifierArray(services),
 	}
 	err := client.Mutate(&m, v, WithName("SystemAssignService"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) CreateSystem(input SystemInput) (*System, error) {
+func (client *Client) CreateSystem(input SystemInput) (*System, error) {
 	var m struct {
 		Payload struct {
 			System System
@@ -126,11 +126,11 @@ func (c *Client) CreateSystem(input SystemInput) (*System, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := c.Mutate(&m, v, WithName("SystemCreate"))
+	err := client.Mutate(&m, v, WithName("SystemCreate"))
 	return &m.Payload.System, HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) GetSystem(identifier string) (*System, error) {
+func (client *Client) GetSystem(identifier string) (*System, error) {
 	var q struct {
 		Account struct {
 			System System `graphql:"system(input: $input)"`
@@ -139,25 +139,25 @@ func (c *Client) GetSystem(identifier string) (*System, error) {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := c.Query(&q, v, WithName("SystemGet"))
+	err := client.Query(&q, v, WithName("SystemGet"))
 	return &q.Account.System, HandleErrors(err, nil)
 }
 
-func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, error) {
+func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, error) {
 	var q struct {
 		Account struct {
 			Systems SystemConnection `graphql:"systems(after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {
-		variables = c.InitialPageVariablesPointer()
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := c.Query(&q, *variables, WithName("SystemsList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("SystemsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.Systems.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Systems.PageInfo.End
-		resp, err := c.ListSystems(variables)
+		resp, err := client.ListSystems(variables)
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +168,7 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 	return &q.Account.Systems, nil
 }
 
-func (c *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
+func (client *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
 	var s struct {
 		Payload struct {
 			System System
@@ -179,11 +179,11 @@ func (c *Client) UpdateSystem(identifier string, input SystemInput) (*System, er
 		"system": *NewIdentifier(identifier),
 		"input":  input,
 	}
-	err := c.Mutate(&s, v, WithName("SystemUpdate"))
+	err := client.Mutate(&s, v, WithName("SystemUpdate"))
 	return &s.Payload.System, HandleErrors(err, s.Payload.Errors)
 }
 
-func (c *Client) DeleteSystem(identifier string) error {
+func (client *Client) DeleteSystem(identifier string) error {
 	var s struct {
 		Payload struct {
 			Errors []OpsLevelErrors `graphql:"errors"`
@@ -192,6 +192,6 @@ func (c *Client) DeleteSystem(identifier string) error {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := c.Mutate(&s, v, WithName("SystemDelete"))
+	err := client.Mutate(&s, v, WithName("SystemDelete"))
 	return HandleErrors(err, s.Payload.Errors)
 }

@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 )
@@ -76,16 +77,14 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	return taggableResource, nil
 }
 
-func (t *TagConnection) GetTagById(tagId ID) (*Tag, error) {
-	for _, tag := range t.Nodes {
+func (tagConnection *TagConnection) GetTagById(tagId ID) (*Tag, error) {
+	for _, tag := range tagConnection.Nodes {
 		if tag.Id == tagId {
 			return &tag, nil
 		}
 	}
-	return nil, fmt.Errorf("Tag with ID '%s' not found.", tagId)
+	return nil, fmt.Errorf("tag with ID '%s' not found", tagId)
 }
-
-//#region Helpers
 
 func ValidateTagKey(key string) error {
 	if !TagKeyRegex.MatchString(key) {
@@ -93,8 +92,6 @@ func ValidateTagKey(key string) error {
 	}
 	return nil
 }
-
-//#region Assign
 
 func (client *Client) AssignTags(identifier string, tags map[string]string) ([]Tag, error) {
 	input := TagAssignInput{
@@ -131,12 +128,9 @@ func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
 	return m.Payload.Tags, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Create
-
 func (client *Client) CreateTags(identifier string, tags map[string]string) ([]Tag, error) {
 	var output []Tag
+	var allErrors error
 	for key, value := range tags {
 		if err := ValidateTagKey(key); err != nil {
 			return nil, err
@@ -152,12 +146,12 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 		}
 		newTag, err := client.CreateTag(input)
 		if err != nil {
-			// TODO: combind errors?
+			allErrors = errors.Join(allErrors, err)
 		} else {
 			output = append(output, *newTag)
 		}
 	}
-	return output, nil
+	return output, allErrors
 }
 
 func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
@@ -177,10 +171,6 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	var m struct {
 		Payload struct {
@@ -198,10 +188,6 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	return &m.Payload.Tag, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteTag(id ID) error {
 	var m struct {
 		Payload struct {
@@ -214,5 +200,3 @@ func (client *Client) DeleteTag(id ID) error {
 	err := client.Mutate(&m, v, WithName("TagDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

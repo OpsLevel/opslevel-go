@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -15,13 +14,12 @@ const (
 	RunnerJobOutcomeEnumUnstarted        RunnerJobOutcomeEnum = "unstarted"         // translation missing: en.graphql.types.runner_job_outcome_enum.unstarted.
 	RunnerJobOutcomeEnumCanceled         RunnerJobOutcomeEnum = "canceled"          // Job was canceled.
 	RunnerJobOutcomeEnumFailed           RunnerJobOutcomeEnum = "failed"            // Job failed during execution.
-	RunnerJobOutcomeEnumSuccess          RunnerJobOutcomeEnum = "success"           // Job succeded the execution.
+	RunnerJobOutcomeEnumSuccess          RunnerJobOutcomeEnum = "success"           // Job succeeded the execution.
 	RunnerJobOutcomeEnumQueueTimeout     RunnerJobOutcomeEnum = "queue_timeout"     // Job was not assigned to a runner for too long.
 	RunnerJobOutcomeEnumExecutionTimeout RunnerJobOutcomeEnum = "execution_timeout" // Job run took too long to complete, and was marked as failed.
 	RunnerJobOutcomeEnumPodTimeout       RunnerJobOutcomeEnum = "pod_timeout"       // A pod could not be scheduled for the job in time.
 )
 
-// All RunnerJobOutcomeEnum as []string
 func AllRunnerJobOutcomeEnum() []string {
 	return []string{
 		string(RunnerJobOutcomeEnumUnstarted),
@@ -44,7 +42,6 @@ const (
 	RunnerJobStatusEnumComplete RunnerJobStatusEnum = "complete" // A finished runner job.
 )
 
-// All RunnerJobStatusEnum as []string
 func AllRunnerJobStatusEnum() []string {
 	return []string{
 		string(RunnerJobStatusEnumCreated),
@@ -62,7 +59,6 @@ const (
 	RunnerStatusTypeEnumRegistered RunnerJobStatusEnum = "registered" // The runner will process jobs.
 )
 
-// All RunnerStatusTypeEnum as []string
 func AllRunnerStatusTypeEnum() []string {
 	return []string{
 		string(RunnerStatusTypeEnumInactive),
@@ -96,8 +92,8 @@ type RunnerJob struct {
 	Files     []RunnerJobFile      `json:"files"`
 }
 
-func (j *RunnerJob) Number() string {
-	id := string(j.Id)
+func (runnerJob *RunnerJob) Number() string {
+	id := string(runnerJob.Id)
 	decoded, err := base64.RawURLEncoding.DecodeString(id)
 	if err != nil {
 		return id
@@ -128,7 +124,7 @@ type RunnerScale struct {
 	RecommendedReplicaCount int `json:"recommendedReplicaCount"`
 }
 
-func (c *Client) RunnerRegister() (*Runner, error) {
+func (client *Client) RunnerRegister() (*Runner, error) {
 	var m struct {
 		Payload struct {
 			Runner Runner
@@ -136,11 +132,11 @@ func (c *Client) RunnerRegister() (*Runner, error) {
 		} `graphql:"runnerRegister"`
 	}
 	v := PayloadVariables{}
-	err := c.Mutate(&m, v, WithName("RunnerRegister"))
+	err := client.Mutate(&m, v, WithName("RunnerRegister"))
 	return &m.Payload.Runner, HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*RunnerJob, ID, error) {
+func (client *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*RunnerJob, ID, error) {
 	var m struct {
 		Payload struct {
 			RunnerJob       RunnerJob
@@ -152,11 +148,11 @@ func (c *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*RunnerJo
 		"id":    runnerId,
 		"token": &lastUpdateToken,
 	}
-	err := c.Mutate(&m, v, WithName("RunnerGetPendingJob"))
+	err := client.Mutate(&m, v, WithName("RunnerGetPendingJob"))
 	return &m.Payload.RunnerJob, m.Payload.LastUpdateToken, HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurrency int) (*RunnerScale, error) {
+func (client *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurrency int) (*RunnerScale, error) {
 	var q struct {
 		Account struct {
 			RunnerScale RunnerScale `graphql:"runnerScale(runnerId: $runnerId, currentReplicaCount: $currentReplicaCount, jobConcurrency: $jobConcurrency)"`
@@ -164,14 +160,14 @@ func (c *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurrency in
 	}
 	v := PayloadVariables{
 		"runnerId":            runnerId,
-		"currentReplicaCount": graphql.Int(currentReplicaCount),
-		"jobConcurrency":      graphql.Int(jobConcurrency),
+		"currentReplicaCount": currentReplicaCount,
+		"jobConcurrency":      jobConcurrency,
 	}
-	err := c.Query(&q, v, WithName("RunnerScale"))
+	err := client.Query(&q, v, WithName("RunnerScale"))
 	return &q.Account.RunnerScale, HandleErrors(err, nil)
 }
 
-func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
+func (client *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
@@ -180,11 +176,11 @@ func (c *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := c.Mutate(&m, v, WithName("RunnerAppendJobLog"))
+	err := client.Mutate(&m, v, WithName("RunnerAppendJobLog"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
+func (client *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
@@ -193,11 +189,11 @@ func (c *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := c.Mutate(&m, v, WithName("RunnerReportJobOutcome"))
+	err := client.Mutate(&m, v, WithName("RunnerReportJobOutcome"))
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (c *Client) RunnerUnregister(runnerId ID) error {
+func (client *Client) RunnerUnregister(runnerId ID) error {
 	var m struct {
 		Payload struct {
 			Errors []OpsLevelErrors
@@ -206,6 +202,6 @@ func (c *Client) RunnerUnregister(runnerId ID) error {
 	v := PayloadVariables{
 		"runnerId": runnerId,
 	}
-	err := c.Mutate(&m, v, WithName("RunnerUnregister"))
+	err := client.Mutate(&m, v, WithName("RunnerUnregister"))
 	return HandleErrors(err, m.Payload.Errors)
 }

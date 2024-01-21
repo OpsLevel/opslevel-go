@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"slices"
 	"strings"
-
-	"github.com/hasura/go-graphql-client"
 )
 
 type ServiceId struct {
@@ -51,18 +49,16 @@ type ServiceDocumentsConnection struct {
 	TotalCount int
 }
 
-func (s *Service) ResourceId() ID {
-	return s.Id
+func (service *Service) ResourceId() ID {
+	return service.Id
 }
 
-func (s *Service) ResourceType() TaggableResource {
+func (service *Service) ResourceType() TaggableResource {
 	return TaggableResourceService
 }
 
-//#region ServiceHelpers
-
-func (s *Service) HasAlias(alias string) bool {
-	for _, a := range s.Aliases {
+func (service *Service) HasAlias(alias string) bool {
+	for _, a := range service.Aliases {
 		if a == alias {
 			return true
 		}
@@ -70,8 +66,8 @@ func (s *Service) HasAlias(alias string) bool {
 	return false
 }
 
-func (s *Service) HasTag(key string, value string) bool {
-	for _, tag := range s.Tags.Nodes {
+func (service *Service) HasTag(key string, value string) bool {
+	for _, tag := range service.Tags.Nodes {
 		if tag.Key == key && tag.Value == value {
 			return true
 		}
@@ -79,8 +75,8 @@ func (s *Service) HasTag(key string, value string) bool {
 	return false
 }
 
-func (s *Service) HasTool(category ToolCategory, name string, environment string) bool {
-	for _, tool := range s.Tools.Nodes {
+func (service *Service) HasTool(category ToolCategory, name string, environment string) bool {
+	for _, tool := range service.Tools.Nodes {
 		if tool.Category == category && tool.DisplayName == name && tool.Environment == environment {
 			return true
 		}
@@ -88,38 +84,38 @@ func (s *Service) HasTool(category ToolCategory, name string, environment string
 	return false
 }
 
-func (s *Service) Hydrate(client *Client) error {
-	if s.Tags == nil {
-		s.Tags = &TagConnection{}
+func (service *Service) Hydrate(client *Client) error {
+	if service.Tags == nil {
+		service.Tags = &TagConnection{}
 	}
-	if s.Tags.PageInfo.HasNextPage {
+	if service.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Tags.PageInfo.End
-		_, err := s.GetTags(client, variables)
+		(*variables)["after"] = service.Tags.PageInfo.End
+		_, err := service.GetTags(client, variables)
 		if err != nil {
 			return err
 		}
 	}
 
-	if s.Tools == nil {
-		s.Tools = &ToolConnection{}
+	if service.Tools == nil {
+		service.Tools = &ToolConnection{}
 	}
-	if s.Tools.PageInfo.HasNextPage {
+	if service.Tools.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Tools.PageInfo.End
-		_, err := s.GetTools(client, variables)
+		(*variables)["after"] = service.Tools.PageInfo.End
+		_, err := service.GetTools(client, variables)
 		if err != nil {
 			return err
 		}
 	}
 
-	if s.Repositories == nil {
-		s.Repositories = &ServiceRepositoryConnection{}
+	if service.Repositories == nil {
+		service.Repositories = &ServiceRepositoryConnection{}
 	}
-	if s.Repositories.PageInfo.HasNextPage {
+	if service.Repositories.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Repositories.PageInfo.End
-		_, err := s.GetRepositories(client, variables)
+		(*variables)["after"] = service.Repositories.PageInfo.End
+		_, err := service.GetRepositories(client, variables)
 		if err != nil {
 			return err
 		}
@@ -128,7 +124,7 @@ func (s *Service) Hydrate(client *Client) error {
 	return nil
 }
 
-func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -136,38 +132,38 @@ func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 			} `graphql:"service(id: $service)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid service id: '%s'", s.Id)
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get Tags, invalid service id: '%s'", service.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["service"] = s.Id
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceTagsList")); err != nil {
 		return nil, err
 	}
-	if s.Tags == nil {
-		s.Tags = &TagConnection{}
+	if service.Tags == nil {
+		service.Tags = &TagConnection{}
 	}
 	// Add unique tags only
 	for _, resp := range q.Account.Service.Tags.Nodes {
-		if !slices.Contains[[]Tag, Tag](s.Tags.Nodes, resp) {
-			s.Tags.Nodes = append(s.Tags.Nodes, resp)
+		if !slices.Contains[[]Tag, Tag](service.Tags.Nodes, resp) {
+			service.Tags.Nodes = append(service.Tags.Nodes, resp)
 		}
 	}
-	s.Tags.PageInfo = q.Account.Service.Tags.PageInfo
-	s.Tags.TotalCount += q.Account.Service.Tags.TotalCount
-	for s.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Tags.PageInfo.End
-		_, err := s.GetTags(client, variables)
+	service.Tags.PageInfo = q.Account.Service.Tags.PageInfo
+	service.Tags.TotalCount += q.Account.Service.Tags.TotalCount
+	for service.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = service.Tags.PageInfo.End
+		_, err := service.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return s.Tags, nil
+	return service.Tags, nil
 }
 
-func (s *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolConnection, error) {
+func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -175,34 +171,34 @@ func (s *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolCo
 			} `graphql:"service(id: $service)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tools, invalid service id: '%s'", s.Id)
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get Tools, invalid service id: '%s'", service.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["service"] = s.Id
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceToolsList")); err != nil {
 		return nil, err
 	}
-	if s.Tools == nil {
+	if service.Tools == nil {
 		tools := ToolConnection{}
-		s.Tools = &tools
+		service.Tools = &tools
 	}
-	s.Tools.Nodes = append(s.Tools.Nodes, q.Account.Service.Tools.Nodes...)
-	s.Tools.PageInfo = q.Account.Service.Tools.PageInfo
-	s.Tools.TotalCount += q.Account.Service.Tools.TotalCount
-	for s.Tools.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Tools.PageInfo.End
-		_, err := s.GetTools(client, variables)
+	service.Tools.Nodes = append(service.Tools.Nodes, q.Account.Service.Tools.Nodes...)
+	service.Tools.PageInfo = q.Account.Service.Tools.PageInfo
+	service.Tools.TotalCount += q.Account.Service.Tools.TotalCount
+	for service.Tools.PageInfo.HasNextPage {
+		(*variables)["after"] = service.Tools.PageInfo.End
+		_, err := service.GetTools(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return s.Tools, nil
+	return service.Tools, nil
 }
 
-func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (*ServiceRepositoryConnection, error) {
+func (service *Service) GetRepositories(client *Client, variables *PayloadVariables) (*ServiceRepositoryConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -210,34 +206,34 @@ func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (
 			} `graphql:"service(id: $service)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Repositories, invalid service id: '%s'", s.Id)
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get Repositories, invalid service id: '%s'", service.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["service"] = s.Id
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceRepositoriesList")); err != nil {
 		return nil, err
 	}
-	if s.Repositories == nil {
+	if service.Repositories == nil {
 		repositories := ServiceRepositoryConnection{}
-		s.Repositories = &repositories
+		service.Repositories = &repositories
 	}
-	s.Repositories.Edges = append(s.Repositories.Edges, q.Account.Service.Repositories.Edges...)
-	s.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
-	s.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
-	for s.Repositories.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Repositories.PageInfo.End
-		_, err := s.GetRepositories(client, variables)
+	service.Repositories.Edges = append(service.Repositories.Edges, q.Account.Service.Repositories.Edges...)
+	service.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
+	service.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
+	for service.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = service.Repositories.PageInfo.End
+		_, err := service.GetRepositories(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return s.Repositories, nil
+	return service.Repositories, nil
 }
 
-func (s *Service) GetDocuments(client *Client, variables *PayloadVariables) (*ServiceDocumentsConnection, error) {
+func (service *Service) GetDocuments(client *Client, variables *PayloadVariables) (*ServiceDocumentsConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -245,20 +241,20 @@ func (s *Service) GetDocuments(client *Client, variables *PayloadVariables) (*Se
 			} `graphql:"service(id: $service)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("unable to get 'Documents', invalid service id: '%s'", s.Id)
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get 'Documents', invalid service id: '%s'", service.Id)
 	}
 
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["service"] = s.Id
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceDocumentsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.Service.Documents.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Service.Documents.PageInfo.End
-		resp, err := s.GetDocuments(client, variables)
+		resp, err := service.GetDocuments(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -268,10 +264,6 @@ func (s *Service) GetDocuments(client *Client, variables *PayloadVariables) (*Se
 	}
 	return &q.Account.Service.Documents, nil
 }
-
-//#endregion
-
-//#region Create
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
 	var m struct {
@@ -292,11 +284,6 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
-// This is a lightweight api call to lookup a service id by and alias - it does not return a full Service object
 func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
 	var q struct {
 		Account struct {
@@ -350,12 +337,12 @@ func (client *Client) GetServiceCount() (int, error) {
 	var q struct {
 		Account struct {
 			Services struct {
-				TotalCount graphql.Int
+				TotalCount int
 			}
 		}
 	}
 	err := client.Query(&q, nil, WithName("ServiceCountGet"))
-	return int(q.Account.Services.TotalCount), HandleErrors(err, nil)
+	return q.Account.Services.TotalCount, HandleErrors(err, nil)
 }
 
 func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnection, error) {
@@ -555,20 +542,22 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 	return &q.Account.Services, nil
 }
 
-func NewTagArgs(tag string) (TagArgs, error) {
+func NewTagArgs(tag string) TagArgs {
 	kv := strings.Split(tag, ":")
 	switch len(kv) {
 	case 1:
 		return TagArgs{
 			Key: RefOf(kv[0]),
-		}, nil
+		}
 	case 2:
 		return TagArgs{
 			Key:   RefOf(kv[0]),
 			Value: RefOf(kv[1]),
-		}, nil
-	default:
-		return TagArgs{}, fmt.Errorf("cannot make a valid TagArg from: '%s' (not in format key:value)", tag)
+		}
+	default: // TODO: is this the best we can do?
+		return TagArgs{
+			Key: RefOf(tag),
+		}
 	}
 }
 
@@ -638,10 +627,6 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
 		Payload struct {
@@ -660,10 +645,6 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 	}
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
-
-//#endregion
-
-//#region Delete
 
 func (client *Client) DeleteService(identifier string) error {
 	input := ServiceDeleteInput{}
@@ -686,5 +667,3 @@ func (client *Client) DeleteService(identifier string) error {
 	err := client.Mutate(&m, v, WithName("ServiceDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

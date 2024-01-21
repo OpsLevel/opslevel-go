@@ -11,14 +11,8 @@ import (
 )
 
 type Client struct {
-	pageSize graphql.Int
+	pageSize int
 	client   *graphql.Client
-}
-
-// Deprecated: Use NewGQLClient instead
-func NewClient(apiToken string, options ...Option) *Client {
-	options = append(options, SetAPIToken(apiToken))
-	return NewGQLClient(options...)
 }
 
 func NewGQLClient(options ...Option) *Client {
@@ -46,7 +40,7 @@ func NewGQLClient(options ...Option) *Client {
 		})
 
 	return &Client{
-		pageSize: graphql.Int(settings.pageSize),
+		pageSize: settings.pageSize,
 		client:   graphql.NewClient(url, standardClient).WithRequestModifier(modifier),
 	}
 }
@@ -97,7 +91,6 @@ func (client *Client) Validate() error {
 		}
 	}
 	err := client.Query(&q, nil)
-	// TODO: we should probably use a custom OpsLevelClientError type - https://www.digitalocean.com/community/tutorials/creating-custom-errors-in-go
 	if err != nil {
 		return fmt.Errorf("client validation error: %s", err.Error())
 	}

@@ -97,7 +97,7 @@ func TestGetIntegration(t *testing.T) {
 	autopilot.Equals(t, "Deploy", result.Name)
 }
 
-func TestGetMissingIntegraion(t *testing.T) {
+func TestGetMissingIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}}}}`,
