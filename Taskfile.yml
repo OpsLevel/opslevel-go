@@ -21,8 +21,8 @@ tasks:
     desc: Formatting and linting
     cmds:
       - test -z "$(gofumpt -d -e . | tee /dev/stderr)"
-      - go vet ./...
       - golangci-lint run
+      - nilaway -test=false -include-pkgs='github.com/opslevel/opslevel-go' ./...
 
   fix:
     desc: Fix formatting and linting
@@ -38,6 +38,8 @@ tasks:
         vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
       - task: install-go-tool
         vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
+      - task: install-go-tool
+        vars: { GO_TOOL: "nilaway", GO_TOOL_PATH: "go.uber.org/nilaway/cmd/nilaway@latest" }
 
   test:
     desc: Run tests
