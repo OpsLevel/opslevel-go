@@ -131,6 +131,9 @@ func (c *Cacher) doCacheTeams(client *Client) {
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Team' from API - REASON: %s", dataErr.Error())
 	}
+	if data == nil {
+		return
+	}
 
 	for _, item := range data.Nodes {
 		for _, alias := range item.Aliases {
@@ -145,6 +148,9 @@ func (c *Cacher) doCacheCategories(client *Client) {
 	data, dataErr := client.ListCategories(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Category' from API - REASON: %s", dataErr.Error())
+	}
+	if data == nil {
+		return
 	}
 
 	for _, item := range data.Nodes {
@@ -172,6 +178,9 @@ func (c *Cacher) doCacheFilters(client *Client) {
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Filter' from API - REASON: %s", dataErr.Error())
 	}
+	if data == nil {
+		return
+	}
 
 	for _, item := range data.Nodes {
 		c.Filters[item.Alias()] = item
@@ -184,6 +193,9 @@ func (c *Cacher) doCacheIntegrations(client *Client) {
 	data, dataErr := client.ListIntegrations(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Integration' from API - REASON: %s", dataErr.Error())
+	}
+	if data == nil {
+		return
 	}
 
 	for _, item := range data.Nodes {
@@ -198,6 +210,9 @@ func (c *Cacher) doCacheRepositories(client *Client) {
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Repository' from API - REASON: %s", dataErr.Error())
 	}
+	if data == nil {
+		return
+	}
 
 	for _, item := range data.Nodes {
 		c.Repositories[item.DefaultAlias] = item
@@ -211,6 +226,10 @@ func (c *Cacher) doCacheInfraSchemas(client *Client) {
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'InfrastructureSchema' from API - REASON: %s", dataErr.Error())
 	}
+	if data == nil {
+		return
+	}
+
 	for _, item := range data.Nodes {
 		// log.Info().Msgf("Caching 'InfrastructureSchema' '%s' ...", item.Type)
 		c.InfraSchemas[item.Type] = item
