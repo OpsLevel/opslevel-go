@@ -3,8 +3,9 @@ package opslevel
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"strconv"
+
+	"github.com/pkg/errors"
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
