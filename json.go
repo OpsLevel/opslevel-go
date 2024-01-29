@@ -2,9 +2,10 @@ package opslevel
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
-	"github.com/rs/zerolog/log"
+	"github.com/pkg/errors"
 )
 
 // JSON is a specialized map[string]string to support proper graphql serialization
@@ -87,8 +88,7 @@ func NewJSONInput(data any) (*JsonString, error) {
 func JsonStringAs[T any](data JsonString) (T, error) {
 	var result T
 	if err := json.Unmarshal([]byte(data), &result); err != nil {
-		log.Warn().Err(err).Msgf("unable to marshal json as %T", result)
-		return result, err
+		return result, errors.Wrap(err, fmt.Sprintf("unable to marshal json as %T", result))
 	}
 	return result, nil
 }
