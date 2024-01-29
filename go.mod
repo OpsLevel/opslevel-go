@@ -11,7 +11,7 @@ require (
 	github.com/hasura/go-graphql-client v0.10.2
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c
-	github.com/relvacode/iso8601 v1.3.0
+	github.com/relvacode/iso8601 v1.4.0
 	github.com/rocktavious/autopilot/v2023 v2023.12.7
 	github.com/rs/zerolog v1.31.0
 )
