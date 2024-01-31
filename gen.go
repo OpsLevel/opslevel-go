@@ -27,7 +27,7 @@ const (
 	inputObjectFile string = "input.go"
 	// interfaceFile   string = "pkg/gen/interface.go"
 	// mutationFile    string = "pkg/gen/mutation.go"
-	// objectFile      string = "pkg/gen/object.go"
+  objectFile string = "object.go"
 	// payloadFile     string = "pkg/gen/payload.go"
 	// queryFile       string = "pkg/gen/query.go"
 	// scalarFile      string = "pkg/gen/scalar.go"
@@ -211,8 +211,8 @@ func run() error {
 		// 	subSchema = interfaceSchema
 		// case mutationFile:
 		// 	subSchema = objectSchema
-		// case objectFile:
-		// 	subSchema = objectSchema
+		case objectFile:
+			subSchema = objectSchema
 		// case payloadFile:
 		// 	subSchema = objectSchema
 		// case queryFile:
@@ -520,34 +520,34 @@ type {{.Name}} struct { {{range .InputFields }}
 	// {{- end}}
 	// {{- end}}
 	// `),
-	// 	objectFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{- if eq .Name "Account" }}
-	//       {{- template "account_struct" . }}
-	//     {{- else}}{{template "object" .}}{{end}}
-	//   {{- end}}
-	// {{- end}}
+	objectFile: t(header + `
+	{{range .Types | sortByName}}
+	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	    {{- if eq .Name "Account" }}
+	      {{- template "account_struct" . }}
+	    {{- else}}{{template "object" .}}{{end}}
+	  {{- end}}
+	{{- end}}
 
-	// {{ define "account_struct" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct { {{range .Fields }}
-	//   {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
-	//  {{- end }}
-	// }
-	// {{- end }}
+	{{ define "account_struct" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct { {{range .Fields }}
+	  {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
+	 {{- end }}
+	}
+	{{- end }}
 
-	// {{- define "object" -}}
-	// {{ if and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name)) }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	//   {{ range .Fields -}}
-	//     {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	//     {{- end}}
-	//   {{ end -}}
-	// }
-	// {{- end }}{{- end -}}
-	// 	`),
+	{{- define "object" -}}
+	{{ if and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name)) }}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct {
+	  {{ range .Fields -}}
+	    {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	    {{- end}}
+	  {{ end -}}
+	}
+	{{- end }}{{- end -}}
+		`),
 	// 	scalarFile: t(header + `
 	// import (
 	// 	"encoding/base64"
