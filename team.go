@@ -22,8 +22,9 @@ type TeamId struct {
 type Team struct {
 	TeamId
 
-	Aliases  []string
-	Contacts []Contact
+	Aliases        []string `graphql:"aliases" json:"aliases" yaml:"aliases"`
+	ManagedAliases []string `graphql:"managedAliases" json:"managedAliases" yaml:"managedAliases"`
+	Contacts       []Contact
 
 	HTMLUrl          string
 	Manager          User
