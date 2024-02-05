@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -76,6 +77,10 @@ type JsonString string
 func (s JsonString) GetGraphQLType() string { return "JsonString" }
 
 func NewJSONInput(data any) (*JsonString, error) {
+	if s, ok := data.(string); ok && wrappedObjectOrArray(s) {
+		result := JsonString(s)
+		return &result, nil
+	}
 	var result JsonString
 	bytes, err := json.Marshal(data)
 	if err != nil {
@@ -121,4 +126,11 @@ func (s JsonString) AsArray() []any {
 func (s JsonString) AsMap() map[string]any {
 	value, _ := JsonStringAs[map[string]any](s)
 	return value
+}
+
+func wrappedObjectOrArray(s string) bool {
+	if (strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}")) || (strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]")) {
+		return true
+	}
+	return false
 }
