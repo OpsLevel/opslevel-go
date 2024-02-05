@@ -25,9 +25,9 @@ const (
 	// connectionFile  string = "pkg/gen/connection.go"
 	enumFile        string = "enum.go"
 	inputObjectFile string = "input.go"
-	// interfaceFile   string = "pkg/gen/interface.go"
+	interfacesFile  string = "interfaces.go"
+	objectFile      string = "object.go"
 	// mutationFile    string = "pkg/gen/mutation.go"
-	// objectFile      string = "pkg/gen/object.go"
 	// payloadFile     string = "pkg/gen/payload.go"
 	// queryFile       string = "pkg/gen/query.go"
 	// scalarFile      string = "pkg/gen/scalar.go"
@@ -207,11 +207,11 @@ func run() error {
 			subSchema = enumSchema
 		case inputObjectFile:
 			subSchema = inputObjectSchema
-		// case interfaceFile:
-		// 	subSchema = interfaceSchema
+		case interfacesFile:
+			subSchema = interfaceSchema
+		case objectFile:
+			subSchema = objectSchema
 		// case mutationFile:
-		// 	subSchema = objectSchema
-		// case objectFile:
 		// 	subSchema = objectSchema
 		// case payloadFile:
 		// 	subSchema = objectSchema
@@ -263,6 +263,10 @@ const (
     {{- if gt $index 0 }}, {{ end -}}
     {{- .Name}}: ${{.Name}}
   {{- end}})"` + "`" + `
+{{- end }}`
+	fragmentsTmpl = `
+{{- define "fragments" -}}
+  {{ if eq .Name "Check" }}{{ check_fragments }}{{- end }}
 {{- end }}`
 	nameToSingularTmpl = `
 {{- define "name_to_singular" -}}
@@ -348,85 +352,30 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
 		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
 		` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + `
+
   {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} example:"
    {{- if isListType .Name }}[{{ end -}}
-    {{- if or (eq .Type.Name "Boolean") (eq .Type.OfType.OfTypeName "Boolean") }}false
-      {{- else if or (eq .Type.Name "Int") (eq .Type.OfType.OfTypeName "Int") }}3
-      {{- else if eq .Type.Name "JSON" }}{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}
-      {{- else if or (hasSuffix "Time" .Type.Name) (hasSuffix "Time" .Type.OfType.OfTypeName) }}2024-01-05T01:00:00.000Z
-      {{- else if or (eq "FrequencyTimeScale" .Type.Name) (eq "FrequencyTimeScale" .Type.OfType.OfTypeName) }}week
-      {{- else if or (eq "ContactType" .Type.Name) (eq "ContactType" .Type.OfType.OfTypeName) }}slack
-      {{- else if or (eq "AlertSourceTypeEnum" .Type.Name) (hasSuffix "AlertSourceTypeEnum" .Type.OfType.OfTypeName) }}pagerduty
-      {{- else if or (eq "AliasOwnerTypeEnum" .Type.Name) (hasSuffix "AliasOwnerTypeEnum" .Type.OfType.OfTypeName) }}scorecard
-      {{- else if or (eq "BasicTypeEnum" .Type.Name) (hasSuffix "BasicTypeEnum" .Type.OfType.OfTypeName) }}does_not_equal
-      {{- else if or (eq "ConnectiveEnum" .Type.Name) (hasSuffix "ConnectiveEnum" .Type.OfType.OfTypeName) }}or
-      {{- else if or (eq "CustomActionsEntityTypeEnum" .Type.Name) (hasSuffix "CustomActionsEntityTypeEnum" .Type.OfType.OfTypeName) }}GLOBAL
-      {{- else if or (eq "CustomActionsHttpMethodEnum" .Type.Name) (hasSuffix "CustomActionsHttpMethodEnum" .Type.OfType.OfTypeName) }}GET
-      {{- else if or (eq "CustomActionsTriggerDefinitionAccessControlEnum" .Type.Name) (hasSuffix "CustomActionsTriggerDefinitionAccessControlEnum" .Type.OfType.OfTypeName) }}service_owners
-      {{- else if or (eq "HasDocumentationTypeEnum" .Type.Name) (hasSuffix "HasDocumentationTypeEnum" .Type.OfType.OfTypeName) }}api
-      {{- else if eq .Name "documentSubtype" }}openapi
-      {{- else if or (eq "RelationshipTypeEnum" .Type.Name) (hasSuffix "RelationshipTypeEnum" .Type.OfType.OfTypeName) }}depends_on
-      {{- else if or (eq "PredicateKeyEnum" .Type.Name) (hasSuffix "PredicateKeyEnum" .Type.OfType.OfTypeName) }}filter_id
-      {{- else if or (eq "PredicateTypeEnum" .Type.Name) (hasSuffix "PredicateTypeEnum" .Type.OfType.OfTypeName) }}satisfies_jq_expression
-      {{- else if or (eq "ServicePropertyTypeEnum" .Type.Name) (hasSuffix "ServicePropertyTypeEnum" .Type.OfType.OfTypeName) }}language
-      {{- else if or (eq "UsersFilterEnum" .Type.Name) (hasSuffix "UsersFilterEnum" .Type.OfType.OfTypeName) }}last_sign_in_at
-      {{- else if or (eq "UserRole" .Type.Name) (hasSuffix "UserRole" .Type.OfType.OfTypeName) }}admin
-      {{- else if or (hasSuffix "Enum" .Type.Name) (hasSuffix "Enum" .Type.OfType.OfTypeName) }}NEW_ENUM_SET_DEFAULT
-      {{- else if or (hasSuffix "ToolCategory" .Type.Name) (hasSuffix "ToolCategory" .Type.OfType.OfTypeName) }}api_documentation
-      {{- else if or (eq "type" .Name) (hasSuffix "Type" .Name) }}example_type
-      {{- else if eq "address" .Name }}support@company.com
-      {{- else if or (eq "id" .Name) (hasSuffix "Id" .Name) }}Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk
-      {{- else if or (eq "definition" .Name) (hasSuffix "Definition" .Name) }}example_definition
-      {{- else if hasSuffix "Template" .Name }}{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}
-      {{- else if or (eq "name" .Name) (hasSuffix "Name" .Name) }}example_name
-      {{- else if or (eq "language" .Name) (hasSuffix "Language" .Name) }}example_language
-      {{- else if or (eq "alias" .Name) (hasSuffix "Alias" .Name) }}example_alias
-      {{- else if or (eq "description" .Name) (hasSuffix "Description" .Name) }}example_description
-      {{- else if or (eq "key" .Name) (hasSuffix "Key" .Name) }}XXX_example_key_XXX
-      {{- else if or (eq "email" .Name) (hasSuffix "Email" .Name) }}first.last@domain.com
-      {{- else if or (eq "data" .Name) (hasSuffix "Data" .Name) }}example_data
-      {{- else if or (eq "note" .Name) (hasSuffix "Note" .Name) }}example_note
-      {{- else if or (eq "role" .Name) (hasSuffix "Role" .Name) }}example_role
-      {{- else if or (eq "notes" .Name) (hasSuffix "Notes" .Name) }}example_notes
-      {{- else if or (eq "value" .Name) (hasSuffix "Value" .Name) }}example_value
-      {{- else if or (eq "product" .Name) (hasSuffix "Product" .Name) }}example_product
-      {{- else if or (eq "framework" .Name) (hasSuffix "Framework" .Name) }}example_framework
-      {{- else if or (eq "url" .Name) (hasSuffix "Url" .Name) }}john.doe@example.com
-      {{- else if eq "baseDirectory" .Name }}/home/opslevel.yaml
-      {{- else if eq "externalUrl" .Name }}https://google.com
-      {{- else if eq "responsibilities" .Name }}example description of responsibilities
-      {{- else if eq "environment" .Name }}environment that tool belongs to
-      {{- else if eq "arg" .Name }}example_arg
-      {{- else if hasSuffix "Extensions" .Name }}'go', 'py', 'rb'
-      {{- else if hasSuffix "Paths" .Name }}'/usr/local/bin', '/home/opslevel'
-      {{- else if hasSuffix "Ids" .Name }}'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'
-      {{- else if hasSuffix "TagKeys" .Name }}'tag_key1', 'tag_key2'
-      {{- else if hasSuffix "Selector" .Name }}example_selector
-      {{- else if hasSuffix "Condition" .Name }}example_condition
-      {{- else if hasSuffix "Message" .Name }}example_message
-      {{- else if hasSuffix "Method" .Name }}example_method
-      {{- else if hasSuffix "Identifier" .Name}}example_identifier
-    {{- end}}
+     {{ . | example_tag_value }}
    {{- if isListType .Name }}]{{ end -}}"{{- end}}` +
 		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
 }
 {{- end -}}
 `),
-	// 	interfaceFile: t(header + `
-	// {{range .Types | sortByName}}{{if and (eq .Kind "INTERFACE") (not (internal .Name))}}
-	// {{template "interface_object" .}}
-	// {{end}}{{end}}
+	interfacesFile: t(header + `
+	{{range .Types | sortByName}}{{if and (eq .Kind "INTERFACE") (not (internal .Name))}}
+	{{template "interface_object" .}}
+	{{end}}{{end}}
 
-	// {{- define "interface_object" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} interface { {{range .Fields }}
-	//   {{ template "field_comment_description" . }}
-	//   {{.Name | title}}() {{.Name | title}}
-	// {{end}}
-	// }
-	// {{- end -}}
-	// 	`),
+	{{- define "interface_object" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct { {{ range .Fields }}{{ if not (eq .Name "campaign") }}
+	  {{.Name | title}} {{  template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	{{- end }}{{ end }}
+    {{ template "fragments" . }}
+	}
+	{{- end -}}
+		`),
 	// 	payloadFile: t(header + `
 	// {{range .Types | sortByName}}{{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
 	// {{template "payload_object" .}}
@@ -520,34 +469,34 @@ type {{.Name}} struct { {{range .InputFields }}
 	// {{- end}}
 	// {{- end}}
 	// `),
-	// 	objectFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{- if eq .Name "Account" }}
-	//       {{- template "account_struct" . }}
-	//     {{- else}}{{template "object" .}}{{end}}
-	//   {{- end}}
-	// {{- end}}
+	objectFile: t(header + `
+	{{range .Types | sortByName}}
+	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	    {{- if eq .Name "Account" }}
+	      {{- template "account_struct" . }}
+	    {{- else}}{{template "object" .}}{{end}}
+	  {{- end}}
+	{{- end}}
 
-	// {{ define "account_struct" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct { {{range .Fields }}
-	//   {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
-	//  {{- end }}
-	// }
-	// {{- end }}
+	{{ define "account_struct" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct { {{range .Fields }}
+	  {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
+	 {{- end }}
+	}
+	{{- end }}
 
-	// {{- define "object" -}}
-	// {{ if and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name)) }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	//   {{ range .Fields -}}
-	//     {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	//     {{- end}}
-	//   {{ end -}}
-	// }
-	// {{- end }}{{- end -}}
-	// 	`),
+	{{- define "object" -}}
+	{{ if and (and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name))) (not (hasSuffix "Edge" .Name)) }}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct {
+	  {{ range .Fields -}}
+	    {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	    {{- end}}
+	  {{ end -}}
+	}
+	{{- end }}{{- end -}}
+		`),
 	// 	scalarFile: t(header + `
 	// import (
 	// 	"encoding/base64"
@@ -666,6 +615,7 @@ func t(text string) *template.Template {
 	genTemplate.Parse(convertedTypeTmpl)
 	genTemplate.Parse(descriptionTmpl)
 	genTemplate.Parse(fieldCommentDescriptionTmpl)
+	genTemplate.Parse(fragmentsTmpl)
 	genTemplate.Parse(graphqlStructTagTmpl)
 	genTemplate.Parse(graphqlStructTagWithArgsTmpl)
 	genTemplate.Parse(nameToSingularTmpl)
@@ -764,10 +714,36 @@ func isPlural(s string) bool {
 	return false
 }
 
+// Check
+func fragmentsForCheck() string {
+	checkFragments := []string{
+		"AlertSourceUsageCheckFragment",
+		"CustomEventCheckFragment",
+		"HasRecentDeployCheckFragment",
+		"ManualCheckFragment",
+		"RepositoryFileCheckFragment",
+		"RepositoryGrepCheckFragment",
+		"RepositorySearchCheckFragment",
+		"ServiceOwnershipCheckFragment",
+		"ServicePropertyCheckFragment",
+		"TagDefinedCheckFragment",
+		"ToolUsageCheckFragment",
+		"HasDocumentationCheckFragment",
+	}
+	output := make([]string, len(checkFragments))
+	for _, fragment := range checkFragments {
+		graphqlFragment := fragment + "`" + `graphql:"... on ` + fragment + "`"
+		output = append(output, graphqlFragment)
+	}
+	return strings.Join(output, "\n")
+}
+
 var templFuncMap = template.FuncMap{
 	"internal":                 func(s string) bool { return strings.HasPrefix(s, "__") },
 	"quote":                    strconv.Quote,
 	"join":                     strings.Join,
+	"check_fragments":          fragmentsForCheck,
+	"example_tag_value":        getExampleValue,
 	"isListType":               isPlural,
 	"renameMutation":           renameMutation,
 	"renameMutationReturnType": renameMutationReturnType,
@@ -828,4 +804,142 @@ var templFuncMap = template.FuncMap{
 		}
 		return s
 	},
+}
+
+func inputFieldNameMatchesName(inputField GraphQLInputValue, fieldName string) bool {
+	if fieldName == inputField.Name ||
+		strings.ToLower(fieldName) == inputField.Name ||
+		strings.HasSuffix(inputField.Name, fieldName) {
+		return true
+	}
+	return false
+}
+
+func inputFieldNameMatchesFieldType(inputField GraphQLInputValue, fieldName string) bool {
+	if fieldName == inputField.Type.Name ||
+		fieldName == inputField.Type.OfType.OfTypeName ||
+		strings.ToLower(fieldName) == inputField.Type.Name ||
+		strings.HasSuffix(inputField.Type.Name, fieldName) ||
+		strings.HasSuffix(inputField.Type.OfType.OfTypeName, fieldName) {
+		return true
+	}
+	return false
+}
+
+func getExampleValue(inputField GraphQLInputValue) string {
+	switch {
+	case inputFieldNameMatchesFieldType(inputField, "Boolean"):
+		return "false"
+	case inputFieldNameMatchesFieldType(inputField, "Int"):
+		return "3"
+	case inputFieldNameMatchesFieldType(inputField, "JSON"):
+		return `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`
+	case strings.HasSuffix(inputField.Type.Name, "Time"), strings.HasSuffix(inputField.Type.OfType.OfTypeName, "Time"):
+		return "2024-01-05T01:00:00.000Z"
+	case inputFieldNameMatchesFieldType(inputField, "FrequencyTimeScale"):
+		return "week"
+	case inputFieldNameMatchesFieldType(inputField, "ContactType"):
+		return "slack"
+	case inputFieldNameMatchesFieldType(inputField, "AlertSourceTypeEnum"):
+		return "pagerduty"
+	case inputFieldNameMatchesFieldType(inputField, "AliasOwnerTypeEnum"):
+		return "scorecard"
+	case inputFieldNameMatchesFieldType(inputField, "BasicTypeEnum"):
+		return "does_not_equal"
+	case inputFieldNameMatchesFieldType(inputField, "ConnectiveEnum"):
+		return "or"
+	case inputFieldNameMatchesFieldType(inputField, "CustomActionsEntityTypeEnum"):
+		return "GLOBAL"
+	case inputFieldNameMatchesFieldType(inputField, "CustomActionsHttpMethodEnum"):
+		return "GET"
+	case inputFieldNameMatchesFieldType(inputField, "CustomActionsTriggerDefinitionAccessControlEnum"):
+		return "service_owners"
+	case inputFieldNameMatchesFieldType(inputField, "HasDocumentationTypeEnum"):
+		return "api"
+	case "documentSubtype" == inputField.Name:
+		return "openapi"
+	case inputFieldNameMatchesFieldType(inputField, "RelationshipTypeEnum"):
+		return "depends_on"
+	case inputFieldNameMatchesFieldType(inputField, "PredicateKeyEnum"):
+		return "filter_id"
+	case inputFieldNameMatchesFieldType(inputField, "PredicateTypeEnum"):
+		return "satisfies_jq_expression"
+	case inputFieldNameMatchesFieldType(inputField, "ServicePropertyTypeEnum"):
+		return "language"
+	case inputFieldNameMatchesFieldType(inputField, "UsersFilterEnum"):
+		return "last_sign_in_at"
+	case inputFieldNameMatchesFieldType(inputField, "UserRole"):
+		return "admin"
+	case strings.HasSuffix(inputField.Type.Name, "Enum"), strings.HasSuffix(inputField.Type.OfType.OfTypeName, "Enum"):
+		return "NEW_ENUM_SET_DEFAULT"
+	case strings.HasSuffix(inputField.Type.Name, "ToolCategory"), strings.HasSuffix(inputField.Type.OfType.OfTypeName, "ToolCategory"):
+		return "api_documentation"
+	case inputFieldNameMatchesName(inputField, "Type"):
+		return "example_type"
+	case inputFieldNameMatchesName(inputField, "Address"):
+		return "support@company.com"
+	case inputFieldNameMatchesName(inputField, "Id"):
+		return "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"
+	case inputFieldNameMatchesName(inputField, "Definition"):
+		return "example_definition"
+	case inputFieldNameMatchesName(inputField, "Template"):
+		return `{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}`
+	case inputFieldNameMatchesName(inputField, "Name"):
+		return "example_name"
+	case inputFieldNameMatchesName(inputField, "Language"):
+		return "example_language"
+	case inputFieldNameMatchesName(inputField, "Alias"):
+		return "example_alias"
+	case inputFieldNameMatchesName(inputField, "Description"):
+		return "example_description"
+	case inputFieldNameMatchesName(inputField, "Key"):
+		return "XXX_example_key_XXX"
+	case inputFieldNameMatchesName(inputField, "Email"):
+		return "first.last@domain.com"
+	case inputFieldNameMatchesName(inputField, "Data"):
+		return "example_data"
+	case inputFieldNameMatchesName(inputField, "Note"):
+		return "example_note"
+	case inputFieldNameMatchesName(inputField, "Role"):
+		return "example_role"
+	case inputFieldNameMatchesName(inputField, "Notes"):
+		return "example_notes"
+	case inputFieldNameMatchesName(inputField, "Value"):
+		return "example_value"
+	case inputFieldNameMatchesName(inputField, "Product"):
+		return "example_product"
+	case inputFieldNameMatchesName(inputField, "Framework"):
+		return "example_framework"
+	case inputFieldNameMatchesName(inputField, "Url"):
+		return "john.doe@example.com"
+	case inputField.Name == "baseDirectory":
+		return "/home/opslevel.yaml"
+	case inputField.Name == "externalUrl":
+		return "https://google.com"
+	case inputField.Name == "responsibilities":
+		return "example description of responsibilities"
+	case inputField.Name == "environment":
+		return "environment that tool belongs to"
+	case inputField.Name == "arg":
+		return "example_arg"
+	case strings.HasSuffix(inputField.Name, "Extensions"):
+		return "'go', 'py', 'rb'"
+	case strings.HasSuffix(inputField.Name, "Paths"):
+		return "'/usr/local/bin', '/home/opslevel'"
+	case strings.HasSuffix(inputField.Name, "Ids"):
+		return "'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'"
+	case strings.HasSuffix(inputField.Name, "TagKeys"):
+		return "'tag_key1', 'tag_key2'"
+	case strings.HasSuffix(inputField.Name, "Selector"):
+		return "example_selector"
+	case strings.HasSuffix(inputField.Name, "Condition"):
+		return "example_condition"
+	case strings.HasSuffix(inputField.Name, "Message"):
+		return "example_message"
+	case strings.HasSuffix(inputField.Name, "Method"):
+		return "example_method"
+	case strings.HasSuffix(inputField.Name, "Identifier"):
+		return "example_identifier"
+	}
+	return ""
 }
