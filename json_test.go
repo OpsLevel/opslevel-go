@@ -28,9 +28,13 @@ func TestNewJsonString(t *testing.T) {
 		// object
 		"wrappedObject":      {`{"foo": "bar"}`, `{"foo": "bar"}`},
 		"wrappedObjectEmpty": {`{}`, `{}`},
+		"objectFromMap":      {map[string]any{"foo": "bar"}, `{"foo":"bar"}`},
+		"objectEmptyFromMap": {make(map[string]any), `{}`},
 		// array
-		"wrappedArray":      {`["foo", "bar"]`, `["foo", "bar"]`},
-		"wrappedArrayEmpty": {`[]`, `[]`},
+		"wrappedArray":        {`["foo", "bar"]`, `["foo", "bar"]`},
+		"wrappedArrayEmpty":   {`[]`, `[]`},
+		"arrayFromSlice":      {[]string{"foo", "bar"}, `["foo","bar"]`},
+		"arrayEmptyFromSlice": {make([]string, 0), `[]`},
 		// string
 		"string":      {"hello world", `"hello world"`},
 		"stringEmpty": {"", `""`},
@@ -47,7 +51,7 @@ func TestNewJsonString(t *testing.T) {
 		t.Run(k, func(t *testing.T) {
 			res, err := ol.NewJSONInput(v.Data)
 			autopilot.Ok(t, err)
-			autopilot.Equals(t, *res, v.Output)
+			autopilot.Equals(t, v.Output, *res)
 		})
 	}
 }
