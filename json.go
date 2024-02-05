@@ -4,14 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 )
 
-// JSON is a specialized map[string]string to support proper graphql serialization
 type (
-	JSON       map[string]any
+	// JSON represents a json object with keys and values for use with the OpsLevel API.
+	// Instantiate using NewJSON.
+	// Has a different graphql type compared to JSONSchema.
+	JSON map[string]any
+
+	// JSONSchema represents a json object with keys and values for use with the OpsLevel API.
+	// Instantiate using NewJSONSchema.
+	// Has a different graphql type compared to JSON.
 	JSONSchema map[string]any
+
+	// JsonString is a specialized input type to support serialization of any json compatible type
+	// (bool, string, int, map, slice, etc.) for use with the OpsLevel API.
+	// Instantiate using NewJSONInput.
+	JsonString string
 )
 
 func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
@@ -24,6 +36,7 @@ func NewJSONSchema(data string) (*JSONSchema, error) {
 	return &result, nil
 }
 
+// AsString returns a string containing its key value pairs marshalled as a json object.
 func (s JSONSchema) AsString() string {
 	dto := map[string]any{}
 	for k, v := range s {
@@ -52,6 +65,7 @@ func NewJSON(data string) (*JSON, error) {
 	return &result, nil
 }
 
+// ToJSON returns a string containing its key value pairs marshalled as a json object.
 func (s JSON) ToJSON() string {
 	dto := map[string]any{}
 	for k, v := range s {
@@ -70,12 +84,16 @@ func (s JSON) MarshalJSON() ([]byte, error) {
 	return []byte(strconv.Quote(string(b))), err
 }
 
-// JsonString is a specialized input type to support serialization to JSON for input to graphql
-type JsonString string
-
 func (s JsonString) GetGraphQLType() string { return "JsonString" }
 
+// NewJSONInput converts any json compatible type (bool, string, int, map, slice, etc.) into a valid JsonString.
+// If passed a json object or array wrapped in a string, it will not use json.Marshal(data) and instead simply return
+// the value of of JsonString(data) to prevent adding unnecessary escape characters.
 func NewJSONInput(data any) (*JsonString, error) {
+	if s, ok := data.(string); ok && wrappedObjectOrArray(s) {
+		result := JsonString(s)
+		return &result, nil
+	}
 	var result JsonString
 	bytes, err := json.Marshal(data)
 	if err != nil {
@@ -121,4 +139,11 @@ func (s JsonString) AsArray() []any {
 func (s JsonString) AsMap() map[string]any {
 	value, _ := JsonStringAs[map[string]any](s)
 	return value
+}
+
+func wrappedObjectOrArray(s string) bool {
+	if (strings.HasPrefix(s, "{") && strings.HasSuffix(s, "}")) || (strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]")) {
+		return true
+	}
+	return false
 }
