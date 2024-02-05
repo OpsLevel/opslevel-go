@@ -10,7 +10,34 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var validStringContainingJSON = `{"name":"Thomas","isIntern":false,"age":45,"access":{"aws":"admin","okta":"admin"},"tags":["org:engineering","team:platform"]}`
+var (
+	wrappedObject    = `{"access":{"aws":"admin","okta":"admin"},"isIntern":false,"name":"Thomas","tags":["org:engineering","team:platform"]}`
+	wrappedObjectMap = map[string]any{
+		"name":     "Thomas",
+		"isIntern": false,
+		"access": map[string]any{
+			"aws":  "admin",
+			"okta": "admin",
+		},
+		"tags": []any{
+			"org:engineering",
+			"team:platform",
+		},
+	}
+	wrappedArray      = `["Thomas",false,{"aws":"admin","okta":"admin"},["org:engineering","team:platform"]]`
+	wrappedArraySlice = []any{
+		"Thomas",
+		false,
+		map[string]any{
+			"aws":  "admin",
+			"okta": "admin",
+		},
+		[]string{
+			"org:engineering",
+			"team:platform",
+		},
+	}
+)
 
 type JSONTester struct {
 	Key1 ol.JSON  `json:"key1"`
@@ -26,26 +53,26 @@ func TestNewJsonString(t *testing.T) {
 	}
 	testCases := map[string]TestCase{
 		// object
-		"wrappedObject":      {`{"foo": "bar"}`, `{"foo": "bar"}`},
-		"wrappedObjectEmpty": {`{}`, `{}`},
-		"objectFromMap":      {map[string]any{"foo": "bar"}, `{"foo":"bar"}`},
-		"objectEmptyFromMap": {make(map[string]any), `{}`},
+		"wrappedObject":         {wrappedObject, ol.JsonString(wrappedObject)},
+		"wrappedObjectMap":      {wrappedObjectMap, ol.JsonString(wrappedObject)},
+		"wrappedObjectEmpty":    {"{}", "{}"},
+		"wrappedObjectMapEmpty": {map[string]any{}, "{}"},
 		// array
-		"wrappedArray":        {`["foo", "bar"]`, `["foo", "bar"]`},
-		"wrappedArrayEmpty":   {`[]`, `[]`},
-		"arrayFromSlice":      {[]string{"foo", "bar"}, `["foo","bar"]`},
-		"arrayEmptyFromSlice": {make([]string, 0), `[]`},
+		"wrappedArray":           {wrappedArray, ol.JsonString(wrappedArray)},
+		"wrappedArraySlice":      {wrappedArraySlice, ol.JsonString(wrappedArray)},
+		"wrappedArrayEmpty":      {"[]", "[]"},
+		"wrappedArraySliceEmpty": {[]any{}, "[]"},
 		// string
 		"string":      {"hello world", `"hello world"`},
 		"stringEmpty": {"", `""`},
 		// bool
 		"wrappedBoolTrue": {"true", `"true"`},
-		"boolTrue":        {true, `true`},
-		"boolFalse":       {false, `false`},
+		"boolTrue":        {true, "true"},
+		"boolFalse":       {false, "false"},
 		// number
 		"wrappedDecimal": {"1.32", `"1.32"`},
-		"numberDecimal":  {1.32, `1.32`},
-		"numberIntZero":  {0, `0`},
+		"numberDecimal":  {1.32, "1.32"},
+		"numberIntZero":  {0, "0"},
 	}
 	for k, v := range testCases {
 		t.Run(k, func(t *testing.T) {
@@ -57,19 +84,39 @@ func TestNewJsonString(t *testing.T) {
 }
 
 func TestNewJSON(t *testing.T) {
-	// Arrange
-	data1 := ol.JSON{"foo": "bar"}
-	data2, data2Err := ol.NewJSON(`{"foo":"bar"}`)
-	// Act
-	result1, err1 := json.Marshal(data1)
-	result2, err2 := json.Marshal(data2)
-	// Assert
-	autopilot.Ok(t, data2Err)
-	autopilot.Ok(t, err1)
-	autopilot.Ok(t, err2)
-	autopilot.Equals(t, data1, *data2)
-	autopilot.Assert(t, &data1 != data2, "The JSON objects have the same memory address")
-	autopilot.Equals(t, result1, result2)
+	type TestCase struct {
+		Data   string
+		Output ol.JSON
+	}
+	testCases := map[string]TestCase{
+		"wrappedObject":      {wrappedObject, ol.JSON(wrappedObjectMap)},
+		"wrappedObjectEmpty": {"{}", ol.JSON{}},
+	}
+	for k, v := range testCases {
+		t.Run(k, func(t *testing.T) {
+			res, err := ol.NewJSON(v.Data)
+			autopilot.Ok(t, err)
+			autopilot.Equals(t, v.Output, *res)
+		})
+	}
+}
+
+func TestNewJSONSchema(t *testing.T) {
+	type TestCase struct {
+		Data   string
+		Output ol.JSONSchema
+	}
+	testCases := map[string]TestCase{
+		"wrappedObject":      {wrappedObject, ol.JSONSchema(wrappedObjectMap)},
+		"wrappedObjectEmpty": {"{}", ol.JSONSchema{}},
+	}
+	for k, v := range testCases {
+		t.Run(k, func(t *testing.T) {
+			res, err := ol.NewJSONSchema(v.Data)
+			autopilot.Ok(t, err)
+			autopilot.Equals(t, v.Output, *res)
+		})
+	}
 }
 
 func TestMarshalJSON(t *testing.T) {
@@ -198,23 +245,4 @@ func TestUnmarshalJSONString(t *testing.T) {
 	autopilot.Equals(t, data4, result4.AsArray())
 	autopilot.Equals(t, data5, result5.AsMap())
 	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float32")
-}
-
-func TestNewJSONSchema(t *testing.T) {
-	res, err := ol.NewJSONSchema(validStringContainingJSON)
-	resVal := *res
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, resVal["name"], "Thomas")
-	autopilot.Equals(t, resVal["isIntern"], false)
-	autopilot.Equals(t, resVal["age"], float64(45)) // this is normal with encoding/json
-	autopilot.Equals(t, resVal["access"], map[string]interface{}{"aws": "admin", "okta": "admin"})
-	autopilot.Equals(t, resVal["tags"], []interface{}{"org:engineering", "team:platform"})
-}
-
-func jsonMarshal(data any) string {
-	b, err := json.Marshal(data)
-	if err != nil {
-		return ""
-	}
-	return string(b)
 }
