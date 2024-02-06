@@ -806,21 +806,97 @@ var templFuncMap = template.FuncMap{
 	},
 }
 
-func inputFieldNameMatchesName(inputField GraphQLInputValue, fieldName string) bool {
-	if fieldName == inputField.Name ||
-		strings.ToLower(fieldName) == inputField.Name ||
-		strings.HasSuffix(inputField.Name, fieldName) {
+func getExampleValueByFieldName(inputField GraphQLInputValue) string {
+	mapFieldTypeToExampleValue := map[string]string{
+		"DocumentSubtype":      "openapi",
+		"Address":              "support@company.com",
+		"Id":                   "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
+		"Definition":           "example_definition",
+		"Template":             `{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}`,
+		"Name":                 "example_name",
+		"Language":             "example_language",
+		"Alias":                "example_alias",
+		"Description":          "example_description",
+		"Email":                "first.last@domain.com",
+		"Data":                 "example_data",
+		"Note":                 "example_note",
+		"IamRole":              "example_role",
+		"DisplayType":          "example_type",
+		"HttpMethod":           "GET",
+		"Notes":                "example_notes",
+		"Value":                "example_value",
+		"Product":              "example_product",
+		"Framework":            "example_framework",
+		"Url":                  "john.doe@example.com",
+		"BaseDirectory":        "/home/opslevel.yaml",
+		"ExternalUrl":          "https://google.com",
+		"Responsibilities":     "example description of responsibilities",
+		"Environment":          "environment that tool belongs to",
+		"Arg":                  "example_arg",
+		"Extensions":           "'go', 'py', 'rb'",
+		"Paths":                "'/usr/local/bin', '/home/opslevel'",
+		"Ids":                  "'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'",
+		"TagKeys":              "'tag_key1', 'tag_key2'",
+		"Selector":             "example_selector",
+		"Condition":            "example_condition",
+		"Message":              "example_message",
+		"RequireContactMethod": "false",
+		"Identifier":           "example_identifier",
+		"DocumentType":         "api",
+	}
+	for k, v := range mapFieldTypeToExampleValue {
+		if k == inputField.Name ||
+			strings.ToLower(k[:1])+k[1:] == inputField.Name ||
+			strings.HasSuffix(inputField.Name, k) {
+			return v
+		}
+	}
+	return ""
+}
+
+func getExampleValueByFieldType(inputField GraphQLInputValue) string {
+	mapFieldTypeToExampleValue := map[string]string{
+		"Time":                        "2024-01-05T01:00:00.000Z",
+		"FrequencyTimeScale":          "week",
+		"ContactType":                 "slack",
+		"AlertSourceTypeEnum":         "pagerduty",
+		"AliasOwnerTypeEnum":          "scorecard",
+		"BasicTypeEnum":               "does_not_equal",
+		"ConnectiveEnum":              "or",
+		"CustomActionsEntityTypeEnum": "GLOBAL",
+		"CustomActionsHttpMethodEnum": "GET",
+		"CustomActionsTriggerDefinitionAccessControlEnum": "service_owners",
+		"RelationshipTypeEnum":                            "depends_on",
+		"PredicateKeyEnum":                                "filter_id",
+		"PredicateTypeEnum":                               "satisfies_jq_expression",
+		"ServicePropertyTypeEnum":                         "language",
+		"UsersFilterEnum":                                 "last_sign_in_at",
+		"UserRole":                                        "admin",
+		"ToolCategory":                                    "api_documentation",
+	}
+	for k, v := range mapFieldTypeToExampleValue {
+		if inputFieldMatchesType(inputField, k) {
+			return v
+		}
+	}
+	return ""
+}
+
+func inputFieldMatchesType(inputField GraphQLInputValue, fieldType string) bool {
+	if fieldType == inputField.Type.Name ||
+		fieldType == inputField.Type.OfType.OfTypeName ||
+		strings.ToLower(fieldType) == inputField.Type.Name ||
+		strings.HasSuffix(inputField.Type.Name, fieldType) ||
+		strings.HasSuffix(inputField.Type.OfType.OfTypeName, fieldType) {
 		return true
 	}
 	return false
 }
 
-func inputFieldNameMatchesFieldType(inputField GraphQLInputValue, fieldName string) bool {
-	if fieldName == inputField.Type.Name ||
-		fieldName == inputField.Type.OfType.OfTypeName ||
-		strings.ToLower(fieldName) == inputField.Type.Name ||
-		strings.HasSuffix(inputField.Type.Name, fieldName) ||
-		strings.HasSuffix(inputField.Type.OfType.OfTypeName, fieldName) {
+func inputFieldNameMatchesName(inputField GraphQLInputValue, fieldName string) bool {
+	if fieldName == inputField.Name ||
+		strings.ToLower(fieldName[:1])+fieldName[1:] == inputField.Name ||
+		strings.HasSuffix(inputField.Name, fieldName) {
 		return true
 	}
 	return false
@@ -828,118 +904,32 @@ func inputFieldNameMatchesFieldType(inputField GraphQLInputValue, fieldName stri
 
 func getExampleValue(inputField GraphQLInputValue) string {
 	switch {
-	case inputFieldNameMatchesFieldType(inputField, "Boolean"):
+	case inputFieldMatchesType(inputField, "Boolean"):
 		return "false"
-	case inputFieldNameMatchesFieldType(inputField, "Int"):
+	case inputFieldMatchesType(inputField, "Int"):
 		return "3"
-	case inputFieldNameMatchesFieldType(inputField, "JSON"):
+	case inputFieldMatchesType(inputField, "JSON"):
 		return `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`
-	case strings.HasSuffix(inputField.Type.Name, "Time"), strings.HasSuffix(inputField.Type.OfType.OfTypeName, "Time"):
-		return "2024-01-05T01:00:00.000Z"
-	case inputFieldNameMatchesFieldType(inputField, "FrequencyTimeScale"):
-		return "week"
-	case inputFieldNameMatchesFieldType(inputField, "ContactType"):
-		return "slack"
-	case inputFieldNameMatchesFieldType(inputField, "AlertSourceTypeEnum"):
-		return "pagerduty"
-	case inputFieldNameMatchesFieldType(inputField, "AliasOwnerTypeEnum"):
-		return "scorecard"
-	case inputFieldNameMatchesFieldType(inputField, "BasicTypeEnum"):
-		return "does_not_equal"
-	case inputFieldNameMatchesFieldType(inputField, "ConnectiveEnum"):
-		return "or"
-	case inputFieldNameMatchesFieldType(inputField, "CustomActionsEntityTypeEnum"):
-		return "GLOBAL"
-	case inputFieldNameMatchesFieldType(inputField, "CustomActionsHttpMethodEnum"):
-		return "GET"
-	case inputFieldNameMatchesFieldType(inputField, "CustomActionsTriggerDefinitionAccessControlEnum"):
-		return "service_owners"
-	case inputFieldNameMatchesFieldType(inputField, "HasDocumentationTypeEnum"):
-		return "api"
-	case "documentSubtype" == inputField.Name:
-		return "openapi"
-	case inputFieldNameMatchesFieldType(inputField, "RelationshipTypeEnum"):
-		return "depends_on"
-	case inputFieldNameMatchesFieldType(inputField, "PredicateKeyEnum"):
-		return "filter_id"
-	case inputFieldNameMatchesFieldType(inputField, "PredicateTypeEnum"):
-		return "satisfies_jq_expression"
-	case inputFieldNameMatchesFieldType(inputField, "ServicePropertyTypeEnum"):
-		return "language"
-	case inputFieldNameMatchesFieldType(inputField, "UsersFilterEnum"):
-		return "last_sign_in_at"
-	case inputFieldNameMatchesFieldType(inputField, "UserRole"):
-		return "admin"
-	case strings.HasSuffix(inputField.Type.Name, "Enum"), strings.HasSuffix(inputField.Type.OfType.OfTypeName, "Enum"):
-		return "NEW_ENUM_SET_DEFAULT"
-	case strings.HasSuffix(inputField.Type.Name, "ToolCategory"), strings.HasSuffix(inputField.Type.OfType.OfTypeName, "ToolCategory"):
-		return "api_documentation"
-	case inputFieldNameMatchesName(inputField, "Type"):
-		return "example_type"
-	case inputFieldNameMatchesName(inputField, "Address"):
-		return "support@company.com"
-	case inputFieldNameMatchesName(inputField, "Id"):
-		return "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"
-	case inputFieldNameMatchesName(inputField, "Definition"):
-		return "example_definition"
-	case inputFieldNameMatchesName(inputField, "Template"):
-		return `{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}`
-	case inputFieldNameMatchesName(inputField, "Name"):
-		return "example_name"
-	case inputFieldNameMatchesName(inputField, "Language"):
-		return "example_language"
-	case inputFieldNameMatchesName(inputField, "Alias"):
-		return "example_alias"
-	case inputFieldNameMatchesName(inputField, "Description"):
-		return "example_description"
-	case inputFieldNameMatchesName(inputField, "Key"):
-		return "XXX_example_key_XXX"
-	case inputFieldNameMatchesName(inputField, "Email"):
-		return "first.last@domain.com"
-	case inputFieldNameMatchesName(inputField, "Data"):
-		return "example_data"
-	case inputFieldNameMatchesName(inputField, "Note"):
-		return "example_note"
+	}
+
+	if valueByName := getExampleValueByFieldName(inputField); valueByName != "" {
+		return valueByName
+	}
+	if valueByType := getExampleValueByFieldType(inputField); valueByType != "" {
+		return valueByType
+	}
+
+	switch {
 	case inputFieldNameMatchesName(inputField, "Role"):
 		return "example_role"
-	case inputFieldNameMatchesName(inputField, "Notes"):
-		return "example_notes"
-	case inputFieldNameMatchesName(inputField, "Value"):
-		return "example_value"
-	case inputFieldNameMatchesName(inputField, "Product"):
-		return "example_product"
-	case inputFieldNameMatchesName(inputField, "Framework"):
-		return "example_framework"
-	case inputFieldNameMatchesName(inputField, "Url"):
-		return "john.doe@example.com"
-	case inputField.Name == "baseDirectory":
-		return "/home/opslevel.yaml"
-	case inputField.Name == "externalUrl":
-		return "https://google.com"
-	case inputField.Name == "responsibilities":
-		return "example description of responsibilities"
-	case inputField.Name == "environment":
-		return "environment that tool belongs to"
-	case inputField.Name == "arg":
-		return "example_arg"
-	case strings.HasSuffix(inputField.Name, "Extensions"):
-		return "'go', 'py', 'rb'"
-	case strings.HasSuffix(inputField.Name, "Paths"):
-		return "'/usr/local/bin', '/home/opslevel'"
-	case strings.HasSuffix(inputField.Name, "Ids"):
-		return "'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'"
-	case strings.HasSuffix(inputField.Name, "TagKeys"):
-		return "'tag_key1', 'tag_key2'"
-	case strings.HasSuffix(inputField.Name, "Selector"):
-		return "example_selector"
-	case strings.HasSuffix(inputField.Name, "Condition"):
-		return "example_condition"
-	case strings.HasSuffix(inputField.Name, "Message"):
-		return "example_message"
-	case strings.HasSuffix(inputField.Name, "Method"):
+	case inputFieldNameMatchesName(inputField, "Key"):
+		return "XXX_example_key_XXX"
+	case inputFieldNameMatchesName(inputField, "Type"):
+		return "example_type"
+	case inputFieldNameMatchesName(inputField, "Method"):
 		return "example_method"
-	case strings.HasSuffix(inputField.Name, "Identifier"):
-		return "example_identifier"
+	case inputFieldMatchesType(inputField, "Enum"):
+		return "NEW_ENUM_SET_DEFAULT"
 	}
 	return ""
 }
