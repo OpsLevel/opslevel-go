@@ -10,6 +10,7 @@ import (
 	"go/format"
 	"log"
 	"os"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -33,6 +34,22 @@ const (
 	// scalarFile      string = "pkg/gen/scalar.go"
 	// unionFile       string = "pkg/gen/union.go"
 )
+
+var knownTypeIsName = []string{
+	"category",
+	"filter",
+	"level",
+}
+
+var knownBoolsByName = []string{
+	"enabled",
+}
+
+var knownIsoTimeByName = []string{
+	"createdat",
+	"installedat",
+	"enableon",
+}
 
 var stringTypeSuffixes = []string{
 	"actionmessage",
@@ -266,7 +283,10 @@ const (
 {{- end }}`
 	fragmentsTmpl = `
 {{- define "fragments" -}}
-  {{ if eq .Name "Check" }}{{ check_fragments }}{{- end }}
+  {{ if eq .Name "Check" }}{{ check_fragments }}
+  {{ else if eq .Name "CustomActionsExternalAction" }}{{ custom_actions_ext_action_fragments }}
+  {{ else if eq .Name "Integration" }}{{ integration_fragments }}
+  {{- end }}
 {{- end }}`
 	nameToSingularTmpl = `
 {{- define "name_to_singular" -}}
@@ -318,8 +338,10 @@ var templates = map[string]*template.Template{
 {{ template "type_comment_description" . }}
 type {{.Name}} string
 
-const ({{range .EnumValues}}
-	{{$.Name}}{{.Name | enumIdentifier}} {{$.Name}} = {{.Name | quote}} {{ template "field_comment_description" . }}{{end}}
+const (
+{{- range .EnumValues }}
+	{{$.Name}}{{.Name | enumIdentifier}} {{$.Name}} = {{.Name | quote}} {{ template "field_comment_description" . }}
+{{- end }}
 )
 // All {{$.Name}} as []string
 var All{{$.Name}} = []string {
@@ -363,15 +385,19 @@ type {{.Name}} struct { {{range .InputFields }}
 {{- end -}}
 `),
 	interfacesFile: t(header + `
+  import "github.com/relvacode/iso8601"
+
 	{{range .Types | sortByName}}{{if and (eq .Kind "INTERFACE") (not (internal .Name))}}
 	{{template "interface_object" .}}
 	{{end}}{{end}}
 
 	{{- define "interface_object" -}}
 	{{ template "type_comment_description" . }}
-	type {{.Name}} struct { {{ range .Fields }}{{ if not (eq .Name "campaign") }}
-	  {{.Name | title}} {{  template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	type {{.Name}} struct { {{ add_special_interfaces_fields .Name }}
+    {{ range .Fields }}{{ if not (skip_interface_field $.Name .Name) }}
+	  {{.Name | title}} {{ . | get_field_type }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
 	{{- end }}{{ end }}
+
     {{ template "fragments" . }}
 	}
 	{{- end -}}
@@ -714,6 +740,15 @@ func isPlural(s string) bool {
 	return false
 }
 
+func getFragmentWithStructTag(fragmentNames ...string) string {
+	output := make([]string, len(fragmentNames))
+	for _, fragment := range fragmentNames {
+		fragmentWithTag := fragment + "`" + `graphql:"... on ` + strings.TrimSuffix(fragment, "Fragment") + "\"`"
+		output = append(output, fragmentWithTag)
+	}
+	return strings.Join(output, "\n")
+}
+
 // Check
 func fragmentsForCheck() string {
 	checkFragments := []string{
@@ -730,25 +765,38 @@ func fragmentsForCheck() string {
 		"ToolUsageCheckFragment",
 		"HasDocumentationCheckFragment",
 	}
-	output := make([]string, len(checkFragments))
-	for _, fragment := range checkFragments {
-		graphqlFragment := fragment + "`" + `graphql:"... on ` + fragment + "`"
-		output = append(output, graphqlFragment)
+	return getFragmentWithStructTag(checkFragments...)
+}
+
+func fragmentsForIntegration() string {
+	integrationFragments := []string{
+		"AWSIntegrationFragment",
+		"NewRelicIntegrationFragment",
 	}
-	return strings.Join(output, "\n")
+
+	return getFragmentWithStructTag(integrationFragments...)
+}
+
+func fragmentsForCustomActionsExtAction() string {
+	return getFragmentWithStructTag("CustomActionsWebhookAction")
 }
 
 var templFuncMap = template.FuncMap{
-	"internal":                 func(s string) bool { return strings.HasPrefix(s, "__") },
-	"quote":                    strconv.Quote,
-	"join":                     strings.Join,
-	"check_fragments":          fragmentsForCheck,
-	"example_tag_value":        getExampleValue,
-	"isListType":               isPlural,
-	"renameMutation":           renameMutation,
-	"renameMutationReturnType": renameMutationReturnType,
-	"convertPayloadType":       convertPayloadType,
-	"makeSingular":             makeSingular,
+	"internal":                            func(s string) bool { return strings.HasPrefix(s, "__") },
+	"quote":                               strconv.Quote,
+	"join":                                strings.Join,
+	"check_fragments":                     fragmentsForCheck,
+	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
+	"integration_fragments":               fragmentsForIntegration,
+	"get_field_type":                      getFieldType,
+	"add_special_interfaces_fields":       addSpecialInterfacesFields,
+	"skip_interface_field":                skipInterfaceField,
+	"example_tag_value":                   getExampleValue,
+	"isListType":                          isPlural,
+	"renameMutation":                      renameMutation,
+	"renameMutationReturnType":            renameMutationReturnType,
+	"convertPayloadType":                  convertPayloadType,
+	"makeSingular":                        makeSingular,
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
 			return string(unicode.ToLower(v)) + value[i+1:]
@@ -804,6 +852,57 @@ var templFuncMap = template.FuncMap{
 		}
 		return s
 	},
+}
+
+func addSpecialInterfacesFields(interfaceName string) string {
+	switch interfaceName {
+	case "CustomActionsExternalAction":
+		return "CustomActionsId"
+	case "Integration":
+		return "IntegrationId"
+	}
+	return ""
+}
+
+func skipInterfaceField(interfaceName, fieldName string) bool {
+	if interfaceName == "Check" {
+		switch fieldName {
+		case "campaign", "rawNotes", "url":
+			return true
+		}
+	} else if interfaceName == "CustomActionsExternalAction" {
+		switch fieldName {
+		case "id", "aliases":
+			return true
+		}
+	} else if interfaceName == "Integration" {
+		switch fieldName {
+		case "id", "name", "type":
+			return true
+		}
+	}
+	return false
+}
+
+func getFieldType(inputField GraphQLField) string {
+	lowercaseFieldName := strings.ToLower(inputField.Name)
+	switch {
+	case "id" == lowercaseFieldName:
+		return "ID"
+	case "aliases" == lowercaseFieldName:
+		return "[]string"
+	case "owner" == lowercaseFieldName:
+		return "CheckOwner"
+	case "type" == lowercaseFieldName:
+		return "CheckType"
+	case slices.Contains(knownTypeIsName, lowercaseFieldName):
+		return strings.ToUpper(inputField.Name[0:1]) + inputField.Name[1:]
+	case slices.Contains(knownBoolsByName, lowercaseFieldName):
+		return "bool"
+	case slices.Contains(knownIsoTimeByName, lowercaseFieldName):
+		return "iso8601.Time"
+	}
+	return "string"
 }
 
 func getExampleValueByFieldName(inputField GraphQLInputValue) string {

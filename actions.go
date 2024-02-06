@@ -9,15 +9,15 @@ type CustomActionsId struct {
 	Id      ID       `graphql:"id"`
 }
 
-type CustomActionsExternalAction struct {
-	CustomActionsId
+// type CustomActionsExternalAction struct {
+// 	CustomActionsId
 
-	Description    string `graphql:"description"`
-	LiquidTemplate string `graphql:"liquidTemplate"`
-	Name           string `graphql:"name"`
+// 	Description    string `graphql:"description"`
+// 	LiquidTemplate string `graphql:"liquidTemplate"`
+// 	Name           string `graphql:"name"`
 
-	CustomActionsWebhookAction `graphql:"... on CustomActionsWebhookAction"`
-}
+// 	CustomActionsWebhookAction `graphql:"... on CustomActionsWebhookAction"`
+// }
 
 type CustomActionsWebhookAction struct {
 	Headers    JSON                        `graphql:"headers" scalar:"true"`

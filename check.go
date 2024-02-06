@@ -14,33 +14,34 @@ type CheckOwner struct {
 	// User User `graphql:"... on User"` // TODO: will this be public?
 }
 
-type Check struct {
-	Category    Category     `graphql:"category"`
-	Description string       `graphql:"description"`
-	Enabled     bool         `graphql:"enabled"`
-	EnableOn    iso8601.Time `graphql:"enableOn"`
-	Filter      Filter       `graphql:"filter"`
-	Id          ID           `graphql:"id"`
-	Level       Level        `graphql:"level"`
-	Name        string       `graphql:"name"`
-	Notes       string       `graphql:"notes: rawNotes"`
-	Owner       CheckOwner   `graphql:"owner"`
-	Type        CheckType    `graphql:"type"`
+// NOTE: remove after testing proves this can been replaced
+// type Check struct {
+// 	Category    Category     `graphql:"category"`
+// 	Description string       `graphql:"description"`
+// 	Enabled     bool         `graphql:"enabled"`
+// 	EnableOn    iso8601.Time `graphql:"enableOn"`
+// 	Filter      Filter       `graphql:"filter"`
+// 	Id          ID           `graphql:"id"`
+// 	Level       Level        `graphql:"level"`
+// 	Name        string       `graphql:"name"`
+// 	Notes       string       `graphql:"notes: rawNotes"`
+// 	Owner       CheckOwner   `graphql:"owner"`
+// 	Type        CheckType    `graphql:"type"`
 
-	// TODO: resort these alphabetically - It will require fixing all the test fixtures
-	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
-	CustomEventCheckFragment      `graphql:"... on CustomEventCheck"`
-	HasRecentDeployCheckFragment  `graphql:"... on HasRecentDeployCheck"`
-	ManualCheckFragment           `graphql:"... on ManualCheck"`
-	RepositoryFileCheckFragment   `graphql:"... on RepositoryFileCheck"`
-	RepositoryGrepCheckFragment   `graphql:"... on RepositoryGrepCheck"`
-	RepositorySearchCheckFragment `graphql:"... on RepositorySearchCheck"`
-	ServiceOwnershipCheckFragment `graphql:"... on ServiceOwnershipCheck"`
-	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`
-	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
-	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
-	HasDocumentationCheckFragment `graphql:"... on HasDocumentationCheck"`
-}
+// 	// TODO: resort these alphabetically - It will require fixing all the test fixtures
+// 	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
+// 	CustomEventCheckFragment      `graphql:"... on CustomEventCheck"`
+// 	HasRecentDeployCheckFragment  `graphql:"... on HasRecentDeployCheck"`
+// 	ManualCheckFragment           `graphql:"... on ManualCheck"`
+// 	RepositoryFileCheckFragment   `graphql:"... on RepositoryFileCheck"`
+// 	RepositoryGrepCheckFragment   `graphql:"... on RepositoryGrepCheck"`
+// 	RepositorySearchCheckFragment `graphql:"... on RepositorySearchCheck"`
+// 	ServiceOwnershipCheckFragment `graphql:"... on ServiceOwnershipCheck"`
+// 	ServicePropertyCheckFragment  `graphql:"... on ServicePropertyCheck"`
+// 	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
+// 	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
+// 	HasDocumentationCheckFragment `graphql:"... on HasDocumentationCheck"`
+// }
 
 type CheckInputConstructor func() any
 
