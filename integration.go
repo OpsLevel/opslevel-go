@@ -14,16 +14,6 @@ type IntegrationId struct {
 	Type string `json:"type"`
 }
 
-// type Integration struct {
-// 	IntegrationId
-
-// 	CreatedAt   iso8601.Time `graphql:"createdAt"`
-// 	InstalledAt iso8601.Time `graphql:"installedAt"`
-
-// 	AWSIntegrationFragment      `graphql:"... on AwsIntegration"`
-// 	NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
-// }
-
 type AWSIntegrationFragment struct {
 	IAMRole              string   `graphql:"iamRole"`
 	ExternalID           string   `graphql:"externalId"`

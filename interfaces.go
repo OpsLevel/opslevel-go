@@ -60,7 +60,7 @@ type Integration struct {
 	CreatedAt   iso8601.Time `graphql:"createdAt"`   // The time this integration was created.
 	InstalledAt iso8601.Time `graphql:"installedAt"` // The time that this integration was successfully installed, if null, this indicates the integration was not completed installed.
 
-	AWSIntegrationFragment      `graphql:"... on AWSIntegration"`
+	AWSIntegrationFragment      `graphql:"... on AwsIntegration"`
 	NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
 }
 
