@@ -27,7 +27,7 @@ const (
 	enumFile        string = "enum.go"
 	inputObjectFile string = "input.go"
 	interfacesFile  string = "interfaces.go"
-	// objectFile      string = "object.go"
+	objectFile      string = "object.go"
 	// mutationFile    string = "pkg/gen/mutation.go"
 	// payloadFile     string = "pkg/gen/payload.go"
 	// queryFile       string = "pkg/gen/query.go"
@@ -43,26 +43,31 @@ var knownTypeIsName = []string{
 
 var knownBoolsByName = []string{
 	"enabled",
+	"published",
 }
 
 var knownIsoTimeByName = []string{
 	"createdat",
 	"installedat",
 	"enableon",
+	"updatedat",
 }
 
 var stringTypeSuffixes = []string{
 	"actionmessage",
+	"address",
 	"alias",
 	"aliases",
 	"apidocsdefaultpath",
 	"createdat",
 	"cursor",
+	"description",
 	"email",
 	"externaluuid",
 	"htmlurl",
 	"id",
 	"kind",
+	"liquidtemplate",
 	"message",
 	"name",
 	"processedat",
@@ -70,6 +75,7 @@ var stringTypeSuffixes = []string{
 	"queryparams",
 	"updatedat",
 	"userdeletepayload",
+	"url",
 	"yaml",
 }
 
@@ -226,8 +232,8 @@ func run() error {
 			subSchema = inputObjectSchema
 		case interfacesFile:
 			subSchema = interfaceSchema
-		// case objectFile:
-		// 	subSchema = objectSchema
+		case objectFile:
+			subSchema = objectSchema
 		// case mutationFile:
 		// 	subSchema = objectSchema
 		// case payloadFile:
@@ -495,34 +501,36 @@ type {{.Name}} struct { {{range .InputFields }}
 	// {{- end}}
 	// {{- end}}
 	// `),
-	// objectFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{- if eq .Name "Account" }}
-	//       {{- template "account_struct" . }}
-	//     {{- else}}{{template "object" .}}{{end}}
-	//   {{- end}}
-	// {{- end}}
+	objectFile: t(header + `
+  import "github.com/relvacode/iso8601"
 
-	// {{ define "account_struct" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct { {{range .Fields }}
-	//   {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
-	//  {{- end }}
-	// }
-	// {{- end }}
+	{{range .Types | sortByName}}
+	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	    {{- if eq .Name "Account" }}
+	      {{- template "account_struct" . }}
+	    {{- else}}{{template "object" .}}{{end}}
+	  {{- end}}
+	{{- end}}
 
-	// {{- define "object" -}}
-	// {{ if and (and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name))) (not (hasSuffix "Edge" .Name)) }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	//   {{ range .Fields -}}
-	//     {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	//     {{- end}}
-	//   {{ end -}}
-	// }
-	// {{- end }}{{- end -}}
-	// 	`),
+	{{ define "account_struct" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct { {{range .Fields }}
+	  {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
+	 {{- end }}
+	}
+	{{- end }}
+
+	{{- define "object" -}}
+	{{ if and (and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name))) (not (hasSuffix "Edge" .Name)) }}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct {
+	  {{ range .Fields -}}
+	    {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	    {{- end}}
+	  {{ end -}}
+	}
+	{{- end }}{{- end -}}
+		`),
 	// 	scalarFile: t(header + `
 	// import (
 	// 	"encoding/base64"
@@ -673,9 +681,14 @@ func convertPayloadType(s string) string {
 	case "":
 		return "string"
 	}
+
 	value := strings.ToLower(s)
 	if strings.HasSuffix(value, "id") {
 		return "ID"
+	} else if slices.Contains(knownBoolsByName, value) {
+		return "bool"
+	} else if slices.Contains(knownIsoTimeByName, value) {
+		return "iso8601.Time"
 	}
 	for k, v := range knownTypeMappings {
 		if value == k {
