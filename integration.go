@@ -3,8 +3,6 @@ package opslevel
 import (
 	"fmt"
 
-	// "github.com/relvacode/iso8601"
-
 	"github.com/gosimple/slug"
 )
 
