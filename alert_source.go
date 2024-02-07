@@ -1,21 +1,21 @@
 package opslevel
 
-type AlertSource struct {
-	Name        string              `graphql:"name"`
-	Description string              `graphql:"description"`
-	Id          ID                  `graphql:"id"`
-	Type        AlertSourceTypeEnum `graphql:"type"`
-	ExternalId  string              `graphql:"externalId"`
-	Integration IntegrationId       `graphql:"integration"`
-	Url         string              `graphql:"url"`
-}
+// type AlertSource struct {
+// 	Description string              `graphql:"description"`
+// 	ExternalId  string              `graphql:"externalId"`
+// 	Id          ID                  `graphql:"id"`
+// 	Integration IntegrationId       `graphql:"integration"`
+// 	Name        string              `graphql:"name"`
+// 	Type        AlertSourceTypeEnum `graphql:"type"`
+// 	Url         string              `graphql:"url"`
+// }
 
-type AlertSourceService struct {
-	AlertSource AlertSource               `graphql:"alertSource"`
-	Id          ID                        `graphql:"id"`
-	Service     ServiceId                 `graphql:"service"`
-	Status      AlertSourceStatusTypeEnum `graphql:"status"`
-}
+// type AlertSourceService struct {
+// 	AlertSource AlertSource               `graphql:"alertSource"`
+// 	Id          ID                        `graphql:"id"`
+// 	Service     ServiceId                 `graphql:"service"`
+// 	Status      AlertSourceStatusTypeEnum `graphql:"status"`
+// }
 
 type AlertSourceDeleteInput struct {
 	Id ID `json:"id"`

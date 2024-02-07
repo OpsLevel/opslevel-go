@@ -1169,6 +1169,8 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 		}
 	case objectName == "System":
 		switch lowercaseFieldName {
+		case "managedaliases":
+			return "[]string"
 		case "owner":
 			return "EntityOwner"
 		case "parent":
