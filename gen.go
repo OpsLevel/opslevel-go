@@ -38,22 +38,43 @@ const (
 var knownTypeIsName = []string{
 	"category",
 	"filter",
+	"frequencytimescale",
+	"lifecycle",
 	"level",
+	"tier",
 	"timestamps",
 }
 
 var knownBoolsByName = []string{
+	"affectsoverallservicelevels",
 	"casesensitive",
 	"enabled",
+	"forked",
+	"hasnextpage",
+	"haspreviouspage",
+	"locked",
 	"ownerlocked",
+	"passingchecks",
 	"published",
+	"servicecount",
+	"totalchecks",
+	"visible",
+}
+
+var knownIntsByName = []string{
+	"index",
+	"frequencyvalue",
 }
 
 var knownIsoTimeByName = []string{
+	"archivedat",
 	"createdat",
+	"createdon",
 	"enableon",
 	"installedat",
+	"lastownerchangedat",
 	"lastsyncedat",
+	"startingdate",
 	"updatedat",
 }
 
@@ -529,7 +550,8 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{- define "object" -}}
 	{{ if not (skip_object .Name) }}
 	{{ template "type_comment_description" . }}
-	type {{.Name}} struct { {{ range .Fields }}
+	type {{.Name}} struct { {{ add_special_fields .Name }}
+    {{ range .Fields }}
     {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
       {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
 	  {{- end -}}{{ end }}
@@ -692,6 +714,8 @@ func convertPayloadType(s string) string {
 		return "ID"
 	} else if slices.Contains(knownBoolsByName, value) {
 		return "bool"
+	} else if slices.Contains(knownIntsByName, value) {
+		return "int"
 	} else if slices.Contains(knownIsoTimeByName, value) {
 		return "iso8601.Time"
 	}
@@ -809,6 +833,7 @@ var templFuncMap = template.FuncMap{
 	"integration_fragments":               fragmentsForIntegration,
 	"get_field_type":                      getFieldType,
 	"get_input_field_type":                getInputFieldType,
+	"add_special_fields":                  addSpecialFields,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
 	"skip_object":                         skipObject,
 	"skip_object_field":                   skipObjectField,
@@ -876,6 +901,28 @@ var templFuncMap = template.FuncMap{
 	},
 }
 
+func addSpecialFields(objectName string) string {
+	switch objectName {
+	case "Domain":
+		return "DomainId"
+	case "Filter":
+		return "FilterId"
+	case "Repository":
+		return "Services *RepositoryServiceConnection\nTags *TagConnection"
+	case "Scorecard":
+		return "ScorecardId"
+	case "Service":
+		return "ServiceId"
+	case "System":
+		return "SystemId"
+	case "Team":
+		return "TeamId"
+	case "User":
+		return "UserId"
+	}
+	return ""
+}
+
 func addSpecialInterfacesFields(interfaceName string) string {
 	switch interfaceName {
 	case "CustomActionsExternalAction":
@@ -889,7 +936,7 @@ func addSpecialInterfacesFields(interfaceName string) string {
 func skipObject(objectName string) bool {
 	nameLowerCased := strings.ToLower(objectName)
 	switch nameLowerCased {
-	case "group":
+	case "group", "mutation":
 		return true
 	}
 	if strings.HasPrefix(nameLowerCased, "campaign") ||
@@ -908,14 +955,24 @@ func skipObjectField(objectName, fieldName string) bool {
 		return true
 	}
 	switch objectName {
-	case "Domain":
-		switch nameLowerCased {
-		case "aliases", "id":
-			return true
-		}
 	case "Filter":
 		switch nameLowerCased {
 		case "id", "name":
+			return true
+		}
+	case "Domain", "Service", "Scorecard", "System":
+		switch nameLowerCased {
+		case "id", "aliases":
+			return true
+		}
+	case "Team":
+		switch nameLowerCased {
+		case "id", "alias":
+			return true
+		}
+	case "User":
+		switch nameLowerCased {
+		case "id", "email":
 			return true
 		}
 	}
@@ -957,6 +1014,8 @@ func getInputFieldType(inputField GraphQLField) string {
 		return strings.ToUpper(inputField.Name[0:1]) + inputField.Name[1:]
 	case slices.Contains(knownBoolsByName, lowercaseFieldName):
 		return "bool"
+	case slices.Contains(knownIntsByName, lowercaseFieldName):
+		return "int"
 	case slices.Contains(knownIsoTimeByName, lowercaseFieldName):
 		return "iso8601.Time"
 	}
@@ -984,7 +1043,7 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 			"InfrastructureResource", "InfrastructureResourceSchema", "Repository",
 			"IssueTrackingIntegration", "JenkinsIntegration", "KubernetesIntegration",
 			"NewRelicIntegration", "OctopusDeployIntegration", "OnPremGitlabIntegration",
-			"OpsgenieIntegration", "PagerdutyIntegration", "PayloadIntegration", "Predicate",
+			"OpsgenieIntegration", "PagerdutyIntegration", "PayloadIntegration",
 			"RelationshipType", "ScimIntegration", "SlackIntegration", "TerraformIntegration":
 			return "string"
 		case "Contact":
@@ -993,6 +1052,8 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 			return "PredicateTypeEnum"
 		case "InfrastructureResourceProviderData":
 			return "DoubleCheckThis"
+		case "Predicate":
+			return "PredicateTypeEnum"
 		default:
 			return "any"
 		}
@@ -1020,10 +1081,17 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 		case "owner":
 			return "TeamId"
 		}
-	case objectName == "CustomActionsWebhookAction" && lowercaseFieldName == "httpmethod":
-		return "CustomActionsHttpMethodEnum"
+	case objectName == "CustomActionsWebhookAction":
+		switch lowercaseFieldName {
+		case "headers":
+			return "JSON"
+		case "httpmethod":
+			return "CustomActionsHttpMethodEnum"
+		}
 	case objectName == "Domain":
 		switch lowercaseFieldName {
+		case "managedaliases":
+			return "[]string"
 		case "owner":
 			return "EntityOwner"
 		}
@@ -1032,15 +1100,105 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 		case "connective":
 			return "ConnectiveEnum"
 		case "predicates":
-			return "FilterPredicate"
+			return "[]FilterPredicate"
 		}
-	case objectName == "FilterPredicate" && lowercaseFieldName == "key":
-		return "PredicateKeyEnum"
+	case objectName == "FilterPredicate":
+		switch lowercaseFieldName {
+		case "casesensitive":
+			return "*bool"
+		case "key":
+			return "PredicateKeyEnum"
+		}
 	case objectName == "InfrastructureResource":
 		switch lowercaseFieldName {
 		case "data", "rawdata":
 			return "JSON"
+		case "id":
+			return "ID"
+		case "owner":
+			return "EntityOwner"
+		case "providerdata":
+			return "InfrastructureResourceProviderData"
 		}
+	case objectName == "InfrastructureResourceSchema" && lowercaseFieldName == "schema":
+		return "JSON"
+	case objectName == "Language" && lowercaseFieldName == "usage":
+		return "float32"
+	case objectName == "Repository":
+		switch lowercaseFieldName {
+		case "languages":
+			return "[]Language"
+		case "owner":
+			return "TeamId"
+		}
+	case objectName == "Scorecard":
+		switch lowercaseFieldName {
+		case "owner":
+			return "EntityOwner"
+		case "passingchecks", "servicecount", "totalchecks":
+			return "int"
+		}
+	case objectName == "Secret" && lowercaseFieldName == "owner":
+		return "TeamId"
+	case objectName == "Repository" && lowercaseFieldName == "owner":
+		return "TeamId"
+	case objectName == "Service":
+		switch lowercaseFieldName {
+		case "managedaliases":
+			return "[]string"
+		case "owner":
+			return "TeamId"
+		case "preferredapidocument":
+			return "*ServiceDocument"
+		case "preferredapidocumentsource":
+			return "*ApiDocumentSourceEnum"
+		}
+	case objectName == "ServiceDependency":
+		switch lowercaseFieldName {
+		case "destinationservice", "sourceservice":
+			return "ServiceId"
+		}
+	case objectName == "ServiceDocument" && lowercaseFieldName == "source":
+		return "ServiceDocumentSource"
+	case objectName == "ServiceRepository":
+		switch lowercaseFieldName {
+		case "repository":
+			return "RepositoryId"
+		case "service":
+			return "ServiceId"
+		}
+	case objectName == "System":
+		switch lowercaseFieldName {
+		case "owner":
+			return "EntityOwner"
+		case "parent":
+			return "Domain"
+		}
+	case objectName == "Team":
+		switch lowercaseFieldName {
+		case "contacts":
+			return "Contact"
+		case "managedaliases":
+			return "[]string"
+		case "parentteam":
+			return "TeamId"
+		}
+	case objectName == "TeamMembership":
+		switch lowercaseFieldName {
+		case "team":
+			return "TeamId"
+		case "user":
+			return "UserId"
+		}
+	case objectName == "Tool":
+		switch lowercaseFieldName {
+		case "category":
+			return "ToolCategory"
+		case "service":
+			return "ServiceId"
+		}
+	case objectName == "User" && lowercaseFieldName == "role":
+		return "UserRole"
 	}
 
 	return getInputFieldType(inputField)
