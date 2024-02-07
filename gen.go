@@ -39,17 +39,21 @@ var knownTypeIsName = []string{
 	"category",
 	"filter",
 	"level",
+	"timestamps",
 }
 
 var knownBoolsByName = []string{
+	"casesensitive",
 	"enabled",
+	"ownerlocked",
 	"published",
 }
 
 var knownIsoTimeByName = []string{
 	"createdat",
-	"installedat",
 	"enableon",
+	"installedat",
+	"lastsyncedat",
 	"updatedat",
 }
 
@@ -85,6 +89,7 @@ var knownTypeMappings = map[string]string{
 	"deletedmembers":                 "User",
 	"edges":                          "any",
 	"filteredcount":                  "int",
+	"headers":                        "JSON",
 	"memberships":                    "TeamMembership",
 	"node":                           "any",
 	"nodes":                          "[]any",
@@ -402,7 +407,7 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{ template "type_comment_description" . }}
 	type {{.Name}} struct { {{ add_special_interfaces_fields .Name }}
     {{ range .Fields }}{{ if not (skip_interface_field $.Name .Name) }}
-	  {{.Name | title}} {{ get_field_type . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	  {{.Name | title}} {{ get_input_field_type . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
 	{{- end }}{{ end }}
 
     {{ template "fragments" . }}
@@ -526,7 +531,7 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{ template "type_comment_description" . }}
 	type {{.Name}} struct { {{ range .Fields }}
     {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
-      {{ .Name | title}} {{ get_field_type . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
 	  {{- end -}}{{ end }}
 	}
 	{{- end }}{{- end -}}
@@ -803,6 +808,7 @@ var templFuncMap = template.FuncMap{
 	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
 	"integration_fragments":               fragmentsForIntegration,
 	"get_field_type":                      getFieldType,
+	"get_input_field_type":                getInputFieldType,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
 	"skip_object":                         skipObject,
 	"skip_object_field":                   skipObjectField,
@@ -901,6 +907,18 @@ func skipObjectField(objectName, fieldName string) bool {
 	case "metadata", "rawnotes":
 		return true
 	}
+	switch objectName {
+	case "Domain":
+		switch nameLowerCased {
+		case "aliases", "id":
+			return true
+		}
+	case "Filter":
+		switch nameLowerCased {
+		case "id", "name":
+			return true
+		}
+	}
 	return false
 }
 
@@ -924,7 +942,7 @@ func skipInterfaceField(interfaceName, fieldName string) bool {
 	return false
 }
 
-func getFieldType(inputField GraphQLField) string {
+func getInputFieldType(inputField GraphQLField) string {
 	lowercaseFieldName := strings.ToLower(inputField.Name)
 	switch {
 	case "id" == lowercaseFieldName:
@@ -943,6 +961,89 @@ func getFieldType(inputField GraphQLField) string {
 		return "iso8601.Time"
 	}
 	return "string"
+}
+
+func getFieldType(objectName string, inputField GraphQLField) string {
+	lowercaseFieldName := strings.ToLower(inputField.Name)
+	switch {
+	case "type" == lowercaseFieldName:
+		switch objectName {
+		case "AlertSource":
+			return "AlertSourceTypeEnum"
+		case "AlertSourceUsageCheck", "CustomCheck", "CustomEventCheck",
+			"GitBranchProtectionCheck", "HasDocumentationCheck", "HasRecentDeployCheck",
+			"ManualCheck", "PayloadCheck", "RepositoryFileCheck", "RepositoryGrepCheck",
+			"RepositoryIntegratedCheck", "RepositorySearchCheck", "ServiceConfigurationCheck",
+			"ServiceDependencyCheck", "ServiceOwnershipCheck", "ServicePropertyCheck",
+			"TagDefinedCheck", "ToolUsageCheck":
+			return "CheckType"
+		case "ApiDocIntegration", "AwsIntegration", "AzureDevopsIntegration",
+			"AzureDevopsPermissionError", "BitbucketIntegration", "CheckIntegration",
+			"DatadogIntegration", "DeployIntegration", "FluxIntegration", "GenericIntegration",
+			"GithubActionsIntegration", "GithubIntegration", "GitlabIntegration",
+			"InfrastructureResource", "InfrastructureResourceSchema", "Repository",
+			"IssueTrackingIntegration", "JenkinsIntegration", "KubernetesIntegration",
+			"NewRelicIntegration", "OctopusDeployIntegration", "OnPremGitlabIntegration",
+			"OpsgenieIntegration", "PagerdutyIntegration", "PayloadIntegration", "Predicate",
+			"RelationshipType", "ScimIntegration", "SlackIntegration", "TerraformIntegration":
+			return "string"
+		case "Contact":
+			return "ContactType"
+		case "FilterPredicate":
+			return "PredicateTypeEnum"
+		case "InfrastructureResourceProviderData":
+			return "DoubleCheckThis"
+		default:
+			return "any"
+		}
+	case objectName == "AlertSource" && lowercaseFieldName == "integration":
+		return "IntegrationId"
+	case objectName == "AlertSourceService":
+		switch lowercaseFieldName {
+		case "alertsource":
+			return "AlertSource"
+		case "service":
+			return "ServiceId"
+		case "status":
+			return "AlertSourceStatusTypeEnum"
+		}
+	case objectName == "CustomActionsTriggerDefinition":
+		switch lowercaseFieldName {
+		case "accesscontrol":
+			return "CustomActionsTriggerDefinitionAccessControlEnum"
+		case "action":
+			return "CustomActionsId"
+		case "entitytype":
+			return "CustomActionsEntityTypeEnum"
+		case "filter":
+			return "FilterId"
+		case "owner":
+			return "TeamId"
+		}
+	case objectName == "CustomActionsWebhookAction" && lowercaseFieldName == "httpmethod":
+		return "CustomActionsHttpMethodEnum"
+	case objectName == "Domain":
+		switch lowercaseFieldName {
+		case "owner":
+			return "EntityOwner"
+		}
+	case objectName == "Filter":
+		switch lowercaseFieldName {
+		case "connective":
+			return "ConnectiveEnum"
+		case "predicates":
+			return "FilterPredicate"
+		}
+	case objectName == "FilterPredicate" && lowercaseFieldName == "key":
+		return "PredicateKeyEnum"
+	case objectName == "InfrastructureResource":
+		switch lowercaseFieldName {
+		case "data", "rawdata":
+			return "JSON"
+		}
+	}
+
+	return getInputFieldType(inputField)
 }
 
 func getExampleValueByFieldName(inputField GraphQLInputValue) string {
