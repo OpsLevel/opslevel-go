@@ -70,6 +70,7 @@ var stringTypeSuffixes = []string{
 	"liquidtemplate",
 	"message",
 	"name",
+	"notes",
 	"processedat",
 	"role",
 	"queryparams",
@@ -401,7 +402,7 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{ template "type_comment_description" . }}
 	type {{.Name}} struct { {{ add_special_interfaces_fields .Name }}
     {{ range .Fields }}{{ if not (skip_interface_field $.Name .Name) }}
-	  {{.Name | title}} {{ . | get_field_type }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	  {{.Name | title}} {{ get_field_type . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
 	{{- end }}{{ end }}
 
     {{ template "fragments" . }}
@@ -501,33 +502,32 @@ type {{.Name}} struct { {{range .InputFields }}
 	// {{- end}}
 	// {{- end}}
 	// `),
+
+	// NOTE: kept for now, probably not keeping later
+	//  	{{ define "account_struct" -}}
+	// {{ template "type_comment_description" . }}
+	// type {{.Name}} struct { {{range .Fields }}
+	//   {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
+	//  {{- end }}
+	// }
+	// {{- end }}
 	objectFile: t(header + `
   import "github.com/relvacode/iso8601"
 
 	{{range .Types | sortByName}}
 	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	    {{- if eq .Name "Account" }}
-	      {{- template "account_struct" . }}
-	    {{- else}}{{template "object" .}}{{end}}
+	  {{- if not (eq .Name "Account") }}
+	    {{template "object" .}}{{end}}
 	  {{- end}}
 	{{- end}}
 
-	{{ define "account_struct" -}}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct { {{range .Fields }}
-	  {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
-	 {{- end }}
-	}
-	{{- end }}
-
 	{{- define "object" -}}
-	{{ if and (and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name))) (not (hasSuffix "Edge" .Name)) }}
+	{{ if not (skip_object .Name) }}
 	{{ template "type_comment_description" . }}
-	type {{.Name}} struct {
-	  {{ range .Fields -}}
-	    {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	    {{- end}}
-	  {{ end -}}
+	type {{.Name}} struct { {{ range .Fields }}
+    {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
+      {{ .Name | title}} {{ get_field_type . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	  {{- end -}}{{ end }}
 	}
 	{{- end }}{{- end -}}
 		`),
@@ -804,6 +804,8 @@ var templFuncMap = template.FuncMap{
 	"integration_fragments":               fragmentsForIntegration,
 	"get_field_type":                      getFieldType,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
+	"skip_object":                         skipObject,
+	"skip_object_field":                   skipObjectField,
 	"skip_interface_field":                skipInterfaceField,
 	"example_tag_value":                   getExampleValue,
 	"isListType":                          isPlural,
@@ -876,6 +878,30 @@ func addSpecialInterfacesFields(interfaceName string) string {
 		return "IntegrationId"
 	}
 	return ""
+}
+
+func skipObject(objectName string) bool {
+	nameLowerCased := strings.ToLower(objectName)
+	switch nameLowerCased {
+	case "group":
+		return true
+	}
+	if strings.HasPrefix(nameLowerCased, "campaign") ||
+		strings.HasSuffix(nameLowerCased, "payload") ||
+		strings.HasSuffix(nameLowerCased, "edge") ||
+		strings.HasSuffix(nameLowerCased, "connection") {
+		return true
+	}
+	return false
+}
+
+func skipObjectField(objectName, fieldName string) bool {
+	nameLowerCased := strings.ToLower(fieldName)
+	switch nameLowerCased {
+	case "metadata", "rawnotes":
+		return true
+	}
+	return false
 }
 
 func skipInterfaceField(interfaceName, fieldName string) bool {

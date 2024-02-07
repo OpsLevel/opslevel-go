@@ -49,7 +49,7 @@ type CustomActionsTriggerDefinitionBase struct {
 	Description            string `graphql:"description"`            // The description of what the trigger definition will do, supports Markdown.
 	ManualInputsDefinition string `graphql:"manualInputsDefinition"` // The YAML definition of any custom inputs for this trigger definition.
 	Name                   string `graphql:"name"`                   // The name of the trigger definition.
-	Published              string `graphql:"published"`              // The published state of the action; true if the definition is ready for use; false if it is a draft.
+	Published              bool   `graphql:"published"`              // The published state of the action; true if the definition is ready for use; false if it is a draft.
 	ResponseTemplate       string `graphql:"responseTemplate"`       // The liquid template used to parse the response from the External Action.
 }
 
