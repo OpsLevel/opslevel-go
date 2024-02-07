@@ -389,7 +389,7 @@ type {{.Name}} struct { {{range .InputFields }}
 
   {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} example:"
    {{- if isListType .Name }}[{{ end -}}
-     {{ . | example_tag_value }}
+     {{ example_tag_value . }}
    {{- if isListType .Name }}]{{ end -}}"{{- end}}` +
 		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
