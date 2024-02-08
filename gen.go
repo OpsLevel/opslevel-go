@@ -316,10 +316,10 @@ const (
 {{- end }}`
 	fragmentsTmpl = `
 {{- define "fragments" -}}
-  {{ if eq .Name "Check" }}{{ check_fragments }}
-  {{ else if eq .Name "CustomActionsExternalAction" }}{{ custom_actions_ext_action_fragments }}
-  {{ else if eq .Name "Integration" }}{{ integration_fragments }}
-  {{- end }}
+  {{- if eq .Name "Check" }}{{ check_fragments }}
+  {{- else if eq .Name "CustomActionsExternalAction" }}{{ custom_actions_ext_action_fragments }}
+  {{- else if eq .Name "Integration" }}{{ integration_fragments }}
+  {{ end }}
 {{- end }}`
 	nameToSingularTmpl = `
 {{- define "name_to_singular" -}}
@@ -428,10 +428,10 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{ template "type_comment_description" . }}
 	type {{.Name}} struct { {{ add_special_interfaces_fields .Name }}
     {{ range .Fields }}{{ if not (skip_interface_field $.Name .Name) }}
-	  {{.Name | title}} {{ get_input_field_type . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	  {{.Name | title}} {{ get_input_field_type . }} {{ if eq .Name "notes" }}` + "`" + `graphql:"notes: rawNotes"` + "`" + `{{ else }}{{ template "graphql_struct_tag" . }}
+    {{- end}} {{ template "field_comment_description" . }}
 	{{- end }}{{ end }}
-
-    {{ template "fragments" . }}
+    {{ template "fragments" . -}}
 	}
 	{{- end -}}
 		`),
