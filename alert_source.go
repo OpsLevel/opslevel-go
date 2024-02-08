@@ -1,12 +1,12 @@
 package opslevel
 
 type AlertSource struct {
-	Name        string              `graphql:"name"`
 	Description string              `graphql:"description"`
-	Id          ID                  `graphql:"id"`
-	Type        AlertSourceTypeEnum `graphql:"type"`
 	ExternalId  string              `graphql:"externalId"`
+	Id          ID                  `graphql:"id"`
 	Integration IntegrationId       `graphql:"integration"`
+	Name        string              `graphql:"name"`
+	Type        AlertSourceTypeEnum `graphql:"type"`
 	Url         string              `graphql:"url"`
 }
 

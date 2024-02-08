@@ -17,8 +17,8 @@ type CheckOwner struct {
 type Check struct {
 	Category    Category     `graphql:"category"`
 	Description string       `graphql:"description"`
-	Enabled     bool         `graphql:"enabled"`
 	EnableOn    iso8601.Time `graphql:"enableOn"`
+	Enabled     bool         `graphql:"enabled"`
 	Filter      Filter       `graphql:"filter"`
 	Id          ID           `graphql:"id"`
 	Level       Level        `graphql:"level"`
