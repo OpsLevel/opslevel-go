@@ -28,7 +28,7 @@ func TestCreateAlertSourceService(t *testing.T) {
 func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){name,description,id,type,externalId,integration{id,name,type},url}}}`,
+		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){description,externalId,id,integration{id,name,type},name,type,url}}}`,
 		`{"externalIdentifier": { "type": "datadog", "externalId": "12345678" }}`,
 		`{"data": {
         "account": {
@@ -64,7 +64,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 func TestGetAlertSource(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){name,description,id,type,externalId,integration{id,name,type},url}}}`,
+		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){description,externalId,id,integration{id,name,type},name,type,url}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
 		`{"data": {
         "account": {
