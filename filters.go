@@ -18,7 +18,6 @@ type FilterId struct {
 
 type Filter struct {
 	FilterId
-
 	Connective ConnectiveEnum
 	HtmlUrl    string
 	Predicates []FilterPredicate
