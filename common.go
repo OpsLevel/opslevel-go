@@ -26,11 +26,6 @@ type OpsLevelErrors struct {
 	Path    []string
 }
 
-// type Timestamps struct {
-// 	CreatedAt iso8601.Time `json:"createdAt"`
-// 	UpdatedAt iso8601.Time `json:"updatedAt"`
-// }
-
 func NullString() *string {
 	var output *string
 	return output

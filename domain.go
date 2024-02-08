@@ -7,6 +7,7 @@ import (
 
 type DomainId Identifier
 
+// NOTES: ManagedAliases field added to this struct in object.go
 // type Domain struct {
 // 	DomainId
 // 	Description string      `graphql:"description"`
