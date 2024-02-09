@@ -471,6 +471,8 @@ type {{.Name}} struct { {{range .InputFields }}
 	// NOTE: "account" == objectSchema.Types[0]
 	// NOTE: "mutation" == objectSchema.Types[134]
 	queryFile: t(header + `
+  import "fmt"
+
 	{{range .Types | sortByName}}
 	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
 	    {{- if eq .Name "Account" }}
@@ -504,10 +506,51 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{ define "non_account_queries" -}}
     {{- range .Fields }} {{- if and (len .Args) (not (skip_query $.Name)) }}
 	// {{ if gt 3 (len .Args) }}List{{- else }}Get{{ end }}{{.Name | title}} {{ template "description" . }}
-	func ({{$.Name}} *{{ .Name | title | makeSingular }}) {{ if gt 3 (len .Args) }}List{{ .Name | title }}(input any) (*{{ .Name | title | makeSingular }}Connection, error) {
-    return nil, nil
+	func ({{ $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }}) {{ if gt 3 (len .Args) }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*{{ .Name | title | makeSingular }}Connection, error) {
+      if {{ $.Name | first_char_lowered }}.Id == "" {
+        return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
+      }
+      var q struct {
+        Account struct {
+          {{ $.Name | title | makeSingular }} struct {
+            {{ .Name | title }} {{ template "name_to_singular" . }}Connection ` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+          } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: ${{$.Name | lower }})"` + "`" + `
+        }
+      }
+      if variables == nil {
+        variables = client.InitialPageVariablesPointer()
+      }
+      (*variables)["{{ $.Name | lower }}"] = {{ $.Name | first_char_lowered }}.Id
+      if err := client.Query(&q, variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+        return nil, err
+      }
+      if {{ $.Name | first_char_lowered }}.{{ .Name | title }} == nil {
+        {{ .Name }} := {{ .Name | title | makeSingular }}Connection{}
+        {{ $.Name | first_char_lowered }}.{{ .Name | title }} = &{{ .Name }}
+      }
+    	{{ $.Name | first_char_lowered }}.{{ .Name | title }}.Nodes = append({{ $.Name | first_char_lowered }}.{{ .Name | title }}, q.Account.{{ $.Name }}.{{ .Name | title }}.Nodes...)
+      {{ $.Name | first_char_lowered }}.{{ .Name | title }}.PageInfo = q.Account.{{ $.Name }}.{{ .Name | title }}.PageInfo
+      {{ $.Name | first_char_lowered }}.{{ .Name | title }}.TotalCount += q.Account.{{ $.Name }}.{{ .Name | title }}.TotalCount
+      for {{ $.Name | first_char_lowered }}.{{ .Name | title }}.PageInfo.HasNextPage {
+        (*variables)["after"] = {{ $.Name | first_char_lowered }}.{{ .Name | title }}.PageInfo.End
+        _, err := {{ $.Name | first_char_lowered }}.List{{ .Name | title }}(client, variables)
+        if err != nil {
+          return nil, err
+        }
+      }
+
+      return &q.Account.{{ $.Name | first_char_lowered }}.{{ .Name | title }}, nil
     {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
-    return nil, nil
+      var q struct {
+        Account struct {
+          {{ .Name | title }} {{ template "name_to_singular" . }} ` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+        }
+      }
+      v := PayloadVariables{"input": *NewIdentifier(identifier)}
+      if err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}Get")); err != nil {
+        return nil, err
+      }
+      return &q.Account.{{ .Name | title }}, nil
     {{- end -}}
   }
   {{- end -}}{{- end -}}{{- end -}}
@@ -846,6 +889,14 @@ func fragmentsForCustomActionsExtAction() string {
 	return getFragmentWithStructTag("CustomActionsWebhookAction")
 }
 
+func wordFirstCharLowered(s string) string {
+	return firstCharLowered(s) + s[1:]
+}
+
+func firstCharLowered(s string) string {
+	return strings.ToLower(s[:1])
+}
+
 func breakPoint(thing GraphQLTypes) string {
 	for _, field := range thing.Fields {
 		if len(field.Args) >= 4 {
@@ -878,6 +929,8 @@ var templFuncMap = template.FuncMap{
 	"renameMutationReturnType":            renameMutationReturnType,
 	"convertPayloadType":                  convertPayloadType,
 	"break_point":                         breakPoint,
+	"first_char_lowered":                  firstCharLowered,
+	"word_first_char_lowered":             wordFirstCharLowered,
 	"makeSingular":                        makeSingular,
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
