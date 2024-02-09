@@ -31,8 +31,8 @@ const (
 	queryFile       string = "query.go"
 	mutationFile    string = "mutation.go"
 	payloadFile     string = "payload.go"
-	// scalarFile      string = "pkg/gen/scalar.go"
-	// unionFile       string = "pkg/gen/union.go"
+	// scalarFile      string = "scalar.go" // NOTE: probably not useful
+	// unionFile       string = "union.go" // NOTE: probably not useful
 )
 
 var knownTypeIsName = []string{
@@ -339,7 +339,7 @@ const (
 var templates = map[string]*template.Template{
 	connectionFile: t(header + `
 	{{range .Types | sortByName}}
-	  {{if and (not (skip_object_connection_type .Name)) (and (eq .Kind "OBJECT") (not (internal .Name))) }}
+	  {{if and (not (skip_object_connection_type .Name)) (not (internal .Name)) }}
 	    {{ if hasSuffix "Connection" .Name }}
 	      {{- template "connection_object" . }}
 	    {{ else if hasSuffix "Edge" .Name }}
@@ -351,10 +351,13 @@ var templates = map[string]*template.Template{
 	{{- define "connection_object" -}}
 	{{ template "type_comment_description" . }}
 	type {{.Name}} struct {
-    Nodes []{{.Name | trimSuffix "Connection" | trimSuffix "V2" | makeSingular }} ` + "`" + `graphql:"nodes"` + "`" + `
-    Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` + "`" + `
-	{{ range .Fields }} {{ if and (ne "edges" .Name) (ne "nodes" .Name) }}
-	    {{- .Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+    Nodes []{{.Name | trimSuffix "Connection" | trimSuffix "V2" | makeSingular }} ` +
+		"`" + `graphql:"nodes"` + "`" + ` // A list of nodes.
+    Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` +
+		"`" + ` // A list of edges.
+	{{ range .Fields }}
+      {{- if and (ne "edges" .Name) (ne "nodes" .Name) }}
+	    {{ .Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
 	  {{- end }}
 	{{- end }}
 	}
@@ -406,7 +409,7 @@ import "github.com/relvacode/iso8601"
 type {{.Name}} struct { {{range .InputFields }}
   {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
     {{- if isListType .Name }}[]{{ end -}}
-    {{- if and (hasSuffix "Id" .Name) (not (eq .Name "externalId")) }}ID
+    {{- if and (hasSuffix "Id" .Name) (ne .Name "externalId") }}ID
     {{- else if hasSuffix "Access" .Name }}IdentifierInput
     {{- else if eq .Name "predicates" }}FilterPredicateInput
     {{- else if eq .Name "tags" }}TagInput
@@ -471,17 +474,19 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{range .Types | sortByName}}
 	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
 	    {{- if eq .Name "Account" }}
-	      {{ template "account_queries" . }}
+	      {{- template "account_queries" . }}
+	    {{- else }}
+	      {{- template "non_account_queries" . }}
 	    {{- end}}
 	  {{- end}}
 	{{- end}}
 
 	{{ define "account_queries" -}}
-	    {{- range .Fields }} {{- if not (skip_query .Name) }}
+	    {{- range .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
 	{{ template "type_comment_description" . }}
-	func (client *Client) {{ if isListType .Name }}List{{ .Name | title }}(input any) (*{{ .Name | title | makeSingular }}Connection, error) {
-	    {{- else }}Get{{ .Name | title }}(input any) (*{{.Name | title}}, error) {
-	    {{end -}}
+	func (client *Client) {{ if gt 3 (len .Args) }}List{{ .Name | title }}(input any) (*{{ .Name | title | makeSingular }}Connection, error) {
+	    {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title}}, error) {
+                        {{end -}}
 	    var q struct {
 	      Account struct {
 	        {{ .Name | title }} {{ if isListType .Name }}{{ template "name_to_singular" . }}Connection
@@ -495,6 +500,17 @@ type {{.Name}} struct { {{range .InputFields }}
 	    return &q.Account.{{ .Name | title }}, HandleErrors(err, nil)
 	}
 	{{- end}}{{ end }}{{- end}}
+
+	{{ define "non_account_queries" -}}
+    {{- range .Fields }} {{- if and (len .Args) (not (skip_query $.Name)) }}
+	// {{ if gt 3 (len .Args) }}List{{- else }}Get{{ end }}{{.Name | title}} {{ template "description" . }}
+	func ({{$.Name}} *{{ .Name | title | makeSingular }}) {{ if gt 3 (len .Args) }}List{{ .Name | title }}(input any) (*{{ .Name | title | makeSingular }}Connection, error) {
+    return nil, nil
+    {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
+    return nil, nil
+    {{- end -}}
+  }
+  {{- end -}}{{- end -}}{{- end -}}
 
 	{{- define "object" -}}
 	{{ if not (hasSuffix "Payload" .Name) }}
@@ -552,7 +568,7 @@ type {{.Name}} struct { {{range .InputFields }}
 
 	{{range .Types | sortByName}}
 	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	  {{- if not (eq .Name "Account") }}
+	  {{- if ne .Name "Account" }}
 	    {{template "object" .}}{{end}}
 	  {{- end}}
 	{{- end}}
@@ -830,6 +846,15 @@ func fragmentsForCustomActionsExtAction() string {
 	return getFragmentWithStructTag("CustomActionsWebhookAction")
 }
 
+func breakPoint(thing GraphQLTypes) string {
+	for _, field := range thing.Fields {
+		if len(field.Args) >= 4 {
+			fmt.Println(thing.Name)
+		}
+	}
+	return ""
+}
+
 var templFuncMap = template.FuncMap{
 	"internal":                            func(s string) bool { return strings.HasPrefix(s, "__") },
 	"quote":                               strconv.Quote,
@@ -841,6 +866,7 @@ var templFuncMap = template.FuncMap{
 	"get_input_field_type":                getInputFieldType,
 	"add_special_fields":                  addSpecialFields,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
+	"query_args":                          queryArgs,
 	"skip_object":                         skipObject,
 	"skip_object_connection_type":         skipObjectConnectionType,
 	"skip_object_field":                   skipObjectField,
@@ -851,6 +877,7 @@ var templFuncMap = template.FuncMap{
 	"renameMutation":                      renameMutation,
 	"renameMutationReturnType":            renameMutationReturnType,
 	"convertPayloadType":                  convertPayloadType,
+	"break_point":                         breakPoint,
 	"makeSingular":                        makeSingular,
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
@@ -950,6 +977,16 @@ func skipObjectConnectionType(objectName string) bool {
 	return false
 }
 
+func queryArgs(fieldObject GraphQLField) string {
+	// var output string
+	// for _, b := range fieldObject.Args {
+	// 	output += fmt.Sprintf("%s", b.Name)
+	// 	fmt.Println(b)
+	// }
+	// return output
+	return "input any"
+}
+
 func skipObject(objectName string) bool {
 	nameLowerCased := strings.ToLower(objectName)
 	switch nameLowerCased {
@@ -999,7 +1036,8 @@ func skipObjectField(objectName, fieldName string) bool {
 func skipQuery(objectName string) bool {
 	nameLowerCased := strings.ToLower(objectName)
 	if strings.Contains(nameLowerCased, "campaign") ||
-		strings.Contains(nameLowerCased, "group") {
+		strings.Contains(nameLowerCased, "group") ||
+		strings.Contains(nameLowerCased, "mutation") {
 		return true
 	}
 	return false
