@@ -879,6 +879,45 @@ type ServiceUpdateInput struct {
 	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows updating a service with invalid aliases. (Optional.)
 }
 
+// SuggestionActionInput represents input for actioning suggestions.
+type SuggestionActionInput struct {
+	Suggestions []string `json:"suggestions" yaml:"suggestions" example:"[]"` // input for actioning a suggestion. (Required.)
+}
+
+// SuggestionActivityFilterInput represents input to be used to filter types.
+type SuggestionActivityFilterInput struct {
+	Key  SuggestionActivityFilterEnum `json:"key" yaml:"key" example:"NEW_ENUM_SET_DEFAULT"`                 // Field to be filtered. (Required.)
+	Arg  *string                      `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_arg"`      // Value to be filtered. (Optional.)
+	Type *BasicTypeEnum               `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // Type of operation to be applied to value on the field. (Optional.)
+}
+
+// SuggestionFilterInput represents input to be used to filter types.
+type SuggestionFilterInput struct {
+	Key  SuggestionFilterEnum `json:"key" yaml:"key" example:"NEW_ENUM_SET_DEFAULT"`                 // Field to be filtered. (Required.)
+	Arg  *string              `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_arg"`      // Value to be filtered. (Optional.)
+	Type *BasicTypeEnum       `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // Type of operation to be applied to value on the field. (Optional.)
+}
+
+// SuggestionInput represents fields for actioning an suggestion.
+type SuggestionInput struct {
+	Type                     SuggestionActionTypeEnum `json:"type" yaml:"type" example:"NEW_ENUM_SET_DEFAULT"`                                                                                 // The type of action to perform. (Required.)
+	SuggestionId             ID                       `json:"suggestionId" yaml:"suggestionId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                      // The ID of the suggestion being actioned. (Required.)
+	SourceIds                *[]string                `json:"sourceIds,omitempty" yaml:"sourceIds,omitempty" example:"['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']"` // IDs of sources to action, nil or empty to accept all sources. (Optional.)
+	Name                     *string                  `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                                                     // The name of the service to create. Only needed for create type. (Optional.)
+	ServiceAlias             *string                  `json:"serviceAlias,omitempty" yaml:"serviceAlias,omitempty" example:"example_alias"`                                                    // The alias to attach to a service. Only needed for attach type. (Optional.)
+	ServiceId                *ID                      `json:"serviceId,omitempty" yaml:"serviceId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The ID of the service to attach an alias to. Only needed for attach type. (Optional.)
+	SuggestionParamsModified *bool                    `json:"suggestionParamsModified,omitempty" yaml:"suggestionParamsModified,omitempty" example:"false"`                                    // Whether this suggestion has been modified from the original suggestion. (Optional.)
+	SuggestionActionModified *bool                    `json:"suggestionActionModified,omitempty" yaml:"suggestionActionModified,omitempty" example:"false"`                                    // Whether this suggestion action type has changed from the original suggestion. (Optional.)
+}
+
+// SuggestionUpdateInput specifies the input fields used to update a suggestion.
+type SuggestionUpdateInput struct {
+	Name          *string  `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                                         // The new name for the suggestions. (Optional.)
+	Description   *string  `json:"description,omitempty" yaml:"description,omitempty" example:"example_description"`                                    // The new description for the suggestions. (Optional.)
+	SuggestionIds []string `json:"suggestionIds" yaml:"suggestionIds" example:"['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']"` // The ids of the suggestions to be updated. (Required.)
+	Ignored       bool     `json:"ignored" yaml:"ignored" example:"false"`                                                                              // Whether the suggestion should be ignored or not. (Required.)
+}
+
 // SystemInput specifies the input fields for a system.
 type SystemInput struct {
 	Name        *string          `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                          // The name for the system. (Optional.)

@@ -784,6 +784,110 @@ var AllServiceSortEnum = []string{
 	string(ServiceSortEnumAlertStatusDesc),
 }
 
+// SuggestionActionTypeEnum represents possible actions.
+type SuggestionActionTypeEnum string
+
+const (
+	SuggestionActionTypeEnumCreateService                SuggestionActionTypeEnum = "create_service"                   // Create a service with the given alias as the service name.
+	SuggestionActionTypeEnumAttachAlias                  SuggestionActionTypeEnum = "attach_alias"                     // Attach the given alias to a service.
+	SuggestionActionTypeEnumAttachHistoricalEvents       SuggestionActionTypeEnum = "attach_historical_events"         // Attach historical events to the service for the given alias.
+	SuggestionActionTypeEnumCreateServiceFromRepository  SuggestionActionTypeEnum = "create_service_from_repository"   // Create a service from a repository.
+	SuggestionActionTypeEnumCreateServiceFromAlertSource SuggestionActionTypeEnum = "create_service_from_alert_source" // Create a service from an alert source.
+	SuggestionActionTypeEnumIgnored                      SuggestionActionTypeEnum = "ignored"                          // Ignore the suggestion.
+	SuggestionActionTypeEnumUnignored                    SuggestionActionTypeEnum = "unignored"                        // Unignore the suggestion.
+	SuggestionActionTypeEnumAttachRepositoryToService    SuggestionActionTypeEnum = "attach_repository_to_service"     // Attach a repository to a service.
+	SuggestionActionTypeEnumAttachAlertSourceToService   SuggestionActionTypeEnum = "attach_alert_source_to_service"   // Attach an alert source to a service.
+)
+
+// All SuggestionActionTypeEnum as []string
+var AllSuggestionActionTypeEnum = []string{
+	string(SuggestionActionTypeEnumCreateService),
+	string(SuggestionActionTypeEnumAttachAlias),
+	string(SuggestionActionTypeEnumAttachHistoricalEvents),
+	string(SuggestionActionTypeEnumCreateServiceFromRepository),
+	string(SuggestionActionTypeEnumCreateServiceFromAlertSource),
+	string(SuggestionActionTypeEnumIgnored),
+	string(SuggestionActionTypeEnumUnignored),
+	string(SuggestionActionTypeEnumAttachRepositoryToService),
+	string(SuggestionActionTypeEnumAttachAlertSourceToService),
+}
+
+// SuggestionActivityFilterEnum represents fields that can be used as part of a filter for suggestion activity.
+type SuggestionActivityFilterEnum string
+
+const (
+	SuggestionActivityFilterEnumValue  SuggestionActivityFilterEnum = "value"  // Filter by `value` field.
+	SuggestionActivityFilterEnumAction SuggestionActivityFilterEnum = "action" // Filter by `action` field.
+	SuggestionActivityFilterEnumType   SuggestionActivityFilterEnum = "type"   // Filter by `type` field.
+	SuggestionActivityFilterEnumUser   SuggestionActivityFilterEnum = "user"   // Filter by `user` field.
+)
+
+// All SuggestionActivityFilterEnum as []string
+var AllSuggestionActivityFilterEnum = []string{
+	string(SuggestionActivityFilterEnumValue),
+	string(SuggestionActivityFilterEnumAction),
+	string(SuggestionActivityFilterEnumType),
+	string(SuggestionActivityFilterEnumUser),
+}
+
+// SuggestionActivitySortEnum represents fields that can be used to sort suggestion activity.
+type SuggestionActivitySortEnum string
+
+const (
+	SuggestionActivitySortEnumValueAsc      SuggestionActivitySortEnum = "value_ASC"       // Order by `value` ascending.
+	SuggestionActivitySortEnumValueDesc     SuggestionActivitySortEnum = "value_DESC"      // Order by `value` descending.
+	SuggestionActivitySortEnumActionAsc     SuggestionActivitySortEnum = "action_ASC"      // Order by `action` ascending.
+	SuggestionActivitySortEnumActionDesc    SuggestionActivitySortEnum = "action_DESC"     // Order by `action` descending.
+	SuggestionActivitySortEnumCreatedAtAsc  SuggestionActivitySortEnum = "created_at_ASC"  // Order by `created_at` ascending.
+	SuggestionActivitySortEnumCreatedAtDesc SuggestionActivitySortEnum = "created_at_DESC" // Order by `created_at` descending.
+)
+
+// All SuggestionActivitySortEnum as []string
+var AllSuggestionActivitySortEnum = []string{
+	string(SuggestionActivitySortEnumValueAsc),
+	string(SuggestionActivitySortEnumValueDesc),
+	string(SuggestionActivitySortEnumActionAsc),
+	string(SuggestionActivitySortEnumActionDesc),
+	string(SuggestionActivitySortEnumCreatedAtAsc),
+	string(SuggestionActivitySortEnumCreatedAtDesc),
+}
+
+// SuggestionFilterEnum represents fields that can be used as part of filter for suggestions.
+type SuggestionFilterEnum string
+
+const (
+	SuggestionFilterEnumIgnored SuggestionFilterEnum = "ignored" // Filter by `ignored` field.
+	SuggestionFilterEnumType    SuggestionFilterEnum = "type"    // Filter by `type` field.
+)
+
+// All SuggestionFilterEnum as []string
+var AllSuggestionFilterEnum = []string{
+	string(SuggestionFilterEnumIgnored),
+	string(SuggestionFilterEnumType),
+}
+
+// SuggestionSortEnum represents sort possibilities for suggestions.
+type SuggestionSortEnum string
+
+const (
+	SuggestionSortEnumAliasAsc                   SuggestionSortEnum = "alias_ASC"                     // Order by `alias` ascending.
+	SuggestionSortEnumAliasDesc                  SuggestionSortEnum = "alias_DESC"                    // Order by `alias` descending.
+	SuggestionSortEnumCreatedAtAsc               SuggestionSortEnum = "created_at_ASC"                // Translation missing: en.graphql.types.suggestion_sort_enum.created_at_asc.
+	SuggestionSortEnumCreatedAtDesc              SuggestionSortEnum = "created_at_DESC"               // Translation missing: en.graphql.types.suggestion_sort_enum.created_at_desc.
+	SuggestionSortEnumSuggestionSourcesCountAsc  SuggestionSortEnum = "suggestion_sources_count_ASC"  // Order by the number of resources suggesting this service ascending.
+	SuggestionSortEnumSuggestionSourcesCountDesc SuggestionSortEnum = "suggestion_sources_count_DESC" // Order by the number of resources suggesting this service descending.
+)
+
+// All SuggestionSortEnum as []string
+var AllSuggestionSortEnum = []string{
+	string(SuggestionSortEnumAliasAsc),
+	string(SuggestionSortEnumAliasDesc),
+	string(SuggestionSortEnumCreatedAtAsc),
+	string(SuggestionSortEnumCreatedAtDesc),
+	string(SuggestionSortEnumSuggestionSourcesCountAsc),
+	string(SuggestionSortEnumSuggestionSourcesCountDesc),
+}
+
 // TaggableResource represents possible types to apply tags to.
 type TaggableResource string
 
