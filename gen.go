@@ -485,28 +485,59 @@ type {{.Name}} struct { {{range .InputFields }}
 
 	{{ define "account_queries" -}}
 	    {{- range .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
-	{{ template "type_comment_description" . }}
-	func (client *Client) {{ if gt 3 (len .Args) }}List{{ .Name | title }}(input any) (*{{ .Name | title | makeSingular }}Connection, error) {
-	    {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title}}, error) {
-                        {{end -}}
+  // {{ if gt (len .Args) 3 -}} List {{- else -}} Get {{- end -}}
+     {{- .Name | title}} {{ .Description | clean | endSentence }}
+	func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*{{ .Name | title | makeSingular }}Connection, error) {
+                        {{- else -}}              Get{{ .Name | title }}(value string) (*{{.Name | title}}, error) {
+                        {{- end -}}
 	    var q struct {
 	      Account struct {
-	        {{ .Name | title }} {{ if isListType .Name }}{{ template "name_to_singular" . }}Connection
-	                            {{- else }}{{ template "name_to_singular" . }}{{end -}}` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+          {{ if gt (len .Args) 3 -}}
+            {{- .Name | title | makePlural }} {{ .Name | title | makeSingular }}Connection {{ template "graphql_struct_tag_with_args" . }}
+          {{- else -}}
+            {{- .Name | title  }} {{ .Name | title | makeSingular }} {{ template "graphql_struct_tag_with_args" . }}
+          {{- end -}}
 	      }
 	    }
+      {{- if gt (len .Args) 3 }}
+    	if variables == nil {
+        variables = client.InitialPageVariablesPointer()
+      }
+      {{ else }}
 	    v := PayloadVariables{ {{ range .Args }}
-	      "{{.Name}}": input, {{ end}}
+	      "{{.Name}}": value, {{ end}}
 	    }
+      {{- end }}
+
+      {{ if gt (len .Args) 3 -}}
+      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+        return nil, err
+      }
+
+      for q.Account.{{ .Name | title }}.PageInfo.HasNextPage {
+        (*variables)["after"] = q.Account.{{ .Name | title }}.PageInfo.End
+        resp, err := client.List{{ .Name | title }}(variables)
+        if err != nil {
+          return nil, err
+        }
+        q.Account.{{ .Name | title }}.Nodes = append(q.Account.{{ .Name | title }}.Nodes, resp.Nodes...)
+        q.Account.{{ .Name | title }}.PageInfo = resp.PageInfo
+        q.Account.{{ .Name | title }}.TotalCount += resp.TotalCount
+      }
+	    return &q.Account.{{ .Name | title }}, nil
+      {{ else }}
 	    err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}{{ if isListType .Name }}List{{else}}Get{{end}}"))
 	    return &q.Account.{{ .Name | title }}, HandleErrors(err, nil)
+      {{- end }}
 	}
-	{{- end}}{{ end }}{{- end}}
+  {{end}}{{- end}}{{- end}}
 
 	{{ define "non_account_queries" -}}
     {{- range .Fields }} {{- if and (len .Args) (not (skip_query $.Name)) }}
-	// {{ if gt 3 (len .Args) }}List{{- else }}Get{{ end }}{{.Name | title}} {{ template "description" . }}
-	func ({{ $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }}) {{ if gt 3 (len .Args) }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*{{ .Name | title | makeSingular }}Connection, error) {
+	// {{ if gt (len .Args) 3 }}List{{- else }}Get{{ end }}{{.Name | title}} {{ .Description | clean | endSentence }}
+	func ( {{- $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }})
+
+    {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*{{ .Name | title | makeSingular }}Connection, error) {
       if {{ $.Name | first_char_lowered }}.Id == "" {
         return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
       }
@@ -539,7 +570,8 @@ type {{.Name}} struct { {{range .InputFields }}
         }
       }
 
-      return &q.Account.{{ $.Name | first_char_lowered }}.{{ .Name | title }}, nil
+      return {{ $.Name | first_char_lowered }}.{{ .Name | title }}, nil
+
     {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
       var q struct {
         Account struct {
@@ -554,16 +586,6 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- end -}}
   }
   {{- end -}}{{- end -}}{{- end -}}
-
-	{{- define "object" -}}
-	{{ if not (hasSuffix "Payload" .Name) }}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct {
-	    {{ range .Fields }}
-	  {{.Name | title}} string  {{ template "field_comment_description" . }}
-	    {{- end }}
-	}
-	{{- end }}{{- end -}}
 	`),
 	mutationFile: t(header + `
 	{{range .Types | sortByName}}
@@ -753,6 +775,18 @@ func t(text string) *template.Template {
 	return template.Must(genTemplate.Parse(text))
 }
 
+func makePlural(s string) string {
+	value := strings.ToLower(s)
+	if isPlural(s) {
+		return s
+	} else if strings.HasSuffix(value, "y") {
+		return strings.ReplaceAll(s, "y", "ies")
+	} else if strings.HasSuffix(value, "s") {
+		return s + "es"
+	}
+	return s
+}
+
 func makeSingular(s string) string {
 	value := strings.ToLower(s)
 	if strings.HasSuffix(value, "ies") {
@@ -897,15 +931,6 @@ func firstCharLowered(s string) string {
 	return strings.ToLower(s[:1])
 }
 
-func breakPoint(thing GraphQLTypes) string {
-	for _, field := range thing.Fields {
-		if len(field.Args) >= 4 {
-			fmt.Println(thing.Name)
-		}
-	}
-	return ""
-}
-
 var templFuncMap = template.FuncMap{
 	"internal":                            func(s string) bool { return strings.HasPrefix(s, "__") },
 	"quote":                               strconv.Quote,
@@ -928,9 +953,9 @@ var templFuncMap = template.FuncMap{
 	"renameMutation":                      renameMutation,
 	"renameMutationReturnType":            renameMutationReturnType,
 	"convertPayloadType":                  convertPayloadType,
-	"break_point":                         breakPoint,
 	"first_char_lowered":                  firstCharLowered,
 	"word_first_char_lowered":             wordFirstCharLowered,
+	"makePlural":                          makePlural,
 	"makeSingular":                        makeSingular,
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
