@@ -49,8 +49,8 @@ type TeamConnection struct {
 }
 
 type TeamMembership struct {
-	Team TeamId `graphql:"team"`
 	Role string `graphql:"role"`
+	Team TeamId `graphql:"team"`
 	User UserId `graphql:"user"`
 }
 

@@ -9,11 +9,13 @@ type DomainId Identifier
 
 type Domain struct {
 	DomainId
-	Name        string      `graphql:"name"`
-	Description string      `graphql:"description"`
-	HTMLUrl     string      `graphql:"htmlUrl"`
-	Owner       EntityOwner `graphql:"owner"`
-	Note        string      `graphql:"note"`
+
+	Description    string      `graphql:"description"`
+	HTMLUrl        string      `graphql:"htmlUrl"`
+	ManagedAliases []string    `graphql:"managedAliases"` // A list of aliases that can be set by users. The unique identifier for the resource is omitted.
+	Name           string      `graphql:"name"`
+	Note           string      `graphql:"note"`
+	Owner          EntityOwner `graphql:"owner"`
 }
 
 type DomainConnection struct {

@@ -8,9 +8,9 @@ type ManualCheckFragment struct {
 }
 
 type ManualCheckFrequency struct {
-	StartingDate       iso8601.Time       `graphql:"startingDate"`
 	FrequencyTimeScale FrequencyTimeScale `graphql:"frequencyTimeScale"`
 	FrequencyValue     int                `graphql:"frequencyValue"`
+	StartingDate       iso8601.Time       `graphql:"startingDate"`
 }
 
 func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeScale, value int) *ManualCheckFrequencyInput {
