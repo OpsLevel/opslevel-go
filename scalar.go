@@ -17,13 +17,13 @@ func NewID(id ...string) *ID {
 	return &output
 }
 
-func (s ID) GetGraphQLType() string { return "ID" }
+func (id ID) GetGraphQLType() string { return "ID" }
 
-func (s *ID) MarshalJSON() ([]byte, error) {
-	if *s == "" {
+func (id ID) MarshalJSON() ([]byte, error) {
+	if id == "" {
 		return []byte("null"), nil
 	}
-	return []byte(strconv.Quote(string(*s))), nil
+	return []byte(strconv.Quote(string(id))), nil
 }
 
 type Identifier struct {
@@ -31,15 +31,15 @@ type Identifier struct {
 	Aliases []string `graphql:"aliases"`
 }
 
-func (i IdentifierInput) MarshalJSON() ([]byte, error) {
-	if i.Id == nil && i.Alias == nil {
+func (identifierInput IdentifierInput) MarshalJSON() ([]byte, error) {
+	if identifierInput.Id == nil && identifierInput.Alias == nil {
 		return []byte("null"), nil
 	}
 	var out string
-	if i.Id != nil {
-		out = fmt.Sprintf(`{"id":"%s"}`, string(*i.Id))
+	if identifierInput.Id != nil {
+		out = fmt.Sprintf(`{"id":"%s"}`, string(*identifierInput.Id))
 	} else {
-		out = fmt.Sprintf(`{"alias":"%s"}`, string(*i.Alias))
+		out = fmt.Sprintf(`{"alias":"%s"}`, *identifierInput.Alias)
 	}
 	return []byte(out), nil
 }
@@ -60,7 +60,7 @@ func NewIdentifier(value ...string) *IdentifierInput {
 }
 
 func NewIdentifierArray(values []string) []IdentifierInput {
-	output := []IdentifierInput{}
+	output := make([]IdentifierInput, 0)
 	for _, value := range values {
 		output = append(output, *NewIdentifier(value))
 	}

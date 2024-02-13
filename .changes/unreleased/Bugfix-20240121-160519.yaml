@@ -1,0 +1,3 @@
+kind: Bugfix
+body: Concrete opslevel.ID structs now correctly JSON marshal to null instead of ""
+time: 2024-01-21T16:05:19.350349-05:00
