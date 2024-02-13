@@ -339,7 +339,7 @@ const (
 var templates = map[string]*template.Template{
 	connectionFile: t(header + `
 	{{range .Types | sortByName}}
-	  {{if and (not (skip_object_connection_type .Name)) (not (internal .Name)) }}
+	  {{if and (not (skip_if_campaign_or_group .Name)) (not (internal .Name)) }}
 	    {{ if hasSuffix "Connection" .Name }}
 	      {{- template "connection_object" . }}
 	    {{ else if hasSuffix "Edge" .Name }}
@@ -537,40 +537,44 @@ type {{.Name}} struct { {{range .InputFields }}
 	// {{ if gt (len .Args) 3 }}List{{- else }}Get{{ end }}{{.Name | title}} {{ .Description | clean | endSentence }}
 	func ( {{- $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }})
 
-    {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*{{ .Name | title | makeSingular }}Connection, error) {
+    {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*
+    {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) }} {{- $.Name }}Connection, error
+    {{- else }}{{- .Name | title | makeSingular | trimPrefix "Child" }}Connection, error
+    {{- end -}} ) {
       if {{ $.Name | first_char_lowered }}.Id == "" {
         return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
       }
       var q struct {
         Account struct {
           {{ $.Name | title | makeSingular }} struct {
-            {{ .Name | title }} {{ template "name_to_singular" . }}Connection ` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
-          } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: ${{$.Name | lower }})"` + "`" + `
+            {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) -}}
+              {{ .Name | title }} {{ $.Name | title | makeSingular }}Connection
+            {{- else -}}
+              {{ .Name | title }} {{ .Name | title | makeSingular }}Connection
+            {{- end }} ` + "`" + `graphql:"{{.Name}}(after: $after, first: $first)"` + "`" + `
+          } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: $id)"` + "`" + `
         }
       }
       if variables == nil {
         variables = client.InitialPageVariablesPointer()
       }
-      (*variables)["{{ $.Name | lower }}"] = {{ $.Name | first_char_lowered }}.Id
-      if err := client.Query(&q, variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+      (*variables)["id"] = {{ $.Name | first_char_lowered }}.Id
+      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
         return nil, err
       }
-      if {{ $.Name | first_char_lowered }}.{{ .Name | title }} == nil {
-        {{ .Name }} := {{ .Name | title | makeSingular }}Connection{}
-        {{ $.Name | first_char_lowered }}.{{ .Name | title }} = &{{ .Name }}
-      }
-    	{{ $.Name | first_char_lowered }}.{{ .Name | title }}.Nodes = append({{ $.Name | first_char_lowered }}.{{ .Name | title }}, q.Account.{{ $.Name }}.{{ .Name | title }}.Nodes...)
-      {{ $.Name | first_char_lowered }}.{{ .Name | title }}.PageInfo = q.Account.{{ $.Name }}.{{ .Name | title }}.PageInfo
-      {{ $.Name | first_char_lowered }}.{{ .Name | title }}.TotalCount += q.Account.{{ $.Name }}.{{ .Name | title }}.TotalCount
-      for {{ $.Name | first_char_lowered }}.{{ .Name | title }}.PageInfo.HasNextPage {
-        (*variables)["after"] = {{ $.Name | first_char_lowered }}.{{ .Name | title }}.PageInfo.End
-        _, err := {{ $.Name | first_char_lowered }}.List{{ .Name | title }}(client, variables)
+
+      for q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.HasNextPage {
+        (*variables)["after"] = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.End
+        connection, err := {{ $.Name | first_char_lowered }}.List{{ .Name | title }}(client, variables)
         if err != nil {
           return nil, err
         }
+        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes = append(q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes, connection.Nodes...)
+        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo
+        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount += q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount
       }
 
-      return {{ $.Name | first_char_lowered }}.{{ .Name | title }}, nil
+      return &q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}, nil
 
     {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
       var q struct {
@@ -597,37 +601,43 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{- end}}
 
 	{{ define "mutation" -}}
-	{{- range .Fields }}
-	// {{ .Name | title | renameMutation }} {{ template "description" . }}
+	{{- range .Fields }} {{- if not (skip_if_campaign_or_group .Name) }}
+	// {{ .Name | title | renameMutation }} {{ .Description | clean | fullSentence }}
 	func (client *Client) {{ .Name | title | renameMutation }}(
-	  {{- range $index, $element := .Args }}{{- if gt $index 0 }}, {{ end -}}
+    {{- if hasSuffix "Delete" .Name }}id ID
+    {{- else }}
+      {{- range $index, $element := .Args }} {{- if gt $index 0 }}, {{ end -}}
 	    {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}identifier string
+	    {{- else if hasSuffix "Delete" $.Name }}id ID
+	    {{- else if eq "String" .Type.OfType.OfTypeName }}{{ .Name }} string
 	    {{- else }}{{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
 	    {{- end }}
-	  {{- end -}} ) (*{{.Name | title | renameMutationReturnType}}, error) {
+    {{- end }}
+	  {{- end -}} ) {{ if hasSuffix "Delete" .Name -}}
+                  error {
+	                {{- else -}}
+                  (*{{.Name | title | renameMutationReturnType}}, error) {
+	                {{- end -}}
+      {{- if hasSuffix "Delete" .Name }}
+      input := {{.Name | title}}Input{Id: id}
+      {{ end }}
 	    var m struct {
 	      {{ .Name | title }}Payload {{ template "graphql_struct_tag_with_args" . }}
 	    }
 	    v := PayloadVariables{ {{ range .Args }}
 	      "{{.Name}}": {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}*NewIdentifier(identifier),
-	                   {{- else}}{{.Name}},{{ end }}
+	                   {{- else}}input,{{ end }}
 	                           {{- end}}
 	    }
 	    err := client.Mutate(&m, v, WithName("{{ .Name | title }}"))
+      {{- if hasSuffix "Delete" .Name }}
+      return HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
+      {{- else }}
 	    return &m.{{ .Name | title }}Payload.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
+      {{- end }}
 	}
-	{{- end}}
-	{{- end}}
+	{{- end}}{{ end }}{{- end}}
 	`),
-
-	// NOTE: kept for now, probably not keeping later
-	//  	{{ define "account_struct" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct { {{range .Fields }}
-	//   {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
-	//  {{- end }}
-	// }
-	// {{- end }}
 	objectFile: t(header + `
   import "github.com/relvacode/iso8601"
 
@@ -835,7 +845,6 @@ func convertPayloadType(s string) string {
 	return makeSingular(s)
 }
 
-// TODO fix up later
 func renameMutationReturnType(s string) string {
 	create, delete, update := "Create", "Delete", "Update"
 	if strings.HasSuffix(s, create) {
@@ -848,7 +857,6 @@ func renameMutationReturnType(s string) string {
 	return s
 }
 
-// TODO fix up later
 func renameMutation(s string) string {
 	create, delete, update := "Create", "Delete", "Update"
 	if strings.HasSuffix(s, create) {
@@ -866,9 +874,8 @@ func renameMutation(s string) string {
 
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
-	// Examples: "alias", "address", "status", "levels", "responsibilities"
-	if value == "notes" || value == "days" || value == "headers" ||
-		strings.HasSuffix(value, "ies") ||
+	// Examples: "alias", "address", "status", "levels"
+	if value == "notes" || value == "days" || value == "headers" || value == "responsibilities" ||
 		strings.HasSuffix(value, "ias") ||
 		strings.HasSuffix(value, "ls") ||
 		(!strings.HasSuffix(value, "access") && strings.HasSuffix(value, "ss")) ||
@@ -944,7 +951,7 @@ var templFuncMap = template.FuncMap{
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
 	"query_args":                          queryArgs,
 	"skip_object":                         skipObject,
-	"skip_object_connection_type":         skipObjectConnectionType,
+	"skip_if_campaign_or_group":           skipCampaignAndGroup,
 	"skip_object_field":                   skipObjectField,
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
@@ -1046,7 +1053,7 @@ func addSpecialInterfacesFields(interfaceName string) string {
 	return ""
 }
 
-func skipObjectConnectionType(objectName string) bool {
+func skipCampaignAndGroup(objectName string) bool {
 	nameLowerCased := strings.ToLower(objectName)
 	if strings.Contains(nameLowerCased, "group") ||
 		strings.Contains(nameLowerCased, "campaign") {
