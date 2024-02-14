@@ -487,15 +487,18 @@ type {{.Name}} struct { {{range .InputFields }}
 	    {{- range .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
   // {{ if gt (len .Args) 3 -}} List {{- else -}} Get {{- end -}}
      {{- .Name | title}} {{ .Description | clean | endSentence }}
-	func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*{{ .Name | title | makeSingular }}Connection, error) {
-                        {{- else -}}              Get{{ .Name | title }}(value string) (*{{.Name | title}}, error) {
+	func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*
+                                      {{- if eq .Name "customActionsExternalActions" }}{{ .Name | title  }}Connection, error) {
+                                      {{- else}}{{ .Name | title | makeSingular }}Connection, error) {
+                                      {{- end -}}
+                        {{- else -}}              Get{{ .Name | title }}(value string) (*{{.Name | title | trimSuffix "sVaultsSecret" }}, error) {
                         {{- end -}}
 	    var q struct {
 	      Account struct {
           {{ if gt (len .Args) 3 -}}
-            {{- .Name | title | makePlural }} {{ .Name | title | makeSingular }}Connection {{ template "graphql_struct_tag_with_args" . }}
+            {{- .Name | title | makePlural }} {{ if eq .Name "customActionsExternalActions" -}}{{ .Name | title  }}{{ else }}{{ .Name | title | makeSingular }}{{ end }}Connection {{ template "graphql_struct_tag_with_args" . }}
           {{- else -}}
-            {{- .Name | title  }} {{ .Name | title | makeSingular }} {{ template "graphql_struct_tag_with_args" . }}
+            {{- .Name | title  }} {{ .Name | title | makeSingular | trimSuffix "sVaultsSecret" }} {{ template "graphql_struct_tag_with_args" . }}
           {{- end -}}
 	      }
 	    }
@@ -539,7 +542,8 @@ type {{.Name}} struct { {{range .InputFields }}
 
     {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*
     {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) }} {{- $.Name }}Connection, error
-    {{- else }}{{- .Name | title | makeSingular | trimPrefix "Child" }}Connection, error
+    {{- else if hasPrefix "descendant" .Name }}{{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection, error
+    {{- else }}{{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular | trimPrefix "Child" }}Connection, error
     {{- end -}} ) {
       if {{ $.Name | first_char_lowered }}.Id == "" {
         return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
@@ -549,8 +553,10 @@ type {{.Name}} struct { {{range .InputFields }}
           {{ $.Name | title | makeSingular }} struct {
             {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) -}}
               {{ .Name | title }} {{ $.Name | title | makeSingular }}Connection
+            {{- else if hasPrefix "descendant" .Name }}
+              {{ .Name | title }} {{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection
             {{- else -}}
-              {{ .Name | title }} {{ .Name | title | makeSingular }}Connection
+              {{ .Name | title }} {{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular }}Connection
             {{- end }} ` + "`" + `graphql:"{{.Name}}(after: $after, first: $first)"` + "`" + `
           } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: $id)"` + "`" + `
         }
