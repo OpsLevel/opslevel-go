@@ -7,6 +7,11 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
+type Language struct {
+	Name  string
+	Usage float32
+}
+
 // Lightweight Repository struct used to make some API calls return less data
 type RepositoryId struct {
 	Id           ID
@@ -35,6 +40,19 @@ type Repository struct {
 	Type               string
 	Url                string
 	Visible            bool
+}
+
+type RepositoryPath struct {
+	Href string
+	Path string
+}
+
+type ServiceRepository struct {
+	BaseDirectory string
+	DisplayName   string
+	Id            ID
+	Repository    RepositoryId
+	Service       ServiceId
 }
 
 type RepositoryConnection struct {

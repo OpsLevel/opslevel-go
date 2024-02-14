@@ -7,15 +7,16 @@ import (
 
 type DomainId Identifier
 
-// NOTES: ManagedAliases field added to this struct in object.go
-// type Domain struct {
-// 	DomainId
-// 	Description string      `graphql:"description"`
-// 	HTMLUrl     string      `graphql:"htmlUrl"`
-// 	Name        string      `graphql:"name"`
-// 	Owner       EntityOwner `graphql:"owner"`
-// 	Note        string      `graphql:"note"`
-// }
+type Domain struct {
+	DomainId
+
+	Description    string      `graphql:"description"`
+	HTMLUrl        string      `graphql:"htmlUrl"`
+	ManagedAliases []string    `graphql:"managedAliases"` // A list of aliases that can be set by users. The unique identifier for the resource is omitted.
+	Name           string      `graphql:"name"`
+	Note           string      `graphql:"note"`
+	Owner          EntityOwner `graphql:"owner"`
+}
 
 type DomainConnection struct {
 	Nodes      []Domain `json:"nodes"`

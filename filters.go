@@ -6,18 +6,22 @@ import (
 	"github.com/gosimple/slug"
 )
 
+type Predicate struct {
+	Type  PredicateTypeEnum `graphql:"type"`
+	Value string            `graphql:"value"`
+}
+
 type FilterId struct {
 	Id   ID
 	Name string
 }
 
-// NOTE: HtmlURL here, HtmlUrl in object.go
-// type Filter struct {
-// 	FilterId
-// 	Connective ConnectiveEnum
-// 	HtmlURL    string
-// 	Predicates []FilterPredicate
-// }
+type Filter struct {
+	FilterId
+	Connective ConnectiveEnum
+	HtmlURL    string
+	Predicates []FilterPredicate
+}
 
 type FilterPredicate struct {
 	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
