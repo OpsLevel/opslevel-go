@@ -10,6 +10,7 @@ import (
 	"go/format"
 	"log"
 	"os"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -22,48 +23,98 @@ import (
 )
 
 const (
-	// connectionFile  string = "pkg/gen/connection.go"
+	connectionFile  string = "connection.go"
 	enumFile        string = "enum.go"
 	inputObjectFile string = "input.go"
-	// interfaceFile   string = "pkg/gen/interface.go"
-	// mutationFile    string = "pkg/gen/mutation.go"
-	// objectFile      string = "pkg/gen/object.go"
-	// payloadFile     string = "pkg/gen/payload.go"
-	// queryFile       string = "pkg/gen/query.go"
-	// scalarFile      string = "pkg/gen/scalar.go"
-	// unionFile       string = "pkg/gen/union.go"
+	interfacesFile  string = "interfaces.go"
+	objectFile      string = "object.go"
+	queryFile       string = "query.go"
+	mutationFile    string = "mutation.go"
+	payloadFile     string = "payload.go"
+	// scalarFile      string = "scalar.go" // NOTE: probably not useful
+	// unionFile       string = "union.go" // NOTE: probably not useful
 )
+
+var knownTypeIsName = []string{
+	"category",
+	"filter",
+	"frequencytimescale",
+	"lifecycle",
+	"level",
+	"tier",
+	"timestamps",
+}
+
+var knownBoolsByName = []string{
+	"affectsoverallservicelevels",
+	"casesensitive",
+	"enabled",
+	"forked",
+	"hasnextpage",
+	"haspreviouspage",
+	"locked",
+	"lockedfromgraphqlmodification",
+	"ownerlocked",
+	"passingchecks",
+	"published",
+	"servicecount",
+	"totalchecks",
+	"visible",
+}
+
+var knownIntsByName = []string{
+	"hiddencount",
+	"index",
+	"frequencyvalue",
+}
+
+var knownIsoTimeByName = []string{
+	"archivedat",
+	"createdat",
+	"createdon",
+	"enableon",
+	"installedat",
+	"lastownerchangedat",
+	"lastsyncedat",
+	"startingdate",
+	"updatedat",
+}
 
 var stringTypeSuffixes = []string{
 	"actionmessage",
+	"address",
 	"alias",
 	"aliases",
 	"apidocsdefaultpath",
 	"createdat",
 	"cursor",
+	"description",
 	"email",
 	"externaluuid",
 	"htmlurl",
 	"id",
 	"kind",
+	"liquidtemplate",
 	"message",
 	"name",
+	"notes",
 	"processedat",
-	"role",
 	"queryparams",
+	"role",
+	"status",
 	"updatedat",
 	"userdeletepayload",
+	"url",
 	"yaml",
 }
 
 var knownTypeMappings = map[string]string{
 	"data":                           "JSON",
 	"deletedmembers":                 "User",
-	"edges":                          "any",
 	"filteredcount":                  "int",
+	"headers":                        "JSON",
+	"highlights":                     "JSON",
 	"memberships":                    "TeamMembership",
-	"node":                           "any",
-	"nodes":                          "[]any",
 	"notupdatedrepositories":         "RepositoryOperationErrorPayload",
 	"promotedchecks":                 "Check",
 	"relationship":                   "RelationshipType",
@@ -71,7 +122,6 @@ var knownTypeMappings = map[string]string{
 	"teamsbeingnotifiedcount":        "int",
 	"teamsmissingcontactmethod":      "int",
 	"teamsmissingcontactmethodcount": "int",
-	"type":                           "any",
 	"totalcount":                     "int",
 	"triggerdefinition":              "CustomActionsTriggerDefinition",
 	"updatedrepositories":            "Repository",
@@ -201,22 +251,22 @@ func run() error {
 	var subSchema GraphQLSchema
 	for filename, t := range templates {
 		switch filename {
-		// case connectionFile:
-		// 	subSchema = objectSchema
+		case connectionFile:
+			subSchema = objectSchema
 		case enumFile:
 			subSchema = enumSchema
 		case inputObjectFile:
 			subSchema = inputObjectSchema
-		// case interfaceFile:
-		// 	subSchema = interfaceSchema
-		// case mutationFile:
-		// 	subSchema = objectSchema
-		// case objectFile:
-		// 	subSchema = objectSchema
-		// case payloadFile:
-		// 	subSchema = objectSchema
-		// case queryFile:
-		// 	subSchema = objectSchema
+		case interfacesFile:
+			subSchema = interfaceSchema
+		case objectFile:
+			subSchema = objectSchema
+		case mutationFile:
+			subSchema = objectSchema
+		case payloadFile:
+			subSchema = objectSchema
+		case queryFile:
+			subSchema = objectSchema
 		// case scalarFile:
 		// 	subSchema = scalarSchema
 		// case unionFile:
@@ -264,6 +314,13 @@ const (
     {{- .Name}}: ${{.Name}}
   {{- end}})"` + "`" + `
 {{- end }}`
+	fragmentsTmpl = `
+{{- define "fragments" -}}
+  {{- if eq .Name "Check" }}{{ check_fragments }}
+  {{- else if eq .Name "CustomActionsExternalAction" }}{{ custom_actions_ext_action_fragments }}
+  {{- else if eq .Name "Integration" }}{{ integration_fragments }}
+  {{ end }}
+{{- end }}`
 	nameToSingularTmpl = `
 {{- define "name_to_singular" -}}
   {{- .Name | title | makeSingular }}
@@ -280,30 +337,43 @@ const (
 
 // Filename -> Template.
 var templates = map[string]*template.Template{
-	// 	connectionFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{ if hasSuffix "Connection" .Name }}
-	//       {{- template "object" . }}
-	//     {{end}}
-	//   {{- end}}
-	// {{- end}}
+	connectionFile: t(header + `
+	{{range .Types | sortByName}}
+	  {{if and (not (skip_if_campaign_or_group .Name)) (not (internal .Name)) }}
+	    {{ if hasSuffix "Connection" .Name }}
+	      {{- template "connection_object" . }}
+	    {{ else if hasSuffix "Edge" .Name }}
+	      {{- template "edge_object" . }}
+	    {{end}}
+	  {{- end}}
+	{{- end}}
 
-	// {{- define "object" -}}
-	// {{ if hasSuffix "Connection" .Name }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	//   Nodes []{{- if eq .Name "AncestorGroupsConnection"}}Group
-	//           {{- else}}{{.Name | trimSuffix "Connection" | trimSuffix "V2" }} ` + "`" + `graphql:"nodes"` + "`" + `
-	//           {{- end }}
-	//   Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` + "`" + `
-	// {{ range .Fields }} {{ if and (ne "edges" .Name) (ne "nodes" .Name) }}
-	//     {{- .Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	//   {{- end }}
-	// {{- end }}
-	// }
-	// {{- end }}{{- end -}}
-	//   `),
+	{{- define "connection_object" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct {
+    Nodes []{{.Name | trimSuffix "Connection" | trimSuffix "V2" | makeSingular }} ` +
+		"`" + `graphql:"nodes"` + "`" + ` // A list of nodes.
+    Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` +
+		"`" + ` // A list of edges.
+	{{ range .Fields }}
+      {{- if and (ne "edges" .Name) (ne "nodes" .Name) }}
+	    {{ .Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	  {{- end }}
+	{{- end }}
+	}
+	{{- end }}
+
+  {{- define "edge_object" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct {
+    {{ range .Fields }}
+	    {{ .Name | title }} {{ if eq .Name "node"}}{{ $.Name | trimSuffix "Edge" | trimSuffix "V2" | makeSingular }}
+      {{- else }}{{ template "converted_type" . }}
+      {{- end }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+    {{- end }}
+	}
+	{{- end }}
+	  `),
 	enumFile: t(header + `
 {{range .Types | sortByName}}{{if and (eq .Kind "ENUM") (not (internal .Name))}}
 {{template "enum" .}}
@@ -314,8 +384,10 @@ var templates = map[string]*template.Template{
 {{ template "type_comment_description" . }}
 type {{.Name}} string
 
-const ({{range .EnumValues}}
-	{{$.Name}}{{.Name | enumIdentifier}} {{$.Name}} = {{.Name | quote}} {{ template "field_comment_description" . }}{{end}}
+const (
+{{- range .EnumValues }}
+	{{$.Name}}{{.Name | enumIdentifier}} {{$.Name}} = {{.Name | quote}} {{ template "field_comment_description" . }}
+{{- end }}
 )
 // All {{$.Name}} as []string
 var All{{$.Name}} = []string {
@@ -337,7 +409,7 @@ import "github.com/relvacode/iso8601"
 type {{.Name}} struct { {{range .InputFields }}
   {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
     {{- if isListType .Name }}[]{{ end -}}
-    {{- if and (hasSuffix "Id" .Name) (not (eq .Name "externalId")) }}ID
+    {{- if and (hasSuffix "Id" .Name) (ne .Name "externalId") }}ID
     {{- else if hasSuffix "Access" .Name }}IdentifierInput
     {{- else if eq .Name "predicates" }}FilterPredicateInput
     {{- else if eq .Name "tags" }}TagInput
@@ -348,206 +420,251 @@ type {{.Name}} struct { {{range .InputFields }}
     {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
 		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
 		` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + `
+
   {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} example:"
    {{- if isListType .Name }}[{{ end -}}
-    {{- if or (eq .Type.Name "Boolean") (eq .Type.OfType.OfTypeName "Boolean") }}false
-      {{- else if or (eq .Type.Name "Int") (eq .Type.OfType.OfTypeName "Int") }}3
-      {{- else if eq .Type.Name "JSON" }}{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}
-      {{- else if or (hasSuffix "Time" .Type.Name) (hasSuffix "Time" .Type.OfType.OfTypeName) }}2024-01-05T01:00:00.000Z
-      {{- else if or (eq "FrequencyTimeScale" .Type.Name) (eq "FrequencyTimeScale" .Type.OfType.OfTypeName) }}week
-      {{- else if or (eq "ContactType" .Type.Name) (eq "ContactType" .Type.OfType.OfTypeName) }}slack
-      {{- else if or (eq "AlertSourceTypeEnum" .Type.Name) (hasSuffix "AlertSourceTypeEnum" .Type.OfType.OfTypeName) }}pagerduty
-      {{- else if or (eq "AliasOwnerTypeEnum" .Type.Name) (hasSuffix "AliasOwnerTypeEnum" .Type.OfType.OfTypeName) }}scorecard
-      {{- else if or (eq "BasicTypeEnum" .Type.Name) (hasSuffix "BasicTypeEnum" .Type.OfType.OfTypeName) }}does_not_equal
-      {{- else if or (eq "ConnectiveEnum" .Type.Name) (hasSuffix "ConnectiveEnum" .Type.OfType.OfTypeName) }}or
-      {{- else if or (eq "CustomActionsEntityTypeEnum" .Type.Name) (hasSuffix "CustomActionsEntityTypeEnum" .Type.OfType.OfTypeName) }}GLOBAL
-      {{- else if or (eq "CustomActionsHttpMethodEnum" .Type.Name) (hasSuffix "CustomActionsHttpMethodEnum" .Type.OfType.OfTypeName) }}GET
-      {{- else if or (eq "CustomActionsTriggerDefinitionAccessControlEnum" .Type.Name) (hasSuffix "CustomActionsTriggerDefinitionAccessControlEnum" .Type.OfType.OfTypeName) }}service_owners
-      {{- else if or (eq "HasDocumentationTypeEnum" .Type.Name) (hasSuffix "HasDocumentationTypeEnum" .Type.OfType.OfTypeName) }}api
-      {{- else if eq .Name "documentSubtype" }}openapi
-      {{- else if or (eq "RelationshipTypeEnum" .Type.Name) (hasSuffix "RelationshipTypeEnum" .Type.OfType.OfTypeName) }}depends_on
-      {{- else if or (eq "PredicateKeyEnum" .Type.Name) (hasSuffix "PredicateKeyEnum" .Type.OfType.OfTypeName) }}filter_id
-      {{- else if or (eq "PredicateTypeEnum" .Type.Name) (hasSuffix "PredicateTypeEnum" .Type.OfType.OfTypeName) }}satisfies_jq_expression
-      {{- else if or (eq "ServicePropertyTypeEnum" .Type.Name) (hasSuffix "ServicePropertyTypeEnum" .Type.OfType.OfTypeName) }}language
-      {{- else if or (eq "UsersFilterEnum" .Type.Name) (hasSuffix "UsersFilterEnum" .Type.OfType.OfTypeName) }}last_sign_in_at
-      {{- else if or (eq "UserRole" .Type.Name) (hasSuffix "UserRole" .Type.OfType.OfTypeName) }}admin
-      {{- else if or (hasSuffix "Enum" .Type.Name) (hasSuffix "Enum" .Type.OfType.OfTypeName) }}NEW_ENUM_SET_DEFAULT
-      {{- else if or (hasSuffix "ToolCategory" .Type.Name) (hasSuffix "ToolCategory" .Type.OfType.OfTypeName) }}api_documentation
-      {{- else if or (eq "type" .Name) (hasSuffix "Type" .Name) }}example_type
-      {{- else if eq "address" .Name }}support@company.com
-      {{- else if or (eq "id" .Name) (hasSuffix "Id" .Name) }}Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk
-      {{- else if or (eq "definition" .Name) (hasSuffix "Definition" .Name) }}example_definition
-      {{- else if hasSuffix "Template" .Name }}{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}
-      {{- else if or (eq "name" .Name) (hasSuffix "Name" .Name) }}example_name
-      {{- else if or (eq "language" .Name) (hasSuffix "Language" .Name) }}example_language
-      {{- else if or (eq "alias" .Name) (hasSuffix "Alias" .Name) }}example_alias
-      {{- else if or (eq "description" .Name) (hasSuffix "Description" .Name) }}example_description
-      {{- else if or (eq "key" .Name) (hasSuffix "Key" .Name) }}XXX_example_key_XXX
-      {{- else if or (eq "email" .Name) (hasSuffix "Email" .Name) }}first.last@domain.com
-      {{- else if or (eq "data" .Name) (hasSuffix "Data" .Name) }}example_data
-      {{- else if or (eq "note" .Name) (hasSuffix "Note" .Name) }}example_note
-      {{- else if or (eq "role" .Name) (hasSuffix "Role" .Name) }}example_role
-      {{- else if or (eq "notes" .Name) (hasSuffix "Notes" .Name) }}example_notes
-      {{- else if or (eq "value" .Name) (hasSuffix "Value" .Name) }}example_value
-      {{- else if or (eq "product" .Name) (hasSuffix "Product" .Name) }}example_product
-      {{- else if or (eq "framework" .Name) (hasSuffix "Framework" .Name) }}example_framework
-      {{- else if or (eq "url" .Name) (hasSuffix "Url" .Name) }}john.doe@example.com
-      {{- else if eq "baseDirectory" .Name }}/home/opslevel.yaml
-      {{- else if eq "externalUrl" .Name }}https://google.com
-      {{- else if eq "responsibilities" .Name }}example description of responsibilities
-      {{- else if eq "environment" .Name }}environment that tool belongs to
-      {{- else if eq "arg" .Name }}example_arg
-      {{- else if hasSuffix "Extensions" .Name }}'go', 'py', 'rb'
-      {{- else if hasSuffix "Paths" .Name }}'/usr/local/bin', '/home/opslevel'
-      {{- else if hasSuffix "Ids" .Name }}'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'
-      {{- else if hasSuffix "TagKeys" .Name }}'tag_key1', 'tag_key2'
-      {{- else if hasSuffix "Selector" .Name }}example_selector
-      {{- else if hasSuffix "Condition" .Name }}example_condition
-      {{- else if hasSuffix "Message" .Name }}example_message
-      {{- else if hasSuffix "Method" .Name }}example_method
-      {{- else if hasSuffix "Identifier" .Name}}example_identifier
-    {{- end}}
+     {{ example_tag_value . }}
    {{- if isListType .Name }}]{{ end -}}"{{- end}}` +
 		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
   {{- end}}
 }
 {{- end -}}
 `),
-	// 	interfaceFile: t(header + `
-	// {{range .Types | sortByName}}{{if and (eq .Kind "INTERFACE") (not (internal .Name))}}
-	// {{template "interface_object" .}}
-	// {{end}}{{end}}
+	interfacesFile: t(header + `
+  import "github.com/relvacode/iso8601"
 
-	// {{- define "interface_object" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} interface { {{range .Fields }}
-	//   {{ template "field_comment_description" . }}
-	//   {{.Name | title}}() {{.Name | title}}
-	// {{end}}
-	// }
-	// {{- end -}}
-	// 	`),
-	// 	payloadFile: t(header + `
-	// {{range .Types | sortByName}}{{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	// {{template "payload_object" .}}
-	// {{- end}}{{- end}}
+	{{range .Types | sortByName}}{{if and (eq .Kind "INTERFACE") (not (internal .Name))}}
+	{{template "interface_object" .}}
+	{{end}}{{end}}
 
-	// {{- define "payload_object" -}}
-	// {{ if hasSuffix "Payload" .Name }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	// {{ range .Fields }}
-	//   {{.Name | title}} {{ if isListType .Name }}[]{{- end -}}
-	//     {{ template "converted_type" . }} {{ template "field_comment_description" . }}
-	// {{- end }}
-	// }
-	// {{- end }}{{ end -}}
-	// `),
+	{{- define "interface_object" -}}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct { {{ add_special_interfaces_fields .Name }}
+    {{ range .Fields }}{{ if not (skip_interface_field $.Name .Name) }}
+	  {{.Name | title}} {{ get_input_field_type . }} {{ if eq .Name "notes" }}` + "`" + `graphql:"notes: rawNotes"` + "`" + `{{ else }}{{ template "graphql_struct_tag" . }}
+    {{- end}} {{ template "field_comment_description" . }}
+	{{- end }}{{ end }}
+    {{ template "fragments" . -}}
+	}
+	{{- end -}}
+		`),
+	payloadFile: t(header + `
+  import "github.com/relvacode/iso8601"
+
+	{{range .Types | sortByName}}{{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	{{template "payload_object" .}}
+	{{- end}}{{- end}}
+
+	{{- define "payload_object" -}}
+	{{ if and (hasSuffix "Payload" .Name) (not (skip_query .Name)) }}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct {
+	{{ range .Fields }}
+	  {{.Name | title}} {{ if isListType .Name }}[]{{- end -}}
+      {{- if eq .Name "targetCategory" -}}Category
+      {{- else }}{{ template "converted_type" . }}
+      {{- end }} {{ template "field_comment_description" . }}
+	{{- end }}
+	}
+	{{- end }}{{ end -}}
+	`),
 	// NOTE: "account" == objectSchema.Types[0]
 	// NOTE: "mutation" == objectSchema.Types[134]
-	// NOTE: may have to use interfaceSchema to derive details for objects
-	// 	queryFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{- if eq .Name "Account" }}
-	//       {{ template "account_queries" . }}
-	//     {{- end}}
-	//   {{- end}}
-	// {{- end}}
+	queryFile: t(header + `
+  import "fmt"
 
-	// {{ define "account_queries" -}}
-	//     {{- range .Fields }}
-	// {{ template "type_comment_description" . }}
-	// func (client *Client) {{ if isListType .Name }}List{{ .Name | title }}(input any) ({{ template "name_to_singular" . }}Connection, error) {
-	//     {{- else }}Get{{ .Name | title }}(input any) ({{.Name | title}}, error) {
-	//     {{end -}}
-	//     var q struct {
-	//       Account struct {
-	//         {{ .Name | title }} {{ if isListType .Name }}{{ template "name_to_singular" . }}Connection
-	//                             {{- else }}Get{{ template "name_to_singular" . }}{{end -}}` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
-	//       }
-	//     }
-	//     v := PayloadVariables{ {{ range .Args }}
-	//       "{{.Name}}": input, {{ end}}
-	//     }
-	//     err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}{{ if isListType .Name }}List{{else}}Get{{end}}"))
-	//     return &q.Account.{{ .Name | title }}, HandleErrors(err, nil)
-	// }
-	// {{- end}}{{- end}}
+	{{range .Types | sortByName}}
+	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	    {{- if eq .Name "Account" }}
+	      {{- template "account_queries" . }}
+	    {{- else }}
+	      {{- template "non_account_queries" . }}
+	    {{- end}}
+	  {{- end}}
+	{{- end}}
 
-	// {{- define "object" -}}
-	// {{ if not (hasSuffix "Payload" .Name) }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	//     {{ range .Fields }}
-	//   {{.Name | title}} string  {{ template "field_comment_description" . }}
-	//     {{- end }}
-	// }
-	// {{- end }}{{- end -}}
-	// `),
-	// 	mutationFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{- if eq .Name "Mutation" }}
-	//       {{- template "mutation" .}}
-	//     {{end}}
-	//   {{- end}}
-	// {{- end}}
+	{{ define "account_queries" -}}
+	    {{- range .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
+  // {{ if gt (len .Args) 3 -}} List {{- else -}} Get {{- end -}}
+     {{- .Name | title}} {{ .Description | clean | endSentence }}
+	func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*
+                                      {{- if eq .Name "customActionsExternalActions" }}{{ .Name | title  }}Connection, error) {
+                                      {{- else}}{{ .Name | title | makeSingular }}Connection, error) {
+                                      {{- end -}}
+                        {{- else -}}              Get{{ .Name | title }}(value string) (*{{.Name | title | trimSuffix "sVaultsSecret" }}, error) {
+                        {{- end -}}
+	    var q struct {
+	      Account struct {
+          {{ if gt (len .Args) 3 -}}
+            {{- .Name | title | makePlural }} {{ if eq .Name "customActionsExternalActions" -}}{{ .Name | title  }}{{ else }}{{ .Name | title | makeSingular }}{{ end }}Connection {{ template "graphql_struct_tag_with_args" . }}
+          {{- else -}}
+            {{- .Name | title  }} {{ .Name | title | makeSingular | trimSuffix "sVaultsSecret" }} {{ template "graphql_struct_tag_with_args" . }}
+          {{- end -}}
+	      }
+	    }
+      {{- if gt (len .Args) 3 }}
+    	if variables == nil {
+        variables = client.InitialPageVariablesPointer()
+      }
+      {{ else }}
+	    v := PayloadVariables{ {{ range .Args }}
+	      "{{.Name}}": value, {{ end}}
+	    }
+      {{- end }}
 
-	// {{ define "mutation" -}}
-	// {{- range .Fields }}
-	// // {{ .Name | title | renameMutation }} {{ template "description" . }}
-	// func (client *Client) {{ .Name | title | renameMutation }}(
-	//   {{- range $index, $element := .Args }}{{- if gt $index 0 }}, {{ end -}}
-	//     {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}identifier string
-	//     {{- else }}{{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
-	//     {{- end }}
-	//   {{- end -}} ) (*{{.Name | title | renameMutationReturnType}}, error) {
-	//     var m struct {
-	//       Payload struct {
-	//         {{ .Name | title | renameMutationReturnType}} {{ .Name | title | renameMutationReturnType}}
-	//         Errors []OpsLevelErrors
-	//       }{{ template "graphql_struct_tag_with_args" . }}
-	//     }
-	//     v := PayloadVariables{ {{ range .Args }}
-	//       "{{.Name}}": {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}*NewIdentifier(identifier),
-	//                    {{- else}}{{.Name}},{{ end }}
-	//                            {{- end}}
-	//     }
-	//     err := client.Mutate(&m, v, WithName("{{ .Name | title }}"))
-	//     return &m.Account.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.Payload.Errors)
-	// }
-	// {{- end}}
-	// {{- end}}
-	// `),
-	// 	objectFile: t(header + `
-	// {{range .Types | sortByName}}
-	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	//     {{- if eq .Name "Account" }}
-	//       {{- template "account_struct" . }}
-	//     {{- else}}{{template "object" .}}{{end}}
-	//   {{- end}}
-	// {{- end}}
+      {{ if gt (len .Args) 3 -}}
+      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+        return nil, err
+      }
 
-	// {{ define "account_struct" -}}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct { {{range .Fields }}
-	//   {{.Name | title}} *{{ if isListType .Name }}[]{{ end }}{{ template "converted_type" . }}  {{ template "field_comment_description" . }}
-	//  {{- end }}
-	// }
-	// {{- end }}
+      for q.Account.{{ .Name | title }}.PageInfo.HasNextPage {
+        (*variables)["after"] = q.Account.{{ .Name | title }}.PageInfo.End
+        resp, err := client.List{{ .Name | title }}(variables)
+        if err != nil {
+          return nil, err
+        }
+        q.Account.{{ .Name | title }}.Nodes = append(q.Account.{{ .Name | title }}.Nodes, resp.Nodes...)
+        q.Account.{{ .Name | title }}.PageInfo = resp.PageInfo
+        q.Account.{{ .Name | title }}.TotalCount += resp.TotalCount
+      }
+	    return &q.Account.{{ .Name | title }}, nil
+      {{ else }}
+	    err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}{{ if isListType .Name }}List{{else}}Get{{end}}"))
+	    return &q.Account.{{ .Name | title }}, HandleErrors(err, nil)
+      {{- end }}
+	}
+  {{end}}{{- end}}{{- end}}
 
-	// {{- define "object" -}}
-	// {{ if and (not (hasSuffix "Payload" .Name)) (not (hasSuffix "Connection" .Name)) }}
-	// {{ template "type_comment_description" . }}
-	// type {{.Name}} struct {
-	//   {{ range .Fields -}}
-	//     {{ if not (len .Args) }}{{.Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	//     {{- end}}
-	//   {{ end -}}
-	// }
-	// {{- end }}{{- end -}}
-	// 	`),
+	{{ define "non_account_queries" -}}
+    {{- range .Fields }} {{- if and (len .Args) (not (skip_query $.Name)) }}
+	// {{ if gt (len .Args) 3 }}List{{- else }}Get{{ end }}{{.Name | title}} {{ .Description | clean | endSentence }}
+	func ( {{- $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }})
+
+    {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*
+    {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) }} {{- $.Name }}Connection, error
+    {{- else if hasPrefix "descendant" .Name }}{{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection, error
+    {{- else }}{{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular | trimPrefix "Child" }}Connection, error
+    {{- end -}} ) {
+      if {{ $.Name | first_char_lowered }}.Id == "" {
+        return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
+      }
+      var q struct {
+        Account struct {
+          {{ $.Name | title | makeSingular }} struct {
+            {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) -}}
+              {{ .Name | title }} {{ $.Name | title | makeSingular }}Connection
+            {{- else if hasPrefix "descendant" .Name }}
+              {{ .Name | title }} {{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection
+            {{- else -}}
+              {{ .Name | title }} {{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular }}Connection
+            {{- end }} ` + "`" + `graphql:"{{.Name}}(after: $after, first: $first)"` + "`" + `
+          } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: $id)"` + "`" + `
+        }
+      }
+      if variables == nil {
+        variables = client.InitialPageVariablesPointer()
+      }
+      (*variables)["id"] = {{ $.Name | first_char_lowered }}.Id
+      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+        return nil, err
+      }
+
+      for q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.HasNextPage {
+        (*variables)["after"] = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.End
+        connection, err := {{ $.Name | first_char_lowered }}.List{{ .Name | title }}(client, variables)
+        if err != nil {
+          return nil, err
+        }
+        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes = append(q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes, connection.Nodes...)
+        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo
+        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount += q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount
+      }
+
+      return &q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}, nil
+
+    {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
+      var q struct {
+        Account struct {
+          {{ .Name | title }} {{ template "name_to_singular" . }} ` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+        }
+      }
+      v := PayloadVariables{"input": *NewIdentifier(identifier)}
+      if err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}Get")); err != nil {
+        return nil, err
+      }
+      return &q.Account.{{ .Name | title }}, nil
+    {{- end -}}
+  }
+  {{- end -}}{{- end -}}{{- end -}}
+	`),
+	mutationFile: t(header + `
+	{{range .Types | sortByName}}
+	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	    {{- if eq .Name "Mutation" }}
+	      {{- template "mutation" .}}
+	    {{end}}
+	  {{- end}}
+	{{- end}}
+
+	{{ define "mutation" -}}
+	{{- range .Fields }} {{- if not (skip_if_campaign_or_group .Name) }}
+	// {{ .Name | title | renameMutation }} {{ .Description | clean | fullSentence }}
+	func (client *Client) {{ .Name | title | renameMutation }}(
+    {{- if hasSuffix "Delete" .Name }}id ID
+    {{- else }}
+      {{- range $index, $element := .Args }} {{- if gt $index 0 }}, {{ end -}}
+	    {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}identifier string
+	    {{- else if hasSuffix "Delete" $.Name }}id ID
+	    {{- else if eq "String" .Type.OfType.OfTypeName }}{{ .Name }} string
+	    {{- else }}{{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
+	    {{- end }}
+    {{- end }}
+	  {{- end -}} ) {{ if hasSuffix "Delete" .Name -}}
+                  error {
+	                {{- else -}}
+                  (*{{.Name | title | renameMutationReturnType}}, error) {
+	                {{- end -}}
+      {{- if hasSuffix "Delete" .Name }}
+      input := {{.Name | title}}Input{Id: id}
+      {{ end }}
+	    var m struct {
+	      {{ .Name | title }}Payload {{ template "graphql_struct_tag_with_args" . }}
+	    }
+	    v := PayloadVariables{ {{ range .Args }}
+	      "{{.Name}}": {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}*NewIdentifier(identifier),
+	                   {{- else}}input,{{ end }}
+	                           {{- end}}
+	    }
+	    err := client.Mutate(&m, v, WithName("{{ .Name | title }}"))
+      {{- if hasSuffix "Delete" .Name }}
+      return HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
+      {{- else }}
+	    return &m.{{ .Name | title }}Payload.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
+      {{- end }}
+	}
+	{{- end}}{{ end }}{{- end}}
+	`),
+	objectFile: t(header + `
+  import "github.com/relvacode/iso8601"
+
+	{{range .Types | sortByName}}
+	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	  {{- if ne .Name "Account" }}
+	    {{template "object" .}}{{end}}
+	  {{- end}}
+	{{- end}}
+
+	{{- define "object" -}}
+	{{ if not (skip_object .Name) }}
+	{{ template "type_comment_description" . }}
+	type {{.Name}} struct { {{ add_special_fields .Name }}
+    {{ range .Fields }}
+    {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
+      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	  {{- end -}}{{ end }}
+	}
+	{{- end }}{{- end -}}
+		`),
 	// 	scalarFile: t(header + `
 	// import (
 	// 	"encoding/base64"
@@ -666,11 +783,24 @@ func t(text string) *template.Template {
 	genTemplate.Parse(convertedTypeTmpl)
 	genTemplate.Parse(descriptionTmpl)
 	genTemplate.Parse(fieldCommentDescriptionTmpl)
+	genTemplate.Parse(fragmentsTmpl)
 	genTemplate.Parse(graphqlStructTagTmpl)
 	genTemplate.Parse(graphqlStructTagWithArgsTmpl)
 	genTemplate.Parse(nameToSingularTmpl)
 	genTemplate.Parse(typeCommentDescriptionTmpl)
 	return template.Must(genTemplate.Parse(text))
+}
+
+func makePlural(s string) string {
+	value := strings.ToLower(s)
+	if isPlural(s) {
+		return s
+	} else if strings.HasSuffix(value, "y") {
+		return strings.ReplaceAll(s, "y", "ies")
+	} else if strings.HasSuffix(value, "s") {
+		return s + "es"
+	}
+	return s
 }
 
 func makeSingular(s string) string {
@@ -697,9 +827,16 @@ func convertPayloadType(s string) string {
 	case "":
 		return "string"
 	}
+
 	value := strings.ToLower(s)
 	if strings.HasSuffix(value, "id") {
 		return "ID"
+	} else if slices.Contains(knownBoolsByName, value) {
+		return "bool"
+	} else if slices.Contains(knownIntsByName, value) {
+		return "int"
+	} else if slices.Contains(knownIsoTimeByName, value) {
+		return "iso8601.Time"
 	}
 	for k, v := range knownTypeMappings {
 		if value == k {
@@ -714,11 +851,8 @@ func convertPayloadType(s string) string {
 	return makeSingular(s)
 }
 
-// TODO fix up later
 func renameMutationReturnType(s string) string {
-	create := "Create"
-	delete := "Delete"
-	update := "Update"
+	create, delete, update := "Create", "Delete", "Update"
 	if strings.HasSuffix(s, create) {
 		s = strings.TrimSuffix(s, create)
 	} else if strings.HasSuffix(s, delete) {
@@ -729,11 +863,8 @@ func renameMutationReturnType(s string) string {
 	return s
 }
 
-// TODO fix up later
 func renameMutation(s string) string {
-	create := "Create"
-	delete := "Delete"
-	update := "Update"
+	create, delete, update := "Create", "Delete", "Update"
 	if strings.HasSuffix(s, create) {
 		s = strings.TrimSuffix(s, create)
 		s = fmt.Sprintf("%s%s", create, s)
@@ -749,9 +880,8 @@ func renameMutation(s string) string {
 
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
-	// Examples: "alias", "address", "status", "levels", "responsibilities"
-	if value == "notes" || value == "days" || value == "headers" ||
-		strings.HasSuffix(value, "ies") ||
+	// Examples: "alias", "address", "status", "levels"
+	if value == "notes" || value == "days" || value == "headers" || value == "responsibilities" ||
 		strings.HasSuffix(value, "ias") ||
 		strings.HasSuffix(value, "ls") ||
 		(!strings.HasSuffix(value, "access") && strings.HasSuffix(value, "ss")) ||
@@ -764,15 +894,82 @@ func isPlural(s string) bool {
 	return false
 }
 
+func getFragmentWithStructTag(fragmentNames ...string) string {
+	output := make([]string, len(fragmentNames))
+	for _, fragment := range fragmentNames {
+		fragmentWithTag := fragment + "`" + `graphql:"... on ` + strings.TrimSuffix(fragment, "Fragment") + "\"`"
+		output = append(output, fragmentWithTag)
+	}
+	return strings.Join(output, "\n")
+}
+
+// Check
+func fragmentsForCheck() string {
+	checkFragments := []string{
+		"AlertSourceUsageCheckFragment",
+		"CustomEventCheckFragment",
+		"HasRecentDeployCheckFragment",
+		"ManualCheckFragment",
+		"RepositoryFileCheckFragment",
+		"RepositoryGrepCheckFragment",
+		"RepositorySearchCheckFragment",
+		"ServiceOwnershipCheckFragment",
+		"ServicePropertyCheckFragment",
+		"TagDefinedCheckFragment",
+		"ToolUsageCheckFragment",
+		"HasDocumentationCheckFragment",
+	}
+	return getFragmentWithStructTag(checkFragments...)
+}
+
+func fragmentsForIntegration() string {
+	integrationFragments := []string{
+		"AwsIntegrationFragment",
+		"NewRelicIntegrationFragment",
+	}
+
+	stuff := getFragmentWithStructTag(integrationFragments...)
+	return strings.Replace(stuff, "AwsIntegration", "AWSIntegration", 1)
+}
+
+func fragmentsForCustomActionsExtAction() string {
+	return getFragmentWithStructTag("CustomActionsWebhookAction")
+}
+
+func wordFirstCharLowered(s string) string {
+	return firstCharLowered(s) + s[1:]
+}
+
+func firstCharLowered(s string) string {
+	return strings.ToLower(s[:1])
+}
+
 var templFuncMap = template.FuncMap{
-	"internal":                 func(s string) bool { return strings.HasPrefix(s, "__") },
-	"quote":                    strconv.Quote,
-	"join":                     strings.Join,
-	"isListType":               isPlural,
-	"renameMutation":           renameMutation,
-	"renameMutationReturnType": renameMutationReturnType,
-	"convertPayloadType":       convertPayloadType,
-	"makeSingular":             makeSingular,
+	"internal":                            func(s string) bool { return strings.HasPrefix(s, "__") },
+	"quote":                               strconv.Quote,
+	"join":                                strings.Join,
+	"check_fragments":                     fragmentsForCheck,
+	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
+	"integration_fragments":               fragmentsForIntegration,
+	"get_field_type":                      getFieldType,
+	"get_input_field_type":                getInputFieldType,
+	"add_special_fields":                  addSpecialFields,
+	"add_special_interfaces_fields":       addSpecialInterfacesFields,
+	"query_args":                          queryArgs,
+	"skip_object":                         skipObject,
+	"skip_if_campaign_or_group":           skipCampaignAndGroup,
+	"skip_object_field":                   skipObjectField,
+	"skip_query":                          skipQuery,
+	"skip_interface_field":                skipInterfaceField,
+	"example_tag_value":                   getExampleValue,
+	"isListType":                          isPlural,
+	"renameMutation":                      renameMutation,
+	"renameMutationReturnType":            renameMutationReturnType,
+	"convertPayloadType":                  convertPayloadType,
+	"first_char_lowered":                  firstCharLowered,
+	"word_first_char_lowered":             wordFirstCharLowered,
+	"makePlural":                          makePlural,
+	"makeSingular":                        makeSingular,
 	"lowerFirst": func(value string) string {
 		for i, v := range value {
 			return string(unicode.ToLower(v)) + value[i+1:]
@@ -828,4 +1025,466 @@ var templFuncMap = template.FuncMap{
 		}
 		return s
 	},
+}
+
+func addSpecialFields(objectName string) string {
+	switch objectName {
+	case "Domain":
+		return "DomainId"
+	case "Filter":
+		return "FilterId"
+	case "Repository":
+		return "Services *RepositoryServiceConnection\nTags *TagConnection"
+	case "Scorecard":
+		return "ScorecardId"
+	case "Service":
+		return "ServiceId"
+	case "System":
+		return "SystemId"
+	case "Team":
+		return "TeamId"
+	case "User":
+		return "UserId"
+	}
+	return ""
+}
+
+func addSpecialInterfacesFields(interfaceName string) string {
+	switch interfaceName {
+	case "CustomActionsExternalAction":
+		return "CustomActionsId"
+	case "Integration":
+		return "IntegrationId"
+	}
+	return ""
+}
+
+func skipCampaignAndGroup(objectName string) bool {
+	nameLowerCased := strings.ToLower(objectName)
+	if strings.Contains(nameLowerCased, "group") ||
+		strings.Contains(nameLowerCased, "campaign") {
+		return true
+	}
+	return false
+}
+
+func queryArgs(fieldObject GraphQLField) string {
+	// var output string
+	// for _, b := range fieldObject.Args {
+	// 	output += fmt.Sprintf("%s", b.Name)
+	// 	fmt.Println(b)
+	// }
+	// return output
+	return "input any"
+}
+
+func skipObject(objectName string) bool {
+	nameLowerCased := strings.ToLower(objectName)
+	switch nameLowerCased {
+	case "group", "mutation":
+		return true
+	}
+	if strings.HasPrefix(nameLowerCased, "campaign") ||
+		strings.HasSuffix(nameLowerCased, "payload") ||
+		strings.HasSuffix(nameLowerCased, "edge") ||
+		strings.HasSuffix(nameLowerCased, "connection") {
+		return true
+	}
+	return false
+}
+
+func skipObjectField(objectName, fieldName string) bool {
+	nameLowerCased := strings.ToLower(fieldName)
+	switch nameLowerCased {
+	case "metadata", "rawnotes":
+		return true
+	}
+	switch objectName {
+	case "Filter":
+		switch nameLowerCased {
+		case "id", "name":
+			return true
+		}
+	case "Domain", "Service", "Scorecard", "System":
+		switch nameLowerCased {
+		case "id", "aliases":
+			return true
+		}
+	case "Team":
+		switch nameLowerCased {
+		case "id", "alias":
+			return true
+		}
+	case "User":
+		switch nameLowerCased {
+		case "id", "email":
+			return true
+		}
+	}
+	return false
+}
+
+func skipQuery(objectName string) bool {
+	nameLowerCased := strings.ToLower(objectName)
+	if strings.Contains(nameLowerCased, "campaign") ||
+		strings.Contains(nameLowerCased, "group") ||
+		strings.Contains(nameLowerCased, "mutation") {
+		return true
+	}
+	return false
+}
+
+func skipInterfaceField(interfaceName, fieldName string) bool {
+	if interfaceName == "Check" {
+		switch fieldName {
+		case "campaign", "rawNotes", "url":
+			return true
+		}
+	} else if interfaceName == "CustomActionsExternalAction" {
+		switch fieldName {
+		case "id", "aliases":
+			return true
+		}
+	} else if interfaceName == "Integration" {
+		switch fieldName {
+		case "id", "name", "type":
+			return true
+		}
+	}
+	return false
+}
+
+func getInputFieldType(inputField GraphQLField) string {
+	lowercaseFieldName := strings.ToLower(inputField.Name)
+	switch {
+	case "id" == lowercaseFieldName:
+		return "ID"
+	case "aliases" == lowercaseFieldName:
+		return "[]string"
+	case "owner" == lowercaseFieldName:
+		return "CheckOwner"
+	case "type" == lowercaseFieldName:
+		return "CheckType"
+	case slices.Contains(knownTypeIsName, lowercaseFieldName):
+		return strings.ToUpper(inputField.Name[0:1]) + inputField.Name[1:]
+	case slices.Contains(knownBoolsByName, lowercaseFieldName):
+		return "bool"
+	case slices.Contains(knownIntsByName, lowercaseFieldName):
+		return "int"
+	case slices.Contains(knownIsoTimeByName, lowercaseFieldName):
+		return "iso8601.Time"
+	}
+	return "string"
+}
+
+func getFieldType(objectName string, inputField GraphQLField) string {
+	lowercaseFieldName := strings.ToLower(inputField.Name)
+	switch {
+	case "type" == lowercaseFieldName:
+		switch objectName {
+		case "AlertSource":
+			return "AlertSourceTypeEnum"
+		case "AlertSourceUsageCheck", "CustomCheck", "CustomEventCheck",
+			"GitBranchProtectionCheck", "HasDocumentationCheck", "HasRecentDeployCheck",
+			"ManualCheck", "PayloadCheck", "RepositoryFileCheck", "RepositoryGrepCheck",
+			"RepositoryIntegratedCheck", "RepositorySearchCheck", "ServiceConfigurationCheck",
+			"ServiceDependencyCheck", "ServiceOwnershipCheck", "ServicePropertyCheck",
+			"TagDefinedCheck", "ToolUsageCheck":
+			return "CheckType"
+		case "ApiDocIntegration", "AwsIntegration", "AzureDevopsIntegration",
+			"AzureDevopsPermissionError", "BitbucketIntegration", "CheckIntegration",
+			"DatadogIntegration", "DeployIntegration", "FluxIntegration", "GenericIntegration",
+			"GithubActionsIntegration", "GithubIntegration", "GitlabIntegration",
+			"InfrastructureResource", "InfrastructureResourceSchema", "Repository",
+			"IssueTrackingIntegration", "JenkinsIntegration", "KubernetesIntegration",
+			"NewRelicIntegration", "OctopusDeployIntegration", "OnPremGitlabIntegration",
+			"OpsgenieIntegration", "PagerdutyIntegration", "PayloadIntegration",
+			"RelationshipType", "ScimIntegration", "SlackIntegration", "TerraformIntegration":
+			return "string"
+		case "Contact":
+			return "ContactType"
+		case "FilterPredicate":
+			return "PredicateTypeEnum"
+		case "InfrastructureResourceProviderData":
+			return "DoubleCheckThis"
+		case "Predicate":
+			return "PredicateTypeEnum"
+		default:
+			return "any"
+		}
+	case objectName == "AlertSource" && lowercaseFieldName == "integration":
+		return "IntegrationId"
+	case objectName == "AlertSourceService":
+		switch lowercaseFieldName {
+		case "alertsource":
+			return "AlertSource"
+		case "service":
+			return "ServiceId"
+		case "status":
+			return "AlertSourceStatusTypeEnum"
+		}
+	case objectName == "CustomActionsTriggerDefinition":
+		switch lowercaseFieldName {
+		case "accesscontrol":
+			return "CustomActionsTriggerDefinitionAccessControlEnum"
+		case "action":
+			return "CustomActionsId"
+		case "entitytype":
+			return "CustomActionsEntityTypeEnum"
+		case "filter":
+			return "FilterId"
+		case "owner":
+			return "TeamId"
+		}
+	case objectName == "CustomActionsWebhookAction":
+		switch lowercaseFieldName {
+		case "headers":
+			return "JSON"
+		case "httpmethod":
+			return "CustomActionsHttpMethodEnum"
+		}
+	case objectName == "Domain":
+		switch lowercaseFieldName {
+		case "managedaliases":
+			return "[]string"
+		case "owner":
+			return "EntityOwner"
+		}
+	case objectName == "Filter":
+		switch lowercaseFieldName {
+		case "connective":
+			return "ConnectiveEnum"
+		case "predicates":
+			return "[]FilterPredicate"
+		}
+	case objectName == "FilterPredicate":
+		switch lowercaseFieldName {
+		case "casesensitive":
+			return "*bool"
+		case "key":
+			return "PredicateKeyEnum"
+		}
+	case objectName == "InfrastructureResource":
+		switch lowercaseFieldName {
+		case "data", "rawdata":
+			return "JSON"
+		case "id":
+			return "ID"
+		case "owner":
+			return "EntityOwner"
+		case "providerdata":
+			return "InfrastructureResourceProviderData"
+		}
+	case objectName == "InfrastructureResourceSchema" && lowercaseFieldName == "schema":
+		return "JSON"
+	case objectName == "Language" && lowercaseFieldName == "usage":
+		return "float32"
+	case objectName == "Repository":
+		switch lowercaseFieldName {
+		case "languages":
+			return "[]Language"
+		case "owner":
+			return "TeamId"
+		}
+	case objectName == "Scorecard":
+		switch lowercaseFieldName {
+		case "owner":
+			return "EntityOwner"
+		case "passingchecks", "servicecount", "totalchecks":
+			return "int"
+		}
+	case objectName == "Secret" && lowercaseFieldName == "owner":
+		return "TeamId"
+	case objectName == "Repository" && lowercaseFieldName == "owner":
+		return "TeamId"
+	case objectName == "Service":
+		switch lowercaseFieldName {
+		case "managedaliases":
+			return "[]string"
+		case "owner":
+			return "TeamId"
+		case "preferredapidocument":
+			return "*ServiceDocument"
+		case "preferredapidocumentsource":
+			return "*ApiDocumentSourceEnum"
+		}
+	case objectName == "ServiceDependency":
+		switch lowercaseFieldName {
+		case "destinationservice", "sourceservice":
+			return "ServiceId"
+		}
+	case objectName == "ServiceDocument" && lowercaseFieldName == "source":
+		return "ServiceDocumentSource"
+	case objectName == "ServiceRepository":
+		switch lowercaseFieldName {
+		case "repository":
+			return "RepositoryId"
+		case "service":
+			return "ServiceId"
+		}
+	case objectName == "System":
+		switch lowercaseFieldName {
+		case "managedaliases":
+			return "[]string"
+		case "owner":
+			return "EntityOwner"
+		case "parent":
+			return "Domain"
+		}
+	case objectName == "Team":
+		switch lowercaseFieldName {
+		case "contacts":
+			return "Contact"
+		case "managedaliases":
+			return "[]string"
+		case "parentteam":
+			return "TeamId"
+		}
+	case objectName == "TeamMembership":
+		switch lowercaseFieldName {
+		case "team":
+			return "TeamId"
+		case "user":
+			return "UserId"
+		}
+	case objectName == "Tool":
+		switch lowercaseFieldName {
+		case "category":
+			return "ToolCategory"
+		case "service":
+			return "ServiceId"
+		}
+	case objectName == "User" && lowercaseFieldName == "role":
+		return "UserRole"
+	}
+
+	return getInputFieldType(inputField)
+}
+
+func getExampleValueByFieldName(inputField GraphQLInputValue) string {
+	mapFieldTypeToExampleValue := map[string]string{
+		"DocumentSubtype":      "openapi",
+		"Address":              "support@company.com",
+		"Id":                   "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
+		"Definition":           "example_definition",
+		"Template":             `{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}`,
+		"Name":                 "example_name",
+		"Language":             "example_language",
+		"Alias":                "example_alias",
+		"Description":          "example_description",
+		"Email":                "first.last@domain.com",
+		"Data":                 "example_data",
+		"Note":                 "example_note",
+		"IamRole":              "example_role",
+		"DisplayType":          "example_type",
+		"HttpMethod":           "GET",
+		"Notes":                "example_notes",
+		"Value":                "example_value",
+		"Product":              "example_product",
+		"Framework":            "example_framework",
+		"Url":                  "john.doe@example.com",
+		"BaseDirectory":        "/home/opslevel.yaml",
+		"ExternalUrl":          "https://google.com",
+		"Responsibilities":     "example description of responsibilities",
+		"Environment":          "environment that tool belongs to",
+		"Arg":                  "example_arg",
+		"Extensions":           "'go', 'py', 'rb'",
+		"Paths":                "'/usr/local/bin', '/home/opslevel'",
+		"Ids":                  "'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'",
+		"TagKeys":              "'tag_key1', 'tag_key2'",
+		"Selector":             "example_selector",
+		"Condition":            "example_condition",
+		"Message":              "example_message",
+		"RequireContactMethod": "false",
+		"Identifier":           "example_identifier",
+		"DocumentType":         "api",
+	}
+	for k, v := range mapFieldTypeToExampleValue {
+		if k == inputField.Name ||
+			strings.ToLower(k[:1])+k[1:] == inputField.Name ||
+			strings.HasSuffix(inputField.Name, k) {
+			return v
+		}
+	}
+	return ""
+}
+
+func getExampleValueByFieldType(inputField GraphQLInputValue) string {
+	mapFieldTypeToExampleValue := map[string]string{
+		"Time":                        "2024-01-05T01:00:00.000Z",
+		"FrequencyTimeScale":          "week",
+		"ContactType":                 "slack",
+		"AlertSourceTypeEnum":         "pagerduty",
+		"AliasOwnerTypeEnum":          "scorecard",
+		"BasicTypeEnum":               "does_not_equal",
+		"ConnectiveEnum":              "or",
+		"CustomActionsEntityTypeEnum": "GLOBAL",
+		"CustomActionsHttpMethodEnum": "GET",
+		"CustomActionsTriggerDefinitionAccessControlEnum": "service_owners",
+		"RelationshipTypeEnum":                            "depends_on",
+		"PredicateKeyEnum":                                "filter_id",
+		"PredicateTypeEnum":                               "satisfies_jq_expression",
+		"ServicePropertyTypeEnum":                         "language",
+		"UsersFilterEnum":                                 "last_sign_in_at",
+		"UserRole":                                        "admin",
+		"ToolCategory":                                    "api_documentation",
+	}
+	for k, v := range mapFieldTypeToExampleValue {
+		if inputFieldMatchesType(inputField, k) {
+			return v
+		}
+	}
+	return ""
+}
+
+func inputFieldMatchesType(inputField GraphQLInputValue, fieldType string) bool {
+	if fieldType == inputField.Type.Name ||
+		fieldType == inputField.Type.OfType.OfTypeName ||
+		strings.ToLower(fieldType) == inputField.Type.Name ||
+		strings.HasSuffix(inputField.Type.Name, fieldType) ||
+		strings.HasSuffix(inputField.Type.OfType.OfTypeName, fieldType) {
+		return true
+	}
+	return false
+}
+
+func inputFieldNameMatchesName(inputField GraphQLInputValue, fieldName string) bool {
+	if fieldName == inputField.Name ||
+		strings.ToLower(fieldName[:1])+fieldName[1:] == inputField.Name ||
+		strings.HasSuffix(inputField.Name, fieldName) {
+		return true
+	}
+	return false
+}
+
+func getExampleValue(inputField GraphQLInputValue) string {
+	switch {
+	case inputFieldMatchesType(inputField, "Boolean"):
+		return "false"
+	case inputFieldMatchesType(inputField, "Int"):
+		return "3"
+	case inputFieldMatchesType(inputField, "JSON"):
+		return `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`
+	}
+
+	if valueByName := getExampleValueByFieldName(inputField); valueByName != "" {
+		return valueByName
+	}
+	if valueByType := getExampleValueByFieldType(inputField); valueByType != "" {
+		return valueByType
+	}
+
+	switch {
+	case inputFieldNameMatchesName(inputField, "Role"):
+		return "example_role"
+	case inputFieldNameMatchesName(inputField, "Key"):
+		return "XXX_example_key_XXX"
+	case inputFieldNameMatchesName(inputField, "Type"):
+		return "example_type"
+	case inputFieldNameMatchesName(inputField, "Method"):
+		return "example_method"
+	case inputFieldMatchesType(inputField, "Enum"):
+		return "NEW_ENUM_SET_DEFAULT"
+	}
+	return ""
 }

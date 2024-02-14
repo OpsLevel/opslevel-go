@@ -3,8 +3,6 @@ package opslevel
 import (
 	"fmt"
 
-	"github.com/relvacode/iso8601"
-
 	"github.com/gosimple/slug"
 )
 
@@ -12,16 +10,6 @@ type IntegrationId struct {
 	Id   ID     `json:"id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
-}
-
-type Integration struct {
-	IntegrationId
-
-	CreatedAt   iso8601.Time `graphql:"createdAt"`
-	InstalledAt iso8601.Time `graphql:"installedAt"`
-
-	AWSIntegrationFragment      `graphql:"... on AwsIntegration"`
-	NewRelicIntegrationFragment `graphql:"... on NewRelicIntegration"`
 }
 
 type AWSIntegrationFragment struct {
