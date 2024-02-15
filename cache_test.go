@@ -50,7 +50,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "repositories":{ "hiddenCount": 0, "nodes":[{{ template "repository_1" }}] } }}}`,
 	)
 	testRequestNine := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{schema,type},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "infrastructureResourceSchemas":{ "nodes":[ {{ template "infra_schema_1" }} ] }}}}`,
 	)

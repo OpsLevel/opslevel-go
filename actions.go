@@ -9,11 +9,11 @@ type CustomActionsId struct {
 	Id      ID       `graphql:"id"`
 }
 
-type CustomActionsWebhookAction struct {
-	Headers    JSON                        `graphql:"headers" scalar:"true"`
-	HTTPMethod CustomActionsHttpMethodEnum `graphql:"httpMethod"`
-	WebhookURL string                      `graphql:"webhookUrl"`
-}
+// type CustomActionsWebhookAction struct {
+// 	Headers    JSON                        `graphql:"headers" scalar:"true"`
+// 	HTTPMethod CustomActionsHttpMethodEnum `graphql:"httpMethod"`
+// 	WebhookURL string                      `graphql:"webhookUrl"`
+// }
 
 func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {

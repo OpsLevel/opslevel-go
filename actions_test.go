@@ -62,7 +62,7 @@ var newID *ol.ID = ol.NewID("123456789")
 func TestUpdateWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
+		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
 		`{"input":{"id": "123456789", "httpMethod":"PUT"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
@@ -82,7 +82,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 func TestUpdateWebhookAction2(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
+		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
 		`{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)

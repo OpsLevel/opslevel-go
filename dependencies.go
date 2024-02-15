@@ -2,12 +2,12 @@ package opslevel
 
 import "fmt"
 
-type ServiceDependency struct {
-	Id        ID        `graphql:"id"`
-	Service   ServiceId `graphql:"sourceService"`
-	DependsOn ServiceId `graphql:"destinationService"`
-	Notes     string    `graphql:"notes"`
-}
+// type ServiceDependency struct {
+// 	Id        ID        `graphql:"id"`
+// 	Service   ServiceId `graphql:"sourceService"`
+// 	DependsOn ServiceId `graphql:"destinationService"`
+// 	Notes     string    `graphql:"notes"`
+// }
 
 type ServiceDependenciesEdge struct {
 	Id     ID         `graphql:"id"`

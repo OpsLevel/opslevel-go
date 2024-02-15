@@ -10,12 +10,12 @@ import (
 func TestServiceTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": { "account": { "service": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA5", "key": "prod", "value": "false" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ServiceTagsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tags(after: $after, first: $first){nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": { "account": { "service": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODA4", "key": "test", "value": "true" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } }}}}`,
 	)
@@ -42,7 +42,7 @@ func TestServiceTags(t *testing.T) {
 func TestServiceTools(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": {
                     "account": {
@@ -70,7 +70,7 @@ func TestServiceTools(t *testing.T) {
                           }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ServiceToolsList($after:String!$first:Int!$service:ID!){account{service(id: $service){tools(after: $after, first: $first){nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
 		`{ "data": {
                     "account": {

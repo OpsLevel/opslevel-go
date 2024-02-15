@@ -10,7 +10,7 @@ import (
 func TestCreateServiceDependency(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceDependencyCreate($input:ServiceDependencyCreateInput!){serviceDependencyCreate(inputV2: $input){serviceDependency{id,sourceService{id,aliases},destinationService{id,aliases},notes},errors{message,path}}}`,
+		`mutation ServiceDependencyCreate($input:ServiceDependencyCreateInput!){serviceDependencyCreate(inputV2: $input){serviceDependency{destinationService{id,aliases},id,notes,sourceService{id,aliases}},errors{message,path}}}`,
 		`{ "input": { "dependencyKey": { "destinationIdentifier": {"alias": "example_3"}, "sourceIdentifier": {"alias": "example_2"} }, "notes": "An example description" }}`,
 		`{"data": { "serviceDependencyCreate": { "serviceDependency": {{ template "serviceDependency" }}, "errors": [] } }}`,
 	)
@@ -26,8 +26,8 @@ func TestCreateServiceDependency(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)
-	autopilot.Equals(t, id2, result.Service.Id)
-	autopilot.Equals(t, id3, result.DependsOn.Id)
+	autopilot.Equals(t, id2, result.SourceService.Id)
+	autopilot.Equals(t, id3, result.DestinationService.Id)
 	autopilot.Equals(t, "An example description", result.Notes)
 }
 

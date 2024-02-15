@@ -307,7 +307,7 @@ const (
 	// `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"
 	graphqlAndJsonStructTagTmpl = `
 {{- define "graphql_json_struct_tag" -}}` + "`" + `graphql:"
-  {{- .Name | lowerFirst }}" json:"{{- .Name | lowerFirst }}"` + `
+  {{- .Name | lowerFirst }}" json:"{{- .Name | lowerFirst }}"
 {{- end }}`
 	graphqlStructTagTmpl = `
 {{- define "graphql_struct_tag" -}}` + "`" + `graphql:"
@@ -671,7 +671,8 @@ type {{.Name}} struct { {{range .InputFields }}
 	type {{.Name}} struct { {{ add_special_fields .Name }}
     {{ range .Fields }}
     {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
-      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_json_struct_tag" . }} {{ template "field_comment_description" . }}
+      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_json_struct_tag" . }}
+      {{- if eq (get_field_type $.Name .) "JSON" }} scalar:"true"{{ end }}` + "`" + ` {{ template "field_comment_description" . }}
 	  {{- end -}}{{ end }}
 	}
 	{{- end }}{{- end -}}
@@ -796,6 +797,7 @@ func t(text string) *template.Template {
 	genTemplate.Parse(fieldCommentDescriptionTmpl)
 	genTemplate.Parse(fragmentsTmpl)
 	genTemplate.Parse(graphqlStructTagTmpl)
+	genTemplate.Parse(graphqlAndJsonStructTagTmpl)
 	genTemplate.Parse(graphqlStructTagWithArgsTmpl)
 	genTemplate.Parse(nameToSingularTmpl)
 	genTemplate.Parse(typeCommentDescriptionTmpl)
