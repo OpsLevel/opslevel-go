@@ -15,22 +15,6 @@ type CustomActionsWebhookAction struct {
 	WebhookURL string                      `graphql:"webhookUrl"`
 }
 
-type CustomActionsTriggerDefinition struct {
-	Action                 CustomActionsId                                 `graphql:"action"`
-	Aliases                []string                                        `graphql:"aliases"`
-	Description            string                                          `graphql:"description"`
-	Filter                 FilterId                                        `graphql:"filter"`
-	Id                     ID                                              `graphql:"id"`
-	ManualInputsDefinition string                                          `graphql:"manualInputsDefinition"`
-	Name                   string                                          `graphql:"name"`
-	Owner                  TeamId                                          `graphql:"owner"`
-	Published              bool                                            `graphql:"published"`
-	Timestamps             Timestamps                                      `graphql:"timestamps"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `graphql:"accessControl"`
-	ResponseTemplate       string                                          `graphql:"responseTemplate"`
-	EntityType             CustomActionsEntityTypeEnum                     `graphql:"entityType"`
-}
-
 func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
@@ -52,7 +36,7 @@ func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, vari
 	}
 
 	for q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.End
+		(*variables)["after"] = q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.EndCursor
 		resp, err := c.ExtendedTeamAccess(client, variables)
 		if err != nil {
 			return nil, err
@@ -100,7 +84,7 @@ func (client *Client) GetCustomAction(input string) (*CustomActionsExternalActio
 		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
-	if q.Account.Action.Id == "" {
+	if q.Account.Action.CustomActionsId.Id == "" {
 		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)
@@ -119,7 +103,7 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomAct
 		return nil, err
 	}
 	for q.Account.Actions.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Actions.PageInfo.End
+		(*variables)["after"] = q.Account.Actions.PageInfo.EndCursor
 		resp, err := client.ListCustomActions(variables)
 		if err != nil {
 			return nil, err
@@ -206,7 +190,7 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*Cust
 		return nil, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Definitions.PageInfo.End
+		(*variables)["after"] = q.Account.Definitions.PageInfo.EndCursor
 		resp, err := client.ListTriggerDefinitions(variables)
 		if err != nil {
 			return nil, err

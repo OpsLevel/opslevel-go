@@ -6,10 +6,10 @@ import (
 	"github.com/gosimple/slug"
 )
 
-type Category struct {
-	Id   ID `json:"id"`
-	Name string
-}
+// type Category struct {
+// 	Id   ID `json:"id"`
+// 	Name string
+// }
 
 type CategoryConnection struct {
 	Nodes      []Category
@@ -72,7 +72,7 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 		return nil, err
 	}
 	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Rubric.Categories.PageInfo.End
+		(*variables)["after"] = q.Account.Rubric.Categories.PageInfo.EndCursor
 		resp, err := client.ListCategories(variables)
 		if err != nil {
 			return nil, err

@@ -94,7 +94,7 @@ func (s *Service) Hydrate(client *Client) error {
 	}
 	if s.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Tags.PageInfo.End
+		(*variables)["after"] = s.Tags.PageInfo.EndCursor
 		_, err := s.GetTags(client, variables)
 		if err != nil {
 			return err
@@ -106,7 +106,7 @@ func (s *Service) Hydrate(client *Client) error {
 	}
 	if s.Tools.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Tools.PageInfo.End
+		(*variables)["after"] = s.Tools.PageInfo.EndCursor
 		_, err := s.GetTools(client, variables)
 		if err != nil {
 			return err
@@ -118,7 +118,7 @@ func (s *Service) Hydrate(client *Client) error {
 	}
 	if s.Repositories.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = s.Repositories.PageInfo.End
+		(*variables)["after"] = s.Repositories.PageInfo.EndCursor
 		_, err := s.GetRepositories(client, variables)
 		if err != nil {
 			return err
@@ -158,7 +158,7 @@ func (s *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	s.Tags.PageInfo = q.Account.Service.Tags.PageInfo
 	s.Tags.TotalCount += q.Account.Service.Tags.TotalCount
 	for s.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Tags.PageInfo.End
+		(*variables)["after"] = s.Tags.PageInfo.EndCursor
 		_, err := s.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -193,7 +193,7 @@ func (s *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolCo
 	s.Tools.PageInfo = q.Account.Service.Tools.PageInfo
 	s.Tools.TotalCount += q.Account.Service.Tools.TotalCount
 	for s.Tools.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Tools.PageInfo.End
+		(*variables)["after"] = s.Tools.PageInfo.EndCursor
 		_, err := s.GetTools(client, variables)
 		if err != nil {
 			return nil, err
@@ -228,7 +228,7 @@ func (s *Service) GetRepositories(client *Client, variables *PayloadVariables) (
 	s.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
 	s.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
 	for s.Repositories.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Repositories.PageInfo.End
+		(*variables)["after"] = s.Repositories.PageInfo.EndCursor
 		_, err := s.GetRepositories(client, variables)
 		if err != nil {
 			return nil, err
@@ -257,7 +257,7 @@ func (s *Service) GetDocuments(client *Client, variables *PayloadVariables) (*Se
 		return nil, err
 	}
 	for q.Account.Service.Documents.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Service.Documents.PageInfo.End
+		(*variables)["after"] = q.Account.Service.Documents.PageInfo.EndCursor
 		resp, err := s.GetDocuments(client, variables)
 		if err != nil {
 			return nil, err
@@ -373,7 +373,7 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServices(variables)
 		if err != nil {
 			return nil, err
@@ -406,7 +406,7 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithFramework(framework, variables)
 		if err != nil {
 			return nil, err
@@ -439,7 +439,7 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithLanguage(language, variables)
 		if err != nil {
 			return nil, err
@@ -472,7 +472,7 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithLifecycle(lifecycle, variables)
 		if err != nil {
 			return nil, err
@@ -505,7 +505,7 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithOwner(owner, variables)
 		if err != nil {
 			return nil, err
@@ -538,7 +538,7 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithProduct(product, variables)
 		if err != nil {
 			return nil, err
@@ -590,7 +590,7 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithTag(tag, variables)
 		if err != nil {
 			return nil, err
@@ -623,7 +623,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	}
 
 	for q.Account.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Services.PageInfo.End
+		(*variables)["after"] = q.Account.Services.PageInfo.EndCursor
 		resp, err := client.ListServicesWithTier(tier, variables)
 		if err != nil {
 			return nil, err

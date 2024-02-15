@@ -8,13 +8,6 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
-type PageInfo struct {
-	HasNextPage     bool   `graphql:"hasNextPage"`
-	HasPreviousPage bool   `graphql:"hasPreviousPage"`
-	Start           string `graphql:"startCursor"`
-	End             string `graphql:"endCursor"`
-}
-
 type PayloadVariables map[string]interface{}
 
 type OpsLevelWarnings struct {
@@ -26,10 +19,10 @@ type OpsLevelErrors struct {
 	Path    []string
 }
 
-type Timestamps struct {
-	CreatedAt iso8601.Time `json:"createdAt"`
-	UpdatedAt iso8601.Time `json:"updatedAt"`
-}
+// type Timestamps struct {
+// 	CreatedAt iso8601.Time `json:"createdAt"`
+// 	UpdatedAt iso8601.Time `json:"updatedAt"`
+// }
 
 func NullString() *string {
 	var output *string

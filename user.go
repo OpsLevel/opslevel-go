@@ -10,15 +10,6 @@ type UserId struct {
 	Email string
 }
 
-type User struct {
-	UserId
-	HTMLUrl string
-	Name    string
-	Role    UserRole
-	// We cannot have this here because its breaks a TON of queries
-	// Teams   *TeamIdConnection
-}
-
 type UserConnection struct {
 	Nodes      []User
 	PageInfo   PageInfo
@@ -65,7 +56,7 @@ func (u *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConne
 		return nil, err
 	}
 	for q.Account.User.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.User.Tags.PageInfo.End
+		(*variables)["after"] = q.Account.User.Tags.PageInfo.EndCursor
 		resp, err := u.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -102,7 +93,7 @@ func (u *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnec
 		return nil, err
 	}
 	for q.Account.User.Teams.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.User.Teams.PageInfo.End
+		(*variables)["after"] = q.Account.User.Teams.PageInfo.EndCursor
 		conn, err := u.Teams(client, variables)
 		if err != nil {
 			return nil, err
@@ -165,7 +156,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 	}
 
 	for q.Account.Users.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Users.PageInfo.End
+		(*variables)["after"] = q.Account.Users.PageInfo.EndCursor
 		resp, err := client.ListUsers(variables)
 		if err != nil {
 			return nil, err

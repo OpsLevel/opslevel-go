@@ -20,12 +20,12 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "lifecycles":[{{ template "lifecycle_1" }}] }}}`,
 	)
 	testRequestThree := autopilot.NewTestRequest(
-		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,id,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}`,
+		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,owner{... on Team{alias,id}},type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "teams":{ "nodes":[{{ template "team_1" }}] } }}}`,
 	)
 	testRequestFour := autopilot.NewTestRequest(
-		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}`,
+		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{description,id,name},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{"rubric":{ "categories":{ "nodes":[{{ template "category_1" }}] } }}}}`,
 	)
@@ -35,7 +35,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{"rubric":{ "levels":{ "nodes":[{{ template "level_1" }}] } }}}}`,
 	)
 	testRequestSix := autopilot.NewTestRequest(
-		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}`,
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	)
@@ -45,7 +45,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "integrations":{ "nodes":[{{ template "integration_1" }}] } }}}`,
 	)
 	testRequestEight := autopilot.NewTestRequest(
-		`query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
+		`query RepositoryList($after:String!$first:Int!){account{repositories(after: $after, first: $first){hiddenCount,nodes{services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},tags{nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},archivedAt,configErrors,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},repoKey,tier{alias,description,id,index,name},type,url,visibility,visible},organizationCount,ownedCount,pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount,visibleCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "repositories":{ "hiddenCount": 0, "nodes":[{{ template "repository_1" }}] } }}}`,
 	)

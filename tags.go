@@ -23,11 +23,11 @@ var (
 	TagKeyErrorMsg = "tag key name '%s' must start with a letter and be only lowercase alphanumerics, underscores, hyphens, periods, and slashes"
 )
 
-type Tag struct {
-	Id    ID     `json:"id"`
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
+// type Tag struct {
+// 	Id    ID     `json:"id"`
+// 	Key   string `json:"key"`
+// 	Value string `json:"value"`
+// }
 
 type TagConnection struct {
 	Nodes      []Tag

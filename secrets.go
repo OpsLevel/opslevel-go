@@ -1,11 +1,11 @@
 package opslevel
 
-type Secret struct {
-	Alias      string     `json:"alias"`
-	ID         ID         `json:"id"`
-	Owner      TeamId     `json:"team"`
-	Timestamps Timestamps `json:"timestamps"`
-}
+// type Secret struct {
+// 	Alias      string     `json:"alias"`
+// 	ID         ID         `json:"id"`
+// 	Owner      TeamId     `json:"team"`
+// 	Timestamps Timestamps `json:"timestamps"`
+// }
 
 type SecretsVaultsSecretConnection struct {
 	Nodes      []Secret
@@ -42,7 +42,7 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*Sec
 		return nil, err
 	}
 	for q.Account.SecretsVaultsSecrets.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.SecretsVaultsSecrets.PageInfo.End
+		(*variables)["after"] = q.Account.SecretsVaultsSecrets.PageInfo.EndCursor
 		resp, err := client.ListSecretsVaultsSecret(variables)
 		if err != nil {
 			return nil, err

@@ -5,10 +5,10 @@ import (
 	"slices"
 )
 
-type InfrastructureResourceSchema struct {
-	Type   string `json:"type"`
-	Schema JSON   `json:"schema" scalar:"true"`
-}
+// type InfrastructureResourceSchema struct {
+// 	Type   string `json:"type"`
+// 	Schema JSON   `json:"schema" scalar:"true"`
+// }
 
 type InfrastructureResourceSchemaConnection struct {
 	Nodes      []InfrastructureResourceSchema
@@ -16,24 +16,24 @@ type InfrastructureResourceSchemaConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
-type InfrastructureResourceProviderData struct {
-	AccountName  string `json:"accountName" graphql:"accountName"`
-	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
-	ProviderName string `json:"providerName" graphql:"providerName"`
-}
+// type InfrastructureResourceProviderData struct {
+// 	AccountName  string `json:"accountName" graphql:"accountName"`
+// 	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
+// 	ProviderName string `json:"providerName" graphql:"providerName"`
+// }
 
-type InfrastructureResource struct {
-	Id           string                             `json:"id"`
-	Aliases      []string                           `json:"aliases"`
-	Name         string                             `json:"name"`
-	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
-	ProviderType string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
-	ProviderData InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`
-	Owner        EntityOwner                        `json:"owner" graphql:"owner @include(if: $all)"`
-	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
-	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
-	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
-}
+// type InfrastructureResource struct {
+// 	Id           string                             `json:"id"`
+// 	Aliases      []string                           `json:"aliases"`
+// 	Name         string                             `json:"name"`
+// 	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
+// 	ProviderType string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
+// 	ProviderData InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`
+// 	Owner        EntityOwner                        `json:"owner" graphql:"owner @include(if: $all)"`
+// 	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
+// 	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
+// 	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
+// }
 
 type InfrastructureResourceConnection struct {
 	Nodes      []InfrastructureResource
@@ -75,7 +75,7 @@ func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVaria
 		return nil, err
 	}
 	for q.Account.InfrastructureResource.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.InfrastructureResource.Tags.PageInfo.End
+		(*variables)["after"] = q.Account.InfrastructureResource.Tags.PageInfo.EndCursor
 		resp, err := i.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -93,7 +93,7 @@ func (i *InfrastructureResource) GetTags(client *Client, variables *PayloadVaria
 }
 
 func (i *InfrastructureResource) ResourceId() ID {
-	return *NewID(i.Id)
+	return i.Id
 }
 
 func (i *InfrastructureResource) ResourceType() TaggableResource {
@@ -162,7 +162,7 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (*I
 		return nil, err
 	}
 	for q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.InfrastructureResourceSchemas.PageInfo.End
+		(*variables)["after"] = q.Account.InfrastructureResourceSchemas.PageInfo.EndCursor
 		resp, err := client.ListInfrastructureSchemas(variables)
 		if err != nil {
 			return nil, err
@@ -188,7 +188,7 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (*Infrastr
 		return nil, err
 	}
 	for q.Account.InfrastructureResource.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.InfrastructureResource.PageInfo.End
+		(*variables)["after"] = q.Account.InfrastructureResource.PageInfo.EndCursor
 		resp, err := client.ListInfrastructure(variables)
 		if err != nil {
 			return nil, err

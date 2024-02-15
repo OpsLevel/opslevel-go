@@ -9,18 +9,18 @@ type ScorecardId struct {
 	Id      ID       `graphql:"id"`
 }
 
-type Scorecard struct {
-	ScorecardId
+// type Scorecard struct {
+// 	ScorecardId
 
-	AffectsOverallServiceLevels bool        `graphql:"affectsOverallServiceLevels"`
-	Description                 string      `graphql:"description"` // optional
-	Filter                      Filter      `graphql:"filter"`      // optional
-	Name                        string      `graphql:"name"`
-	Owner                       EntityOwner `graphql:"owner"`
-	PassingChecks               int         `graphql:"passingChecks"`
-	ServiceCount                int         `graphql:"serviceCount"`
-	ChecksCount                 int         `graphql:"totalChecks"`
-}
+// 	AffectsOverallServiceLevels bool        `graphql:"affectsOverallServiceLevels"`
+// 	Description                 string      `graphql:"description"` // optional
+// 	Filter                      Filter      `graphql:"filter"`      // optional
+// 	Name                        string      `graphql:"name"`
+// 	Owner                       EntityOwner `graphql:"owner"`
+// 	PassingChecks               int         `graphql:"passingChecks"`
+// 	ServiceCount                int         `graphql:"serviceCount"`
+// 	ChecksCount                 int         `graphql:"totalChecks"`
+// }
 
 type ScorecardConnection struct {
 	Nodes      []Scorecard `graphql:"nodes"`
@@ -71,7 +71,7 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardCon
 		return nil, err
 	}
 	for q.Account.Scorecards.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Scorecards.PageInfo.End
+		(*variables)["after"] = q.Account.Scorecards.PageInfo.EndCursor
 		resp, err := client.ListScorecards(variables)
 		if err != nil {
 			return nil, err

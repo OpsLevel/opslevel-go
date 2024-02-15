@@ -6,30 +6,18 @@ import (
 	"github.com/gosimple/slug"
 )
 
-type Predicate struct {
-	Type  PredicateTypeEnum `graphql:"type"`
-	Value string            `graphql:"value"`
-}
-
 type FilterId struct {
 	Id   ID
 	Name string
 }
 
-type Filter struct {
-	FilterId
-	Connective ConnectiveEnum
-	HtmlUrl    string
-	Predicates []FilterPredicate
-}
-
-type FilterPredicate struct {
-	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
-	KeyData       string            `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"null"`
-	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
-	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
-	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
-}
+// type FilterPredicate struct {
+// 	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
+// 	KeyData       string            `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"null"`
+// 	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
+// 	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
+// 	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
+// }
 
 type FilterConnection struct {
 	Nodes      []Filter
@@ -90,7 +78,7 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 		return nil, err
 	}
 	for q.Account.Filters.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Filters.PageInfo.End
+		(*variables)["after"] = q.Account.Filters.PageInfo.EndCursor
 		resp, err := client.ListFilters(variables)
 		if err != nil {
 			return nil, err

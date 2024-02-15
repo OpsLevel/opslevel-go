@@ -3,14 +3,7 @@ package opslevel
 import (
 	"fmt"
 	"slices"
-
-	"github.com/relvacode/iso8601"
 )
-
-type Language struct {
-	Name  string
-	Usage float32
-}
 
 // Lightweight Repository struct used to make some API calls return less data
 type RepositoryId struct {
@@ -18,42 +11,29 @@ type RepositoryId struct {
 	DefaultAlias string
 }
 
-type Repository struct {
-	ArchivedAt         iso8601.Time
-	CreatedOn          iso8601.Time
-	DefaultAlias       string
-	DefaultBranch      string
-	Description        string
-	Forked             bool
-	HtmlUrl            string
-	Id                 ID
-	Languages          []Language
-	LastOwnerChangedAt iso8601.Time
-	Name               string
-	Organization       string
-	Owner              TeamId
-	Private            bool
-	RepoKey            string
-	Services           *RepositoryServiceConnection
-	Tags               *TagConnection
-	Tier               Tier
-	Type               string
-	Url                string
-	Visible            bool
-}
-
-type RepositoryPath struct {
-	Href string
-	Path string
-}
-
-type ServiceRepository struct {
-	BaseDirectory string
-	DisplayName   string
-	Id            ID
-	Repository    RepositoryId
-	Service       ServiceId
-}
+// type Repository struct {
+// 	ArchivedAt         iso8601.Time
+// 	CreatedOn          iso8601.Time
+// 	DefaultAlias       string
+// 	DefaultBranch      string
+// 	Description        string
+// 	Forked             bool
+// 	HtmlUrl            string
+// 	Id                 ID
+// 	Languages          []Language
+// 	LastOwnerChangedAt iso8601.Time
+// 	Name               string
+// 	Organization       string
+// 	Owner              TeamId
+// 	Private            bool
+// 	RepoKey            string
+// 	Services           *RepositoryServiceConnection
+// 	Tags               *TagConnection
+// 	Tier               Tier
+// 	Type               string
+// 	Url                string
+// 	Visible            bool
+// }
 
 type RepositoryConnection struct {
 	HiddenCount       int
@@ -114,7 +94,7 @@ func (r *Repository) Hydrate(client *Client) error {
 	}
 	if r.Services.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = r.Services.PageInfo.End
+		(*variables)["after"] = r.Services.PageInfo.EndCursor
 		_, err := r.GetServices(client, variables)
 		if err != nil {
 			return err
@@ -126,7 +106,7 @@ func (r *Repository) Hydrate(client *Client) error {
 	}
 	if r.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = r.Tags.PageInfo.End
+		(*variables)["after"] = r.Tags.PageInfo.EndCursor
 		_, err := r.GetTags(client, variables)
 		if err != nil {
 			return err
@@ -160,7 +140,7 @@ func (r *Repository) GetServices(client *Client, variables *PayloadVariables) (*
 	r.Services.PageInfo = q.Account.Repository.Services.PageInfo
 	r.Services.TotalCount += q.Account.Repository.Services.TotalCount
 	for r.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = r.Services.PageInfo.End
+		(*variables)["after"] = r.Services.PageInfo.EndCursor
 		_, err := r.GetServices(client, variables)
 		if err != nil {
 			return nil, err
@@ -199,7 +179,7 @@ func (r *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagC
 	r.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
 	r.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
 	for r.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = r.Tags.PageInfo.End
+		(*variables)["after"] = r.Tags.PageInfo.EndCursor
 		_, err := r.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -287,7 +267,7 @@ func (client *Client) ListRepositories(variables *PayloadVariables) (*Repository
 		return &q.Account.Repositories, err
 	}
 	for q.Account.Repositories.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Repositories.PageInfo.End
+		(*variables)["after"] = q.Account.Repositories.PageInfo.EndCursor
 		resp, err := client.ListRepositories(variables)
 		if err != nil {
 			return nil, err
@@ -319,7 +299,7 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 		return &q.Account.Repositories, err
 	}
 	for q.Account.Repositories.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Repositories.PageInfo.End
+		(*variables)["after"] = q.Account.Repositories.PageInfo.EndCursor
 		resp, err := client.ListRepositoriesWithTier(tier, variables)
 		if err != nil {
 			return nil, err

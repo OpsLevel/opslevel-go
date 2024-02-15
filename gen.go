@@ -52,6 +52,7 @@ var knownBoolsByName = []string{
 	"forked",
 	"hasnextpage",
 	"haspreviouspage",
+	"isdefault",
 	"locked",
 	"lockedfromgraphqlmodification",
 	"ownerlocked",
@@ -303,6 +304,11 @@ const (
 {{- define "description" -}}
  {{.Description | clean | endSentence}}
 {{- end }}`
+	// `json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"
+	graphqlAndJsonStructTagTmpl = `
+{{- define "graphql_json_struct_tag" -}}` + "`" + `graphql:"
+  {{- .Name | lowerFirst }}" json:"{{- .Name | lowerFirst }}"` + `
+{{- end }}`
 	graphqlStructTagTmpl = `
 {{- define "graphql_struct_tag" -}}` + "`" + `graphql:"
   {{- .Name | lowerFirst }}"` + "`" + `
@@ -484,7 +490,11 @@ type {{.Name}} struct { {{range .InputFields }}
 	{{- end}}
 
 	{{ define "account_queries" -}}
-	    {{- range .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
+	  {{- range $index, $my_field := .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
+      {{- if eq (len .Args) 2 }}{{- range $index, $my_arg := .Args }}
+  // Get{{ $my_field.Name | title}}By{{ .Name | title }} find a {{ $my_field.Name | title }} by {{ .Name }}.
+  // func (client *Client) Get{{ $my_field.Name | title  }}By{{ .Name | title }}({{ .Name }} string) (*
+      {{- end -}}               {{- end}}
   // {{ if gt (len .Args) 3 -}} List {{- else -}} Get {{- end -}}
      {{- .Name | title}} {{ .Description | clean | endSentence }}
 	func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*
@@ -644,6 +654,7 @@ type {{.Name}} struct { {{range .InputFields }}
 	}
 	{{- end}}{{ end }}{{- end}}
 	`),
+	// NOTE: InfrastructureResource.Integration should be Integration type?
 	objectFile: t(header + `
   import "github.com/relvacode/iso8601"
 
@@ -660,7 +671,7 @@ type {{.Name}} struct { {{range .InputFields }}
 	type {{.Name}} struct { {{ add_special_fields .Name }}
     {{ range .Fields }}
     {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
-      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_json_struct_tag" . }} {{ template "field_comment_description" . }}
 	  {{- end -}}{{ end }}
 	}
 	{{- end }}{{- end -}}
@@ -1081,7 +1092,7 @@ func queryArgs(fieldObject GraphQLField) string {
 func skipObject(objectName string) bool {
 	nameLowerCased := strings.ToLower(objectName)
 	switch nameLowerCased {
-	case "group", "mutation":
+	case "group", "mutation", "rubric":
 		return true
 	}
 	if strings.HasPrefix(nameLowerCased, "campaign") ||

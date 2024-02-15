@@ -222,7 +222,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "infrastructureResource/tags", requests...)
 	// Act
-	infra := opslevel.InfrastructureResource{Id: string(id1)}
+	infra := opslevel.InfrastructureResource{Id: id1}
 	resp, err := infra.GetTags(client, nil)
 	autopilot.Ok(t, err)
 	result := resp.Nodes

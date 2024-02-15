@@ -6,12 +6,12 @@ import (
 	"slices"
 )
 
-type Contact struct {
-	Address     string
-	DisplayName string
-	Id          ID
-	Type        ContactType
-}
+// type Contact struct {
+// 	Address     string
+// 	DisplayName string
+// 	Id          ID
+// 	Type        ContactType
+// }
 
 // Has no json struct tags as this is nested in returned data structs
 type TeamId struct {
@@ -48,12 +48,6 @@ type TeamConnection struct {
 	TotalCount int
 }
 
-type TeamMembership struct {
-	Role string `graphql:"role"`
-	Team TeamId `graphql:"team"`
-	User UserId `graphql:"user"`
-}
-
 type TeamMembershipConnection struct {
 	Nodes      []TeamMembership
 	PageInfo   PageInfo
@@ -78,7 +72,7 @@ func (self *Team) Hydrate(client *Client) error {
 	}
 	if self.Memberships.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Memberships.PageInfo.End
+		(*variables)["after"] = self.Memberships.PageInfo.EndCursor
 		_, err := self.GetMemberships(client, variables)
 		if err != nil {
 			return err
@@ -90,7 +84,7 @@ func (self *Team) Hydrate(client *Client) error {
 	}
 	if self.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = self.Tags.PageInfo.End
+		(*variables)["after"] = self.Tags.PageInfo.EndCursor
 		_, err := self.GetTags(client, variables)
 		if err != nil {
 			return err
@@ -125,7 +119,7 @@ func (t *Team) GetMemberships(client *Client, variables *PayloadVariables) (*Tea
 	t.Memberships.PageInfo = q.Account.Team.Memberships.PageInfo
 	t.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
 	for t.Memberships.PageInfo.HasNextPage {
-		(*variables)["after"] = t.Memberships.PageInfo.End
+		(*variables)["after"] = t.Memberships.PageInfo.EndCursor
 		_, err := t.GetMemberships(client, variables)
 		if err != nil {
 			return nil, err
@@ -164,7 +158,7 @@ func (t *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConnect
 	t.Tags.PageInfo = q.Account.Team.Tags.PageInfo
 	t.Tags.TotalCount += q.Account.Team.Tags.TotalCount
 	for t.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = t.Tags.PageInfo.End
+		(*variables)["after"] = t.Tags.PageInfo.EndCursor
 		_, err := t.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -346,7 +340,7 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		(*variables)["after"] = q.Account.Teams.PageInfo.EndCursor
 		resp, err := client.ListTeams(variables)
 		if err != nil {
 			return nil, err
@@ -379,7 +373,7 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	}
 
 	for q.Account.Teams.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		(*variables)["after"] = q.Account.Teams.PageInfo.EndCursor
 		resp, err := client.ListTeamsWithManager(email, variables)
 		if err != nil {
 			return nil, err
