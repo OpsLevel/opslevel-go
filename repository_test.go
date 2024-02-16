@@ -88,8 +88,7 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 func TestGetRepository(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RepositoryGet($repo:ID!){account{repository(id: $repo){services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},tags{nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},archivedAt,configErrors,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},repoKey,tier{alias,description,id,index,name},type,url,visibility,visible}}}`,
-		`{"repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk" }`,
+		`query RepositoryGet($repo:ID!){account{repository(id: $repo){services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},tags{nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount},archivedAt,configErrors,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},repoKey,tier{alias,description,id,index,name},type,url,visibility,visible}}}`, `{"repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk" }`,
 		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
 	)
 
