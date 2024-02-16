@@ -31,8 +31,8 @@ const (
 	queryFile       string = "query.go"
 	mutationFile    string = "mutation.go"
 	payloadFile     string = "payload.go"
-	// scalarFile      string = "scalar.go" // NOTE: probably not useful
-	// unionFile       string = "union.go" // NOTE: probably not useful
+	// scalarFile      string = "scalar.go" // NOTE: not sure if useful
+	unionFile string = "union.go"
 )
 
 var knownTypeIsName = []string{
@@ -272,8 +272,8 @@ func run() error {
 			subSchema = objectSchema
 		// case scalarFile:
 		// 	subSchema = scalarSchema
-		// case unionFile:
-		// 	subSchema = unionSchema
+		case unionFile:
+			subSchema = unionSchema
 		default:
 			panic("Unknown file: " + filename)
 		}
@@ -755,21 +755,23 @@ type {{.Name}} struct { {{range .InputFields }}
 	// func NewString(value string) *string {
 	// 	return &value
 	// }`),
-	// 	unionFile: t(header + `
-	// {{range .Types | sortByName}}{{if and (eq .Kind "UNION") (not (internal .Name))}}
-	// {{template "union_object" .}}
-	// {{end}}{{end}}
+	unionFile: t(header + `
+	{{range .Types | sortByName}}{{if and (eq .Kind "UNION") (not (internal .Name))}}
+	{{template "union_object" .}}
+	{{end}}{{end}}
 
-	// {{- define "union_object" -}}
-	// // Union{{.Name}} {{ template "description" . }}
-	// type Union{{.Name}} interface { {{range .PossibleTypes }}
-	//
-	//	    {{.Name}}Fragment() {{.Name}}Fragment{{end}}
-	//	}
-	//
-	// {{- end -}}
-	//
-	//	`),
+	{{- define "union_object" -}}
+	// {{.Name}} is a Union that {{ template "description" . }}
+	type {{.Name}} struct { {{range .PossibleTypes }}
+     {{- if not (skip_object .Name) }}
+	    {{.Name}} {{.Name}} ` + "`" + `graphql:"... on  {{- .Name | title }}"` + "`" + `
+     {{- end}}
+    {{- end}}
+	}
+
+	{{- end -}}
+
+	`),
 }
 
 func t(text string) *template.Template {
