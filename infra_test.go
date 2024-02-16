@@ -52,7 +52,7 @@ func TestCreateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -126,7 +126,7 @@ func TestListInfra(t *testing.T) {
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}`,
+		`mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{aliases,data,href,id,integration,lastSyncedAt,name,owner{... on Team{teamAlias:alias,id}},ownerLocked,providerData{accountName,externalUrl,providerName},providerResourceType,rawData,type},warnings{message},errors{message,path}}}`,
 		`{"all": true, "identifier": { {{ template "id1" }}}, "input": { "ownerId": "{{ template "id1_string" }}", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
 		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
 	)
@@ -143,7 +143,7 @@ func TestUpdateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -164,7 +164,7 @@ func TestDeleteInfra(t *testing.T) {
 func TestGetInfrastructureResourceTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "infrastructureResource": { {{template "id1" }} } }`,
 		`{
                   "data": {
@@ -197,7 +197,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                 }`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "infrastructureResource": { {{template "id1" }} }}`,
 		`{
                   "data": {

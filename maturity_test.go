@@ -9,7 +9,7 @@ import (
 func TestGetServiceMaturityWithAlias(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query ($service:String!){account{service(alias:$service){name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}}}}`,
+		`query ($service:String!){account{service(alias:$service){name,maturityReport{categoryBreakdown{category{description,id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}}}}`,
 		`{"service": "cert-manager"}`,
 		`{
   "data": {
@@ -133,7 +133,7 @@ func TestGetServiceMaturityWithAlias(t *testing.T) {
 func TestListServicesMaturity(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query ($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},{{ template "pagination_request" }}}}}`,
+		`query ($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{description,id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}`,
 		`{"after":"", "first":100}`,
 		`{
   "data": {

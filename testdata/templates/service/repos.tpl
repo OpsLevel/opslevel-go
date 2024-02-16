@@ -13,7 +13,7 @@
   "name": "Store Front",
   "organization": "raptors-store",
   "owner": null,
-  "private": true,
+  "locked": true,
   "repoKey": "{60eb0953-f5bc-4af5-9f20-ac8921276cd3}",
   "services": {
     "edges": [
@@ -206,7 +206,7 @@
   "name": "Store Front",
   "organization": "raptors-store",
   "owner": null,
-  "private": true,
+  "locked": true,
   "repoKey": "{60eb0953-f5bc-4af5-9f20-ac8921276cd3}",
   "services": {
     "edges": [
@@ -399,7 +399,7 @@
   "name": "Catalogue",
   "organization": "raptors-store",
   "owner": null,
-  "private": true,
+  "locked": true,
   "repoKey": "{d5154d29-0ebb-4c7d-b1a8-b578118f5e29}",
   "services": {
     "edges": [
