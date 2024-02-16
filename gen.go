@@ -1287,6 +1287,8 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 			return "JSON"
 		case "id":
 			return "ID"
+		case "integration":
+			return "Integration"
 		case "owner":
 			return "EntityOwner"
 		case "providerdata":

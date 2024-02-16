@@ -9,19 +9,6 @@ type ScorecardId struct {
 	Id      ID       `graphql:"id"`
 }
 
-// type Scorecard struct {
-// 	ScorecardId
-
-// 	AffectsOverallServiceLevels bool        `graphql:"affectsOverallServiceLevels"`
-// 	Description                 string      `graphql:"description"` // optional
-// 	Filter                      Filter      `graphql:"filter"`      // optional
-// 	Name                        string      `graphql:"name"`
-// 	Owner                       EntityOwner `graphql:"owner"`
-// 	PassingChecks               int         `graphql:"passingChecks"`
-// 	ServiceCount                int         `graphql:"serviceCount"`
-// 	ChecksCount                 int         `graphql:"totalChecks"`
-// }
-
 type ScorecardConnection struct {
 	Nodes      []Scorecard `graphql:"nodes"`
 	PageInfo   PageInfo    `graphql:"pageInfo"`

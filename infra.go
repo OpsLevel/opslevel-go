@@ -5,35 +5,11 @@ import (
 	"slices"
 )
 
-// type InfrastructureResourceSchema struct {
-// 	Type   string `json:"type"`
-// 	Schema JSON   `json:"schema" scalar:"true"`
-// }
-
 type InfrastructureResourceSchemaConnection struct {
 	Nodes      []InfrastructureResourceSchema
 	PageInfo   PageInfo
 	TotalCount int `graphql:"-"`
 }
-
-// type InfrastructureResourceProviderData struct {
-// 	AccountName  string `json:"accountName" graphql:"accountName"`
-// 	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
-// 	ProviderName string `json:"providerName" graphql:"providerName"`
-// }
-
-// type InfrastructureResource struct {
-// 	Id           string                             `json:"id"`
-// 	Aliases      []string                           `json:"aliases"`
-// 	Name         string                             `json:"name"`
-// 	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
-// 	ProviderType string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
-// 	ProviderData InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`
-// 	Owner        EntityOwner                        `json:"owner" graphql:"owner @include(if: $all)"`
-// 	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
-// 	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
-// 	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
-// }
 
 type InfrastructureResourceConnection struct {
 	Nodes      []InfrastructureResource

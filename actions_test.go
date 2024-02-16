@@ -9,55 +9,55 @@ import (
 
 var newID *ol.ID = ol.NewID("123456789")
 
-// func TestCreateWebhookAction(t *testing.T) {
-// 	// Arrange
-// 	testRequest := autopilot.NewTestRequest(
-// 		`mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
-// 		`{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
-// 		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
-// 	)
+func TestCreateWebhookAction(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
+		`{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
+		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
+	)
 
-// 	client := BestTestClient(t, "custom_actions/create_action", testRequest)
+	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
-// 	// Act
-// 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
-// 		Name:           "Deploy Rollback",
-// 		LiquidTemplate: ol.RefOf("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
-// 		Headers:        &ol.JSON{"Content-Type": "application/json"},
-// 		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
-// 		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
-// 	})
+	// Act
+	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
+		Name:           "Deploy Rollback",
+		LiquidTemplate: ol.RefOf("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
+		Headers:        &ol.JSON{"Content-Type": "application/json"},
+		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
+		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
+	})
 
-// 	// Assert
-// 	autopilot.Ok(t, err)
-// 	autopilot.Equals(t, "Deploy Rollback", action.Name)
-// }
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Deploy Rollback", action.Name)
+}
 
-// func TestListCustomActions(t *testing.T) {
-// 	// Arrange
-// 	testRequestOne := autopilot.NewTestRequest(
-// 		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},{{ template "pagination_request" }},totalCount}}}`,
-// 		`{{ template "pagination_initial_query_variables" }}`,
-// 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
-// 	)
-// 	testRequestTwo := autopilot.NewTestRequest(
-// 		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},{{ template "pagination_request" }},totalCount}}}`,
-// 		`{{ template "pagination_second_query_variables" }}`,
-// 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
-// 	)
-// 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+func TestListCustomActions(t *testing.T) {
+	// Arrange
+	testRequestOne := autopilot.NewTestRequest(
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
+		`{{ template "pagination_second_query_variables" }}`,
+		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
-// 	client := BestTestClient(t, "custom_actions/list_actions", requests...)
-// 	// Act
-// 	response, err := client.ListCustomActions(nil)
-// 	result := response.Nodes
-// 	// Assert
-// 	autopilot.Ok(t, err)
-// 	autopilot.Equals(t, 3, len(result))
-// 	autopilot.Equals(t, "Deploy Freeze", result[1].Name)
-// 	autopilot.Equals(t, "Page On-Call", result[2].Name)
-// 	autopilot.Equals(t, "application/json", result[0].Headers["Content-Type"])
-// }
+	client := BestTestClient(t, "custom_actions/list_actions", requests...)
+	// Act
+	response, err := client.ListCustomActions(nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result))
+	autopilot.Equals(t, "Deploy Freeze", result[1].Name)
+	autopilot.Equals(t, "Page On-Call", result[2].Name)
+	autopilot.Equals(t, "application/json", result[0].Headers["Content-Type"])
+}
 
 func TestUpdateWebhookAction(t *testing.T) {
 	// Arrange

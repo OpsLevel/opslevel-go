@@ -11,14 +11,6 @@ type FilterId struct {
 	Name string
 }
 
-// type FilterPredicate struct {
-// 	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
-// 	KeyData       string            `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"null"`
-// 	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
-// 	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
-// 	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
-// }
-
 type FilterConnection struct {
 	Nodes      []Filter
 	PageInfo   PageInfo

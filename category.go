@@ -6,11 +6,6 @@ import (
 	"github.com/gosimple/slug"
 )
 
-// type Category struct {
-// 	Id   ID `json:"id"`
-// 	Name string
-// }
-
 type CategoryConnection struct {
 	Nodes      []Category
 	PageInfo   PageInfo

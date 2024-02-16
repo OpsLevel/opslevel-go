@@ -6,13 +6,6 @@ import (
 	"slices"
 )
 
-// type Contact struct {
-// 	Address     string
-// 	DisplayName string
-// 	Id          ID
-// 	Type        ContactType
-// }
-
 // Has no json struct tags as this is nested in returned data structs
 type TeamId struct {
 	Alias string

@@ -6,14 +6,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-// type Level struct {
-// 	Alias       string
-// 	Description string `json:"description,omitempty"`
-// 	Id          ID     `json:"id"`
-// 	Index       int
-// 	Name        string
-// }
-
 type LevelConnection struct {
 	Nodes      []Level
 	PageInfo   PageInfo

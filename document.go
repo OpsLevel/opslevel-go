@@ -1,15 +1,14 @@
 package opslevel
 
+// NOTE: test first, then replace this struct with commented out one below
 type ServiceDocumentSource struct {
 	IntegrationId     `graphql:"... on ApiDocIntegration"`
 	ServiceRepository `graphql:"... on ServiceRepository"`
 }
 
-// type ServiceDocument struct {
-// 	Id         ID                    `graphql:"id" json:"id"`
-// 	HtmlURL    string                `graphql:"htmlUrl" json:"htmUrl,omitempty"`
-// 	Source     ServiceDocumentSource `graphql:"source" json:"source"`
-// 	Timestamps Timestamps            `graphql:"timestamps" json:"timestamps"`
+// type ServiceDocumentSource struct {
+// 	IntegrationId     IntegrationId `graphql:"... on ApiDocIntegration"`
+// 	ServiceRepository ServiceRepository `graphql:"... on ServiceRepository"`
 // }
 
 type ServiceDocumentContent struct {

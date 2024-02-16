@@ -1,12 +1,5 @@
 package opslevel
 
-// type Secret struct {
-// 	Alias      string     `json:"alias"`
-// 	ID         ID         `json:"id"`
-// 	Owner      TeamId     `json:"team"`
-// 	Timestamps Timestamps `json:"timestamps"`
-// }
-
 type SecretsVaultsSecretConnection struct {
 	Nodes      []Secret
 	PageInfo   PageInfo

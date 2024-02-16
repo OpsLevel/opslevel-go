@@ -11,30 +11,6 @@ type RepositoryId struct {
 	DefaultAlias string
 }
 
-// type Repository struct {
-// 	ArchivedAt         iso8601.Time
-// 	CreatedOn          iso8601.Time
-// 	DefaultAlias       string
-// 	DefaultBranch      string
-// 	Description        string
-// 	Forked             bool
-// 	HtmlUrl            string
-// 	Id                 ID
-// 	Languages          []Language
-// 	LastOwnerChangedAt iso8601.Time
-// 	Name               string
-// 	Organization       string
-// 	Owner              TeamId
-// 	Private            bool
-// 	RepoKey            string
-// 	Services           *RepositoryServiceConnection
-// 	Tags               *TagConnection
-// 	Tier               Tier
-// 	Type               string
-// 	Url                string
-// 	Visible            bool
-// }
-
 type RepositoryConnection struct {
 	HiddenCount       int
 	Nodes             []Repository
