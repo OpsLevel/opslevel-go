@@ -90,6 +90,14 @@ type CheckAlertSourceUsageUpdateInput struct {
 	AlertSourceNamePredicate *PredicateUpdateInput `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`               // The condition that the alert source name should satisfy to be evaluated. (Optional.)
 }
 
+// CheckCopyInput represents information about the check(s) that are to be copied.
+type CheckCopyInput struct {
+	CheckIds         []string `json:"checkIds" yaml:"checkIds" example:"['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']"` // The IDs of the checks to be copied. (Required.)
+	TargetCategoryId ID       `json:"targetCategoryId" yaml:"targetCategoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                        // The ID of the category to which the checks are copied. Belongs to either the rubric or a scorecard. (Required.)
+	TargetLevelId    *ID      `json:"targetLevelId,omitempty" yaml:"targetLevelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The ID of the level which the copied checks are associated with. (Optional.)
+	Move             *bool    `json:"move,omitempty" yaml:"move,omitempty" example:"false"`                                                      // If set to true, the original checks will be deleted after being successfully copied. (Optional.)
+}
+
 // CheckCustomEventCreateInput represents creates a custom event check.
 type CheckCustomEventCreateInput struct {
 	Name             string        `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
@@ -840,6 +848,11 @@ type ServiceDependencyCreateInput struct {
 type ServiceDependencyKey struct {
 	SourceIdentifier      *IdentifierInput `json:"sourceIdentifier,omitempty" yaml:"sourceIdentifier,omitempty"`           // The ID or alias identifier of the service with the dependency. (Optional.)
 	DestinationIdentifier *IdentifierInput `json:"destinationIdentifier,omitempty" yaml:"destinationIdentifier,omitempty"` // The ID or alias identifier of the service that is depended upon. (Optional.)
+}
+
+// ServiceLevelNotificationsUpdateInput specifies the input fields used to update service level notification settings.
+type ServiceLevelNotificationsUpdateInput struct {
+	EnableSlackNotifications *[]bool `json:"enableSlackNotifications,omitempty" yaml:"enableSlackNotifications,omitempty" example:"[false]"` // Whether or not to enable receiving slack notifications on service level changes. (Optional.)
 }
 
 // ServiceNoteUpdateInput specifies the input fields used in the `serviceNoteUpdate` mutation.

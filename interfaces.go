@@ -34,11 +34,11 @@ type Check struct {
 
 // CustomActionsExternalAction represents an external action to be triggered by a custom action.
 type CustomActionsExternalAction struct {
-	CustomActionsId
-
-	Description    string `graphql:"description"`    // A description of what the action should accomplish.
-	LiquidTemplate string `graphql:"liquidTemplate"` // The liquid template used to generate the data sent to the external action.
-	Name           string `graphql:"name"`           // The name of the external action.
+	Aliases        []string `graphql:"aliases"`        // Any aliases for this external action.
+	Description    string   `graphql:"description"`    // A description of what the action should accomplish.
+	Id             ID       `graphql:"id"`             // The ID of the external action.
+	LiquidTemplate string   `graphql:"liquidTemplate"` // The liquid template used to generate the data sent to the external action.
+	Name           string   `graphql:"name"`           // The name of the external action.
 
 	CustomActionsWebhookAction `graphql:"... on CustomActionsWebhookAction"`
 }

@@ -12,7 +12,7 @@ var newID *ol.ID = ol.NewID("123456789")
 func TestCreateWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
+		`mutation WebhookActionCreate($input:CustomActionsWebhookActionCreateInput!){customActionsWebhookActionCreate(input: $input){webhookAction{aliases,description,id,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
 		`{"input":{"headers":"{\"Content-Type\":\"application/json\"}","httpMethod":"POST",{{ template "liquid_template_rollback" }},"name":"Deploy Rollback","webhookUrl":"https://gitlab.com/api/v4/projects/1/trigger/pipeline"}}`,
 		`{"data": {"customActionsWebhookActionCreate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
@@ -36,12 +36,12 @@ func TestCreateWebhookAction(t *testing.T) {
 func TestListCustomActions(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,description,id,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,description,id,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -62,7 +62,7 @@ func TestListCustomActions(t *testing.T) {
 func TestUpdateWebhookAction(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
+		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{aliases,description,id,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
 		`{"input":{"id": "123456789", "httpMethod":"PUT"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
@@ -82,7 +82,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 func TestUpdateWebhookAction2(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
+		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{aliases,description,id,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}},errors{message,path}}}`,
 		`{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)

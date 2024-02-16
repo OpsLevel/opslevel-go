@@ -78,7 +78,7 @@ func (client *Client) GetCustomAction(input string) (*CustomActionsExternalActio
 		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
-	if q.Account.Action.CustomActionsId.Id == "" {
+	if q.Account.Action.Id == "" {
 		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)

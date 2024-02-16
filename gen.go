@@ -1068,8 +1068,8 @@ func addSpecialFields(objectName string) string {
 
 func addSpecialInterfacesFields(interfaceName string) string {
 	switch interfaceName {
-	case "CustomActionsExternalAction":
-		return "CustomActionsId"
+	// case "CustomActionsExternalAction":
+	// 	return "CustomActionsId"
 	case "Integration":
 		return "IntegrationId"
 	}
@@ -1155,11 +1155,6 @@ func skipInterfaceField(interfaceName, fieldName string) bool {
 	if interfaceName == "Check" {
 		switch fieldName {
 		case "campaign", "rawNotes", "url":
-			return true
-		}
-	} else if interfaceName == "CustomActionsExternalAction" {
-		switch fieldName {
-		case "id", "aliases":
 			return true
 		}
 	} else if interfaceName == "Integration" {
