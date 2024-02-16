@@ -23,16 +23,16 @@ import (
 )
 
 const (
-	connectionFile  string = "connection.go"
+	// connectionFile  string = "connection.go"
 	enumFile        string = "enum.go"
 	inputObjectFile string = "input.go"
 	interfacesFile  string = "interfaces.go"
 	objectFile      string = "object.go"
-	queryFile       string = "query.go"
-	mutationFile    string = "mutation.go"
-	payloadFile     string = "payload.go"
+	// queryFile       string = "query.go"
+	// mutationFile string = "mutation.go"
+	payloadFile string = "payload.go"
 	// scalarFile      string = "scalar.go" // NOTE: not sure if useful
-	unionFile string = "union.go"
+	// unionFile string = "union.go"
 )
 
 var knownTypeIsName = []string{
@@ -254,8 +254,8 @@ func run() error {
 	var subSchema GraphQLSchema
 	for filename, t := range templates {
 		switch filename {
-		case connectionFile:
-			subSchema = objectSchema
+		// case connectionFile:
+		// 	subSchema = objectSchema
 		case enumFile:
 			subSchema = enumSchema
 		case inputObjectFile:
@@ -264,16 +264,16 @@ func run() error {
 			subSchema = interfaceSchema
 		case objectFile:
 			subSchema = objectSchema
-		case mutationFile:
-			subSchema = objectSchema
-		case payloadFile:
-			subSchema = objectSchema
-		case queryFile:
-			subSchema = objectSchema
+		// case mutationFile:
+		// 	subSchema = objectSchema
+		// case payloadFile:
+		// 	subSchema = objectSchema
+		// case queryFile:
+		// 	subSchema = objectSchema
 		// case scalarFile:
 		// 	subSchema = scalarSchema
-		case unionFile:
-			subSchema = unionSchema
+		// case unionFile:
+		// 	subSchema = unionSchema
 		default:
 			panic("Unknown file: " + filename)
 		}
@@ -345,43 +345,43 @@ const (
 
 // Filename -> Template.
 var templates = map[string]*template.Template{
-	connectionFile: t(header + `
-	{{range .Types | sortByName}}
-	  {{if and (not (skip_if_campaign_or_group .Name)) (not (internal .Name)) }}
-	    {{ if hasSuffix "Connection" .Name }}
-	      {{- template "connection_object" . }}
-	    {{ else if hasSuffix "Edge" .Name }}
-	      {{- template "edge_object" . }}
-	    {{end}}
-	  {{- end}}
-	{{- end}}
+	// connectionFile: t(header + `
+	// {{range .Types | sortByName}}
+	//   {{if and (not (skip_if_campaign_or_group .Name)) (not (internal .Name)) }}
+	//     {{ if hasSuffix "Connection" .Name }}
+	//       {{- template "connection_object" . }}
+	//     {{ else if hasSuffix "Edge" .Name }}
+	//       {{- template "edge_object" . }}
+	//     {{end}}
+	//   {{- end}}
+	// {{- end}}
 
-	{{- define "connection_object" -}}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct {
-    Nodes []{{.Name | trimSuffix "Connection" | trimSuffix "V2" | makeSingular }} ` +
-		"`" + `graphql:"nodes"` + "`" + ` // A list of nodes.
-    Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` +
-		"`" + ` // A list of edges.
-	{{ range .Fields }}
-      {{- if and (ne "edges" .Name) (ne "nodes" .Name) }}
-	    {{ .Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	  {{- end }}
-	{{- end }}
-	}
-	{{- end }}
+	// {{- define "connection_object" -}}
+	// {{ template "type_comment_description" . }}
+	// type {{.Name}} struct {
+	//    Nodes []{{.Name | trimSuffix "Connection" | trimSuffix "V2" | makeSingular }} ` +
+	// 	"`" + `graphql:"nodes"` + "`" + ` // A list of nodes.
+	//    Edges []{{.Name | trimSuffix "Connection" }}Edge ` + "`" + `graphql:"edges"` +
+	// 	"`" + ` // A list of edges.
+	// {{ range .Fields }}
+	//      {{- if and (ne "edges" .Name) (ne "nodes" .Name) }}
+	//     {{ .Name | title}} {{ template "converted_type" . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	//   {{- end }}
+	// {{- end }}
+	// }
+	// {{- end }}
 
-  {{- define "edge_object" -}}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct {
-    {{ range .Fields }}
-	    {{ .Name | title }} {{ if eq .Name "node"}}{{ $.Name | trimSuffix "Edge" | trimSuffix "V2" | makeSingular }}
-      {{- else }}{{ template "converted_type" . }}
-      {{- end }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-    {{- end }}
-	}
-	{{- end }}
-	  `),
+	//  {{- define "edge_object" -}}
+	// {{ template "type_comment_description" . }}
+	// type {{.Name}} struct {
+	//    {{ range .Fields }}
+	//     {{ .Name | title }} {{ if eq .Name "node"}}{{ $.Name | trimSuffix "Edge" | trimSuffix "V2" | makeSingular }}
+	//      {{- else }}{{ template "converted_type" . }}
+	//      {{- end }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
+	//    {{- end }}
+	// }
+	// {{- end }}
+	//   `),
 	enumFile: t(header + `
 {{range .Types | sortByName}}{{if and (eq .Kind "ENUM") (not (internal .Name))}}
 {{template "enum" .}}
@@ -456,206 +456,206 @@ type {{.Name}} struct { {{range .InputFields }}
 	}
 	{{- end -}}
 		`),
-	payloadFile: t(header + `
-  import "github.com/relvacode/iso8601"
+	// payloadFile: t(header + `
+	//  import "github.com/relvacode/iso8601"
 
-	{{range .Types | sortByName}}{{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	{{template "payload_object" .}}
-	{{- end}}{{- end}}
+	// {{range .Types | sortByName}}{{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	// {{template "payload_object" .}}
+	// {{- end}}{{- end}}
 
-	{{- define "payload_object" -}}
-	{{ if and (hasSuffix "Payload" .Name) (not (skip_query .Name)) }}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct {
-	{{ range .Fields }}
-	  {{.Name | title}} {{ if isListType .Name }}[]{{- end -}}
-      {{- if eq .Name "targetCategory" -}}Category
-      {{- else }}{{ template "converted_type" . }}
-      {{- end }} {{ template "field_comment_description" . }}
-	{{- end }}
-	}
-	{{- end }}{{ end -}}
-	`),
+	// {{- define "payload_object" -}}
+	// {{ if and (hasSuffix "Payload" .Name) (not (skip_query .Name)) }}
+	// {{ template "type_comment_description" . }}
+	// type {{.Name}} struct {
+	// {{ range .Fields }}
+	//   {{.Name | title}} {{ if isListType .Name }}[]{{- end -}}
+	//      {{- if eq .Name "targetCategory" -}}Category
+	//      {{- else }}{{ template "converted_type" . }}
+	//      {{- end }} {{ template "field_comment_description" . }}
+	// {{- end }}
+	// }
+	// {{- end }}{{ end -}}
+	// `),
 	// NOTE: "account" == objectSchema.Types[0]
 	// NOTE: "mutation" == objectSchema.Types[134]
-	queryFile: t(header + `
-  import "fmt"
+	// queryFile: t(header + `
+	//  import "fmt"
 
-	{{range .Types | sortByName}}
-	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	    {{- if eq .Name "Account" }}
-	      {{- template "account_queries" . }}
-	    {{- else }}
-	      {{- template "non_account_queries" . }}
-	    {{- end}}
-	  {{- end}}
-	{{- end}}
+	// {{range .Types | sortByName}}
+	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	//     {{- if eq .Name "Account" }}
+	//       {{- template "account_queries" . }}
+	//     {{- else }}
+	//       {{- template "non_account_queries" . }}
+	//     {{- end}}
+	//   {{- end}}
+	// {{- end}}
 
-	{{ define "account_queries" -}}
-	  {{- range $index, $my_field := .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
-      {{- if eq (len .Args) 2 }}{{- range $index, $my_arg := .Args }}
-  // Get{{ $my_field.Name | title}}By{{ .Name | title }} find a {{ $my_field.Name | title }} by {{ .Name }}.
-  // func (client *Client) Get{{ $my_field.Name | title  }}By{{ .Name | title }}({{ .Name }} string) (*
-      {{- end -}}               {{- end}}
-  // {{ if gt (len .Args) 3 -}} List {{- else -}} Get {{- end -}}
-     {{- .Name | title}} {{ .Description | clean | endSentence }}
-	func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*
-                                      {{- if eq .Name "customActionsExternalActions" }}{{ .Name | title  }}Connection, error) {
-                                      {{- else}}{{ .Name | title | makeSingular }}Connection, error) {
-                                      {{- end -}}
-                        {{- else -}}              Get{{ .Name | title }}(value string) (*{{.Name | title | trimSuffix "sVaultsSecret" }}, error) {
-                        {{- end -}}
-	    var q struct {
-	      Account struct {
-          {{ if gt (len .Args) 3 -}}
-            {{- .Name | title | makePlural }} {{ if eq .Name "customActionsExternalActions" -}}{{ .Name | title  }}{{ else }}{{ .Name | title | makeSingular }}{{ end }}Connection {{ template "graphql_struct_tag_with_args" . }}
-          {{- else -}}
-            {{- .Name | title  }} {{ .Name | title | makeSingular | trimSuffix "sVaultsSecret" }} {{ template "graphql_struct_tag_with_args" . }}
-          {{- end -}}
-	      }
-	    }
-      {{- if gt (len .Args) 3 }}
-    	if variables == nil {
-        variables = client.InitialPageVariablesPointer()
-      }
-      {{ else }}
-	    v := PayloadVariables{ {{ range .Args }}
-	      "{{.Name}}": value, {{ end}}
-	    }
-      {{- end }}
+	// {{ define "account_queries" -}}
+	//   {{- range $index, $my_field := .Fields }} {{- if and (len .Args) (not (skip_query .Name)) }}
+	//      {{- if eq (len .Args) 2 }}{{- range $index, $my_arg := .Args }}
+	//  // Get{{ $my_field.Name | title}}By{{ .Name | title }} find a {{ $my_field.Name | title }} by {{ .Name }}.
+	//  // func (client *Client) Get{{ $my_field.Name | title  }}By{{ .Name | title }}({{ .Name }} string) (*
+	//      {{- end -}}               {{- end}}
+	//  // {{ if gt (len .Args) 3 -}} List {{- else -}} Get {{- end -}}
+	//     {{- .Name | title}} {{ .Description | clean | endSentence }}
+	// func (client *Client) {{ if gt (len .Args) 3 }}List{{ .Name | title | makePlural }}(variables *PayloadVariables) (*
+	//                                      {{- if eq .Name "customActionsExternalActions" }}{{ .Name | title  }}Connection, error) {
+	//                                      {{- else}}{{ .Name | title | makeSingular }}Connection, error) {
+	//                                      {{- end -}}
+	//                        {{- else -}}              Get{{ .Name | title }}(value string) (*{{.Name | title | trimSuffix "sVaultsSecret" }}, error) {
+	//                        {{- end -}}
+	//     var q struct {
+	//       Account struct {
+	//          {{ if gt (len .Args) 3 -}}
+	//            {{- .Name | title | makePlural }} {{ if eq .Name "customActionsExternalActions" -}}{{ .Name | title  }}{{ else }}{{ .Name | title | makeSingular }}{{ end }}Connection {{ template "graphql_struct_tag_with_args" . }}
+	//          {{- else -}}
+	//            {{- .Name | title  }} {{ .Name | title | makeSingular | trimSuffix "sVaultsSecret" }} {{ template "graphql_struct_tag_with_args" . }}
+	//          {{- end -}}
+	//       }
+	//     }
+	//      {{- if gt (len .Args) 3 }}
+	//    	if variables == nil {
+	//        variables = client.InitialPageVariablesPointer()
+	//      }
+	//      {{ else }}
+	//     v := PayloadVariables{ {{ range .Args }}
+	//       "{{.Name}}": value, {{ end}}
+	//     }
+	//      {{- end }}
 
-      {{ if gt (len .Args) 3 -}}
-      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
-        return nil, err
-      }
+	//      {{ if gt (len .Args) 3 -}}
+	//      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+	//        return nil, err
+	//      }
 
-      for q.Account.{{ .Name | title }}.PageInfo.HasNextPage {
-        (*variables)["after"] = q.Account.{{ .Name | title }}.PageInfo.End
-        resp, err := client.List{{ .Name | title }}(variables)
-        if err != nil {
-          return nil, err
-        }
-        q.Account.{{ .Name | title }}.Nodes = append(q.Account.{{ .Name | title }}.Nodes, resp.Nodes...)
-        q.Account.{{ .Name | title }}.PageInfo = resp.PageInfo
-        q.Account.{{ .Name | title }}.TotalCount += resp.TotalCount
-      }
-	    return &q.Account.{{ .Name | title }}, nil
-      {{ else }}
-	    err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}{{ if isListType .Name }}List{{else}}Get{{end}}"))
-	    return &q.Account.{{ .Name | title }}, HandleErrors(err, nil)
-      {{- end }}
-	}
-  {{end}}{{- end}}{{- end}}
+	//      for q.Account.{{ .Name | title }}.PageInfo.HasNextPage {
+	//        (*variables)["after"] = q.Account.{{ .Name | title }}.PageInfo.End
+	//        resp, err := client.List{{ .Name | title }}(variables)
+	//        if err != nil {
+	//          return nil, err
+	//        }
+	//        q.Account.{{ .Name | title }}.Nodes = append(q.Account.{{ .Name | title }}.Nodes, resp.Nodes...)
+	//        q.Account.{{ .Name | title }}.PageInfo = resp.PageInfo
+	//        q.Account.{{ .Name | title }}.TotalCount += resp.TotalCount
+	//      }
+	//     return &q.Account.{{ .Name | title }}, nil
+	//      {{ else }}
+	//     err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}{{ if isListType .Name }}List{{else}}Get{{end}}"))
+	//     return &q.Account.{{ .Name | title }}, HandleErrors(err, nil)
+	//      {{- end }}
+	// }
+	//  {{end}}{{- end}}{{- end}}
 
-	{{ define "non_account_queries" -}}
-    {{- range .Fields }} {{- if and (len .Args) (not (skip_query $.Name)) }}
-	// {{ if gt (len .Args) 3 }}List{{- else }}Get{{ end }}{{.Name | title}} {{ .Description | clean | endSentence }}
-	func ( {{- $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }})
+	// {{ define "non_account_queries" -}}
+	//    {{- range .Fields }} {{- if and (len .Args) (not (skip_query $.Name)) }}
+	// // {{ if gt (len .Args) 3 }}List{{- else }}Get{{ end }}{{.Name | title}} {{ .Description | clean | endSentence }}
+	// func ( {{- $.Name | first_char_lowered }} *{{ $.Name | title | makeSingular }})
 
-    {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*
-    {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) }} {{- $.Name }}Connection, error
-    {{- else if hasPrefix "descendant" .Name }}{{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection, error
-    {{- else }}{{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular | trimPrefix "Child" }}Connection, error
-    {{- end -}} ) {
-      if {{ $.Name | first_char_lowered }}.Id == "" {
-        return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
-      }
-      var q struct {
-        Account struct {
-          {{ $.Name | title | makeSingular }} struct {
-            {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) -}}
-              {{ .Name | title }} {{ $.Name | title | makeSingular }}Connection
-            {{- else if hasPrefix "descendant" .Name }}
-              {{ .Name | title }} {{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection
-            {{- else -}}
-              {{ .Name | title }} {{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular }}Connection
-            {{- end }} ` + "`" + `graphql:"{{.Name}}(after: $after, first: $first)"` + "`" + `
-          } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: $id)"` + "`" + `
-        }
-      }
-      if variables == nil {
-        variables = client.InitialPageVariablesPointer()
-      }
-      (*variables)["id"] = {{ $.Name | first_char_lowered }}.Id
-      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
-        return nil, err
-      }
+	//    {{- if gt (len .Args) 3 }}List{{ .Name | title }}(client *Client, variables *PayloadVariables) (*
+	//    {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) }} {{- $.Name }}Connection, error
+	//    {{- else if hasPrefix "descendant" .Name }}{{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection, error
+	//    {{- else }}{{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular | trimPrefix "Child" }}Connection, error
+	//    {{- end -}} ) {
+	//      if {{ $.Name | first_char_lowered }}.Id == "" {
+	//        return nil, fmt.Errorf("Unable to get {{ .Name | title }}, invalid {{ $.Name | lower }} id: '%s'", {{ $.Name | first_char_lowered }}.Id)
+	//      }
+	//      var q struct {
+	//        Account struct {
+	//          {{ $.Name | title | makeSingular }} struct {
+	//            {{- if or (hasPrefix "ancestor" .Name) (hasPrefix "child" .Name) -}}
+	//              {{ .Name | title }} {{ $.Name | title | makeSingular }}Connection
+	//            {{- else if hasPrefix "descendant" .Name }}
+	//              {{ .Name | title }} {{ .Name | title | makeSingular | trimPrefix "Descendant" }}Connection
+	//            {{- else -}}
+	//              {{ .Name | title }} {{ if eq .Name "memberships" }}Team{{end}}{{ .Name | title | makeSingular }}Connection
+	//            {{- end }} ` + "`" + `graphql:"{{.Name}}(after: $after, first: $first)"` + "`" + `
+	//          } ` + "`" + `graphql:"{{$.Name | word_first_char_lowered }}(id: $id)"` + "`" + `
+	//        }
+	//      }
+	//      if variables == nil {
+	//        variables = client.InitialPageVariablesPointer()
+	//      }
+	//      (*variables)["id"] = {{ $.Name | first_char_lowered }}.Id
+	//      if err := client.Query(&q, *variables, WithName("{{ template "name_to_singular" . }}List")); err != nil {
+	//        return nil, err
+	//      }
 
-      for q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.HasNextPage {
-        (*variables)["after"] = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.End
-        connection, err := {{ $.Name | first_char_lowered }}.List{{ .Name | title }}(client, variables)
-        if err != nil {
-          return nil, err
-        }
-        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes = append(q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes, connection.Nodes...)
-        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo
-        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount += q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount
-      }
+	//      for q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.HasNextPage {
+	//        (*variables)["after"] = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo.End
+	//        connection, err := {{ $.Name | first_char_lowered }}.List{{ .Name | title }}(client, variables)
+	//        if err != nil {
+	//          return nil, err
+	//        }
+	//        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes = append(q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.Nodes, connection.Nodes...)
+	//        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo = q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.PageInfo
+	//        q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount += q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}.TotalCount
+	//      }
 
-      return &q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}, nil
+	//      return &q.Account.{{ $.Name | title | makeSingular }}.{{ .Name | title }}, nil
 
-    {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
-      var q struct {
-        Account struct {
-          {{ .Name | title }} {{ template "name_to_singular" . }} ` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
-        }
-      }
-      v := PayloadVariables{"input": *NewIdentifier(identifier)}
-      if err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}Get")); err != nil {
-        return nil, err
-      }
-      return &q.Account.{{ .Name | title }}, nil
-    {{- end -}}
-  }
-  {{- end -}}{{- end -}}{{- end -}}
-	`),
-	mutationFile: t(header + `
-	{{range .Types | sortByName}}
-	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	    {{- if eq .Name "Mutation" }}
-	      {{- template "mutation" .}}
-	    {{end}}
-	  {{- end}}
-	{{- end}}
+	//    {{- else }}Get{{ .Name | title }}({{ query_args . }}) (*{{.Name | title | makeSingular }}, error) {
+	//      var q struct {
+	//        Account struct {
+	//          {{ .Name | title }} {{ template "name_to_singular" . }} ` + "`" + `graphql:"{{.Name}}(input: $input)"` + "`" + `
+	//        }
+	//      }
+	//      v := PayloadVariables{"input": *NewIdentifier(identifier)}
+	//      if err := client.Query(&q, v, WithName("{{ template "name_to_singular" . }}Get")); err != nil {
+	//        return nil, err
+	//      }
+	//      return &q.Account.{{ .Name | title }}, nil
+	//    {{- end -}}
+	//  }
+	//  {{- end -}}{{- end -}}{{- end -}}
+	// `),
+	// mutationFile: t(header + `
+	// {{range .Types | sortByName}}
+	//   {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
+	//     {{- if eq .Name "Mutation" }}
+	//       {{- template "mutation" .}}
+	//     {{end}}
+	//   {{- end}}
+	// {{- end}}
 
-	{{ define "mutation" -}}
-	{{- range .Fields }} {{- if not (skip_if_campaign_or_group .Name) }}
-	// {{ .Name | title | renameMutation }} {{ .Description | clean | fullSentence }}
-	func (client *Client) {{ .Name | title | renameMutation }}(
-    {{- if hasSuffix "Delete" .Name }}id ID
-    {{- else }}
-      {{- range $index, $element := .Args }} {{- if gt $index 0 }}, {{ end -}}
-	    {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}identifier string
-	    {{- else if hasSuffix "Delete" $.Name }}id ID
-	    {{- else if eq "String" .Type.OfType.OfTypeName }}{{ .Name }} string
-	    {{- else }}{{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
-	    {{- end }}
-    {{- end }}
-	  {{- end -}} ) {{ if hasSuffix "Delete" .Name -}}
-                  error {
-	                {{- else -}}
-                  (*{{.Name | title | renameMutationReturnType}}, error) {
-	                {{- end -}}
-      {{- if hasSuffix "Delete" .Name }}
-      input := {{.Name | title}}Input{Id: id}
-      {{ end }}
-	    var m struct {
-	      {{ .Name | title }}Payload {{ template "graphql_struct_tag_with_args" . }}
-	    }
-	    v := PayloadVariables{ {{ range .Args }}
-	      "{{.Name}}": {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}*NewIdentifier(identifier),
-	                   {{- else}}input,{{ end }}
-	                           {{- end}}
-	    }
-	    err := client.Mutate(&m, v, WithName("{{ .Name | title }}"))
-      {{- if hasSuffix "Delete" .Name }}
-      return HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
-      {{- else }}
-	    return &m.{{ .Name | title }}Payload.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
-      {{- end }}
-	}
-	{{- end}}{{ end }}{{- end}}
-	`),
+	// {{ define "mutation" -}}
+	// {{- range .Fields }} {{- if not (skip_if_campaign_or_group .Name) }}
+	// // {{ .Name | title | renameMutation }} {{ .Description | clean | fullSentence }}
+	// func (client *Client) {{ .Name | title | renameMutation }}(
+	//    {{- if hasSuffix "Delete" .Name }}id ID
+	//    {{- else }}
+	//      {{- range $index, $element := .Args }} {{- if gt $index 0 }}, {{ end -}}
+	//     {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}identifier string
+	//     {{- else if hasSuffix "Delete" $.Name }}id ID
+	//     {{- else if eq "String" .Type.OfType.OfTypeName }}{{ .Name }} string
+	//     {{- else }}{{- .Name }} {{ with .Type.OfType.OfTypeName }}{{.}}{{else}}any{{end}}
+	//     {{- end }}
+	//    {{- end }}
+	//   {{- end -}} ) {{ if hasSuffix "Delete" .Name -}}
+	//                  error {
+	//                 {{- else -}}
+	//                  (*{{.Name | title | renameMutationReturnType}}, error) {
+	//                 {{- end -}}
+	//      {{- if hasSuffix "Delete" .Name }}
+	//      input := {{.Name | title}}Input{Id: id}
+	//      {{ end }}
+	//     var m struct {
+	//       {{ .Name | title }}Payload {{ template "graphql_struct_tag_with_args" . }}
+	//     }
+	//     v := PayloadVariables{ {{ range .Args }}
+	//       "{{.Name}}": {{- if eq "IdentifierInput" .Type.OfType.OfTypeName }}*NewIdentifier(identifier),
+	//                    {{- else}}input,{{ end }}
+	//                            {{- end}}
+	//     }
+	//     err := client.Mutate(&m, v, WithName("{{ .Name | title }}"))
+	//      {{- if hasSuffix "Delete" .Name }}
+	//      return HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
+	//      {{- else }}
+	//     return &m.{{ .Name | title }}Payload.{{ .Name | title | renameMutationReturnType}}, HandleErrors(err, m.{{ .Name | title }}Payload.Errors)
+	//      {{- end }}
+	// }
+	// {{- end}}{{ end }}{{- end}}
+	// `),
 	// NOTE: InfrastructureResource.Integration should be Integration type?
 	objectFile: t(header + `
   import "github.com/relvacode/iso8601"
@@ -755,23 +755,23 @@ type {{.Name}} struct { {{range .InputFields }}
 	// func NewString(value string) *string {
 	// 	return &value
 	// }`),
-	unionFile: t(header + `
-	{{range .Types | sortByName}}{{if and (eq .Kind "UNION") (not (internal .Name))}}
-	{{template "union_object" .}}
-	{{end}}{{end}}
+	// unionFile: t(header + `
+	// {{range .Types | sortByName}}{{if and (eq .Kind "UNION") (not (internal .Name))}}
+	// {{template "union_object" .}}
+	// {{end}}{{end}}
 
-	{{- define "union_object" -}}
-	// {{.Name}} is a Union that {{ template "description" . }}
-	type {{.Name}} struct { {{range .PossibleTypes }}
-     {{- if not (skip_object .Name) }}
-	    {{.Name}} {{.Name}} ` + "`" + `graphql:"... on  {{- .Name | title }}"` + "`" + `
-     {{- end}}
-    {{- end}}
-	}
+	// {{- define "union_object" -}}
+	// // {{.Name}} is a Union that {{ template "description" . }}
+	// type {{.Name}} struct { {{range .PossibleTypes }}
+	//     {{- if not (skip_object .Name) }}
+	//     {{.Name}} {{.Name}} ` + "`" + `graphql:"... on  {{- .Name | title }}"` + "`" + `
+	//     {{- end}}
+	//    {{- end}}
+	// }
 
-	{{- end -}}
+	// {{- end -}}
 
-	`),
+	// `),
 }
 
 func t(text string) *template.Template {
