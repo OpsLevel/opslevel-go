@@ -658,6 +658,29 @@ type Predicate struct {
 	Value string            `graphql:"value" json:"value"` // The value of the condition.
 }
 
+// Property represents a custom property value assigned to an entity.
+type Property struct {
+	Definition       PropertyDefinitionId `graphql:"definition" json:"definition"`             // The definition of the custom property, including its schema.
+	Locked           bool                 `graphql:"locked" json:"locked"`                     // Translation missing: en.graphql.types.property.locked.
+	LockerUrl        string               `graphql:"lockerUrl" json:"lockerUrl"`               // Translation missing: en.graphql.types.property.locker_url.
+	Owner            EntityOwnerService   `graphql:"owner" json:"owner"`                       // The entity that the property has been assigned to.
+	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors" json:"validationErrors"` // Errors in current value, when validating against the definition.
+	Value            *JsonString          `graphql:"value" json:"value"`                       // The value of the custom property.
+}
+
+// PropertyDefinition represents the definition of a property.
+type PropertyDefinition struct {
+	Aliases               []string                          `graphql:"aliases" json:"aliases"`                             // A list of human-friendly, unique identifiers of the property definition.
+	AllowedInConfigFiles  bool                              `graphql:"allowedInConfigFiles" json:"allowedInConfigFiles"`   // Whether or not the property is allowed to be set in opslevel.yml config files.
+	Description           string                            `graphql:"description" json:"description"`                     // The description of the property definition.
+	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`               // The secondary inferred type of the schema.
+	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`                     // The primary inferred type of the schema.
+	Id                    ID                                `graphql:"id" json:"id"`                                       // The id of the property definition.
+	Name                  string                            `graphql:"name" json:"name"`                                   // The name of the property definition.
+	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"` // The display status of the custom property on service pages.
+	Schema                JSON                              `graphql:"schema" json:"schema" scalar:"true"`                 // The schema of the property definition.
+}
+
 // Query represents the schema's entry-point for queries.
 type Query struct {
 	Account           string `graphql:"account" json:"account"`                     // Get information about the current account.
@@ -946,6 +969,7 @@ type ServicePropertyCheck struct {
 	Name                   string       `graphql:"name" json:"name"`                                     // The display name of the check.
 	Notes                  string       `graphql:"notes" json:"notes"`                                   // Additional information about the check.
 	Owner                  CheckOwner   `graphql:"owner" json:"owner"`                                   // The owner of the check.
+	PropertyDefinition     string       `graphql:"propertyDefinition" json:"propertyDefinition"`         // Translation missing: en.graphql.types.service_property_check.property_definition.
 	PropertyValuePredicate string       `graphql:"propertyValuePredicate" json:"propertyValuePredicate"` // The property of the service that the check will verify.
 	ServiceProperty        string       `graphql:"serviceProperty" json:"serviceProperty"`               // The condition that should be satisfied by the service property value.
 	Type                   CheckType    `graphql:"type" json:"type"`                                     // The type of check.

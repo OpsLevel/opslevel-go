@@ -47,6 +47,7 @@ var knownTypeIsName = []string{
 
 var knownBoolsByName = []string{
 	"affectsoverallservicelevels",
+	"allowedinconfigfiles",
 	"casesensitive",
 	"enabled",
 	"forked",
@@ -119,6 +120,7 @@ var knownTypeMappings = map[string]string{
 	"notupdatedrepositories":         "RepositoryOperationErrorPayload",
 	"promotedchecks":                 "Check",
 	"relationship":                   "RelationshipType",
+	"schema":                         "JSON",
 	"teamsbeingnotified":             "CampaignSendReminderOutcomeTeams",
 	"teamsbeingnotifiedcount":        "int",
 	"teamsmissingcontactmethod":      "int",
@@ -1292,6 +1294,28 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 		return "JSON"
 	case objectName == "Language" && lowercaseFieldName == "usage":
 		return "float32"
+	case objectName == "Property":
+		switch lowercaseFieldName {
+		case "definition":
+			return "PropertyDefinitionId"
+		case "owner":
+			return "EntityOwnerService"
+		case "validationerrors":
+			return "[]OpsLevelErrors"
+		case "value":
+			return "*JsonString"
+		}
+	case objectName == "PropertyDefinition":
+		switch lowercaseFieldName {
+		case "displaytype", "displaysubtype":
+			return "PropertyDefinitionDisplayTypeEnum"
+		case "propertydisplaystatus":
+			return "PropertyDisplayStatusEnum"
+		case "schema":
+			return "JSON"
+		case "value":
+			return "*JsonString"
+		}
 	case objectName == "Repository":
 		switch lowercaseFieldName {
 		case "languages":
@@ -1347,7 +1371,7 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 	case objectName == "Team":
 		switch lowercaseFieldName {
 		case "contacts":
-			return "Contact"
+			return "[]Contact"
 		case "managedaliases":
 			return "[]string"
 		case "parentteam":

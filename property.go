@@ -2,17 +2,6 @@ package opslevel
 
 import "fmt"
 
-type PropertyDefinition struct {
-	Aliases               []string                          `graphql:"aliases" json:"aliases"`
-	Id                    ID                                `graphql:"id" json:"id"`
-	Name                  string                            `graphql:"name" json:"name"`
-	Description           string                            `graphql:"description" json:"description"`
-	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`
-	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`
-	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"`
-	Schema                JSON                              `json:"schema" scalar:"true"`
-}
-
 type PropertyDefinitionConnection struct {
 	Nodes      []PropertyDefinition
 	PageInfo   PageInfo
@@ -22,13 +11,6 @@ type PropertyDefinitionConnection struct {
 type PropertyDefinitionId struct {
 	Id      ID       `json:"id"`
 	Aliases []string `json:"aliases,omitempty"`
-}
-
-type Property struct {
-	Definition       PropertyDefinitionId `graphql:"definition"`
-	Owner            EntityOwnerService   `graphql:"owner"`
-	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
-	Value            *JsonString          `graphql:"value"`
 }
 
 type ServicePropertiesConnection struct {
