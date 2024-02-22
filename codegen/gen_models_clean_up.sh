@@ -20,9 +20,12 @@ for BLOCK_NUM in $(seq 1 "$CODE_BLOCK_COUNT"); do
   CODE_BLOCK=$(awk -v RS=\} NR=="$BLOCK_NUM" models_gen.go | awk '{ gsub("opslevel.",""); print $0 }')
 
   if echo "$CODE_BLOCK" | grep \
-    -e "type .*Connection struct {" \
+    -e "type .*Campaign.* struct {" \
+    -e "type .*Connection.* struct {" \
     -e "type .*Edge struct {" \
-    -e "type .*Input struct {"  > /dev/null; then
+    -e "type .*Group.* struct {" \
+    -e "type .*Input struct {" \
+    -e "type .*Payload struct {"  > /dev/null; then
     continue
   elif echo "$CODE_BLOCK" | grep -e "type [A-Za-z0-9]* struct {" > /dev/null; then
     echo "$CODE_BLOCK" >> objects.go;

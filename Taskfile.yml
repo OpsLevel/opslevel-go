@@ -14,30 +14,23 @@ tasks:
     desc: Generate code based on public GraphQL Interface
     aliases: [gen]
     cmds:
-      # - task: clean_gen_code
       - go generate
       - gofumpt -w .
       - task: schema_update
       - task: gqlgen
-
-  # clean_gen_code:
-  #   desc: Generate code based on public GraphQL Interface
-  #   cmds:
-  #     - echo "Remove Edge types from Connections"
-  #     - rm enum.go input.go interfaces.go object.go objects.go || true
 
   schema_update:
     desc: Get latest OpsLevel GraphQL API schema and make subschemas
     dir: codegen
     cmds:
       - curl https://app.opslevel.com/public/schemas/schema.graphql > schema.graphql
+      - mkdir -p graph
+      - ./split_schema.sh
 
   gqlgen:
     desc: Experimental - gen code with gqlgen
     dir: codegen
     cmds:
-      - mkdir -p graph
-      - ./split_schema.sh
       - go run github.com/99designs/gqlgen generate
       - ./gen_models_clean_up.sh
       - cp ./graph/model/objects.go {{.ROOT_DIR}}

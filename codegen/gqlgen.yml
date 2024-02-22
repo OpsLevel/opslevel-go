@@ -16,6 +16,7 @@ exec:
 model:
   filename: graph/model/models_gen.go
   package: model
+  model_template: graph/model.gotpl
 
 # Where should the resolver implementations go?
 resolver:
