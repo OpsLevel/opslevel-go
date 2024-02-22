@@ -14,10 +14,17 @@ tasks:
     desc: Generate code based on public GraphQL Interface
     aliases: [gen]
     cmds:
+      # - task: clean_gen_code
       - go generate
-      # - gofumpt -w .
+      - gofumpt -w .
       - task: schema_update
       - task: gqlgen
+
+  # clean_gen_code:
+  #   desc: Generate code based on public GraphQL Interface
+  #   cmds:
+  #     - echo "Remove Edge types from Connections"
+  #     - rm enum.go input.go interfaces.go object.go objects.go || true
 
   schema_update:
     desc: Get latest OpsLevel GraphQL API schema and make subschemas

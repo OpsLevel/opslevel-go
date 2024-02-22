@@ -17,7 +17,10 @@ truncate -s0 \
 echo "Splitting OpsLevel GraphQL API schema into subschemas..."
 for BLOCK_NUM in $(seq 1 "$CODE_BLOCK_COUNT"); do
   CODE_BLOCK=$(awk -v RS=\} NR=="$BLOCK_NUM" schema.graphql)
-  if echo "$CODE_BLOCK" | grep -e "type Account {" -e "type Query {" -e "type Mutation {" > /dev/null; then
+  if echo "$CODE_BLOCK" | grep \
+    -e "type Account {" \
+    -e "type Query {" \
+    -e "type Mutation {" > /dev/null; then
     continue
   fi
 

@@ -30,7 +30,7 @@ const (
 	objectFile      string = "object.go"
 	// queryFile       string = "query.go"
 	// mutationFile string = "mutation.go"
-	payloadFile string = "payload.go"
+	// payloadFile string = "payload.go"
 	// scalarFile      string = "scalar.go" // NOTE: not sure if useful
 	// unionFile string = "union.go"
 )
