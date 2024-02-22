@@ -14,7 +14,7 @@ tasks:
     desc: Generate code based on public GraphQL Interface
     aliases: [gen]
     cmds:
-      # - go generate
+      - go generate
       # - gofumpt -w .
       - task: schema_update
       - task: gqlgen
