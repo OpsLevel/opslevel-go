@@ -100,7 +100,8 @@ func (r *Repository) ResourceType() TaggableResource {
 func (r *Repository) GetService(service ID, directory string) *ServiceRepository {
 	for _, edge := range r.Services.Edges {
 		for _, connection := range edge.ServiceRepositories {
-			if connection.Service.Id == service && connection.BaseDirectory == directory {
+			// the directory "/" is the same as ""
+			if connection.Service.Id == service && (connection.BaseDirectory == directory || (directory == "/" && connection.BaseDirectory == "")) {
 				return &connection
 			}
 		}
