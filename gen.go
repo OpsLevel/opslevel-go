@@ -72,8 +72,11 @@ var knownIntsByName = []string{
 
 var knownIsoTimeByName = []string{
 	"archivedat",
+	"commitauthoringdate",
+	"committedat",
 	"createdat",
 	"createdon",
+	"deployedat",
 	"enableon",
 	"installedat",
 	"lastownerchangedat",
@@ -1254,6 +1257,11 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 			return "JSON"
 		case "httpmethod":
 			return "CustomActionsHttpMethodEnum"
+		}
+	case objectName == "Deploy":
+		switch lowercaseFieldName {
+		case "associateduser":
+			return "User"
 		}
 	case objectName == "Domain":
 		switch lowercaseFieldName {
