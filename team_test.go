@@ -808,3 +808,38 @@ func TestTeamRemoveContact(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 }
+
+func TestTeamUpdateNameWorksFine(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,managedAliases,contacts{address,displayName,id,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}`,
+		`{"input": { "name": "updated team name" }}`,
+		`{"data": {"teamUpdate": {"team": {"name": "updated team name"}, "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "team/ex_change_name", testRequest)
+	// Act
+	res, err := client.UpdateTeam(ol.TeamUpdateInput{
+		Name: ol.RefOf("updated team name"),
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "updated team name", res.Name)
+}
+
+func TestTeamUpdateUnsetParentTeamDoesNotWork(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,managedAliases,contacts{address,displayName,id,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}`,
+		`{"input": { "parentTeam": null }}`,
+		`{"data": {"teamUpdate": {"team": {"parentTeam": null}, "errors": [] } }}`,
+	)
+	client := BestTestClient(t, "team/ex_unset_parentteam", testRequest)
+	// Act
+	res, err := client.UpdateTeam(ol.TeamUpdateInput{
+		ParentTeam: nil,
+	})
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "", string(res.ParentTeam.Id))
+	autopilot.Equals(t, "", res.ParentTeam.Alias)
+}
