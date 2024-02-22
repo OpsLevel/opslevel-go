@@ -1,0 +1,3 @@
+kind: Bugfix
+body: Fix bug where GetService did not work when passing `/` as the directory
+time: 2024-02-21T19:10:59.880955-05:00
