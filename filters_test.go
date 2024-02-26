@@ -11,7 +11,7 @@ import (
 func TestCreateFilter(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
+		`mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},errors{message,path}}}`,
 		`{"input": {"name": "Kubernetes", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1" } ], "connective": "and" }}`,
 		`{"data": {"filterCreate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
 	)
@@ -38,7 +38,7 @@ func TestCreateFilter(t *testing.T) {
 func TestCreateFilterNested(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
+		`mutation FilterCreate($input:FilterCreateInput!){filterCreate(input: $input){filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},errors{message,path}}}`,
 		`{"input": { {{ template "create_filter_nested_input" }} }}`,
 		`{"data": {"filterCreate": {"filter": { {{ template "create_filter_nested_response" }} }, "errors": [] }}}`,
 	)
@@ -76,7 +76,7 @@ func TestCreateFilterNested(t *testing.T) {
 func TestGetFilter(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query FilterGet($id:ID!){account{filter(id: $id){id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}}}}`,
+		`query FilterGet($id:ID!){account{filter(id: $id){id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"}`,
 		`{"data": {"account": {"filter": { {{ template "filter_tier1service_response" }} }}}}`,
 	)
@@ -93,7 +93,7 @@ func TestGetFilter(t *testing.T) {
 func TestGetMissingFilter(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query FilterGet($id:ID!){account{filter(id: $id){id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}}}}`,
+		`query FilterGet($id:ID!){account{filter(id: $id){id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMf"}`,
 		`{"data": {"account": {"filter": null }}}`,
 	)
@@ -108,12 +108,12 @@ func TestGetMissingFilter(t *testing.T) {
 func TestListFilters(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}`,
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}`,
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -135,7 +135,7 @@ func TestListFilters(t *testing.T) {
 func TestUpdateFilter(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1" } ] }}`,
 		`{"data": {"filterUpdate": {"filter": { {{ template "filter_tier1service_response" }} }, "errors": [] }}}`,
 	)
@@ -160,7 +160,7 @@ func TestUpdateFilter(t *testing.T) {
 func TestUpdateFilterNested(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},errors{message,path}}}`,
 		`{"input": { {{ template "update_filter_nested_input" }} }}`,
 		`{"data": {"filterUpdate": {"filter": { {{ template "update_filter_nested_response" }} }, "errors": [] }}}`,
 	)
@@ -199,7 +199,7 @@ func TestUpdateFilterNested(t *testing.T) {
 func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1", "caseSensitive": true } ] }}`,
 		`{"data": {
       "filterUpdate": {
@@ -244,7 +244,7 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},errors{message,path}}}`,
+		`mutation FilterUpdate($input:FilterUpdateInput!){filterUpdate(input: $input){filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},errors{message,path}}}`,
 		`{"input": {"id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg", "name": "Test Updated", "predicates": [ { "key": "tier_index", "type": "equals", "value": "1", "caseSensitive": false } ] }}`,
 		`{"data": {
       "filterUpdate": {

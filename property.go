@@ -2,17 +2,6 @@ package opslevel
 
 import "fmt"
 
-type PropertyDefinition struct {
-	Aliases               []string                          `graphql:"aliases" json:"aliases"`
-	Id                    ID                                `graphql:"id" json:"id"`
-	Name                  string                            `graphql:"name" json:"name"`
-	Description           string                            `graphql:"description" json:"description"`
-	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`
-	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`
-	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"`
-	Schema                JSON                              `json:"schema" scalar:"true"`
-}
-
 type PropertyDefinitionConnection struct {
 	Nodes      []PropertyDefinition
 	PageInfo   PageInfo
@@ -22,13 +11,6 @@ type PropertyDefinitionConnection struct {
 type PropertyDefinitionId struct {
 	Id      ID       `json:"id"`
 	Aliases []string `json:"aliases,omitempty"`
-}
-
-type Property struct {
-	Definition       PropertyDefinitionId `graphql:"definition"`
-	Owner            EntityOwnerService   `graphql:"owner"`
-	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
-	Value            *JsonString          `graphql:"value"`
 }
 
 type ServicePropertiesConnection struct {
@@ -95,7 +77,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*Pro
 		return nil, err
 	}
 	for q.Account.Definitions.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Definitions.PageInfo.End
+		(*variables)["after"] = q.Account.Definitions.PageInfo.EndCursor
 		resp, err := client.ListPropertyDefinitions(variables)
 		if err != nil {
 			return nil, err
@@ -187,7 +169,7 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 	service.Properties.Nodes = append(service.Properties.Nodes, q.Account.Service.Properties.Nodes...)
 	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo
 	for service.Properties.PageInfo.HasNextPage {
-		(*variables)["after"] = service.Properties.PageInfo.End
+		(*variables)["after"] = service.Properties.PageInfo.EndCursor
 		resp, err := service.GetProperties(client, variables)
 		if err != nil {
 			return nil, err

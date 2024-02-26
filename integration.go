@@ -113,7 +113,7 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 		return nil, err
 	}
 	for q.Account.Integrations.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Integrations.PageInfo.End
+		(*variables)["after"] = q.Account.Integrations.PageInfo.EndCursor
 		resp, err := client.ListIntegrations(variables)
 		if err != nil {
 			return nil, err

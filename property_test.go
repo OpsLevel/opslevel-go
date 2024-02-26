@@ -30,7 +30,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 		Schema: schema,
 	})
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
+		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,allowedInConfigFiles,description,displaySubtype,displayType,id,name,propertyDisplayStatus,schema},errors{message,path}}}`,
 		`{"input": {{ template "property_definition_input" }} }`,
 		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schemaString),
 	)
@@ -65,7 +65,7 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 		PropertyDisplayStatus: ol.RefOf(ol.PropertyDisplayStatusEnumHidden),
 	})
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
+		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,allowedInConfigFiles,description,displaySubtype,displayType,id,name,propertyDisplayStatus,schema},errors{message,path}}}`,
 		`{"propertyDefinition":{"alias":"my_prop"}, "input": {{ template "property_definition_input" }} }`,
 		fmt.Sprintf(`{"data":{"propertyDefinitionUpdate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","description":"this description was added","propertyDisplayStatus":"hidden","schema": %s}, "errors":[] }}}`, schemaString2),
 	)
@@ -108,7 +108,7 @@ func TestGetPropertyDefinition(t *testing.T) {
 			Schema:  *schema,
 		})
 	testRequest := autopilot.NewTestRequest(
-		`query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema}}}`,
+		`query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,allowedInConfigFiles,description,displaySubtype,displayType,id,name,propertyDisplayStatus,schema}}}`,
 		`{"input":{"alias":"my_prop"}}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s }}}}`, schemaString),
 	)
@@ -156,12 +156,12 @@ func TestListPropertyDefinitions(t *testing.T) {
 		Schema:  *schemaPage3,
 	})
 	testRequestOne := autopilot.NewTestRequest(
-		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,
+		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,description,displaySubtype,displayType,id,name,propertyDisplayStatus,schema},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,
+		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,description,displaySubtype,displayType,id,name,propertyDisplayStatus,schema},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
 	)
@@ -186,7 +186,7 @@ func TestListPropertyDefinitions(t *testing.T) {
 func TestGetProperty(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
+		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},locked,lockerUrl,owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
 		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"}}}}`,
 	)
@@ -206,7 +206,7 @@ func TestGetProperty(t *testing.T) {
 func TestGetPropertyHasErrors(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
+		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},locked,lockerUrl,owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"dropdown"}}`,
 		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[{"message":"vmessage1","path":["vmp1","vmp2"]},{"message":"vmessage2","path":["vmp3"]}],"value":"\"orange\""}}}}`,
 	)
@@ -235,7 +235,7 @@ func TestGetPropertyHasErrors(t *testing.T) {
 func TestGetPropertyHasNullValue(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
+		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},locked,lockerUrl,owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
 		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":null}}}}`,
 	)
@@ -260,7 +260,7 @@ func TestAssignProperty(t *testing.T) {
 		Value:      "true",
 	}
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyAssign($input:PropertyInput!){propertyAssign(input: $input){property{definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value},errors{message,path}}}`,
+		`mutation PropertyAssign($input:PropertyInput!){propertyAssign(input: $input){property{definition{id,aliases},locked,lockerUrl,owner{... on Service{id,aliases}},validationErrors{message,path},value},errors{message,path}}}`,
 		`{"input": {{ template "property_assign_input" }} }`,
 		`{"data":{"propertyAssign":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"},"errors":[]}}}`,
 	)
@@ -336,12 +336,12 @@ func TestGetServiceProperties(t *testing.T) {
 		},
 	})
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){nodes{definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value},{{ template "pagination_request" }}}}}}`,
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){nodes{definition{id,aliases},locked,lockerUrl,owner{... on Service{id,aliases}},validationErrors{message,path},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}}`,
 		`{ {{ template "first_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data":{"account":{"service":{"properties":{"nodes":[{{ template "service_properties_page_1" }}],{{ template "pagination_initial_pageInfo_response" }}}}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){nodes{definition{id,aliases},owner{... on Service{id,aliases}},validationErrors{message,path},value},{{ template "pagination_request" }}}}}}`,
+		`query ServicePropertiesList($after:String!$first:Int!$service:ID!){account{service(id: $service){properties(after: $after, first: $first){nodes{definition{id,aliases},locked,lockerUrl,owner{... on Service{id,aliases}},validationErrors{message,path},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}}`,
 		`{ {{ template "second_page_variables" }}, "service": "{{ template "id1_string" }}" }`,
 		`{"data":{"account":{"service":{"properties":{"nodes":[{{ template "service_properties_page_2" }}],{{ template "pagination_second_pageInfo_response" }}}}}}}`,
 	)

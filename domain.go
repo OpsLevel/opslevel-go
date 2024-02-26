@@ -7,17 +7,6 @@ import (
 
 type DomainId Identifier
 
-type Domain struct {
-	DomainId
-
-	Description    string      `graphql:"description"`
-	HTMLUrl        string      `graphql:"htmlUrl"`
-	ManagedAliases []string    `graphql:"managedAliases"` // A list of aliases that can be set by users. The unique identifier for the resource is omitted.
-	Name           string      `graphql:"name"`
-	Note           string      `graphql:"note"`
-	Owner          EntityOwner `graphql:"owner"`
-}
-
 type DomainConnection struct {
 	Nodes      []Domain `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
@@ -44,7 +33,7 @@ func (d *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagCon
 		return nil, err
 	}
 	for q.Account.Domain.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.End
+		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.EndCursor
 		resp, err := d.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -90,7 +79,7 @@ func (d *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*S
 		return nil, err
 	}
 	for q.Account.Domain.ChildSystems.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Domain.ChildSystems.PageInfo.End
+		(*variables)["after"] = q.Account.Domain.ChildSystems.PageInfo.EndCursor
 		resp, err := d.ChildSystems(client, variables)
 		if err != nil {
 			return nil, err
@@ -157,7 +146,7 @@ func (c *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, er
 		return nil, err
 	}
 	for q.Account.Domains.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Domains.PageInfo.End
+		(*variables)["after"] = q.Account.Domains.PageInfo.EndCursor
 		resp, err := c.ListDomains(variables)
 		if err != nil {
 			return nil, err

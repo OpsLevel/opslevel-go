@@ -21,7 +21,7 @@
     "alias": "developers",
     "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
 },
-"private": false,
+"locked": false,
 "repoKey": "359666903",
 "services": {},
 "tags": {},
@@ -60,7 +60,7 @@
     "alias": "platform",
     "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
 },
-"private": false,
+"locked": false,
 "repoKey": "359666903",
 "services": {},
 "tags": {},
@@ -96,7 +96,7 @@
 "name": "cli",
 "organization": "OpsLevel",
 "owner": null,
-"private": false,
+"locked": false,
 "repoKey": "359666903",
 "services": {},
 "tags": {},

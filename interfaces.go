@@ -34,11 +34,11 @@ type Check struct {
 
 // CustomActionsExternalAction represents an external action to be triggered by a custom action.
 type CustomActionsExternalAction struct {
-	CustomActionsId
-
-	Description    string `graphql:"description"`    // A description of what the action should accomplish.
-	LiquidTemplate string `graphql:"liquidTemplate"` // The liquid template used to generate the data sent to the external action.
-	Name           string `graphql:"name"`           // The name of the external action.
+	Aliases        []string `graphql:"aliases"`        // Any aliases for this external action.
+	Description    string   `graphql:"description"`    // A description of what the action should accomplish.
+	Id             ID       `graphql:"id"`             // The ID of the external action.
+	LiquidTemplate string   `graphql:"liquidTemplate"` // The liquid template used to generate the data sent to the external action.
+	Name           string   `graphql:"name"`           // The name of the external action.
 
 	CustomActionsWebhookAction `graphql:"... on CustomActionsWebhookAction"`
 }
@@ -51,6 +51,12 @@ type CustomActionsTriggerDefinitionBase struct {
 	Name                   string `graphql:"name"`                   // The name of the trigger definition.
 	Published              bool   `graphql:"published"`              // The published state of the action; true if the definition is ready for use; false if it is a draft.
 	ResponseTemplate       string `graphql:"responseTemplate"`       // The liquid template used to parse the response from the External Action.
+}
+
+// HasProperties represents an entity type that can have custom properties.
+type HasProperties struct {
+	Properties string `graphql:"properties"` // Custom properties assigned to this entity.
+	Property   string `graphql:"property"`   // A custom property value assigned to this entity.
 }
 
 // Integration represents an integration is a way of extending OpsLevel functionality.

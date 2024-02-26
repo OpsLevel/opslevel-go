@@ -55,7 +55,7 @@ func (c *Client) ListServicesMaturity() ([]ServiceMaturity, error) {
 	}
 	output = append(output, q.Account.Services.Nodes...)
 	for q.Account.Services.PageInfo.HasNextPage {
-		v["after"] = q.Account.Services.PageInfo.End
+		v["after"] = q.Account.Services.PageInfo.EndCursor
 		if err := c.Query(&q, v); err != nil {
 			return nil, err
 		}

@@ -16,6 +16,24 @@ tasks:
     cmds:
       - go generate
       - gofumpt -w .
+      - task: schema_update
+      - task: gqlgen
+
+  schema_update:
+    desc: Get latest OpsLevel GraphQL API schema and make subschemas
+    dir: codegen
+    cmds:
+      - curl https://app.opslevel.com/public/schemas/schema.graphql > schema.graphql
+      - mkdir -p graph
+      - ./split_schema.sh
+
+  gqlgen:
+    desc: Experimental - gen code with gqlgen
+    dir: codegen
+    cmds:
+      - go run github.com/99designs/gqlgen generate
+      - ./gen_models_clean_up.sh
+      - cp ./graph/model/objects.go {{.ROOT_DIR}}
 
   lint:
     desc: Formatting and linting

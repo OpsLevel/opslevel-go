@@ -6,14 +6,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-type Level struct {
-	Alias       string
-	Description string `json:"description,omitempty"`
-	Id          ID     `json:"id"`
-	Index       int
-	Name        string
-}
-
 type LevelConnection struct {
 	Nodes      []Level
 	PageInfo   PageInfo
@@ -33,7 +25,7 @@ func (conn *LevelConnection) Hydrate(client *Client) error {
 	}
 	q.Account.Rubric.Levels.PageInfo = conn.PageInfo
 	for q.Account.Rubric.Levels.PageInfo.HasNextPage {
-		v["after"] = q.Account.Rubric.Levels.PageInfo.End
+		v["after"] = q.Account.Rubric.Levels.PageInfo.EndCursor
 		if err := client.Query(&q, v); err != nil {
 			return err
 		}

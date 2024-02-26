@@ -25,7 +25,7 @@
 }
 {{ end }}
 {{- define "description" }}An example description{{ end }}
-{{- define "pagination_request" }}pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}{{ end }}
+{{- define "pagination_request" }}pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}{{ end }}
 {{- define "no_pagination_response" }}"pageInfo": {
     "hasNextPage": false,
     "hasPreviousPage": false,

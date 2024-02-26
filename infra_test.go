@@ -10,7 +10,7 @@ import (
 func TestCreateInfra(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}`,
+		`mutation InfrastructureResourceCreate($all:Boolean!$input:InfrastructureResourceInput!){infrastructureResourceCreate(input: $input){infrastructureResource{aliases,data,href,id,integration,lastSyncedAt,name,owner{... on Team{teamAlias:alias,id}},ownerLocked,providerData{accountName,externalUrl,providerName},providerResourceType,rawData,type},warnings{message},errors{message,path}}}`,
 		`{
     "all": true,
     "input": {
@@ -52,14 +52,14 @@ func TestCreateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
 func TestGetInfra(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}`,
+		`query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){aliases,data,href,id,integration,lastSyncedAt,name,owner{... on Team{teamAlias:alias,id}},ownerLocked,providerData{accountName,externalUrl,providerName},providerResourceType,rawData,type}}}`,
 		`{"all": true, "input":{ {{ template "id1" }} }}`,
 		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
 	)
@@ -68,19 +68,19 @@ func TestGetInfra(t *testing.T) {
 	result, err := client.GetInfrastructure(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
 func TestListInfraSchemas(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{schema,type},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_1" }}, {{ template "infra_schema_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{schema,type},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -101,12 +101,12 @@ func TestListInfraSchemas(t *testing.T) {
 func TestListInfra(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
+		`query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{aliases,data,href,id,integration,lastSyncedAt,name,owner{... on Team{teamAlias:alias,id}},ownerLocked,providerData{accountName,externalUrl,providerName},providerResourceType,rawData,type},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}`,
 		`{ "after": "", "all": true, "first": 100 }`,
 		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_1" }}, {{ template "infra_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
+		`query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{aliases,data,href,id,integration,lastSyncedAt,name,owner{... on Team{teamAlias:alias,id}},ownerLocked,providerData{accountName,externalUrl,providerName},providerResourceType,rawData,type},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor}}}}`,
 		`{ "after": "OA", "all": true, "first": 100 }`,
 		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -126,7 +126,7 @@ func TestListInfra(t *testing.T) {
 func TestUpdateInfra(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},warnings{message},errors{message,path}}}`,
+		`mutation InfrastructureResourceUpdate($all:Boolean!$identifier:IdentifierInput!$input:InfrastructureResourceInput!){infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input){infrastructureResource{aliases,data,href,id,integration,lastSyncedAt,name,owner{... on Team{teamAlias:alias,id}},ownerLocked,providerData{accountName,externalUrl,providerName},providerResourceType,rawData,type},warnings{message},errors{message,path}}}`,
 		`{"all": true, "identifier": { {{ template "id1" }}}, "input": { "ownerId": "{{ template "id1_string" }}", "data": "{\"endpoint\":\"https://google.com\",\"engine\":\"BigQuery\",\"name\":\"my-big-query\",\"replica\":false}" }}`,
 		`{"data": { "infrastructureResourceUpdate": { "infrastructureResource": {{ template "infra_1" }}, "warnings": [], "errors": [] }}}`,
 	)
@@ -143,7 +143,7 @@ func TestUpdateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -164,7 +164,7 @@ func TestDeleteInfra(t *testing.T) {
 func TestGetInfrastructureResourceTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "infrastructureResource": { {{template "id1" }} } }`,
 		`{
                   "data": {
@@ -197,7 +197,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                 }`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,owner{... on Team{alias,id}},value},pageInfo{endCursor,hasNextPage,hasPreviousPage,startCursor},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "infrastructureResource": { {{template "id1" }} }}`,
 		`{
                   "data": {
@@ -222,7 +222,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "infrastructureResource/tags", requests...)
 	// Act
-	infra := opslevel.InfrastructureResource{Id: string(id1)}
+	infra := opslevel.InfrastructureResource{Id: id1}
 	resp, err := infra.GetTags(client, nil)
 	autopilot.Ok(t, err)
 	result := resp.Nodes

@@ -7,16 +7,6 @@ import (
 
 type SystemId Identifier
 
-type System struct {
-	SystemId
-	Name        string      `graphql:"name"`
-	Description string      `graphql:"description"`
-	HTMLUrl     string      `graphql:"htmlUrl"`
-	Owner       EntityOwner `graphql:"owner"`
-	Parent      Domain      `graphql:"parent"`
-	Note        string      `graphql:"note"`
-}
-
 type SystemConnection struct {
 	Nodes      []System `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
@@ -43,7 +33,7 @@ func (s *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagCon
 		return nil, err
 	}
 	for q.Account.System.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.System.Tags.PageInfo.End
+		(*variables)["after"] = q.Account.System.Tags.PageInfo.EndCursor
 		resp, err := s.GetTags(client, variables)
 		if err != nil {
 			return nil, err
@@ -89,7 +79,7 @@ func (s *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*
 		return nil, err
 	}
 	for q.Account.System.ChildServices.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.System.ChildServices.PageInfo.End
+		(*variables)["after"] = q.Account.System.ChildServices.PageInfo.EndCursor
 		resp, err := s.ChildServices(client, variables)
 		if err != nil {
 			return nil, err
@@ -156,7 +146,7 @@ func (c *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, er
 		return nil, err
 	}
 	for q.Account.Systems.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Systems.PageInfo.End
+		(*variables)["after"] = q.Account.Systems.PageInfo.EndCursor
 		resp, err := c.ListSystems(variables)
 		if err != nil {
 			return nil, err
