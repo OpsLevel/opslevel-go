@@ -1,4 +1,0 @@
-kind: Bugfix
-body: BREAKING - NewJSONInput() will not json.Marshal() on string input containing
-  a json array/obj to prevent adding unnecessary backlashes.
-time: 2024-02-05T13:47:19.198581-05:00
