@@ -808,7 +808,9 @@ func TestListServicesWithTag(t *testing.T) {
 
 	client := BestTestClient(t, "service/list_with_tag", requests...)
 	// Act
-	response, err := client.ListServicesWithTag(ol.NewTagArgs("app:worker"), nil)
+	tagArgs, err := ol.NewTagArgs("app:worker")
+	autopilot.Ok(t, err)
+	response, err := client.ListServicesWithTag(tagArgs, nil)
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)

@@ -542,22 +542,20 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 	return &q.Account.Services, nil
 }
 
-func NewTagArgs(tag string) TagArgs {
+func NewTagArgs(tag string) (TagArgs, error) {
 	kv := strings.Split(tag, ":")
 	switch len(kv) {
 	case 1:
 		return TagArgs{
 			Key: RefOf(kv[0]),
-		}
+		}, nil
 	case 2:
 		return TagArgs{
 			Key:   RefOf(kv[0]),
 			Value: RefOf(kv[1]),
-		}
-	default: // TODO: is this the best we can do?
-		return TagArgs{
-			Key: RefOf(tag),
-		}
+		}, nil
+	default:
+		return TagArgs{}, fmt.Errorf("cannot make a valid TagArg from: '%s' (not in format key:value)", tag)
 	}
 }
 
