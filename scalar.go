@@ -17,7 +17,7 @@ func NewID(id ...string) *ID {
 	return &output
 }
 
-func (id ID) GetGraphQLType() string { return "ID" }
+func (id *ID) GetGraphQLType() string { return "ID" }
 
 func (id *ID) MarshalJSON() ([]byte, error) {
 	if *id == "" {
