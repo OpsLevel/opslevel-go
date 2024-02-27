@@ -18,7 +18,6 @@ func TestCreateFilter(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
-	// TODO: Fix FilterCreateInput generation.
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
 		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
@@ -143,7 +142,7 @@ func TestUpdateFilter(t *testing.T) {
 	client := BestTestClient(t, "filter/update", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: ol.RefOf("Test Updated"),
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
@@ -168,7 +167,7 @@ func TestUpdateFilterNested(t *testing.T) {
 	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:         ol.ID("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY"),
+		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
 		Name:       ol.RefOf("Tier 1-2 not deployed by us"),
 		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
 		Predicates: &[]ol.FilterPredicateInput{
@@ -225,7 +224,7 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	client := BestTestClient(t, "filter/update_case_sensitive_true", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: ol.RefOf("Test Updated"),
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
@@ -270,7 +269,7 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	client := BestTestClient(t, "filter/update_case_sensitive_false", testRequest)
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
-		Id:   ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg"),
+		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: ol.RefOf("Test Updated"),
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,

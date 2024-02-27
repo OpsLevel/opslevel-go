@@ -31,7 +31,7 @@ type CustomActionsTriggerDefinition struct {
 	EntityType             CustomActionsEntityTypeEnum                     `graphql:"entityType"`
 }
 
-func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
+func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
 			CustomActionsTriggerDefinition struct {
@@ -39,13 +39,13 @@ func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, vari
 			} `graphql:"customActionsTriggerDefinition(input: $input)"`
 		}
 	}
-	if c.Id == "" {
-		return nil, fmt.Errorf("Unable to get teams with ExtendedTeamAccess, invalid CustomActionsTriggerDefinition id: '%s'", c.Id)
+	if customActionsTriggerDefinition.Id == "" {
+		return nil, fmt.Errorf("unable to get teams with ExtendedTeamAccess, invalid CustomActionsTriggerDefinition id: '%s'", customActionsTriggerDefinition.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["input"] = *NewIdentifier(string(c.Id))
+	(*variables)["input"] = *NewIdentifier(string(customActionsTriggerDefinition.Id))
 
 	if err := client.Query(&q, *variables, WithName("ExtendedTeamAccessList")); err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (c *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, vari
 
 	for q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.End
-		resp, err := c.ExtendedTeamAccess(client, variables)
+		resp, err := customActionsTriggerDefinition.ExtendedTeamAccess(client, variables)
 		if err != nil {
 			return nil, err
 		}

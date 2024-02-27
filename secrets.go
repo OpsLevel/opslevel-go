@@ -28,7 +28,6 @@ func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, er
 	return &m.Payload.Secret, HandleErrors(err, m.Payload.Errors)
 }
 
-// List all Secrets for your account.
 func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*SecretsVaultsSecretConnection, error) {
 	var q struct {
 		Account struct {

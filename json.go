@@ -26,7 +26,7 @@ type (
 	JsonString string
 )
 
-func (s JSONSchema) GetGraphQLType() string { return "JSONSchema" }
+func (jsonSchema JSONSchema) GetGraphQLType() string { return "JSONSchema" }
 
 func NewJSONSchema(data string) (*JSONSchema, error) {
 	result := make(JSONSchema)
@@ -37,25 +37,25 @@ func NewJSONSchema(data string) (*JSONSchema, error) {
 }
 
 // AsString returns a string containing its key value pairs marshalled as a json object.
-func (s JSONSchema) AsString() string {
+func (jsonSchema JSONSchema) AsString() string {
 	dto := map[string]any{}
-	for k, v := range s {
+	for k, v := range jsonSchema {
 		dto[k] = v
 	}
 	b, _ := json.Marshal(dto)
 	return string(b)
 }
 
-func (s JSONSchema) MarshalJSON() ([]byte, error) {
+func (jsonSchema JSONSchema) MarshalJSON() ([]byte, error) {
 	dto := map[string]any{}
-	for k, v := range s {
+	for k, v := range jsonSchema {
 		dto[k] = v
 	}
 	b, err := json.Marshal(dto)
 	return []byte(strconv.Quote(string(b))), err
 }
 
-func (s JSON) GetGraphQLType() string { return "JSON" }
+func (jsonObject JSON) GetGraphQLType() string { return "JSON" }
 
 func NewJSON(data string) (*JSON, error) {
 	result := make(JSON)
@@ -66,25 +66,25 @@ func NewJSON(data string) (*JSON, error) {
 }
 
 // ToJSON returns a string containing its key value pairs marshalled as a json object.
-func (s JSON) ToJSON() string {
+func (jsonObject JSON) ToJSON() string {
 	dto := map[string]any{}
-	for k, v := range s {
+	for k, v := range jsonObject {
 		dto[k] = v
 	}
 	b, _ := json.Marshal(dto)
 	return string(b)
 }
 
-func (s JSON) MarshalJSON() ([]byte, error) {
+func (jsonObject JSON) MarshalJSON() ([]byte, error) {
 	dto := map[string]any{}
-	for k, v := range s {
+	for k, v := range jsonObject {
 		dto[k] = v
 	}
 	b, err := json.Marshal(dto)
 	return []byte(strconv.Quote(string(b))), err
 }
 
-func (s JsonString) GetGraphQLType() string { return "JsonString" }
+func (jsonString JsonString) GetGraphQLType() string { return "JsonString" }
 
 // NewJSONInput converts any json compatible type (bool, string, int, map, slice, etc.) into a valid JsonString.
 // If passed a json object or array wrapped in a string, it will not use json.Marshal(data) and instead simply return
@@ -111,33 +111,33 @@ func JsonStringAs[T any](data JsonString) (T, error) {
 	return result, nil
 }
 
-func (s JsonString) AsBool() bool {
-	value, _ := JsonStringAs[bool](s)
+func (jsonString JsonString) AsBool() bool {
+	value, _ := JsonStringAs[bool](jsonString)
 	return value
 }
 
-func (s JsonString) AsInt() int {
-	value, _ := JsonStringAs[int](s)
+func (jsonString JsonString) AsInt() int {
+	value, _ := JsonStringAs[int](jsonString)
 	return value
 }
 
-func (s JsonString) AsFloat64() float64 {
-	value, _ := JsonStringAs[float64](s)
+func (jsonString JsonString) AsFloat64() float64 {
+	value, _ := JsonStringAs[float64](jsonString)
 	return value
 }
 
-func (s JsonString) AsString() string {
-	value, _ := JsonStringAs[string](s)
+func (jsonString JsonString) AsString() string {
+	value, _ := JsonStringAs[string](jsonString)
 	return value
 }
 
-func (s JsonString) AsArray() []any {
-	value, _ := JsonStringAs[[]any](s)
+func (jsonString JsonString) AsArray() []any {
+	value, _ := JsonStringAs[[]any](jsonString)
 	return value
 }
 
-func (s JsonString) AsMap() map[string]any {
-	value, _ := JsonStringAs[map[string]any](s)
+func (jsonString JsonString) AsMap() map[string]any {
+	value, _ := JsonStringAs[map[string]any](jsonString)
 	return value
 }
 

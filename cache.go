@@ -19,88 +19,88 @@ type Cacher struct {
 	InfraSchemas map[string]InfrastructureResourceSchema
 }
 
-func (c *Cacher) TryGetTier(alias string) (*Tier, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Tiers[alias]; ok {
+func (cacher *Cacher) TryGetTier(alias string) (*Tier, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Tiers[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetLifecycle(alias string) (*Lifecycle, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Lifecycles[alias]; ok {
+func (cacher *Cacher) TryGetLifecycle(alias string) (*Lifecycle, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Lifecycles[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetTeam(alias string) (*Team, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Teams[alias]; ok {
+func (cacher *Cacher) TryGetTeam(alias string) (*Team, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Teams[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetCategory(alias string) (*Category, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Categories[alias]; ok {
+func (cacher *Cacher) TryGetCategory(alias string) (*Category, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Categories[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetLevel(alias string) (*Level, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Levels[alias]; ok {
+func (cacher *Cacher) TryGetLevel(alias string) (*Level, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Levels[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetFilter(alias string) (*Filter, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Filters[alias]; ok {
+func (cacher *Cacher) TryGetFilter(alias string) (*Filter, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Filters[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetIntegration(alias string) (*Integration, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Integrations[alias]; ok {
+func (cacher *Cacher) TryGetIntegration(alias string) (*Integration, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Integrations[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetRepository(alias string) (*Repository, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.Repositories[alias]; ok {
+func (cacher *Cacher) TryGetRepository(alias string) (*Repository, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Repositories[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) TryGetInfrastructureSchema(alias string) (*InfrastructureResourceSchema, bool) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if v, ok := c.InfraSchemas[alias]; ok {
+func (cacher *Cacher) TryGetInfrastructureSchema(alias string) (*InfrastructureResourceSchema, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.InfraSchemas[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
 }
 
-func (c *Cacher) doCacheTiers(client *Client) {
+func (cacher *Cacher) doCacheTiers(client *Client) {
 	log.Debug().Msg("Caching 'Tier' lookup table from API ...")
 
 	data, dataErr := client.ListTiers()
@@ -108,11 +108,11 @@ func (c *Cacher) doCacheTiers(client *Client) {
 		log.Warn().Msgf("===> Failed to list all 'Tier' from API - REASON: %s", dataErr.Error())
 	}
 	for _, item := range data {
-		c.Tiers[string(item.Alias)] = item
+		cacher.Tiers[item.Alias] = item
 	}
 }
 
-func (c *Cacher) doCacheLifecycles(client *Client) {
+func (cacher *Cacher) doCacheLifecycles(client *Client) {
 	log.Debug().Msg("Caching 'Lifecycle' lookup table from API ...")
 
 	data, dataErr := client.ListLifecycles()
@@ -120,11 +120,11 @@ func (c *Cacher) doCacheLifecycles(client *Client) {
 		log.Warn().Msgf("===> Failed to list all 'Lifecycle' from API - REASON: %s", dataErr.Error())
 	}
 	for _, item := range data {
-		c.Lifecycles[string(item.Alias)] = item
+		cacher.Lifecycles[item.Alias] = item
 	}
 }
 
-func (c *Cacher) doCacheTeams(client *Client) {
+func (cacher *Cacher) doCacheTeams(client *Client) {
 	log.Debug().Msg("Caching 'Team' lookup table from API ...")
 
 	data, dataErr := client.ListTeams(nil)
@@ -137,12 +137,12 @@ func (c *Cacher) doCacheTeams(client *Client) {
 
 	for _, item := range data.Nodes {
 		for _, alias := range item.Aliases {
-			c.Teams[string(alias)] = item
+			cacher.Teams[alias] = item
 		}
 	}
 }
 
-func (c *Cacher) doCacheCategories(client *Client) {
+func (cacher *Cacher) doCacheCategories(client *Client) {
 	log.Debug().Msg("Caching 'Category' lookup table from API ...")
 
 	data, dataErr := client.ListCategories(nil)
@@ -154,11 +154,11 @@ func (c *Cacher) doCacheCategories(client *Client) {
 	}
 
 	for _, item := range data.Nodes {
-		c.Categories[item.Alias()] = item
+		cacher.Categories[item.Alias()] = item
 	}
 }
 
-func (c *Cacher) doCacheLevels(client *Client) {
+func (cacher *Cacher) doCacheLevels(client *Client) {
 	log.Debug().Msg("Caching 'Level' lookup table from API ...")
 
 	data, dataErr := client.ListLevels()
@@ -167,11 +167,11 @@ func (c *Cacher) doCacheLevels(client *Client) {
 	}
 
 	for _, item := range data {
-		c.Levels[string(item.Alias)] = item
+		cacher.Levels[item.Alias] = item
 	}
 }
 
-func (c *Cacher) doCacheFilters(client *Client) {
+func (cacher *Cacher) doCacheFilters(client *Client) {
 	log.Debug().Msg("Caching 'Filter' lookup table from API ...")
 
 	data, dataErr := client.ListFilters(nil)
@@ -183,11 +183,11 @@ func (c *Cacher) doCacheFilters(client *Client) {
 	}
 
 	for _, item := range data.Nodes {
-		c.Filters[item.Alias()] = item
+		cacher.Filters[item.Alias()] = item
 	}
 }
 
-func (c *Cacher) doCacheIntegrations(client *Client) {
+func (cacher *Cacher) doCacheIntegrations(client *Client) {
 	log.Debug().Msg("Caching 'Integration' lookup table from API ...")
 
 	data, dataErr := client.ListIntegrations(nil)
@@ -199,11 +199,11 @@ func (c *Cacher) doCacheIntegrations(client *Client) {
 	}
 
 	for _, item := range data.Nodes {
-		c.Integrations[item.Alias()] = item
+		cacher.Integrations[item.Alias()] = item
 	}
 }
 
-func (c *Cacher) doCacheRepositories(client *Client) {
+func (cacher *Cacher) doCacheRepositories(client *Client) {
 	log.Debug().Msg("Caching 'Repository' lookup table from API ...")
 
 	data, dataErr := client.ListRepositories(nil)
@@ -215,11 +215,11 @@ func (c *Cacher) doCacheRepositories(client *Client) {
 	}
 
 	for _, item := range data.Nodes {
-		c.Repositories[item.DefaultAlias] = item
+		cacher.Repositories[item.DefaultAlias] = item
 	}
 }
 
-func (c *Cacher) doCacheInfraSchemas(client *Client) {
+func (cacher *Cacher) doCacheInfraSchemas(client *Client) {
 	log.Debug().Msg("Caching 'InfrastructureSchema' lookup table from API ...")
 
 	data, dataErr := client.ListInfrastructureSchemas(nil)
@@ -231,77 +231,76 @@ func (c *Cacher) doCacheInfraSchemas(client *Client) {
 	}
 
 	for _, item := range data.Nodes {
-		// log.Info().Msgf("Caching 'InfrastructureSchema' '%s' ...", item.Type)
-		c.InfraSchemas[item.Type] = item
+		cacher.InfraSchemas[item.Type] = item
 	}
 }
 
-func (c *Cacher) CacheTiers(client *Client) {
-	c.mutex.Lock()
-	c.doCacheTiers(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheTiers(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheTiers(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheLifecycles(client *Client) {
-	c.mutex.Lock()
-	c.doCacheLifecycles(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheLifecycles(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheLifecycles(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheTeams(client *Client) {
-	c.mutex.Lock()
-	c.doCacheTeams(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheTeams(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheTeams(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheCategories(client *Client) {
-	c.mutex.Lock()
-	c.doCacheCategories(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheCategories(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheCategories(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheLevels(client *Client) {
-	c.mutex.Lock()
-	c.doCacheLevels(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheLevels(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheLevels(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheFilters(client *Client) {
-	c.mutex.Lock()
-	c.doCacheFilters(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheFilters(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheFilters(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheIntegrations(client *Client) {
-	c.mutex.Lock()
-	c.doCacheIntegrations(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheIntegrations(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheIntegrations(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheRepositories(client *Client) {
-	c.mutex.Lock()
-	c.doCacheRepositories(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheRepositories(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheRepositories(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheInfraSchemas(client *Client) {
-	c.mutex.Lock()
-	c.doCacheInfraSchemas(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheInfraSchemas(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheInfraSchemas(client)
+	cacher.mutex.Unlock()
 }
 
-func (c *Cacher) CacheAll(client *Client) {
-	c.mutex.Lock()
-	c.doCacheTiers(client)
-	c.doCacheLifecycles(client)
-	c.doCacheTeams(client)
-	c.doCacheCategories(client)
-	c.doCacheLevels(client)
-	c.doCacheFilters(client)
-	c.doCacheIntegrations(client)
-	c.doCacheRepositories(client)
-	c.doCacheInfraSchemas(client)
-	c.mutex.Unlock()
+func (cacher *Cacher) CacheAll(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheTiers(client)
+	cacher.doCacheLifecycles(client)
+	cacher.doCacheTeams(client)
+	cacher.doCacheCategories(client)
+	cacher.doCacheLevels(client)
+	cacher.doCacheFilters(client)
+	cacher.doCacheIntegrations(client)
+	cacher.doCacheRepositories(client)
+	cacher.doCacheInfraSchemas(client)
+	cacher.mutex.Unlock()
 }
 
 var Cache = &Cacher{

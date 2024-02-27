@@ -7,12 +7,12 @@ import (
 
 var structValidator = validator.New(validator.WithRequiredStructEnabled())
 
-// Validates resource's `validate:""` struct tags
+// IsResourceValid runs validator.Validate on all `validate` struct tags
 func IsResourceValid[T any](opslevelResource T) error {
 	return structValidator.Struct(opslevelResource)
 }
 
-// Apply resource's `default:""` struct tags
+// SetDefaultsFor applies all `default` struct tags
 func SetDefaultsFor[T any](opslevelResource *T) {
 	validator.New(validator.WithRequiredStructEnabled())
 	if err := moredefaults.Set(opslevelResource); err != nil {
@@ -20,7 +20,7 @@ func SetDefaultsFor[T any](opslevelResource *T) {
 	}
 }
 
-// Apply resource's `example:""` struct tags
+// SetExamplesFor applies all `example` struct tags
 func SetExamplesFor[T any](opslevelResource *T) {
 	validator.New(validator.WithRequiredStructEnabled())
 	if err := moredefaults.Set(opslevelResource, "example"); err != nil {
@@ -28,7 +28,7 @@ func SetExamplesFor[T any](opslevelResource *T) {
 	}
 }
 
-// Make new OpsLevel resource with defaults set
+// NewExampleOf makes a new OpsLevel resource with all `example` struct tags applied
 func NewExampleOf[T any]() T {
 	var opslevelResource T
 	SetExamplesFor[T](&opslevelResource)

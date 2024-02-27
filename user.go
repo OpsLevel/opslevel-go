@@ -25,15 +25,13 @@ type UserConnection struct {
 	TotalCount int
 }
 
-func (u *User) ResourceId() ID {
-	return u.Id
+func (user *User) ResourceId() ID {
+	return user.Id
 }
 
-func (u *User) ResourceType() TaggableResource {
+func (user *User) ResourceType() TaggableResource {
 	return TaggableResourceUser
 }
-
-//#region Helpers
 
 func NewUserIdentifier(value string) *UserIdentifierInput {
 	if IsID(value) {
@@ -46,7 +44,7 @@ func NewUserIdentifier(value string) *UserIdentifierInput {
 	}
 }
 
-func (u *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
+func (userId *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
 			User struct {
@@ -54,19 +52,19 @@ func (u *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConne
 			} `graphql:"user(id: $user)"`
 		}
 	}
-	if u.Id == "" {
-		return nil, fmt.Errorf("Unable to get Tags, invalid User id: '%s'", u.Id)
+	if userId.Id == "" {
+		return nil, fmt.Errorf("unable to get Tags, invalid User id: '%s'", userId.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["user"] = u.Id
+	(*variables)["user"] = userId.Id
 	if err := client.Query(&q, *variables, WithName("UserTagsList")); err != nil {
 		return nil, err
 	}
 	for q.Account.User.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.User.Tags.PageInfo.End
-		resp, err := u.GetTags(client, variables)
+		resp, err := userId.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -83,7 +81,7 @@ func (u *UserId) GetTags(client *Client, variables *PayloadVariables) (*TagConne
 	return &q.Account.User.Tags, nil
 }
 
-func (u *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
+func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
 	var q struct {
 		Account struct {
 			User struct {
@@ -91,19 +89,19 @@ func (u *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnec
 			} `graphql:"user(id: $user)"`
 		}
 	}
-	if u.Id == "" {
+	if user.Id == "" {
 		return nil, fmt.Errorf("unable to get teams, nil user id")
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["user"] = u.Id
+	(*variables)["user"] = user.Id
 	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil { // what goes in "" here and how is it derived?
 		return nil, err
 	}
 	for q.Account.User.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.User.Teams.PageInfo.End
-		conn, err := u.Teams(client, variables)
+		conn, err := user.Teams(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -113,10 +111,6 @@ func (u *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnec
 	}
 	return &q.Account.User.Teams, nil
 }
-
-//#endregion
-
-//#region Create
 
 func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 	var m struct {
@@ -132,10 +126,6 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 	err := client.Mutate(&m, v, WithName("UserInvite"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion
-
-//#region Retrieve
 
 func (client *Client) GetUser(value string) (*User, error) {
 	var q struct {
@@ -177,10 +167,6 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 	return &q.Account.Users, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 	var m struct {
 		Payload struct {
@@ -196,10 +182,6 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteUser(user string) error {
 	var m struct {
 		Payload struct {
@@ -212,5 +194,3 @@ func (client *Client) DeleteUser(user string) error {
 	err := client.Mutate(&m, v, WithName("UserDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

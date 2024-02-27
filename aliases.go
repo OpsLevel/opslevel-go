@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// #region Create
-// TODO: make sure duplicate aliases throw an error that we can catch
 func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
 	var output []string
 	var errors []string
@@ -19,9 +17,7 @@ func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, err
 		if err != nil {
 			errors = append(errors, err.Error())
 		}
-		for _, resultAlias := range result {
-			output = append(output, string(resultAlias))
-		}
+		output = append(output, result...)
 	}
 	output = removeDuplicates(output)
 	if len(errors) > 0 {
@@ -44,15 +40,9 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 	}
 	err := client.Mutate(&m, v, WithName("AliasCreate"))
 	output := make([]string, len(m.Payload.Aliases))
-	for i, item := range m.Payload.Aliases {
-		output[i] = string(item)
-	}
+	copy(output, m.Payload.Aliases)
 	return output, HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion
-
-//#region Delete
 
 func (client *Client) DeleteInfraAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
@@ -88,5 +78,3 @@ func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	err := client.Mutate(&m, v, WithName("AliasDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

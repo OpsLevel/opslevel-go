@@ -1,10 +1,9 @@
 # Contributing
 
 1. [About this document](#about-this-document)
-3. [Getting the code](#getting-the-code)
-4. [Setting up an environment](#setting-up-an-environment)
-5. [Local development](#local-development)
-7. [Submitting a Pull Request](#submitting-a-pull-request)
+2. [Getting the code](#getting-the-code)
+3. [Local development](#local-development)
+4. [Submitting a Pull Request](#submitting-a-pull-request)
 
 ## About this document
 
@@ -14,7 +13,7 @@ If you're new to Golang development or contributing to open-source software, we 
 
 ## Proposing a change
 
-This project is what it is today because community members like you have opened issues, provided feedback, and contributed to the knowledge loop for the entire communtiy. Whether you are a seasoned open source contributor or a first-time committer, we welcome and encourage you to contribute code, documentation, ideas, or problem statements to this project.
+This project is what it is today because community members like you have opened issues, provided feedback, and contributed to the knowledge loop for the entire community. Whether you are a seasoned open source contributor or a first-time committer, we welcome and encourage you to contribute code, documentation, ideas, or problem statements to this project.
 
 ### Defining the problem
 
@@ -76,9 +75,9 @@ Once the GraphQL API is made public, and before adding any other types - try the
 
 ## Submitting a Pull Request
 
-OpsLevel provides a CI environment to test changes through Github Actions. For example, if you submit a pull request to the repo, GitHub will trigger automated code checks and tests upon approval from an OpsLevel maintainer.
+OpsLevel provides a CI environment to test changes through GitHub Actions. For example, if you submit a pull request to the repo, GitHub will trigger automated code checks and tests upon approval from an OpsLevel maintainer.
 
 A maintainer will review your PR. They may suggest code revision for style or clarity, or request that you add unit or integration test(s). These are good things! We believe that, with a little bit of help, anyone can contribute high-quality code.
-- First time contributors should note code checks + unit tests require a maintainer to approve.
+- First time contributors should note that code checks + unit tests require a maintainer to approve.
 
 Once all tests are passing and your PR has been approved, a maintainer will merge your changes into the active development branch. And that's it!  It will be available in the next release that is cut. Happy developing :tada:

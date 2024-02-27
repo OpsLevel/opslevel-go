@@ -9,29 +9,26 @@ type EntityOwner struct {
 	OnTeam EntityOwnerTeam `graphql:"... on Team"`
 }
 
-func (s *EntityOwner) Alias() string {
-	return s.OnTeam.Alias
+func (entityOwner *EntityOwner) Alias() string {
+	return entityOwner.OnTeam.Alias
 }
 
-func (s *EntityOwner) Id() ID {
-	return s.OnTeam.Id
+func (entityOwner *EntityOwner) Id() ID {
+	return entityOwner.OnTeam.Id
 }
 
-func (s *EntityOwnerTeam) AsTeam() TeamId {
-	return TeamId{
-		Alias: s.Alias,
-		Id:    s.Id,
-	}
+func (entityOwnerTeam *EntityOwnerTeam) AsTeam() TeamId {
+	return TeamId(*entityOwnerTeam)
 }
 
 type EntityOwnerService struct {
 	OnService ServiceId `graphql:"... on Service"`
 }
 
-func (s *EntityOwnerService) Aliases() []string {
-	return s.OnService.Aliases
+func (entityOwnerService *EntityOwnerService) Aliases() []string {
+	return entityOwnerService.OnService.Aliases
 }
 
-func (s *EntityOwnerService) Id() ID {
-	return s.OnService.Id
+func (entityOwnerService *EntityOwnerService) Id() ID {
+	return entityOwnerService.OnService.Id
 }

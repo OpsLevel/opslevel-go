@@ -103,10 +103,6 @@ func NewCheckCreateInputTypeOf[T any](checkCreateInput CheckCreateInput) *T {
 	return newCheck
 }
 
-func (c *CheckCreateInput) GetCheckCreateInput() *CheckCreateInput {
-	return c
-}
-
 type CheckUpdateInputProvider interface {
 	GetCheckUpdateInput() *CheckUpdateInput
 }
@@ -131,17 +127,11 @@ func NewCheckUpdateInputTypeOf[T any](checkUpdateInput CheckUpdateInput) *T {
 	return newCheck
 }
 
-func (c *CheckUpdateInput) GetCheckUpdateInput() *CheckUpdateInput {
-	return c
-}
-
-// Encompass CheckCreatePayload and CheckUpdatePayload into 1 struct
+// CheckResponsePayload encompasses CheckCreatePayload and CheckUpdatePayload into 1 struct
 type CheckResponsePayload struct {
 	Check  Check
 	Errors []OpsLevelErrors
 }
-
-//#region Create
 
 func (client *Client) CreateCheck(input any) (*Check, error) {
 	switch v := input.(type) {
@@ -180,12 +170,6 @@ func (client *Client) CreateCheck(input any) (*Check, error) {
 	}
 	return nil, fmt.Errorf("unknown input type %T", input)
 }
-
-// See files check_*.go
-
-//#endregion
-
-//#region Retrieve
 
 func (client *Client) GetCheck(id ID) (*Check, error) {
 	var q struct {
@@ -230,10 +214,6 @@ func (client *Client) ListChecks(variables *PayloadVariables) (*CheckConnection,
 	return &q.Account.Rubric.Checks, nil
 }
 
-//#endregion
-
-//#region Update
-
 func (client *Client) UpdateCheck(input any) (*Check, error) {
 	switch v := input.(type) {
 	case *CheckAlertSourceUsageUpdateInput:
@@ -272,10 +252,6 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 	return nil, fmt.Errorf("unknown input type %T", input)
 }
 
-//#endregion
-
-//#region Delete
-
 func (client *Client) DeleteCheck(id ID) error {
 	var m struct {
 		Payload struct {
@@ -288,5 +264,3 @@ func (client *Client) DeleteCheck(id ID) error {
 	err := client.Mutate(&m, v, WithName("CheckDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion

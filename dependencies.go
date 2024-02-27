@@ -33,8 +33,6 @@ type ServiceDependentsConnection struct {
 	PageInfo PageInfo
 }
 
-//#region Create
-
 func (client *Client) CreateServiceDependency(input ServiceDependencyCreateInput) (*ServiceDependency, error) {
 	var m struct {
 		Payload struct {
@@ -49,11 +47,7 @@ func (client *Client) CreateServiceDependency(input ServiceDependencyCreateInput
 	return m.Payload.ServiceDependency, HandleErrors(err, m.Payload.Errors)
 }
 
-//#endregion
-
-//#region Retrieve
-
-func (s *Service) GetDependencies(client *Client, variables *PayloadVariables) (*ServiceDependenciesConnection, error) {
+func (service *Service) GetDependencies(client *Client, variables *PayloadVariables) (*ServiceDependenciesConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -61,32 +55,32 @@ func (s *Service) GetDependencies(client *Client, variables *PayloadVariables) (
 			} `graphql:"service(id: $service)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Dependencies, invalid service id: '%s'", s.Id)
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get Dependencies, invalid service id: '%s'", service.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["service"] = s.Id
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceDependenciesList")); err != nil {
 		return nil, err
 	}
-	if s.Dependencies == nil {
-		s.Dependencies = &ServiceDependenciesConnection{}
+	if service.Dependencies == nil {
+		service.Dependencies = &ServiceDependenciesConnection{}
 	}
-	s.Dependencies.Edges = append(s.Dependencies.Edges, q.Account.Service.Dependencies.Edges...)
-	s.Dependencies.PageInfo = q.Account.Service.Dependencies.PageInfo
-	for s.Dependencies.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Dependencies.PageInfo.End
-		_, err := s.GetDependencies(client, variables)
+	service.Dependencies.Edges = append(service.Dependencies.Edges, q.Account.Service.Dependencies.Edges...)
+	service.Dependencies.PageInfo = q.Account.Service.Dependencies.PageInfo
+	for service.Dependencies.PageInfo.HasNextPage {
+		(*variables)["after"] = service.Dependencies.PageInfo.End
+		_, err := service.GetDependencies(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return s.Dependencies, nil
+	return service.Dependencies, nil
 }
 
-func (s *Service) GetDependents(client *Client, variables *PayloadVariables) (*ServiceDependentsConnection, error) {
+func (service *Service) GetDependents(client *Client, variables *PayloadVariables) (*ServiceDependentsConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
@@ -94,34 +88,30 @@ func (s *Service) GetDependents(client *Client, variables *PayloadVariables) (*S
 			} `graphql:"service(id: $service)"`
 		}
 	}
-	if s.Id == "" {
-		return nil, fmt.Errorf("Unable to get Dependents, invalid service id: '%s'", s.Id)
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get Dependents, invalid service id: '%s'", service.Id)
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["service"] = s.Id
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceDependentsList")); err != nil {
 		return nil, err
 	}
-	if s.Dependents == nil {
-		s.Dependents = &ServiceDependentsConnection{}
+	if service.Dependents == nil {
+		service.Dependents = &ServiceDependentsConnection{}
 	}
-	s.Dependents.Edges = append(s.Dependents.Edges, q.Account.Service.Dependents.Edges...)
-	s.Dependents.PageInfo = q.Account.Service.Dependents.PageInfo
-	for s.Dependents.PageInfo.HasNextPage {
-		(*variables)["after"] = s.Dependents.PageInfo.End
-		_, err := s.GetDependents(client, variables)
+	service.Dependents.Edges = append(service.Dependents.Edges, q.Account.Service.Dependents.Edges...)
+	service.Dependents.PageInfo = q.Account.Service.Dependents.PageInfo
+	for service.Dependents.PageInfo.HasNextPage {
+		(*variables)["after"] = service.Dependents.PageInfo.End
+		_, err := service.GetDependents(client, variables)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return s.Dependents, nil
+	return service.Dependents, nil
 }
-
-//#endregion
-
-//#region Delete
 
 func (client *Client) DeleteServiceDependency(id ID) error {
 	var m struct {
@@ -135,5 +125,3 @@ func (client *Client) DeleteServiceDependency(id ID) error {
 	err := client.Mutate(&m, v, WithName("ServiceDependencyDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
-
-//#endregion
