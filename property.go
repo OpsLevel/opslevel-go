@@ -2,8 +2,10 @@ package opslevel
 
 import "fmt"
 
+// PropertyDefinition represents the definition of a property.
 type PropertyDefinition struct {
 	Aliases               []string                          `graphql:"aliases" json:"aliases"`
+	AllowedInConfigFiles  string                            `graphql:"allowedInConfigFiles"` // Whether or not the property is allowed to be set in opslevel.yml config files.
 	Id                    ID                                `graphql:"id" json:"id"`
 	Name                  string                            `graphql:"name" json:"name"`
 	Description           string                            `graphql:"description" json:"description"`
@@ -24,8 +26,10 @@ type PropertyDefinitionId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
+// Property represents a custom property value assigned to an entity.
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
+	Locked           bool                 `graphql:"locked"`
 	Owner            EntityOwnerService   `graphql:"owner"`
 	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
 	Value            *JsonString          `graphql:"value"`
@@ -132,6 +136,40 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 	}
 	err := client.Query(&q, v, WithName("PropertyGet"))
 	return &q.Account.Property, HandleErrors(err, nil)
+}
+
+// ListProperties represents custom properties assigned to this entity.
+func (s *Service) ListProperties(client *Client, variables *PayloadVariables) (*PropertyConnection, error) {
+	if s.Id == "" {
+		return nil, fmt.Errorf("unable to get Properties, invalid service id: '%s'", s.Id)
+	}
+	var q struct {
+		Account struct {
+			Service struct {
+				Properties PropertyConnection `graphql:"properties(after: $after, first: $first)"`
+			} `graphql:"service(id: $id)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["id"] = s.Id
+	if err := client.Query(&q, *variables, WithName("PropertyList")); err != nil {
+		return nil, err
+	}
+
+	for q.Account.Service.Properties.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Service.Properties.PageInfo.End
+		connection, err := s.ListProperties(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Service.Properties.Nodes = append(q.Account.Service.Properties.Nodes, connection.Nodes...)
+		q.Account.Service.Properties.PageInfo = connection.PageInfo
+		q.Account.Service.Properties.TotalCount += connection.TotalCount
+	}
+
+	return &q.Account.Service.Properties, nil
 }
 
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
