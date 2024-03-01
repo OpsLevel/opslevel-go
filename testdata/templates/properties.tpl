@@ -5,6 +5,7 @@
     "definition": {
         "id": "{{ template "id2_string" }}"
     },
+    "locked": true,
     "owner": {
         "id": "{{ template "id1_string" }}"
     },
@@ -15,6 +16,7 @@
     "definition": {
         "id": "{{ template "id3_string" }}"
     },
+    "locked": false,
     "owner": {
         "id": "{{ template "id1_string" }}"
     },
@@ -28,6 +30,7 @@
     "definition": {
         "id": "{{ template "id4_string" }}"
     },
+    "locked": true,
     "owner": {
         "id": "{{ template "id1_string" }}"
     },

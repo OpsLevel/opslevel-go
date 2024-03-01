@@ -2,8 +2,10 @@ package opslevel
 
 import "fmt"
 
+// PropertyDefinition represents the definition of a property.
 type PropertyDefinition struct {
 	Aliases               []string                          `graphql:"aliases" json:"aliases"`
+	AllowedInConfigFiles  bool                              `graphql:"allowedInConfigFiles"` // Whether or not the property is allowed to be set in opslevel.yml config files.
 	Id                    ID                                `graphql:"id" json:"id"`
 	Name                  string                            `graphql:"name" json:"name"`
 	Description           string                            `graphql:"description" json:"description"`
@@ -24,8 +26,10 @@ type PropertyDefinitionId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
+// Property represents a custom property value assigned to an entity.
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
+	Locked           bool                 `graphql:"locked"`
 	Owner            EntityOwnerService   `graphql:"owner"`
 	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
 	Value            *JsonString          `graphql:"value"`
