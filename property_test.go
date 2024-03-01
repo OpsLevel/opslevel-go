@@ -20,19 +20,21 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	autopilot.Ok(t, schemaErr)
 	autopilot.Ok(t, schemaAsJSONErr)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
-		Aliases: []string{"my_prop"},
-		Id:      "XXX",
-		Name:    "my-prop",
-		Schema:  *schemaAsJSON,
+		Aliases:              []string{"my_prop"},
+		AllowedInConfigFiles: true,
+		Id:                   "XXX",
+		Name:                 "my-prop",
+		Schema:               *schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
-		Name:   ol.RefOf("my-prop"),
-		Schema: schema,
+		AllowedInConfigFiles: ol.RefOf(true),
+		Name:                 ol.RefOf("my-prop"),
+		Schema:               schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
 		`{"input": {{ template "property_definition_input" }} }`,
-		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schemaString),
+		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"allowedInConfigFiles":true,"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schemaString),
 	)
 	client := BestTestClient(t, "properties/definition_create", testRequest)
 
@@ -53,16 +55,18 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 	autopilot.Ok(t, schemaAsJSONErr)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
 		Aliases:               []string{"my_prop"},
+		AllowedInConfigFiles:  false,
+		Description:           "this description was added",
 		Id:                    "XXX",
 		Name:                  "my-prop",
-		Description:           "this description was added",
-		Schema:                *schemaAsJSON,
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
+		Schema:                *schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+		AllowedInConfigFiles:  ol.RefOf(false),
 		Description:           ol.RefOf("this description was added"),
-		Schema:                schema,
 		PropertyDisplayStatus: ol.RefOf(ol.PropertyDisplayStatusEnumHidden),
+		Schema:                schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
@@ -102,15 +106,16 @@ func TestGetPropertyDefinition(t *testing.T) {
 	autopilot.Ok(t, schemaErr)
 	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition",
 		ol.PropertyDefinition{
-			Aliases: []string{"my_prop"},
-			Id:      "XXX",
-			Name:    "my-prop",
-			Schema:  *schema,
+			Aliases:              []string{"my_prop"},
+			AllowedInConfigFiles: true,
+			Id:                   "XXX",
+			Name:                 "my-prop",
+			Schema:               *schema,
 		})
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema}}}`,
 		`{"input":{"alias":"my_prop"}}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","schema": %s }}}}`, schemaString),
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinition": {"aliases":["my_prop"],"allowedInConfigFiles":true,"id":"XXX","name":"my-prop","schema": %s }}}}`, schemaString),
 	)
 	client := BestTestClient(t, "properties/definition_get", testRequest)
 
@@ -118,11 +123,12 @@ func TestGetPropertyDefinition(t *testing.T) {
 	property, err := client.GetPropertyDefinition("my_prop")
 
 	// Assert
-	autopilot.Ok(t, err)
 	autopilot.Equals(t, "XXX", string(property.Id))
-	autopilot.Equals(t, expectedPropertyDefinition, *property)
 	autopilot.Equals(t, "my-prop", property.Name)
 	autopilot.Equals(t, *schema, property.Schema)
+	autopilot.Equals(t, expectedPropertyDefinition, *property)
+	autopilot.Equals(t, true, property.AllowedInConfigFiles)
+	autopilot.Ok(t, err)
 }
 
 func TestListPropertyDefinitions(t *testing.T) {
@@ -137,33 +143,36 @@ func TestListPropertyDefinitions(t *testing.T) {
 	autopilot.Ok(t, schemaPage3Err)
 	expectedPropDefsPageOne := autopilot.Register[[]ol.PropertyDefinition]("property_definitions", []ol.PropertyDefinition{
 		{
-			Aliases: []string{"prop1"},
-			Id:      "XXX",
-			Name:    "prop1",
-			Schema:  *schemaPage1,
+			AllowedInConfigFiles: true,
+			Aliases:              []string{"prop1"},
+			Id:                   "XXX",
+			Name:                 "prop1",
+			Schema:               *schemaPage1,
 		},
 		{
-			Aliases: []string{"prop2"},
-			Id:      "XXX",
-			Name:    "prop2",
-			Schema:  *schemaPage2,
+			AllowedInConfigFiles: false,
+			Aliases:              []string{"prop2"},
+			Id:                   "XXX",
+			Name:                 "prop2",
+			Schema:               *schemaPage2,
 		},
 	})
 	expectedPropDefPageTwo := autopilot.Register[ol.PropertyDefinition]("property_definition_3", ol.PropertyDefinition{
-		Aliases: []string{"prop3"},
-		Id:      "XXX",
-		Name:    "prop3",
-		Schema:  *schemaPage3,
+		AllowedInConfigFiles: true,
+		Aliases:              []string{"prop3"},
+		Id:                   "XXX",
+		Name:                 "prop3",
+		Schema:               *schemaPage3,
 	})
 	testRequestOne := autopilot.NewTestRequest(
 		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"allowedInConfigFiles":true,"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"allowedInConfigFiles":false,"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"allowedInConfigFiles":true,"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "properties/definition_list", requests...)
@@ -188,7 +197,7 @@ func TestGetProperty(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},locked,owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
-		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"}}}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"locked":true,"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"}}}}`,
 	)
 	client := BestTestClient(t, "properties/property_get", testRequest)
 
@@ -197,10 +206,11 @@ func TestGetProperty(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, "true", string(*property.Value))
+	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
-	autopilot.Equals(t, 0, len(property.ValidationErrors))
-	autopilot.Equals(t, "true", string(*property.Value))
+	autopilot.Equals(t, true, property.Locked)
 }
 
 func TestGetPropertyHasErrors(t *testing.T) {
@@ -208,7 +218,7 @@ func TestGetPropertyHasErrors(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},locked,owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"dropdown"}}`,
-		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[{"message":"vmessage1","path":["vmp1","vmp2"]},{"message":"vmessage2","path":["vmp3"]}],"value":"\"orange\""}}}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"locked":false,"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[{"message":"vmessage1","path":["vmp1","vmp2"]},{"message":"vmessage2","path":["vmp3"]}],"value":"\"orange\""}}}}`,
 	)
 	client := BestTestClient(t, "properties/property_get_has_errors", testRequest)
 
@@ -217,9 +227,10 @@ func TestGetPropertyHasErrors(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(property.ValidationErrors))
+	autopilot.Equals(t, false, property.Locked)
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
-	autopilot.Equals(t, 2, len(property.ValidationErrors))
 	// validation error 1
 	autopilot.Equals(t, "vmessage1", property.ValidationErrors[0].Message)
 	autopilot.Equals(t, 2, len(property.ValidationErrors[0].Path))
@@ -237,7 +248,7 @@ func TestGetPropertyHasNullValue(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
 		`query PropertyGet($definition:IdentifierInput!$owner:IdentifierInput!){account{property(owner: $owner, definition: $definition){definition{id,aliases},locked,owner{... on Service{id,aliases}},validationErrors{message,path},value}}}`,
 		`{"owner":{"alias":"monolith"},"definition":{"alias":"is_beta_feature"}}`,
-		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":null}}}}`,
+		`{"data":{"account":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"locked":true,"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":null}}}}`,
 	)
 	client := BestTestClient(t, "properties/property_get_has_null_value", testRequest)
 
@@ -246,9 +257,10 @@ func TestGetPropertyHasNullValue(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
-	autopilot.Equals(t, 0, len(property.ValidationErrors))
+	autopilot.Equals(t, true, property.Locked)
 	autopilot.Equals(t, true, property.Value == nil)
 }
 
@@ -262,7 +274,7 @@ func TestAssignProperty(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyAssign($input:PropertyInput!){propertyAssign(input: $input){property{definition{id,aliases},locked,owner{... on Service{id,aliases}},validationErrors{message,path},value},errors{message,path}}}`,
 		`{"input": {{ template "property_assign_input" }} }`,
-		`{"data":{"propertyAssign":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"},"errors":[]}}}`,
+		`{"data":{"propertyAssign":{"property":{"definition":{"id":"{{ template "id2_string" }}"},"locked":true,"owner":{"id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"},"errors":[]}}}`,
 	)
 	client := BestTestClient(t, "properties/property_assign", testRequest)
 
@@ -271,10 +283,11 @@ func TestAssignProperty(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, "true", string(*property.Value))
+	autopilot.Equals(t, 0, len(property.ValidationErrors))
 	autopilot.Equals(t, string(id1), string(property.Owner.Id()))
 	autopilot.Equals(t, string(id2), string(property.Definition.Id))
-	autopilot.Equals(t, 0, len(property.ValidationErrors))
-	autopilot.Equals(t, "true", string(*property.Value))
+	autopilot.Equals(t, true, property.Locked)
 }
 
 func TestUnassignProperty(t *testing.T) {
@@ -309,6 +322,7 @@ func TestGetServiceProperties(t *testing.T) {
 	value3 := ol.JsonString("\"Hello World!\"")
 	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
 		{
+			Locked: true,
 			Definition: ol.PropertyDefinitionId{
 				Id: id2,
 			},
@@ -317,6 +331,7 @@ func TestGetServiceProperties(t *testing.T) {
 			Value:            &value1,
 		},
 		{
+			Locked: false,
 			Definition: ol.PropertyDefinitionId{
 				Id: id3,
 			},
@@ -327,6 +342,7 @@ func TestGetServiceProperties(t *testing.T) {
 	})
 	expectedPropsPageTwo := autopilot.Register[[]ol.Property]("service_properties_3", []ol.Property{
 		{
+			Locked: true,
 			Definition: ol.PropertyDefinitionId{
 				Id: id4,
 			},
