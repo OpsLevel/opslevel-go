@@ -35,13 +35,6 @@ type Property struct {
 	Value            *JsonString          `graphql:"value"`
 }
 
-// PropertyConnection represents the connection type for Property.
-type PropertyConnection struct {
-	Nodes      []Property `graphql:"nodes"`      // A list of nodes.
-	PageInfo   PageInfo   `graphql:"pageInfo"`   // Information to aid in pagination.
-	TotalCount int        `graphql:"totalCount"` // The number of returned nodes.
-}
-
 type ServicePropertiesConnection struct {
 	Nodes      []Property
 	PageInfo   PageInfo
