@@ -771,7 +771,7 @@ type PropertyDefinitionInput struct {
 	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:""`                                                   // The schema of the property definition. (Optional.)
 	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_description"`                      // The description of the property definition. (Optional.)
 	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"NEW_ENUM_SET_DEFAULT"` // The display status of the custom property on service pages. (Optional.)
-	AllowedInConfigFiles  *[]bool                    `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"[false]"`                // Whether or not the property is allowed to be set in opslevel.yml config files. (Optional.)
+	AllowedInConfigFiles  *bool                      `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"true"`                   // Whether or not the property is allowed to be set in opslevel.yml config files. (Optional.)
 }
 
 // PropertyInput represents the input for setting a property.
