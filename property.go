@@ -5,7 +5,7 @@ import "fmt"
 // PropertyDefinition represents the definition of a property.
 type PropertyDefinition struct {
 	Aliases               []string                          `graphql:"aliases" json:"aliases"`
-	AllowedInConfigFiles  string                            `graphql:"allowedInConfigFiles"` // Whether or not the property is allowed to be set in opslevel.yml config files.
+	AllowedInConfigFiles  bool                              `graphql:"allowedInConfigFiles"` // Whether or not the property is allowed to be set in opslevel.yml config files.
 	Id                    ID                                `graphql:"id" json:"id"`
 	Name                  string                            `graphql:"name" json:"name"`
 	Description           string                            `graphql:"description" json:"description"`
