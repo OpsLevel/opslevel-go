@@ -145,40 +145,6 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 	return &q.Account.Property, HandleErrors(err, nil)
 }
 
-// ListProperties represents custom properties assigned to this entity.
-func (s *Service) ListProperties(client *Client, variables *PayloadVariables) (*PropertyConnection, error) {
-	if s.Id == "" {
-		return nil, fmt.Errorf("unable to get Properties, invalid service id: '%s'", s.Id)
-	}
-	var q struct {
-		Account struct {
-			Service struct {
-				Properties PropertyConnection `graphql:"properties(after: $after, first: $first)"`
-			} `graphql:"service(id: $id)"`
-		}
-	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
-	(*variables)["id"] = s.Id
-	if err := client.Query(&q, *variables, WithName("PropertyList")); err != nil {
-		return nil, err
-	}
-
-	for q.Account.Service.Properties.PageInfo.HasNextPage {
-		(*variables)["after"] = q.Account.Service.Properties.PageInfo.End
-		connection, err := s.ListProperties(client, variables)
-		if err != nil {
-			return nil, err
-		}
-		q.Account.Service.Properties.Nodes = append(q.Account.Service.Properties.Nodes, connection.Nodes...)
-		q.Account.Service.Properties.PageInfo = connection.PageInfo
-		q.Account.Service.Properties.TotalCount += connection.TotalCount
-	}
-
-	return &q.Account.Service.Properties, nil
-}
-
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 	var m struct {
 		Payload struct {
