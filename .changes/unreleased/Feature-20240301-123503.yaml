@@ -1,0 +1,3 @@
+kind: Feature
+body: Add support for Property.Locked and PropertyDefinition.AllowedInConfigFiles
+time: 2024-03-01T12:35:03.085399-05:00
