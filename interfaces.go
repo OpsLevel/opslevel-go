@@ -53,6 +53,12 @@ type CustomActionsTriggerDefinitionBase struct {
 	ResponseTemplate       string `graphql:"responseTemplate"`       // The liquid template used to parse the response from the External Action.
 }
 
+// HasProperties represents an entity type that can have custom properties.
+type HasProperties struct {
+	Properties string `graphql:"properties"` // Custom properties assigned to this entity.
+	Property   string `graphql:"property"`   // A custom property value assigned to this entity.
+}
+
 // Integration represents an integration is a way of extending OpsLevel functionality.
 type Integration struct {
 	IntegrationId
