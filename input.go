@@ -767,19 +767,19 @@ type PredicateUpdateInput struct {
 
 // PropertyDefinitionInput represents the input for defining a property.
 type PropertyDefinitionInput struct {
-	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                           // The name of the property definition. (Optional.)
-	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:""`                                                   // The schema of the property definition. (Optional.)
-	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_description"`                      // The description of the property definition. (Optional.)
-	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"NEW_ENUM_SET_DEFAULT"` // The display status of the custom property on service pages. (Optional.)
-	AllowedInConfigFiles  *bool                      `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"true"`                   // Whether or not the property is allowed to be set in opslevel.yml config files. (Optional.)
+	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty" example:"color_picker"`                                                                          // The name of the property definition. (Optional.)
+	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:"{\"enum\":[\"red\",\"green\",\"blue\",\"yellow\",\"purple\"],\"type\":\"string\"}"` // The schema of the property definition. (Optional.)
+	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty" example:"property that is a color selection"`                                      // The description of the property definition. (Optional.)
+	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"visible"`                                             // The display status of the custom property on service pages. (Optional.)
+	AllowedInConfigFiles  *bool                      `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"true"`                                                  // Whether or not the property is allowed to be set in opslevel.yml config files. (Optional.)
 }
 
 // PropertyInput represents the input for setting a property.
 type PropertyInput struct {
-	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                                     // The entity that the property has been assigned to. (Required.)
-	Definition    IdentifierInput `json:"definition" yaml:"definition"`                                           // The definition of the property. (Required.)
-	Value         JsonString      `json:"value" yaml:"value" example:"example_value"`                             // The value of the property. (Required.)
-	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty" example:"false"` // Validate the property value against the schema. On by default. (Optional.)
+	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                                    // The entity that the property has been assigned to. (Required.)
+	Definition    IdentifierInput `json:"definition" yaml:"definition"`                                          // The definition of the property. (Required.)
+	Value         JsonString      `json:"value" yaml:"value" example:"green"`                                    // The value of the property. (Required.)
+	RunValidation *bool           `json:"runValidation,omitempty" yaml:"runValidation,omitempty" example:"true"` // Validate the property value against the schema. On by default. (Optional.)
 }
 
 // RelationshipDefinition represents a source, target and relationship type specifying a relationship between two resources.
