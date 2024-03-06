@@ -1,0 +1,3 @@
+kind: Bugfix
+body: fix list services maturity query, crashed if over 100 services
+time: 2024-03-06T12:48:39.473637-06:00
