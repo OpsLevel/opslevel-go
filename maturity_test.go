@@ -133,7 +133,7 @@ func TestGetServiceMaturityWithAlias(t *testing.T) {
 func TestListServicesMaturity(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query ServiceMaturityList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},{{ template "pagination_request" }},totalCount}}}`,
+		`query ServiceMaturityList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{id,name},level{alias,description,id,index,name}},overallLevel{alias,description,id,index,name}}},{{ template "pagination_request" }}}}}`,
 		`{"after":"", "first":100}`,
 		`{
   "data": {
