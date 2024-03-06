@@ -42,7 +42,7 @@ func (client *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturit
 type ServiceMaturityConnection struct {
 	Nodes      []ServiceMaturity
 	PageInfo   PageInfo
-	TotalCount int `graphql:"-"`
+	TotalCount int
 }
 
 func (client *Client) ListServicesMaturity(variables *PayloadVariables) (*ServiceMaturityConnection, error) {
@@ -66,6 +66,7 @@ func (client *Client) ListServicesMaturity(variables *PayloadVariables) (*Servic
 		}
 		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
 		q.Account.Services.PageInfo = resp.PageInfo
+		q.Account.Services.TotalCount += resp.TotalCount
 	}
 	return &q.Account.Services, nil
 }
