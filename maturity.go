@@ -38,29 +38,34 @@ func (client *Client) GetServiceMaturityWithAlias(alias string) (*ServiceMaturit
 	return &q.Account.Service, HandleErrors(err, nil)
 }
 
-func (client *Client) ListServicesMaturity() ([]ServiceMaturity, error) {
+// NOTE: ServiceMaturityConnection is not part of GraphQL API schema
+type ServiceMaturityConnection struct {
+	Nodes      []ServiceMaturity
+	PageInfo   PageInfo
+	TotalCount int `graphql:"-"`
+}
+
+func (client *Client) ListServicesMaturity(variables *PayloadVariables) (*ServiceMaturityConnection, error) {
 	var q struct {
 		Account struct {
-			Services struct {
-				Nodes    []ServiceMaturity
-				PageInfo PageInfo
-			} `graphql:"services(after: $after, first: $first)"`
+			Services ServiceMaturityConnection `graphql:"services(after: $after, first: $first)"`
 		}
 	}
-	v := client.InitialPageVariables()
-
-	var output []ServiceMaturity
-	if err := client.Query(&q, v); err != nil {
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	if err := client.Query(&q, *variables, WithName("ServiceMaturityList")); err != nil {
 		return nil, err
 	}
-	output = append(output, q.Account.Services.Nodes...)
+
 	for q.Account.Services.PageInfo.HasNextPage {
-		v["after"] = q.Account.Services.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
+		(*variables)["after"] = q.Account.Services.PageInfo.End
+		resp, err := client.ListServicesMaturity(variables)
+		if err != nil {
 			return nil, err
 		}
-		output = append(output, q.Account.Services.Nodes...)
+		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
+		q.Account.Services.PageInfo = resp.PageInfo
 	}
-
-	return output, nil
+	return &q.Account.Services, nil
 }
