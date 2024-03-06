@@ -67,5 +67,6 @@ func (client *Client) ListServicesMaturity(variables *PayloadVariables) (*Servic
 		q.Account.Services.Nodes = append(q.Account.Services.Nodes, resp.Nodes...)
 		q.Account.Services.PageInfo = resp.PageInfo
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
