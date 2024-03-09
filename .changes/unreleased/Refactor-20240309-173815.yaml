@@ -1,0 +1,3 @@
+kind: Refactor
+body: Cacher now must be instantiated using `NewCacher()`, is no longer a global var
+time: 2024-03-09T17:38:15.725564-05:00

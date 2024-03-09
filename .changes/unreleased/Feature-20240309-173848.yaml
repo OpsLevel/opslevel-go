@@ -1,0 +1,3 @@
+kind: Feature
+body: Allow passing in a `zerolog.Logger` to be used by the cache
+time: 2024-03-09T17:38:48.627274-05:00
