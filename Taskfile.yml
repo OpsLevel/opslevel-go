@@ -30,7 +30,6 @@ tasks:
       - gofumpt -w .
       - go mod tidy
       - golangci-lint run --fix
-      - nilaway -fix -test=false -include-pkgs='github.com/opslevel/opslevel-go' ./...
 
   setup:
     desc: Setup linter, formatter, etc. for local testing and CI

@@ -3,6 +3,8 @@ package opslevel_test
 import (
 	"testing"
 
+	"github.com/rs/zerolog/log"
+
 	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
@@ -73,44 +75,45 @@ func TestCache(t *testing.T) {
 	client2 := BestTestClient(t, "cache2", requests...)
 
 	// Act
-	ol.Cache.CacheAll(client1)
+	cache := ol.NewCacher(&log.Logger)
+	cache.CacheAll(client1)
 
-	ol.Cache.CacheTiers(client2)
-	ol.Cache.CacheLifecycles(client2)
-	ol.Cache.CacheTeams(client2)
-	ol.Cache.CacheCategories(client2)
-	ol.Cache.CacheLevels(client2)
-	ol.Cache.CacheFilters(client2)
-	ol.Cache.CacheIntegrations(client2)
-	ol.Cache.CacheRepositories(client2)
-	ol.Cache.CacheInfraSchemas(client2)
+	cache.CacheTiers(client2)
+	cache.CacheLifecycles(client2)
+	cache.CacheTeams(client2)
+	cache.CacheCategories(client2)
+	cache.CacheLevels(client2)
+	cache.CacheFilters(client2)
+	cache.CacheIntegrations(client2)
+	cache.CacheRepositories(client2)
+	cache.CacheInfraSchemas(client2)
 
-	tier1, tier1Ok := ol.Cache.TryGetTier("example")
-	tier2, tier2Ok := ol.Cache.TryGetTier("does_not_exist")
+	tier1, tier1Ok := cache.TryGetTier("example")
+	tier2, tier2Ok := cache.TryGetTier("does_not_exist")
 
-	lifecycle1, lifecycle1Ok := ol.Cache.TryGetLifecycle("example")
-	lifecycle2, lifecycle2Ok := ol.Cache.TryGetLifecycle("does_not_exist")
+	lifecycle1, lifecycle1Ok := cache.TryGetLifecycle("example")
+	lifecycle2, lifecycle2Ok := cache.TryGetLifecycle("does_not_exist")
 
-	team1, team1Ok := ol.Cache.TryGetTeam("example")
-	team2, team2Ok := ol.Cache.TryGetTeam("does_not_exist")
+	team1, team1Ok := cache.TryGetTeam("example")
+	team2, team2Ok := cache.TryGetTeam("does_not_exist")
 
-	category1, category1Ok := ol.Cache.TryGetCategory("example")
-	category2, category2Ok := ol.Cache.TryGetCategory("does_not_exist")
+	category1, category1Ok := cache.TryGetCategory("example")
+	category2, category2Ok := cache.TryGetCategory("does_not_exist")
 
-	level1, level1Ok := ol.Cache.TryGetLevel("example")
-	level2, level2Ok := ol.Cache.TryGetLevel("does_not_exist")
+	level1, level1Ok := cache.TryGetLevel("example")
+	level2, level2Ok := cache.TryGetLevel("does_not_exist")
 
-	filter1, filter1Ok := ol.Cache.TryGetFilter("example")
-	filter2, filter2Ok := ol.Cache.TryGetFilter("does_not_exist")
+	filter1, filter1Ok := cache.TryGetFilter("example")
+	filter2, filter2Ok := cache.TryGetFilter("does_not_exist")
 
-	integration1, integration1Ok := ol.Cache.TryGetIntegration("deploy-example")
-	integration2, integration2Ok := ol.Cache.TryGetIntegration("does_not_exist")
+	integration1, integration1Ok := cache.TryGetIntegration("deploy-example")
+	integration2, integration2Ok := cache.TryGetIntegration("does_not_exist")
 
-	repository1, repository1Ok := ol.Cache.TryGetRepository("github.com:rocktavious/autopilot")
-	repository2, repository2Ok := ol.Cache.TryGetRepository("does_not_exist")
+	repository1, repository1Ok := cache.TryGetRepository("github.com:rocktavious/autopilot")
+	repository2, repository2Ok := cache.TryGetRepository("does_not_exist")
 
-	infraSchema1, infraSchema1OK := ol.Cache.TryGetInfrastructureSchema("Database")
-	infraSchema2, infraSchema2Ok := ol.Cache.TryGetInfrastructureSchema("does_not_exist")
+	infraSchema1, infraSchema1OK := cache.TryGetInfrastructureSchema("Database")
+	infraSchema2, infraSchema2Ok := cache.TryGetInfrastructureSchema("does_not_exist")
 
 	// Assert
 	autopilot.Equals(t, true, tier1Ok)
