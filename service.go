@@ -85,23 +85,6 @@ func (service *Service) HasTool(category ToolCategory, name string, environment 
 	return false
 }
 
-func (service *Service) GetSystem(client *Client) (*Identifier, error) {
-	var q struct {
-		Account struct {
-			Service struct {
-				Parent *Identifier `graphql:"parent"`
-			} `graphql:"service(id: $service)"`
-		}
-	}
-	v := PayloadVariables{
-		"service": *NewIdentifier(string(service.Id)),
-	}
-	if err := client.Query(&q, v, WithName("ServiceGetSystem")); err != nil {
-		return nil, err
-	}
-	return q.Account.Service.Parent, nil
-}
-
 func (service *Service) Hydrate(client *Client) error {
 	if service.Tags == nil {
 		service.Tags = &TagConnection{}
