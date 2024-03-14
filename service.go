@@ -11,6 +11,7 @@ type ServiceId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
+// TODO: Lifecycle, TeamId, Tier should probably be pointers.
 type Service struct {
 	ApiDocumentPath string `json:"apiDocumentPath,omitempty"`
 	Description     string `json:"description,omitempty"`
@@ -22,6 +23,7 @@ type Service struct {
 	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
 	Name                       string                       `json:"name,omitempty"`
 	Owner                      TeamId                       `json:"owner,omitempty"`
+	Parent                     *SystemId                    `json:"parent,omitempty" graphql:"parent"`
 	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
 	PreferredApiDocumentSource *ApiDocumentSourceEnum       `json:"preferredApiDocumentSource,omitempty"`
 	Product                    string                       `json:"product,omitempty"`
