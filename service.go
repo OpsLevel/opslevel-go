@@ -22,7 +22,7 @@ type Service struct {
 	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
 	Name                       string                       `json:"name,omitempty"`
 	Owner                      TeamId                       `json:"owner,omitempty"`
-	Parent                     *Identifier                  `json:"parent,omitempty" graphql:"parent"`
+	Parent                     *SystemId                    `json:"parent,omitempty" graphql:"parent"`
 	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
 	PreferredApiDocumentSource *ApiDocumentSourceEnum       `json:"preferredApiDocumentSource,omitempty"`
 	Product                    string                       `json:"product,omitempty"`
