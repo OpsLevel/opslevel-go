@@ -523,6 +523,10 @@ func TestGetService(t *testing.T) {
           "alias": "developers",
           "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
         },
+		"parent": {
+          "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzExOTc",
+          "aliases": ["just_updated_this_with_an_alias","taimoor_s_orange_system","update_2_lol"]
+		},
         "preferredApiDocument": {
           "id": "Z2lkOi8vb3BzbGV2ZWwvRG9jdW1lbnRzOjpBcGkvOTU0MQ",
           "htmlUrl": null,
@@ -658,6 +662,8 @@ func TestGetService(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, len(result.Aliases))
+	autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzExOTc", string(result.Parent.Id))
+	autopilot.Equals(t, []string{"just_updated_this_with_an_alias", "taimoor_s_orange_system", "update_2_lol"}, result.Parent.Aliases)
 	autopilot.Equals(t, "alpha", result.Lifecycle.Alias)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
 	autopilot.Equals(t, "tier_1", result.Tier.Alias)
