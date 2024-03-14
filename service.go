@@ -11,6 +11,7 @@ type ServiceId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
+// TODO: Lifecycle, TeamId, Tier should probably be pointers.
 type Service struct {
 	ApiDocumentPath string `json:"apiDocumentPath,omitempty"`
 	Description     string `json:"description,omitempty"`
