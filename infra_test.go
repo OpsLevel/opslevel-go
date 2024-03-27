@@ -146,6 +146,7 @@ func TestUpdateInfra(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, string(id1), result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
+	autopilot.Equals(t, "Database", result.Schema)
 }
 
 func TestDeleteInfra(t *testing.T) {
