@@ -201,7 +201,8 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (*Infrastr
 
 func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) (*InfrastructureResource, error) {
 	i := InfrastructureResourceInput{
-		Data: input.Data,
+		Data:   input.Data,
+		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
 	}
 	if input.Owner != nil {
 		i.OwnerId = input.Owner
