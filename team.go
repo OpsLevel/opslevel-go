@@ -9,7 +9,10 @@ import (
 type Contact struct {
 	Address     string
 	DisplayName string
+	DisplayType string
+	ExternalId  string
 	Id          ID
+	IsDefault   bool
 	Type        ContactType
 }
 
