@@ -2,23 +2,32 @@
 {
 "address": "{{ template "email1" }}",
 "displayName": "Email",
+"displayType": "Primary",
+"externalId": null,
 {{ template "id1" }},
+"isDefault": true,
 "type": "email"
 }
 {{ end }}
 {{- define "contact_2" }}
 {
-"address": "{{ template "email2" }}",
-"displayName": "Email",
+"address": "#engineering",
+"displayName": "Slack Channel",
+"displayType": "Secondary",
+"externalId": "CN689A229",
 {{ template "id2" }},
-"type": "email"
+"isDefault": true,
+"type": "slack"
 }
 {{ end }}
 {{- define "contact_3" }}
 {
-"address": "{{ template "email3" }}",
-"displayName": "Email",
+"address": "#marketing",
+"displayName": "Slack",
+"displayType": null,
+"externalId": null,
 {{ template "id3" }},
-"type": "email"
+"isDefault": false,
+"type": "slack"
 }
 {{ end }}
