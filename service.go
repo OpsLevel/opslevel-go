@@ -379,6 +379,39 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 	return &q.Account.Services, nil
 }
 
+func (client *Client) ListServicesWithFilter(filterIdentifier string, variables *PayloadVariables) (*ServiceConnection, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(filterIdentifier: $filter, after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["filter"] = *NewIdentifier(filterIdentifier)
+
+	if err := client.Query(&q, *variables, WithName("ServiceListWithFilterIdentifier")); err != nil {
+		return nil, err
+	}
+
+	for q.Account.Services.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Services.PageInfo.End
+		resp, err := client.ListServicesWithFilter(filterIdentifier, variables)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return nil, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
+		q.Account.Services.PageInfo = resp.PageInfo
+		q.Account.Services.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Services, nil
+}
+
 func (client *Client) ListServicesWithFramework(framework string, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
