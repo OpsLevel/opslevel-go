@@ -391,7 +391,7 @@ func (client *Client) ListServicesWithFilterId(filterId string, variables *Paylo
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["filter"] = filterId
+	(*variables)["filter"] = NewIdentifier(filterId)
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithFilterId")); err != nil {
 		return nil, err
