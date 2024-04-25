@@ -385,7 +385,7 @@ func (client *Client) ListServicesWithFilterId(filterId string, variables *Paylo
 	}
 	var q struct {
 		Account struct {
-			Services ServiceConnection `graphql:"services(filterId: $filter, after: $after, first: $first)"`
+			Services ServiceConnection `graphql:"services(filterIdentifier: $filter, after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {
