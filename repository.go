@@ -270,7 +270,7 @@ func (client *Client) GetRepository(id ID) (*Repository, error) {
 func (client *Client) ListRepositories(variables *PayloadVariables) (*RepositoryConnection, error) {
 	var q struct {
 		Account struct {
-			Repositories RepositoryConnection `graphql:"repositories(after: $after, first: $first)"`
+			Repositories RepositoryConnection `graphql:"repositories(after: $after, first: $first, visible: $visible)"`
 		}
 	}
 	if variables == nil {
