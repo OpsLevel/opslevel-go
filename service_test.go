@@ -739,7 +739,7 @@ func TestListServicesWithFilter(t *testing.T) {
 
 	client := BestTestClient(t, "service/list_with_filter", requests...)
 	// Act
-	response, err := client.ListServicesWithFilterId(string(id1), nil)
+	response, err := client.ListServicesWithFilter(string(id1), nil)
 	result := response.Nodes
 	// Assert
 	autopilot.Ok(t, err)

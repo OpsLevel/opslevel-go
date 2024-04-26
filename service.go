@@ -379,9 +379,9 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithFilterId(filterId string, variables *PayloadVariables) (*ServiceConnection, error) {
-	if !IsID(filterId) {
-		return nil, fmt.Errorf("filterId must be an ID. Given: '%s'", filterId)
+func (client *Client) ListServicesWithFilter(filterIdentifier string, variables *PayloadVariables) (*ServiceConnection, error) {
+	if !IsID(filterIdentifier) {
+		return nil, fmt.Errorf("filterId must be an ID. Given: '%s'", filterIdentifier)
 	}
 	var q struct {
 		Account struct {
@@ -391,7 +391,7 @@ func (client *Client) ListServicesWithFilterId(filterId string, variables *Paylo
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["filter"] = NewIdentifier(filterId)
+	(*variables)["filter"] = NewIdentifier(filterIdentifier)
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithFilterId")); err != nil {
 		return nil, err
@@ -399,7 +399,7 @@ func (client *Client) ListServicesWithFilterId(filterId string, variables *Paylo
 
 	for q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
-		resp, err := client.ListServicesWithFilterId(filterId, variables)
+		resp, err := client.ListServicesWithFilter(filterIdentifier, variables)
 		if err != nil {
 			return nil, err
 		}
