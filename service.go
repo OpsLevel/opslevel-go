@@ -393,7 +393,7 @@ func (client *Client) ListServicesWithFilter(filterIdentifier string, variables 
 	}
 	(*variables)["filter"] = NewIdentifier(filterIdentifier)
 
-	if err := client.Query(&q, *variables, WithName("ServiceListWithFilterId")); err != nil {
+	if err := client.Query(&q, *variables, WithName("ServiceListWithFilter")); err != nil {
 		return nil, err
 	}
 
