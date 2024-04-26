@@ -380,6 +380,9 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 }
 
 func (client *Client) ListServicesWithFilter(filterIdentifier string, variables *PayloadVariables) (*ServiceConnection, error) {
+	if !IsID(filterIdentifier) {
+		return nil, fmt.Errorf("filterId must be an ID. Given: '%s'", filterIdentifier)
+	}
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(filterIdentifier: $filter, after: $after, first: $first)"`
@@ -388,9 +391,9 @@ func (client *Client) ListServicesWithFilter(filterIdentifier string, variables 
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["filter"] = *NewIdentifier(filterIdentifier)
+	(*variables)["filter"] = NewIdentifier(filterIdentifier)
 
-	if err := client.Query(&q, *variables, WithName("ServiceListWithFilterIdentifier")); err != nil {
+	if err := client.Query(&q, *variables, WithName("ServiceListWithFilter")); err != nil {
 		return nil, err
 	}
 
