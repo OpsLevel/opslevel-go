@@ -28,6 +28,7 @@ type Service struct {
 	PreferredApiDocumentSource *ApiDocumentSourceEnum       `json:"preferredApiDocumentSource,omitempty"`
 	Product                    string                       `json:"product,omitempty"`
 	Repositories               *ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
+	Repository                 *ServiceRepository           `graphql:"defaultServiceRepository" json:"defaultServiceRepository"`
 	Tags                       *TagConnection               `json:"tags,omitempty"`
 	Tier                       Tier                         `json:"tier,omitempty"`
 	Timestamps                 Timestamps                   `json:"timestamps"`
