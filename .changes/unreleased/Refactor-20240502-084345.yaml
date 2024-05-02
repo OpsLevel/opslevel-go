@@ -1,3 +1,3 @@
 kind: Refactor
-body: update "Usage" field in Repository struct. Was float32, is now float64
+body: BREAKING - update "Usage" field in Repository struct. Was float32, is now float64
 time: 2024-05-02T08:43:45.128124-05:00
