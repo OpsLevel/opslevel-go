@@ -9,7 +9,7 @@ import (
 
 type Language struct {
 	Name  string
-	Usage float32
+	Usage float64
 }
 
 type RepositoryId struct {
