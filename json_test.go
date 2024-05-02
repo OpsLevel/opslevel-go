@@ -228,7 +228,7 @@ func TestUnmarshalJSONString(t *testing.T) {
 	result3, result3Err := ol.NewJSONInput(data3)
 	result4, result4Err := ol.NewJSONInput(data4)
 	result5, result5Err := ol.NewJSONInput(data5)
-	_, err := ol.JsonStringAs[float32](*result1)
+	_, err := ol.JsonStringAs[float64](*result1)
 	// Assert
 	autopilot.Ok(t, result1Err)
 	autopilot.Ok(t, result1aErr)
@@ -244,5 +244,5 @@ func TestUnmarshalJSONString(t *testing.T) {
 	autopilot.Equals(t, data3, result3.AsString())
 	autopilot.Equals(t, data4, result4.AsArray())
 	autopilot.Equals(t, data5, result5.AsMap())
-	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float32")
+	autopilot.Assert(t, err != nil, "The JSON string of type bool should be unable to unmarshalled into a float64")
 }

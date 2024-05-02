@@ -1278,7 +1278,7 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 	case objectName == "InfrastructureResourceSchema" && lowercaseFieldName == "schema":
 		return "JSON"
 	case objectName == "Language" && lowercaseFieldName == "usage":
-		return "float32"
+		return "float64"
 	case objectName == "Repository":
 		switch lowercaseFieldName {
 		case "languages":
