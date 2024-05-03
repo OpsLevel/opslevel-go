@@ -31,6 +31,7 @@ type Timestamps struct {
 	UpdatedAt iso8601.Time `json:"updatedAt"`
 }
 
+// TODO: replace me with optional string
 func NullString() *string {
 	var output *string
 	return output

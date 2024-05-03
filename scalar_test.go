@@ -221,3 +221,44 @@ func TestNewIdentifierArray(t *testing.T) {
 	autopilot.Equals(t, "my-service", *result[0].Alias)
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id)
 }
+
+func TestOptionalString(t *testing.T) {
+	type TestCase struct {
+		Name         string
+		Input        string
+		OutputBuffer string
+	}
+	testCases := []TestCase{
+		{
+			Name:         "empty input",
+			Input:        "",
+			OutputBuffer: `null`,
+		},
+		{
+			Name:         "spaces",
+			Input:        "              ",
+			OutputBuffer: `"              "`,
+		},
+		{
+			Name:         "the string null",
+			Input:        "null",
+			OutputBuffer: `"null"`,
+		},
+		{
+			Name:         "simple hello world",
+			Input:        "hello world",
+			OutputBuffer: `"hello world"`,
+		},
+		{
+			Name:         "quoted hello world",
+			Input:        `"hello world"`,
+			OutputBuffer: `"\"hello world\""`,
+		},
+	}
+
+	for _, testCase := range testCases {
+		buf, err := json.Marshal(ol.NewOptionalString(testCase.Input))
+		autopilot.Ok(t, err)
+		autopilot.Equals(t, testCase.OutputBuffer, string(buf))
+	}
+}

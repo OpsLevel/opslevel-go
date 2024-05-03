@@ -663,6 +663,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
+// DEPRECATED: use NewUpdateService
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
 		Payload struct {
@@ -670,6 +671,27 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 			Errors  []OpsLevelErrors
 		} `graphql:"serviceUpdate(input: $input)"`
 	}
+
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v, WithName("ServiceUpdate")); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Service.Hydrate(client); err != nil {
+		return &m.Payload.Service, err
+	}
+	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) NewUpdateService(input NewServiceUpdateInput) (*Service, error) {
+	var m struct {
+		Payload struct {
+			Service Service
+			Errors  []OpsLevelErrors
+		} `graphql:"serviceUpdate(input: $input)"`
+	}
+
 	v := PayloadVariables{
 		"input": input,
 	}
