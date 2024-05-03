@@ -1,7 +1,17 @@
 package opslevel
 
 // ServiceUpdater exists for backwards compatability between ServiceUpdateInput and ServiceUpdateInputV2
-type ServiceUpdater interface{}
+type ServiceUpdater interface {
+	updatesService() bool // exists only to restrict which types qualify as a ServiceUpdater
+}
+
+func (inputType ServiceUpdateInput) updatesService() bool {
+	return true
+}
+
+func (inputType ServiceUpdateInputV2) updatesService() bool {
+	return true
+}
 
 // ServiceUpdateInputV2 enables setting fields like Framework and foreign keys like TierAlias to `null`
 type ServiceUpdateInputV2 struct {
