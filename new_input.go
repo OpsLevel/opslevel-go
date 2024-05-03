@@ -1,5 +1,9 @@
 package opslevel
 
+// ServiceUpdater exists for backwards compatability between ServiceUpdateInput and ServiceUpdateInputV2
+type ServiceUpdater interface{}
+
+// ServiceUpdateInputV2 enables setting fields like Framework and foreign keys like TierAlias to `null`
 type ServiceUpdateInputV2 struct {
 	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service. (Optional.)
 	Id                    *ID              `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the service to be updated. (Optional.)

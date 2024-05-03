@@ -75,19 +75,25 @@ func IsID(value string) bool {
 	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-type OptionalString string
+// OptionalString is implemented using a bool indicating whether the field should be unset, this is required for
+// backwards compatability so that we can still differentiate between "" and nil
+type OptionalString struct {
+	Value   string
+	SetNull bool
+}
 
+// NewOptionalString will create an optional string provided an input string, if no input string is provided the result
+// will json marshal into `null`
 func NewOptionalString(input ...string) *OptionalString {
-	var output OptionalString
 	if len(input) == 1 {
-		output = OptionalString(input[0])
+		return &OptionalString{Value: input[0]}
 	}
-	return &output
+	return &OptionalString{SetNull: true}
 }
 
 func (optionalString *OptionalString) MarshalJSON() ([]byte, error) {
-	if *optionalString == "" {
+	if optionalString.SetNull {
 		return []byte("null"), nil
 	}
-	return []byte(strconv.Quote(string(*optionalString))), nil
+	return []byte(strconv.Quote(optionalString.Value)), nil
 }

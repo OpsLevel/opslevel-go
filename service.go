@@ -663,31 +663,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-// DEPRECATED: use UpdateServiceV2
-// TODO: don't deprecate this
-// change the input to be an INTERFACE, so that the old input type is also valid
-// write tests to ensure backwards compat.
-func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
-	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceUpdate(input: $input)"`
-	}
-
-	v := PayloadVariables{
-		"input": input,
-	}
-	if err := client.Mutate(&m, v, WithName("ServiceUpdate")); err != nil {
-		return nil, err
-	}
-	if err := m.Payload.Service.Hydrate(client); err != nil {
-		return &m.Payload.Service, err
-	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
-}
-
-func (client *Client) UpdateServiceV2(input ServiceUpdateInputV2) (*Service, error) {
+func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
 	var m struct {
 		Payload struct {
 			Service Service

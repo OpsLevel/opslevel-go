@@ -230,12 +230,12 @@ func TestOptionalString(t *testing.T) {
 	}
 	testCases := []TestCase{
 		{
-			Name:         "empty input",
+			Name:         "empty string",
 			Input:        "",
-			OutputBuffer: `null`,
+			OutputBuffer: `""`,
 		},
 		{
-			Name:         "spaces",
+			Name:         "spaces string",
 			Input:        "              ",
 			OutputBuffer: `"              "`,
 		},
@@ -245,12 +245,12 @@ func TestOptionalString(t *testing.T) {
 			OutputBuffer: `"null"`,
 		},
 		{
-			Name:         "simple hello world",
+			Name:         "simple hello world string",
 			Input:        "hello world",
 			OutputBuffer: `"hello world"`,
 		},
 		{
-			Name:         "quoted hello world",
+			Name:         "quoted hello world string",
 			Input:        `"hello world"`,
 			OutputBuffer: `"\"hello world\""`,
 		},
@@ -261,4 +261,9 @@ func TestOptionalString(t *testing.T) {
 		autopilot.Ok(t, err)
 		autopilot.Equals(t, testCase.OutputBuffer, string(buf))
 	}
+
+	// for when field needs to be unset
+	buf, err := json.Marshal(ol.NewOptionalString())
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, `null`, string(buf))
 }
