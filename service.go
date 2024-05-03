@@ -663,7 +663,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-// DEPRECATED: use NewUpdateService
+// DEPRECATED: use UpdateServiceV2
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
 		Payload struct {
@@ -684,7 +684,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
 
-func (client *Client) NewUpdateService(input NewServiceUpdateInput) (*Service, error) {
+func (client *Client) UpdateServiceV2(input ServiceUpdateInputV2) (*Service, error) {
 	var m struct {
 		Payload struct {
 			Service Service

@@ -1,6 +1,6 @@
 package opslevel
 
-type NewServiceUpdateInput struct {
+type ServiceUpdateInputV2 struct {
 	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service. (Optional.)
 	Id                    *ID              `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the service to be updated. (Optional.)
 	Alias                 *OptionalString  `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_alias"`                         // The alias of the service to be updated. (Optional.)

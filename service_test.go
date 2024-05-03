@@ -286,7 +286,7 @@ func TestUpdateService(t *testing.T) {
 func TestNewUpdateService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceUpdate($input:NewServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
+		`mutation ServiceUpdate($input:ServiceUpdateInputV2!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
 		`{"input":{"id": "123456789"}}`,
 		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
@@ -294,7 +294,7 @@ func TestNewUpdateService(t *testing.T) {
 	client := BestTestClient(t, "service/new_update", testRequest)
 
 	// Act
-	result, err := client.NewUpdateService(ol.NewServiceUpdateInput{
+	result, err := client.UpdateServiceV2(ol.ServiceUpdateInputV2{
 		Id: ol.NewID("123456789"),
 	})
 
@@ -327,7 +327,7 @@ func TestUpdateServiceWithSystem(t *testing.T) {
 func TestNewUpdateServiceWithFields(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceUpdate($input:NewServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
+		`mutation ServiceUpdate($input:ServiceUpdateInputV2!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
 		`{"input":{"id": "123456789", "language": null, "lifecycleAlias": "pre-alpha", "parent": {"alias": "FooSystem"}, "tierAlias": null}}`,
 		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 	)
@@ -335,7 +335,7 @@ func TestNewUpdateServiceWithFields(t *testing.T) {
 	client := BestTestClient(t, "service/new_update_with_fields", testRequest)
 
 	// Act
-	result, err := client.NewUpdateService(ol.NewServiceUpdateInput{
+	result, err := client.UpdateServiceV2(ol.ServiceUpdateInputV2{
 		Framework:      nil, // will do nothing - not included in request body
 		Id:             ol.NewID("123456789"),
 		Language:       ol.NewNullString(), // will unset the field - becomes `null` in request body

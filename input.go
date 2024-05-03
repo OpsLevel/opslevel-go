@@ -864,7 +864,7 @@ type ServiceRepositoryUpdateInput struct {
 	DisplayName   *string `json:"displayName,omitempty" yaml:"displayName,omitempty" example:"example_name"`            // The name displayed in the UI for the service repository. (Optional.)
 }
 
-// DEPRECATED: use NewServiceUpdateInput
+// DEPRECATED: use ServiceUpdateInputV2
 type ServiceUpdateInput struct {
 	Parent                *IdentifierInput `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service. (Optional.)
 	Id                    *ID              `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the service to be updated. (Optional.)
