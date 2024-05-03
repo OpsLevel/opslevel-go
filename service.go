@@ -1,7 +1,6 @@
 package opslevel
 
 import (
-	"encoding/json"
 	"fmt"
 	"slices"
 	"strings"
@@ -673,21 +672,8 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 		} `graphql:"serviceUpdate(input: $input)"`
 	}
 
-	var payload PayloadVariables
-	var err error
-	inputBytes, err := json.Marshal(input)
-	err = json.Unmarshal(inputBytes, &payload)
-	fmt.Println(err)
-
-	if lifecycle, ok := payload["lifecycleAlias"]; ok && lifecycle == "" {
-		payload["lifecycleAlias"] = NullString()
-	}
-	if tier, ok := payload["tierAlias"]; ok && tier == "" {
-		payload["tierAlias"] = NullString()
-	}
-
 	v := PayloadVariables{
-		"input": payload,
+		"input": input,
 	}
 	if err := client.Mutate(&m, v, WithName("ServiceUpdate")); err != nil {
 		return nil, err

@@ -324,31 +324,6 @@ func TestUpdateServiceWithSystem(t *testing.T) {
 	autopilot.Equals(t, "Foo", result.Name)
 }
 
-func TestNewUpdateServiceTestNull(t *testing.T) {
-	// Arrange
-	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
-		`{"input":{"id": "123456789", "language": "", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`,
-		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
-	)
-
-	client := BestTestClient(t, "service/new_update_with_fields", testRequest)
-
-	// Act
-	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Framework:      nil, // will do nothing - not included in request body
-		Id:             ol.NewID("123456789"),
-		Language:       ol.RefOf(""),       // should be unset
-		LifecycleAlias: ol.RefOf(""),       // should be unset
-		Parent:         ol.NewIdentifier(), // should be unset
-		TierAlias:      ol.RefOf(""),       // should be unset
-	})
-
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Foo", result.Name)
-}
-
 func TestNewUpdateServiceWithFields(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
