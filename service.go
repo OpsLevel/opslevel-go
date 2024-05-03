@@ -664,6 +664,9 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 }
 
 // DEPRECATED: use UpdateServiceV2
+// TODO: don't deprecate this
+// change the input to be an INTERFACE, so that the old input type is also valid
+// write tests to ensure backwards compat.
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
 		Payload struct {

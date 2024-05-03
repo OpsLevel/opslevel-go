@@ -14,3 +14,7 @@ type ServiceUpdateInputV2 struct {
 	LifecycleAlias        *OptionalString  `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" example:"example_alias"`       // The lifecycle stage of the service. (Optional.)
 	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows updating a service with invalid aliases. (Optional.)
 }
+
+func (inputType ServiceUpdateInputV2) GetGraphQLType() string {
+	return "ServiceUpdateInput"
+}

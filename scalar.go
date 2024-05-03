@@ -75,29 +75,19 @@ func IsID(value string) bool {
 	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-type OptionalString struct {
-	Value   string
-	SetNull bool
+type OptionalString string
+
+func NewOptionalString(input ...string) *OptionalString {
+	var output OptionalString
+	if len(input) == 1 {
+		output = OptionalString(input[0])
+	}
+	return &output
 }
 
-func NewNullString() *OptionalString {
-	return &OptionalString{
-		SetNull: true,
-	}
-}
-
-func NewOptionalString(input string) *OptionalString {
-	if input == "" {
-		return NewNullString()
-	}
-	return &OptionalString{
-		Value: input,
-	}
-}
-
-func (optionalString OptionalString) MarshalJSON() ([]byte, error) {
-	if optionalString.SetNull {
+func (optionalString *OptionalString) MarshalJSON() ([]byte, error) {
+	if *optionalString == "" {
 		return []byte("null"), nil
 	}
-	return []byte(strconv.Quote(optionalString.Value)), nil
+	return []byte(strconv.Quote(string(*optionalString))), nil
 }
