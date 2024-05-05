@@ -7,6 +7,26 @@ import (
 	"strings"
 )
 
+// String matches OpsLevel's GraphQL API behavior. Empty strings are JSON marshalled to null.
+type String string
+
+func NewString(value ...string) *String {
+	var output String
+	if len(value) == 1 {
+		output = String(value[0])
+	}
+	return &output
+}
+
+func (s String) GetGraphQLType() string { return "String" }
+
+func (s *String) MarshalJSON() ([]byte, error) {
+	if *s == "" {
+		return []byte("null"), nil
+	}
+	return []byte(strconv.Quote(string(*s))), nil
+}
+
 type ID string
 
 func NewID(id ...string) *ID {
