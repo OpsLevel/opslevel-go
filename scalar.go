@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -75,25 +76,28 @@ func IsID(value string) bool {
 	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-// NullableString is implemented using a bool indicating whether the field should be unset, this is required for
-// backwards compatability so that we can still differentiate between "" and nil
-type NullableString struct {
-	Value   string
+// NullableValue can be used to unset a value using an OpsLevel input struct type, should always be instantiated using a constructor.
+type NullableValue[T any] struct {
+	Value   T
 	SetNull bool
 }
 
-// NewNullableString will create an optional string provided an input string, if no input string is provided the result
-// will json marshal into `null`
-func NewNullableString(input ...string) *NullableString {
-	if len(input) == 1 {
-		return &NullableString{Value: input[0]}
-	}
-	return &NullableString{SetNull: true}
-}
-
-func (nullableString *NullableString) MarshalJSON() ([]byte, error) {
-	if nullableString.SetNull {
+func (nullableValue NullableValue[T]) MarshalJSON() ([]byte, error) {
+	if nullableValue.SetNull {
 		return []byte("null"), nil
 	}
-	return []byte(strconv.Quote(nullableString.Value)), nil
+	return json.Marshal(nullableValue.Value)
+}
+
+func NewNullValue[T any]() *NullableValue[T] {
+	return &NullableValue[T]{
+		SetNull: true,
+	}
+}
+
+func NewNullableValue[T any](value T, setNull bool) *NullableValue[T] {
+	return &NullableValue[T]{
+		Value:   value,
+		SetNull: setNull,
+	}
 }

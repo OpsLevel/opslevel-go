@@ -2,7 +2,10 @@ package opslevel_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
+
+	"github.com/relvacode/iso8601"
 
 	"github.com/hasura/go-graphql-client"
 
@@ -222,48 +225,145 @@ func TestNewIdentifierArray(t *testing.T) {
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id)
 }
 
-func TestNullableString(t *testing.T) {
+func TestNullValueString(t *testing.T) {
+	buf, err := json.Marshal(ol.NewNullValue[string]())
+	if err != nil {
+		t.Errorf("got unexpected error: '%+v'", err)
+	}
+	if string(buf) != "null" {
+		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
+	}
+}
+
+func TestNullValueBool(t *testing.T) {
+	buf, err := json.Marshal(ol.NewNullValue[bool]())
+	if err != nil {
+		t.Errorf("got unexpected error: '%+v'", err)
+	}
+	if string(buf) != "null" {
+		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
+	}
+}
+
+func TestNullValueInt(t *testing.T) {
+	buf, err := json.Marshal(ol.NewNullValue[int]())
+	if err != nil {
+		t.Errorf("got unexpected error: '%+v'", err)
+	}
+	if string(buf) != "null" {
+		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
+	}
+}
+
+func TestNullValueTime(t *testing.T) {
+	buf, err := json.Marshal(ol.NewNullValue[iso8601.Time]())
+	if err != nil {
+		t.Errorf("got unexpected error: '%+v'", err)
+	}
+	if string(buf) != "null" {
+		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
+	}
+}
+
+func TestNewNullableValue(t *testing.T) {
 	type TestCase struct {
 		Name         string
-		Input        string
+		Value        any
+		SetNull      bool
 		OutputBuffer string
 	}
 	testCases := []TestCase{
+		// string
 		{
 			Name:         "empty string",
-			Input:        "",
+			Value:        "",
+			SetNull:      false,
 			OutputBuffer: `""`,
 		},
 		{
-			Name:         "spaces string",
-			Input:        "              ",
-			OutputBuffer: `"              "`,
-		},
-		{
-			Name:         "the string null",
-			Input:        "null",
-			OutputBuffer: `"null"`,
-		},
-		{
-			Name:         "simple hello world string",
-			Input:        "hello world",
+			Name:         "hello world string",
+			Value:        "hello world",
+			SetNull:      false,
 			OutputBuffer: `"hello world"`,
 		},
 		{
-			Name:         "quoted hello world string",
-			Input:        `"hello world"`,
-			OutputBuffer: `"\"hello world\""`,
+			Name:         "non-empty string (but marked as null, value should be ignored)",
+			Value:        "hello world set me to null",
+			SetNull:      true,
+			OutputBuffer: `null`,
+		},
+
+		// bool
+		{
+			Name:         "bool false",
+			Value:        false,
+			SetNull:      false,
+			OutputBuffer: `false`,
+		},
+		{
+			Name:         "bool true",
+			Value:        true,
+			SetNull:      false,
+			OutputBuffer: `true`,
+		},
+		{
+			Name:         "bool true (as null)",
+			Value:        true,
+			SetNull:      true,
+			OutputBuffer: `null`,
+		},
+
+		// int
+		{
+			Name:         "integer 0",
+			Value:        0,
+			SetNull:      false,
+			OutputBuffer: `0`,
+		},
+		{
+			Name:         "integer 16",
+			Value:        16,
+			SetNull:      false,
+			OutputBuffer: `16`,
+		},
+		{
+			Name:         "integer 32 (as null)",
+			Value:        32,
+			SetNull:      true,
+			OutputBuffer: `null`,
+		},
+
+		// iso8601.Time
+		{
+			Name:         "zero value of date",
+			Value:        iso8601.Time{},
+			SetNull:      false,
+			OutputBuffer: `"0001-01-01T00:00:00Z"`,
+		},
+		{
+			Name:         "valid date",
+			Value:        ol.NewISO8601Date("2024-05-06T14:26:19.204501-04:00"),
+			SetNull:      false,
+			OutputBuffer: `"2024-05-06T14:26:19.204501-04:00"`,
+		},
+		{
+			Name:         "valid date (as null)",
+			Value:        ol.NewISO8601DateNow(),
+			SetNull:      true,
+			OutputBuffer: `null`,
 		},
 	}
 
 	for _, testCase := range testCases {
-		buf, err := json.Marshal(ol.NewNullableString(testCase.Input))
-		autopilot.Ok(t, err)
-		autopilot.Equals(t, testCase.OutputBuffer, string(buf))
+		testName := fmt.Sprintf("%s with args (%+v, %t)", testCase.Name, testCase.Value, testCase.SetNull)
+		t.Run(testName, func(t *testing.T) {
+			buf, err := json.Marshal(ol.NewNullableValue(testCase.Value, testCase.SetNull))
+			if err != nil {
+				t.Errorf("got unexpected error: '%+v'", err)
+			}
+			if string(buf) != testCase.OutputBuffer {
+				t.Errorf("got unexpected output: '%s' (expected '%s')", string(buf), testCase.OutputBuffer)
+			}
+		})
 	}
-
-	// for when field needs to be unset
-	buf, err := json.Marshal(ol.NewNullableString())
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, `null`, string(buf))
 }
