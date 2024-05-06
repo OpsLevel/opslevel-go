@@ -294,11 +294,11 @@ func TestUpdateService(t *testing.T) {
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier("some_system"),
 				Id:             ol.NewID("123456789"),
-				Name:           ol.NewNullableValue[string]("Hello World", false),
-				Description:    ol.NewNullableValue("The quick brown fox", false),
-				Framework:      ol.NewNullableValue("django", false),
-				TierAlias:      ol.NewNullableValue("tier_4", false),
-				LifecycleAlias: ol.NewNullableValue("pre-alpha", false),
+				Name:           ol.NewNullableValue[string]("Hello World"),
+				Description:    ol.NewNullableValue("The quick brown fox"),
+				Framework:      ol.NewNullableValue("django"),
+				TierAlias:      ol.NewNullableValue("tier_4"),
+				LifecycleAlias: ol.NewNullableValue("pre-alpha"),
 			},
 		},
 
@@ -310,9 +310,9 @@ func TestUpdateService(t *testing.T) {
 				Parent:         ol.NewIdentifier(),
 				Id:             ol.NewID("123456789"),
 				Description:    ol.NewNullValue[string](),
-				Framework:      ol.NewNullableValue("framework in the request body should be null", true),
-				TierAlias:      ol.NewNullableValue("same", true),
-				LifecycleAlias: ol.NewNullableValue("", true),
+				Framework:      ol.NewNullValue[string](),
+				TierAlias:      ol.NewNullValue[string](),
+				LifecycleAlias: ol.NewNullValue[string](),
 			},
 		},
 
@@ -331,8 +331,8 @@ func TestUpdateService(t *testing.T) {
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInputV2{
 				Id:          ol.NewID("123456789"),
-				Description: ol.NewNullableValue("", false),
-				Framework:   ol.NewNullableValue("", false),
+				Description: ol.NewNullableValue(""),
+				Framework:   ol.NewNullableValue(""),
 			},
 		},
 	}

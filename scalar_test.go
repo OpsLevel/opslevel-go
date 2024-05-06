@@ -269,95 +269,94 @@ func TestNewNullableValue(t *testing.T) {
 	type TestCase struct {
 		Name         string
 		Value        any
-		SetNull      bool
 		OutputBuffer string
 	}
 	testCases := []TestCase{
 		// string
 		{
 			Name:         "empty string",
-			Value:        "",
-			SetNull:      false,
+			Value:        ol.NewNullableValue(""),
 			OutputBuffer: `""`,
 		},
 		{
 			Name:         "hello world string",
-			Value:        "hello world",
-			SetNull:      false,
+			Value:        ol.NewNullableValue("hello world"),
 			OutputBuffer: `"hello world"`,
 		},
 		{
-			Name:         "non-empty string (but marked as null, value should be ignored)",
-			Value:        "hello world set me to null",
-			SetNull:      true,
+			Name: "a string but with set null",
+			Value: ol.NullableValue[string]{
+				Value:   "abc123",
+				SetNull: true,
+			},
 			OutputBuffer: `null`,
 		},
 
 		// bool
 		{
 			Name:         "bool false",
-			Value:        false,
-			SetNull:      false,
+			Value:        ol.NewNullableValue(false),
 			OutputBuffer: `false`,
 		},
 		{
 			Name:         "bool true",
-			Value:        true,
-			SetNull:      false,
+			Value:        ol.NewNullableValue(true),
 			OutputBuffer: `true`,
 		},
 		{
-			Name:         "bool true (as null)",
-			Value:        true,
-			SetNull:      true,
+			Name: "a bool but with set null",
+			Value: ol.NullableValue[bool]{
+				Value:   true,
+				SetNull: true,
+			},
 			OutputBuffer: `null`,
 		},
 
 		// int
 		{
 			Name:         "integer 0",
-			Value:        0,
-			SetNull:      false,
+			Value:        ol.NewNullableValue(0),
 			OutputBuffer: `0`,
 		},
 		{
 			Name:         "integer 16",
-			Value:        16,
-			SetNull:      false,
+			Value:        ol.NewNullableValue(16),
 			OutputBuffer: `16`,
 		},
 		{
-			Name:         "integer 32 (as null)",
-			Value:        32,
-			SetNull:      true,
+			Name: "an integer but with set null",
+			Value: ol.NullableValue[int]{
+				Value:   32,
+				SetNull: true,
+			},
 			OutputBuffer: `null`,
 		},
 
 		// iso8601.Time
 		{
 			Name:         "zero value of date",
-			Value:        iso8601.Time{},
-			SetNull:      false,
+			Value:        ol.NewNullableValue(iso8601.Time{}),
 			OutputBuffer: `"0001-01-01T00:00:00Z"`,
 		},
 		{
 			Name:         "valid date",
-			Value:        ol.NewISO8601Date("2024-05-06T14:26:19.204501-04:00"),
-			SetNull:      false,
+			Value:        ol.NewNullableValue(ol.NewISO8601Date("2024-05-06T14:26:19.204501-04:00")),
 			OutputBuffer: `"2024-05-06T14:26:19.204501-04:00"`,
 		},
 		{
-			Name:         "valid date (as null)",
-			Value:        ol.NewISO8601DateNow(),
-			SetNull:      true,
+			Name: "a date but with set null",
+			Value: ol.NullableValue[iso8601.Time]{
+				Value:   ol.NewISO8601DateNow(),
+				SetNull: true,
+			},
 			OutputBuffer: `null`,
 		},
 	}
 
 	for _, testCase := range testCases {
-		testName := fmt.Sprintf("%s with args (%+v, %t)", testCase.Name, testCase.Value, testCase.SetNull)
+		testName := fmt.Sprintf("%s with input: %+v", testCase.Name, testCase.Value)
 		t.Run(testName, func(t *testing.T) {
-			buf, err := json.Marshal(ol.NewNullableValue(testCase.Value, testCase.SetNull))
+			buf, err := json.Marshal(ol.NewNullableValue(testCase.Value))
 			if err != nil {
 				t.Errorf("got unexpected error: '%+v'", err)
 			}

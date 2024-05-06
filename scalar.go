@@ -95,9 +95,9 @@ func NewNullValue[T any]() *NullableValue[T] {
 	}
 }
 
-func NewNullableValue[T any](value T, setNull bool) *NullableValue[T] {
+func NewNullableValue[T any](value T) *NullableValue[T] {
 	return &NullableValue[T]{
 		Value:   value,
-		SetNull: setNull,
+		SetNull: false,
 	}
 }
