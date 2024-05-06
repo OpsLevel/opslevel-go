@@ -222,7 +222,7 @@ func TestNewIdentifierArray(t *testing.T) {
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id)
 }
 
-func TestOptionalString(t *testing.T) {
+func TestNullableString(t *testing.T) {
 	type TestCase struct {
 		Name         string
 		Input        string
@@ -257,13 +257,13 @@ func TestOptionalString(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		buf, err := json.Marshal(ol.NewOptionalString(testCase.Input))
+		buf, err := json.Marshal(ol.NewNullableString(testCase.Input))
 		autopilot.Ok(t, err)
 		autopilot.Equals(t, testCase.OutputBuffer, string(buf))
 	}
 
 	// for when field needs to be unset
-	buf, err := json.Marshal(ol.NewOptionalString())
+	buf, err := json.Marshal(ol.NewNullableString())
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `null`, string(buf))
 }

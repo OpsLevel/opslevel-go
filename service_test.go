@@ -292,11 +292,11 @@ func TestUpdateService(t *testing.T) {
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier("some_system"),
 				Id:             ol.NewID("123456789"),
-				Name:           ol.NewOptionalString("Hello World"),
-				Description:    ol.NewOptionalString("The quick brown fox"),
-				Framework:      ol.NewOptionalString("django"),
-				TierAlias:      ol.NewOptionalString("tier_4"),
-				LifecycleAlias: ol.NewOptionalString("pre-alpha"),
+				Name:           ol.NewNullableString("Hello World"),
+				Description:    ol.NewNullableString("The quick brown fox"),
+				Framework:      ol.NewNullableString("django"),
+				TierAlias:      ol.NewNullableString("tier_4"),
+				LifecycleAlias: ol.NewNullableString("pre-alpha"),
 			},
 		},
 
@@ -307,10 +307,10 @@ func TestUpdateService(t *testing.T) {
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier(),
 				Id:             ol.NewID("123456789"),
-				Description:    ol.NewOptionalString(""),
-				Framework:      ol.NewOptionalString(),
-				TierAlias:      ol.NewOptionalString(),
-				LifecycleAlias: ol.NewOptionalString(),
+				Description:    ol.NewNullableString(""),
+				Framework:      ol.NewNullableString(),
+				TierAlias:      ol.NewNullableString(),
+				LifecycleAlias: ol.NewNullableString(),
 			},
 		},
 	}

@@ -75,25 +75,25 @@ func IsID(value string) bool {
 	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-// OptionalString is implemented using a bool indicating whether the field should be unset, this is required for
+// NullableString is implemented using a bool indicating whether the field should be unset, this is required for
 // backwards compatability so that we can still differentiate between "" and nil
-type OptionalString struct {
+type NullableString struct {
 	Value   string
 	SetNull bool
 }
 
-// NewOptionalString will create an optional string provided an input string, if no input string is provided the result
+// NewNullableString will create an optional string provided an input string, if no input string is provided the result
 // will json marshal into `null`
-func NewOptionalString(input ...string) *OptionalString {
+func NewNullableString(input ...string) *NullableString {
 	if len(input) == 1 {
-		return &OptionalString{Value: input[0]}
+		return &NullableString{Value: input[0]}
 	}
-	return &OptionalString{SetNull: true}
+	return &NullableString{SetNull: true}
 }
 
-func (optionalString *OptionalString) MarshalJSON() ([]byte, error) {
-	if optionalString.SetNull {
+func (nullableString *NullableString) MarshalJSON() ([]byte, error) {
+	if nullableString.SetNull {
 		return []byte("null"), nil
 	}
-	return []byte(strconv.Quote(optionalString.Value)), nil
+	return []byte(strconv.Quote(nullableString.Value)), nil
 }
