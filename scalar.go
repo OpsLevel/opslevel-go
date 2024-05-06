@@ -7,20 +7,20 @@ import (
 	"strings"
 )
 
-// String matches OpsLevel's GraphQL API behavior. Empty strings are JSON marshalled to null.
-type String string
+// Alias matches OpsLevel's GraphQL API behavior. Empty strings are JSON marshalled to null.
+type Alias string
 
-func NewString(value ...string) *String {
-	var output String
+func NewString(value ...string) *Alias {
+	var output Alias
 	if len(value) == 1 {
-		output = String(value[0])
+		output = Alias(value[0])
 	}
 	return &output
 }
 
-func (s String) GetGraphQLType() string { return "String" }
+func (s Alias) GetGraphQLType() string { return "String" }
 
-func (s *String) MarshalJSON() ([]byte, error) {
+func (s *Alias) MarshalJSON() ([]byte, error) {
 	if *s == "" {
 		return []byte("null"), nil
 	}
