@@ -318,7 +318,7 @@ func TestUpdateService(t *testing.T) {
 
 		// should still be able to set fields to empty string
 		{
-			Name: "zero fields (new update input)",
+			Name: "zero fields",
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInput{
 				Id:          ol.NewID("123456789"),
