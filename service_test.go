@@ -294,11 +294,11 @@ func TestUpdateService(t *testing.T) {
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier("some_system"),
 				Id:             ol.NewID("123456789"),
-				Name:           ol.NewNullableWithValue[string]("Hello World"),
-				Description:    ol.NewNullableWithValue("The quick brown fox"),
-				Framework:      ol.NewNullableWithValue("django"),
-				TierAlias:      ol.NewNullableWithValue("tier_4"),
-				LifecycleAlias: ol.NewNullableWithValue("pre-alpha"),
+				Name:           ol.NewNullableFrom[string]("Hello World"),
+				Description:    ol.NewNullableFrom("The quick brown fox"),
+				Framework:      ol.NewNullableFrom("django"),
+				TierAlias:      ol.NewNullableFrom("tier_4"),
+				LifecycleAlias: ol.NewNullableFrom("pre-alpha"),
 			},
 		},
 
@@ -331,8 +331,8 @@ func TestUpdateService(t *testing.T) {
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInputV2{
 				Id:          ol.NewID("123456789"),
-				Description: ol.NewNullableWithValue(""),
-				Framework:   ol.NewNullableWithValue(""),
+				Description: ol.NewNullableFrom(""),
+				Framework:   ol.NewNullableFrom(""),
 			},
 		},
 	}
