@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2024"
@@ -264,44 +265,102 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 }
 
 func TestUpdateService(t *testing.T) {
-	// Arrange
-	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
-		`{"input":{"id": "123456789"}}`,
-		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
-	)
+	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycleAlias": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tierAlias": "tier_4"}}`
+	delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`
+	delVarsV1DoesNotWorkExceptOnParent := `{"input":{"id": "123456789", "parent": null}}`
+	zeroVars := `{"input":{"description": "", "framework": "", "id": "123456789"}}`
+	type TestCase struct {
+		Name  string
+		Vars  string
+		Input ol.ServiceUpdater
+	}
+	testCases := []TestCase{
+		{
+			Name: "add fields v1",
+			Vars: addVars,
+			Input: ol.ServiceUpdateInput{
+				Parent:         ol.NewIdentifier("some_system"),
+				Id:             ol.NewID("123456789"),
+				Name:           ol.RefOf("Hello World"),
+				Description:    ol.RefOf("The quick brown fox"),
+				Framework:      ol.RefOf("django"),
+				TierAlias:      ol.RefOf("tier_4"),
+				LifecycleAlias: ol.RefOf("pre-alpha"),
+			},
+		},
+		{
+			Name: "add fields v2",
+			Vars: addVars,
+			Input: ol.ServiceUpdateInputV2{
+				Parent:         ol.NewIdentifier("some_system"),
+				Id:             ol.NewID("123456789"),
+				Name:           ol.NewNullableFrom[string]("Hello World"),
+				Description:    ol.NewNullableFrom("The quick brown fox"),
+				Framework:      ol.NewNullableFrom("django"),
+				TierAlias:      ol.NewNullableFrom("tier_4"),
+				LifecycleAlias: ol.NewNullableFrom("pre-alpha"),
+			},
+		},
+		{
+			Name: "unset fields v1 - does not work except on parent",
+			Vars: delVarsV1DoesNotWorkExceptOnParent,
+			Input: ol.ServiceUpdateInput{
+				Parent:         ol.NewIdentifier(),
+				Id:             ol.NewID("123456789"),
+				Description:    nil,
+				Framework:      nil,
+				TierAlias:      nil,
+				LifecycleAlias: nil,
+			},
+		},
+		{
+			Name: "unset fields v2 - works on all including parent",
+			Vars: delVars,
+			Input: ol.ServiceUpdateInputV2{
+				Parent:         ol.NewIdentifier(),
+				Id:             ol.NewID("123456789"),
+				Description:    ol.NewNull[string](),
+				Framework:      ol.NewNull[string](),
+				TierAlias:      ol.NewNull[string](),
+				LifecycleAlias: ol.NewNull[string](),
+			},
+		},
+		{
+			Name: "set fields to zero value v1",
+			Vars: zeroVars,
+			Input: ol.ServiceUpdateInput{
+				Id:          ol.NewID("123456789"),
+				Description: ol.RefOf(""),
+				Framework:   ol.RefOf(""),
+			},
+		},
+		{
+			Name: "set fields to zero value v2",
+			Vars: zeroVars,
+			Input: ol.ServiceUpdateInputV2{
+				Id:          ol.NewID("123456789"),
+				Description: ol.NewNullableFrom(""),
+				Framework:   ol.NewNullableFrom(""),
+			},
+		},
+	}
 
-	client := BestTestClient(t, "service/update", testRequest)
+	for i, testCase := range testCases {
+		t.Run(testCase.Name, func(t *testing.T) {
+			testRequest := autopilot.NewTestRequest(
+				`mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
+				testCase.Vars,
+				`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
+			)
 
-	// Act
-	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Id: ol.NewID("123456789"),
-	})
+			client := BestTestClient(t, fmt.Sprintf("service/update_%d", i+1), testRequest)
 
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Foo", result.Name)
-}
-
-func TestUpdateServiceWithSystem(t *testing.T) {
-	// Arrange
-	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},{{ template "pagination_request" }},totalCount}},errors{message,path}}}`,
-		`{"input":{"id": "123456789", "parent": {"alias": "FooSystem"}}}`,
-		`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
-	)
-
-	client := BestTestClient(t, "service/update_with_system", testRequest)
-
-	// Act
-	result, err := client.UpdateService(ol.ServiceUpdateInput{
-		Id:     ol.NewID("123456789"),
-		Parent: ol.NewIdentifier("FooSystem"),
-	})
-
-	// Assert
-	autopilot.Ok(t, err)
-	autopilot.Equals(t, "Foo", result.Name)
+			_, err := client.UpdateService(testCase.Input)
+			if err != nil {
+				t.Errorf("got unexpected error: '%+v'", err)
+			}
+		})
+	}
 }
 
 func TestGetServiceIdWithAlias(t *testing.T) {

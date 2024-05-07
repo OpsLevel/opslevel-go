@@ -2,6 +2,7 @@ package opslevel_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/hasura/go-graphql-client"
@@ -220,4 +221,55 @@ func TestNewIdentifierArray(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, "my-service", *result[0].Alias)
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id)
+}
+
+func TestNewNullString(t *testing.T) {
+	buf, err := json.Marshal(ol.NewNull[string]())
+	if err != nil {
+		t.Errorf("got unexpected error: '%+v'", err)
+	}
+	if string(buf) != "null" {
+		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
+	}
+}
+
+func TestNewNullableWithValueString(t *testing.T) {
+	type TestCase struct {
+		Name         string
+		Value        any
+		OutputBuffer string
+	}
+	testCases := []TestCase{
+		{
+			Name:         "empty string using constructor",
+			Value:        ol.NewNullableFrom(""),
+			OutputBuffer: `""`,
+		},
+		{
+			Name:         "hello world string using constructor",
+			Value:        ol.NewNullableFrom("hello world"),
+			OutputBuffer: `"hello world"`,
+		},
+		{
+			Name: "a valid string but with set null = true",
+			Value: &ol.Nullable[string]{
+				Value:   "abc123",
+				SetNull: true,
+			},
+			OutputBuffer: `null`,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testName := fmt.Sprintf("%s with input: %+v", testCase.Name, testCase.Value)
+		t.Run(testName, func(t *testing.T) {
+			buf, err := json.Marshal(testCase.Value)
+			if err != nil {
+				t.Errorf("got unexpected error: '%+v'", err)
+			}
+			if string(buf) != testCase.OutputBuffer {
+				t.Errorf("got unexpected output: '%s' (expected '%s')", string(buf), testCase.OutputBuffer)
+			}
+		})
+	}
 }

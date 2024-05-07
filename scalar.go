@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -73,4 +74,37 @@ func IsID(value string) bool {
 		return false
 	}
 	return strings.HasPrefix(string(decoded), "gid://")
+}
+
+// NullableConstraint defines what types can be nullable - keep separated using the union operator (pipe)
+type NullableConstraint interface {
+	string
+}
+
+// Nullable can be used to unset a value using an OpsLevel input struct type, should always be instantiated using a constructor.
+type Nullable[T NullableConstraint] struct {
+	Value   T
+	SetNull bool
+}
+
+func (nullable Nullable[T]) MarshalJSON() ([]byte, error) {
+	if nullable.SetNull {
+		return []byte("null"), nil
+	}
+	return json.Marshal(nullable.Value)
+}
+
+// NewNull returns a Nullable that will always marshal into `null`, can be used to unset fields
+func NewNull[T NullableConstraint]() *Nullable[T] {
+	return &Nullable[T]{
+		SetNull: true,
+	}
+}
+
+// NewNullableFrom returns a Nullable that will never marshal into `null`, can be used to change fields or even set them to an empty value (like "")
+func NewNullableFrom[T NullableConstraint](value T) *Nullable[T] {
+	return &Nullable[T]{
+		Value:   value,
+		SetNull: false,
+	}
 }

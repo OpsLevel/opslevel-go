@@ -663,13 +663,14 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
+func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
 	var m struct {
 		Payload struct {
 			Service Service
 			Errors  []OpsLevelErrors
 		} `graphql:"serviceUpdate(input: $input)"`
 	}
+
 	v := PayloadVariables{
 		"input": input,
 	}
