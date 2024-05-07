@@ -76,27 +76,32 @@ func IsID(value string) bool {
 	return strings.HasPrefix(string(decoded), "gid://")
 }
 
-// NullableValue can be used to unset a value using an OpsLevel input struct type, should always be instantiated using a constructor.
-type NullableValue[T any] struct {
+// NullableConstraint defines what types can be nullable - keep separated using the union operator (pipe)
+type NullableConstraint interface {
+	string
+}
+
+// Nullable can be used to unset a value using an OpsLevel input struct type, should always be instantiated using a constructor.
+type Nullable[T NullableConstraint] struct {
 	Value   T
 	SetNull bool
 }
 
-func (nullableValue NullableValue[T]) MarshalJSON() ([]byte, error) {
-	if nullableValue.SetNull {
+func (nullable Nullable[T]) MarshalJSON() ([]byte, error) {
+	if nullable.SetNull {
 		return []byte("null"), nil
 	}
-	return json.Marshal(nullableValue.Value)
+	return json.Marshal(nullable.Value)
 }
 
-func NewNullValue[T any]() *NullableValue[T] {
-	return &NullableValue[T]{
+func NewNull[T NullableConstraint]() *Nullable[T] {
+	return &Nullable[T]{
 		SetNull: true,
 	}
 }
 
-func NewNullableValue[T any](value T) *NullableValue[T] {
-	return &NullableValue[T]{
+func NewNullableWithValue[T NullableConstraint](value T) *Nullable[T] {
+	return &Nullable[T]{
 		Value:   value,
 		SetNull: false,
 	}

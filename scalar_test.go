@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/relvacode/iso8601"
-
 	"github.com/hasura/go-graphql-client"
 
 	ol "github.com/opslevel/opslevel-go/v2024"
@@ -225,8 +223,8 @@ func TestNewIdentifierArray(t *testing.T) {
 	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id)
 }
 
-func TestNullValueString(t *testing.T) {
-	buf, err := json.Marshal(ol.NewNullValue[string]())
+func TestNewNullString(t *testing.T) {
+	buf, err := json.Marshal(ol.NewNull[string]())
 	if err != nil {
 		t.Errorf("got unexpected error: '%+v'", err)
 	}
@@ -235,118 +233,27 @@ func TestNullValueString(t *testing.T) {
 	}
 }
 
-func TestNullValueBool(t *testing.T) {
-	buf, err := json.Marshal(ol.NewNullValue[bool]())
-	if err != nil {
-		t.Errorf("got unexpected error: '%+v'", err)
-	}
-	if string(buf) != "null" {
-		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
-	}
-}
-
-func TestNullValueInt(t *testing.T) {
-	buf, err := json.Marshal(ol.NewNullValue[int]())
-	if err != nil {
-		t.Errorf("got unexpected error: '%+v'", err)
-	}
-	if string(buf) != "null" {
-		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
-	}
-}
-
-func TestNullValueTime(t *testing.T) {
-	buf, err := json.Marshal(ol.NewNullValue[iso8601.Time]())
-	if err != nil {
-		t.Errorf("got unexpected error: '%+v'", err)
-	}
-	if string(buf) != "null" {
-		t.Errorf("null value on this type did not marshal to null, got: '%s'", string(buf))
-	}
-}
-
-func TestNewNullableValue(t *testing.T) {
+func TestNewNullableWithValueString(t *testing.T) {
 	type TestCase struct {
 		Name         string
 		Value        any
 		OutputBuffer string
 	}
 	testCases := []TestCase{
-		// string
 		{
-			Name:         "empty string",
-			Value:        ol.NewNullableValue(""),
+			Name:         "empty string using constructor",
+			Value:        ol.NewNullableWithValue(""),
 			OutputBuffer: `""`,
 		},
 		{
-			Name:         "hello world string",
-			Value:        ol.NewNullableValue("hello world"),
+			Name:         "hello world string using constructor",
+			Value:        ol.NewNullableWithValue("hello world"),
 			OutputBuffer: `"hello world"`,
 		},
 		{
-			Name: "a string but with set null",
-			Value: ol.NullableValue[string]{
+			Name: "a valid string but with set null = true",
+			Value: &ol.Nullable[string]{
 				Value:   "abc123",
-				SetNull: true,
-			},
-			OutputBuffer: `null`,
-		},
-
-		// bool
-		{
-			Name:         "bool false",
-			Value:        ol.NewNullableValue(false),
-			OutputBuffer: `false`,
-		},
-		{
-			Name:         "bool true",
-			Value:        ol.NewNullableValue(true),
-			OutputBuffer: `true`,
-		},
-		{
-			Name: "a bool but with set null",
-			Value: ol.NullableValue[bool]{
-				Value:   true,
-				SetNull: true,
-			},
-			OutputBuffer: `null`,
-		},
-
-		// int
-		{
-			Name:         "integer 0",
-			Value:        ol.NewNullableValue(0),
-			OutputBuffer: `0`,
-		},
-		{
-			Name:         "integer 16",
-			Value:        ol.NewNullableValue(16),
-			OutputBuffer: `16`,
-		},
-		{
-			Name: "an integer but with set null",
-			Value: ol.NullableValue[int]{
-				Value:   32,
-				SetNull: true,
-			},
-			OutputBuffer: `null`,
-		},
-
-		// iso8601.Time
-		{
-			Name:         "zero value of date",
-			Value:        ol.NewNullableValue(iso8601.Time{}),
-			OutputBuffer: `"0001-01-01T00:00:00Z"`,
-		},
-		{
-			Name:         "valid date",
-			Value:        ol.NewNullableValue(ol.NewISO8601Date("2024-05-06T14:26:19.204501-04:00")),
-			OutputBuffer: `"2024-05-06T14:26:19.204501-04:00"`,
-		},
-		{
-			Name: "a date but with set null",
-			Value: ol.NullableValue[iso8601.Time]{
-				Value:   ol.NewISO8601DateNow(),
 				SetNull: true,
 			},
 			OutputBuffer: `null`,
@@ -356,7 +263,7 @@ func TestNewNullableValue(t *testing.T) {
 	for _, testCase := range testCases {
 		testName := fmt.Sprintf("%s with input: %+v", testCase.Name, testCase.Value)
 		t.Run(testName, func(t *testing.T) {
-			buf, err := json.Marshal(ol.NewNullableValue(testCase.Value))
+			buf, err := json.Marshal(testCase.Value)
 			if err != nil {
 				t.Errorf("got unexpected error: '%+v'", err)
 			}

@@ -1,3 +1,3 @@
 kind: Feature
-body: Introduce NullableValue generic type (adds support for unsetting fields in update input structs)
+body: Introduce Nullable generic type allows string only (to support for unsetting fields in update input structs)
 time: 2024-05-03T13:13:11.992999-04:00
