@@ -267,6 +267,7 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 func TestUpdateService(t *testing.T) {
 	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycleAlias": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tierAlias": "tier_4"}}`
 	delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`
+	delVarsV1DoesNotWorkExceptOnParent := `{"input":{"id": "123456789", "parent": null}}`
 	zeroVars := `{"input":{"description": "", "framework": "", "id": "123456789"}}`
 	type TestCase struct {
 		Name  string
@@ -274,9 +275,8 @@ func TestUpdateService(t *testing.T) {
 		Input ol.ServiceUpdater
 	}
 	testCases := []TestCase{
-		// add fields
 		{
-			Name: "add fields",
+			Name: "add fields v1",
 			Vars: addVars,
 			Input: ol.ServiceUpdateInput{
 				Parent:         ol.NewIdentifier("some_system"),
@@ -289,7 +289,7 @@ func TestUpdateService(t *testing.T) {
 			},
 		},
 		{
-			Name: "add fields (new update input)",
+			Name: "add fields v2",
 			Vars: addVars,
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier("some_system"),
@@ -301,10 +301,20 @@ func TestUpdateService(t *testing.T) {
 				LifecycleAlias: ol.NewNullableFrom("pre-alpha"),
 			},
 		},
-
-		// unsetting fields does not work properly on old update input...
 		{
-			Name: "unset fields (new update input)",
+			Name: "unset fields v1 - does not work except on parent",
+			Vars: delVarsV1DoesNotWorkExceptOnParent,
+			Input: ol.ServiceUpdateInput{
+				Parent:         ol.NewIdentifier(),
+				Id:             ol.NewID("123456789"),
+				Description:    nil,
+				Framework:      nil,
+				TierAlias:      nil,
+				LifecycleAlias: nil,
+			},
+		},
+		{
+			Name: "unset fields v2 - works on all including parent",
 			Vars: delVars,
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier(),
@@ -315,10 +325,8 @@ func TestUpdateService(t *testing.T) {
 				LifecycleAlias: ol.NewNull[string](),
 			},
 		},
-
-		// should still be able to set fields to empty string
 		{
-			Name: "zero fields",
+			Name: "set fields to zero value v1",
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInput{
 				Id:          ol.NewID("123456789"),
@@ -327,7 +335,7 @@ func TestUpdateService(t *testing.T) {
 			},
 		},
 		{
-			Name: "zero fields (new update input)",
+			Name: "set fields to zero value v2",
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInputV2{
 				Id:          ol.NewID("123456789"),
