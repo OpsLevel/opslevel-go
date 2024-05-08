@@ -275,6 +275,7 @@ func (client *Client) ListRepositories(variables *PayloadVariables) (*Repository
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
+		(*variables)["visible"] = true
 	}
 	if err := client.Query(&q, *variables, WithName("RepositoryList")); err != nil {
 		return &q.Account.Repositories, err
