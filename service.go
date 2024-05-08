@@ -165,6 +165,17 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 	return service.Tags, nil
 }
 
+func (service *Service) GetTeam(client *Client) (*Team, error) {
+	if service.Owner.Id == "" {
+		return nil, nil
+	}
+	return client.GetTeam(service.Owner.Id)
+}
+
+func (service *Service) GetTeamId() TeamId {
+	return service.Owner
+}
+
 func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolConnection, error) {
 	var q struct {
 		Account struct {

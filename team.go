@@ -21,6 +21,11 @@ type TeamId struct {
 	Id    ID
 }
 
+type HasTeam interface {
+	GetTeam(client *Client) (*Team, error)
+	GetTeamId() TeamId
+}
+
 type Team struct {
 	TeamId
 

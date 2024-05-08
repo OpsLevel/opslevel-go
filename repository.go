@@ -207,6 +207,17 @@ func (repository *Repository) GetTags(client *Client, variables *PayloadVariable
 	return repository.Tags, nil
 }
 
+func (repository *Repository) GetTeam(client *Client) (*Team, error) {
+	if repository.Owner.Id == "" {
+		return nil, nil
+	}
+	return client.GetTeam(repository.Owner.Id)
+}
+
+func (repository *Repository) GetTeamId() TeamId {
+	return repository.Owner
+}
+
 func (client *Client) ConnectServiceRepository(service *ServiceId, repository *Repository) (*ServiceRepository, error) {
 	input := ServiceRepositoryCreateInput{
 		Service:       *NewIdentifier(string(service.Id)),

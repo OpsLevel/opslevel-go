@@ -13,6 +13,17 @@ type SecretsVaultsSecretConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
+func (secret *Secret) GetTeam(client *Client) (*Team, error) {
+	if secret.Owner.Id == "" {
+		return nil, nil
+	}
+	return client.GetTeam(secret.Owner.Id)
+}
+
+func (secret *Secret) GetTeamId() TeamId {
+	return secret.Owner
+}
+
 func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, error) {
 	var m struct {
 		Payload struct {

@@ -64,6 +64,17 @@ func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTe
 	return &q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess, nil
 }
 
+func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) GetTeam(client *Client) (*Team, error) {
+	if customActionsTriggerDefinition.Owner.Id == "" {
+		return nil, nil
+	}
+	return client.GetTeam(customActionsTriggerDefinition.Owner.Id)
+}
+
+func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) GetTeamId() TeamId {
+	return customActionsTriggerDefinition.Owner
+}
+
 type CustomActionsExternalActionsConnection struct {
 	Nodes      []CustomActionsExternalAction
 	PageInfo   PageInfo
