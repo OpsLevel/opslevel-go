@@ -60,6 +60,12 @@ func NewIdentifier(value ...string) *IdentifierInput {
 	return &output
 }
 
+// NullIdentifier returns an IdentifierInput that can be used to unset a value
+func NullIdentifier(value ...string) *IdentifierInput {
+	var output IdentifierInput
+	return &output
+}
+
 func NewIdentifierArray(values []string) []IdentifierInput {
 	output := make([]IdentifierInput, 0)
 	for _, value := range values {
