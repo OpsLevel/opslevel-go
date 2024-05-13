@@ -1,3 +1,0 @@
-kind: Deprecated
-body: Deprecate ServiceUpdateInput, is being replaced by ServiceUpdateInputV2
-time: 2024-05-03T13:13:33.378963-04:00

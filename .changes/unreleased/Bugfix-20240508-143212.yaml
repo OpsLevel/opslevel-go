@@ -1,3 +1,0 @@
-kind: Bugfix
-body: fix listing repositories. added default "visible" bool to query variables
-time: 2024-05-08T14:32:12.015202-05:00
