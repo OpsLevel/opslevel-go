@@ -1,8 +1,8 @@
 package opslevel
 
 type RepositorySearchCheckFragment struct {
-	FileExtensions        []string  `graphql:"fileExtensions"`
-	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"`
+	FileExtensions        []string   `graphql:"fileExtensions"`
+	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
 }
 
 func (client *Client) CreateCheckRepositorySearch(input CheckRepositorySearchCreateInput) (*Check, error) {
