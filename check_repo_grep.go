@@ -1,9 +1,9 @@
 package opslevel
 
 type RepositoryGrepCheckFragment struct {
-	DirectorySearch       bool       `graphql:"directorySearch"`
-	Filepaths             []string   `graphql:"filePaths"`
-	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
+	DirectorySearch       bool      `graphql:"directorySearch"`
+	Filepaths             []string  `graphql:"filePaths"`
+	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"`
 }
 
 func (client *Client) CreateCheckRepositoryGrep(input CheckRepositoryGrepCreateInput) (*Check, error) {

@@ -1,7 +1,7 @@
 package opslevel
 
 type AlertSourceUsageCheckFragment struct {
-	AlertSourceNamePredicate Predicate           `graphql:"alertSourceNamePredicate"`
+	AlertSourceNamePredicate *Predicate          `graphql:"alertSourceNamePredicate"`
 	AlertSourceType          AlertSourceTypeEnum `graphql:"alertSourceType"`
 }
 
