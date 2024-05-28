@@ -1,3 +1,0 @@
-kind: Refactor
-body: BREAKING CHANGE - pointers of Predicate fields updated for AlertSourceUsageCheckFragment, RepositoryGrepCheckFragment, and RepositorySearchCheckFragment
-time: 2024-05-28T11:11:18.997688-05:00

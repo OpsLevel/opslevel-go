@@ -1,3 +1,0 @@
-kind: Bugfix
-body: make FileContentsPredicate a pointer in RepositorySearchCheckFragment to allow unsetting
-time: 2024-05-17T15:53:27.468499-05:00
