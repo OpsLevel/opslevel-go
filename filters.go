@@ -6,11 +6,6 @@ import (
 	"github.com/gosimple/slug"
 )
 
-type Predicate struct {
-	Type  PredicateTypeEnum `graphql:"type"`
-	Value string            `graphql:"value"`
-}
-
 type FilterId struct {
 	Id   ID
 	Name string
