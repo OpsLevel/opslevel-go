@@ -1,0 +1,3 @@
+kind: Feature
+body: add Validate func to Predicate struct
+time: 2024-05-31T10:18:33.977091-05:00
