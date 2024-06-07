@@ -743,7 +743,7 @@ func TestDeleteCheck(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 }
 
-func TestJsonUnmarshalCreateCheck(t *testing.T) {
+func TestJsonUnmarshalCreateCheckManual(t *testing.T) {
 	// Arrange
 	data := `{
 	"name": "Example",
@@ -762,7 +762,46 @@ func TestJsonUnmarshalCreateCheck(t *testing.T) {
 	autopilot.Equals(t, &output, buf1.(*ol.CheckManualCreateInput))
 }
 
-func TestJsonUnmarshalUpdateCheck(t *testing.T) {
+func TestJsonUnmarshalCreateCheckToolUsage(t *testing.T) {
+	// Arrange
+	data := `{
+	"name": "Example",
+	"notes": "Example Notes",
+	"environmentPredicate": {
+    "type": "exists"
+  },
+  "toolNamePredicate": {
+    "type": "contains",
+    "value": "go"
+  },
+  "toolUrlPredicate": {
+    "type": "starts_with",
+    "value": "https"
+  }
+}`
+	output := ol.CheckToolUsageCreateInput{
+		Name:  "Example",
+		Notes: ol.RefOf("Example Notes"),
+		EnvironmentPredicate: &ol.PredicateInput{
+			Type: ol.PredicateTypeEnum("exists"),
+		},
+		ToolNamePredicate: &ol.PredicateInput{
+			Type:  ol.PredicateTypeEnum("contains"),
+			Value: ol.RefOf("go"),
+		},
+		ToolUrlPredicate: &ol.PredicateInput{
+			Type:  ol.PredicateTypeEnum("starts_with"),
+			Value: ol.RefOf("https"),
+		},
+	}
+	// Act
+	buf1, err1 := ol.UnmarshalCheckCreateInput(ol.CheckTypeToolUsage, []byte(data))
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, &output, buf1.(*ol.CheckToolUsageCreateInput))
+}
+
+func TestJsonUnmarshalUpdateCheckManual(t *testing.T) {
 	// Arrange
 	data := `{
 	"name": "Example",
@@ -779,4 +818,43 @@ func TestJsonUnmarshalUpdateCheck(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err1)
 	autopilot.Equals(t, &output, buf1.(*ol.CheckManualUpdateInput))
+}
+
+func TestJsonUnmarshalUpdateCheckToolUsage(t *testing.T) {
+	// Arrange
+	data := `{
+	"name": "Example",
+	"notes": "Updated Notes",
+	"environmentPredicate": {
+    "type": "exists"
+  },
+  "toolNamePredicate": {
+    "type": "contains",
+    "value": "go"
+  },
+  "toolUrlPredicate": {
+    "type": "starts_with",
+    "value": "https"
+  }
+}`
+	output := ol.CheckToolUsageUpdateInput{
+		Name:  ol.RefOf("Example"),
+		Notes: ol.RefOf("Updated Notes"),
+		EnvironmentPredicate: &ol.PredicateUpdateInput{
+			Type: ol.RefOf(ol.PredicateTypeEnum("exists")),
+		},
+		ToolNamePredicate: &ol.PredicateUpdateInput{
+			Type:  ol.RefOf(ol.PredicateTypeEnum("contains")),
+			Value: ol.RefOf("go"),
+		},
+		ToolUrlPredicate: &ol.PredicateUpdateInput{
+			Type:  ol.RefOf(ol.PredicateTypeEnum("starts_with")),
+			Value: ol.RefOf("https"),
+		},
+	}
+	// Act
+	buf1, err1 := ol.UnmarshalCheckUpdateInput(ol.CheckTypeToolUsage, []byte(data))
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, &output, buf1.(*ol.CheckToolUsageUpdateInput))
 }
