@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"encoding/json"
 	"fmt"
 	"slices"
 )
@@ -25,4 +26,19 @@ func (p *Predicate) Validate() error {
 		return fmt.Errorf("Predicate type '%s' requires a value", p.Type)
 	}
 	return nil
+}
+
+func (p *PredicateUpdateInput) MarshalJSON() ([]byte, error) {
+	if p == nil || p.Type == nil || *p.Type == "" {
+		return []byte("null"), nil
+	}
+	m := map[string]string{
+		"type": string(*p.Type),
+	}
+
+	if p.Value != nil {
+		m["value"] = *p.Value
+	}
+
+	return json.Marshal(m)
 }
