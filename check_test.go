@@ -583,14 +583,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		"UpdateToolUsageNullPredicates": {
 			fixture: autopilot.NewTestRequest(
 				`mutation CheckToolUsageUpdate($input:CheckToolUsageUpdateInput!){checkToolUsageUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "toolCategory": "metrics", "toolNamePredicate": null, "toolUrlPredicate": null, "environmentPredicate": null } }`,
+				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "toolCategory": "metrics", "toolUrlPredicate": null, "environmentPredicate": null } }`,
 				`{ "data": { "checkToolUsageUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
 			),
 			endpoint: "check/update_tool_usage_null_predicates",
 			body: func(c *ol.Client) (*ol.Check, error) {
 				checkToolUsageUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
 				checkToolUsageUpdateInput.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
-				checkToolUsageUpdateInput.ToolNamePredicate = &ol.PredicateUpdateInput{}
 				checkToolUsageUpdateInput.ToolUrlPredicate = &ol.PredicateUpdateInput{}
 				checkToolUsageUpdateInput.EnvironmentPredicate = &ol.PredicateUpdateInput{}
 				return c.UpdateCheckToolUsage(*checkToolUsageUpdateInput)
