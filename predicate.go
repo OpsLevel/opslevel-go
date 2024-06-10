@@ -33,9 +33,9 @@ func (p *PredicateUpdateInput) MarshalJSON() ([]byte, error) {
 	}
 	var predicateAsJson string
 	if p.Value == nil {
-		predicateAsJson = fmt.Sprintf(`{"type": "%s"}`, *p.Type)
+		predicateAsJson = fmt.Sprintf(`{"type":"%s"}`, *p.Type)
 	} else {
-		predicateAsJson = fmt.Sprintf(`{"type": "%s", "value": "%s"}`, *p.Type, *p.Value)
+		predicateAsJson = fmt.Sprintf(`{"type":"%s","value":"%s"}`, *p.Type, *p.Value)
 	}
 	return []byte(predicateAsJson), nil
 }
