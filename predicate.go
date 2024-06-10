@@ -26,3 +26,16 @@ func (p *Predicate) Validate() error {
 	}
 	return nil
 }
+
+func (p *PredicateUpdateInput) MarshalJSON() ([]byte, error) {
+	if p == nil || p.Type == nil || *p.Type == "" {
+		return []byte("null"), nil
+	}
+	var predicateAsJson string
+	if p.Value == nil {
+		predicateAsJson = fmt.Sprintf(`{"type": "%s"}`, *p.Type)
+	} else {
+		predicateAsJson = fmt.Sprintf(`{"type": "%s", "value": "%s"}`, *p.Type, *p.Value)
+	}
+	return []byte(predicateAsJson), nil
+}
