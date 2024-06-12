@@ -164,3 +164,35 @@ func TestListScorecards(t *testing.T) {
 	autopilot.Equals(t, *newOwnerId, result[2].Owner.Id())
 	autopilot.Equals(t, 33, result[2].ServiceCount)
 }
+
+func TestListScorecardCategories(t *testing.T) {
+	// Arrange
+	testRequestOne := autopilot.NewTestRequest(
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`{ {{ template "first_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
+		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id2" }}, "name": "quality" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`{ {{ template "second_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
+		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id3" }}, "name": "ownership" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+
+	client := BestTestClient(t, "scorecard/categories", requests...)
+	// Act
+	scorecard := ol.Scorecard{
+		ScorecardId: ol.ScorecardId{
+			Id: id1,
+		},
+	}
+	resp, err := scorecard.ListCategories(client, nil)
+	result := resp.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, id2, result[0].Id)
+	autopilot.Equals(t, "quality", result[0].Name)
+	autopilot.Equals(t, id3, result[1].Id)
+	autopilot.Equals(t, "ownership", result[1].Name)
+}
