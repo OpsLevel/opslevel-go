@@ -43,9 +43,7 @@ func (filterPredicate *FilterPredicate) Validate() error {
 		PredicateTypeEnumEndsWith,
 		PredicateTypeEnumStartsWith,
 	}
-	if filterPredicate.CaseSensitive != nil &&
-		*filterPredicate.CaseSensitive &&
-		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
+	if filterPredicate.CaseSensitive != nil && !slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
 	}
 
