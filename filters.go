@@ -3,6 +3,7 @@ package opslevel
 import (
 	"fmt"
 	"slices"
+	"strconv"
 
 	"github.com/gosimple/slug"
 )
@@ -40,6 +41,17 @@ func (filterPredicate *FilterPredicate) Validate() error {
 		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
 	}
+
+	numericTypes := []PredicateTypeEnum{
+		PredicateTypeEnumGreaterThanOrEqualTo,
+		PredicateTypeEnumLessThanOrEqualTo,
+	}
+	if slices.Contains(numericTypes, filterPredicate.Type) {
+		if _, err := strconv.Atoi(filterPredicate.Value); err != nil {
+			return fmt.Errorf("FilterPredicate type '%s' requires a numeric value. Given '%s'", filterPredicate.Type, filterPredicate.Value)
+		}
+	}
+
 	return nil
 }
 
