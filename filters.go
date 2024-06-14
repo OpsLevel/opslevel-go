@@ -3,7 +3,6 @@ package opslevel
 import (
 	"fmt"
 	"slices"
-	"strconv"
 
 	"github.com/gosimple/slug"
 )
@@ -29,9 +28,17 @@ type FilterPredicate struct {
 }
 
 func (filterPredicate *FilterPredicate) Validate() error {
+	// validation common to Predicate and FilterPredicate types
+	basicPredicate := Predicate{Type: filterPredicate.Type, Value: filterPredicate.Value}
+	if err := basicPredicate.Validate(); err != nil {
+		return err
+	}
+
+	// validation specific to FilterPredicate types
 	caseSensitiveTypes := []PredicateTypeEnum{
 		PredicateTypeEnumContains,
 		PredicateTypeEnumDoesNotContain,
+		PredicateTypeEnumDoesNotEqual,
 		PredicateTypeEnumEquals,
 		PredicateTypeEnumEndsWith,
 		PredicateTypeEnumStartsWith,
@@ -40,16 +47,6 @@ func (filterPredicate *FilterPredicate) Validate() error {
 		*filterPredicate.CaseSensitive &&
 		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
-	}
-
-	numericTypes := []PredicateTypeEnum{
-		PredicateTypeEnumGreaterThanOrEqualTo,
-		PredicateTypeEnumLessThanOrEqualTo,
-	}
-	if slices.Contains(numericTypes, filterPredicate.Type) {
-		if _, err := strconv.Atoi(filterPredicate.Value); err != nil {
-			return fmt.Errorf("FilterPredicate type '%s' requires a numeric value. Given '%s'", filterPredicate.Type, filterPredicate.Value)
-		}
 	}
 
 	return nil
