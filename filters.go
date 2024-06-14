@@ -28,9 +28,17 @@ type FilterPredicate struct {
 }
 
 func (filterPredicate *FilterPredicate) Validate() error {
+	// validation common to Predicate and FilterPredicate types
+	basicPredicate := Predicate{Type: filterPredicate.Type, Value: filterPredicate.Value}
+	if err := basicPredicate.Validate(); err != nil {
+		return err
+	}
+
+	// validation specific to FilterPredicate types
 	caseSensitiveTypes := []PredicateTypeEnum{
 		PredicateTypeEnumContains,
 		PredicateTypeEnumDoesNotContain,
+		PredicateTypeEnumDoesNotEqual,
 		PredicateTypeEnumEquals,
 		PredicateTypeEnumEndsWith,
 		PredicateTypeEnumStartsWith,
@@ -40,6 +48,7 @@ func (filterPredicate *FilterPredicate) Validate() error {
 		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
 	}
+
 	return nil
 }
 
