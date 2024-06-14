@@ -18,5 +18,6 @@ func NewRestClient(options ...Option) *resty.Client {
 		client.SetHeader(key, value)
 	}
 	client.SetTimeout(settings.timeout)
+	client.SetTransport(settings.transport)
 	return client
 }
