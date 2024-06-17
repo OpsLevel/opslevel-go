@@ -8,7 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/gosimple/slug v1.14.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
-	github.com/hasura/go-graphql-client v0.12.1
+	github.com/hasura/go-graphql-client v0.12.2
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c
 	github.com/pkg/errors v0.9.1
@@ -41,5 +41,5 @@ require (
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	nhooyr.io/websocket v1.8.10 // indirect
+	nhooyr.io/websocket v1.8.11 // indirect
 )
