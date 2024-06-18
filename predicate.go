@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
+	"strconv"
 )
 
 type Predicate struct {
@@ -12,10 +13,6 @@ type Predicate struct {
 }
 
 func (p *Predicate) Validate() error {
-	if !slices.Contains(AllPredicateTypeEnum, string(p.Type)) {
-		return fmt.Errorf("Invalidate Predicate type '%s'. Expected one of '%v'", p.Type, AllPredicateTypeEnum)
-	}
-
 	predicatesWithNoValue := []PredicateTypeEnum{
 		PredicateTypeEnumDoesNotExist,
 		PredicateTypeEnumExists,
@@ -25,6 +22,17 @@ func (p *Predicate) Validate() error {
 	} else if !slices.Contains(predicatesWithNoValue, p.Type) && p.Value == "" {
 		return fmt.Errorf("Predicate type '%s' requires a value", p.Type)
 	}
+
+	numericTypes := []PredicateTypeEnum{
+		PredicateTypeEnumGreaterThanOrEqualTo,
+		PredicateTypeEnumLessThanOrEqualTo,
+	}
+	if slices.Contains(numericTypes, p.Type) {
+		if _, err := strconv.Atoi(p.Value); err != nil {
+			return fmt.Errorf("FilterPredicate type '%s' requires a numeric value. Given '%s'", p.Type, p.Value)
+		}
+	}
+
 	return nil
 }
 

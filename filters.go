@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/gosimple/slug"
 )
@@ -24,6 +25,31 @@ type FilterPredicate struct {
 	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
 	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
 	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
+}
+
+func (filterPredicate *FilterPredicate) Validate() error {
+	// validation common to Predicate and FilterPredicate types
+	basicPredicate := Predicate{Type: filterPredicate.Type, Value: filterPredicate.Value}
+	if err := basicPredicate.Validate(); err != nil {
+		return err
+	}
+
+	// validation specific to FilterPredicate types
+	caseSensitiveTypes := []PredicateTypeEnum{
+		PredicateTypeEnumContains,
+		PredicateTypeEnumDoesNotContain,
+		PredicateTypeEnumDoesNotEqual,
+		PredicateTypeEnumEquals,
+		PredicateTypeEnumEndsWith,
+		PredicateTypeEnumStartsWith,
+	}
+	if filterPredicate.CaseSensitive != nil &&
+		*filterPredicate.CaseSensitive &&
+		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
+		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
+	}
+
+	return nil
 }
 
 type FilterConnection struct {

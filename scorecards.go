@@ -32,6 +32,45 @@ func (scorecard *Scorecard) AliasOwnerType() AliasOwnerTypeEnum {
 	return AliasOwnerTypeEnumScorecard
 }
 
+type ScorecardCategoryConnection struct {
+	Nodes      []Category `graphql:"nodes"`
+	PageInfo   PageInfo   `graphql:"pageInfo"`
+	TotalCount int        `graphql:"totalCount"`
+}
+
+func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVariables) (*ScorecardCategoryConnection, error) {
+	if scorecard.Id == "" {
+		return nil, fmt.Errorf("unable to get categories, invalid scorecard id: '%s'", scorecard.Id)
+	}
+	var q struct {
+		Account struct {
+			Scorecard struct {
+				Categories ScorecardCategoryConnection `graphql:"categories(after: $after, first: $first)"`
+			} `graphql:"scorecard(input: $scorecard)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["scorecard"] = *NewIdentifier(string(scorecard.Id))
+	if err := client.Query(&q, *variables, WithName("ScorecardCategoryList")); err != nil {
+		return nil, err
+	}
+
+	for q.Account.Scorecard.Categories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Scorecard.Categories.PageInfo.End
+		resp, err := scorecard.ListCategories(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Scorecard.Categories.Nodes = append(q.Account.Scorecard.Categories.Nodes, resp.Nodes...)
+		q.Account.Scorecard.Categories.PageInfo = resp.PageInfo
+		q.Account.Scorecard.Categories.TotalCount += resp.TotalCount
+	}
+
+	return &q.Account.Scorecard.Categories, nil
+}
+
 func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) {
 	var m struct {
 		Payload struct {
