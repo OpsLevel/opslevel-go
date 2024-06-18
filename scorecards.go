@@ -28,6 +28,10 @@ type ScorecardConnection struct {
 	TotalCount int         `graphql:"totalCount"`
 }
 
+func (scorecard *Scorecard) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumScorecard
+}
+
 func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) {
 	var m struct {
 		Payload struct {

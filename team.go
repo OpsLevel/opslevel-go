@@ -205,6 +205,10 @@ func CreateContactWeb(address string, name *string) ContactInput {
 	}
 }
 
+func (team *Team) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumTeam
+}
+
 func (team *Team) HasTag(key string, value string) bool {
 	for _, tag := range team.Tags.Nodes {
 		if tag.Key == key && tag.Value == value {

@@ -24,6 +24,10 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+func (d *Domain) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumDomain
+}
+
 func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {

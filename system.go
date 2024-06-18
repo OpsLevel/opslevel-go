@@ -23,6 +23,10 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+func (system *System) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumSystem
+}
+
 func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
