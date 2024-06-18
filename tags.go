@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"slices"
+	"strings"
 )
 
 type TagOwner string
@@ -28,6 +30,10 @@ type Tag struct {
 	Id    ID     `json:"id"`
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+func (t Tag) Flatten() string {
+	return fmt.Sprintf("%s:%s", t.Key, t.Value)
 }
 
 type TagConnection struct {
@@ -199,4 +205,49 @@ func (client *Client) DeleteTag(id ID) error {
 	}
 	err := client.Mutate(&m, v, WithName("TagDelete"))
 	return HandleErrors(err, m.Payload.Errors)
+}
+
+// ReconcileTags manages tags API operations for TaggableResourceInterface implementations
+//
+// Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created. Reconciled tags are returned.
+func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []string) ([]Tag, error) {
+	var err error
+	var tagConnection *TagConnection
+	var assignedTags []Tag
+
+	tagConnection, err = resourceType.GetTags(client, nil)
+	if err != nil {
+		return assignedTags, err
+	}
+	if tagConnection == nil {
+		return assignedTags, fmt.Errorf("no tags found on %s with id '%s'", string(resourceType.ResourceType()), resourceType.ResourceId())
+	}
+
+	// delete tags found in resource but not listed in tagsWanted
+	for _, tag := range tagConnection.Nodes {
+		if !slices.Contains(tagsWanted, tag.Flatten()) {
+			if err := client.DeleteTag(tag.Id); err != nil {
+				return assignedTags, err
+			}
+		}
+	}
+
+	// format tags listed in Terraform config but not found in service
+	tagInput := map[string]string{}
+	for _, tag := range tagsWanted {
+		parts := strings.Split(tag, ":")
+		if len(parts) != 2 {
+			return assignedTags, fmt.Errorf("[%s] invalid tag, should be in format 'key:value' (only a single colon between the key and value, no spaces or special characters)", tag)
+		}
+		key := parts[0]
+		value := parts[1]
+		tagInput[key] = value
+	}
+	// assign tags listed in Terraform config but not found in service
+	assignedTags, err = client.AssignTags(string(resourceType.ResourceId()), tagInput)
+	if err != nil {
+		return assignedTags, err
+	}
+
+	return assignedTags, nil
 }

@@ -28,6 +28,10 @@ type ScorecardConnection struct {
 	TotalCount int         `graphql:"totalCount"`
 }
 
+func (scorecard *Scorecard) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumScorecard
+}
+
 type ScorecardCategoryConnection struct {
 	Nodes      []Category `graphql:"nodes"`
 	PageInfo   PageInfo   `graphql:"pageInfo"`

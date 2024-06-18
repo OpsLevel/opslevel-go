@@ -52,6 +52,10 @@ type ServiceDocumentsConnection struct {
 	TotalCount int
 }
 
+func (s *Service) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumService
+}
+
 func (service *Service) ResourceId() ID {
 	return service.Id
 }

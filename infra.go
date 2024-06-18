@@ -55,6 +55,10 @@ type InfraInput struct {
 	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
+func (infrastructureResource *InfrastructureResource) AliasOwnerType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumInfrastructureResource
+}
+
 func (infrastructureResource *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
