@@ -215,25 +215,7 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 	var tagConnection *TagConnection
 	var assignedTags []Tag
 
-	// Get underlying resource type for type checking
-	switch resource := resourceType.(type) {
-	case *Domain:
-		tagConnection, err = resource.GetTags(client, nil)
-	case *InfrastructureResource:
-		tagConnection, err = resource.GetTags(client, nil)
-	case *Repository:
-		tagConnection, err = resource.GetTags(client, nil)
-	case *Service:
-		tagConnection, err = resource.GetTags(client, nil)
-	case *System:
-		tagConnection, err = resource.GetTags(client, nil)
-	case *Team:
-		tagConnection, err = resource.GetTags(client, nil)
-	case *User:
-		tagConnection, err = resource.GetTags(client, nil)
-	default:
-		return assignedTags, fmt.Errorf("not a taggable resource type: %s" + string(resourceType.ResourceType()))
-	}
+	tagConnection, err = resourceType.GetTags(client, nil)
 	if err != nil {
 		return assignedTags, err
 	}
