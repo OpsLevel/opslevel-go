@@ -104,7 +104,7 @@ func (client *Client) AssignTagsWithTags(identifier string, tags []Tag) ([]Tag, 
 		tagInput = append(tagInput, TagInput{Key: tag.Key, Value: tag.Value})
 	}
 	input := TagAssignInput{
-		Tags: []TagInput{},
+		Tags: tagInput,
 	}
 	if IsID(identifier) {
 		input.Id = NewID(identifier)
