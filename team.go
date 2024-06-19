@@ -76,7 +76,7 @@ func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error
 	}
 
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases from owned by Team
+		// CreateAliases returns current list of aliases of Team
 		team.ManagedAliases, err = client.CreateAliases(team.Id, aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {

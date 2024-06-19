@@ -69,7 +69,7 @@ func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *C
 	}
 
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases from owned by InfrastructureResource
+		// CreateAliases returns current list of aliases of InfrastructureResource
 		infrastructureResource.Aliases, err = client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {

@@ -49,7 +49,7 @@ func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []s
 	}
 
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases from owned by Scorecard
+		// CreateAliases returns current list of aliases of Scorecard
 		scorecard.Aliases, err = client.CreateAliases(scorecard.Id, aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {

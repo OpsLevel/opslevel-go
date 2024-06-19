@@ -66,7 +66,7 @@ func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string)
 	}
 
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases from owned by Service
+		// CreateAliases returns current list of aliases of Service
 		service.ManagedAliases, err = client.CreateAliases(service.Id, aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {

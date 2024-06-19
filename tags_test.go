@@ -17,7 +17,7 @@ type extractTagsTestCase struct {
 
 func TestExtractTags(t *testing.T) {
 	var noTags []ol.Tag
-	fourTags := []ol.Tag{
+	tags := []ol.Tag{
 		{Key: "foo", Value: "bar"},
 		{Key: "ping", Value: "pong"},
 		{Key: "marco", Value: "pollo"},
@@ -26,26 +26,38 @@ func TestExtractTags(t *testing.T) {
 	// Arrange
 	testCases := map[string]extractTagsTestCase{
 		"create all delete none": {
-			tagsWanted:           fourTags,
+			tagsWanted:           tags,
 			existingTags:         noTags,
-			expectedTagsToCreate: fourTags,
+			expectedTagsToCreate: tags,
 			expectedTagsToDelete: noTags,
 		},
 		"create none delete all": {
 			tagsWanted:           noTags,
-			existingTags:         fourTags,
+			existingTags:         tags,
 			expectedTagsToCreate: noTags,
-			expectedTagsToDelete: fourTags,
+			expectedTagsToDelete: tags,
 		},
 		"create some delete some": {
-			tagsWanted:           fourTags[:3],
-			existingTags:         fourTags[1:],
-			expectedTagsToCreate: fourTags[:1],
-			expectedTagsToDelete: fourTags[3:],
+			tagsWanted: []ol.Tag{
+				{Key: "foo", Value: "bar"},
+				{Key: "env", Value: "prod"},
+			},
+			existingTags: []ol.Tag{
+				{Key: "ping", Value: "pong"},
+				{Key: "marco", Value: "pollo"},
+				{Key: "env", Value: "prod"},
+			},
+			expectedTagsToCreate: []ol.Tag{
+				{Key: "foo", Value: "bar"},
+			},
+			expectedTagsToDelete: []ol.Tag{
+				{Key: "ping", Value: "pong"},
+				{Key: "marco", Value: "pollo"},
+			},
 		},
 		"no change": {
-			tagsWanted:           fourTags,
-			existingTags:         fourTags,
+			tagsWanted:           tags,
+			existingTags:         tags,
 			expectedTagsToCreate: noTags,
 			expectedTagsToDelete: noTags,
 		},

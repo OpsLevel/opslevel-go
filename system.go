@@ -82,7 +82,7 @@ func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string)
 	}
 
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases from owned by System
+		// CreateAliases returns current list of aliases of System
 		system.Aliases, err = client.CreateAliases(system.Id, aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {

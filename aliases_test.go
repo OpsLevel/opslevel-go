@@ -16,30 +16,30 @@ type extractAliasesTestCase struct {
 
 func TestExtractAliases(t *testing.T) {
 	var noAliases []string
-	fourAliases := []string{"foo", "alpha", "beta", "gamma"}
+	aliases := []string{"foo", "alpha", "beta", "gamma"}
 	// Arrange
 	testCases := map[string]extractAliasesTestCase{
 		"create all delete none": {
-			aliasesWanted:           fourAliases,
+			aliasesWanted:           aliases,
 			existingAliases:         noAliases,
-			expectedAliasesToCreate: fourAliases,
+			expectedAliasesToCreate: aliases,
 			expectedAliasesToDelete: noAliases,
 		},
 		"create none delete all": {
 			aliasesWanted:           noAliases,
-			existingAliases:         fourAliases,
+			existingAliases:         aliases,
 			expectedAliasesToCreate: noAliases,
-			expectedAliasesToDelete: fourAliases,
+			expectedAliasesToDelete: aliases,
 		},
 		"create some delete some": {
-			aliasesWanted:           fourAliases[:3],
-			existingAliases:         fourAliases[1:],
-			expectedAliasesToCreate: fourAliases[:1],
-			expectedAliasesToDelete: fourAliases[3:],
+			aliasesWanted:           []string{"foo", "alpha", "beta"},
+			existingAliases:         []string{"alpha", "beta", "gamma"},
+			expectedAliasesToCreate: []string{"foo"},
+			expectedAliasesToDelete: []string{"gamma"},
 		},
 		"no change": {
-			aliasesWanted:           fourAliases,
-			existingAliases:         fourAliases,
+			aliasesWanted:           aliases,
+			existingAliases:         aliases,
 			expectedAliasesToCreate: noAliases,
 			expectedAliasesToDelete: noAliases,
 		},

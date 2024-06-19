@@ -38,7 +38,7 @@ func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error 
 	}
 
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases from owned by Domain
+		// CreateAliases returns current list of aliases of Domain
 		d.ManagedAliases, err = client.CreateAliases(d.Id, aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {
