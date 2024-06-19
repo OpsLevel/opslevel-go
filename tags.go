@@ -224,7 +224,7 @@ func (client *Client) DeleteTag(id ID) error {
 //
 // Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created
 func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []Tag) error {
-	var err error
+	var allErrors, err error
 	var tagConnection *TagConnection
 
 	tagConnection, err = resourceType.GetTags(client, nil)
@@ -238,9 +238,10 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 	tagsToCreate, tagsToDelete := ExtractTags(tagConnection.Nodes, tagsWanted)
 	// delete tags found in resource but not listed in tagsWanted
 	for _, tag := range tagsToDelete {
-		if err := client.DeleteTag(tag.Id); err != nil {
-			return err
-		}
+		allErrors = errors.Join(allErrors, client.DeleteTag(tag.Id))
+	}
+	if allErrors != nil {
+		return allErrors
 	}
 
 	if len(tagsToCreate) > 0 {
