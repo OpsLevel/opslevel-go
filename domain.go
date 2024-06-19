@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 )
@@ -24,8 +25,22 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-func (d *Domain) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumDomain
+func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
+	var allErrors error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(d.ManagedAliases, aliasesWanted)
+	for _, alias := range aliasesToDelete {
+		err := client.DeleteAlias(AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: AliasOwnerTypeEnumDomain,
+		})
+		allErrors = errors.Join(allErrors, err)
+	}
+
+	createdAliases, err := client.CreateAliases(d.Id, aliasesToCreate)
+	allErrors = errors.Join(allErrors, err)
+
+	return createdAliases, allErrors
 }
 
 func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

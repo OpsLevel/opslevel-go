@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -52,8 +53,22 @@ type ServiceDocumentsConnection struct {
 	TotalCount int
 }
 
-func (s *Service) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumService
+func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
+	var allErrors error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(service.ManagedAliases, aliasesWanted)
+	for _, alias := range aliasesToDelete {
+		err := client.DeleteAlias(AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: AliasOwnerTypeEnumService,
+		})
+		allErrors = errors.Join(allErrors, err)
+	}
+
+	createdAliases, err := client.CreateAliases(service.Id, aliasesToCreate)
+	allErrors = errors.Join(allErrors, err)
+
+	return createdAliases, allErrors
 }
 
 func (service *Service) ResourceId() ID {

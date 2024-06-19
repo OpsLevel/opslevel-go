@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 )
@@ -55,8 +56,22 @@ type InfraInput struct {
 	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
-func (infrastructureResource *InfrastructureResource) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumInfrastructureResource
+func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
+	var allErrors error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(infrastructureResource.Aliases, aliasesWanted)
+	for _, alias := range aliasesToDelete {
+		err := client.DeleteAlias(AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: AliasOwnerTypeEnumInfrastructureResource,
+		})
+		allErrors = errors.Join(allErrors, err)
+	}
+
+	createdAliases, err := client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
+	allErrors = errors.Join(allErrors, err)
+
+	return createdAliases, allErrors
 }
 
 func (infrastructureResource *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

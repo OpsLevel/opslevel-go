@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"html"
 	"slices"
@@ -60,6 +61,24 @@ type TeamMembershipConnection struct {
 	Nodes      []TeamMembership
 	PageInfo   PageInfo
 	TotalCount int
+}
+
+func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
+	var allErrors error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(team.Aliases, aliasesWanted)
+	for _, alias := range aliasesToDelete {
+		err := client.DeleteAlias(AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: AliasOwnerTypeEnumTeam,
+		})
+		allErrors = errors.Join(allErrors, err)
+	}
+
+	createdAliases, err := client.CreateAliases(team.Id, aliasesToCreate)
+	allErrors = errors.Join(allErrors, err)
+
+	return createdAliases, allErrors
 }
 
 func (team *Team) ResourceId() ID {
@@ -203,10 +222,6 @@ func CreateContactWeb(address string, name *string) ContactInput {
 		DisplayName: name,
 		Address:     address,
 	}
-}
-
-func (team *Team) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumTeam
 }
 
 func (team *Team) HasTag(key string, value string) bool {

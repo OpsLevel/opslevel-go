@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
-	"strings"
 )
 
 type TagOwner string
@@ -99,18 +98,13 @@ func ValidateTagKey(key string) error {
 	return nil
 }
 
-func (client *Client) AssignTags(identifier string, tags map[string]string) ([]Tag, error) {
+func (client *Client) AssignTagsWithTags(identifier string, tags []Tag) ([]Tag, error) {
+	var tagInput []TagInput
+	for _, tag := range tags {
+		tagInput = append(tagInput, TagInput{Key: tag.Key, Value: tag.Value})
+	}
 	input := TagAssignInput{
 		Tags: []TagInput{},
-	}
-	for key, value := range tags {
-		if err := ValidateTagKey(key); err != nil {
-			return nil, err
-		}
-		input.Tags = append(input.Tags, TagInput{
-			Key:   key,
-			Value: value,
-		})
 	}
 	if IsID(identifier) {
 		input.Id = NewID(identifier)
@@ -118,6 +112,21 @@ func (client *Client) AssignTags(identifier string, tags map[string]string) ([]T
 		input.Alias = &identifier
 	}
 	return client.AssignTag(input)
+}
+
+func (client *Client) AssignTags(identifier string, tags map[string]string) ([]Tag, error) {
+	var tagsSlice []Tag
+
+	for key, value := range tags {
+		if err := ValidateTagKey(key); err != nil {
+			return nil, err
+		}
+		tagsSlice = append(tagsSlice, Tag{
+			Key:   key,
+			Value: value,
+		})
+	}
+	return client.AssignTagsWithTags(identifier, tagsSlice)
 }
 
 func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
@@ -210,7 +219,7 @@ func (client *Client) DeleteTag(id ID) error {
 // ReconcileTags manages tags API operations for TaggableResourceInterface implementations
 //
 // Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created. Reconciled tags are returned.
-func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []string) ([]Tag, error) {
+func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []Tag) ([]Tag, error) {
 	var err error
 	var tagConnection *TagConnection
 	var assignedTags []Tag
@@ -223,31 +232,42 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 		return assignedTags, fmt.Errorf("no tags found on %s with id '%s'", string(resourceType.ResourceType()), resourceType.ResourceId())
 	}
 
+	tagsToCreate, tagsToDelete := extractTags(tagConnection.Nodes, tagsWanted)
 	// delete tags found in resource but not listed in tagsWanted
-	for _, tag := range tagConnection.Nodes {
-		if !slices.Contains(tagsWanted, tag.Flatten()) {
-			if err := client.DeleteTag(tag.Id); err != nil {
-				return assignedTags, err
-			}
+	for _, tag := range tagsToDelete {
+		if err := client.DeleteTag(tag.Id); err != nil {
+			return assignedTags, err
 		}
 	}
-
-	// format tags listed in Terraform config but not found in service
-	tagInput := map[string]string{}
-	for _, tag := range tagsWanted {
-		parts := strings.Split(tag, ":")
-		if len(parts) != 2 {
-			return assignedTags, fmt.Errorf("[%s] invalid tag, should be in format 'key:value' (only a single colon between the key and value, no spaces or special characters)", tag)
-		}
-		key := parts[0]
-		value := parts[1]
-		tagInput[key] = value
-	}
-	// assign tags listed in Terraform config but not found in service
-	assignedTags, err = client.AssignTags(string(resourceType.ResourceId()), tagInput)
+	assignedTags, err = client.AssignTagsWithTags(string(resourceType.ResourceId()), tagsToCreate)
 	if err != nil {
 		return assignedTags, err
 	}
 
 	return assignedTags, nil
+}
+
+// Given actual tags and wanted tags, returns tagsToCreate and tagsToDelete lists
+func extractTags(existingTags, tagsWanted []Tag) ([]Tag, []Tag) {
+	var existingTagIds, tagsWantedIds []ID
+	var tagsToCreate, tagsToDelete []Tag
+
+	for _, tag := range tagsWanted {
+		tagsWantedIds = append(tagsWantedIds, tag.Id)
+	}
+	for _, existingTag := range existingTags {
+		if !slices.Contains(tagsWantedIds, existingTag.Id) {
+			tagsToDelete = append(tagsToDelete, existingTag)
+		}
+	}
+
+	for _, tag := range existingTags {
+		existingTagIds = append(existingTagIds, tag.Id)
+	}
+	for _, tagWanted := range tagsWanted {
+		if !slices.Contains(existingTagIds, tagWanted.Id) {
+			tagsToCreate = append(tagsToCreate, tagWanted)
+		}
+	}
+	return tagsToCreate, tagsToDelete
 }

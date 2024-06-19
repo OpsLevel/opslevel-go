@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 )
@@ -21,10 +22,6 @@ type SystemConnection struct {
 	Nodes      []System `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
 	TotalCount int      `json:"totalCount" graphql:"-"`
-}
-
-func (system *System) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumSystem
 }
 
 func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -70,6 +67,24 @@ func (systemId *SystemId) ResourceId() ID {
 
 func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
+}
+
+func (system *System) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
+	var allErrors error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(system.Aliases, aliasesWanted)
+	for _, alias := range aliasesToDelete {
+		err := client.DeleteAlias(AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: AliasOwnerTypeEnumSystem,
+		})
+		allErrors = errors.Join(allErrors, err)
+	}
+
+	createdAliases, err := client.CreateAliases(system.Id, aliasesToCreate)
+	allErrors = errors.Join(allErrors, err)
+
+	return createdAliases, allErrors
 }
 
 func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {

@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -28,14 +29,28 @@ type ScorecardConnection struct {
 	TotalCount int         `graphql:"totalCount"`
 }
 
-func (scorecard *Scorecard) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumScorecard
-}
-
 type ScorecardCategoryConnection struct {
 	Nodes      []Category `graphql:"nodes"`
 	PageInfo   PageInfo   `graphql:"pageInfo"`
 	TotalCount int        `graphql:"totalCount"`
+}
+
+func (scorecard *Scorecard) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
+	var allErrors error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(scorecard.Aliases, aliasesWanted)
+	for _, alias := range aliasesToDelete {
+		err := client.DeleteAlias(AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: AliasOwnerTypeEnumScorecard,
+		})
+		allErrors = errors.Join(allErrors, err)
+	}
+
+	createdAliases, err := client.CreateAliases(scorecard.Id, aliasesToCreate)
+	allErrors = errors.Join(allErrors, err)
+
+	return createdAliases, allErrors
 }
 
 func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVariables) (*ScorecardCategoryConnection, error) {
