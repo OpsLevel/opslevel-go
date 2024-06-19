@@ -66,7 +66,7 @@ type TeamMembershipConnection struct {
 func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
 	var allErrors error
 
-	aliasesToCreate, aliasesToDelete := extractAliases(team.Aliases, aliasesWanted)
+	aliasesToCreate, aliasesToDelete := ExtractAliases(team.Aliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
 		err := client.DeleteAlias(AliasDeleteInput{
 			Alias:     alias,

@@ -31,6 +31,10 @@ type Tag struct {
 	Value string `json:"value"`
 }
 
+func (t Tag) HasSameKeyValue(otherTag Tag) bool {
+	return t.Key == otherTag.Key && t.Value == otherTag.Value
+}
+
 func (t Tag) Flatten() string {
 	return fmt.Sprintf("%s:%s", t.Key, t.Value)
 }
@@ -232,7 +236,7 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 		return assignedTags, fmt.Errorf("no tags found on %s with id '%s'", string(resourceType.ResourceType()), resourceType.ResourceId())
 	}
 
-	tagsToCreate, tagsToDelete := extractTags(tagConnection.Nodes, tagsWanted)
+	tagsToCreate, tagsToDelete := ExtractTags(tagConnection.Nodes, tagsWanted)
 	// delete tags found in resource but not listed in tagsWanted
 	for _, tag := range tagsToDelete {
 		if err := client.DeleteTag(tag.Id); err != nil {
@@ -248,26 +252,22 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 }
 
 // Given actual tags and wanted tags, returns tagsToCreate and tagsToDelete lists
-func extractTags(existingTags, tagsWanted []Tag) ([]Tag, []Tag) {
-	var existingTagIds, tagsWantedIds []ID
+func ExtractTags(existingTags, tagsWanted []Tag) ([]Tag, []Tag) {
 	var tagsToCreate, tagsToDelete []Tag
 
-	for _, tag := range tagsWanted {
-		tagsWantedIds = append(tagsWantedIds, tag.Id)
-	}
+	// collect tagsToDelete - existing tags that are no longer wanted
 	for _, existingTag := range existingTags {
-		if !slices.Contains(tagsWantedIds, existingTag.Id) {
+		if !slices.ContainsFunc(tagsWanted, func(t Tag) bool { return existingTag.HasSameKeyValue(t) }) {
 			tagsToDelete = append(tagsToDelete, existingTag)
 		}
 	}
 
-	for _, tag := range existingTags {
-		existingTagIds = append(existingTagIds, tag.Id)
-	}
+	// collect tagsToCreate - wanted tags that do not yet exist
 	for _, tagWanted := range tagsWanted {
-		if !slices.Contains(existingTagIds, tagWanted.Id) {
+		if !slices.ContainsFunc(existingTags, func(t Tag) bool { return tagWanted.HasSameKeyValue(t) }) {
 			tagsToCreate = append(tagsToCreate, tagWanted)
 		}
 	}
+
 	return tagsToCreate, tagsToDelete
 }

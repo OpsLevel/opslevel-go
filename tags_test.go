@@ -8,6 +8,105 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+type extractTagsTestCase struct {
+	tagsWanted           []ol.Tag
+	existingTags         []ol.Tag
+	expectedTagsToCreate []ol.Tag
+	expectedTagsToDelete []ol.Tag
+}
+
+func TestExtractTags(t *testing.T) {
+	var noTags []ol.Tag
+	fourTags := []ol.Tag{
+		{Key: "foo", Value: "bar"},
+		{Key: "ping", Value: "pong"},
+		{Key: "marco", Value: "pollo"},
+		{Key: "env", Value: "prod"},
+	}
+	// Arrange
+	testCases := map[string]extractTagsTestCase{
+		"create all delete none": {
+			tagsWanted:           fourTags,
+			existingTags:         noTags,
+			expectedTagsToCreate: fourTags,
+			expectedTagsToDelete: noTags,
+		},
+		"create none delete all": {
+			tagsWanted:           noTags,
+			existingTags:         fourTags,
+			expectedTagsToCreate: noTags,
+			expectedTagsToDelete: fourTags,
+		},
+		"create some delete some": {
+			tagsWanted:           fourTags[:3],
+			existingTags:         fourTags[1:],
+			expectedTagsToCreate: fourTags[:1],
+			expectedTagsToDelete: fourTags[3:],
+		},
+		"no change": {
+			tagsWanted:           fourTags,
+			existingTags:         fourTags,
+			expectedTagsToCreate: noTags,
+			expectedTagsToDelete: noTags,
+		},
+	}
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			// Act
+			aliasesToCreate, aliasesToDelete := ol.ExtractTags(tc.existingTags, tc.tagsWanted)
+
+			// Assert
+			autopilot.Equals(t, aliasesToCreate, tc.expectedTagsToCreate)
+			autopilot.Equals(t, aliasesToDelete, tc.expectedTagsToDelete)
+		})
+	}
+}
+
+type tagHasSameKeyValueTestCase struct {
+	tagOne          ol.Tag
+	tagTwo          ol.Tag
+	hasSameKeyValue bool
+}
+
+func TestAssignTagHasSameKeyValue(t *testing.T) {
+	// Arrange
+	testTag := ol.Tag{Key: "foo", Value: "bar"}
+	testCases := map[string]tagHasSameKeyValueTestCase{
+		"empty tags match": {
+			tagOne:          ol.Tag{},
+			tagTwo:          ol.Tag{},
+			hasSameKeyValue: true,
+		},
+		"empty tag does not match non-empty tag": {
+			tagOne:          testTag,
+			tagTwo:          ol.Tag{},
+			hasSameKeyValue: false,
+		},
+		"tags have different key": {
+			tagOne:          testTag,
+			tagTwo:          ol.Tag{Key: "env", Value: testTag.Value},
+			hasSameKeyValue: false,
+		},
+		"tags have different value": {
+			tagOne:          testTag,
+			tagTwo:          ol.Tag{Key: testTag.Key, Value: "prod"},
+			hasSameKeyValue: false,
+		},
+		"tags have same key and value": {
+			tagOne:          testTag,
+			tagTwo:          ol.Tag{Key: testTag.Key, Value: testTag.Value},
+			hasSameKeyValue: true,
+		},
+	}
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			// Assert
+			autopilot.Equals(t, tc.tagOne.HasSameKeyValue(tc.tagTwo), tc.hasSameKeyValue)
+			autopilot.Equals(t, tc.tagTwo.HasSameKeyValue(tc.tagOne), tc.hasSameKeyValue)
+		})
+	}
+}
+
 func TestAssignTagForAlias(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(

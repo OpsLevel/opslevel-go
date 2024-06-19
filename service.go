@@ -56,7 +56,7 @@ type ServiceDocumentsConnection struct {
 func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
 	var allErrors error
 
-	aliasesToCreate, aliasesToDelete := extractAliases(service.ManagedAliases, aliasesWanted)
+	aliasesToCreate, aliasesToDelete := ExtractAliases(service.ManagedAliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
 		err := client.DeleteAlias(AliasDeleteInput{
 			Alias:     alias,

@@ -59,7 +59,7 @@ type InfraInput struct {
 func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
 	var allErrors error
 
-	aliasesToCreate, aliasesToDelete := extractAliases(infrastructureResource.Aliases, aliasesWanted)
+	aliasesToCreate, aliasesToDelete := ExtractAliases(infrastructureResource.Aliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
 		err := client.DeleteAlias(AliasDeleteInput{
 			Alias:     alias,
