@@ -53,8 +53,8 @@ type ServiceDocumentsConnection struct {
 	TotalCount int
 }
 
-func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
-	var allErrors error
+func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var allErrors, err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(service.ManagedAliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
@@ -65,10 +65,17 @@ func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string)
 		allErrors = errors.Join(allErrors, err)
 	}
 
-	createdAliases, err := client.CreateAliases(service.Id, aliasesToCreate)
-	allErrors = errors.Join(allErrors, err)
+	if len(aliasesToCreate) > 0 {
+		// CreateAliases returns current list of aliases from owned by Service
+		service.ManagedAliases, err = client.CreateAliases(service.Id, aliasesToCreate)
+		allErrors = errors.Join(allErrors, err)
+	} else {
+		service.ManagedAliases = slices.DeleteFunc(service.ManagedAliases, func(alias string) bool {
+			return slices.Contains(aliasesToDelete, alias)
+		})
+	}
 
-	return createdAliases, allErrors
+	return allErrors
 }
 
 func (service *Service) ResourceId() ID {

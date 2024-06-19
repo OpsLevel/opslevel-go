@@ -63,10 +63,10 @@ type TeamMembershipConnection struct {
 	TotalCount int
 }
 
-func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
-	var allErrors error
+func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var allErrors, err error
 
-	aliasesToCreate, aliasesToDelete := ExtractAliases(team.Aliases, aliasesWanted)
+	aliasesToCreate, aliasesToDelete := ExtractAliases(team.ManagedAliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
 		err := client.DeleteAlias(AliasDeleteInput{
 			Alias:     alias,
@@ -75,10 +75,17 @@ func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) ([]st
 		allErrors = errors.Join(allErrors, err)
 	}
 
-	createdAliases, err := client.CreateAliases(team.Id, aliasesToCreate)
-	allErrors = errors.Join(allErrors, err)
+	if len(aliasesToCreate) > 0 {
+		// CreateAliases returns current list of aliases from owned by Team
+		team.ManagedAliases, err = client.CreateAliases(team.Id, aliasesToCreate)
+		allErrors = errors.Join(allErrors, err)
+	} else {
+		team.ManagedAliases = slices.DeleteFunc(team.ManagedAliases, func(alias string) bool {
+			return slices.Contains(aliasesToDelete, alias)
+		})
+	}
 
-	return createdAliases, allErrors
+	return allErrors
 }
 
 func (team *Team) ResourceId() ID {

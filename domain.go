@@ -25,8 +25,8 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
-	var allErrors error
+func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var allErrors, err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(d.ManagedAliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
@@ -37,10 +37,17 @@ func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) ([]str
 		allErrors = errors.Join(allErrors, err)
 	}
 
-	createdAliases, err := client.CreateAliases(d.Id, aliasesToCreate)
-	allErrors = errors.Join(allErrors, err)
+	if len(aliasesToCreate) > 0 {
+		// CreateAliases returns current list of aliases from owned by Domain
+		d.ManagedAliases, err = client.CreateAliases(d.Id, aliasesToCreate)
+		allErrors = errors.Join(allErrors, err)
+	} else {
+		d.ManagedAliases = slices.DeleteFunc(d.ManagedAliases, func(alias string) bool {
+			return slices.Contains(aliasesToDelete, alias)
+		})
+	}
 
-	return createdAliases, allErrors
+	return allErrors
 }
 
 func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

@@ -222,33 +222,35 @@ func (client *Client) DeleteTag(id ID) error {
 
 // ReconcileTags manages tags API operations for TaggableResourceInterface implementations
 //
-// Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created. Reconciled tags are returned.
-func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []Tag) ([]Tag, error) {
+// Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created
+func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []Tag) error {
 	var err error
 	var tagConnection *TagConnection
-	var assignedTags []Tag
 
 	tagConnection, err = resourceType.GetTags(client, nil)
 	if err != nil {
-		return assignedTags, err
+		return err
 	}
 	if tagConnection == nil {
-		return assignedTags, fmt.Errorf("no tags found on %s with id '%s'", string(resourceType.ResourceType()), resourceType.ResourceId())
+		return fmt.Errorf("no tags found on %s with id '%s'", string(resourceType.ResourceType()), resourceType.ResourceId())
 	}
 
 	tagsToCreate, tagsToDelete := ExtractTags(tagConnection.Nodes, tagsWanted)
 	// delete tags found in resource but not listed in tagsWanted
 	for _, tag := range tagsToDelete {
 		if err := client.DeleteTag(tag.Id); err != nil {
-			return assignedTags, err
+			return err
 		}
 	}
-	assignedTags, err = client.AssignTagsWithTags(string(resourceType.ResourceId()), tagsToCreate)
-	if err != nil {
-		return assignedTags, err
+
+	if len(tagsToCreate) > 0 {
+		_, err = client.AssignTagsWithTags(string(resourceType.ResourceId()), tagsToCreate)
+		if err != nil {
+			return err
+		}
 	}
 
-	return assignedTags, nil
+	return nil
 }
 
 // Given actual tags and wanted tags, returns tagsToCreate and tagsToDelete lists

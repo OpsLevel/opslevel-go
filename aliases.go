@@ -7,7 +7,7 @@ import (
 )
 
 type AliasOwnerInterface interface {
-	ReconcileAliases(*Client, []string) ([]string, error)
+	ReconcileAliases(*Client, []string) error
 }
 
 func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
@@ -89,8 +89,8 @@ func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 
 // ReconcileAliases manages aliases API operations for AliasOwnerInterface implementations
 //
-// Aliases not in 'aliasesWanted' will be deleted, new tags from 'aliasesWanted' will be created. Reconciled aliases are returned.
-func (client *Client) ReconcileAliases(resourceType AliasOwnerInterface, aliasesWanted []string) ([]string, error) {
+// Aliases not in 'aliasesWanted' will be deleted, new tags from 'aliasesWanted' will be created
+func (client *Client) ReconcileAliases(resourceType AliasOwnerInterface, aliasesWanted []string) error {
 	return resourceType.ReconcileAliases(client, aliasesWanted)
 }
 

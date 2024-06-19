@@ -807,3 +807,81 @@ func TestTeamRemoveContact(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 }
+
+func TestTeamReconcileAliasesDeleteAll(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{}
+	team := ol.Team{
+		TeamId: ol.TeamId{
+			Id: id1,
+		},
+		ManagedAliases: []string{"one", "two"},
+	}
+
+	// delete "one" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "one", "ownerType": "team" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// delete "two" alias
+	testRequestTwo := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "two", "ownerType": "team" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "team/reconcile_aliases_delete_all", requests...)
+
+	// Act
+	err := team.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, len(team.ManagedAliases), 0)
+}
+
+func TestTeamReconcileAliases(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{"one", "two", "three"}
+	team := ol.Team{
+		TeamId: ol.TeamId{
+			Id: id1,
+		},
+		ManagedAliases: []string{"one", "alpha", "beta"},
+	}
+
+	// delete "alpha" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "alpha", "ownerType": "team" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// delete "beta" alias
+	testRequestTwo := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "beta", "ownerType": "team" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// create "two" alias
+	testRequestThree := autopilot.NewTestRequest(
+		`mutation AliasCreate($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}`,
+		`{"input":{ "alias": "two", "ownerId": "{{ template "id1_string" }}" }}`,
+		`{"data": { "aliasCreate": { "aliases": [ "one", "two" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
+	)
+	// create "three" alias
+	testRequestFour := autopilot.NewTestRequest(
+		`mutation AliasCreate($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}`,
+		`{"input":{ "alias": "three", "ownerId": "{{ template "id1_string" }}" }}`,
+		`{"data": { "aliasCreate": { "aliases": [ "one", "two", "three" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour}
+	client := BestTestClient(t, "team/reconcile_aliases", requests...)
+
+	// Act
+	err := team.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, team.ManagedAliases, aliasesWanted)
+}

@@ -56,8 +56,8 @@ type InfraInput struct {
 	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
-func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
-	var allErrors error
+func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var allErrors, err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(infrastructureResource.Aliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
@@ -68,10 +68,17 @@ func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *C
 		allErrors = errors.Join(allErrors, err)
 	}
 
-	createdAliases, err := client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
-	allErrors = errors.Join(allErrors, err)
+	if len(aliasesToCreate) > 0 {
+		// CreateAliases returns current list of aliases from owned by InfrastructureResource
+		infrastructureResource.Aliases, err = client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
+		allErrors = errors.Join(allErrors, err)
+	} else {
+		infrastructureResource.Aliases = slices.DeleteFunc(infrastructureResource.Aliases, func(alias string) bool {
+			return slices.Contains(aliasesToDelete, alias)
+		})
+	}
 
-	return createdAliases, allErrors
+	return allErrors
 }
 
 func (infrastructureResource *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

@@ -69,8 +69,8 @@ func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
 }
 
-func (system *System) ReconcileAliases(client *Client, aliasesWanted []string) ([]string, error) {
-	var allErrors error
+func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var allErrors, err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(system.Aliases, aliasesWanted)
 	for _, alias := range aliasesToDelete {
@@ -81,10 +81,17 @@ func (system *System) ReconcileAliases(client *Client, aliasesWanted []string) (
 		allErrors = errors.Join(allErrors, err)
 	}
 
-	createdAliases, err := client.CreateAliases(system.Id, aliasesToCreate)
-	allErrors = errors.Join(allErrors, err)
+	if len(aliasesToCreate) > 0 {
+		// CreateAliases returns current list of aliases from owned by System
+		system.Aliases, err = client.CreateAliases(system.Id, aliasesToCreate)
+		allErrors = errors.Join(allErrors, err)
+	} else {
+		system.Aliases = slices.DeleteFunc(system.Aliases, func(alias string) bool {
+			return slices.Contains(aliasesToDelete, alias)
+		})
+	}
 
-	return createdAliases, allErrors
+	return allErrors
 }
 
 func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {
