@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -73,6 +74,20 @@ func (client *Client) DeleteTeamAlias(alias string) error {
 	})
 }
 
+func (client *Client) DeleteAliases(aliasOwnerType AliasOwnerTypeEnum, aliases []string) error {
+	var allErrors error
+
+	for _, alias := range aliases {
+		input := AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: aliasOwnerType,
+		}
+		allErrors = errors.Join(allErrors, client.DeleteAlias(input))
+	}
+
+	return allErrors
+}
+
 func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	var m struct {
 		Payload struct {
@@ -85,13 +100,6 @@ func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	}
 	err := client.Mutate(&m, v, WithName("AliasDelete"))
 	return HandleErrors(err, m.Payload.Errors)
-}
-
-// ReconcileAliases manages aliases API operations for AliasOwnerInterface implementations
-//
-// Aliases not in 'aliasesWanted' will be deleted, new tags from 'aliasesWanted' will be created
-func (client *Client) ReconcileAliases(resourceType AliasOwnerInterface, aliasesWanted []string) error {
-	return resourceType.ReconcileAliases(client, aliasesWanted)
 }
 
 // Given actual aliases and wanted aliases, returns aliasesToCreate and aliasesToDelete lists

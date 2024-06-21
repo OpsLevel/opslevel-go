@@ -1,7 +1,6 @@
 package opslevel
 
 import (
-	"errors"
 	"fmt"
 	"slices"
 )
@@ -26,28 +25,23 @@ type DomainConnection struct {
 }
 
 func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var allErrors, err error
+	var err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(d.ManagedAliases, aliasesWanted)
-	for _, alias := range aliasesToDelete {
-		err := client.DeleteAlias(AliasDeleteInput{
-			Alias:     alias,
-			OwnerType: AliasOwnerTypeEnumDomain,
-		})
-		allErrors = errors.Join(allErrors, err)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumDomain, aliasesToDelete); err != nil {
+		return err
 	}
 
+	// Update this domain's aliases
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases of Domain
+		// aliases retrieved from API
 		d.ManagedAliases, err = client.CreateAliases(d.Id, aliasesToCreate)
-		allErrors = errors.Join(allErrors, err)
 	} else {
-		d.ManagedAliases = slices.DeleteFunc(d.ManagedAliases, func(alias string) bool {
-			return slices.Contains(aliasesToDelete, alias)
-		})
+		// aliases updated by hand - no more API calls here
+		d.ManagedAliases = getSliceWithStringsRemoved(d.ManagedAliases, aliasesToDelete)
 	}
 
-	return allErrors
+	return err
 }
 
 func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

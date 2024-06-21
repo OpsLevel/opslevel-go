@@ -3,7 +3,6 @@ package opslevel
 import (
 	"errors"
 	"fmt"
-	"slices"
 )
 
 type ScorecardId struct {
@@ -40,22 +39,19 @@ func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []s
 	var allErrors, err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(scorecard.Aliases, aliasesWanted)
-	for _, alias := range aliasesToDelete {
-		err := client.DeleteAlias(AliasDeleteInput{
-			Alias:     alias,
-			OwnerType: AliasOwnerTypeEnumScorecard,
-		})
-		allErrors = errors.Join(allErrors, err)
+	allErrors = client.DeleteAliases(AliasOwnerTypeEnumScorecard, aliasesToDelete)
+	if allErrors != nil {
+		return allErrors
 	}
 
+	// Update this scorecard's aliases
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases of Scorecard
+		// aliases retrieved from API
 		scorecard.Aliases, err = client.CreateAliases(scorecard.Id, aliasesToCreate)
 		allErrors = errors.Join(allErrors, err)
 	} else {
-		scorecard.Aliases = slices.DeleteFunc(scorecard.Aliases, func(alias string) bool {
-			return slices.Contains(aliasesToDelete, alias)
-		})
+		// aliases updated by hand - no more API calls here
+		scorecard.Aliases = getSliceWithStringsRemoved(scorecard.Aliases, aliasesToDelete)
 	}
 
 	return allErrors

@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -88,4 +89,11 @@ func removeDuplicates(data []string) []string {
 		}
 	}
 	return list
+}
+
+// Returns copy of stringsToKeep after removing stringsToExclude
+func getSliceWithStringsRemoved(stringsToKeep, stringsToExclude []string) []string {
+	return slices.DeleteFunc(stringsToKeep, func(value string) bool {
+		return slices.Contains(stringsToExclude, value)
+	})
 }

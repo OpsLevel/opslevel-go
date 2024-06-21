@@ -1,7 +1,6 @@
 package opslevel
 
 import (
-	"errors"
 	"fmt"
 	"html"
 	"slices"
@@ -64,28 +63,23 @@ type TeamMembershipConnection struct {
 }
 
 func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var allErrors, err error
+	var err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(team.ManagedAliases, aliasesWanted)
-	for _, alias := range aliasesToDelete {
-		err := client.DeleteAlias(AliasDeleteInput{
-			Alias:     alias,
-			OwnerType: AliasOwnerTypeEnumTeam,
-		})
-		allErrors = errors.Join(allErrors, err)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumTeam, aliasesToDelete); err != nil {
+		return err
 	}
 
+	// Update this team's aliases
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases of Team
+		// aliases retrieved from API
 		team.ManagedAliases, err = client.CreateAliases(team.Id, aliasesToCreate)
-		allErrors = errors.Join(allErrors, err)
 	} else {
-		team.ManagedAliases = slices.DeleteFunc(team.ManagedAliases, func(alias string) bool {
-			return slices.Contains(aliasesToDelete, alias)
-		})
+		// aliases updated by hand - no more API calls here
+		team.ManagedAliases = getSliceWithStringsRemoved(team.ManagedAliases, aliasesToDelete)
 	}
 
-	return allErrors
+	return err
 }
 
 func (team *Team) ResourceId() ID {

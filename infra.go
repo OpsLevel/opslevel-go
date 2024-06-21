@@ -1,7 +1,6 @@
 package opslevel
 
 import (
-	"errors"
 	"fmt"
 	"slices"
 )
@@ -57,28 +56,23 @@ type InfraInput struct {
 }
 
 func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var allErrors, err error
+	var err error
 
 	aliasesToCreate, aliasesToDelete := ExtractAliases(infrastructureResource.Aliases, aliasesWanted)
-	for _, alias := range aliasesToDelete {
-		err := client.DeleteAlias(AliasDeleteInput{
-			Alias:     alias,
-			OwnerType: AliasOwnerTypeEnumInfrastructureResource,
-		})
-		allErrors = errors.Join(allErrors, err)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumInfrastructureResource, aliasesToDelete); err != nil {
+		return err
 	}
 
+	// Update this infrastructureResource's aliases
 	if len(aliasesToCreate) > 0 {
-		// CreateAliases returns current list of aliases of InfrastructureResource
+		// aliases retrieved from API
 		infrastructureResource.Aliases, err = client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
-		allErrors = errors.Join(allErrors, err)
 	} else {
-		infrastructureResource.Aliases = slices.DeleteFunc(infrastructureResource.Aliases, func(alias string) bool {
-			return slices.Contains(aliasesToDelete, alias)
-		})
+		// aliases updated by hand - no more API calls here
+		infrastructureResource.Aliases = getSliceWithStringsRemoved(infrastructureResource.Aliases, aliasesToDelete)
 	}
 
-	return allErrors
+	return err
 }
 
 func (infrastructureResource *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
