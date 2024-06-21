@@ -26,8 +26,9 @@ type DomainConnection struct {
 
 func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
+	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, d.ManagedAliases)
+	aliasesToDelete := getSliceWithStringsRemoved(d.ManagedAliases, aliasesWanted)
 
-	aliasesToCreate, aliasesToDelete := ExtractAliases(d.ManagedAliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumDomain, aliasesToDelete); err != nil {
 		return err
 	}

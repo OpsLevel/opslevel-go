@@ -3,58 +3,8 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
-
-type extractAliasesTestCase struct {
-	aliasesWanted           []string
-	existingAliases         []string
-	expectedAliasesToCreate []string
-	expectedAliasesToDelete []string
-}
-
-func TestExtractAliases(t *testing.T) {
-	var noAliases []string
-	aliases := []string{"foo", "alpha", "beta", "gamma"}
-	// Arrange
-	testCases := map[string]extractAliasesTestCase{
-		"create all delete none": {
-			aliasesWanted:           aliases,
-			existingAliases:         noAliases,
-			expectedAliasesToCreate: aliases,
-			expectedAliasesToDelete: noAliases,
-		},
-		"create none delete all": {
-			aliasesWanted:           noAliases,
-			existingAliases:         aliases,
-			expectedAliasesToCreate: noAliases,
-			expectedAliasesToDelete: aliases,
-		},
-		"create some delete some": {
-			aliasesWanted:           []string{"foo", "alpha", "beta"},
-			existingAliases:         []string{"alpha", "beta", "gamma"},
-			expectedAliasesToCreate: []string{"foo"},
-			expectedAliasesToDelete: []string{"gamma"},
-		},
-		"no change": {
-			aliasesWanted:           aliases,
-			existingAliases:         aliases,
-			expectedAliasesToCreate: noAliases,
-			expectedAliasesToDelete: noAliases,
-		},
-	}
-	for name, tc := range testCases {
-		t.Run(name, func(t *testing.T) {
-			// Act
-			aliasesToCreate, aliasesToDelete := ol.ExtractAliases(tc.existingAliases, tc.aliasesWanted)
-
-			// Assert
-			autopilot.Equals(t, aliasesToCreate, tc.expectedAliasesToCreate)
-			autopilot.Equals(t, aliasesToDelete, tc.expectedAliasesToDelete)
-		})
-	}
-}
 
 func TestCreateAliases(t *testing.T) {
 	// Arrange

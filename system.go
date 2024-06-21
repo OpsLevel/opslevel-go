@@ -70,8 +70,9 @@ func (systemId *SystemId) ResourceType() TaggableResource {
 
 func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
+	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, system.Aliases)
+	aliasesToDelete := getSliceWithStringsRemoved(system.Aliases, aliasesWanted)
 
-	aliasesToCreate, aliasesToDelete := ExtractAliases(system.Aliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumSystem, aliasesToDelete); err != nil {
 		return err
 	}

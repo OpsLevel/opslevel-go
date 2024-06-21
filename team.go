@@ -64,8 +64,9 @@ type TeamMembershipConnection struct {
 
 func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
+	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, team.ManagedAliases)
+	aliasesToDelete := getSliceWithStringsRemoved(team.ManagedAliases, aliasesWanted)
 
-	aliasesToCreate, aliasesToDelete := ExtractAliases(team.ManagedAliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumTeam, aliasesToDelete); err != nil {
 		return err
 	}

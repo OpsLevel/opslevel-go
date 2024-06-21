@@ -37,8 +37,9 @@ type ScorecardCategoryConnection struct {
 
 func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var allErrors, err error
+	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, scorecard.Aliases)
+	aliasesToDelete := getSliceWithStringsRemoved(scorecard.Aliases, aliasesWanted)
 
-	aliasesToCreate, aliasesToDelete := ExtractAliases(scorecard.Aliases, aliasesWanted)
 	allErrors = client.DeleteAliases(AliasOwnerTypeEnumScorecard, aliasesToDelete)
 	if allErrors != nil {
 		return allErrors

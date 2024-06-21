@@ -91,9 +91,9 @@ func removeDuplicates(data []string) []string {
 	return list
 }
 
-// Returns copy of stringsToKeep after removing stringsToExclude
+// Returns copy of stringsToKeep with stringsToExclude values removed
 func getSliceWithStringsRemoved(stringsToKeep, stringsToExclude []string) []string {
-	return slices.DeleteFunc(stringsToKeep, func(value string) bool {
+	return slices.DeleteFunc(slices.Clone(stringsToKeep), func(value string) bool {
 		return slices.Contains(stringsToExclude, value)
 	})
 }
