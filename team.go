@@ -62,6 +62,30 @@ type TeamMembershipConnection struct {
 	TotalCount int
 }
 
+func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var err error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(team.ManagedAliases, aliasesWanted)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumTeam, aliasesToDelete); err != nil {
+		return err
+	}
+
+	// Update this team's aliases
+	if len(aliasesToCreate) > 0 {
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
+		team.ManagedAliases, err = client.CreateAliases(team.Id, aliasesToCreate)
+	} else {
+		// If no aliases are created but aliases may have been deleted,
+		// update this Team struct's aliases by hand
+		team.ManagedAliases = slices.DeleteFunc(team.ManagedAliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
+	}
+
+	return err
+}
+
 func (team *Team) ResourceId() ID {
 	return team.Id
 }
@@ -203,10 +227,6 @@ func CreateContactWeb(address string, name *string) ContactInput {
 		DisplayName: name,
 		Address:     address,
 	}
-}
-
-func (team *Team) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumTeam
 }
 
 func (team *Team) HasTag(key string, value string) bool {

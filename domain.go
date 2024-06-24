@@ -24,8 +24,28 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-func (d *Domain) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumDomain
+func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var err error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(d.ManagedAliases, aliasesWanted)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumDomain, aliasesToDelete); err != nil {
+		return err
+	}
+
+	// Update this domain's aliases
+	if len(aliasesToCreate) > 0 {
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
+		d.ManagedAliases, err = client.CreateAliases(d.Id, aliasesToCreate)
+	} else {
+		// If no aliases are created but aliases may have been deleted,
+		// update this Domain struct's aliases by hand
+		d.ManagedAliases = slices.DeleteFunc(d.ManagedAliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
+	}
+
+	return err
 }
 
 func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

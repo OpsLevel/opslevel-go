@@ -1,14 +1,10 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
-	"slices"
 	"strings"
 )
-
-type AliasOwnerInterface interface {
-	AliasOwnerType() AliasOwnerTypeEnum
-}
 
 func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
 	var output []string
@@ -49,13 +45,7 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 	return output, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) DeleteDomainAlias(alias string) error {
-	return client.DeleteAlias(AliasDeleteInput{
-		Alias:     alias,
-		OwnerType: AliasOwnerTypeEnumDomain,
-	})
-}
-
+// Deprecated: use client.DeleteAlias instead
 func (client *Client) DeleteInfraAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
 		Alias:     alias,
@@ -63,13 +53,7 @@ func (client *Client) DeleteInfraAlias(alias string) error {
 	})
 }
 
-func (client *Client) DeleteScorecardAlias(alias string) error {
-	return client.DeleteAlias(AliasDeleteInput{
-		Alias:     alias,
-		OwnerType: AliasOwnerTypeEnumScorecard,
-	})
-}
-
+// Deprecated: use client.DeleteAlias instead
 func (client *Client) DeleteServiceAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
 		Alias:     alias,
@@ -77,18 +61,26 @@ func (client *Client) DeleteServiceAlias(alias string) error {
 	})
 }
 
-func (client *Client) DeleteSystemAlias(alias string) error {
-	return client.DeleteAlias(AliasDeleteInput{
-		Alias:     alias,
-		OwnerType: AliasOwnerTypeEnumSystem,
-	})
-}
-
+// Deprecated: use client.DeleteAlias instead
 func (client *Client) DeleteTeamAlias(alias string) error {
 	return client.DeleteAlias(AliasDeleteInput{
 		Alias:     alias,
 		OwnerType: AliasOwnerTypeEnumTeam,
 	})
+}
+
+func (client *Client) DeleteAliases(aliasOwnerType AliasOwnerTypeEnum, aliases []string) error {
+	var allErrors error
+
+	for _, alias := range aliases {
+		input := AliasDeleteInput{
+			Alias:     alias,
+			OwnerType: aliasOwnerType,
+		}
+		allErrors = errors.Join(allErrors, client.DeleteAlias(input))
+	}
+
+	return allErrors
 }
 
 func (client *Client) DeleteAlias(input AliasDeleteInput) error {
@@ -103,58 +95,4 @@ func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	}
 	err := client.Mutate(&m, v, WithName("AliasDelete"))
 	return HandleErrors(err, m.Payload.Errors)
-}
-
-// ReconcileAliases manages aliases API operations for AliasOwnerInterface implementations
-//
-// Aliases not in 'aliasesWanted' will be deleted, new tags from 'aliasesWanted' will be created. Reconciled aliases are returned.
-func (client *Client) ReconcileAliases(resourceType AliasOwnerInterface, aliasesWanted []string) ([]string, error) {
-	var deleteAliasFunc func(string) error
-	var existingAliases []string
-	var resourceId ID
-
-	switch resource := resourceType.(type) {
-	case *Domain:
-		deleteAliasFunc = client.DeleteDomainAlias
-		existingAliases = resource.ManagedAliases
-		resourceId = resource.Id
-	case *InfrastructureResource:
-		deleteAliasFunc = client.DeleteInfraAlias
-		existingAliases = resource.Aliases
-		resourceId = ID(resource.Id)
-	case *Scorecard:
-		deleteAliasFunc = client.DeleteScorecardAlias
-		existingAliases = resource.Aliases
-		resourceId = resource.Id
-	case *Service:
-		deleteAliasFunc = client.DeleteServiceAlias
-		existingAliases = resource.ManagedAliases
-		resourceId = resource.Id
-	case *System:
-		deleteAliasFunc = client.DeleteSystemAlias
-		existingAliases = resource.Aliases
-		resourceId = resource.Id
-	case *Team:
-		deleteAliasFunc = client.DeleteTeamAlias
-		existingAliases = resource.ManagedAliases
-		resourceId = resource.Id
-	}
-
-	// delete aliases found in resource but not listed in aliasesWanted
-	for _, alias := range existingAliases {
-		if !slices.Contains(aliasesWanted, alias) {
-			if err := deleteAliasFunc(alias); err != nil {
-				return []string{}, err
-			}
-		}
-	}
-
-	newServiceAliases := []string{}
-	for _, aliasWanted := range aliasesWanted {
-		if !slices.Contains(existingAliases, aliasWanted) {
-			newServiceAliases = append(newServiceAliases, aliasWanted)
-		}
-	}
-
-	return client.CreateAliases(resourceId, newServiceAliases)
 }

@@ -23,10 +23,6 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
-func (system *System) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumSystem
-}
-
 func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
@@ -70,6 +66,30 @@ func (systemId *SystemId) ResourceId() ID {
 
 func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
+}
+
+func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var err error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(system.Aliases, aliasesWanted)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumSystem, aliasesToDelete); err != nil {
+		return err
+	}
+
+	// Update this system's aliases
+	if len(aliasesToCreate) > 0 {
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
+		system.Aliases, err = client.CreateAliases(system.Id, aliasesToCreate)
+	} else {
+		// If no aliases are created but aliases may have been deleted,
+		// update this System struct's aliases by hand
+		system.Aliases = slices.DeleteFunc(system.Aliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
+	}
+
+	return err
 }
 
 func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {

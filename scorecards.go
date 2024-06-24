@@ -1,7 +1,9 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
+	"slices"
 )
 
 type ScorecardId struct {
@@ -28,14 +30,36 @@ type ScorecardConnection struct {
 	TotalCount int         `graphql:"totalCount"`
 }
 
-func (scorecard *Scorecard) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumScorecard
-}
-
 type ScorecardCategoryConnection struct {
 	Nodes      []Category `graphql:"nodes"`
 	PageInfo   PageInfo   `graphql:"pageInfo"`
 	TotalCount int        `graphql:"totalCount"`
+}
+
+func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var allErrors, err error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(scorecard.Aliases, aliasesWanted)
+	allErrors = client.DeleteAliases(AliasOwnerTypeEnumScorecard, aliasesToDelete)
+	if allErrors != nil {
+		return allErrors
+	}
+
+	// Update this scorecard's aliases
+	if len(aliasesToCreate) > 0 {
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
+		scorecard.Aliases, err = client.CreateAliases(scorecard.Id, aliasesToCreate)
+		allErrors = errors.Join(allErrors, err)
+	} else {
+		// If no aliases are created but aliases may have been deleted,
+		// update this Scorecard struct's aliases by hand
+		scorecard.Aliases = slices.DeleteFunc(scorecard.Aliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
+	}
+
+	return allErrors
 }
 
 func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVariables) (*ScorecardCategoryConnection, error) {

@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -88,4 +89,24 @@ func removeDuplicates(data []string) []string {
 		}
 	}
 	return list
+}
+
+// Given actual aliases and wanted aliases, returns aliasesToCreate and aliasesToDelete lists
+func extractAliases(existingAliases, aliasesWanted []string) ([]string, []string) {
+	var aliasesToCreate, aliasesToDelete []string
+
+	// collect aliasesToDelete - existing aliases that are no longer wanted
+	for _, alias := range existingAliases {
+		if !slices.Contains(aliasesWanted, alias) {
+			aliasesToDelete = append(aliasesToDelete, alias)
+		}
+	}
+
+	// collect aliasesToCreate - wanted aliases that do not yet exist
+	for _, aliasWanted := range aliasesWanted {
+		if !slices.Contains(existingAliases, aliasWanted) {
+			aliasesToCreate = append(aliasesToCreate, aliasWanted)
+		}
+	}
+	return aliasesToCreate, aliasesToDelete
 }

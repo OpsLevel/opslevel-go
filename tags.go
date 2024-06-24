@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
-	"strings"
 )
 
 type TagOwner string
@@ -30,6 +29,10 @@ type Tag struct {
 	Id    ID     `json:"id"`
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+func (t Tag) HasSameKeyValue(otherTag Tag) bool {
+	return t.Key == otherTag.Key && t.Value == otherTag.Value
 }
 
 func (t Tag) Flatten() string {
@@ -99,18 +102,9 @@ func ValidateTagKey(key string) error {
 	return nil
 }
 
-func (client *Client) AssignTags(identifier string, tags map[string]string) ([]Tag, error) {
+func (client *Client) AssignTagsWithTagInputs(identifier string, tags []TagInput) ([]Tag, error) {
 	input := TagAssignInput{
-		Tags: []TagInput{},
-	}
-	for key, value := range tags {
-		if err := ValidateTagKey(key); err != nil {
-			return nil, err
-		}
-		input.Tags = append(input.Tags, TagInput{
-			Key:   key,
-			Value: value,
-		})
+		Tags: tags,
 	}
 	if IsID(identifier) {
 		input.Id = NewID(identifier)
@@ -118,6 +112,19 @@ func (client *Client) AssignTags(identifier string, tags map[string]string) ([]T
 		input.Alias = &identifier
 	}
 	return client.AssignTag(input)
+}
+
+func (client *Client) AssignTags(identifier string, tags map[string]string) ([]Tag, error) {
+	var tagInputs []TagInput
+
+	for key, value := range tags {
+		if err := ValidateTagKey(key); err != nil {
+			return nil, err
+		}
+		tagInputs = append(tagInputs, TagInput{Key: key, Value: value})
+	}
+
+	return client.AssignTagsWithTagInputs(identifier, tagInputs)
 }
 
 func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
@@ -209,45 +216,64 @@ func (client *Client) DeleteTag(id ID) error {
 
 // ReconcileTags manages tags API operations for TaggableResourceInterface implementations
 //
-// Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created. Reconciled tags are returned.
-func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []string) ([]Tag, error) {
-	var err error
+// Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created
+func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []Tag) error {
+	var allErrors, err error
 	var tagConnection *TagConnection
-	var assignedTags []Tag
+	existingTags := []Tag{}
 
 	tagConnection, err = resourceType.GetTags(client, nil)
 	if err != nil {
-		return assignedTags, err
+		return err
 	}
-	if tagConnection == nil {
-		return assignedTags, fmt.Errorf("no tags found on %s with id '%s'", string(resourceType.ResourceType()), resourceType.ResourceId())
+	if tagConnection != nil {
+		existingTags = tagConnection.Nodes
 	}
 
 	// delete tags found in resource but not listed in tagsWanted
-	for _, tag := range tagConnection.Nodes {
-		if !slices.Contains(tagsWanted, tag.Flatten()) {
-			if err := client.DeleteTag(tag.Id); err != nil {
-				return assignedTags, err
-			}
+	for _, tagId := range extractTagIdsToDelete(existingTags, tagsWanted) {
+		allErrors = errors.Join(allErrors, client.DeleteTag(tagId))
+	}
+	if allErrors != nil {
+		return allErrors
+	}
+
+	tagInputsToCreate := extractTagInputsToCreate(existingTags, tagsWanted)
+	if len(tagInputsToCreate) > 0 {
+		_, err = client.AssignTagsWithTagInputs(string(resourceType.ResourceId()), tagInputsToCreate)
+		if err != nil {
+			return err
 		}
 	}
 
-	// format tags listed in Terraform config but not found in service
-	tagInput := map[string]string{}
-	for _, tag := range tagsWanted {
-		parts := strings.Split(tag, ":")
-		if len(parts) != 2 {
-			return assignedTags, fmt.Errorf("[%s] invalid tag, should be in format 'key:value' (only a single colon between the key and value, no spaces or special characters)", tag)
+	return nil
+}
+
+// return ids of tags that are to be deleted
+func extractTagIdsToDelete(existingTags, tagsWanted []Tag) []ID {
+	var tagIdsToDelete []ID
+
+	for _, existingTag := range existingTags {
+		if !slices.ContainsFunc(tagsWanted, func(t Tag) bool { return existingTag.HasSameKeyValue(t) }) {
+			tagIdsToDelete = append(tagIdsToDelete, existingTag.Id)
 		}
-		key := parts[0]
-		value := parts[1]
-		tagInput[key] = value
 	}
-	// assign tags listed in Terraform config but not found in service
-	assignedTags, err = client.AssignTags(string(resourceType.ResourceId()), tagInput)
-	if err != nil {
-		return assignedTags, err
+	return tagIdsToDelete
+}
+
+// return TagInputs for tags that are to be created
+func extractTagInputsToCreate(existingTags, tagsWanted []Tag) []TagInput {
+	var tagsToCreate []TagInput
+
+	// collect tagsToCreate - wanted tags that do not yet exist
+	for _, tagWanted := range tagsWanted {
+		if !slices.ContainsFunc(existingTags, func(t Tag) bool { return tagWanted.HasSameKeyValue(t) }) {
+			tagsToCreate = append(tagsToCreate, TagInput{
+				Key:   tagWanted.Key,
+				Value: tagWanted.Value,
+			})
+		}
 	}
 
-	return assignedTags, nil
+	return tagsToCreate
 }

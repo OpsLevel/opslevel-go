@@ -55,8 +55,28 @@ type InfraInput struct {
 	Data     *JSON               `json:"data" yaml:"data" default:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"`
 }
 
-func (infrastructureResource *InfrastructureResource) AliasOwnerType() AliasOwnerTypeEnum {
-	return AliasOwnerTypeEnumInfrastructureResource
+func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) error {
+	var err error
+
+	aliasesToCreate, aliasesToDelete := extractAliases(infrastructureResource.Aliases, aliasesWanted)
+	if err := client.DeleteAliases(AliasOwnerTypeEnumInfrastructureResource, aliasesToDelete); err != nil {
+		return err
+	}
+
+	// Update this infrastructureResource's aliases
+	if len(aliasesToCreate) > 0 {
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
+		infrastructureResource.Aliases, err = client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
+	} else {
+		// If no aliases are created but aliases may have been deleted,
+		// update this infrastructureResource struct's aliases by hand
+		infrastructureResource.Aliases = slices.DeleteFunc(infrastructureResource.Aliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
+	}
+
+	return err
 }
 
 func (infrastructureResource *InfrastructureResource) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {

@@ -61,6 +61,84 @@ func TestDomainGetSystems(t *testing.T) {
 	autopilot.Equals(t, "PlatformSystem3", result[2].Name)
 }
 
+func TestDomainReconcileAliasesDeleteAll(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{}
+	domain := ol.Domain{
+		DomainId: ol.DomainId{
+			Id: id1,
+		},
+		ManagedAliases: []string{"one", "two"},
+	}
+
+	// delete "one" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "one", "ownerType": "domain" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// delete "two" alias
+	testRequestTwo := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "two", "ownerType": "domain" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "domain/reconcile_aliases_delete_all", requests...)
+
+	// Act
+	err := domain.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, len(domain.ManagedAliases), 0)
+}
+
+func TestDomainReconcileAliases(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{"one", "two", "three"}
+	domain := ol.Domain{
+		DomainId: ol.DomainId{
+			Id: id1,
+		},
+		ManagedAliases: []string{"one", "alpha", "beta"},
+	}
+
+	// delete "alpha" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "alpha", "ownerType": "domain" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// delete "beta" alias
+	testRequestTwo := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "beta", "ownerType": "domain" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// create "two" alias
+	testRequestThree := autopilot.NewTestRequest(
+		`mutation AliasCreate($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}`,
+		`{"input":{ "alias": "two", "ownerId": "{{ template "id1_string" }}" }}`,
+		`{"data": { "aliasCreate": { "aliases": [ "one", "two" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
+	)
+	// create "three" alias
+	testRequestFour := autopilot.NewTestRequest(
+		`mutation AliasCreate($input:AliasCreateInput!){aliasCreate(input: $input){aliases,ownerId,errors{message,path}}}`,
+		`{"input":{ "alias": "three", "ownerId": "{{ template "id1_string" }}" }}`,
+		`{"data": { "aliasCreate": { "aliases": [ "one", "two", "three" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour}
+	client := BestTestClient(t, "domain/reconcile_aliases", requests...)
+
+	// Act
+	err := domain.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, domain.ManagedAliases, aliasesWanted)
+}
+
 func TestDomainGetTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
