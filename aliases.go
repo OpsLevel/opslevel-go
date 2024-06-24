@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-type AliasOwnerInterface interface {
-	ReconcileAliases(*Client, []string) error
-}
-
 func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
 	var output []string
 	var errors []string
