@@ -18,10 +18,10 @@ type extractTagsTestCase struct {
 func TestExtractTags(t *testing.T) {
 	var noTags []ol.Tag
 	tags := []ol.Tag{
-		{Key: "foo", Value: "bar"},
-		{Key: "ping", Value: "pong"},
-		{Key: "marco", Value: "pollo"},
-		{Key: "env", Value: "prod"},
+		{Id: id1, Key: "foo", Value: "bar"},
+		{Id: id2, Key: "ping", Value: "pong"},
+		{Id: id3, Key: "marco", Value: "pollo"},
+		{Id: id4, Key: "env", Value: "prod"},
 	}
 	// Arrange
 	testCases := map[string]extractTagsTestCase{
@@ -39,20 +39,20 @@ func TestExtractTags(t *testing.T) {
 		},
 		"create some delete some": {
 			tagsWanted: []ol.Tag{
-				{Key: "foo", Value: "bar"},
-				{Key: "env", Value: "prod"},
+				{Id: id1, Key: "foo", Value: "bar"},
+				{Id: id2, Key: "env", Value: "prod"},
 			},
 			existingTags: []ol.Tag{
-				{Key: "ping", Value: "pong"},
-				{Key: "marco", Value: "pollo"},
-				{Key: "env", Value: "prod"},
+				{Id: id2, Key: "env", Value: "prod"},
+				{Id: id3, Key: "ping", Value: "pong"},
+				{Id: id4, Key: "marco", Value: "pollo"},
 			},
 			expectedTagsToCreate: []ol.Tag{
-				{Key: "foo", Value: "bar"},
+				{Id: id1, Key: "foo", Value: "bar"},
 			},
 			expectedTagsToDelete: []ol.Tag{
-				{Key: "ping", Value: "pong"},
-				{Key: "marco", Value: "pollo"},
+				{Id: id3, Key: "ping", Value: "pong"},
+				{Id: id4, Key: "marco", Value: "pollo"},
 			},
 		},
 		"no change": {
@@ -66,6 +66,11 @@ func TestExtractTags(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			// Act
 			aliasesToCreate, aliasesToDelete := ol.ExtractTags(tc.existingTags, tc.tagsWanted)
+
+			tagIds := []ol.ID{}
+			for _, tagId := range aliasesToDelete {
+				tagIds = append(tagIds, tagId)
+			}
 
 			// Assert
 			autopilot.Equals(t, aliasesToCreate, tc.expectedTagsToCreate)

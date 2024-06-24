@@ -54,20 +54,23 @@ type ServiceDocumentsConnection struct {
 
 func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
-	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, service.ManagedAliases)
-	aliasesToDelete := getSliceWithStringsRemoved(service.ManagedAliases, aliasesWanted)
 
+	aliasesToCreate, aliasesToDelete := extractAliases(service.ManagedAliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumService, aliasesToDelete); err != nil {
 		return err
 	}
 
 	// Update this service's aliases
 	if len(aliasesToCreate) > 0 {
-		// aliases retrieved from API
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
 		service.ManagedAliases, err = client.CreateAliases(service.Id, aliasesToCreate)
 	} else {
-		// aliases updated by hand - no more API calls here
-		service.ManagedAliases = getSliceWithStringsRemoved(service.ManagedAliases, aliasesToDelete)
+		// If no aliases are created but aliases may have been deleted,
+		// update this Service struct's aliases by hand
+		service.ManagedAliases = slices.DeleteFunc(service.ManagedAliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
 	}
 
 	return err

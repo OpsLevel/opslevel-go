@@ -64,20 +64,23 @@ type TeamMembershipConnection struct {
 
 func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
-	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, team.ManagedAliases)
-	aliasesToDelete := getSliceWithStringsRemoved(team.ManagedAliases, aliasesWanted)
 
+	aliasesToCreate, aliasesToDelete := extractAliases(team.ManagedAliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumTeam, aliasesToDelete); err != nil {
 		return err
 	}
 
 	// Update this team's aliases
 	if len(aliasesToCreate) > 0 {
-		// aliases retrieved from API
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
 		team.ManagedAliases, err = client.CreateAliases(team.Id, aliasesToCreate)
 	} else {
-		// aliases updated by hand - no more API calls here
-		team.ManagedAliases = getSliceWithStringsRemoved(team.ManagedAliases, aliasesToDelete)
+		// If no aliases are created but aliases may have been deleted,
+		// update this Team struct's aliases by hand
+		team.ManagedAliases = slices.DeleteFunc(team.ManagedAliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
 	}
 
 	return err

@@ -70,20 +70,23 @@ func (systemId *SystemId) ResourceType() TaggableResource {
 
 func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
-	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, system.Aliases)
-	aliasesToDelete := getSliceWithStringsRemoved(system.Aliases, aliasesWanted)
 
+	aliasesToCreate, aliasesToDelete := extractAliases(system.Aliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumSystem, aliasesToDelete); err != nil {
 		return err
 	}
 
 	// Update this system's aliases
 	if len(aliasesToCreate) > 0 {
-		// aliases retrieved from API
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
 		system.Aliases, err = client.CreateAliases(system.Id, aliasesToCreate)
 	} else {
-		// aliases updated by hand - no more API calls here
-		system.Aliases = getSliceWithStringsRemoved(system.Aliases, aliasesToDelete)
+		// If no aliases are created but aliases may have been deleted,
+		// update this System struct's aliases by hand
+		system.Aliases = slices.DeleteFunc(system.Aliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
 	}
 
 	return err

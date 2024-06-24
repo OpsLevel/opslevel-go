@@ -57,20 +57,23 @@ type InfraInput struct {
 
 func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	var err error
-	aliasesToCreate := getSliceWithStringsRemoved(aliasesWanted, infrastructureResource.Aliases)
-	aliasesToDelete := getSliceWithStringsRemoved(infrastructureResource.Aliases, aliasesWanted)
 
+	aliasesToCreate, aliasesToDelete := extractAliases(infrastructureResource.Aliases, aliasesWanted)
 	if err := client.DeleteAliases(AliasOwnerTypeEnumInfrastructureResource, aliasesToDelete); err != nil {
 		return err
 	}
 
 	// Update this infrastructureResource's aliases
 	if len(aliasesToCreate) > 0 {
-		// aliases retrieved from API
+		// Creating an alias retrieves the latest slice of aliases from the API
+		// This accounts for any aliases deleted above as well
 		infrastructureResource.Aliases, err = client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
 	} else {
-		// aliases updated by hand - no more API calls here
-		infrastructureResource.Aliases = getSliceWithStringsRemoved(infrastructureResource.Aliases, aliasesToDelete)
+		// If no aliases are created but aliases may have been deleted,
+		// update this infrastructureResource struct's aliases by hand
+		infrastructureResource.Aliases = slices.DeleteFunc(infrastructureResource.Aliases, func(value string) bool {
+			return slices.Contains(aliasesToDelete, value)
+		})
 	}
 
 	return err
