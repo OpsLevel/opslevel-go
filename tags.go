@@ -230,17 +230,17 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 		existingTags = tagConnection.Nodes
 	}
 
-	tagsToCreate, tagIdsToDelete := ExtractTags(existingTags, tagsWanted)
 	// delete tags found in resource but not listed in tagsWanted
-	for _, tagId := range tagIdsToDelete {
+	for _, tagId := range extractTagIdsToDelete(existingTags, tagsWanted) {
 		allErrors = errors.Join(allErrors, client.DeleteTag(tagId))
 	}
 	if allErrors != nil {
 		return allErrors
 	}
 
-	if len(tagsToCreate) > 0 {
-		_, err = client.AssignTagsWithTagInputs(string(resourceType.ResourceId()), tagsToCreate)
+	tagInputsToCreate := extractTagInputsToCreate(existingTags, tagsWanted)
+	if len(tagInputsToCreate) > 0 {
+		_, err = client.AssignTagsWithTagInputs(string(resourceType.ResourceId()), tagInputsToCreate)
 		if err != nil {
 			return err
 		}
@@ -249,17 +249,21 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 	return nil
 }
 
-// Given actual tags and wanted tags, returns []TagInput to create and []ID to delete
-func ExtractTags(existingTags, tagsWanted []Tag) ([]TagInput, []ID) {
-	var tagsToCreate []TagInput
+// return ids of tags that are to be deleted
+func extractTagIdsToDelete(existingTags, tagsWanted []Tag) []ID {
 	var tagIdsToDelete []ID
 
-	// collect tagsToDelete - existing tags that are no longer wanted
 	for _, existingTag := range existingTags {
 		if !slices.ContainsFunc(tagsWanted, func(t Tag) bool { return existingTag.HasSameKeyValue(t) }) {
 			tagIdsToDelete = append(tagIdsToDelete, existingTag.Id)
 		}
 	}
+	return tagIdsToDelete
+}
+
+// return TagInputs for tags that are to be created
+func extractTagInputsToCreate(existingTags, tagsWanted []Tag) []TagInput {
+	var tagsToCreate []TagInput
 
 	// collect tagsToCreate - wanted tags that do not yet exist
 	for _, tagWanted := range tagsWanted {
@@ -271,5 +275,5 @@ func ExtractTags(existingTags, tagsWanted []Tag) ([]TagInput, []ID) {
 		}
 	}
 
-	return tagsToCreate, tagIdsToDelete
+	return tagsToCreate
 }
