@@ -815,6 +815,7 @@ func TestTeamReconcileAliasesDeleteAll(t *testing.T) {
 		TeamId: ol.TeamId{
 			Id: id1,
 		},
+		Aliases:        []string{"one", "two"},
 		ManagedAliases: []string{"one", "two"},
 	}
 
@@ -846,6 +847,41 @@ func TestTeamReconcileAliasesDeleteAll(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, len(team.Aliases), 0)
 	autopilot.Equals(t, len(team.ManagedAliases), 0)
+}
+
+func TestTeamReconcileAliasesDeleteSome(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{"two"}
+	team := ol.Team{
+		TeamId: ol.TeamId{
+			Id: id1,
+		},
+		Aliases:        []string{"one", "two"},
+		ManagedAliases: []string{"one", "two"},
+	}
+
+	// delete "one" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "one", "ownerType": "team" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	// get team
+	testRequestTwo := autopilot.NewTestRequest(
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ {{ template "id1" }} }`,
+		`{ "data": { "account": { "team": { {{ template "id1" }}, "aliases": ["two"], "managedAliases": ["two"] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "team/reconcile_aliases_delete_some", requests...)
+
+	// Act
+	err := team.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, len(team.Aliases), 1)
+	autopilot.Equals(t, len(team.ManagedAliases), 1)
 }
 
 func TestTeamReconcileAliases(t *testing.T) {
