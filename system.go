@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 )
@@ -69,27 +70,17 @@ func (systemId *SystemId) ResourceType() TaggableResource {
 }
 
 func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var err error
-
 	aliasesToCreate, aliasesToDelete := extractAliases(system.Aliases, aliasesWanted)
-	if err := client.DeleteAliases(AliasOwnerTypeEnumSystem, aliasesToDelete); err != nil {
-		return err
-	}
 
-	// Update this system's aliases
-	if len(aliasesToCreate) > 0 {
-		// Creating an alias retrieves the latest slice of aliases from the API
-		// This accounts for any aliases deleted above as well
-		system.Aliases, err = client.CreateAliases(system.Id, aliasesToCreate)
-	} else {
-		// If no aliases are created but aliases may have been deleted,
-		// update this System struct's aliases by hand
-		system.Aliases = slices.DeleteFunc(system.Aliases, func(value string) bool {
-			return slices.Contains(aliasesToDelete, value)
-		})
-	}
+	// reconcile wanted aliases with actual aliases
+	deleteErr := client.DeleteAliases(AliasOwnerTypeEnumSystem, aliasesToDelete)
+	_, createErr := client.CreateAliases(system.Id, aliasesToCreate)
 
-	return err
+	// update system to reflect API updates
+	updatedSystem, getErr := client.GetSystem(string(system.Id))
+	system.Aliases = updatedSystem.Aliases
+
+	return errors.Join(deleteErr, createErr, getErr)
 }
 
 func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariables) (*ServiceConnection, error) {

@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"html"
 	"slices"
@@ -63,27 +64,18 @@ type TeamMembershipConnection struct {
 }
 
 func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var err error
-
 	aliasesToCreate, aliasesToDelete := extractAliases(team.ManagedAliases, aliasesWanted)
-	if err := client.DeleteAliases(AliasOwnerTypeEnumTeam, aliasesToDelete); err != nil {
-		return err
-	}
 
-	// Update this team's aliases
-	if len(aliasesToCreate) > 0 {
-		// Creating an alias retrieves the latest slice of aliases from the API
-		// This accounts for any aliases deleted above as well
-		team.ManagedAliases, err = client.CreateAliases(team.Id, aliasesToCreate)
-	} else {
-		// If no aliases are created but aliases may have been deleted,
-		// update this Team struct's aliases by hand
-		team.ManagedAliases = slices.DeleteFunc(team.ManagedAliases, func(value string) bool {
-			return slices.Contains(aliasesToDelete, value)
-		})
-	}
+	// reconcile wanted aliases with actual aliases
+	deleteErr := client.DeleteAliases(AliasOwnerTypeEnumTeam, aliasesToDelete)
+	_, createErr := client.CreateAliases(team.Id, aliasesToCreate)
 
-	return err
+	// update team to reflect API updates
+	updatedTeam, getErr := client.GetTeam(team.Id)
+	team.Aliases = updatedTeam.Aliases
+	team.ManagedAliases = updatedTeam.ManagedAliases
+
+	return errors.Join(deleteErr, createErr, getErr)
 }
 
 func (team *Team) ResourceId() ID {

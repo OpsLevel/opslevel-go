@@ -227,7 +227,12 @@ func TestSystemReconcileAliasesDeleteAll(t *testing.T) {
 		`{"input":{ "alias": "two", "ownerType": "system" }}`,
 		`{"data": { "aliasDelete": {"errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	testRequestThree := autopilot.NewTestRequest(
+		`query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}},note}}}`,
+		`{ "input": { {{ template "id1" }} } }`,
+		`{"data": { "account": { "system": { {{ template "id1" }}, "aliases": [] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree}
 	client := BestTestClient(t, "system/reconcile_aliases_delete_all", requests...)
 
 	// Act
@@ -236,6 +241,38 @@ func TestSystemReconcileAliasesDeleteAll(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, len(system.Aliases), 0)
+}
+
+func TestSystemReconcileAliasesDeleteSome(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{"two"}
+	system := ol.System{
+		SystemId: ol.SystemId{
+			Id:      id1,
+			Aliases: []string{"one", "two"},
+		},
+	}
+
+	// delete "one" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "one", "ownerType": "system" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}},note}}}`,
+		`{ "input": { {{ template "id1" }} } }`,
+		`{"data": { "account": { "system": { {{ template "id1" }}, "aliases": ["two"] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "system/reconcile_aliases_delete_some", requests...)
+
+	// Act
+	err := system.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, len(system.Aliases), 1)
 }
 
 func TestSystemReconcileAliases(t *testing.T) {
@@ -270,7 +307,13 @@ func TestSystemReconcileAliases(t *testing.T) {
 		`{"input":{ "alias": "three", "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": { "aliasCreate": { "aliases": [ "one", "two", "three" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour}
+	// get service
+	testRequestFive := autopilot.NewTestRequest(
+		`query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}},note}}}`,
+		`{ "input": { {{ template "id1" }} } }`,
+		`{"data": { "account": { "system": { {{ template "id1" }}, "aliases": ["one", "two", "three"] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour, testRequestFive}
 	client := BestTestClient(t, "system/reconcile_aliases", requests...)
 
 	// Act

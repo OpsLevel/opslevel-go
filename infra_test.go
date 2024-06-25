@@ -259,7 +259,13 @@ func TestInfraReconcileAliasesDeleteAll(t *testing.T) {
 		`{"input":{ "alias": "two", "ownerType": "infrastructure_resource" }}`,
 		`{"data": { "aliasDelete": {"errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	// get infrastructureResource
+	testRequestThree := autopilot.NewTestRequest(
+		`query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}`,
+		`{"all": true, "input":{ {{ template "id1" }} }}`,
+		`{"data": { "account": { "infrastructureResource": { {{ template "id1" }}, "aliases": [] } }}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree}
 	client := BestTestClient(t, "infra/reconcile_aliases_delete_all", requests...)
 
 	// Act
@@ -302,7 +308,13 @@ func TestInfraReconcileAliases(t *testing.T) {
 		`{"input":{ "alias": "three", "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": { "aliasCreate": { "aliases": [ "one", "two", "three" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour}
+	// get infrastructureResource
+	testRequestFive := autopilot.NewTestRequest(
+		`query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}`,
+		`{"all": true, "input":{ {{ template "id1" }} }}`,
+		`{"data": { "account": { "infrastructureResource": { {{ template "id1" }}, "aliases": ["one", "two", "three"] } }}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour, testRequestFive}
 	client := BestTestClient(t, "infra/reconcile_aliases", requests...)
 
 	// Act
