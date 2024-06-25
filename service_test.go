@@ -1019,7 +1019,8 @@ func TestServiceReconcileAliasesDeleteAll(t *testing.T) {
 	aliasesWanted := []string{}
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
-			Id: id1,
+			Id:      id1,
+			Aliases: []string{"one", "two"},
 		},
 		ManagedAliases: []string{"one", "two"},
 	}
@@ -1036,7 +1037,13 @@ func TestServiceReconcileAliasesDeleteAll(t *testing.T) {
 		`{"input":{ "alias": "two", "ownerType": "service" }}`,
 		`{"data": { "aliasDelete": {"errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	// get service
+	testRequestThree := autopilot.NewTestRequest(
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`{ "service": "{{ template "id1_string" }}" }`,
+		`{ "data": { "account": { "service": { {{ template "id1" }}, "aliases": [], "managedAliases": [] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree}
 	client := BestTestClient(t, "service/reconcile_aliases_delete_all", requests...)
 
 	// Act
@@ -1045,6 +1052,41 @@ func TestServiceReconcileAliasesDeleteAll(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, len(service.Aliases), 0)
+	autopilot.Equals(t, len(service.ManagedAliases), 0)
+}
+
+func TestServiceReconcileAliasesDeleteSome(t *testing.T) {
+	// Arrange
+	aliasesWanted := []string{"two"}
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id:      id1,
+			Aliases: []string{"one", "two"},
+		},
+		ManagedAliases: []string{"one", "two"},
+	}
+
+	// delete "one" alias
+	testRequestOne := autopilot.NewTestRequest(
+		`mutation AliasDelete($input:AliasDeleteInput!){aliasDelete(input: $input){deletedAlias,errors{message,path}}}`,
+		`{"input":{ "alias": "one", "ownerType": "service" }}`,
+		`{"data": { "aliasDelete": {"errors": [] }}}`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`{ "service": "{{ template "id1_string" }}" }`,
+		`{ "data": { "account": { "service": { {{ template "id1" }}, "aliases": [ "two" ], "managedAliases": [ "two" ] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	client := BestTestClient(t, "service/reconcile_aliases_delete_some", requests...)
+
+	// Act
+	err := service.ReconcileAliases(client, aliasesWanted)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, len(service.Aliases), 1)
+	autopilot.Equals(t, len(service.ManagedAliases), 1)
 }
 
 func TestServiceReconcileAliases(t *testing.T) {
@@ -1052,7 +1094,8 @@ func TestServiceReconcileAliases(t *testing.T) {
 	aliasesWanted := []string{"one", "two", "three"}
 	service := ol.Service{
 		ServiceId: ol.ServiceId{
-			Id: id1,
+			Id:      id1,
+			Aliases: []string{"one", "alpha", "beta"},
 		},
 		ManagedAliases: []string{"one", "alpha", "beta"},
 	}
@@ -1081,7 +1124,13 @@ func TestServiceReconcileAliases(t *testing.T) {
 		`{"input":{ "alias": "three", "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": { "aliasCreate": { "aliases": [ "one", "two", "three" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour}
+	// get service
+	testRequestFive := autopilot.NewTestRequest(
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},managedAliases,name,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`{ "service": "{{ template "id1_string" }}" }`,
+		`{ "data": { "account": { "service": { {{ template "id1" }}, "aliases": ["one", "two", "three"], "managedAliases": ["one", "two", "three"] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour, testRequestFive}
 	client := BestTestClient(t, "service/reconcile_aliases", requests...)
 
 	// Act
@@ -1089,5 +1138,6 @@ func TestServiceReconcileAliases(t *testing.T) {
 
 	// Assert
 	autopilot.Ok(t, err)
+	autopilot.Equals(t, service.Aliases, aliasesWanted)
 	autopilot.Equals(t, service.ManagedAliases, aliasesWanted)
 }

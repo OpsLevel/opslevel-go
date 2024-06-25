@@ -217,7 +217,13 @@ func TestScorecardReconcileAliasesDeleteAll(t *testing.T) {
 		`{"input":{ "alias": "two", "ownerType": "scorecard" }}`,
 		`{"data": { "aliasDelete": {"errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+	// get service
+	testRequestThree := autopilot.NewTestRequest(
+		`{{ template "scorecard_get_request" }}`,
+		`{"input": { {{ template "id1" }} }}`,
+		`{ "data": { "account": { "scorecard": { {{ template "id1" }}, "aliases": [] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree}
 	client := BestTestClient(t, "scorecard/reconcile_aliases_delete_all", requests...)
 
 	// Act
@@ -260,7 +266,13 @@ func TestScorecardReconcileAliases(t *testing.T) {
 		`{"input":{ "alias": "three", "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": { "aliasCreate": { "aliases": [ "one", "two", "three" ], "ownerId": "{{ template "id1_string" }}", "errors": [] }}}`,
 	)
-	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour}
+	// get service
+	testRequestFive := autopilot.NewTestRequest(
+		`{{ template "scorecard_get_request" }}`,
+		`{"input": { {{ template "id1" }} }}`,
+		`{ "data": { "account": { "scorecard": { {{ template "id1" }}, "aliases": ["one", "two", "three"] }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo, testRequestThree, testRequestFour, testRequestFive}
 	client := BestTestClient(t, "scorecard/reconcile_aliases", requests...)
 
 	// Act

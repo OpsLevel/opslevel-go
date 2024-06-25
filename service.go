@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -53,27 +54,20 @@ type ServiceDocumentsConnection struct {
 }
 
 func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var err error
+	aliasesToCreate, aliasesToDelete := extractAliases(service.Aliases, aliasesWanted)
 
-	aliasesToCreate, aliasesToDelete := extractAliases(service.ManagedAliases, aliasesWanted)
-	if err := client.DeleteAliases(AliasOwnerTypeEnumService, aliasesToDelete); err != nil {
-		return err
+	// reconcile wanted aliases with actual aliases
+	deleteErr := client.DeleteAliases(AliasOwnerTypeEnumService, aliasesToDelete)
+	_, createErr := client.CreateAliases(service.Id, aliasesToCreate)
+
+	// update service to reflect API updates
+	updatedService, getErr := client.GetService(service.Id)
+	if updatedService != nil {
+		service.Aliases = updatedService.Aliases
+		service.ManagedAliases = updatedService.ManagedAliases
 	}
 
-	// Update this service's aliases
-	if len(aliasesToCreate) > 0 {
-		// Creating an alias retrieves the latest slice of aliases from the API
-		// This accounts for any aliases deleted above as well
-		service.ManagedAliases, err = client.CreateAliases(service.Id, aliasesToCreate)
-	} else {
-		// If no aliases are created but aliases may have been deleted,
-		// update this Service struct's aliases by hand
-		service.ManagedAliases = slices.DeleteFunc(service.ManagedAliases, func(value string) bool {
-			return slices.Contains(aliasesToDelete, value)
-		})
-	}
-
-	return err
+	return errors.Join(deleteErr, createErr, getErr)
 }
 
 func (service *Service) ResourceId() ID {

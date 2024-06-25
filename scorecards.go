@@ -3,7 +3,6 @@ package opslevel
 import (
 	"errors"
 	"fmt"
-	"slices"
 )
 
 type ScorecardId struct {
@@ -37,29 +36,19 @@ type ScorecardCategoryConnection struct {
 }
 
 func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []string) error {
-	var allErrors, err error
-
 	aliasesToCreate, aliasesToDelete := extractAliases(scorecard.Aliases, aliasesWanted)
-	allErrors = client.DeleteAliases(AliasOwnerTypeEnumScorecard, aliasesToDelete)
-	if allErrors != nil {
-		return allErrors
+
+	// reconcile wanted aliases with actual aliases
+	deleteErr := client.DeleteAliases(AliasOwnerTypeEnumScorecard, aliasesToDelete)
+	_, createErr := client.CreateAliases(scorecard.Id, aliasesToCreate)
+
+	// update scorecard to reflect API updates
+	updatedScorecard, getErr := client.GetScorecard(string(scorecard.Id))
+	if updatedScorecard != nil {
+		scorecard.Aliases = updatedScorecard.Aliases
 	}
 
-	// Update this scorecard's aliases
-	if len(aliasesToCreate) > 0 {
-		// Creating an alias retrieves the latest slice of aliases from the API
-		// This accounts for any aliases deleted above as well
-		scorecard.Aliases, err = client.CreateAliases(scorecard.Id, aliasesToCreate)
-		allErrors = errors.Join(allErrors, err)
-	} else {
-		// If no aliases are created but aliases may have been deleted,
-		// update this Scorecard struct's aliases by hand
-		scorecard.Aliases = slices.DeleteFunc(scorecard.Aliases, func(value string) bool {
-			return slices.Contains(aliasesToDelete, value)
-		})
-	}
-
-	return allErrors
+	return errors.Join(deleteErr, createErr, getErr)
 }
 
 func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVariables) (*ScorecardCategoryConnection, error) {
