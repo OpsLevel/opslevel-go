@@ -34,8 +34,10 @@ func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error 
 
 	// update domain to reflect API updates
 	updatedDomain, getErr := client.GetDomain(string(d.Id))
-	d.Aliases = updatedDomain.Aliases
-	d.ManagedAliases = updatedDomain.ManagedAliases
+	if updatedDomain != nil {
+		d.Aliases = updatedDomain.Aliases
+		d.ManagedAliases = updatedDomain.ManagedAliases
+	}
 
 	return errors.Join(deleteErr, createErr, getErr)
 }

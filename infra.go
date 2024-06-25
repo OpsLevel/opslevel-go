@@ -65,7 +65,9 @@ func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *C
 
 	// update infrastructureResource to reflect API updates
 	updatedInfra, getErr := client.GetInfrastructure(infrastructureResource.Id)
-	infrastructureResource.Aliases = updatedInfra.Aliases
+	if updatedInfra != nil {
+		infrastructureResource.Aliases = updatedInfra.Aliases
+	}
 
 	return errors.Join(deleteErr, createErr, getErr)
 }

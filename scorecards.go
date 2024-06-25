@@ -44,7 +44,9 @@ func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []s
 
 	// update scorecard to reflect API updates
 	updatedScorecard, getErr := client.GetScorecard(string(scorecard.Id))
-	scorecard.Aliases = updatedScorecard.Aliases
+	if updatedScorecard != nil {
+		scorecard.Aliases = updatedScorecard.Aliases
+	}
 
 	return errors.Join(deleteErr, createErr, getErr)
 }

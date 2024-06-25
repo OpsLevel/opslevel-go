@@ -78,7 +78,9 @@ func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string)
 
 	// update system to reflect API updates
 	updatedSystem, getErr := client.GetSystem(string(system.Id))
-	system.Aliases = updatedSystem.Aliases
+	if updatedSystem != nil {
+		system.Aliases = updatedSystem.Aliases
+	}
 
 	return errors.Join(deleteErr, createErr, getErr)
 }

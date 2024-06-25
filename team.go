@@ -72,8 +72,10 @@ func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error
 
 	// update team to reflect API updates
 	updatedTeam, getErr := client.GetTeam(team.Id)
-	team.Aliases = updatedTeam.Aliases
-	team.ManagedAliases = updatedTeam.ManagedAliases
+	if updatedTeam != nil {
+		team.Aliases = updatedTeam.Aliases
+		team.ManagedAliases = updatedTeam.ManagedAliases
+	}
 
 	return errors.Join(deleteErr, createErr, getErr)
 }

@@ -62,8 +62,10 @@ func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string)
 
 	// update service to reflect API updates
 	updatedService, getErr := client.GetService(service.Id)
-	service.Aliases = updatedService.Aliases
-	service.ManagedAliases = updatedService.ManagedAliases
+	if updatedService != nil {
+		service.Aliases = updatedService.Aliases
+		service.ManagedAliases = updatedService.ManagedAliases
+	}
 
 	return errors.Join(deleteErr, createErr, getErr)
 }
