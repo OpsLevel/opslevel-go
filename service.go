@@ -53,6 +53,18 @@ type ServiceDocumentsConnection struct {
 	TotalCount int
 }
 
+// Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
+func (service *Service) UniqueIdentifiers() []string {
+	uniqueIdentifiers := []string{}
+	for _, alias := range service.Aliases {
+		if !slices.Contains(service.ManagedAliases, alias) {
+			uniqueIdentifiers = append(uniqueIdentifiers, alias)
+		}
+	}
+
+	return uniqueIdentifiers
+}
+
 func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	aliasesToCreate, aliasesToDelete := extractAliases(service.Aliases, aliasesWanted)
 

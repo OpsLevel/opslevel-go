@@ -63,6 +63,18 @@ type TeamMembershipConnection struct {
 	TotalCount int
 }
 
+// Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
+func (team *Team) UniqueIdentifiers() []string {
+	uniqueIdentifiers := []string{}
+	for _, alias := range team.Aliases {
+		if !slices.Contains(team.ManagedAliases, alias) {
+			uniqueIdentifiers = append(uniqueIdentifiers, alias)
+		}
+	}
+
+	return uniqueIdentifiers
+}
+
 func (team *Team) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	aliasesToCreate, aliasesToDelete := extractAliases(team.Aliases, aliasesWanted)
 

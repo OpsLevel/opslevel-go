@@ -25,6 +25,18 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+// Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
+func (d *Domain) UniqueIdentifiers() []string {
+	uniqueIdentifiers := []string{}
+	for _, alias := range d.Aliases {
+		if !slices.Contains(d.ManagedAliases, alias) {
+			uniqueIdentifiers = append(uniqueIdentifiers, alias)
+		}
+	}
+
+	return uniqueIdentifiers
+}
+
 func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	aliasesToCreate, aliasesToDelete := extractAliases(d.Aliases, aliasesWanted)
 
