@@ -26,7 +26,7 @@ type DomainConnection struct {
 }
 
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
-func (d *Domain) GetUniqueIdentifiers() []string {
+func (d *Domain) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
 	for _, alias := range d.Aliases {
 		if !slices.Contains(d.ManagedAliases, alias) {

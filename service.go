@@ -54,7 +54,7 @@ type ServiceDocumentsConnection struct {
 }
 
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
-func (service *Service) GetUniqueIdentifiers() []string {
+func (service *Service) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
 	for _, alias := range service.Aliases {
 		if !slices.Contains(service.ManagedAliases, alias) {

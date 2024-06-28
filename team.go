@@ -64,7 +64,7 @@ type TeamMembershipConnection struct {
 }
 
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
-func (team *Team) GetUniqueIdentifiers() []string {
+func (team *Team) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
 	for _, alias := range team.Aliases {
 		if !slices.Contains(team.ManagedAliases, alias) {
