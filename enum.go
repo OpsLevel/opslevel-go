@@ -232,6 +232,20 @@ var AllCampaignStatusEnum = []string{
 	string(CampaignStatusEnumEnded),
 }
 
+// CheckResultStatusEnum represents the status of the check result.
+type CheckResultStatusEnum string
+
+const (
+	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service..
+	CheckResultStatusEnumFailed CheckResultStatusEnum = "failed" // Indicates that the check has failed for the associated service.
+)
+
+// All CheckResultStatusEnum as []string
+var AllCheckResultStatusEnum = []string{
+	string(CheckResultStatusEnumPassed),
+	string(CheckResultStatusEnumFailed),
+}
+
 // CheckStatus represents the evaluation status of the check.
 type CheckStatus string
 
@@ -253,7 +267,7 @@ type CheckType string
 
 const (
 	CheckTypeHasOwner            CheckType = "has_owner"             // Verifies that the service has an owner defined.
-	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verified that the services has received a deploy within a specified number of days.
+	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verifies that the services has received a deploy within a specified number of days.
 	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format.
 	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config.
 	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype.
@@ -270,6 +284,7 @@ const (
 	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
 	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters.
+	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages.
 )
 
 // All CheckType as []string
@@ -292,6 +307,7 @@ var AllCheckType = []string{
 	string(CheckTypeGitBranchProtection),
 	string(CheckTypeServiceDependency),
 	string(CheckTypeRepoGrep),
+	string(CheckTypePackageVersion),
 }
 
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
@@ -452,7 +468,7 @@ var AllHasDocumentationSubtypeEnum = []string{
 type HasDocumentationTypeEnum string
 
 const (
-	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" // Document is an Tech document.
+	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" // Document is a Tech document.
 	HasDocumentationTypeEnumAPI  HasDocumentationTypeEnum = "api"  // Document is an API document.
 )
 
@@ -460,6 +476,94 @@ const (
 var AllHasDocumentationTypeEnum = []string{
 	string(HasDocumentationTypeEnumTech),
 	string(HasDocumentationTypeEnumAPI),
+}
+
+// PackageConstraintEnum represents possible values of a package version check constraint.
+type PackageConstraintEnum string
+
+const (
+	PackageConstraintEnumExists         PackageConstraintEnum = "exists"          // The package must be used by a service.
+	PackageConstraintEnumDoesNotExist   PackageConstraintEnum = "does_not_exist"  // The package must not be used by a service.
+	PackageConstraintEnumMatchesVersion PackageConstraintEnum = "matches_version" // The package usage by a service must match certain specified version constraints.
+)
+
+// All PackageConstraintEnum as []string
+var AllPackageConstraintEnum = []string{
+	string(PackageConstraintEnumExists),
+	string(PackageConstraintEnumDoesNotExist),
+	string(PackageConstraintEnumMatchesVersion),
+}
+
+// PackageManagerEnum represents supported software package manager types.
+type PackageManagerEnum string
+
+const (
+	PackageManagerEnumAlpm      PackageManagerEnum = "alpm"      // .
+	PackageManagerEnumApk       PackageManagerEnum = "apk"       // .
+	PackageManagerEnumBitbucket PackageManagerEnum = "bitbucket" // .
+	PackageManagerEnumBitnami   PackageManagerEnum = "bitnami"   // .
+	PackageManagerEnumCocoapods PackageManagerEnum = "cocoapods" // .
+	PackageManagerEnumCargo     PackageManagerEnum = "cargo"     // .
+	PackageManagerEnumComposer  PackageManagerEnum = "composer"  // .
+	PackageManagerEnumConan     PackageManagerEnum = "conan"     // .
+	PackageManagerEnumConda     PackageManagerEnum = "conda"     // .
+	PackageManagerEnumCpan      PackageManagerEnum = "cpan"      // .
+	PackageManagerEnumCran      PackageManagerEnum = "cran"      // .
+	PackageManagerEnumDeb       PackageManagerEnum = "deb"       // .
+	PackageManagerEnumDocker    PackageManagerEnum = "docker"    // .
+	PackageManagerEnumGem       PackageManagerEnum = "gem"       // .
+	PackageManagerEnumGeneric   PackageManagerEnum = "generic"   // .
+	PackageManagerEnumGitHub    PackageManagerEnum = "github"    // .
+	PackageManagerEnumGolang    PackageManagerEnum = "golang"    // .
+	PackageManagerEnumGradle    PackageManagerEnum = "gradle"    // .
+	PackageManagerEnumHackage   PackageManagerEnum = "hackage"   // .
+	PackageManagerEnumHex       PackageManagerEnum = "hex"       // .
+	PackageManagerEnumMaven     PackageManagerEnum = "maven"     // .
+	PackageManagerEnumMlflow    PackageManagerEnum = "mlflow"    // .
+	PackageManagerEnumNpm       PackageManagerEnum = "npm"       // .
+	PackageManagerEnumNuget     PackageManagerEnum = "nuget"     // .
+	PackageManagerEnumQpkg      PackageManagerEnum = "qpkg"      // .
+	PackageManagerEnumOci       PackageManagerEnum = "oci"       // .
+	PackageManagerEnumPub       PackageManagerEnum = "pub"       // .
+	PackageManagerEnumPypi      PackageManagerEnum = "pypi"      // .
+	PackageManagerEnumRpm       PackageManagerEnum = "rpm"       // .
+	PackageManagerEnumSwid      PackageManagerEnum = "swid"      // .
+	PackageManagerEnumSwift     PackageManagerEnum = "swift"     // .
+)
+
+// All PackageManagerEnum as []string
+var AllPackageManagerEnum = []string{
+	string(PackageManagerEnumAlpm),
+	string(PackageManagerEnumApk),
+	string(PackageManagerEnumBitbucket),
+	string(PackageManagerEnumBitnami),
+	string(PackageManagerEnumCocoapods),
+	string(PackageManagerEnumCargo),
+	string(PackageManagerEnumComposer),
+	string(PackageManagerEnumConan),
+	string(PackageManagerEnumConda),
+	string(PackageManagerEnumCpan),
+	string(PackageManagerEnumCran),
+	string(PackageManagerEnumDeb),
+	string(PackageManagerEnumDocker),
+	string(PackageManagerEnumGem),
+	string(PackageManagerEnumGeneric),
+	string(PackageManagerEnumGitHub),
+	string(PackageManagerEnumGolang),
+	string(PackageManagerEnumGradle),
+	string(PackageManagerEnumHackage),
+	string(PackageManagerEnumHex),
+	string(PackageManagerEnumMaven),
+	string(PackageManagerEnumMlflow),
+	string(PackageManagerEnumNpm),
+	string(PackageManagerEnumNuget),
+	string(PackageManagerEnumQpkg),
+	string(PackageManagerEnumOci),
+	string(PackageManagerEnumPub),
+	string(PackageManagerEnumPypi),
+	string(PackageManagerEnumRpm),
+	string(PackageManagerEnumSwid),
+	string(PackageManagerEnumSwift),
 }
 
 // PayloadSortEnum represents sort possibilities for payloads.
@@ -868,9 +972,11 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleUser      UserRole = "user"       // A regular user on the account.
-	UserRoleAdmin     UserRole = "admin"      // An administrator on the account.
-	UserRoleBasicUser UserRole = "basic_user" // A basic user on the account with limited access.
+	UserRoleUser           UserRole = "user"            // A regular user on the account.
+	UserRoleAdmin          UserRole = "admin"           // An administrator on the account.
+	UserRoleBasicUser      UserRole = "basic_user"      // A basic user on the account with limited access.
+	UserRoleTeamMember     UserRole = "team_member"     // Read access to all resources. Write access based on team membership.
+	UserRoleStandardsAdmin UserRole = "standards_admin" // Full write access to Standards resources, including rubric, campaigns, and checks. User-level access to all other entities.
 )
 
 // All UserRole as []string
@@ -878,6 +984,8 @@ var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
 	string(UserRoleBasicUser),
+	string(UserRoleTeamMember),
+	string(UserRoleStandardsAdmin),
 }
 
 // UsersFilterEnum represents fields that can be used as part of filter for users.
