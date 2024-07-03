@@ -232,6 +232,20 @@ var AllCampaignStatusEnum = []string{
 	string(CampaignStatusEnumEnded),
 }
 
+// CheckResultStatusEnum represents the status of the check result.
+type CheckResultStatusEnum string
+
+const (
+	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service..
+	CheckResultStatusEnumFailed CheckResultStatusEnum = "failed" // Indicates that the check has failed for the associated service.
+)
+
+// All CheckResultStatusEnum as []string
+var AllCheckResultStatusEnum = []string{
+	string(CheckResultStatusEnumPassed),
+	string(CheckResultStatusEnumFailed),
+}
+
 // CheckStatus represents the evaluation status of the check.
 type CheckStatus string
 
@@ -253,7 +267,7 @@ type CheckType string
 
 const (
 	CheckTypeHasOwner            CheckType = "has_owner"             // Verifies that the service has an owner defined.
-	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verified that the services has received a deploy within a specified number of days.
+	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verifies that the services has received a deploy within a specified number of days.
 	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format.
 	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config.
 	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype.
@@ -452,7 +466,7 @@ var AllHasDocumentationSubtypeEnum = []string{
 type HasDocumentationTypeEnum string
 
 const (
-	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" // Document is an Tech document.
+	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" // Document is a Tech document.
 	HasDocumentationTypeEnumAPI  HasDocumentationTypeEnum = "api"  // Document is an API document.
 )
 
@@ -868,16 +882,18 @@ var AllToolCategory = []string{
 type UserRole string
 
 const (
-	UserRoleUser      UserRole = "user"       // A regular user on the account.
-	UserRoleAdmin     UserRole = "admin"      // An administrator on the account.
-	UserRoleBasicUser UserRole = "basic_user" // A basic user on the account with limited access.
+	UserRoleUser           UserRole = "user"            // A regular user on the account.
+	UserRoleAdmin          UserRole = "admin"           // An administrator on the account.
+	UserRoleTeamMember     UserRole = "team_member"     // Read access to all resources. Write access based on team membership.
+	UserRoleStandardsAdmin UserRole = "standards_admin" // Full write access to Standards resources, including rubric, campaigns, and checks. User-level access to all other entities.
 )
 
 // All UserRole as []string
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
-	string(UserRoleBasicUser),
+	string(UserRoleTeamMember),
+	string(UserRoleStandardsAdmin),
 }
 
 // UsersFilterEnum represents fields that can be used as part of filter for users.
