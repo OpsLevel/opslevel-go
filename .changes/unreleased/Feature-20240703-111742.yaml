@@ -1,3 +1,3 @@
 kind: Feature
-body: add Package type enums, update UserRole enum
+body: add team_member and standards_admin UserRole enums
 time: 2024-07-03T11:17:42.896493-05:00

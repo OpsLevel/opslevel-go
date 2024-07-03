@@ -284,7 +284,6 @@ const (
 	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled.
 	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters.
-	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages.
 )
 
 // All CheckType as []string
@@ -307,7 +306,6 @@ var AllCheckType = []string{
 	string(CheckTypeGitBranchProtection),
 	string(CheckTypeServiceDependency),
 	string(CheckTypeRepoGrep),
-	string(CheckTypePackageVersion),
 }
 
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
@@ -476,94 +474,6 @@ const (
 var AllHasDocumentationTypeEnum = []string{
 	string(HasDocumentationTypeEnumTech),
 	string(HasDocumentationTypeEnumAPI),
-}
-
-// PackageConstraintEnum represents possible values of a package version check constraint.
-type PackageConstraintEnum string
-
-const (
-	PackageConstraintEnumExists         PackageConstraintEnum = "exists"          // The package must be used by a service.
-	PackageConstraintEnumDoesNotExist   PackageConstraintEnum = "does_not_exist"  // The package must not be used by a service.
-	PackageConstraintEnumMatchesVersion PackageConstraintEnum = "matches_version" // The package usage by a service must match certain specified version constraints.
-)
-
-// All PackageConstraintEnum as []string
-var AllPackageConstraintEnum = []string{
-	string(PackageConstraintEnumExists),
-	string(PackageConstraintEnumDoesNotExist),
-	string(PackageConstraintEnumMatchesVersion),
-}
-
-// PackageManagerEnum represents supported software package manager types.
-type PackageManagerEnum string
-
-const (
-	PackageManagerEnumAlpm      PackageManagerEnum = "alpm"      // .
-	PackageManagerEnumApk       PackageManagerEnum = "apk"       // .
-	PackageManagerEnumBitbucket PackageManagerEnum = "bitbucket" // .
-	PackageManagerEnumBitnami   PackageManagerEnum = "bitnami"   // .
-	PackageManagerEnumCocoapods PackageManagerEnum = "cocoapods" // .
-	PackageManagerEnumCargo     PackageManagerEnum = "cargo"     // .
-	PackageManagerEnumComposer  PackageManagerEnum = "composer"  // .
-	PackageManagerEnumConan     PackageManagerEnum = "conan"     // .
-	PackageManagerEnumConda     PackageManagerEnum = "conda"     // .
-	PackageManagerEnumCpan      PackageManagerEnum = "cpan"      // .
-	PackageManagerEnumCran      PackageManagerEnum = "cran"      // .
-	PackageManagerEnumDeb       PackageManagerEnum = "deb"       // .
-	PackageManagerEnumDocker    PackageManagerEnum = "docker"    // .
-	PackageManagerEnumGem       PackageManagerEnum = "gem"       // .
-	PackageManagerEnumGeneric   PackageManagerEnum = "generic"   // .
-	PackageManagerEnumGitHub    PackageManagerEnum = "github"    // .
-	PackageManagerEnumGolang    PackageManagerEnum = "golang"    // .
-	PackageManagerEnumGradle    PackageManagerEnum = "gradle"    // .
-	PackageManagerEnumHackage   PackageManagerEnum = "hackage"   // .
-	PackageManagerEnumHex       PackageManagerEnum = "hex"       // .
-	PackageManagerEnumMaven     PackageManagerEnum = "maven"     // .
-	PackageManagerEnumMlflow    PackageManagerEnum = "mlflow"    // .
-	PackageManagerEnumNpm       PackageManagerEnum = "npm"       // .
-	PackageManagerEnumNuget     PackageManagerEnum = "nuget"     // .
-	PackageManagerEnumQpkg      PackageManagerEnum = "qpkg"      // .
-	PackageManagerEnumOci       PackageManagerEnum = "oci"       // .
-	PackageManagerEnumPub       PackageManagerEnum = "pub"       // .
-	PackageManagerEnumPypi      PackageManagerEnum = "pypi"      // .
-	PackageManagerEnumRpm       PackageManagerEnum = "rpm"       // .
-	PackageManagerEnumSwid      PackageManagerEnum = "swid"      // .
-	PackageManagerEnumSwift     PackageManagerEnum = "swift"     // .
-)
-
-// All PackageManagerEnum as []string
-var AllPackageManagerEnum = []string{
-	string(PackageManagerEnumAlpm),
-	string(PackageManagerEnumApk),
-	string(PackageManagerEnumBitbucket),
-	string(PackageManagerEnumBitnami),
-	string(PackageManagerEnumCocoapods),
-	string(PackageManagerEnumCargo),
-	string(PackageManagerEnumComposer),
-	string(PackageManagerEnumConan),
-	string(PackageManagerEnumConda),
-	string(PackageManagerEnumCpan),
-	string(PackageManagerEnumCran),
-	string(PackageManagerEnumDeb),
-	string(PackageManagerEnumDocker),
-	string(PackageManagerEnumGem),
-	string(PackageManagerEnumGeneric),
-	string(PackageManagerEnumGitHub),
-	string(PackageManagerEnumGolang),
-	string(PackageManagerEnumGradle),
-	string(PackageManagerEnumHackage),
-	string(PackageManagerEnumHex),
-	string(PackageManagerEnumMaven),
-	string(PackageManagerEnumMlflow),
-	string(PackageManagerEnumNpm),
-	string(PackageManagerEnumNuget),
-	string(PackageManagerEnumQpkg),
-	string(PackageManagerEnumOci),
-	string(PackageManagerEnumPub),
-	string(PackageManagerEnumPypi),
-	string(PackageManagerEnumRpm),
-	string(PackageManagerEnumSwid),
-	string(PackageManagerEnumSwift),
 }
 
 // PayloadSortEnum represents sort possibilities for payloads.
@@ -974,7 +884,6 @@ type UserRole string
 const (
 	UserRoleUser           UserRole = "user"            // A regular user on the account.
 	UserRoleAdmin          UserRole = "admin"           // An administrator on the account.
-	UserRoleBasicUser      UserRole = "basic_user"      // A basic user on the account with limited access.
 	UserRoleTeamMember     UserRole = "team_member"     // Read access to all resources. Write access based on team membership.
 	UserRoleStandardsAdmin UserRole = "standards_admin" // Full write access to Standards resources, including rubric, campaigns, and checks. User-level access to all other entities.
 )
@@ -983,7 +892,6 @@ const (
 var AllUserRole = []string{
 	string(UserRoleUser),
 	string(UserRoleAdmin),
-	string(UserRoleBasicUser),
 	string(UserRoleTeamMember),
 	string(UserRoleStandardsAdmin),
 }
