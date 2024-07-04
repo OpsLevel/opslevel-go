@@ -163,3 +163,32 @@ func (client *Client) DeleteIntegration(identifier string) error {
 	err := client.Mutate(&m, v, WithName("IntegrationDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
+
+func (client *Client) CreateIntegrationAzureResources(input AzureResourcesIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"azureResourcesIntegrationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("AzureResourcesIntegrationCreate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateIntegrationAzureResources(identifier string, input AzureResourcesIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"azureResourcesIntegrationUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"integration": *NewIdentifier(identifier),
+		"input":       input,
+	}
+	err := client.Mutate(&m, v, WithName("AzureResourcesIntegrationUpdate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
