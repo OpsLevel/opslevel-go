@@ -3,6 +3,8 @@ package opslevel
 import (
 	"fmt"
 
+	"github.com/relvacode/iso8601"
+
 	"github.com/gosimple/slug"
 )
 
@@ -17,6 +19,15 @@ type AWSIntegrationFragment struct {
 	ExternalID           string   `graphql:"externalId"`
 	OwnershipTagOverride bool     `graphql:"awsTagsOverrideOwnership"`
 	OwnershipTagKeys     []string `graphql:"ownershipTagKeys"`
+}
+
+type AzureResourcesIntegrationFragment struct {
+	TenantId                                             string        `graphql:"tenantId"`
+	SubscriptionId                                       string        `graphql:"subscriptionId"`
+	LastSyncedAt                                         *iso8601.Time `graphql:"lastSyncedAt"`
+	Aliases                                              []string      `graphql:"aliases"`
+	AllowManualSyncInfrastructureResources               bool          `graphql:"allowManualSyncInfrastructureResources"`
+	MinutesUntilManualSyncInfrastructureResourcesAllowed *int          `graphql:"minutesUntilManualSyncInfrastructureResourcesAllowed"`
 }
 
 type NewRelicIntegrationFragment struct {
@@ -183,7 +194,7 @@ func (client *Client) UpdateIntegrationAzureResources(identifier string, input A
 		Payload struct {
 			Integration *Integration
 			Errors      []OpsLevelErrors
-		} `graphql:"azureResourcesIntegrationUpdate(input: $input)"`
+		} `graphql:"azureResourcesIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),
