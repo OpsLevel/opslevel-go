@@ -1,3 +1,0 @@
-kind: Removed
-body: remove deprecated UserRoleBasicUser enum, not used in API anymore
-time: 2024-07-03T15:07:07.463669-05:00
