@@ -22,12 +22,10 @@ type AWSIntegrationFragment struct {
 }
 
 type AzureResourcesIntegrationFragment struct {
-	TenantId                                             string        `graphql:"tenantId"`
-	SubscriptionId                                       string        `graphql:"subscriptionId"`
-	LastSyncedAt                                         *iso8601.Time `graphql:"lastSyncedAt"`
-	Aliases                                              []string      `graphql:"aliases"`
-	AllowManualSyncInfrastructureResources               bool          `graphql:"allowManualSyncInfrastructureResources"`
-	MinutesUntilManualSyncInfrastructureResourcesAllowed *int          `graphql:"minutesUntilManualSyncInfrastructureResourcesAllowed"`
+	TenantId       string        `graphql:"tenantId"`
+	SubscriptionId string        `graphql:"subscriptionId"`
+	LastSyncedAt   *iso8601.Time `graphql:"lastSyncedAt"`
+	Aliases        []string      `graphql:"aliases"`
 }
 
 type NewRelicIntegrationFragment struct {
