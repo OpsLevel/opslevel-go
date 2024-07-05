@@ -47,7 +47,7 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation AzureResourcesIntegrationCreate($input:AzureResourcesIntegrationInput!){azureResourcesIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{tenantId,subscriptionId,lastSyncedAt,aliases,allowManualSyncInfrastructureResources,minutesUntilManualSyncInfrastructureResourcesAllowed},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
-		`{"input": { "name": "new azure resources", "tenantId": "original tenant id", "subscriptionId": "original subscription id", "clientId": "original client id", "clientSecret": "original client secret"}}`,
+		`{"input": { "name": "new azure resources", "tenantId": "12345678-1234-1234-1234-123456789abc", "subscriptionId": "12345678-1234-1234-1234-123456789def", "clientId": "XXX_client_id_XXX", "clientSecret": "XXX_client_secret_XXX"}}`,
 		`{"data": {
       "azureResourcesIntegrationCreate": {
         "integration": {
@@ -56,12 +56,12 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
           "type": "azureResources",
           "createdAt": "2024-07-04T16:25:29.574450Z",
           "installedAt": "2024-07-04T16:25:28.541124Z",
-          "tenantId": "original tenant id",
-          "subscriptionId": "original subscription id",
-          "lastSyncedAt": "2024-07-05T11:06:56.574450Z",
-          "aliases": ["alias1", "alias2"],
-          "allowManualSyncInfrastructureResources": true,
-          "minutesUntilManualSyncInfrastructureResourcesAllowed": 3
+          "tenantId": "12345678-1234-1234-1234-123456789abc",
+          "subscriptionId": "12345678-1234-1234-1234-123456789def",
+          "lastSyncedAt": null,
+          "aliases": [],
+          "allowManualSyncInfrastructureResources": false,
+          "minutesUntilManualSyncInfrastructureResourcesAllowed": null
         },
         "errors": []
       }}}`,
@@ -70,21 +70,25 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 	// Act
 	result, err := client.CreateIntegrationAzureResources(opslevel.AzureResourcesIntegrationInput{
 		Name:           opslevel.RefOf("new azure resources"),
-		TenantId:       opslevel.NewID("original tenant id"),
-		SubscriptionId: opslevel.NewID("original subscription id"),
-		ClientId:       opslevel.NewID("original client id"),
-		ClientSecret:   opslevel.RefOf("original client secret"),
+		TenantId:       opslevel.NewID("12345678-1234-1234-1234-123456789abc"),
+		SubscriptionId: opslevel.NewID("12345678-1234-1234-1234-123456789def"),
+		ClientId:       opslevel.NewID("XXX_client_id_XXX"),
+		ClientSecret:   opslevel.RefOf("XXX_client_secret_XXX"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "new azure resources", result.Name)
-	autopilot.Equals(t, "original tenant id", result.TenantId)
-	autopilot.Equals(t, "original subscription id", result.SubscriptionId)
-	autopilot.Equals(t, "2024-07-05 11:06:56.57445 +0000 UTC", result.LastSyncedAt.String())
-	autopilot.Equals(t, []string{"alias1", "alias2"}, result.Aliases)
-	autopilot.Equals(t, true, result.AllowManualSyncInfrastructureResources)
-	autopilot.Equals(t, opslevel.RefOf(3), result.MinutesUntilManualSyncInfrastructureResourcesAllowed)
+	autopilot.Equals(t, "12345678-1234-1234-1234-123456789abc", result.TenantId)
+	autopilot.Equals(t, "12345678-1234-1234-1234-123456789def", result.SubscriptionId)
+	if result.LastSyncedAt != nil {
+		t.Errorf("expected last synced at to be null, got '%s'", result.LastSyncedAt)
+	}
+	autopilot.Equals(t, []string{}, result.Aliases)
+	autopilot.Equals(t, false, result.AllowManualSyncInfrastructureResources)
+	if result.MinutesUntilManualSyncInfrastructureResourcesAllowed != nil {
+		t.Errorf("expected minutes until manual sync allowed to be null, got '%d'", result.MinutesUntilManualSyncInfrastructureResourcesAllowed)
+	}
 }
 
 func TestCreateNewRelicIntegration(t *testing.T) {
@@ -219,20 +223,21 @@ func TestUpdateAzureResourcesIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation AzureResourcesIntegrationUpdate($input:AzureResourcesIntegrationInput!$integration:IdentifierInput!){azureResourcesIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{tenantId,subscriptionId,lastSyncedAt,aliases,allowManualSyncInfrastructureResources,minutesUntilManualSyncInfrastructureResourcesAllowed},... on NewRelicIntegration{baseUrl,accountKey}},errors{message,path}}}`,
-		`{"integration": { {{ template "id1" }} }, "input": { "name": "updated azure resources", "tenantId": "updated tenant id", "subscriptionId": "updated subscription id", "clientId": "updated client id", "clientSecret": "updated client secret" }}`,
+		`{"integration": { {{ template "id1" }} }, "input": { "name": "updated azure resources", "clientId": "updated client id", "clientSecret": "updated client secret" }}`,
 		`{"data": {
       "azureResourcesIntegrationUpdate": {
         "integration": {
-        {{ template "id1" }},
-        "name": "updated azure resources",
-        "type": "azureResources",
-        "createdAt": "2024-07-04T16:25:29.574450Z",
-        "tenantId": "updated tenant id",
-        "subscriptionId": "updated subscription id",
-        "lastSyncedAt": null,
-        "aliases": [],
-        "allowManualSyncInfrastructureResources": false,
-		"minutesUntilManualSyncInfrastructureResourcesAllowed": null
+          {{ template "id1" }},
+          "name": "updated azure resources",
+          "type": "azureResources",
+          "createdAt": "2024-07-04T16:25:29.574450Z",
+          "installedAt": "2024-07-04T16:25:28.541124Z",
+          "tenantId": "12345678-1234-1234-1234-123456789abc",
+          "subscriptionId": "12345678-1234-1234-1234-123456789def",
+          "lastSyncedAt": "2024-07-05T11:06:56.574450Z",
+          "aliases": ["alias1", "alias2"],
+          "allowManualSyncInfrastructureResources": true,
+          "minutesUntilManualSyncInfrastructureResourcesAllowed": 3
       },
       "errors": []
     }}}`,
@@ -240,26 +245,20 @@ func TestUpdateAzureResourcesIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/update_azure_resources", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationAzureResources(string(id1), opslevel.AzureResourcesIntegrationInput{
-		Name:           opslevel.RefOf("updated azure resources"),
-		TenantId:       opslevel.NewID("updated tenant id"),
-		SubscriptionId: opslevel.NewID("updated subscription id"),
-		ClientId:       opslevel.NewID("updated client id"),
-		ClientSecret:   opslevel.RefOf("updated client secret"),
+		Name:         opslevel.RefOf("updated azure resources"),
+		ClientId:     opslevel.NewID("updated client id"),
+		ClientSecret: opslevel.RefOf("updated client secret"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "updated azure resources", result.Name)
-	autopilot.Equals(t, "updated tenant id", result.TenantId)
-	autopilot.Equals(t, "updated subscription id", result.SubscriptionId)
-	if result.LastSyncedAt != nil {
-		t.Errorf("expected last synced at to be null, got '%s'", result.LastSyncedAt)
-	}
-	autopilot.Equals(t, []string{}, result.Aliases)
-	autopilot.Equals(t, false, result.AllowManualSyncInfrastructureResources)
-	if result.LastSyncedAt != nil {
-		t.Errorf("expected minutes until manual sync allowed to be null, got '%d'", result.MinutesUntilManualSyncInfrastructureResourcesAllowed)
-	}
+	autopilot.Equals(t, "12345678-1234-1234-1234-123456789abc", result.TenantId)
+	autopilot.Equals(t, "12345678-1234-1234-1234-123456789def", result.SubscriptionId)
+	autopilot.Equals(t, "2024-07-05 11:06:56.57445 +0000 UTC", result.LastSyncedAt.String())
+	autopilot.Equals(t, []string{"alias1", "alias2"}, result.Aliases)
+	autopilot.Equals(t, true, result.AllowManualSyncInfrastructureResources)
+	autopilot.Equals(t, opslevel.RefOf(3), result.MinutesUntilManualSyncInfrastructureResourcesAllowed)
 }
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
