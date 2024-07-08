@@ -45,11 +45,11 @@ type AwsIntegrationInput struct {
 
 // AzureResourcesIntegrationInput specifies the input fields used to create an Azure resources integration.
 type AzureResourcesIntegrationInput struct {
-	Name           *string `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                        // The name of the integration. (Optional.)
-	TenantId       *ID     `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The tenant OpsLevel uses to access the Azure account. (Optional.)
-	SubscriptionId *ID     `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The subscription OpsLevel uses to access the Azure account. (Optional.)
-	ClientId       *ID     `json:"clientId,omitempty" yaml:"clientId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The client OpsLevel uses to access the Azure account. (Optional.)
-	ClientSecret   *string `json:"clientSecret,omitempty" yaml:"clientSecret,omitempty" example:""`                                    // The client secret OpsLevel uses to access the Azure account. (Optional.)
+	Name           *string `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                             // The name of the integration. (Optional.)
+	TenantId       *string `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"12345678-1234-1234-1234-123456789abc"`             // The tenant OpsLevel uses to access the Azure account. (Optional.)
+	SubscriptionId *string `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"12345678-1234-1234-1234-123456789def"` // The subscription OpsLevel uses to access the Azure account. (Optional.)
+	ClientId       *string `json:"clientId,omitempty" yaml:"clientId,omitempty"`                                                            // The client OpsLevel uses to access the Azure account. (Optional.)
+	ClientSecret   *string `json:"clientSecret,omitempty" yaml:"clientSecret,omitempty"`                                                    // The client secret OpsLevel uses to access the Azure account. (Optional.)
 }
 
 // CategoryCreateInput specifies the input fields used to create a category.
