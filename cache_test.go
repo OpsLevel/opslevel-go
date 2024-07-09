@@ -40,7 +40,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	)
 	testRequestSeven := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{tenantId,subscriptionId,lastSyncedAt,aliases},... on NewRelicIntegration{baseUrl,accountKey}},{{ template "pagination_request" }},totalCount}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on NewRelicIntegration{baseUrl,accountKey}},{{ template "pagination_request" }},totalCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "integrations":{ "nodes":[{{ template "integration_1" }}] } }}}`,
 	)
