@@ -107,7 +107,7 @@ func BuildCheckUpdateMutation(name string) string {
 	return BuildCheckMutation(name, "Update")
 }
 
-func MergeCheckResponse(extras map[string]any) string {
+func MergeCheckData(extras map[string]any) string {
 	data := map[string]any{
 		"category": map[string]any{
 			"id":   "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
@@ -135,11 +135,11 @@ func MergeCheckResponse(extras map[string]any) string {
 	return string(b)
 }
 
-func BuildCheckResponse(name string, style string, extras map[string]any) string {
+func BuildCheckMutationResponse(name string, style string, extras map[string]any) string {
 	data := map[string]any{
 		"Name":  name,
 		"Style": style,
-		"Body":  MergeCheckResponse(extras),
+		"Body":  MergeCheckData(extras),
 	}
 	text := TrimGraphQLString(`{
   "data": {
@@ -152,12 +152,12 @@ func BuildCheckResponse(name string, style string, extras map[string]any) string
 	return Template(text, data)
 }
 
-func BuildCheckCreateResponse(name string, extras map[string]any) string {
-	return BuildCheckResponse(name, "Create", extras)
+func BuildCheckCreateMutationResponse(name string, extras map[string]any) string {
+	return BuildCheckMutationResponse(name, "Create", extras)
 }
 
-func BuildCheckUpdateResponse(name string, extras map[string]any) string {
-	return BuildCheckResponse(name, "Update", extras)
+func BuildCheckUpdateMutationResponse(name string, extras map[string]any) string {
+	return BuildCheckMutationResponse(name, "Update", extras)
 }
 
 func getCheckTestCases() map[string]TmpCheckTestCase {
@@ -166,7 +166,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("AlertSourceUsage"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "alertSourceNamePredicate": {"type":"equals", "value":"Requests"}, "alertSourceType":"datadog" } }`,
-				BuildCheckCreateResponse("AlertSourceUsage", map[string]any{}),
+				BuildCheckCreateMutationResponse("AlertSourceUsage", map[string]any{}),
 			),
 			endpoint: "check/create_alert_source_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -183,7 +183,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("AlertSourceUsage"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "alertSourceNamePredicate": {"type":"equals", "value":"Requests"}, "alertSourceType":"datadog" } }`,
-				BuildCheckUpdateResponse("AlertSourceUsage", map[string]any{}),
+				BuildCheckUpdateMutationResponse("AlertSourceUsage", map[string]any{}),
 			),
 			endpoint: "check/update_alert_source_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -201,7 +201,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("GitBranchProtection"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkGitBranchProtectionCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("GitBranchProtection", map[string]any{}),
 			),
 			endpoint: "check/create_git_branch_protection",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -213,7 +213,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("GitBranchProtection"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkGitBranchProtectionUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("GitBranchProtection", map[string]any{}),
 			),
 			endpoint: "check/update_git_branch_protection",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -226,7 +226,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("HasRecentDeploy"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "days": 5 } }`,
-				`{ "data": { "checkHasRecentDeployCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("HasRecentDeploy", map[string]any{}),
 			),
 			endpoint: "check/create_has_recent_deploy",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -239,7 +239,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("HasRecentDeploy"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "days": 5 } }`,
-				`{ "data": { "checkHasRecentDeployUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("HasRecentDeploy", map[string]any{}),
 			),
 			endpoint: "check/update_has_recent_deploy",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -253,7 +253,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("HasDocumentation"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "documentType": "api", "documentSubtype": "openapi", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkHasDocumentationCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has valid documentation.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "documentType": "api", "documentSubtype": "openapi" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("HasDocumentation", map[string]any{}),
 			),
 			endpoint: "check/create_has_documentation",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -267,7 +267,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("HasDocumentation"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "documentType": "api", "documentSubtype": "openapi", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkHasDocumentationUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World Update", "notes": "Hello World Update", "documentType": "api", "documentSubtype": "openapi" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("HasDocumentation", map[string]any{}),
 			),
 			endpoint: "check/update_has_documentation",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -282,7 +282,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("CustomEvent"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "passPending": false, "serviceSelector": ".metadata.name", "successCondition": ".metadata.name", "resultMessage": "#Hello World", "integrationId": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg" } }`,
-				`{ "data": { "checkCustomEventCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("CustomEvent", map[string]any{}),
 			),
 			endpoint: "check/create_custom_event",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -299,8 +299,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("CustomEvent"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "passPending": false, "serviceSelector": ".metadata.name", "successCondition": ".metadata.name", "resultMessage": "#Hello World", "integrationId": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg" } }`,
-				BuildCheckUpdateResponse("CustomEvent", map[string]any{"resultMessage": "#Hello World"}),
-				//`{ "data": { "checkCustomEventUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("CustomEvent", map[string]any{"resultMessage": "#Hello World"}),
 			),
 			endpoint: "check/update_custom_event",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -317,8 +316,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("CustomEvent"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "passPending": false, "serviceSelector": ".metadata.name", "successCondition": ".metadata.name", "resultMessage": "", "integrationId": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg" } }`,
-				BuildCheckUpdateResponse("CustomEvent", map[string]any{}),
-				//`{ "data": { "checkCustomEventUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("CustomEvent", map[string]any{}),
 			),
 			endpoint: "check/update_custom_event_no_message",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -335,7 +333,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("Manual"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "updateFrequency": { "startingDate": "2021-07-26T20:22:44.427Z", "frequencyTimeScale": "week", "frequencyValue": 1 }, "updateRequiresComment": false } }`,
-				`{ "data": { "checkManualCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a service owner to manually complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("Manual", map[string]any{}),
 			),
 			endpoint: "check/create_manual",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -348,7 +346,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("Manual"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "updateFrequency": { "startingDate": "2021-07-26T20:22:44.427Z", "frequencyTimeScale": "week", "frequencyValue": 1 } } }`,
-				`{ "data": { "checkManualUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a service owner to manually complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("Manual", map[string]any{}),
 			),
 			endpoint: "check/update_manual",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -361,7 +359,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("RepositoryFile"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "directorySearch": true, "filePaths": [ "/src", "/test" ], "fileContentsPredicate": { "type": "equals", "value": "postgres" }, "useAbsoluteRoot": true } }`,
-				`{ "data": { "checkRepositoryFileCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo directorys ''/src' or '/test'' equals 'postgres'.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("RepositoryFile", map[string]any{}),
 			),
 			endpoint: "check/create_repo_file",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -380,7 +378,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("RepositoryFile"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "directorySearch": true, "filePaths": [ "/src", "/test" ], "fileContentsPredicate": { "type": "equals", "value": "postgres" }, "useAbsoluteRoot": false } }`,
-				`{ "data": { "checkRepositoryFileUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo directorys ''/src' or '/test'' equals 'postgres'.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("RepositoryFile", map[string]any{}),
 			),
 			endpoint: "check/update_repo_file",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -399,7 +397,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("RepositoryGrep"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "directorySearch": true, "filePaths": [ "**/hello.go" ], "fileContentsPredicate": { "type": "exists" } } }`,
-				`{ "data": { "checkRepositoryGrepCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw", "name": "Performance" }, "description": "Verifies the existence and/or contents of files in a service's attached Git repositories.", "enabled": true, "enableOn": null, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ1", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "owner": null, "type": "repo_grep" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("RepositoryGrep", map[string]any{}),
 			),
 			endpoint: "check/create_repo_grep",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -416,7 +414,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("RepositoryGrep"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "directorySearch": true, "filePaths": [ "**/go.mod" ], "fileContentsPredicate": { "type": "exists" } } }`,
-				`{ "data": { "checkRepositoryGrepUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw", "name": "Performance" }, "description": "Verifies the existence and/or contents of files in a service's attached Git repositories.", "enabled": true, "enableOn": null, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ1", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "owner": null, "type": "repo_grep" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("RepositoryGrep", map[string]any{}),
 			),
 			endpoint: "check/update_repo_grep",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -433,7 +431,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("RepositoryGrep"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "filePaths": [ "**/go.mod" ], "directorySearch": false, "fileContentsPredicate": { "type": "exists" } } }`,
-				`{ "data": { "checkRepositoryGrepUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw", "name": "Performance" }, "description": "Verifies the existence and/or contents of files in a service's attached Git repositories.", "enabled": true, "enableOn": null, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ1", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "owner": null, "type": "repo_grep" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("RepositoryGrep", map[string]any{}),
 			),
 			endpoint: "check/update_repo_grep_missing_directory_search",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -450,7 +448,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("RepositoryIntegrated"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkRepositoryIntegratedCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has a repository integrated.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("RepositoryIntegrated", map[string]any{}),
 			),
 			endpoint: "check/create_repo_integrated",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -462,7 +460,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("RepositoryIntegrated"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkRepositoryIntegratedUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has a repository integrated.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("RepositoryIntegrated", map[string]any{}),
 			),
 			endpoint: "check/update_repo_integrated",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -474,7 +472,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("RepositorySearch"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "fileExtensions": [ "sbt", "py" ], "fileContentsPredicate": { "type": "contains", "value": "postgres" } } }`,
-				`{ "data": { "checkRepositorySearchCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo contains search term 'postgres' in at least one .sbt or .py file.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("RepositorySearch", map[string]any{}),
 			),
 			endpoint: "check/create_repo_search",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -492,7 +490,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("RepositorySearch"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "fileExtensions": [ "sbt", "py" ], "fileContentsPredicate": { "type": "contains", "value": "postgres" } } }`,
-				`{ "data": { "checkRepositorySearchUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo contains search term 'postgres' in at least one .sbt or .py file.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("RepositorySearch", map[string]any{}),
 			),
 			endpoint: "check/update_repo_search",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -509,7 +507,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("ServiceDependency"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkServiceDependencyCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has either a dependent or dependency.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("ServiceDependency", map[string]any{}),
 			),
 			endpoint: "check/create_service_dependency",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -521,7 +519,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("ServiceDependency"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkServiceDependencyUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has either a dependent or dependency.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("ServiceDependency", map[string]any{}),
 			),
 			endpoint: "check/update_service_dependency",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -533,7 +531,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("ServiceConfiguration"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkServiceConfigurationCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service is maintained though the use of an opslevel.yml service config.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("ServiceConfiguration", map[string]any{}),
 			),
 			endpoint: "check/create_service_configuration",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -545,7 +543,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("ServiceConfiguration"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkServiceConfigurationUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service is maintained though the use of an opslevel.yml service config.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("ServiceConfiguration", map[string]any{}),
 			),
 			endpoint: "check/update_service_configuration",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -557,7 +555,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("ServiceOwnership"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "requireContactMethod": true, "contactMethod": "slack", "tagKey": "updated_at", "tagPredicate": { "type": "equals", "value": "2-11-2022" } } }`,
-				`{ "data": { "checkServiceOwnershipCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has an owner defined.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("ServiceOwnership", map[string]any{}),
 			),
 			endpoint: "check/create_service_ownership",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -576,7 +574,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("ServiceOwnership"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "requireContactMethod": true, "contactMethod": "email", "tagKey": "updated_at", "tagPredicate": { "type": "equals", "value": "2-11-2022" } } }`,
-				`{ "data": { "checkServiceOwnershipUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has an owner defined.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("ServiceOwnership", map[string]any{}),
 			),
 			endpoint: "check/update_service_ownership",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -595,7 +593,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("ServiceProperty"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "serviceProperty": "framework", "propertyValuePredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkServicePropertyCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service has a framework that equals <code>postgres</code>", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("ServiceProperty", map[string]any{}),
 			),
 			endpoint: "check/create_service_property",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -612,7 +610,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("ServiceProperty"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "serviceProperty": "framework", "propertyValuePredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkServicePropertyUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service has a framework that equals <code>postgres</code>", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("ServiceProperty", map[string]any{}),
 			),
 			endpoint: "check/update_service_property",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -629,7 +627,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("TagDefined"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "tagKey": "app", "tagPredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkTagDefinedCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has the specified tag defined.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("TagDefined", map[string]any{}),
 			),
 			endpoint: "check/create_tag_defined",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -646,7 +644,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("TagDefined"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "tagKey": "app", "tagPredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkTagDefinedUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has the specified tag defined.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("TagDefined", map[string]any{}),
 			),
 			endpoint: "check/update_tag_defined",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -663,7 +661,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckCreateMutation("ToolUsage"),
 				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "toolCategory": "metrics", "toolNamePredicate": { "type": "equals", "value": "datadog" }, "toolUrlPredicate": { "type": "contains", "value": "https://" }, "environmentPredicate": { "type": "equals", "value": "production" } } }`,
-				`{ "data": { "checkToolUsageCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckCreateMutationResponse("ToolUsage", map[string]any{}),
 			),
 			endpoint: "check/create_tool_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -688,7 +686,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("ToolUsage"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "toolCategory": "metrics", "toolNamePredicate": { "type": "equals", "value": "datadog" }, "toolUrlPredicate": { "type": "contains", "value": "https://" }, "environmentPredicate": { "type": "equals", "value": "production" } } }`,
-				`{ "data": { "checkToolUsageUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("ToolUsage", map[string]any{}),
 			),
 			endpoint: "check/update_tool_usage",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -713,7 +711,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: autopilot.NewTestRequest(
 				BuildCheckUpdateMutation("ToolUsage"),
 				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "toolCategory": "metrics", "toolUrlPredicate": null, "environmentPredicate": null } }`,
-				`{ "data": { "checkToolUsageUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
+				BuildCheckUpdateMutationResponse("ToolUsage", map[string]any{}),
 			),
 			endpoint: "check/update_tool_usage_null_predicates",
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -758,34 +756,14 @@ func TestChecks(t *testing.T) {
 func TestCanUpdateFilterToNull(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation CheckCustomEventUpdate($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
+		BuildCheckUpdateMutation("CustomEvent"),
 		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "filterId": null }}`,
-		`{ "data": {
-      "checkCustomEventUpdate": {
-        "check": {
-          "category": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
-            "name": "Performance"
-          },
-          "enabled": true,
-          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-          "level": {
-            "alias": "bronze",
-            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-            "index": 1,
-            "name": "Bronze"
-          },
-          "notes": "Hello World Notes",
-          "name": "Hello World"
-        },
-        "errors": []
-      }}}`,
+		BuildCheckUpdateMutationResponse("CustomEvent", map[string]any{}),
 	)
 	client := BestTestClient(t, "check/can_update_filter_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-		Id:       ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
+		Id:       "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
 		FilterId: ol.NewID(),
 	})
 	// Assert
@@ -797,28 +775,9 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 func TestCanUpdateNotesToNull(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation CheckCustomEventUpdate($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
+		BuildCheckUpdateMutation("CustomEvent"),
 		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "notes": "" }}`,
-		`{ "data": {
-      "checkCustomEventUpdate": {
-        "check": {
-          "category": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
-            "name": "Performance"
-          },
-          "enabled": true,
-          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-          "level": {
-            "alias": "bronze",
-            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-            "index": 1,
-            "name": "Bronze"
-          },
-          "name": "Hello World"
-        },
-        "errors": []
-      }}}`,
+		BuildCheckUpdateMutationResponse("CustomEvent", map[string]any{}),
 	)
 	client := BestTestClient(t, "check/can_update_notes_to_null", testRequest)
 	// Act
