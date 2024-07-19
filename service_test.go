@@ -265,8 +265,7 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 }
 
 func TestUpdateService(t *testing.T) {
-	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycleAlias": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tierAlias": "tier_4"}}`
-	addVarsV2 := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycle": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tier": "tier_4"}}`
+	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycle": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tier": "tier_4"}}`
 	delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycle": null, "parent": null, "tier": null}}`
 	delVarsV1DoesNotWorkExceptOnParent := `{"input":{"id": "123456789", "parent": null}}`
 	zeroVars := `{"input":{"description": "", "framework": "", "id": "123456789"}}`
@@ -291,7 +290,7 @@ func TestUpdateService(t *testing.T) {
 		},
 		{
 			Name: "add fields v2",
-			Vars: addVarsV2,
+			Vars: addVars,
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier("some_system"),
 				Id:             ol.NewID("123456789"),
