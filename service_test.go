@@ -266,7 +266,8 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 
 func TestUpdateService(t *testing.T) {
 	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycleAlias": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tierAlias": "tier_4"}}`
-	delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`
+	addVarsV2 := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycle": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tier": "tier_4"}}`
+	delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycle": null, "parent": null, "tier": null}}`
 	delVarsV1DoesNotWorkExceptOnParent := `{"input":{"id": "123456789", "parent": null}}`
 	zeroVars := `{"input":{"description": "", "framework": "", "id": "123456789"}}`
 	type TestCase struct {
@@ -290,11 +291,11 @@ func TestUpdateService(t *testing.T) {
 		},
 		{
 			Name: "add fields v2",
-			Vars: addVars,
+			Vars: addVarsV2,
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier("some_system"),
 				Id:             ol.NewID("123456789"),
-				Name:           ol.NewNullableFrom[string]("Hello World"),
+				Name:           ol.NewNullableFrom("Hello World"),
 				Description:    ol.NewNullableFrom("The quick brown fox"),
 				Framework:      ol.NewNullableFrom("django"),
 				TierAlias:      ol.NewNullableFrom("tier_4"),
@@ -319,10 +320,10 @@ func TestUpdateService(t *testing.T) {
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier(),
 				Id:             ol.NewID("123456789"),
-				Description:    ol.NewNull[string](),
-				Framework:      ol.NewNull[string](),
-				TierAlias:      ol.NewNull[string](),
-				LifecycleAlias: ol.NewNull[string](),
+				Description:    ol.NewNull(),
+				Framework:      ol.NewNull(),
+				TierAlias:      ol.NewNull(),
+				LifecycleAlias: ol.NewNull(),
 			},
 		},
 		{
