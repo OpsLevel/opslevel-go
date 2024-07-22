@@ -10,6 +10,7 @@
     {{ template "id1" }},
     "language": null,
     "lifecycle": null,
+    "locked": true,
     "name": "Foo",
     "owner": null,
     "preferredApiDocument": null,

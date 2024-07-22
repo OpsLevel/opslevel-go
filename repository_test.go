@@ -53,7 +53,7 @@ func TestConnectServiceRepository(t *testing.T) {
 func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible}}}`,
+		`query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible}}}`,
 		`{ "repo": "github.com:rocktavious/autopilot" }`,
 		`{"data": { "account": { "repository": null }}}`,
 	)
@@ -68,7 +68,7 @@ func TestGetRepositoryWithAliasNotFound(t *testing.T) {
 func TestGetRepositoryWithAlias(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible}}}`,
+		`query RepositoryGet($repo:String!){account{repository(alias: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible}}}`,
 		`{"repo": "github.com:rocktavious/autopilot" }`,
 		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
 	)
@@ -88,7 +88,7 @@ func TestGetRepositoryWithAlias(t *testing.T) {
 func TestGetRepository(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RepositoryGet($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible}}}`,
+		`query RepositoryGet($repo:ID!){account{repository(id: $repo){archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible}}}`,
 		`{"repo": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk" }`,
 		`{"data": { "account": { "repository": {{ template "repository_1" }} }}}`,
 	)
@@ -99,6 +99,7 @@ func TestGetRepository(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "main", result.DefaultBranch)
+	autopilot.Equals(t, true, result.Locked)
 	autopilot.Equals(t, "autopilot", result.Name)
 	autopilot.Equals(t, "359666903", result.RepoKey)
 	autopilot.Equals(t, "developers", result.Owner.Alias)
@@ -108,12 +109,12 @@ func TestGetRepository(t *testing.T) {
 func TestListRepositories(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query RepositoryList($after:String!$first:Int!$visible:Boolean!){account{repositories(after: $after, first: $first, visible: $visible){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
+		`query RepositoryList($after:String!$first:Int!$visible:Boolean!){account{repositories(after: $after, first: $first, visible: $visible){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
 		`{ {{ template "first_page_variables" }}, "visible": true }`,
 		`{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_1" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query RepositoryList($after:String!$first:Int!$visible:Boolean!){account{repositories(after: $after, first: $first, visible: $visible){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
+		`query RepositoryList($after:String!$first:Int!$visible:Boolean!){account{repositories(after: $after, first: $first, visible: $visible){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
 		`{ {{ template "second_page_variables" }}, "visible": true }`,
 		`{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -127,18 +128,20 @@ func TestListRepositories(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 2, resp.TotalCount)
 	autopilot.Equals(t, "autopilot", result[0].Name)
+	autopilot.Equals(t, true, result[0].Locked)
+	autopilot.Equals(t, false, result[1].Locked)
 	autopilot.Equals(t, "https://github.com/opslevel/cli", result[1].Url)
 }
 
 func TestListRepositoriesWithTier(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
+		`query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
 		`{ {{ template "first_page_variables" }}, "tier": "tier_1" }`,
 		`{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_1" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
+		`query RepositoryListWithTier($after:String!$first:Int!$tier:String!){account{repositories(tierAlias: $tier, after: $after, first: $first){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},totalCount,visibleCount}}}`,
 		`{ {{ template "second_page_variables" }}, "tier": "tier_1" }`,
 		`{ "data": { "account": { "repositories": { "nodes": [ {{ template "repository_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -158,7 +161,7 @@ func TestListRepositoriesWithTier(t *testing.T) {
 func TestUpdateRepository(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}`,
+		`mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}`,
 		`{ "input": { {{ template "id1" }}, "ownerId": "{{ template "id1_string" }}" }}`,
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_1" }}, "errors": [] }}}`,
 	)
@@ -177,7 +180,7 @@ func TestUpdateRepository(t *testing.T) {
 func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}`,
+		`mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_2" }}, "errors": [] }}}`,
 	)
@@ -195,7 +198,7 @@ func TestRepositoryUpdateOwnerNotPresent(t *testing.T) {
 func TestRepositoryUpdateOwnerNull(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}`,
+		`mutation RepositoryUpdate($input:RepositoryUpdateInput!){repositoryUpdate(input: $input){repository{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},type,url,visible},errors{message,path}}}`,
 		`{"input": { {{ template "id1" }}, "ownerId": null }}`,
 		`{"data": { "repositoryUpdate": { "repository": {{ template "repository_3" }}, "errors": [] }}}`,
 	)
