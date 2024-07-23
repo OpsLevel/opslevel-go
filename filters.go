@@ -27,6 +27,7 @@ type FilterPredicate struct {
 	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
 }
 
+// Validate the FilterPredicate based on known expectations before sending to API
 func (filterPredicate *FilterPredicate) Validate() error {
 	// validation common to Predicate and FilterPredicate types
 	basicPredicate := Predicate{Type: filterPredicate.Type, Value: filterPredicate.Value}
@@ -35,6 +36,24 @@ func (filterPredicate *FilterPredicate) Validate() error {
 	}
 
 	// validation specific to FilterPredicate types
+	if err := filterPredicate.validateKeyHasExpectedType(); err != nil {
+		return err
+	}
+	if err := filterPredicate.validateCaseSensitivity(); err != nil {
+		return err
+	}
+	if err := filterPredicate.validateValue(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (filterPredicate *FilterPredicate) validateCaseSensitivity() error {
+	if filterPredicate.CaseSensitive == nil {
+		return nil
+	}
+
 	caseSensitiveTypes := []PredicateTypeEnum{
 		PredicateTypeEnumContains,
 		PredicateTypeEnumDoesNotContain,
@@ -43,12 +62,95 @@ func (filterPredicate *FilterPredicate) Validate() error {
 		PredicateTypeEnumEndsWith,
 		PredicateTypeEnumStartsWith,
 	}
-	if filterPredicate.CaseSensitive != nil &&
-		*filterPredicate.CaseSensitive &&
+	if *filterPredicate.CaseSensitive &&
 		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
 	}
+	return nil
+}
 
+func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
+	var expectedPredicateTypes []PredicateTypeEnum
+	containsTypes := []PredicateTypeEnum{
+		PredicateTypeEnumContains,
+		PredicateTypeEnumDoesNotContain,
+	}
+	equalsTypes := []PredicateTypeEnum{
+		PredicateTypeEnumDoesNotEqual,
+		PredicateTypeEnumEquals,
+	}
+	existsTypes := []PredicateTypeEnum{
+		PredicateTypeEnumDoesNotExist,
+		PredicateTypeEnumExists,
+	}
+	lessThanGreaterThanTypes := []PredicateTypeEnum{
+		PredicateTypeEnumGreaterThanOrEqualTo,
+		PredicateTypeEnumLessThanOrEqualTo,
+	}
+	regexMatchesTypes := []PredicateTypeEnum{
+		PredicateTypeEnumDoesNotMatch,
+		PredicateTypeEnumMatches,
+	}
+	startsOrEndsWithTypes := []PredicateTypeEnum{
+		PredicateTypeEnumEndsWith,
+		PredicateTypeEnumStartsWith,
+	}
+
+	switch filterPredicate.Key {
+	case PredicateKeyEnumAliases, PredicateKeyEnumFramework, PredicateKeyEnumLanguage, PredicateKeyEnumName, PredicateKeyEnumProduct:
+		expectedPredicateTypes = slices.Concat(
+			containsTypes,
+			equalsTypes,
+			existsTypes,
+			regexMatchesTypes,
+			startsOrEndsWithTypes,
+		)
+	case PredicateKeyEnumFilterID:
+		expectedPredicateTypes = regexMatchesTypes
+	case PredicateKeyEnumLifecycleIndex, PredicateKeyEnumTierIndex:
+		expectedPredicateTypes = slices.Concat(equalsTypes, existsTypes, lessThanGreaterThanTypes)
+	case PredicateKeyEnumDomainID, PredicateKeyEnumOwnerID, PredicateKeyEnumOwnerIDs, PredicateKeyEnumSystemID:
+		expectedPredicateTypes = slices.Concat(equalsTypes, existsTypes)
+	case PredicateKeyEnumProperties:
+		expectedPredicateTypes = append(existsTypes, PredicateTypeEnumSatisfiesJqExpression)
+	case PredicateKeyEnumRepositoryIDs:
+		expectedPredicateTypes = existsTypes
+	case PredicateKeyEnumTags:
+		expectedPredicateTypes = append(slices.Concat(
+			containsTypes,
+			equalsTypes,
+			existsTypes,
+			regexMatchesTypes,
+			startsOrEndsWithTypes,
+		), PredicateTypeEnumSatisfiesVersionConstraint)
+	default:
+		return nil
+	}
+
+	if !slices.Contains(expectedPredicateTypes, filterPredicate.Type) {
+		return fmt.Errorf(
+			"FilterPredicate key '%s' expected to have one of the following types: %v",
+			filterPredicate.Key,
+			expectedPredicateTypes,
+		)
+	}
+
+	return nil
+}
+
+// Validates Value requirements expected by some Key types
+func (filterPredicate *FilterPredicate) validateValue() error {
+	idPredicateKeyTypes := []PredicateKeyEnum{
+		PredicateKeyEnumOwnerID,
+		PredicateKeyEnumOwnerIDs,
+		PredicateKeyEnumRepositoryIDs,
+		PredicateKeyEnumFilterID,
+		PredicateKeyEnumDomainID,
+		PredicateKeyEnumSystemID,
+	}
+	if slices.Contains(idPredicateKeyTypes, filterPredicate.Key) && !IsID(filterPredicate.Value) {
+		return fmt.Errorf("FilterPredicate with key '%s' expects value to be an ID", filterPredicate.Key)
+	}
 	return nil
 }
 
