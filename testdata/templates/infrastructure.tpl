@@ -7,6 +7,7 @@
     "owner": {
       {{ template "id1" }}
     },
+    "locked": true,
     "ownerLocked": false,
     "data": {
       "name": "my-big-query",
@@ -25,6 +26,7 @@
     "name": "vpc-XXXXXXXXXX",
     "type": "Network",
     "owner": null,
+    "locked": false,
     "ownerLocked": false,
     "data": {
       "name": "vpc-XXXXXXXXXX",

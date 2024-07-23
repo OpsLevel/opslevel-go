@@ -1,0 +1,4 @@
+kind: Feature
+body: add Locked field to AlertSource, InfrastructureResource, Repository, Service, and
+  System structs
+time: 2024-07-22T15:23:38.273543-05:00

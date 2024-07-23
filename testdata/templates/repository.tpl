@@ -15,6 +15,7 @@
     }
 ],
 "lastOwnerChangedAt": "2021-05-30T19:10:13.111394Z",
+"locked": true,
 "name": "autopilot",
 "organization": "rocktavious",
 "owner": {

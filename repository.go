@@ -28,6 +28,7 @@ type Repository struct {
 	Id                 ID
 	Languages          []Language
 	LastOwnerChangedAt iso8601.Time
+	Locked             bool
 	Name               string
 	Organization       string
 	Owner              TeamId

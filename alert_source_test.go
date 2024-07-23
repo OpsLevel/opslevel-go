@@ -10,7 +10,7 @@ import (
 func TestCreateAlertSourceService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{description,externalId,id,integration{id,name,type},name,type,url},id,service{id,aliases},status},errors{message,path}}}`,
+		`mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{description,externalId,id,integration{id,name,type},locked,name,type,url},id,service{id,aliases},status},errors{message,path}}}`,
 		`{"input": { "alertSourceExternalIdentifier": { "externalId": "QWERTY", "type": "datadog" }, "service": { "alias": "example" }}}`,
 		`{"data": { "alertSourceServiceCreate": { "alertSourceService": { "service": { "aliases": ["example"] }}}}}`,
 	)
@@ -28,7 +28,7 @@ func TestCreateAlertSourceService(t *testing.T) {
 func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){description,externalId,id,integration{id,name,type},name,type,url}}}`,
+		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){description,externalId,id,integration{id,name,type},locked,name,type,url}}}`,
 		`{"externalIdentifier": { "type": "datadog", "externalId": "12345678" }}`,
 		`{"data": {
         "account": {
@@ -41,6 +41,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpQYWdlcmR1dHlJbnRlZ3JhdGlvbi8zMg",
               "type": "datadog"
             },
+            "locked": true,
             "name": "Example",
             "type": "datadog",
             "url": "https://example.com"
@@ -58,13 +59,14 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "test", result.Description)
+	autopilot.Equals(t, true, result.Locked)
 	autopilot.Equals(t, ol.AlertSourceTypeEnumDatadog, result.Type)
 }
 
 func TestGetAlertSource(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){description,externalId,id,integration{id,name,type},name,type,url}}}`,
+		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){description,externalId,id,integration{id,name,type},locked,name,type,url}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
 		`{"data": {
         "account": {
@@ -77,6 +79,7 @@ func TestGetAlertSource(t *testing.T) {
               "id": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpQYWdlcmR1dHlJbnRlZ3JhdGlvbi8zMg",
               "type": "datadog"
             },
+            "locked": false,
             "name": "Example",
             "type": "datadog",
             "url": "https://example.com"
@@ -90,6 +93,7 @@ func TestGetAlertSource(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "Example", result.Name)
 	autopilot.Equals(t, "test", result.Description)
+	autopilot.Equals(t, false, result.Locked)
 	autopilot.Equals(t, ol.AlertSourceTypeEnumDatadog, result.Type)
 }
 
