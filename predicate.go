@@ -12,14 +12,15 @@ type Predicate struct {
 	Value string            `graphql:"value"`
 }
 
+var existsTypes = []PredicateTypeEnum{
+	PredicateTypeEnumDoesNotExist,
+	PredicateTypeEnumExists,
+}
+
 func (p *Predicate) Validate() error {
-	predicatesWithNoValue := []PredicateTypeEnum{
-		PredicateTypeEnumDoesNotExist,
-		PredicateTypeEnumExists,
-	}
-	if slices.Contains(predicatesWithNoValue, p.Type) && p.Value != "" {
+	if slices.Contains(existsTypes, p.Type) && p.Value != "" {
 		return fmt.Errorf("Predicate type '%s' cannot have a value. Given value '%s'", p.Type, p.Value)
-	} else if !slices.Contains(predicatesWithNoValue, p.Type) && p.Value == "" {
+	} else if !slices.Contains(existsTypes, p.Type) && p.Value == "" {
 		return fmt.Errorf("Predicate type '%s' requires a value", p.Type)
 	}
 
