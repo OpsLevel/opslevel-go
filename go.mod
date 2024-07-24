@@ -1,6 +1,8 @@
 module github.com/opslevel/opslevel-go/v2024
 
-go 1.22
+go 1.21
+
+toolchain go1.22.0
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
