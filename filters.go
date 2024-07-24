@@ -79,10 +79,6 @@ func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
 		PredicateTypeEnumDoesNotEqual,
 		PredicateTypeEnumEquals,
 	}
-	existsTypes := []PredicateTypeEnum{
-		PredicateTypeEnumDoesNotExist,
-		PredicateTypeEnumExists,
-	}
 	lessThanGreaterThanTypes := []PredicateTypeEnum{
 		PredicateTypeEnumGreaterThanOrEqualTo,
 		PredicateTypeEnumLessThanOrEqualTo,
@@ -140,12 +136,17 @@ func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
 
 // Validates Value requirements expected by some Key types
 func (filterPredicate *FilterPredicate) validateValue() error {
+	if slices.Contains(existsTypes, filterPredicate.Type) {
+		if filterPredicate.Value != "" {
+			return fmt.Errorf("FilterPredicate type '%s' cannot have value set.", filterPredicate.Type)
+		}
+		return nil
+	}
 	idPredicateKeyTypes := []PredicateKeyEnum{
+		PredicateKeyEnumDomainID,
+		PredicateKeyEnumFilterID,
 		PredicateKeyEnumOwnerID,
 		PredicateKeyEnumOwnerIDs,
-		PredicateKeyEnumRepositoryIDs,
-		PredicateKeyEnumFilterID,
-		PredicateKeyEnumDomainID,
 		PredicateKeyEnumSystemID,
 	}
 	if slices.Contains(idPredicateKeyTypes, filterPredicate.Key) && !IsID(filterPredicate.Value) {
