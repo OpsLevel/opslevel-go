@@ -39,10 +39,13 @@ func (filterPredicate *FilterPredicate) Validate() error {
 	if err := filterPredicate.validateKeyHasExpectedType(); err != nil {
 		return err
 	}
+	if err := filterPredicate.validateValue(); err != nil {
+		return err
+	}
 	if err := filterPredicate.validateCaseSensitivity(); err != nil {
 		return err
 	}
-	if err := filterPredicate.validateValue(); err != nil {
+	if err := filterPredicate.validateKeyData(); err != nil {
 		return err
 	}
 
@@ -66,6 +69,21 @@ func (filterPredicate *FilterPredicate) validateCaseSensitivity() error {
 		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
 	}
+	return nil
+}
+
+func (filterPredicate *FilterPredicate) validateKeyData() error {
+	keyDataExpectedTypes := []PredicateKeyEnum{
+		PredicateKeyEnumProperties,
+		PredicateKeyEnumTags,
+	}
+	if slices.Contains(keyDataExpectedTypes, filterPredicate.Key) && filterPredicate.KeyData == "" {
+		return fmt.Errorf("FilterPredicate key '%s' expects a value for 'key_data'", filterPredicate.Key)
+	}
+	if !slices.Contains(keyDataExpectedTypes, filterPredicate.Key) && filterPredicate.KeyData != "" {
+		return fmt.Errorf("FilterPredicate key '%s' cannot have a value set for 'key_data'", filterPredicate.Key)
+	}
+
 	return nil
 }
 
