@@ -101,9 +101,13 @@ func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
 		PredicateTypeEnumGreaterThanOrEqualTo,
 		PredicateTypeEnumLessThanOrEqualTo,
 	}
-	regexMatchesTypes := []PredicateTypeEnum{
+	filterMatchTypes := []PredicateTypeEnum{
 		PredicateTypeEnumDoesNotMatch,
 		PredicateTypeEnumMatches,
+	}
+	regexMatchesTypes := []PredicateTypeEnum{
+		PredicateTypeEnumDoesNotMatchRegex,
+		PredicateTypeEnumMatchesRegex,
 	}
 	startsOrEndsWithTypes := []PredicateTypeEnum{
 		PredicateTypeEnumEndsWith,
@@ -120,7 +124,7 @@ func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
 			startsOrEndsWithTypes,
 		)
 	case PredicateKeyEnumFilterID:
-		expectedPredicateTypes = regexMatchesTypes
+		expectedPredicateTypes = filterMatchTypes
 	case PredicateKeyEnumLifecycleIndex, PredicateKeyEnumTierIndex:
 		expectedPredicateTypes = slices.Concat(equalsTypes, existsTypes, lessThanGreaterThanTypes)
 	case PredicateKeyEnumOwnerIDs:
