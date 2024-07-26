@@ -123,7 +123,9 @@ func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
 		expectedPredicateTypes = regexMatchesTypes
 	case PredicateKeyEnumLifecycleIndex, PredicateKeyEnumTierIndex:
 		expectedPredicateTypes = slices.Concat(equalsTypes, existsTypes, lessThanGreaterThanTypes)
-	case PredicateKeyEnumDomainID, PredicateKeyEnumOwnerID, PredicateKeyEnumOwnerIDs, PredicateKeyEnumSystemID:
+	case PredicateKeyEnumOwnerIDs:
+		expectedPredicateTypes = []PredicateTypeEnum{PredicateTypeEnumEquals}
+	case PredicateKeyEnumDomainID, PredicateKeyEnumOwnerID, PredicateKeyEnumSystemID:
 		expectedPredicateTypes = slices.Concat(equalsTypes, existsTypes)
 	case PredicateKeyEnumProperties:
 		expectedPredicateTypes = append(existsTypes, PredicateTypeEnumSatisfiesJqExpression)
