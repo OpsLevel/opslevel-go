@@ -57,16 +57,20 @@ func (filterPredicate *FilterPredicate) validateCaseSensitivity() error {
 		return nil
 	}
 
-	caseSensitiveTypes := []PredicateTypeEnum{
-		PredicateTypeEnumContains,
-		PredicateTypeEnumDoesNotContain,
-		PredicateTypeEnumDoesNotEqual,
-		PredicateTypeEnumEquals,
-		PredicateTypeEnumEndsWith,
-		PredicateTypeEnumStartsWith,
+	knownNotCaseSensitiveTypes := []PredicateTypeEnum{
+		PredicateTypeEnumDoesNotExist,
+		PredicateTypeEnumExists,
+		PredicateTypeEnumGreaterThanOrEqualTo,
+		PredicateTypeEnumLessThanOrEqualTo,
+		PredicateTypeEnumSatisfiesVersionConstraint,
+		PredicateTypeEnumMatchesRegex,
+		PredicateTypeEnumDoesNotMatchRegex,
+		PredicateTypeEnumBelongsTo,
+		PredicateTypeEnumMatches,
+		PredicateTypeEnumDoesNotMatch,
+		PredicateTypeEnumSatisfiesJqExpression,
 	}
-	if *filterPredicate.CaseSensitive &&
-		!slices.Contains(caseSensitiveTypes, filterPredicate.Type) {
+	if slices.Contains(knownNotCaseSensitiveTypes, filterPredicate.Type) && *filterPredicate.CaseSensitive {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
 	}
 	return nil
@@ -77,10 +81,26 @@ func (filterPredicate *FilterPredicate) validateKeyData() error {
 		PredicateKeyEnumProperties,
 		PredicateKeyEnumTags,
 	}
+	knownNoKeyDataSetTypes := []PredicateKeyEnum{
+		PredicateKeyEnumAliases,
+		PredicateKeyEnumDomainID,
+		PredicateKeyEnumFilterID,
+		PredicateKeyEnumFramework,
+		PredicateKeyEnumLifecycleIndex,
+		PredicateKeyEnumLanguage,
+		PredicateKeyEnumName,
+		PredicateKeyEnumOwnerID,
+		PredicateKeyEnumOwnerIDs,
+		PredicateKeyEnumProduct,
+		PredicateKeyEnumRepositoryIDs,
+		PredicateKeyEnumSystemID,
+		PredicateKeyEnumTierIndex,
+	}
+
 	if slices.Contains(keyDataExpectedTypes, filterPredicate.Key) && filterPredicate.KeyData == "" {
 		return fmt.Errorf("FilterPredicate key '%s' expects a value for 'key_data'", filterPredicate.Key)
 	}
-	if !slices.Contains(keyDataExpectedTypes, filterPredicate.Key) && filterPredicate.KeyData != "" {
+	if slices.Contains(knownNoKeyDataSetTypes, filterPredicate.Key) && filterPredicate.KeyData != "" {
 		return fmt.Errorf("FilterPredicate key '%s' cannot have a value set for 'key_data'", filterPredicate.Key)
 	}
 
