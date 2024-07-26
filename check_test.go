@@ -1,609 +1,694 @@
 package opslevel_test
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
+	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var checkCreateInput = ol.CheckCreateInput{
-	Name:     "Hello World",
-	Enabled:  ol.RefOf(true),
-	Category: ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1"),
-	Level:    ol.ID("Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3"),
-	Notes:    ol.RefOf("Hello World Check"),
-}
-
-var checkUpdateNotes = "Hello World Check"
-
-var checkUpdateInput = ol.CheckUpdateInput{
-	Id:       "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-	Name:     "Hello World",
-	Enabled:  ol.RefOf(true),
-	Category: "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
-	Level:    "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-	Notes:    &checkUpdateNotes,
-}
-
 // Temporary solution until repo wide testing is standardized
 type TmpCheckTestCase struct {
-	fixture  autopilot.TestRequest
-	endpoint string
-	body     func(c *ol.Client) (*ol.Check, error)
+	fixture autopilot.TestRequest
+	body    func(c *ol.Client) (*ol.Check, error)
+}
+
+// Helper Data
+var (
+	templater = template.New("").Funcs(sprig.TxtFuncMap()).Delims("[%", "%]")
+
+	id = ol.ID("Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2")
+
+	predicateInput = &ol.PredicateInput{
+		Type:  ol.PredicateTypeEnumEquals,
+		Value: ol.RefOf("Requests"),
+	}
+
+	predicateUpdateInput = &ol.PredicateUpdateInput{
+		Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
+		Value: ol.RefOf("Requests"),
+	}
+
+	checkNotes = "Hello World Check"
+
+	checkCreateInput = ol.CheckCreateInput{
+		Name:     "Hello World",
+		Enabled:  ol.RefOf(true),
+		Category: id,
+		Level:    id,
+		Notes:    &checkNotes,
+	}
+
+	checkUpdateInput = ol.CheckUpdateInput{
+		Id:       id,
+		Name:     "Hello World",
+		Enabled:  ol.RefOf(true),
+		Category: id,
+		Level:    id,
+		Notes:    &checkNotes,
+	}
+)
+
+type RequestStyle string
+
+const (
+	CreateRequest RequestStyle = "Create"
+	UpdateRequest RequestStyle = "Update"
+)
+
+func TrimGraphQLString(input string) string {
+	processed := strings.ReplaceAll(input, "\n", "")
+	processed = strings.ReplaceAll(processed, "\t", "")
+	return strings.ReplaceAll(processed, "  ", "")
+}
+
+func Template(text string, data map[string]any) string {
+	tpl, err := templater.Clone()
+	if err != nil {
+		panic(err)
+	}
+	parsed, err := tpl.Parse(text)
+	if err != nil {
+		panic(err)
+	}
+	result := bytes.NewBuffer([]byte{})
+	if err = parsed.Execute(result, data); err != nil {
+		panic(err)
+	}
+	return result.String()
+}
+
+func BuildCheckMutation(name string, style RequestStyle) string {
+	data := map[string]any{
+		"Name":  name,
+		"Style": style,
+	}
+	text := TrimGraphQLString(`mutation Check[% .Name %][% .Style %]($input:Check[% .Name %][% .Style %]Input!){
+  check[% .Name %][% .Style %](input: $input){
+    check{
+      category{id,name},
+      description,
+      enableOn,
+      enabled,
+      filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},
+      id,
+      level{alias,description,id,index,name},
+      name,
+      notes: rawNotes,
+      owner{... on Team{alias,id}},
+      type,
+      ... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},
+      ... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},
+      ... on HasRecentDeployCheck{days},
+      ... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},
+      ... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},
+      ... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},
+      ... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},
+      ... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},
+      ... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},
+      ... on TagDefinedCheck{tagKey,tagPredicate{type,value}},
+      ... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},
+      ... on HasDocumentationCheck{documentType,documentSubtype}
+	},
+	errors{message,path}
+  }
+}`)
+	return Template(text, data)
+}
+
+func MergeCheckData(extras map[string]any) string {
+	data := map[string]any{
+		"category": map[string]any{
+			"id":   id,
+			"name": "Performance",
+		},
+		"description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.",
+		"enabled":     true,
+		"filter":      map[string]any{},
+		"id":          id,
+		"level": map[string]any{
+			"alias":       "bronze",
+			"description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+			"id":          id,
+			"index":       1,
+			"name":        "Bronze",
+		},
+		"name": "Hello World",
+	}
+	for k, v := range extras {
+		data[k] = v
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
+
+func BuildCheckMutationResponse(name string, style RequestStyle, extras map[string]any) string {
+	data := map[string]any{
+		"Name":  name,
+		"Style": style,
+		"Body":  MergeCheckData(extras),
+	}
+	text := TrimGraphQLString(`{
+  "data": {
+    "check[% .Name %][% .Style %]": {
+      "check": [% .Body %],
+      "errors": []
+    }
+  }
+}`)
+	return Template(text, data)
+}
+
+func BuildCheckInput(style RequestStyle, extras map[string]any) string {
+	base := map[string]any{
+		"name":       "Hello World",
+		"enabled":    true,
+		"categoryId": id,
+		"levelId":    id,
+		"notes":      "Hello World Check",
+	}
+	if style == UpdateRequest {
+		base["id"] = id
+	}
+	for k, v := range extras {
+		base[k] = v
+	}
+	b, err := json.Marshal(map[string]any{
+		"input": base,
+	})
+	if err != nil {
+		panic(fmt.Errorf("failed to marshal input: %s", err))
+	}
+	return string(b)
+}
+
+func BuildRequest(style RequestStyle, name string, extras map[string]any) autopilot.TestRequest {
+	return autopilot.NewTestRequest(
+		BuildCheckMutation(name, style),
+		BuildCheckInput(style, extras),
+		BuildCheckMutationResponse(name, style, extras),
+	)
+}
+
+func BuildCreateRequest(name string, extras map[string]any) autopilot.TestRequest {
+	return autopilot.NewTestRequest(
+		BuildCheckMutation(name, CreateRequest),
+		BuildCheckInput(CreateRequest, extras),
+		BuildCheckMutationResponse(name, CreateRequest, extras),
+	)
+}
+
+func BuildCreateRequestAlt(name string, input, response map[string]any) autopilot.TestRequest {
+	return autopilot.NewTestRequest(
+		BuildCheckMutation(name, CreateRequest),
+		BuildCheckInput(CreateRequest, input),
+		BuildCheckMutationResponse(name, CreateRequest, response),
+	)
+}
+
+func BuildUpdateRequest(name string, extras map[string]any) autopilot.TestRequest {
+	return autopilot.NewTestRequest(
+		BuildCheckMutation(name, UpdateRequest),
+		BuildCheckInput(UpdateRequest, extras),
+		BuildCheckMutationResponse(name, UpdateRequest, extras),
+	)
+}
+
+func BuildUpdateRequestAlt(name string, input, response map[string]any) autopilot.TestRequest {
+	return autopilot.NewTestRequest(
+		BuildCheckMutation(name, UpdateRequest),
+		BuildCheckInput(UpdateRequest, input),
+		BuildCheckMutationResponse(name, UpdateRequest, response),
+	)
 }
 
 func getCheckTestCases() map[string]TmpCheckTestCase {
+	// Test Cases
 	testcases := map[string]TmpCheckTestCase{
 		"CreateAlertSourceUsage": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckAlertSourceUsageCreate($input:CheckAlertSourceUsageCreateInput!){checkAlertSourceUsageCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "alertSourceNamePredicate": {"type":"equals", "value":"Requests"}, "alertSourceType":"datadog" } }`,
-				`{ "data": { "checkAlertSourceUsageCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_alert_source_usage",
+			fixture: BuildCreateRequest("AlertSourceUsage", map[string]any{
+				"alertSourceNamePredicate": predicateInput,
+				"alertSourceType":          ol.AlertSourceTypeEnumDatadog,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkAlertSourceUsageCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckAlertSourceUsageCreateInput](checkCreateInput)
-				checkAlertSourceUsageCreateInput.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
-				checkAlertSourceUsageCreateInput.AlertSourceNamePredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("Requests"),
-				}
-				return c.CreateCheckAlertSourceUsage(*checkAlertSourceUsageCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckAlertSourceUsageCreateInput](checkCreateInput)
+				input.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
+				input.AlertSourceNamePredicate = predicateInput
+				return c.CreateCheckAlertSourceUsage(*input)
 			},
 		},
 		"UpdateAlertSourceUsage": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckAlertSourceUsageUpdate($input:CheckAlertSourceUsageUpdateInput!){checkAlertSourceUsageUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "alertSourceNamePredicate": {"type":"equals", "value":"Requests"}, "alertSourceType":"datadog" } }`,
-				`{ "data": { "checkAlertSourceUsageUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_alert_source_usage",
+			fixture: BuildUpdateRequest("AlertSourceUsage", map[string]any{
+				"alertSourceNamePredicate": predicateUpdateInput,
+				"alertSourceType":          ol.AlertSourceTypeEnumDatadog,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkAlertSourceUsageUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckAlertSourceUsageUpdateInput](checkUpdateInput)
-				checkAlertSourceUsageUpdateInput.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
-				checkAlertSourceUsageUpdateInput.AlertSourceNamePredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("Requests"),
-				}
-				return c.UpdateCheckAlertSourceUsage(*checkAlertSourceUsageUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckAlertSourceUsageUpdateInput](checkUpdateInput)
+				input.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
+				input.AlertSourceNamePredicate = predicateUpdateInput
+				return c.UpdateCheckAlertSourceUsage(*input)
 			},
 		},
 
 		"CreateGitBranchProtection": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckGitBranchProtectionCreate($input:CheckGitBranchProtectionCreateInput!){checkGitBranchProtectionCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkGitBranchProtectionCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_git_branch_protection",
+			fixture: BuildCreateRequest("GitBranchProtection", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkGitBranchProtectionCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckGitBranchProtectionCreateInput](checkCreateInput)
-				return c.CreateCheckGitBranchProtection(*checkGitBranchProtectionCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckGitBranchProtectionCreateInput](checkCreateInput)
+				return c.CreateCheckGitBranchProtection(*input)
 			},
 		},
 		"UpdateGitBranchProtection": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckGitBranchProtectionUpdate($input:CheckGitBranchProtectionUpdateInput!){checkGitBranchProtectionUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkGitBranchProtectionUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_git_branch_protection",
+			fixture: BuildUpdateRequest("GitBranchProtection", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkGitBranchProtectionUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckGitBranchProtectionUpdateInput](checkUpdateInput)
-				return c.UpdateCheckGitBranchProtection(*checkGitBranchProtectionUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckGitBranchProtectionUpdateInput](checkUpdateInput)
+				return c.UpdateCheckGitBranchProtection(*input)
 			},
 		},
 
 		"CreateHasRecentDeploy": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckHasRecentDeployCreate($input:CheckHasRecentDeployCreateInput!){checkHasRecentDeployCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "days": 5 } }`,
-				`{ "data": { "checkHasRecentDeployCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_has_recent_deploy",
+			fixture: BuildCreateRequest("HasRecentDeploy", map[string]any{"days": 5}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkHasRecentDeployCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckHasRecentDeployCreateInput](checkCreateInput)
-				checkHasRecentDeployCreateInput.Days = 5
-				return c.CreateCheckHasRecentDeploy(*checkHasRecentDeployCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckHasRecentDeployCreateInput](checkCreateInput)
+				input.Days = 5
+				return c.CreateCheckHasRecentDeploy(*input)
 			},
 		},
 		"UpdateHasRecentDeploy": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckHasRecentDeployUpdate($input:CheckHasRecentDeployUpdateInput!){checkHasRecentDeployUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "days": 5 } }`,
-				`{ "data": { "checkHasRecentDeployUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_has_recent_deploy",
+			fixture: BuildUpdateRequest("HasRecentDeploy", map[string]any{"days": 5}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkHasRecentDeployUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckHasRecentDeployUpdateInput](checkUpdateInput)
-				checkHasRecentDeployUpdateInput.Days = ol.RefOf(5)
-				return c.UpdateCheckHasRecentDeploy(*checkHasRecentDeployUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasRecentDeployUpdateInput](checkUpdateInput)
+				input.Days = ol.RefOf(5)
+				return c.UpdateCheckHasRecentDeploy(*input)
 			},
 		},
 
 		"CreateHasDocumentation": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckHasDocumentationCreate($input:CheckHasDocumentationCreateInput!){checkHasDocumentationCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "documentType": "api", "documentSubtype": "openapi", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkHasDocumentationCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has valid documentation.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "documentType": "api", "documentSubtype": "openapi" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_has_documentation",
+			fixture: BuildCreateRequest("HasDocumentation", map[string]any{
+				"documentType":    ol.HasDocumentationTypeEnumAPI,
+				"documentSubtype": ol.HasDocumentationSubtypeEnumOpenapi,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkHasDocumentationCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckHasDocumentationCreateInput](checkCreateInput)
-				checkHasDocumentationCreateInput.DocumentType = ol.HasDocumentationTypeEnumAPI
-				checkHasDocumentationCreateInput.DocumentSubtype = ol.HasDocumentationSubtypeEnumOpenapi
-				return c.CreateCheckHasDocumentation(*checkHasDocumentationCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckHasDocumentationCreateInput](checkCreateInput)
+				input.DocumentType = ol.HasDocumentationTypeEnumAPI
+				input.DocumentSubtype = ol.HasDocumentationSubtypeEnumOpenapi
+				return c.CreateCheckHasDocumentation(*input)
 			},
 		},
 		"UpdateHasDocumentation": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckHasDocumentationUpdate($input:CheckHasDocumentationUpdateInput!){checkHasDocumentationUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "documentType": "api", "documentSubtype": "openapi", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkHasDocumentationUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World Update", "notes": "Hello World Update", "documentType": "api", "documentSubtype": "openapi" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_has_documentation",
+			fixture: BuildUpdateRequest("HasDocumentation", map[string]any{
+				"documentType":    ol.HasDocumentationTypeEnumAPI,
+				"documentSubtype": ol.HasDocumentationSubtypeEnumOpenapi,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkHasDocumentationUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckHasDocumentationUpdateInput](checkUpdateInput)
-				checkHasDocumentationUpdateInput.DocumentType = ol.RefOf(ol.HasDocumentationTypeEnumAPI)
-				checkHasDocumentationUpdateInput.DocumentSubtype = ol.RefOf(ol.HasDocumentationSubtypeEnumOpenapi)
-				return c.UpdateCheckHasDocumentation(*checkHasDocumentationUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasDocumentationUpdateInput](checkUpdateInput)
+				input.DocumentType = ol.RefOf(ol.HasDocumentationTypeEnumAPI)
+				input.DocumentSubtype = ol.RefOf(ol.HasDocumentationSubtypeEnumOpenapi)
+				return c.UpdateCheckHasDocumentation(*input)
 			},
 		},
 
 		"CreateCustomEvent": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckCustomEventCreate($input:CheckCustomEventCreateInput!){checkCustomEventCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "passPending": false, "serviceSelector": ".metadata.name", "successCondition": ".metadata.name", "resultMessage": "#Hello World", "integrationId": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg" } }`,
-				`{ "data": { "checkCustomEventCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_custom_event",
+			fixture: BuildCreateRequestAlt("CustomEvent", map[string]any{
+				"passPending":      false,
+				"serviceSelector":  ".metadata.name",
+				"successCondition": ".metadata.name",
+				"resultMessage":    "#Hello World",
+				"integrationId":    id,
+			}, map[string]any{
+				"passPending":      false,
+				"serviceSelector":  ".metadata.name",
+				"successCondition": ".metadata.name",
+				"resultMessage":    "#Hello World",
+				"integration": ol.IntegrationId{
+					Id: id,
+				},
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkCustomEventCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckCustomEventCreateInput](checkCreateInput)
-				checkCustomEventCreateInput.ServiceSelector = ".metadata.name"
-				checkCustomEventCreateInput.SuccessCondition = ".metadata.name"
-				checkCustomEventCreateInput.ResultMessage = ol.RefOf("#Hello World")
-				checkCustomEventCreateInput.IntegrationId = ol.ID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg")
-				checkCustomEventCreateInput.PassPending = ol.RefOf(false)
-				return c.CreateCheckCustomEvent(*checkCustomEventCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckCustomEventCreateInput](checkCreateInput)
+				input.ServiceSelector = ".metadata.name"
+				input.SuccessCondition = ".metadata.name"
+				input.ResultMessage = ol.RefOf("#Hello World")
+				input.IntegrationId = id
+				input.PassPending = ol.RefOf(false)
+				return c.CreateCheckCustomEvent(*input)
 			},
 		},
 		"UpdateCustomEvent": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckCustomEventUpdate($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "passPending": false, "serviceSelector": ".metadata.name", "successCondition": ".metadata.name", "resultMessage": "#Hello World", "integrationId": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg" } }`,
-				`{ "data": { "checkCustomEventUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_custom_event",
+			fixture: BuildUpdateRequestAlt("CustomEvent", map[string]any{
+				"passPending":      false,
+				"serviceSelector":  ".metadata.name",
+				"successCondition": ".metadata.name",
+				"resultMessage":    "#Hello World",
+				"integrationId":    id,
+			}, map[string]any{
+				"passPending":      false,
+				"serviceSelector":  ".metadata.name",
+				"successCondition": ".metadata.name",
+				"resultMessage":    "#Hello World",
+				"integration": ol.IntegrationId{
+					Id: id,
+				},
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkCustomEventUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
-				checkCustomEventUpdateInput.ServiceSelector = ol.RefOf(".metadata.name")
-				checkCustomEventUpdateInput.SuccessCondition = ol.RefOf(".metadata.name")
-				checkCustomEventUpdateInput.ResultMessage = ol.RefOf("#Hello World")
-				checkCustomEventUpdateInput.IntegrationId = ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg")
-				checkCustomEventUpdateInput.PassPending = ol.RefOf(false)
-				return c.UpdateCheckCustomEvent(*checkCustomEventUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
+				input.ServiceSelector = ol.RefOf(".metadata.name")
+				input.SuccessCondition = ol.RefOf(".metadata.name")
+				input.ResultMessage = ol.RefOf("#Hello World")
+				input.IntegrationId = &id
+				input.PassPending = ol.RefOf(false)
+				return c.UpdateCheckCustomEvent(*input)
 			},
 		},
 		"UpdateCustomEventNoMessage": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckCustomEventUpdate($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "passPending": false, "serviceSelector": ".metadata.name", "successCondition": ".metadata.name", "resultMessage": "", "integrationId": "Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg" } }`,
-				`{ "data": { "checkCustomEventUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_custom_event_no_message",
+			fixture: BuildUpdateRequestAlt("CustomEvent", map[string]any{
+				"passPending":      false,
+				"serviceSelector":  ".metadata.name",
+				"successCondition": ".metadata.name",
+				"resultMessage":    "",
+				"integrationId":    id,
+			}, map[string]any{
+				"passPending":      false,
+				"serviceSelector":  ".metadata.name",
+				"successCondition": ".metadata.name",
+				"resultMessage":    "",
+				"integration": ol.IntegrationId{
+					Id: id,
+				},
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkCustomEventUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
-				checkCustomEventUpdateInput.ServiceSelector = ol.RefOf(".metadata.name")
-				checkCustomEventUpdateInput.SuccessCondition = ol.RefOf(".metadata.name")
-				checkCustomEventUpdateInput.ResultMessage = ol.RefOf("")
-				checkCustomEventUpdateInput.IntegrationId = ol.NewID("Z2lkOi8vb3BzbGV2ZWwvSW50ZWdyYXRpb25zOjpFdmVudHM6OkdlbmVyaWNJbnRlZ3JhdGlvbi81Njg")
-				checkCustomEventUpdateInput.PassPending = ol.RefOf(false)
-				return c.UpdateCheckCustomEvent(*checkCustomEventUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
+				input.ServiceSelector = ol.RefOf(".metadata.name")
+				input.SuccessCondition = ol.RefOf(".metadata.name")
+				input.ResultMessage = ol.RefOf("")
+				input.IntegrationId = &id
+				input.PassPending = ol.RefOf(false)
+				return c.UpdateCheckCustomEvent(*input)
 			},
 		},
 		"CreateManual": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckManualCreate($input:CheckManualCreateInput!){checkManualCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "updateFrequency": { "startingDate": "2021-07-26T20:22:44.427Z", "frequencyTimeScale": "week", "frequencyValue": 1 }, "updateRequiresComment": false } }`,
-				`{ "data": { "checkManualCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a service owner to manually complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_manual",
+			fixture: BuildCreateRequest("Manual", map[string]any{
+				"updateFrequency":       ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
+				"updateRequiresComment": false,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkManualCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckManualCreateInput](checkCreateInput)
-				checkManualCreateInput.UpdateFrequency = ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
-				return c.CreateCheckManual(*checkManualCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckManualCreateInput](checkCreateInput)
+				input.UpdateFrequency = ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
+				return c.CreateCheckManual(*input)
 			},
 		},
 		"UpdateManual": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckManualUpdate($input:CheckManualUpdateInput!){checkManualUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "updateFrequency": { "startingDate": "2021-07-26T20:22:44.427Z", "frequencyTimeScale": "week", "frequencyValue": 1 } } }`,
-				`{ "data": { "checkManualUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Requires a service owner to manually complete a check for the service.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_manual",
+			fixture: BuildUpdateRequest("Manual", map[string]any{
+				"updateFrequency": ol.NewManualCheckFrequencyUpdateInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1),
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkManualUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckManualUpdateInput](checkUpdateInput)
-				checkManualUpdateInput.UpdateFrequency = ol.NewManualCheckFrequencyUpdateInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
-				return c.UpdateCheckManual(*checkManualUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckManualUpdateInput](checkUpdateInput)
+				input.UpdateFrequency = ol.NewManualCheckFrequencyUpdateInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
+				return c.UpdateCheckManual(*input)
 			},
 		},
 		"CreateRepositoryFile": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryFileCreate($input:CheckRepositoryFileCreateInput!){checkRepositoryFileCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "directorySearch": true, "filePaths": [ "/src", "/test" ], "fileContentsPredicate": { "type": "equals", "value": "postgres" }, "useAbsoluteRoot": true } }`,
-				`{ "data": { "checkRepositoryFileCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo directorys ''/src' or '/test'' equals 'postgres'.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_repo_file",
+			fixture: BuildCreateRequest("RepositoryFile", map[string]any{
+				"directorySearch":       true,
+				"filePaths":             []string{"/src", "/test"},
+				"fileContentsPredicate": predicateInput,
+				"useAbsoluteRoot":       true,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryFileCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryFileCreateInput](checkCreateInput)
-				checkRepositoryFileCreateInput.DirectorySearch = ol.RefOf(true)
-				checkRepositoryFileCreateInput.FilePaths = []string{"/src", "/test"}
-				checkRepositoryFileCreateInput.FileContentsPredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("postgres"),
-				}
-				checkRepositoryFileCreateInput.UseAbsoluteRoot = ol.RefOf(true)
-				return c.CreateCheckRepositoryFile(*checkRepositoryFileCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryFileCreateInput](checkCreateInput)
+				input.DirectorySearch = ol.RefOf(true)
+				input.FilePaths = []string{"/src", "/test"}
+				input.FileContentsPredicate = predicateInput
+				input.UseAbsoluteRoot = ol.RefOf(true)
+				return c.CreateCheckRepositoryFile(*input)
 			},
 		},
 		"UpdateRepositoryFile": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryFileUpdate($input:CheckRepositoryFileUpdateInput!){checkRepositoryFileUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "directorySearch": true, "filePaths": [ "/src", "/test" ], "fileContentsPredicate": { "type": "equals", "value": "postgres" }, "useAbsoluteRoot": false } }`,
-				`{ "data": { "checkRepositoryFileUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo directorys ''/src' or '/test'' equals 'postgres'.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_repo_file",
+			fixture: BuildUpdateRequest("RepositoryFile", map[string]any{
+				"directorySearch":       true,
+				"filePaths":             []string{"/src", "/test", "/foo/bar"},
+				"fileContentsPredicate": predicateUpdateInput,
+				"useAbsoluteRoot":       false,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryFileUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryFileUpdateInput](checkUpdateInput)
-				checkRepositoryFileUpdateInput.DirectorySearch = ol.RefOf(true)
-				checkRepositoryFileUpdateInput.FilePaths = &[]string{"/src", "/test"}
-				checkRepositoryFileUpdateInput.FileContentsPredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("postgres"),
-				}
-				checkRepositoryFileUpdateInput.UseAbsoluteRoot = ol.RefOf(false)
-				return c.UpdateCheckRepositoryFile(*checkRepositoryFileUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryFileUpdateInput](checkUpdateInput)
+				input.DirectorySearch = ol.RefOf(true)
+				input.FilePaths = &[]string{"/src", "/test", "/foo/bar"}
+				input.FileContentsPredicate = predicateUpdateInput
+				input.UseAbsoluteRoot = ol.RefOf(false)
+				return c.UpdateCheckRepositoryFile(*input)
 			},
 		},
 		"CreateRepositoryGrep": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryGrepCreate($input:CheckRepositoryGrepCreateInput!){checkRepositoryGrepCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "directorySearch": true, "filePaths": [ "**/hello.go" ], "fileContentsPredicate": { "type": "exists" } } }`,
-				`{ "data": { "checkRepositoryGrepCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw", "name": "Performance" }, "description": "Verifies the existence and/or contents of files in a service's attached Git repositories.", "enabled": true, "enableOn": null, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ1", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "owner": null, "type": "repo_grep" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_repo_grep",
+			fixture: BuildCreateRequest("RepositoryGrep", map[string]any{
+				"directorySearch":       true,
+				"filePaths":             []string{"**/hello.go"},
+				"fileContentsPredicate": predicateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryGrepCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryGrepCreateInput](checkCreateInput)
-				checkRepositoryGrepCreateInput.DirectorySearch = ol.RefOf(true)
-				checkRepositoryGrepCreateInput.FilePaths = []string{"**/hello.go"}
-				checkRepositoryGrepCreateInput.FileContentsPredicate = ol.PredicateInput{
-					Type: ol.PredicateTypeEnumExists,
-				}
-				return c.CreateCheckRepositoryGrep(*checkRepositoryGrepCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryGrepCreateInput](checkCreateInput)
+				input.DirectorySearch = ol.RefOf(true)
+				input.FilePaths = []string{"**/hello.go"}
+				input.FileContentsPredicate = *predicateInput
+				return c.CreateCheckRepositoryGrep(*input)
 			},
 		},
 		"UpdateRepositoryGrep": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryGrepUpdate($input:CheckRepositoryGrepUpdateInput!){checkRepositoryGrepUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "directorySearch": true, "filePaths": [ "**/go.mod" ], "fileContentsPredicate": { "type": "exists" } } }`,
-				`{ "data": { "checkRepositoryGrepUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw", "name": "Performance" }, "description": "Verifies the existence and/or contents of files in a service's attached Git repositories.", "enabled": true, "enableOn": null, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ1", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "owner": null, "type": "repo_grep" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_repo_grep",
+			fixture: BuildUpdateRequest("RepositoryGrep", map[string]any{
+				"directorySearch":       true,
+				"filePaths":             []string{"go.mod", "**/go.mod"},
+				"fileContentsPredicate": predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryGrepUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
-				checkRepositoryGrepUpdateInput.DirectorySearch = ol.RefOf(true)
-				checkRepositoryGrepUpdateInput.FilePaths = &[]string{"**/go.mod"}
-				checkRepositoryGrepUpdateInput.FileContentsPredicate = &ol.PredicateUpdateInput{
-					Type: ol.RefOf(ol.PredicateTypeEnumExists),
-				}
-				return c.UpdateCheckRepositoryGrep(*checkRepositoryGrepUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
+				input.DirectorySearch = ol.RefOf(true)
+				input.FilePaths = &[]string{"go.mod", "**/go.mod"}
+				input.FileContentsPredicate = predicateUpdateInput
+				return c.UpdateCheckRepositoryGrep(*input)
 			},
 		},
-		"UpdateRepositoryGrepMissingDirectorySearch": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryGrepUpdate($input:CheckRepositoryGrepUpdateInput!){checkRepositoryGrepUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "filePaths": [ "**/go.mod" ], "directorySearch": false, "fileContentsPredicate": { "type": "exists" } } }`,
-				`{ "data": { "checkRepositoryGrepUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNzEw", "name": "Performance" }, "description": "Verifies the existence and/or contents of files in a service's attached Git repositories.", "enabled": true, "enableOn": null, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvNDQ1", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check", "owner": null, "type": "repo_grep" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_repo_grep_missing_directory_search",
+		"UpdateRepositoryGrepDirectorySearchFalse": {
+			fixture: BuildUpdateRequest("RepositoryGrep", map[string]any{
+				"directorySearch":       false,
+				"filePaths":             []string{"**/go.mod"},
+				"fileContentsPredicate": predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryGrepUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
-				checkRepositoryGrepUpdateInput.DirectorySearch = ol.RefOf(false)
-				checkRepositoryGrepUpdateInput.FilePaths = &[]string{"**/go.mod"}
-				checkRepositoryGrepUpdateInput.FileContentsPredicate = &ol.PredicateUpdateInput{
-					Type: ol.RefOf(ol.PredicateTypeEnumExists),
-				}
-				return c.UpdateCheckRepositoryGrep(*checkRepositoryGrepUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
+				input.DirectorySearch = ol.RefOf(false)
+				input.FilePaths = &[]string{"**/go.mod"}
+				input.FileContentsPredicate = predicateUpdateInput
+				return c.UpdateCheckRepositoryGrep(*input)
 			},
 		},
 		"CreateRepositoryIntegrated": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryIntegratedCreate($input:CheckRepositoryIntegratedCreateInput!){checkRepositoryIntegratedCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkRepositoryIntegratedCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has a repository integrated.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_repo_integrated",
+			fixture: BuildCreateRequest("RepositoryIntegrated", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryIntegratedCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryIntegratedCreateInput](checkCreateInput)
-				return c.CreateCheckRepositoryIntegrated(*checkRepositoryIntegratedCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryIntegratedCreateInput](checkCreateInput)
+				return c.CreateCheckRepositoryIntegrated(*input)
 			},
 		},
 		"UpdateRepositoryIntegrated": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositoryIntegratedUpdate($input:CheckRepositoryIntegratedUpdateInput!){checkRepositoryIntegratedUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkRepositoryIntegratedUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has a repository integrated.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_repo_integrated",
+			fixture: BuildUpdateRequest("RepositoryIntegrated", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositoryIntegratedUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryIntegratedUpdateInput](checkUpdateInput)
-				return c.UpdateCheckRepositoryIntegrated(*checkRepositoryIntegratedUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryIntegratedUpdateInput](checkUpdateInput)
+				return c.UpdateCheckRepositoryIntegrated(*input)
 			},
 		},
 		"CreateRepositorySearch": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositorySearchCreate($input:CheckRepositorySearchCreateInput!){checkRepositorySearchCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "fileExtensions": [ "sbt", "py" ], "fileContentsPredicate": { "type": "contains", "value": "postgres" } } }`,
-				`{ "data": { "checkRepositorySearchCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo contains search term 'postgres' in at least one .sbt or .py file.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_repo_search",
+			fixture: BuildCreateRequest("RepositorySearch", map[string]any{
+				"fileExtensions":        []string{"sbt", "py"},
+				"fileContentsPredicate": predicateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositorySearchCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckRepositorySearchCreateInput](checkCreateInput)
-				checkRepositorySearchCreateInput.FileExtensions = &[]string{"sbt", "py"}
-				checkRepositorySearchCreateInput.FileContentsPredicate = ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumContains,
-					Value: ol.RefOf("postgres"),
-				}
-
-				return c.CreateCheckRepositorySearch(*checkRepositorySearchCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositorySearchCreateInput](checkCreateInput)
+				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileContentsPredicate = *predicateInput
+				return c.CreateCheckRepositorySearch(*input)
 			},
 		},
 		"UpdateRepositorySearch": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckRepositorySearchUpdate($input:CheckRepositorySearchUpdateInput!){checkRepositorySearchUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "fileExtensions": [ "sbt", "py" ], "fileContentsPredicate": { "type": "contains", "value": "postgres" } } }`,
-				`{ "data": { "checkRepositorySearchUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Repo contains search term 'postgres' in at least one .sbt or .py file.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_repo_search",
+			fixture: BuildUpdateRequest("RepositorySearch", map[string]any{
+				"fileExtensions":        []string{"sbt", "py"},
+				"fileContentsPredicate": predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkRepositorySearchUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositorySearchUpdateInput](checkUpdateInput)
-				checkRepositorySearchUpdateInput.FileExtensions = &[]string{"sbt", "py"}
-				checkRepositorySearchUpdateInput.FileContentsPredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumContains),
-					Value: ol.RefOf("postgres"),
-				}
-				return c.UpdateCheckRepositorySearch(*checkRepositorySearchUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositorySearchUpdateInput](checkUpdateInput)
+				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileContentsPredicate = predicateUpdateInput
+				return c.UpdateCheckRepositorySearch(*input)
 			},
 		},
 		"CreateServiceDependency": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServiceDependencyCreate($input:CheckServiceDependencyCreateInput!){checkServiceDependencyCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkServiceDependencyCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has either a dependent or dependency.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_service_dependency",
+			fixture: BuildCreateRequest("ServiceDependency", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				checkServiceDependencyCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckServiceDependencyCreateInput](checkCreateInput)
 				return c.CreateCheckServiceDependency(*checkServiceDependencyCreateInput)
 			},
 		},
 		"UpdateServiceDependency": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServiceDependencyUpdate($input:CheckServiceDependencyUpdateInput!){checkServiceDependencyUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkServiceDependencyUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has either a dependent or dependency.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_service_dependency",
+			fixture: BuildUpdateRequest("ServiceDependency", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServiceDependencyUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceDependencyUpdateInput](checkUpdateInput)
-				return c.UpdateCheckServiceDependency(*checkServiceDependencyUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceDependencyUpdateInput](checkUpdateInput)
+				return c.UpdateCheckServiceDependency(*input)
 			},
 		},
 		"CreateServiceConfiguration": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServiceConfigurationCreate($input:CheckServiceConfigurationCreateInput!){checkServiceConfigurationCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check" } }`,
-				`{ "data": { "checkServiceConfigurationCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service is maintained though the use of an opslevel.yml service config.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_service_configuration",
+			fixture: BuildCreateRequest("ServiceConfiguration", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServiceConfigurationCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckServiceConfigurationCreateInput](checkCreateInput)
-				return c.CreateCheckServiceConfiguration(*checkServiceConfigurationCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckServiceConfigurationCreateInput](checkCreateInput)
+				return c.CreateCheckServiceConfiguration(*input)
 			},
 		},
 		"UpdateServiceConfiguration": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServiceConfigurationUpdate($input:CheckServiceConfigurationUpdateInput!){checkServiceConfigurationUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }} } }`,
-				`{ "data": { "checkServiceConfigurationUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service is maintained though the use of an opslevel.yml service config.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_service_configuration",
+			fixture: BuildUpdateRequest("ServiceConfiguration", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServiceConfigurationUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceConfigurationUpdateInput](checkUpdateInput)
-				return c.UpdateCheckServiceConfiguration(*checkServiceConfigurationUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceConfigurationUpdateInput](checkUpdateInput)
+				return c.UpdateCheckServiceConfiguration(*input)
 			},
 		},
 		"CreateServiceOwnership": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServiceOwnershipCreate($input:CheckServiceOwnershipCreateInput!){checkServiceOwnershipCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "requireContactMethod": true, "contactMethod": "slack", "tagKey": "updated_at", "tagPredicate": { "type": "equals", "value": "2-11-2022" } } }`,
-				`{ "data": { "checkServiceOwnershipCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has an owner defined.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_service_ownership",
+			fixture: BuildCreateRequest("ServiceOwnership", map[string]any{
+				"requireContactMethod": true,
+				"contactMethod":        ol.ContactTypeSlack,
+				"tagKey":               "updated_at",
+				"tagPredicate":         predicateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServiceOwnershipCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckServiceOwnershipCreateInput](checkCreateInput)
-				checkServiceOwnershipCreateInput.RequireContactMethod = ol.RefOf(true)
-				checkServiceOwnershipCreateInput.ContactMethod = ol.RefOf(string(ol.ContactTypeSlack))
-				checkServiceOwnershipCreateInput.TagKey = ol.RefOf("updated_at")
-				checkServiceOwnershipCreateInput.TagPredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("2-11-2022"),
-				}
-				return c.CreateCheckServiceOwnership(*checkServiceOwnershipCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckServiceOwnershipCreateInput](checkCreateInput)
+				input.RequireContactMethod = ol.RefOf(true)
+				input.ContactMethod = ol.RefOf(string(ol.ContactTypeSlack))
+				input.TagKey = ol.RefOf("updated_at")
+				input.TagPredicate = predicateInput
+				return c.CreateCheckServiceOwnership(*input)
 			},
 		},
 		"UpdateServiceOwnership": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServiceOwnershipUpdate($input:CheckServiceOwnershipUpdateInput!){checkServiceOwnershipUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "requireContactMethod": true, "contactMethod": "email", "tagKey": "updated_at", "tagPredicate": { "type": "equals", "value": "2-11-2022" } } }`,
-				`{ "data": { "checkServiceOwnershipUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has an owner defined.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_service_ownership",
+			fixture: BuildUpdateRequest("ServiceOwnership", map[string]any{
+				"requireContactMethod": true,
+				"contactMethod":        ol.ContactTypeEmail,
+				"tagKey":               "updated_at",
+				"tagPredicate":         predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServiceOwnershipUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceOwnershipUpdateInput](checkUpdateInput)
-				checkServiceOwnershipUpdateInput.RequireContactMethod = ol.RefOf(true)
-				checkServiceOwnershipUpdateInput.ContactMethod = ol.RefOf(string(ol.ContactTypeEmail))
-				checkServiceOwnershipUpdateInput.TagKey = ol.RefOf("updated_at")
-				checkServiceOwnershipUpdateInput.TagPredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("2-11-2022"),
-				}
-				return c.UpdateCheckServiceOwnership(*checkServiceOwnershipUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceOwnershipUpdateInput](checkUpdateInput)
+				input.RequireContactMethod = ol.RefOf(true)
+				input.ContactMethod = ol.RefOf(string(ol.ContactTypeEmail))
+				input.TagKey = ol.RefOf("updated_at")
+				input.TagPredicate = predicateUpdateInput
+				return c.UpdateCheckServiceOwnership(*input)
 			},
 		},
 		"CreateServiceProperty": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServicePropertyCreate($input:CheckServicePropertyCreateInput!){checkServicePropertyCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "serviceProperty": "framework", "propertyValuePredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkServicePropertyCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service has a framework that equals <code>postgres</code>", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_service_property",
+			fixture: BuildCreateRequest("ServiceProperty", map[string]any{
+				"serviceProperty":        ol.ServicePropertyTypeEnumFramework,
+				"propertyValuePredicate": predicateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServicePropertyCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckServicePropertyCreateInput](checkCreateInput)
-				checkServicePropertyCreateInput.ServiceProperty = ol.ServicePropertyTypeEnumFramework
-				checkServicePropertyCreateInput.PropertyValuePredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("postgres"),
-				}
-				return c.CreateCheckServiceProperty(*checkServicePropertyCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckServicePropertyCreateInput](checkCreateInput)
+				input.ServiceProperty = ol.ServicePropertyTypeEnumFramework
+				input.PropertyValuePredicate = predicateInput
+				return c.CreateCheckServiceProperty(*input)
 			},
 		},
 		"UpdateServiceProperty": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckServicePropertyUpdate($input:CheckServicePropertyUpdateInput!){checkServicePropertyUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "serviceProperty": "framework", "propertyValuePredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkServicePropertyUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service has a framework that equals <code>postgres</code>", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": "Hello World Check" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_service_property",
+			fixture: BuildUpdateRequest("ServiceProperty", map[string]any{
+				"serviceProperty":        ol.ServicePropertyTypeEnumFramework,
+				"propertyValuePredicate": predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkServicePropertyUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckServicePropertyUpdateInput](checkUpdateInput)
-				checkServicePropertyUpdateInput.ServiceProperty = ol.RefOf(ol.ServicePropertyTypeEnumFramework)
-				checkServicePropertyUpdateInput.PropertyValuePredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("postgres"),
-				}
-				return c.UpdateCheckServiceProperty(*checkServicePropertyUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServicePropertyUpdateInput](checkUpdateInput)
+				input.ServiceProperty = ol.RefOf(ol.ServicePropertyTypeEnumFramework)
+				input.PropertyValuePredicate = predicateUpdateInput
+				return c.UpdateCheckServiceProperty(*input)
 			},
 		},
 		"CreateTagDefined": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckTagDefinedCreate($input:CheckTagDefinedCreateInput!){checkTagDefinedCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "tagKey": "app", "tagPredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkTagDefinedCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has the specified tag defined.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_tag_defined",
+			fixture: BuildCreateRequest("TagDefined", map[string]any{
+				"tagKey":       "app",
+				"tagPredicate": predicateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkTagDefinedCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckTagDefinedCreateInput](checkCreateInput)
-				checkTagDefinedCreateInput.TagKey = "app"
-				checkTagDefinedCreateInput.TagPredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("postgres"),
-				}
-				return c.CreateCheckTagDefined(*checkTagDefinedCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckTagDefinedCreateInput](checkCreateInput)
+				input.TagKey = "app"
+				input.TagPredicate = predicateInput
+				return c.CreateCheckTagDefined(*input)
 			},
 		},
 		"UpdateTagDefined": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckTagDefinedUpdate($input:CheckTagDefinedUpdateInput!){checkTagDefinedUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "tagKey": "app", "tagPredicate": { "type": "equals", "value": "postgres" } } }`,
-				`{ "data": { "checkTagDefinedUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has the specified tag defined.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_tag_defined",
+			fixture: BuildUpdateRequest("TagDefined", map[string]any{
+				"tagKey":       "app",
+				"tagPredicate": predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkTagDefinedUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckTagDefinedUpdateInput](checkUpdateInput)
-				checkTagDefinedUpdateInput.TagKey = ol.RefOf("app")
-				checkTagDefinedUpdateInput.TagPredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("postgres"),
-				}
-				return c.UpdateCheckTagDefined(*checkTagDefinedUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckTagDefinedUpdateInput](checkUpdateInput)
+				input.TagKey = ol.RefOf("app")
+				input.TagPredicate = predicateUpdateInput
+				return c.UpdateCheckTagDefined(*input)
 			},
 		},
 		"CreateToolUsage": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckToolUsageCreate($input:CheckToolUsageCreateInput!){checkToolUsageCreate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "name": "Hello World", "enabled": true, "categoryId": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "levelId": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "notes": "Hello World Check", "toolCategory": "metrics", "toolNamePredicate": { "type": "equals", "value": "datadog" }, "toolUrlPredicate": { "type": "contains", "value": "https://" }, "environmentPredicate": { "type": "equals", "value": "production" } } }`,
-				`{ "data": { "checkToolUsageCreate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/create_tool_usage",
+			fixture: BuildCreateRequest("ToolUsage", map[string]any{
+				"toolCategory":         ol.ToolCategoryMetrics,
+				"toolNamePredicate":    predicateInput,
+				"toolUrlPredicate":     predicateInput,
+				"environmentPredicate": predicateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkToolUsageCreateInput := ol.NewCheckCreateInputTypeOf[ol.CheckToolUsageCreateInput](checkCreateInput)
-				checkToolUsageCreateInput.ToolCategory = ol.ToolCategoryMetrics
-				checkToolUsageCreateInput.ToolNamePredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("datadog"),
-				}
-				checkToolUsageCreateInput.ToolUrlPredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumContains,
-					Value: ol.RefOf("https://"),
-				}
-				checkToolUsageCreateInput.EnvironmentPredicate = &ol.PredicateInput{
-					Type:  ol.PredicateTypeEnumEquals,
-					Value: ol.RefOf("production"),
-				}
-				return c.CreateCheckToolUsage(*checkToolUsageCreateInput)
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckToolUsageCreateInput](checkCreateInput)
+				input.ToolCategory = ol.ToolCategoryMetrics
+				input.ToolNamePredicate = predicateInput
+				input.ToolUrlPredicate = predicateInput
+				input.EnvironmentPredicate = predicateInput
+				return c.CreateCheckToolUsage(*input)
 			},
 		},
 		"UpdateToolUsage": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckToolUsageUpdate($input:CheckToolUsageUpdateInput!){checkToolUsageUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "toolCategory": "metrics", "toolNamePredicate": { "type": "equals", "value": "datadog" }, "toolUrlPredicate": { "type": "contains", "value": "https://" }, "environmentPredicate": { "type": "equals", "value": "production" } } }`,
-				`{ "data": { "checkToolUsageUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_tool_usage",
+			fixture: BuildUpdateRequest("ToolUsage", map[string]any{
+				"toolCategory":         ol.ToolCategoryMetrics,
+				"toolNamePredicate":    predicateUpdateInput,
+				"toolUrlPredicate":     predicateUpdateInput,
+				"environmentPredicate": predicateUpdateInput,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkToolUsageUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				checkToolUsageUpdateInput.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
-				checkToolUsageUpdateInput.ToolNamePredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("datadog"),
-				}
-				checkToolUsageUpdateInput.ToolUrlPredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumContains),
-					Value: ol.RefOf("https://"),
-				}
-				checkToolUsageUpdateInput.EnvironmentPredicate = &ol.PredicateUpdateInput{
-					Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-					Value: ol.RefOf("production"),
-				}
-				return c.UpdateCheckToolUsage(*checkToolUsageUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
+				input.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
+				input.ToolNamePredicate = predicateUpdateInput
+				input.ToolUrlPredicate = predicateUpdateInput
+				input.EnvironmentPredicate = predicateUpdateInput
+				return c.UpdateCheckToolUsage(*input)
 			},
 		},
 		"UpdateToolUsageNullPredicates": {
-			fixture: autopilot.NewTestRequest(
-				`mutation CheckToolUsageUpdate($input:CheckToolUsageUpdateInput!){checkToolUsageUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-				`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", {{ template "check_base_vars" }}, "toolCategory": "metrics", "toolUrlPredicate": null, "environmentPredicate": null } }`,
-				`{ "data": { "checkToolUsageUpdate": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "The service is using 'datadog' as a metrics tool in the 'production' environment.", "enabled": true, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Hello World" }, "errors": [] } } }`,
-			),
-			endpoint: "check/update_tool_usage_null_predicates",
+			fixture: BuildUpdateRequest("ToolUsage", map[string]any{
+				"toolCategory":         ol.ToolCategoryMetrics,
+				"toolUrlPredicate":     nil,
+				"environmentPredicate": nil,
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				checkToolUsageUpdateInput := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				checkToolUsageUpdateInput.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
-				checkToolUsageUpdateInput.ToolUrlPredicate = &ol.PredicateUpdateInput{}
-				checkToolUsageUpdateInput.EnvironmentPredicate = &ol.PredicateUpdateInput{}
-				return c.UpdateCheckToolUsage(*checkToolUsageUpdateInput)
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
+				input.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
+				input.ToolUrlPredicate = &ol.PredicateUpdateInput{}
+				input.EnvironmentPredicate = &ol.PredicateUpdateInput{}
+				return c.UpdateCheckToolUsage(*input)
 			},
 		},
 		"GetCheck": {
 			fixture: autopilot.NewTestRequest(
 				`query CheckGet($id:ID!){account{check(id: $id){category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}}}}`,
-				`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4" }`,
-				`{ "data": { "account": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1", "name": "Performance" }, "description": "Verifies that the service has an owner defined.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Owner Defined", "notes": null } } } }`,
+				`{ "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2" }`,
+				`{ "data": { "account": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "name": "Performance" }, "description": "Verifies that the service has an owner defined.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3", "index": 1, "name": "Bronze" }, "name": "Owner Defined", "notes": null } } } }`,
 			),
-			endpoint: "check/get",
 			body: func(c *ol.Client) (*ol.Check, error) {
-				return c.GetCheck("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4")
+				return c.GetCheck(id)
 			},
 		},
 	}
@@ -619,7 +704,7 @@ func TestChecks(t *testing.T) {
 			result, err := tc.body(client)
 			// Assert
 			autopilot.Equals(t, nil, err)
-			autopilot.Equals(t, "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", string(result.Id))
+			autopilot.Equals(t, id, result.Id)
 			autopilot.Equals(t, "Performance", result.Category.Name)
 			autopilot.Equals(t, "Bronze", result.Level.Name)
 		})
@@ -628,36 +713,17 @@ func TestChecks(t *testing.T) {
 
 func TestCanUpdateFilterToNull(t *testing.T) {
 	// Arrange
-	testRequest := autopilot.NewTestRequest(
-		`mutation CheckCustomEventUpdate($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "filterId": null }}`,
-		`{ "data": {
-      "checkCustomEventUpdate": {
-        "check": {
-          "category": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
-            "name": "Performance"
-          },
-          "enabled": true,
-          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-          "level": {
-            "alias": "bronze",
-            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-            "index": 1,
-            "name": "Bronze"
-          },
-          "notes": "Hello World Notes",
-          "name": "Hello World"
-        },
-        "errors": []
-      }}}`,
-	)
+	testRequest := BuildUpdateRequestAlt("CustomEvent", map[string]any{"filterId": nil}, map[string]any{"filter": map[string]any{}})
 	client := BestTestClient(t, "check/can_update_filter_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-		Id:       ol.ID("Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4"),
-		FilterId: ol.NewID(),
+		Id:         id,
+		Name:       ol.RefOf("Hello World"),
+		CategoryId: ol.RefOf(id),
+		Enabled:    ol.RefOf(true),
+		LevelId:    ol.RefOf(id),
+		FilterId:   ol.NewID(),
+		Notes:      ol.RefOf("Hello World Check"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -667,35 +733,18 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 
 func TestCanUpdateNotesToNull(t *testing.T) {
 	// Arrange
-	testRequest := autopilot.NewTestRequest(
-		`mutation CheckCustomEventUpdate($input:CheckCustomEventUpdateInput!){checkCustomEventUpdate(input: $input){check{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,filePaths,fileContentsPredicate{type,value},useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,filePaths,fileContentsPredicate{type,value}},... on RepositorySearchCheck{fileExtensions,fileContentsPredicate{type,value}},... on ServiceOwnershipCheck{requireContactMethod,contactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value},environmentPredicate{type,value}},... on HasDocumentationCheck{documentType,documentSubtype}},errors{message,path}}}`,
-		`{ "input": { "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4", "notes": "" }}`,
-		`{ "data": {
-      "checkCustomEventUpdate": {
-        "check": {
-          "category": {
-            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvNjA1",
-            "name": "Performance"
-          },
-          "enabled": true,
-          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-          "level": {
-            "alias": "bronze",
-            "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
-            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMzE3",
-            "index": 1,
-            "name": "Bronze"
-          },
-          "name": "Hello World"
-        },
-        "errors": []
-      }}}`,
-	)
+	testRequest := BuildUpdateRequest("CustomEvent", map[string]any{
+		"notes": "",
+	})
 	client := BestTestClient(t, "check/can_update_notes_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
-		Id:    "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDE4",
-		Notes: ol.RefOf(""),
+		Id:         id,
+		Name:       ol.RefOf("Hello World"),
+		CategoryId: ol.RefOf(id),
+		Enabled:    ol.RefOf(true),
+		LevelId:    ol.RefOf(id),
+		Notes:      ol.RefOf(""),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
