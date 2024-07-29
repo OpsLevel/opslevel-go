@@ -30,6 +30,7 @@ type Check struct {
 	TagDefinedCheckFragment       `graphql:"... on TagDefinedCheck"`
 	ToolUsageCheckFragment        `graphql:"... on ToolUsageCheck"`
 	HasDocumentationCheckFragment `graphql:"... on HasDocumentationCheck"`
+	PackageVersionCheckFragment   `graphql:"... on PackageVersionCheck"`
 }
 
 // CustomActionsExternalAction represents an external action to be triggered by a custom action.

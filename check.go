@@ -35,6 +35,7 @@ var CheckCreateConstructors = map[CheckType]CheckInputConstructor{
 	CheckTypeServiceProperty:     func() any { return &CheckServicePropertyCreateInput{} },
 	CheckTypeTagDefined:          func() any { return &CheckTagDefinedCreateInput{} },
 	CheckTypeToolUsage:           func() any { return &CheckToolUsageCreateInput{} },
+	CheckTypePackageVersion:      func() any { return &CheckPackageVersionCreateInput{} },
 }
 
 var CheckUpdateConstructors = map[CheckType]CheckInputConstructor{
@@ -56,6 +57,7 @@ var CheckUpdateConstructors = map[CheckType]CheckInputConstructor{
 	CheckTypeServiceProperty:     func() any { return &CheckServicePropertyUpdateInput{} },
 	CheckTypeTagDefined:          func() any { return &CheckTagDefinedUpdateInput{} },
 	CheckTypeToolUsage:           func() any { return &CheckToolUsageUpdateInput{} },
+	CheckTypePackageVersion:      func() any { return &CheckPackageVersionUpdateInput{} },
 }
 
 func UnmarshalCheckCreateInput(checkType CheckType, data []byte) (any, error) {
@@ -167,6 +169,8 @@ func (client *Client) CreateCheck(input any) (*Check, error) {
 		return client.CreateCheckTagDefined(*v)
 	case *CheckToolUsageCreateInput:
 		return client.CreateCheckToolUsage(*v)
+	case *CheckPackageVersionCreateInput:
+		return client.CreateCheckPackageVersion(*v)
 	}
 	return nil, fmt.Errorf("unknown input type %T", input)
 }
@@ -248,6 +252,8 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 		return client.UpdateCheckTagDefined(*v)
 	case *CheckToolUsageUpdateInput:
 		return client.UpdateCheckToolUsage(*v)
+	case *CheckPackageVersionUpdateInput:
+		return client.UpdateCheckPackageVersion(*v)
 	}
 	return nil, fmt.Errorf("unknown input type %T", input)
 }
