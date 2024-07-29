@@ -6,7 +6,7 @@ type PackageVersionCheckFragment struct {
 	PackageManager             PackageManagerEnum     `graphql:"packageManager"`             // The package manager (ecosystem) this package relates to.
 	PackageName                string                 `graphql:"packageName"`                // The name of the package to be checked.
 	PackageNameIsRegex         bool                   `graphql:"packageNameIsRegex"`         // Whether or not the value in the package name field is a regular expression.
-	VersionConstraintPredicate Predicate              `graphql:"versionConstraintPredicate"` // The predicate that describes the version constraint the package must satisfy.
+	VersionConstraintPredicate *Predicate              `graphql:"versionConstraintPredicate"` // The predicate that describes the version constraint the package must satisfy.
 }
 
 // CreateCheckPackageVersion Creates a package version check.
