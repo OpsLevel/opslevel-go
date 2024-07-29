@@ -3,8 +3,6 @@ package opslevel
 import (
 	"fmt"
 
-	"github.com/relvacode/iso8601"
-
 	"github.com/gosimple/slug"
 )
 
@@ -22,10 +20,11 @@ type AWSIntegrationFragment struct {
 }
 
 type AzureResourcesIntegrationFragment struct {
-	TenantId       string        `graphql:"tenantId"`
-	SubscriptionId string        `graphql:"subscriptionId"`
-	LastSyncedAt   *iso8601.Time `graphql:"lastSyncedAt"`
-	Aliases        []string      `graphql:"aliases"`
+	Aliases               []string `graphql:"aliases"`
+	OwnershipTagKeys      []string `graphql:"ownershipTagKeys"`
+	SubscriptionId        string   `graphql:"subscriptionId"`
+	TagsOverrideOwnership bool     `graphql:"awsTagsOverrideOwnership"`
+	TenantId              string   `graphql:"tenantId"`
 }
 
 type NewRelicIntegrationFragment struct {
