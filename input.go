@@ -47,9 +47,9 @@ type AwsIntegrationInput struct {
 type AzureResourcesIntegrationInput struct {
 	Name                  *string   `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                        // The name of the integration. (Optional.)
 	OwnershipTagKeys      *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"`    // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
-	TenantId              *ID       `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The tenant OpsLevel uses to access the Azure account. (Optional.)
-	SubscriptionId        *ID       `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The subscription OpsLevel uses to access the Azure account. (Optional.)
-	ClientId              *ID       `json:"clientId,omitempty" yaml:"clientId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The client OpsLevel uses to access the Azure account. (Optional.)
+	TenantId              *string   `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The tenant OpsLevel uses to access the Azure account. (Optional.)
+	SubscriptionId        *string   `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The subscription OpsLevel uses to access the Azure account. (Optional.)
+	ClientId              *string   `json:"clientId,omitempty" yaml:"clientId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The client OpsLevel uses to access the Azure account. (Optional.)
 	ClientSecret          *string   `json:"clientSecret,omitempty" yaml:"clientSecret,omitempty" example:""`                                    // The client secret OpsLevel uses to access the Azure account. (Optional.)
 	TagsOverrideOwnership *bool     `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`             // Allow tags imported from Azure to override ownership set in OpsLevel directly. (Optional.)
 }

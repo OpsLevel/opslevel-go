@@ -68,9 +68,9 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 	// Act
 	result, err := client.CreateIntegrationAzureResources(opslevel.AzureResourcesIntegrationInput{
 		Name:           opslevel.RefOf("new azure resources"),
-		TenantId:       opslevel.NewID("12345678-1234-1234-1234-123456789abc"),
-		SubscriptionId: opslevel.NewID("12345678-1234-1234-1234-123456789def"),
-		ClientId:       opslevel.NewID("XXX_client_id_XXX"),
+		TenantId:       opslevel.RefOf("12345678-1234-1234-1234-123456789abc"),
+		SubscriptionId: opslevel.RefOf("12345678-1234-1234-1234-123456789def"),
+		ClientId:       opslevel.RefOf("XXX_client_id_XXX"),
 		ClientSecret:   opslevel.RefOf("XXX_client_secret_XXX"),
 	})
 	// Assert
@@ -238,7 +238,7 @@ func TestUpdateAzureResourcesIntegration(t *testing.T) {
 	// Act
 	result, err := client.UpdateIntegrationAzureResources(string(id1), opslevel.AzureResourcesIntegrationInput{
 		Name:         opslevel.RefOf("updated azure resources"),
-		ClientId:     opslevel.NewID("updated client id"),
+		ClientId:     opslevel.RefOf("updated client id"),
 		ClientSecret: opslevel.RefOf("updated client secret"),
 	})
 	// Assert
