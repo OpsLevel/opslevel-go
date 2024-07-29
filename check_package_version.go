@@ -2,7 +2,7 @@ package opslevel
 
 type PackageVersionCheckFragment struct {
 	MissingPackageResult       *CheckResultStatusEnum `graphql:"missingPackageResult"`       // The check result if the package isn't being used by a service.
-	PackageConstraint          *PackageConstraintEnum `graphql:"packageConstraint"`          // The package constraint the service is to be checked for.
+	PackageConstraint          PackageConstraintEnum `graphql:"packageConstraint"`          // The package constraint the service is to be checked for.
 	PackageManager             PackageManagerEnum     `graphql:"packageManager"`             // The package manager (ecosystem) this package relates to.
 	PackageName                string                 `graphql:"packageName"`                // The name of the package to be checked.
 	PackageNameIsRegex         bool                   `graphql:"packageNameIsRegex"`         // Whether or not the value in the package name field is a regular expression.
