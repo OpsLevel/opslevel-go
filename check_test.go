@@ -602,13 +602,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		},
 		"CreateServicePropertyDefinition": {
 			fixture: BuildCreateRequest("ServiceProperty", map[string]any{
-				"serviceProperty":        ol.ServicePropertyTypeEnumFramework,
+				"serviceProperty":        ol.ServicePropertyTypeEnumCustomProperty,
 				"propertyDefinition":     ol.NewIdentifier(string(id)),
 				"propertyValuePredicate": predicateInput,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckServicePropertyCreateInput](checkCreateInput)
-				input.ServiceProperty = ol.ServicePropertyTypeEnumFramework
+				input.ServiceProperty = ol.ServicePropertyTypeEnumCustomProperty
 				input.PropertyDefinition = ol.NewIdentifier(string(id))
 				input.PropertyValuePredicate = predicateInput
 				return c.CreateCheckServiceProperty(*input)
