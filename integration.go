@@ -23,7 +23,7 @@ type AzureResourcesIntegrationFragment struct {
 	Aliases               []string `graphql:"aliases"`
 	OwnershipTagKeys      []string `graphql:"ownershipTagKeys"`
 	SubscriptionId        string   `graphql:"subscriptionId"`
-	TagsOverrideOwnership bool     `graphql:"awsTagsOverrideOwnership"`
+	TagsOverrideOwnership bool     `graphql:"tagsOverrideOwnership"`
 	TenantId              string   `graphql:"tenantId"`
 }
 
