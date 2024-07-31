@@ -43,6 +43,17 @@ type AwsIntegrationInput struct {
 	AwsTagsOverrideOwnership *bool     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty" example:"false"`    // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
 }
 
+// AzureResourcesIntegrationInput specifies the input fields used to create and update an Azure resources integration.
+type AzureResourcesIntegrationInput struct {
+	Name                  *string   `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                        // The name of the integration. (Optional.)
+	OwnershipTagKeys      *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"`    // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
+	TenantId              *string   `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The tenant OpsLevel uses to access the Azure account. (Optional.)
+	SubscriptionId        *string   `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The subscription OpsLevel uses to access the Azure account. (Optional.)
+	ClientId              *string   `json:"clientId,omitempty" yaml:"clientId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The client OpsLevel uses to access the Azure account. (Optional.)
+	ClientSecret          *string   `json:"clientSecret,omitempty" yaml:"clientSecret,omitempty" example:""`                                    // The client secret OpsLevel uses to access the Azure account. (Optional.)
+	TagsOverrideOwnership *bool     `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`             // Allow tags imported from Azure to override ownership set in OpsLevel directly. (Optional.)
+}
+
 // CategoryCreateInput specifies the input fields used to create a category.
 type CategoryCreateInput struct {
 	Name        string  `json:"name" yaml:"name" example:"example_name"`                                          // The display name of the category. (Required.)
@@ -890,14 +901,14 @@ type ServiceNoteUpdateInput struct {
 type ServiceRepositoryCreateInput struct {
 	Service       IdentifierInput `json:"service" yaml:"service"`                                                               // The identifier for the service. (Required.)
 	Repository    IdentifierInput `json:"repository" yaml:"repository"`                                                         // The identifier for the repository. (Required.)
-	BaseDirectory *string         `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty" example:"/home/opslevel.yaml"` // The directory in the repository containing opslevel.yml. (Optional.)
+	BaseDirectory *string         `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty" example:"/home/opslevel.yaml"` // The directory in the repository where service information exists, including the opslevel.yml file. This path is always returned without leading and trailing slashes. (Optional.)
 	DisplayName   *string         `json:"displayName,omitempty" yaml:"displayName,omitempty" example:"example_name"`            // The name displayed in the UI for the service repository. (Optional.)
 }
 
 // ServiceRepositoryUpdateInput specifies the input fields used to update a service repository.
 type ServiceRepositoryUpdateInput struct {
 	Id            ID      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                               // The ID of the service repository to be updated. (Required.)
-	BaseDirectory *string `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty" example:"/home/opslevel.yaml"` // The directory in the repository containing opslevel.yml. (Optional.)
+	BaseDirectory *string `json:"baseDirectory,omitempty" yaml:"baseDirectory,omitempty" example:"/home/opslevel.yaml"` // The directory in the repository where service information exists, including the opslevel.yml file. This path is always returned without leading and trailing slashes. (Optional.)
 	DisplayName   *string `json:"displayName,omitempty" yaml:"displayName,omitempty" example:"example_name"`            // The name displayed in the UI for the service repository. (Optional.)
 }
 
@@ -995,7 +1006,7 @@ type TeamMembershipDeleteInput struct {
 	Members []TeamMembershipUserInput `json:"members" yaml:"members" example:"[]"`                            // A set of emails that identify users in OpsLevel. (Required.)
 }
 
-// TeamMembershipUserInput represents input for specifiying members on a team.
+// TeamMembershipUserInput represents input for specifying members on a team.
 type TeamMembershipUserInput struct {
 	User *UserIdentifierInput `json:"user,omitempty" yaml:"user,omitempty"`                        // The email address or ID of the user to add to a team. (Optional.)
 	Role *string              `json:"role,omitempty" yaml:"role,omitempty" example:"example_role"` // The type of relationship this membership implies. (Optional.)
