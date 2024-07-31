@@ -1,8 +1,9 @@
 package opslevel
 
 type ServicePropertyCheckFragment struct {
-	Property  ServicePropertyTypeEnum `graphql:"serviceProperty"`
-	Predicate *Predicate              `graphql:"propertyValuePredicate"`
+	Property           ServicePropertyTypeEnum `graphql:"serviceProperty"`        // The property of the service that the check will verify.
+	PropertyDefinition *PropertyDefinition     `graphql:"propertyDefinition"`     // The definition of a property.
+	Predicate          *Predicate              `graphql:"propertyValuePredicate"` // The condition that should be satisfied by the service property value.
 }
 
 func (client *Client) CreateCheckServiceProperty(input CheckServicePropertyCreateInput) (*Check, error) {
