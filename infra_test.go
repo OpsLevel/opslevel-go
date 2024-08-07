@@ -75,12 +75,12 @@ func TestGetInfra(t *testing.T) {
 func TestListInfraSchemas(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
+		`query InfrastructureResourceSchemaList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_1" }}, {{ template "infra_schema_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
+		`query InfrastructureResourceSchemaList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "infrastructureResourceSchemas": { "nodes": [ {{ template "infra_schema_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -101,12 +101,12 @@ func TestListInfraSchemas(t *testing.T) {
 func TestListInfra(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},locked,owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
+		`query InfrastructureResourceList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},locked,owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "all": true, "first": 100 }`,
 		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_1" }}, {{ template "infra_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},locked,owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
+		`query InfrastructureResourceList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},locked,owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
 		`{ "after": "OA", "all": true, "first": 100 }`,
 		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
