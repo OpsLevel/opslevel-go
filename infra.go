@@ -175,7 +175,7 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (*I
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("InfrastructureResourceSchemaList")); err != nil {
 		return nil, err
 	}
 	for q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
@@ -201,7 +201,7 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (*Infrastr
 		variables = client.InitialPageVariablesPointer()
 		(*variables)["all"] = true
 	}
-	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
+	if err := client.Query(&q, *variables, WithName("InfrastructureResourceList")); err != nil {
 		return nil, err
 	}
 	for q.Account.InfrastructureResource.PageInfo.HasNextPage {
