@@ -11,8 +11,17 @@ tasks:
       - task: test
 
   generate:
-    desc: Generate code based on public GraphQL Interface
+    desc: Generate code based on PUBLIC GraphQL Interface
     aliases: [gen]
+    cmds:
+      - go generate
+      - gofumpt -w .
+
+  generate-internal:
+    desc: Generate code based on INTERNAL internal GraphQL Interface
+    aliases: [gen-internal]
+    env:
+      GRAPHQL_VISIBILITY: "internal"
     cmds:
       - go generate
       - gofumpt -w .
