@@ -27,6 +27,14 @@ type AzureResourcesIntegrationFragment struct {
 	TenantId              string   `graphql:"tenantId"`
 }
 
+type GoogleCloudIntegrationFragment struct {
+	Aliases               []string `graphql:"aliases"`
+	ClientEmail           string   `graphql:"clientEmail"`
+	OwnershipTagKeys      []string `graphql:"ownershipTagKeys"`
+	Projects              []string `graphql:"projects"`
+	TagsOverrideOwnership bool     `graphql:"tagsOverrideOwnership"`
+}
+
 type NewRelicIntegrationFragment struct {
 	BaseUrl    string `graphql:"baseUrl"`
 	AccountKey string `graphql:"accountKey"`

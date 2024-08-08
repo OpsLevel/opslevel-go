@@ -64,6 +64,7 @@ type Integration struct {
 	AWSIntegrationFragment            `graphql:"... on AwsIntegration"`
 	AzureResourcesIntegrationFragment `graphql:"... on AzureResourcesIntegration"`
 	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
+	GoogleCloudIntegrationFragment    `graphql:"... on GoogleCloudIntegration"`
 }
 
 // ManualAlertSourceSync represents .
