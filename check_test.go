@@ -458,7 +458,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryGrepCreateInput](checkCreateInput)
 				input.DirectorySearch = ol.RefOf(true)
 				input.FilePaths = []string{"**/hello.go"}
-				input.FileContentsPredicate = *predicateInput
+				input.FileContentsPredicate = predicateInput
 				return c.CreateCheckRepositoryGrep(*input)
 			},
 		},
@@ -512,7 +512,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositorySearchCreateInput](checkCreateInput)
 				input.FileExtensions = &[]string{"sbt", "py"}
-				input.FileContentsPredicate = *predicateInput
+				input.FileContentsPredicate = predicateInput
 				return c.CreateCheckRepositorySearch(*input)
 			},
 		},
