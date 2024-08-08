@@ -11,7 +11,7 @@ import (
 func TestCreateAWSIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"input": { "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role", "externalId": "123456789", "ownershipTagKeys": ["owner"] }}`,
 		`{"data": {
       "awsIntegrationCreate": {
@@ -46,7 +46,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 func TestCreateAzureResourcesIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation AzureResourcesIntegrationCreate($input:AzureResourcesIntegrationInput!){azureResourcesIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation AzureResourcesIntegrationCreate($input:AzureResourcesIntegrationInput!){azureResourcesIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"input": { "name": "new azure resources", "tenantId": "12345678-1234-1234-1234-123456789abc", "subscriptionId": "12345678-1234-1234-1234-123456789def", "clientId": "XXX_client_id_XXX", "clientSecret": "XXX_client_secret_XXX"}}`,
 		`{"data": {
       "azureResourcesIntegrationCreate": {
@@ -84,7 +84,7 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 func TestCreateGoogleCloudIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation GoogleCloudIntegrationCreate($input:GoogleCloudIntegrationInput!){googleCloudIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation GoogleCloudIntegrationCreate($input:GoogleCloudIntegrationInput!){googleCloudIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"input": { "name": "new gcp integration", "ownershipTagKeys": ["owner", "team", "opslevel_team"], "privateKey": "XXX_PRIVATE_KEY_XXX", "clientEmail": "helloworld@appspot.gserviceaccount.com", "tagsOverrideOwnership": true }}`,
 		`{"data": {
       "googleCloudIntegrationCreate": {
@@ -95,7 +95,7 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
           "createdAt": "2024-07-04T16:25:29.574450Z",
           "installedAt": "2024-07-04T16:25:28.541124Z",
           "ownershipTagKeys": ["owner", "team", "opslevel_team"],
-          "projects": ["my-project-1", "my-project-2"],
+          "projects": [{"id": "123", "name": "my-project-1", "url": "XXX_URL_XXX"}],
           "aliases": ["new_gcp_integration"],
           "clientEmail": "helloworld@appspot.gserviceaccount.com",
           "tagsOverrideOwnership": true
@@ -120,13 +120,15 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, true, result.GoogleCloudIntegrationFragment.TagsOverrideOwnership)
 	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"owner", "team", "opslevel_team"})
 	autopilot.Equals(t, []string{"new_gcp_integration"}, result.GoogleCloudIntegrationFragment.Aliases)
-	autopilot.Equals(t, []string{"my-project-1", "my-project-2"}, result.Projects)
+	autopilot.Equals(t, []opslevel.GoogleCloudProject{
+		{ID: "123", Name: "my-project-1", URL: "XXX_URL_XXX"},
+	}, result.Projects)
 }
 
 func TestCreateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation NewRelicIntegrationCreate($input:NewRelicIntegrationInput!){newRelicIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{ "input": { "apiKey": "123456789", "baseUrl": "https://api.newrelic.com/graphql" }}`,
 		`{"data": {
       "newRelicIntegrationCreate": {
@@ -157,7 +159,7 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 func TestGetIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}}}}`,
+		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"data": {
       "account": {
@@ -180,7 +182,7 @@ func TestGetIntegration(t *testing.T) {
 func TestGetMissingIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}}}}`,
+		`query IntegrationGet($id:ID!){account{integration(id: $id){id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}}}}`,
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "integration": null }}}`,
 	)
@@ -194,12 +196,12 @@ func TestGetMissingIntegration(t *testing.T) {
 func TestListIntegrations(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "deploy_integration_response" }} }, { {{ template "payload_integration_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "kubernetes_integration_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -219,7 +221,7 @@ func TestListIntegrations(t *testing.T) {
 func TestUpdateAWSIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation AWSIntegrationUpdate($input:AwsIntegrationInput!$integration:IdentifierInput!){awsIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"integration": { {{ template "id1" }} }, "input": { "name": "Dev2", "externalId": "123456789", "ownershipTagKeys": null }}`,
 		`{"data": {
       "awsIntegrationUpdate": {
@@ -254,7 +256,7 @@ func TestUpdateAWSIntegration(t *testing.T) {
 func TestUpdateAzureResourcesIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation AzureResourcesIntegrationUpdate($input:AzureResourcesIntegrationInput!$integration:IdentifierInput!){azureResourcesIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation AzureResourcesIntegrationUpdate($input:AzureResourcesIntegrationInput!$integration:IdentifierInput!){azureResourcesIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"integration": { {{ template "id1" }} }, "input": { "name": "updated azure resources", "clientId": "updated client id", "clientSecret": "updated client secret" }}`,
 		`{"data": {
       "azureResourcesIntegrationUpdate": {
@@ -290,7 +292,7 @@ func TestUpdateAzureResourcesIntegration(t *testing.T) {
 func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation GoogleCloudIntegrationUpdate($input:GoogleCloudIntegrationInput!$integration:IdentifierInput!){googleCloudIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation GoogleCloudIntegrationUpdate($input:GoogleCloudIntegrationInput!$integration:IdentifierInput!){googleCloudIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{ "integration": { {{ template "id1" }} }, "input": { "name": "updated gcp", "ownershipTagKeys": ["team", "opslevel_team"], "privateKey": "XXX_PRIVATE_KEY_2_XXX", "clientEmail": "helloworld_2@appspot.gserviceaccount.com", "tagsOverrideOwnership": false }}`,
 		`{"data": {
       "googleCloudIntegrationUpdate": {
@@ -301,7 +303,7 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
           "createdAt": "2024-07-04T16:25:29.574450Z",
           "installedAt": "2024-07-04T16:25:28.541124Z",
           "ownershipTagKeys": ["team", "opslevel_team"],
-          "projects": ["my-project-1", "my-project-2"],
+          "projects": [{"id": "123", "name": "my-project-1", "url": "XXX_URL_XXX"}],
           "aliases": ["new_gcp_integration", "updated_gcp"],
           "clientEmail": "helloworld_2@appspot.gserviceaccount.com",
           "tagsOverrideOwnership": false
@@ -326,13 +328,15 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, false, result.GoogleCloudIntegrationFragment.TagsOverrideOwnership)
 	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"team", "opslevel_team"})
 	autopilot.Equals(t, []string{"new_gcp_integration", "updated_gcp"}, result.GoogleCloudIntegrationFragment.Aliases)
-	autopilot.Equals(t, []string{"my-project-1", "my-project-2"}, result.Projects)
+	autopilot.Equals(t, []opslevel.GoogleCloudProject{
+		{ID: "123", Name: "my-project-1", URL: "XXX_URL_XXX"},
+	}, result.Projects)
 }
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation NewRelicIntegrationUpdate($input:NewRelicIntegrationInput!$resource:IdentifierInput!){newRelicIntegrationUpdate(input: $input resource: $resource){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"resource": { {{ template "id1" }} }, "input": { "baseUrl": "https://api-test.newrelic.com/graphql" }}`,
 		`{"data": {
       "newRelicIntegrationUpdate": {
