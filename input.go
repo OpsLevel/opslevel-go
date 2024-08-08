@@ -724,6 +724,15 @@ type FilterUpdateInput struct {
 	Connective *ConnectiveEnum         `json:"connective,omitempty" yaml:"connective,omitempty" example:"or"` // The logical operator to be used in conjunction with predicates. (Optional.)
 }
 
+// GoogleCloudIntegrationInput specifies the input fields used to create and update a Google Cloud integration.
+type GoogleCloudIntegrationInput struct {
+	Name                  *string   `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                     // The name of the integration. (Optional.)
+	OwnershipTagKeys      *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
+	PrivateKey            *string   `json:"privateKey,omitempty" yaml:"privateKey,omitempty" example:"XXX_example_key_XXX"`                  // The private key for the service account that OpsLevel uses to access the Google Cloud account. (Optional.)
+	ClientEmail           *string   `json:"clientEmail,omitempty" yaml:"clientEmail,omitempty" example:"first.last@domain.com"`              // The service account email OpsLevel uses to access the Google Cloud account. (Optional.)
+	TagsOverrideOwnership *bool     `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`          // Allow tags imported from Google Cloud to override ownership set in OpsLevel directly. (Optional.)
+}
+
 // IdentifierInput specifies the input fields used to identify a resource.
 type IdentifierInput struct {
 	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource. (Optional.)
