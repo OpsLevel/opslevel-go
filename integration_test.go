@@ -81,6 +81,48 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 	autopilot.Equals(t, []string{"new_azure_resources"}, result.AzureResourcesIntegrationFragment.Aliases)
 }
 
+func TestCreateGoogleCloudIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation GoogleCloudIntegrationCreate($input:GoogleCloudIntegrationInput!){googleCloudIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`{"input": { "name": "new gcp integration", "ownershipTagKeys": ["owner", "team", "opslevel_team"], "privateKey": "XXX_PRIVATE_KEY_XXX", "clientEmail": "helloworld@appspot.gserviceaccount.com", "tagsOverrideOwnership": true }}`,
+		`{"data": {
+      "googleCloudIntegrationCreate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "new gcp integration",
+          "type": "googleCloud",
+          "createdAt": "2024-07-04T16:25:29.574450Z",
+          "installedAt": "2024-07-04T16:25:28.541124Z",
+          "ownershipTagKeys": ["owner", "team", "opslevel_team"],
+          "projects": ["my-project-1", "my-project-2"],
+          "aliases": ["new_gcp_integration"],
+          "clientEmail": "helloworld@appspot.gserviceaccount.com",
+          "tagsOverrideOwnership": true
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/create_gcp", testRequest)
+	// Act
+	result, err := client.CreateIntegrationGCP(opslevel.GoogleCloudIntegrationInput{
+		Name:                  opslevel.RefOf("new gcp integration"),
+		OwnershipTagKeys:      opslevel.RefOf([]string{"owner", "team", "opslevel_team"}),
+		PrivateKey:            opslevel.RefOf("XXX_PRIVATE_KEY_XXX"),
+		ClientEmail:           opslevel.RefOf("helloworld@appspot.gserviceaccount.com"),
+		TagsOverrideOwnership: opslevel.RefOf(true),
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "new gcp integration", result.Name)
+	autopilot.Equals(t, "helloworld@appspot.gserviceaccount.com", result.ClientEmail)
+	autopilot.Equals(t, true, result.GoogleCloudIntegrationFragment.TagsOverrideOwnership)
+	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"owner", "team", "opslevel_team"})
+	autopilot.Equals(t, []string{"new_gcp_integration"}, result.GoogleCloudIntegrationFragment.Aliases)
+	autopilot.Equals(t, []string{"my-project-1", "my-project-2"}, result.Projects)
+}
+
 func TestCreateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
@@ -243,6 +285,48 @@ func TestUpdateAzureResourcesIntegration(t *testing.T) {
 	autopilot.Equals(t, "12345678-1234-1234-1234-123456789abc", result.TenantId)
 	autopilot.Equals(t, "12345678-1234-1234-1234-123456789def", result.SubscriptionId)
 	autopilot.Equals(t, []string{"alias1", "alias2"}, result.AzureResourcesIntegrationFragment.Aliases)
+}
+
+func TestUpdateGoogleCloudIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation GoogleCloudIntegrationUpdate($input:GoogleCloudIntegrationInput!$integration:IdentifierInput!){googleCloudIntegrationUpdate(integration: $integration input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects,tagsOverrideOwnership}},errors{message,path}}}`,
+		`{ "integration": { {{ template "id1" }} }, "input": { "name": "updated gcp", "ownershipTagKeys": ["team", "opslevel_team"], "privateKey": "XXX_PRIVATE_KEY_2_XXX", "clientEmail": "helloworld_2@appspot.gserviceaccount.com", "tagsOverrideOwnership": false }}`,
+		`{"data": {
+      "googleCloudIntegrationUpdate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "updated gcp",
+          "type": "googleCloud",
+          "createdAt": "2024-07-04T16:25:29.574450Z",
+          "installedAt": "2024-07-04T16:25:28.541124Z",
+          "ownershipTagKeys": ["team", "opslevel_team"],
+          "projects": ["my-project-1", "my-project-2"],
+          "aliases": ["new_gcp_integration", "updated_gcp"],
+          "clientEmail": "helloworld_2@appspot.gserviceaccount.com",
+          "tagsOverrideOwnership": false
+      },
+      "errors": []
+    }}}`,
+	)
+	client := BestTestClient(t, "integration/update_gcp", testRequest)
+	// Act
+	result, err := client.UpdateIntegrationGCP(string(id1), opslevel.GoogleCloudIntegrationInput{
+		Name:                  opslevel.RefOf("updated gcp"),
+		OwnershipTagKeys:      opslevel.RefOf([]string{"team", "opslevel_team"}),
+		PrivateKey:            opslevel.RefOf("XXX_PRIVATE_KEY_2_XXX"),
+		ClientEmail:           opslevel.RefOf("helloworld_2@appspot.gserviceaccount.com"),
+		TagsOverrideOwnership: opslevel.RefOf(false),
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "updated gcp", result.Name)
+	autopilot.Equals(t, "helloworld_2@appspot.gserviceaccount.com", result.ClientEmail)
+	autopilot.Equals(t, false, result.GoogleCloudIntegrationFragment.TagsOverrideOwnership)
+	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"team", "opslevel_team"})
+	autopilot.Equals(t, []string{"new_gcp_integration", "updated_gcp"}, result.GoogleCloudIntegrationFragment.Aliases)
+	autopilot.Equals(t, []string{"my-project-1", "my-project-2"}, result.Projects)
 }
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
