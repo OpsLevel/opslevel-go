@@ -1,0 +1,3 @@
+kind: Refactor
+body: BREAKING CHANGE - fields on Integration structs must be accessed through the Fragment struct to avoid `ambiguous selector` errors
+time: 2024-08-09T14:46:22.462174-04:00
