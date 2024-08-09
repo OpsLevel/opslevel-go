@@ -323,17 +323,17 @@ type CheckRepositoryFileUpdateInput struct {
 
 // CheckRepositoryGrepCreateInput specifies the input fields used to create a repo grep check.
 type CheckRepositoryGrepCreateInput struct {
-	Name                  string         `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
-	Enabled               *bool          `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time  `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
-	CategoryId            ID             `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
-	LevelId               ID             `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId               *ID            `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
-	FilterId              *ID            `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
-	Notes                 *string        `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
-	DirectorySearch       *bool          `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
-	FilePaths             []string       `json:"filePaths" yaml:"filePaths" example:"['/usr/local/bin', '/home/opslevel']"`              // Restrict the search to certain file paths. (Required.)
-	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the file content. (Required.)
+	Name                  string          `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled               *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId            ID              `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId               ID              `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId               *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId              *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                 *string         `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
+	DirectorySearch       *bool           `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`             // Whether the check looks for the existence of a directory instead of a file. (Optional.)
+	FilePaths             []string        `json:"filePaths" yaml:"filePaths" example:"['/usr/local/bin', '/home/opslevel']"`              // Restrict the search to certain file paths. (Required.)
+	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the file content. (Required.)
 }
 
 // CheckRepositoryGrepUpdateInput specifies the input fields used to update a repo file check.
@@ -379,16 +379,16 @@ type CheckRepositoryIntegratedUpdateInput struct {
 
 // CheckRepositorySearchCreateInput specifies the input fields used to create a repo search check.
 type CheckRepositorySearchCreateInput struct {
-	Name                  string         `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
-	Enabled               *bool          `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
-	EnableOn              *iso8601.Time  `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
-	CategoryId            ID             `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
-	LevelId               ID             `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
-	OwnerId               *ID            `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
-	FilterId              *ID            `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
-	Notes                 *string        `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
-	FileExtensions        *[]string      `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`  // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
-	FileContentsPredicate PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the text content. (Required.)
+	Name                  string          `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled               *bool           `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn              *iso8601.Time   `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId            ID              `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId               ID              `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId               *ID             `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId              *ID             `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                 *string         `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
+	FileExtensions        *[]string       `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`  // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
+	FileContentsPredicate *PredicateInput `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the text content. (Required.)
 }
 
 // CheckRepositorySearchUpdateInput specifies the input fields used to update a repo search check.
