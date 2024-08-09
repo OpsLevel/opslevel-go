@@ -27,6 +27,20 @@ type AzureResourcesIntegrationFragment struct {
 	TenantId              string   `graphql:"tenantId"`
 }
 
+type GoogleCloudProject struct {
+	ID   string `graphql:"id"`
+	Name string `graphql:"name"`
+	URL  string `graphql:"url"`
+}
+
+type GoogleCloudIntegrationFragment struct {
+	Aliases               []string             `graphql:"aliases"`
+	ClientEmail           string               `graphql:"clientEmail"`
+	OwnershipTagKeys      []string             `graphql:"ownershipTagKeys"`
+	Projects              []GoogleCloudProject `graphql:"projects"`
+	TagsOverrideOwnership bool                 `graphql:"tagsOverrideOwnership"`
+}
+
 type NewRelicIntegrationFragment struct {
 	BaseUrl    string `graphql:"baseUrl"`
 	AccountKey string `graphql:"accountKey"`
@@ -198,5 +212,34 @@ func (client *Client) UpdateIntegrationAzureResources(identifier string, input A
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AzureResourcesIntegrationUpdate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) CreateIntegrationGCP(input GoogleCloudIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"googleCloudIntegrationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationCreate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"googleCloudIntegrationUpdate(integration: $integration input: $input)"`
+	}
+	v := PayloadVariables{
+		"integration": *NewIdentifier(identifier),
+		"input":       input,
+	}
+	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }

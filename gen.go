@@ -204,11 +204,15 @@ func main() {
 }
 
 func getRootSchema() (*GraphQLSchema, error) {
+	visibility, ok := os.LookupEnv("GRAPHQL_VISIBILITY")
+	if !ok {
+		visibility = "public"
+	}
 	token, ok := os.LookupEnv("OPSLEVEL_API_TOKEN")
 	if !ok {
 		return nil, fmt.Errorf("OPSLEVEL_API_TOKEN environment variable not set")
 	}
-	client := opslevel.NewGQLClient(opslevel.SetAPIToken(token), opslevel.SetAPIVisibility("public"))
+	client := opslevel.NewGQLClient(opslevel.SetAPIToken(token), opslevel.SetAPIVisibility(visibility))
 	schema, err := GetSchema(client)
 	if err != nil {
 		return nil, err
