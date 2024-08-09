@@ -1,0 +1,3 @@
+kind: Refactor
+body: BREAKING CHANGE - must explicitly access `Aliases`, `OwnershipTagKeys`, `TagsOverrideOwnership` on Integration nested Fragment structs to avoid `ambiguous selector` errors
+time: 2024-08-09T14:46:22.462174-04:00
