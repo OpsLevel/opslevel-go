@@ -1,0 +1,4 @@
+kind: Bugfix
+body: Fix bug where AlertSource and InfraResource queries failed because field name should be `ownerLocked` instead of `locked`
+  field
+time: 2024-08-13T12:32:52.744704-04:00
