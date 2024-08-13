@@ -5,7 +5,6 @@ type AlertSource struct {
 	ExternalId  string              `graphql:"externalId"`
 	Id          ID                  `graphql:"id"`
 	Integration IntegrationId       `graphql:"integration"`
-	Locked      bool                `graphql:"locked"`
 	Name        string              `graphql:"name"`
 	Type        AlertSourceTypeEnum `graphql:"type"`
 	Url         string              `graphql:"url"`
