@@ -143,11 +143,12 @@ func (client *Client) GetUser(value string) (*User, error) {
 func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, error) {
 	var q struct {
 		Account struct {
-			Users UserConnection `graphql:"users(after: $after, first: $first)"`
+			Users UserConnection `graphql:"users(after: $after, first: $first, filter: $filter)"`
 		}
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
+		(*variables)["filter"] = []UsersFilterInput{}
 	}
 
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
