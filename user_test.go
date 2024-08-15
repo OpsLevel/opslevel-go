@@ -80,12 +80,12 @@ func TestListUser(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
 		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
-		`{ "after": "", "filter": [], "first": 100 }`,
+		`{ "after": "", "filter": null, "first": 100 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
-		`{ "after": "OA", "filter": [], "first": 100 }`,
+		`{ "after": "OA", "filter": null, "first": 100 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
@@ -119,13 +119,7 @@ func TestListUserOmitDeactivated(t *testing.T) {
 
 	client := BestTestClient(t, "user/list_omit_deactivated", requests...)
 	// Act
-	payloadVars := client.InitialPageVariablesPointer()
-	(*payloadVars)["filter"] = &[]ol.UsersFilterInput{
-		{
-			Key:  ol.UsersFilterEnumDeactivatedAt,
-			Type: ol.RefOf(ol.BasicTypeEnumEquals),
-		},
-	}
+	payloadVars := client.InitialPageVariablesPointer().WithoutDeactivedUsers()
 
 	response, err := client.ListUsers(payloadVars)
 	result := response.Nodes

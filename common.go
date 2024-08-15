@@ -18,6 +18,16 @@ type PageInfo struct {
 
 type PayloadVariables map[string]interface{}
 
+// WithoutDeactivedUsers filters out deactivated users on ListUsers query
+func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
+	omitDeactivedUsersFilter := UsersFilterInput{
+		Key:  UsersFilterEnumDeactivatedAt,
+		Type: RefOf(BasicTypeEnumEquals),
+	}
+	(*pv)["filter"] = RefOf([]UsersFilterInput{omitDeactivedUsersFilter})
+	return pv
+}
+
 type OpsLevelWarnings struct {
 	Message string
 }
