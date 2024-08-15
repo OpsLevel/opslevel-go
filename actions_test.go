@@ -338,8 +338,8 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, `OpsLevel API Errors:
-	- 'one.two.three' Example Error
-`, err2.Error())
+	- 'one.two.three' Example Error`,
+		err2.Error())
 	autopilot.Assert(t, err3 != nil, "Expected error was not thrown")
 }
 

@@ -47,7 +47,7 @@ tasks:
       - task: install-go-tool
         vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
       - task: install-go-tool
-        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@latest" }
+        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.1" }
       - task: install-go-tool
         vars: { GO_TOOL: "nilaway", GO_TOOL_PATH: "go.uber.org/nilaway/cmd/nilaway@latest" }
 

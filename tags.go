@@ -77,7 +77,7 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	case TaggableResourceUser:
 		taggableResource, err = client.GetUser(identifier)
 	default:
-		return nil, fmt.Errorf("not a taggable resource type: %s" + string(resourceType))
+		return nil, fmt.Errorf("not a taggable resource type: %s", string(resourceType))
 	}
 
 	if err != nil {

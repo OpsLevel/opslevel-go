@@ -2,30 +2,22 @@ package opslevel
 
 import (
 	"errors"
-	"fmt"
-	"strings"
 )
 
 func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
 	var output []string
-	var errors []string
+	var allErrors error
 	for _, alias := range aliases {
 		input := AliasCreateInput{
 			Alias:   alias,
 			OwnerId: ownerId,
 		}
 		result, err := client.CreateAlias(input)
-		if err != nil {
-			errors = append(errors, err.Error())
-		}
+		allErrors = errors.Join(allErrors, err)
 		output = append(output, result...)
 	}
 	output = removeDuplicates(output)
-	if len(errors) > 0 {
-		return output, fmt.Errorf(strings.Join(errors, "\n"))
-	} else {
-		return output, nil
-	}
+	return output, allErrors
 }
 
 func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
