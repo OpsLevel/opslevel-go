@@ -79,13 +79,13 @@ func TestGetUserTeams(t *testing.T) {
 func TestListUser(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
-		`{{ template "pagination_initial_query_variables" }}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]!$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
+		`{ "after": "", "filter": [], "first": 100 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserList($after:String!$first:Int!){account{users(after: $after, first: $first){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
-		`{{ template "pagination_second_query_variables" }}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]!$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
+		`{ "after": "OA", "filter": [], "first": 100 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
@@ -101,6 +101,40 @@ func TestListUser(t *testing.T) {
 	autopilot.Equals(t, ol.UserRoleAdmin, result[1].Role)
 	autopilot.Equals(t, "Matthew Brahms", result[2].Name)
 	autopilot.Equals(t, ol.UserRoleAdmin, result[2].Role)
+}
+
+func TestListUserOmitDeactivated(t *testing.T) {
+	// Arrange
+	testRequestOne := autopilot.NewTestRequest(
+		`query UserList($after:String!$filter:[UsersFilterInput!]!$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
+		`{ "after": "", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 100 }`,
+		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query UserList($after:String!$filter:[UsersFilterInput!]!$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,role},{{ template "pagination_request" }},totalCount}}}`,
+		`{ "after": "OA", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 100 }`,
+		`{ "data": { "account": { "users": { "nodes": [], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 0 }}}}`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+
+	client := BestTestClient(t, "user/list_omit_deactivated", requests...)
+	// Act
+	payloadVars := client.InitialPageVariablesPointer()
+	(*payloadVars)["filter"] = []ol.UsersFilterInput{
+		{
+			Key:  ol.UsersFilterEnumDeactivatedAt,
+			Type: ol.RefOf(ol.BasicTypeEnumEquals),
+		},
+	}
+
+	response, err := client.ListUsers(payloadVars)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, response.TotalCount)
+	autopilot.Equals(t, 2, len(result))
+	autopilot.Equals(t, "Edgar Ochoa", result[1].Name)
+	autopilot.Equals(t, ol.UserRoleAdmin, result[1].Role)
 }
 
 func TestUpdateUser(t *testing.T) {
