@@ -180,8 +180,8 @@ func TestDeleteUserDoesNotExist(t *testing.T) {
 	err := client.DeleteUser("not-found@opslevel.com")
 	// Assert
 	autopilot.Equals(t, `OpsLevel API Errors:
-	- 'user' User with email 'not-found@opslevel.com' does not exist on this account
-`, err.Error())
+	- 'user' User with email 'not-found@opslevel.com' does not exist on this account`,
+		err.Error())
 }
 
 func TestGetUserTags(t *testing.T) {

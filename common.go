@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -67,16 +68,16 @@ func FormatErrors(errs []OpsLevelErrors) error {
 		return nil
 	}
 
-	var sb strings.Builder
-	sb.WriteString("OpsLevel API Errors:\n")
+	allErrors := fmt.Errorf("OpsLevel API Errors:")
 	for _, err := range errs {
 		if len(err.Path) == 1 && err.Path[0] == "base" {
 			err.Path[0] = ""
 		}
-		sb.WriteString(fmt.Sprintf("\t- '%s' %s\n", strings.Join(err.Path, "."), err.Message))
+		newErr := fmt.Errorf("\t- '%s' %s", strings.Join(err.Path, "."), err.Message)
+		allErrors = errors.Join(allErrors, newErr)
 	}
 
-	return fmt.Errorf(sb.String())
+	return allErrors
 }
 
 func NewISO8601Date(datetime string) iso8601.Time {

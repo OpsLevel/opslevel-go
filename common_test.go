@@ -18,8 +18,8 @@ func TestFormatErrorsWorks(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, `OpsLevel API Errors:
 	- 'resource.id' can't be blank
-	- 'id' is not a valid input
-`, output.Error())
+	- 'id' is not a valid input`,
+		output.Error())
 }
 
 func TestFormatErrorsNoPath(t *testing.T) {
@@ -33,6 +33,6 @@ func TestFormatErrorsNoPath(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, `OpsLevel API Errors:
 	- '' can't be blank
-	- '' is not a valid input
-`, output.Error())
+	- '' is not a valid input`,
+		output.Error())
 }
