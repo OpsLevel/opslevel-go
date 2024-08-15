@@ -148,7 +148,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
-		(*variables)["filter"] = []UsersFilterInput{}
+		(*variables)["filter"] = &[]UsersFilterInput{}
 	}
 
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
