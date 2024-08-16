@@ -1,3 +1,0 @@
-kind: Feature
-body: add filter query param to ListUsers() to filter out deactivated users
-time: 2024-08-15T09:28:48.041582-05:00
