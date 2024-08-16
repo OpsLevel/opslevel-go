@@ -70,6 +70,18 @@ func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
 }
 
+// Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
+func (system *System) UniqueIdentifiers() []string {
+	uniqueIdentifiers := []string{}
+	for _, alias := range system.Aliases {
+		if !slices.Contains(system.ManagedAliases, alias) {
+			uniqueIdentifiers = append(uniqueIdentifiers, alias)
+		}
+	}
+
+	return uniqueIdentifiers
+}
+
 func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	aliasesToCreate, aliasesToDelete := extractAliases(system.Aliases, aliasesWanted)
 
