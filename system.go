@@ -10,12 +10,13 @@ type SystemId Identifier
 
 type System struct {
 	SystemId
-	Name        string      `graphql:"name"`
-	Description string      `graphql:"description"`
-	HTMLUrl     string      `graphql:"htmlUrl"`
-	Owner       EntityOwner `graphql:"owner"`
-	Parent      Domain      `graphql:"parent"`
-	Note        string      `graphql:"note"`
+	ManagedAliases []string    `graphql:"managedAliases"`
+	Name           string      `graphql:"name"`
+	Description    string      `graphql:"description"`
+	HTMLUrl        string      `graphql:"htmlUrl"`
+	Owner          EntityOwner `graphql:"owner"`
+	Parent         Domain      `graphql:"parent"`
+	Note           string      `graphql:"note"`
 }
 
 type SystemConnection struct {
@@ -67,6 +68,18 @@ func (systemId *SystemId) ResourceId() ID {
 
 func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
+}
+
+// Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
+func (system *System) UniqueIdentifiers() []string {
+	uniqueIdentifiers := []string{}
+	for _, alias := range system.Aliases {
+		if !slices.Contains(system.ManagedAliases, alias) {
+			uniqueIdentifiers = append(uniqueIdentifiers, alias)
+		}
+	}
+
+	return uniqueIdentifiers
 }
 
 func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
