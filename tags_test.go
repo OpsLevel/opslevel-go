@@ -61,49 +61,6 @@ func TestExtractTagIdsToDelete(t *testing.T) {
 	}
 }
 
-type extractTagInputsTestCase struct {
-	existingTags              []ol.Tag
-	expectedTagInputsToCreate []ol.TagInput
-	tagsWanted                []ol.Tag
-}
-
-func TestExtractTagInputsToCreate(t *testing.T) {
-	var noTagInputs []ol.TagInput
-	allTagInputs := []ol.TagInput{
-		{Key: tagOne.Key, Value: tagOne.Value},
-		{Key: tagTwo.Key, Value: tagTwo.Value},
-		{Key: tagThree.Key, Value: tagThree.Value},
-		{Key: tagFour.Key, Value: tagFour.Value},
-	}
-	// Arrange
-	testCases := map[string]extractTagInputsTestCase{
-		"create all": {
-			tagsWanted:                allTags,
-			existingTags:              noTags,
-			expectedTagInputsToCreate: allTagInputs,
-		},
-		"create none": {
-			tagsWanted:                noTags,
-			existingTags:              allTags,
-			expectedTagInputsToCreate: noTagInputs,
-		},
-		"create some": {
-			tagsWanted:                []ol.Tag{tagOne, tagTwo, tagThree},
-			existingTags:              []ol.Tag{tagOne, tagTwo},
-			expectedTagInputsToCreate: []ol.TagInput{{Key: tagThree.Key, Value: tagThree.Value}},
-		},
-	}
-	for name, tc := range testCases {
-		t.Run(name, func(t *testing.T) {
-			// Act
-			tagInputsToCreate := ol.ExtractTagInputsToCreate(tc.existingTags, tc.tagsWanted)
-
-			// Assert
-			autopilot.Equals(t, tagInputsToCreate, tc.expectedTagInputsToCreate)
-		})
-	}
-}
-
 type tagHasSameKeyValueTestCase struct {
 	tagOne          ol.Tag
 	tagTwo          ol.Tag

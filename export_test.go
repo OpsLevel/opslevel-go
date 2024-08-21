@@ -5,7 +5,6 @@ package opslevel
 // Running `go help build` displays:
 // When compiling packages, build ignores files that end in '_test.go'.
 var (
-	ExtractAliases           = extractAliases
-	ExtractTagIdsToDelete    = extractTagIdsToDelete
-	ExtractTagInputsToCreate = extractTagInputsToCreate
+	ExtractAliases        = extractAliases
+	ExtractTagIdsToDelete = extractTagIdsToDelete
 )
