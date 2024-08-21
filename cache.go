@@ -10,6 +10,7 @@ type Cacher struct {
 	mutex        sync.Mutex
 	Tiers        map[string]Tier
 	Lifecycles   map[string]Lifecycle
+	Systems      map[string]System
 	Teams        map[string]Team
 	Categories   map[string]Category
 	Levels       map[string]Level
@@ -32,6 +33,15 @@ func (cacher *Cacher) TryGetLifecycle(alias string) (*Lifecycle, bool) {
 	cacher.mutex.Lock()
 	defer cacher.mutex.Unlock()
 	if v, ok := cacher.Lifecycles[alias]; ok {
+		return &v, ok
+	}
+	return nil, false
+}
+
+func (cacher *Cacher) TryGetSystems(alias string) (*System, bool) {
+	cacher.mutex.Lock()
+	defer cacher.mutex.Unlock()
+	if v, ok := cacher.Systems[alias]; ok {
 		return &v, ok
 	}
 	return nil, false
@@ -121,6 +131,24 @@ func (cacher *Cacher) doCacheLifecycles(client *Client) {
 	}
 	for _, item := range data {
 		cacher.Lifecycles[item.Alias] = item
+	}
+}
+
+func (cacher *Cacher) doCacheSystems(client *Client) {
+	log.Debug().Msg("Caching 'Systems' lookup table from API ...")
+
+	data, dataErr := client.ListSystems(nil)
+	if dataErr != nil {
+		log.Warn().Msgf("===> Failed to list all 'Systems' from API - REASON: %s", dataErr.Error())
+	}
+	if data == nil {
+		return
+	}
+
+	for _, item := range data.Nodes {
+		for _, alias := range item.Aliases {
+			cacher.Systems[alias] = item
+		}
 	}
 }
 
@@ -247,6 +275,12 @@ func (cacher *Cacher) CacheLifecycles(client *Client) {
 	cacher.mutex.Unlock()
 }
 
+func (cacher *Cacher) CacheSystems(client *Client) {
+	cacher.mutex.Lock()
+	cacher.doCacheSystems(client)
+	cacher.mutex.Unlock()
+}
+
 func (cacher *Cacher) CacheTeams(client *Client) {
 	cacher.mutex.Lock()
 	cacher.doCacheTeams(client)
@@ -293,6 +327,7 @@ func (cacher *Cacher) CacheAll(client *Client) {
 	cacher.mutex.Lock()
 	cacher.doCacheTiers(client)
 	cacher.doCacheLifecycles(client)
+	cacher.doCacheSystems(client)
 	cacher.doCacheTeams(client)
 	cacher.doCacheCategories(client)
 	cacher.doCacheLevels(client)
@@ -307,6 +342,7 @@ var Cache = &Cacher{
 	mutex:        sync.Mutex{},
 	Tiers:        make(map[string]Tier),
 	Lifecycles:   make(map[string]Lifecycle),
+	Systems:      make(map[string]System),
 	Teams:        make(map[string]Team),
 	Categories:   make(map[string]Category),
 	Levels:       make(map[string]Level),
