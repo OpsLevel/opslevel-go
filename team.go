@@ -11,7 +11,7 @@ type Contact struct {
 	Address     string
 	DisplayName string
 	DisplayType string
-	ExternalId  string
+	ExternalId  string `graphql:"externalId"`
 	Id          ID
 	IsDefault   bool
 	Type        ContactType
