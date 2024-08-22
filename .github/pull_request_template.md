@@ -4,9 +4,6 @@
 
 ## Changelog
 
-- [ ] List your changes here
+- [ ] Does this change require a Terraform schema change?
+  - If so what is the ticket or PR #
 - [ ] Make a `changie` entry
-
-## Tophatting
-
-<!-- paste in CLI output, log messages or screenshots showing your change works -->
