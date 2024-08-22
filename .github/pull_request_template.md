@@ -22,4 +22,4 @@ Resolves #
 - [ ] This PR has no user interface changes or has already received approval from product management to change the interface.
 - [ ] Does this change require a Terraform schema change?
   - If so what is the ticket or PR #
-- [ ] Make a [`changie`](https://github.com/OpsLevel/opslevel-go/blob/main/CONTRIBUTING.md#changie-change-log-generation) entry that explans the customer facing outcome of this change
+- [ ] Make a [changie](https://github.com/OpsLevel/opslevel-go/blob/main/CONTRIBUTING.md#changie-change-log-generation) entry that explains the customer facing outcome of this change
