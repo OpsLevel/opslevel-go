@@ -14,7 +14,6 @@ var (
 	tagThree = ol.Tag{Id: id3, Key: "prod", Value: "true"}
 	tagFour  = ol.Tag{Id: id4, Key: "env", Value: "prod"}
 	tagFive  = ol.Tag{Id: id4, Key: "foo", Value: "baz"}
-	allTags  = []ol.Tag{tagOne, tagTwo, tagThree, tagFour}
 )
 
 type reconcileTagsTestCase struct {
@@ -28,15 +27,15 @@ func TestReconcileTags(t *testing.T) {
 	// Arrange
 	testCases := map[string]reconcileTagsTestCase{
 		"create all": {
-			current:  []ol.Tag{},
+			current:  noTags,
 			desired:  []ol.Tag{tagOne, tagTwo},
 			toCreate: []ol.Tag{tagOne, tagTwo},
-			toDelete: []ol.Tag{},
+			toDelete: noTags,
 		},
 		"delete all": {
 			current:  []ol.Tag{tagOne, tagTwo},
-			desired:  []ol.Tag{},
-			toCreate: []ol.Tag{},
+			desired:  noTags,
+			toCreate: noTags,
 			toDelete: []ol.Tag{tagOne, tagTwo},
 		},
 		"create one delete one": {
@@ -60,14 +59,14 @@ func TestReconcileTags(t *testing.T) {
 		"no create no delete": {
 			current:  []ol.Tag{tagOne, tagTwo},
 			desired:  []ol.Tag{tagOne, tagTwo},
-			toCreate: []ol.Tag{},
-			toDelete: []ol.Tag{},
+			toCreate: noTags,
+			toDelete: noTags,
 		},
 		"null": {
-			current:  []ol.Tag{},
-			desired:  []ol.Tag{},
-			toCreate: []ol.Tag{},
-			toDelete: []ol.Tag{},
+			current:  noTags,
+			desired:  noTags,
+			toCreate: noTags,
+			toDelete: noTags,
 		},
 	}
 	for name, tc := range testCases {
