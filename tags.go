@@ -217,30 +217,26 @@ func (client *Client) DeleteTag(id ID) error {
 // ReconcileTags manages tags API operations for TaggableResourceInterface implementations
 //
 // Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created
-func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsWanted []Tag) error {
-	var allErrors, err error
-	var tagConnection *TagConnection
-	existingTags := []Tag{}
-
-	tagConnection, err = resourceType.GetTags(client, nil)
+func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsDesired []Tag) error {
+	tagConnection, err := resourceType.GetTags(client, nil)
 	if err != nil {
 		return err
 	}
-	if tagConnection != nil {
-		existingTags = tagConnection.Nodes
-	}
 
-	// delete tags found in resource but not listed in tagsWanted
-	for _, tagId := range extractTagIdsToDelete(existingTags, tagsWanted) {
-		allErrors = errors.Join(allErrors, client.DeleteTag(tagId))
+	toCreate, toDelete := reconcileTags(tagConnection.Nodes, tagsDesired)
+	for _, tag := range toCreate {
+		_, err := client.CreateTag(TagCreateInput{
+			Id:    RefOf(resourceType.ResourceId()),
+			Type:  RefOf(resourceType.ResourceType()),
+			Key:   tag.Key,
+			Value: tag.Value,
+		})
+		if err != nil {
+			return err
+		}
 	}
-	if allErrors != nil {
-		return allErrors
-	}
-
-	tagInputsToCreate := extractTagInputsToCreate(existingTags, tagsWanted)
-	if len(tagInputsToCreate) > 0 {
-		_, err = client.AssignTagsWithTagInputs(string(resourceType.ResourceId()), tagInputsToCreate)
+	for _, tag := range toDelete {
+		err := client.DeleteTag(tag.Id)
 		if err != nil {
 			return err
 		}
@@ -249,31 +245,23 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 	return nil
 }
 
-// return ids of tags that are to be deleted
-func extractTagIdsToDelete(existingTags, tagsWanted []Tag) []ID {
-	var tagIdsToDelete []ID
+func reconcileTags(currentTags, desiredTags []Tag) ([]Tag, []Tag) {
+	toCreate := make([]Tag, 0)
+	toDelete := make([]Tag, 0)
 
-	for _, existingTag := range existingTags {
-		if !slices.ContainsFunc(tagsWanted, func(t Tag) bool { return existingTag.HasSameKeyValue(t) }) {
-			tagIdsToDelete = append(tagIdsToDelete, existingTag.Id)
+	for _, tag := range currentTags {
+		if slices.ContainsFunc(desiredTags, func(t Tag) bool { return tag.HasSameKeyValue(t) }) {
+			continue
 		}
-	}
-	return tagIdsToDelete
-}
-
-// return TagInputs for tags that are to be created
-func extractTagInputsToCreate(existingTags, tagsWanted []Tag) []TagInput {
-	var tagsToCreate []TagInput
-
-	// collect tagsToCreate - wanted tags that do not yet exist
-	for _, tagWanted := range tagsWanted {
-		if !slices.ContainsFunc(existingTags, func(t Tag) bool { return tagWanted.HasSameKeyValue(t) }) {
-			tagsToCreate = append(tagsToCreate, TagInput{
-				Key:   tagWanted.Key,
-				Value: tagWanted.Value,
-			})
-		}
+		toDelete = append(toDelete, tag)
 	}
 
-	return tagsToCreate
+	for _, tag := range desiredTags {
+		if slices.ContainsFunc(currentTags, func(t Tag) bool { return tag.HasSameKeyValue(t) }) {
+			continue
+		}
+		toCreate = append(toCreate, tag)
+	}
+
+	return toCreate, toDelete
 }

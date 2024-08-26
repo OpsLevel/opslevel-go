@@ -47,7 +47,7 @@ func TestExtractAliases(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			// Act
-			aliasesToCreate, aliasesToDelete := ol.ExtractAliases(tc.existingAliases, tc.aliasesWanted)
+			aliasesToCreate, aliasesToDelete := ol.TestExtractAliases(tc.existingAliases, tc.aliasesWanted)
 
 			// Assert
 			autopilot.Equals(t, aliasesToCreate, tc.expectedAliasesToCreate)
