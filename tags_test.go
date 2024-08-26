@@ -13,93 +13,70 @@ var (
 	tagTwo   = ol.Tag{Id: id2, Key: "foo", Value: "bar"}
 	tagThree = ol.Tag{Id: id3, Key: "prod", Value: "true"}
 	tagFour  = ol.Tag{Id: id4, Key: "env", Value: "prod"}
+	tagFive  = ol.Tag{Id: id4, Key: "foo", Value: "baz"}
 	allTags  = []ol.Tag{tagOne, tagTwo, tagThree, tagFour}
 )
 
-type extractTagIdsTestCase struct {
-	existingTags           []ol.Tag
-	expectedTagIdsToDelete []ol.ID
-	tagsWanted             []ol.Tag
+type reconcileTagsTestCase struct {
+	current  []ol.Tag
+	desired  []ol.Tag
+	toCreate []ol.Tag
+	toDelete []ol.Tag
 }
 
-func TestExtractTagIdsToDelete(t *testing.T) {
-	var allTagIds, noTagIds []ol.ID
-	for _, tag := range allTags {
-		allTagIds = append(allTagIds, tag.Id)
-	}
-
-	testCases := map[string]extractTagIdsTestCase{
-		"delete none": {
-			existingTags:           allTags,
-			expectedTagIdsToDelete: noTagIds,
-			tagsWanted:             allTags,
+func TestReconcileTags(t *testing.T) {
+	// Arrange
+	testCases := map[string]reconcileTagsTestCase{
+		"create all": {
+			current:  []ol.Tag{},
+			desired:  []ol.Tag{tagOne, tagTwo},
+			toCreate: []ol.Tag{tagOne, tagTwo},
+			toDelete: []ol.Tag{},
 		},
 		"delete all": {
-			existingTags:           allTags,
-			expectedTagIdsToDelete: allTagIds,
-			tagsWanted:             noTags,
+			current:  []ol.Tag{tagOne, tagTwo},
+			desired:  []ol.Tag{},
+			toCreate: []ol.Tag{},
+			toDelete: []ol.Tag{tagOne, tagTwo},
 		},
-		"delete some": {
-			tagsWanted:             []ol.Tag{tagOne, tagTwo},
-			existingTags:           []ol.Tag{tagOne, tagTwo, tagThree, tagFour},
-			expectedTagIdsToDelete: []ol.ID{tagThree.Id, tagFour.Id},
+		"create one delete one": {
+			current:  []ol.Tag{tagOne, tagThree},
+			desired:  []ol.Tag{tagOne, tagTwo},
+			toCreate: []ol.Tag{tagTwo},
+			toDelete: []ol.Tag{tagThree},
 		},
-		"no change": {
-			existingTags:           allTags,
-			expectedTagIdsToDelete: noTagIds,
-			tagsWanted:             allTags,
+		"create two delete two": {
+			current:  []ol.Tag{tagOne, tagTwo, tagThree},
+			desired:  []ol.Tag{tagOne, tagFour, tagFive},
+			toCreate: []ol.Tag{tagFour, tagFive},
+			toDelete: []ol.Tag{tagTwo, tagThree},
 		},
-	}
-	for name, tc := range testCases {
-		t.Run(name, func(t *testing.T) {
-			// Act
-			tagIdsToDelete := ol.ExtractTagIdsToDelete(tc.existingTags, tc.tagsWanted)
-
-			// Assert
-			autopilot.Equals(t, tagIdsToDelete, tc.expectedTagIdsToDelete)
-		})
-	}
-}
-
-type extractTagInputsTestCase struct {
-	existingTags              []ol.Tag
-	expectedTagInputsToCreate []ol.TagInput
-	tagsWanted                []ol.Tag
-}
-
-func TestExtractTagInputsToCreate(t *testing.T) {
-	var noTagInputs []ol.TagInput
-	allTagInputs := []ol.TagInput{
-		{Key: tagOne.Key, Value: tagOne.Value},
-		{Key: tagTwo.Key, Value: tagTwo.Value},
-		{Key: tagThree.Key, Value: tagThree.Value},
-		{Key: tagFour.Key, Value: tagFour.Value},
-	}
-	// Arrange
-	testCases := map[string]extractTagInputsTestCase{
-		"create all": {
-			tagsWanted:                allTags,
-			existingTags:              noTags,
-			expectedTagInputsToCreate: allTagInputs,
+		"replace": {
+			current:  []ol.Tag{tagOne, tagTwo},
+			desired:  []ol.Tag{tagThree, tagFour},
+			toCreate: []ol.Tag{tagThree, tagFour},
+			toDelete: []ol.Tag{tagOne, tagTwo},
 		},
-		"create none": {
-			tagsWanted:                noTags,
-			existingTags:              allTags,
-			expectedTagInputsToCreate: noTagInputs,
+		"no create no delete": {
+			current:  []ol.Tag{tagOne, tagTwo},
+			desired:  []ol.Tag{tagOne, tagTwo},
+			toCreate: []ol.Tag{},
+			toDelete: []ol.Tag{},
 		},
-		"create some": {
-			tagsWanted:                []ol.Tag{tagOne, tagTwo, tagThree},
-			existingTags:              []ol.Tag{tagOne, tagTwo},
-			expectedTagInputsToCreate: []ol.TagInput{{Key: tagThree.Key, Value: tagThree.Value}},
+		"null": {
+			current:  []ol.Tag{},
+			desired:  []ol.Tag{},
+			toCreate: []ol.Tag{},
+			toDelete: []ol.Tag{},
 		},
 	}
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			// Act
-			tagInputsToCreate := ol.ExtractTagInputsToCreate(tc.existingTags, tc.tagsWanted)
-
+			toCreate, toDelete := ol.TestReconcileTags(tc.current, tc.desired)
 			// Assert
-			autopilot.Equals(t, tagInputsToCreate, tc.expectedTagInputsToCreate)
+			autopilot.Equals(t, tc.toCreate, toCreate)
+			autopilot.Equals(t, tc.toDelete, toDelete)
 		})
 	}
 }
@@ -238,62 +215,34 @@ func TestDeleteTag(t *testing.T) {
 	autopilot.Ok(t, err)
 }
 
-func TestReconcileTagsDeleteAllTags(t *testing.T) {
+func TestReconcileTagsAPI(t *testing.T) {
 	// Arrange
 	domain := &ol.Domain{DomainId: ol.DomainId{Id: id3}}
-	testRequestTagsList := autopilot.NewTestRequest(
-		`query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
-		`{ {{ template "first_page_variables" }}, "domain": { {{ template "id3" }} } }`,
-		`{ "data": { "account": { "domain": { "tags": { "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
-	)
-	testRequestDeleteTagOne := autopilot.NewTestRequest(
-		`mutation TagDelete($input:TagDeleteInput!){tagDelete(input: $input){errors{message,path}}}`,
-		`{"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODg2" }}`,
-		`{"data": { "tagDelete": { "errors": [] }}}`,
-	)
-	testRequestDeleteTagTwo := autopilot.NewTestRequest(
-		`mutation TagDelete($input:TagDeleteInput!){tagDelete(input: $input){errors{message,path}}}`,
-		`{"input": { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODg3" }}`,
-		`{"data": { "tagDelete": { "errors": [] }}}`,
-	)
-
-	requests := []autopilot.TestRequest{testRequestTagsList, testRequestDeleteTagOne, testRequestDeleteTagTwo}
-	client := BestTestClient(t, "tags/reconcile_tags_delete_all", requests...)
+	requests := []autopilot.TestRequest{
+		autopilot.NewTestRequest(
+			`query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+			`{ {{ template "first_page_variables" }}, "domain": { {{ template "id3" }} } }`,
+			`{ "data": { "account": { "domain": { "tags": { "nodes": [{ {{ template "id1" }}, "key": "hello", "value": "world" }], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		),
+		autopilot.NewTestRequest(
+			`mutation TagCreate($input:TagCreateInput!){tagCreate(input: $input){tag{id,key,value},errors{message,path}}}`,
+			`{"input": { {{ template "id3" }}, "key": "dev", "type": "Domain", "value": "true" }}`,
+			`{"data": { "tagCreate": { "tag": { {{ template "id2" }}, "key": "dev", "value": "true" }, "errors": [] }}}`,
+		),
+		autopilot.NewTestRequest(
+			`mutation TagCreate($input:TagCreateInput!){tagCreate(input: $input){tag{id,key,value},errors{message,path}}}`,
+			`{"input": { {{ template "id3" }}, "key": "foo", "type": "Domain", "value": "bar" }}`,
+			`{"data": { "tagCreate": { "tag": { {{ template "id3" }}, "key": "foo", "value": "bar" }, "errors": [] }}}`,
+		),
+		autopilot.NewTestRequest(
+			`mutation TagDelete($input:TagDeleteInput!){tagDelete(input: $input){errors{message,path}}}`,
+			`{"input": { {{ template "id1" }} }}`,
+			`{"data": { "tagDelete": { "errors": [] }}}`,
+		),
+	}
+	client := BestTestClient(t, "tags/reconcile_tags", requests...)
 	// Act
-	err := client.ReconcileTags(domain, noTags)
-
-	// Assert
-	autopilot.Ok(t, err)
-}
-
-func TestReconcileTagsAssignAllTags(t *testing.T) {
-	// Arrange
-	domain := &ol.Domain{DomainId: ol.DomainId{Id: id3}}
-	testRequestTagsList := autopilot.NewTestRequest(
-		`query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
-		`{ {{ template "first_page_variables" }}, "domain": { {{ template "id3" }} } }`,
-		`{ "data": { "account": { "domain": { "tags": { "nodes": [], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
-	)
-	testRequestAssignTagOne := autopilot.NewTestRequest(
-		`mutation TagAssign($input:TagAssignInput!){tagAssign(input: $input){tags{id,key,value},errors{message,path}}}`,
-		`{"input": { "id": "{{ template "id3_string" }}", "tags": [
-      { "key": "dev", "value": "true" },
-      { "key": "foo", "value": "bar" },
-      { "key": "prod", "value": "true" },
-      { "key": "env", "value": "prod" }
-     ] } }`,
-		`{"data": {"tagAssign": { "tags": [
-      { "key": "dev", "value": "true" },
-      { "key": "foo", "value": "bar" },
-      { "key": "prod", "value": "true" },
-      { "key": "env", "value": "prod" }
-     ], "errors": [] }}}`,
-	)
-
-	requests := []autopilot.TestRequest{testRequestTagsList, testRequestAssignTagOne}
-	client := BestTestClient(t, "tags/reconcile_tags_create_all", requests...)
-	// Act
-	err := client.ReconcileTags(domain, allTags)
+	err := client.ReconcileTags(domain, []ol.Tag{tagOne, tagTwo})
 
 	// Assert
 	autopilot.Ok(t, err)
