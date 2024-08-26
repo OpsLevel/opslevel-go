@@ -216,7 +216,7 @@ func (client *Client) DeleteTag(id ID) error {
 
 // ReconcileTags manages tags API operations for TaggableResourceInterface implementations
 //
-// Tags not in 'tagsWanted' will be deleted, new tags from 'tagsWanted' will be created
+// Tags from `tagsDesired` are compared against current tags of TaggableResourceInterface and differences are either created or deleted.
 func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tagsDesired []Tag) error {
 	tagConnection, err := resourceType.GetTags(client, nil)
 	if err != nil {
