@@ -1,4 +1,0 @@
-kind: Bugfix
-body: Fix bug with ReconcileTags not properly reconciling the tags due to incorrect
-  behavior of TagAssign mutation.
-time: 2024-08-26T11:06:07.874443-05:00
