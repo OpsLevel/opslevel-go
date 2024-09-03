@@ -24,6 +24,7 @@ type Service struct {
 	Locked                     bool                         `json:"locked" graphql:"locked"`
 	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
 	Name                       string                       `json:"name,omitempty"`
+	Note                       string                       `json:"note,omitempty"`
 	Owner                      TeamId                       `json:"owner,omitempty"`
 	Parent                     *SystemId                    `json:"parent,omitempty" graphql:"parent"`
 	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
@@ -712,6 +713,24 @@ func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
 	if err := m.Payload.Service.Hydrate(client); err != nil {
 		return &m.Payload.Service, err
 	}
+	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+}
+
+func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service, error) {
+	var m struct {
+		Payload struct {
+			Service Service
+			Errors  []OpsLevelErrors
+		} `graphql:"serviceNoteUpdate(input: $input)"`
+	}
+
+	v := PayloadVariables{
+		"input": input,
+	}
+	if err := client.Mutate(&m, v, WithName("ServiceUpdate")); err != nil {
+		return nil, err
+	}
+
 	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
 }
 
