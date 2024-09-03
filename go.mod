@@ -8,7 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.14.0
 	github.com/gosimple/slug v1.14.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
-	github.com/hasura/go-graphql-client v0.12.2
+	github.com/hasura/go-graphql-client v0.13.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c
 	github.com/pkg/errors v0.9.1
