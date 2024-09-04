@@ -727,7 +727,7 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 	v := PayloadVariables{
 		"input": input,
 	}
-	if err := client.Mutate(&m, v, WithName("ServiceUpdate")); err != nil {
+	if err := client.Mutate(&m, v, WithName("ServiceUpdateNote")); err != nil {
 		return nil, err
 	}
 
