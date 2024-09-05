@@ -127,6 +127,22 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) InviteUserWithForceSendInvite(email string, input UserInput, forceSendInvite *bool) (*User, error) {
+	var m struct {
+		Payload struct {
+			User   User
+			Errors []OpsLevelErrors
+		} `graphql:"userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite)"`
+	}
+	v := PayloadVariables{
+		"email":           email,
+		"input":           input,
+		"forceSendInvite": forceSendInvite,
+	}
+	err := client.Mutate(&m, v, WithName("UserInviteWithForceSendInvite"))
+	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) GetUser(value string) (*User, error) {
 	var q struct {
 		Account struct {

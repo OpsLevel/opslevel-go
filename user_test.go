@@ -28,6 +28,31 @@ func TestInviteUser(t *testing.T) {
 	autopilot.Equals(t, ol.UserRoleUser, result.Role)
 }
 
+func TestInviteUserWithForceSendInvite(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation UserInviteWithForceSendInvite($email:String!$forceSendInvite:Boolean$input:UserInput!){userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite){user{id,email,htmlUrl,name,role},errors{message,path}}}`,
+		`{"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "skipWelcomeEmail": false }, "forceSendInvite": true}`,
+		`{"data": { "userInvite": { "user": {{ template "user_1" }}, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/invite_with_force_send_invite", testRequest)
+	// Act
+	result, err := client.InviteUserWithForceSendInvite(
+		"kyle@opslevel.com",
+		ol.UserInput{
+			Name:             ol.RefOf("Kyle Rockman"),
+			SkipWelcomeEmail: ol.RefOf(false),
+		},
+		ol.RefOf(true),
+	)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Kyle Rockman", result.Name)
+	autopilot.Equals(t, ol.UserRoleUser, result.Role)
+}
+
 func TestGetUser(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
