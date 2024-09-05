@@ -112,22 +112,7 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 	return &q.Account.User.Teams, nil
 }
 
-func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
-	var m struct {
-		Payload struct {
-			User   User
-			Errors []OpsLevelErrors
-		} `graphql:"userInvite(email: $email input: $input)"`
-	}
-	v := PayloadVariables{
-		"email": email,
-		"input": input,
-	}
-	err := client.Mutate(&m, v, WithName("UserInvite"))
-	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
-}
-
-func (client *Client) InviteUserWithForceSendInvite(email string, input UserInput, forceSendInvite *bool) (*User, error) {
+func (client *Client) InviteUser(email string, input UserInput, forceSendInvite *bool) (*User, error) {
 	var m struct {
 		Payload struct {
 			User   User
@@ -139,7 +124,7 @@ func (client *Client) InviteUserWithForceSendInvite(email string, input UserInpu
 		"input":           input,
 		"forceSendInvite": forceSendInvite,
 	}
-	err := client.Mutate(&m, v, WithName("UserInviteWithForceSendInvite"))
+	err := client.Mutate(&m, v, WithName("UserInvite"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
