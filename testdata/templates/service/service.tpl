@@ -133,3 +133,55 @@
     }
 }
 {{ end }}
+{{- define "service_with_note" }}
+{
+    "apiDocumentPath": "/src/swagger.json",
+    "aliases": [
+        "{{ template "alias1" }}"
+    ],
+    "description": "{{ template "description" }}",
+    "framework": null,
+    "htmlUrl": "https://app.opslevel.com/services/{{ template "alias1" }}",
+    {{ template "id1" }},
+    "language": null,
+    "lifecycle": null,
+    "locked": true,
+    "name": "Foo",
+    "note": "Foo note",
+    "owner": null,
+    "preferredApiDocument": null,
+    "preferredApiDocumentSource": "PULL",
+    "product": null,
+    "repos": {
+        "edges": [],
+        "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": null,
+        "endCursor": null
+        },
+        "totalCount": 0
+    },
+    "tags": {
+        "nodes": [],
+        "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": null,
+        "endCursor": null
+        },
+        "totalCount": 0
+    },
+    "tier": null,
+    "tools": {
+        "nodes": [],
+        "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": null,
+        "endCursor": null
+        },
+        "totalCount": 0
+    }
+}
+{{ end }}
