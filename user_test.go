@@ -28,6 +28,53 @@ func TestInviteUser(t *testing.T) {
 	autopilot.Equals(t, ol.UserRoleUser, result.Role)
 }
 
+func TestInviteUsers(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation InviteUsers($input:UsersInviteInput!){usersInvite(input: $input){users{id,email,htmlUrl,name,role},failed,errors{message,path}}}`,
+		`{"input": { "users": [ {"email": "kyle@opslevel.com"}, { {{ template "id2" }} } ] }}`,
+		`{"data": { "usersInvite": { "users": [ {{ template "user_1" }}, {{ template "user_2" }}], "failed": [], "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/invite_users", testRequest)
+	userIdentifierInputs := []ol.UserIdentifierInput{
+		{Email: ol.RefOf("kyle@opslevel.com")},
+		{Id: ol.RefOf(id2)},
+	}
+	usersInviteInput := ol.UsersInviteInput{Users: userIdentifierInputs}
+	// Act
+	result, err := client.InviteUsers(usersInviteInput)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(result))
+	autopilot.Equals(t, id2, result[1].Id)
+}
+
+func TestInviteUsersPending(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation InviteUsers($input:UsersInviteInput!){usersInvite(input: $input){users{id,email,htmlUrl,name,role},failed,errors{message,path}}}`,
+		`{"input": { "users": [ {"email": "kyle@opslevel.com"}, { {{ template "id2" }} } ], "scope": "pending" }}`,
+		`{"data": { "usersInvite": { "users": [ {{ template "user_1" }}, {{ template "user_2" }}], "failed": [], "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/invite_users_pending", testRequest)
+	userIdentifierInputs := []ol.UserIdentifierInput{
+		{Email: ol.RefOf("kyle@opslevel.com")},
+		{Id: ol.RefOf(id2)},
+	}
+	usersInviteInput := ol.UsersInviteInput{
+		Users: userIdentifierInputs,
+		Scope: ol.RefOf(ol.UsersInviteScopeEnumPending),
+	}
+	// Act
+	result, err := client.InviteUsers(usersInviteInput)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(result))
+	autopilot.Equals(t, id2, result[1].Id)
+}
+
 func TestGetUser(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(

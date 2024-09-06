@@ -1075,3 +1075,9 @@ type UsersFilterInput struct {
 	Arg  *string         `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_arg"`      // Value to be filtered. (Optional.)
 	Type *BasicTypeEnum  `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // The operation applied to value on the field. (Optional.)
 }
+
+// UsersInviteInput specifies the input fields used in the `usersInvite` mutation.
+type UsersInviteInput struct {
+	Users []UserIdentifierInput `json:"users,omitempty" yaml:"users,omitempty"`                   // A list of individual users to invite. (Optional.)
+	Scope *UsersInviteScopeEnum `json:"scope,omitempty" yaml:"scope,omitempty" example:"pending"` // A classification of users to invite. (Optional.)
+}

@@ -1008,6 +1008,18 @@ var AllUsersFilterEnum = []string{
 	string(UsersFilterEnumLastSignInAt),
 }
 
+// UsersInviteScopeEnum represents a classification of users to invite.
+type UsersInviteScopeEnum string
+
+const (
+	UsersInviteScopeEnumPending UsersInviteScopeEnum = "pending" // All users who have yet to log in to OpsLevel for the first time.
+)
+
+// All UsersInviteScopeEnum as []string
+var AllUsersInviteScopeEnum = []string{
+	string(UsersInviteScopeEnumPending),
+}
+
 // VaultSecretsSortEnum represents sort possibilities for secrets.
 type VaultSecretsSortEnum string
 

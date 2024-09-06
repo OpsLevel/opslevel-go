@@ -127,6 +127,21 @@ func (client *Client) InviteUser(email string, input UserInput) (*User, error) {
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) InviteUsers(input UsersInviteInput) ([]User, error) {
+	var m struct {
+		Payload struct {
+			Users  []User
+			Failed []string
+			Errors []OpsLevelErrors
+		} `graphql:"usersInvite(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("InviteUsers"))
+	return m.Payload.Users, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) GetUser(value string) (*User, error) {
 	var q struct {
 		Account struct {
