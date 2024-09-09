@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/go-playground/validator/v10 v10.22.0
+	github.com/go-playground/validator/v10 v10.22.1
 	github.com/go-resty/resty/v2 v2.14.0
 	github.com/gosimple/slug v1.14.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
