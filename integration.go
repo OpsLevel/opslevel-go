@@ -12,11 +12,23 @@ type IntegrationId struct {
 	Type string `json:"type"`
 }
 
+type ApiDocIntegrationFragment struct {
+	// TODO: nothing special?
+}
+
+type ArgocdDeployIntegrationFragment struct {
+	// TODO: nothing special?
+}
+
 type AWSIntegrationFragment struct {
 	IAMRole              string   `graphql:"iamRole"`
 	ExternalID           string   `graphql:"externalId"`
 	OwnershipTagOverride bool     `graphql:"awsTagsOverrideOwnership"`
 	OwnershipTagKeys     []string `graphql:"ownershipTagKeys"`
+}
+
+type AzureDevopsIntegrationFragment struct {
+	// TODO: add fields
 }
 
 type AzureResourcesIntegrationFragment struct {
@@ -25,6 +37,94 @@ type AzureResourcesIntegrationFragment struct {
 	SubscriptionId        string   `graphql:"subscriptionId"`
 	TagsOverrideOwnership bool     `graphql:"tagsOverrideOwnership"`
 	TenantId              string   `graphql:"tenantId"`
+}
+
+type BitbucketIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type CheckIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type CircleciDeployIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type DatadogIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type DeployIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type FluxIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type GenericIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type GitLabCIIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type GithubActionsIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type GithubIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type GitlabIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type IssueTrackingIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type JenkinsIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type KubernetesIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type OctopusDeployIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type OnPremGitlabIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type OpsgenieIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type PagerdutyIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type PayloadIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type ScimIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type SlackIntegrationFragment struct {
+	// TODO: add fields
+}
+
+type TerraformIntegrationFragment struct {
+	// TODO: add fields
 }
 
 type GoogleCloudProject struct {
@@ -84,6 +184,20 @@ func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integrat
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationCreate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) CreateEventIntegration(input EventIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"eventIntegrationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("EventIntegrationCreate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -155,6 +269,20 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationUpdate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateEventIntegration(input EventIntegrationUpdateInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"eventIntegrationUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("EventIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 

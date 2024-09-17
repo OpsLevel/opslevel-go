@@ -399,7 +399,7 @@ type CustomActionsTriggerEventStatusEnum string
 
 const (
 	CustomActionsTriggerEventStatusEnumPending CustomActionsTriggerEventStatusEnum = "PENDING" // A result has not been determined.
-	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed succesfully.
+	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed successfully.
 	CustomActionsTriggerEventStatusEnumFailure CustomActionsTriggerEventStatusEnum = "FAILURE" // The action failed to complete.
 )
 
@@ -432,6 +432,78 @@ var AllDayOfWeekEnum = []string{
 	string(DayOfWeekEnumFriday),
 	string(DayOfWeekEnumSaturday),
 	string(DayOfWeekEnumSunday),
+}
+
+// EventIntegrationEnum represents the type of event integration.
+type EventIntegrationEnum string
+
+const (
+	EventIntegrationEnumDeploy        EventIntegrationEnum = "deploy"        // Deploy integration.
+	EventIntegrationEnumArgocd        EventIntegrationEnum = "argocd"        // ArgoCD deploy integration.
+	EventIntegrationEnumCircleci      EventIntegrationEnum = "circleci"      // CircleCI deploy integration.
+	EventIntegrationEnumFlux          EventIntegrationEnum = "flux"          // Flux deploy integration.
+	EventIntegrationEnumJenkins       EventIntegrationEnum = "jenkins"       // Jenkins deploy integration.
+	EventIntegrationEnumOctopus       EventIntegrationEnum = "octopus"       // Octopus deploy integration.
+	EventIntegrationEnumGithubactions EventIntegrationEnum = "githubActions" // Github Actions deploy integration.
+	EventIntegrationEnumGitlabci      EventIntegrationEnum = "gitlabCi"      // Gitlab CI deploy integration.
+	EventIntegrationEnumAquasecurity  EventIntegrationEnum = "aquaSecurity"  // Aqua Security Custom Event Check integration.
+	EventIntegrationEnumAwsecr        EventIntegrationEnum = "awsEcr"        // AWS ECR Custom Event Check integration.
+	EventIntegrationEnumBugsnag       EventIntegrationEnum = "bugsnag"       // Bugsnag Custom Event Check integration.
+	EventIntegrationEnumCodacy        EventIntegrationEnum = "codacy"        // Codacy Custom Event Check integration.
+	EventIntegrationEnumCoveralls     EventIntegrationEnum = "coveralls"     // Coveralls Custom Event Check integration.
+	EventIntegrationEnumDatadogcheck  EventIntegrationEnum = "datadogCheck"  // Datadog Check integration.
+	EventIntegrationEnumDynatrace     EventIntegrationEnum = "dynatrace"     // Dynatrace Custom Event Check integration.
+	EventIntegrationEnumGrafana       EventIntegrationEnum = "grafana"       // Grafana Custom Event Check integration.
+	EventIntegrationEnumGrype         EventIntegrationEnum = "grype"         // Grype Custom Event Check integration.
+	EventIntegrationEnumJfrogxray     EventIntegrationEnum = "jfrogXray"     // JFrog Xray Custom Event Check integration.
+	EventIntegrationEnumLacework      EventIntegrationEnum = "lacework"      // Lacework Custom Event Check integration.
+	EventIntegrationEnumNewreliccheck EventIntegrationEnum = "newRelicCheck" // New Relic Check integration.
+	EventIntegrationEnumPrismacloud   EventIntegrationEnum = "prismaCloud"   // Prisma Cloud Custom Event Check integration.
+	EventIntegrationEnumPrometheus    EventIntegrationEnum = "prometheus"    // Prometheus Custom Event Check integration.
+	EventIntegrationEnumRollbar       EventIntegrationEnum = "rollbar"       // Rollbar Custom Event Check integration.
+	EventIntegrationEnumSentry        EventIntegrationEnum = "sentry"        // Sentry Custom Event Check integration.
+	EventIntegrationEnumSnyk          EventIntegrationEnum = "snyk"          // Snyk Custom Event Check integration.
+	EventIntegrationEnumSonarqube     EventIntegrationEnum = "sonarqube"     // SonarQube Custom Event Check integration.
+	EventIntegrationEnumStackhawk     EventIntegrationEnum = "stackhawk"     // StackHawk Custom Event Check integration.
+	EventIntegrationEnumSumologic     EventIntegrationEnum = "sumoLogic"     // Sumo Logic Custom Event Check integration.
+	EventIntegrationEnumVeracode      EventIntegrationEnum = "veracode"      // Veracode Custom Event Check integration.
+	EventIntegrationEnumCustomevent   EventIntegrationEnum = "customEvent"   // Custom Event integration.
+	EventIntegrationEnumApidoc        EventIntegrationEnum = "apiDoc"        // API Documentation integration.
+)
+
+// All EventIntegrationEnum as []string
+var AllEventIntegrationEnum = []string{
+	string(EventIntegrationEnumDeploy),
+	string(EventIntegrationEnumArgocd),
+	string(EventIntegrationEnumCircleci),
+	string(EventIntegrationEnumFlux),
+	string(EventIntegrationEnumJenkins),
+	string(EventIntegrationEnumOctopus),
+	string(EventIntegrationEnumGithubactions),
+	string(EventIntegrationEnumGitlabci),
+	string(EventIntegrationEnumAquasecurity),
+	string(EventIntegrationEnumAwsecr),
+	string(EventIntegrationEnumBugsnag),
+	string(EventIntegrationEnumCodacy),
+	string(EventIntegrationEnumCoveralls),
+	string(EventIntegrationEnumDatadogcheck),
+	string(EventIntegrationEnumDynatrace),
+	string(EventIntegrationEnumGrafana),
+	string(EventIntegrationEnumGrype),
+	string(EventIntegrationEnumJfrogxray),
+	string(EventIntegrationEnumLacework),
+	string(EventIntegrationEnumNewreliccheck),
+	string(EventIntegrationEnumPrismacloud),
+	string(EventIntegrationEnumPrometheus),
+	string(EventIntegrationEnumRollbar),
+	string(EventIntegrationEnumSentry),
+	string(EventIntegrationEnumSnyk),
+	string(EventIntegrationEnumSonarqube),
+	string(EventIntegrationEnumStackhawk),
+	string(EventIntegrationEnumSumologic),
+	string(EventIntegrationEnumVeracode),
+	string(EventIntegrationEnumCustomevent),
+	string(EventIntegrationEnumApidoc),
 }
 
 // FrequencyTimeScale represents the time scale type for the frequency.
@@ -746,7 +818,7 @@ type RepositoryVisibilityEnum string
 const (
 	RepositoryVisibilityEnumPrivate      RepositoryVisibilityEnum = "PRIVATE"      // Repositories that are private to the user.
 	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (Github, Gitlab).
-	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publically accessible.
+	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publicly accessible.
 	RepositoryVisibilityEnumOrganization RepositoryVisibilityEnum = "ORGANIZATION" // Repositories that are only accessible to organization users (ADO).
 )
 
