@@ -86,6 +86,35 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 	autopilot.Equals(t, []string{"new_azure_resources"}, result.AzureResourcesIntegrationFragment.Aliases)
 }
 
+func TestCreateEventIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation EventIntegrationCreate($input:EventIntegrationInput!){eventIntegrationCreate(input: $input){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
+		`{"input": { "name": "Custom Event", "type": "deploy" }}`,
+		`{"data": {
+      "eventIntegrationCreate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "Custom Event",
+          "type": "deploy",
+          "createdAt": "2023-04-26T16:25:29.574450Z",
+          "installedAt": "2023-04-26T16:25:28.541124Z"
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/create_event", testRequest)
+	// Act
+	result, err := client.CreateEventIntegration(opslevel.EventIntegrationInput{
+		Name: opslevel.RefOf("Custom Event"),
+		Type: opslevel.EventIntegrationEnumDeploy,
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Custom Event", result.Name)
+}
+
 func TestCreateGoogleCloudIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(

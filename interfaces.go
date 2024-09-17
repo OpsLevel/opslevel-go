@@ -61,10 +61,35 @@ type Integration struct {
 	CreatedAt   iso8601.Time `graphql:"createdAt"`   // The time this integration was created.
 	InstalledAt iso8601.Time `graphql:"installedAt"` // The time that this integration was successfully installed, if null, this indicates the integration was not completed installed.
 
+	ApiDocIntegrationFragment         `graphql:"... on ApiDocIntegration"`
+	ArgocdDeployIntegrationFragment   `graphql:"... on ArgocdDeployIntegration"`
 	AWSIntegrationFragment            `graphql:"... on AwsIntegration"`
+	AzureDevopsIntegrationFragment    `graphql:"... on AzureDevopsIntegration"`
 	AzureResourcesIntegrationFragment `graphql:"... on AzureResourcesIntegration"`
-	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
+	BitbucketIntegrationFragment      `graphql:"... on BitbucketIntegration"`
+	CheckIntegrationFragment          `graphql:"... on CheckIntegration"`
+	CircleciDeployIntegrationFragment `graphql:"... on CircleciDeployIntegration"`
+	DatadogIntegrationFragment        `graphql:"... on DatadogIntegration"`
+	DeployIntegrationFragment         `graphql:"... on DeployIntegration"`
+	FluxIntegrationFragment           `graphql:"... on FluxIntegration"`
+	GenericIntegrationFragment        `graphql:"... on GenericIntegration"`
+	GitLabCIIntegrationFragment       `graphql:"... on GitLabCIntegration"`
+	GithubActionsIntegrationFragment  `graphql:"... on GithubActionsIntegration"`
+	GithubIntegrationFragment         `graphql:"... on GithubIntegration"`
+	GitlabIntegrationFragment         `graphql:"... on GitlabIntegration"`
 	GoogleCloudIntegrationFragment    `graphql:"... on GoogleCloudIntegration"`
+	IssueTrackingIntegrationFragment  `graphql:"... on IssueTrackingIntegration"`
+	JenkinsIntegrationFragment        `graphql:"... on JenkinsIntegration"`
+	KubernetesIntegrationFragment     `graphql:"... on KubernetesIntegration"`
+	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
+	OctopusDeployIntegrationFragment  `graphql:"... on OctopusDeployIntegration"`
+	OnPremGitlabIntegrationFragment   `graphql:"... on OnPremGitlabIntegration"`
+	OpsgenieIntegrationFragment       `graphql:"... on OpsgenieIntegration"`
+	PagerdutyIntegrationFragment      `graphql:"... on PagerdutyIntegration"`
+	PayloadIntegrationFragment        `graphql:"... on PayloadIntegration"`
+	ScimIntegrationFragment           `graphql:"... on ScimIntegration"`
+	SlackIntegrationFragment          `graphql:"... on SlackIntegration"`
+	TerraformIntegrationFragment      `graphql:"... on TerraformIntegration"`
 }
 
 // ManualAlertSourceSync represents .
