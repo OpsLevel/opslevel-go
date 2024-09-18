@@ -38,3 +38,7 @@
   "name": "Kubernetes",
   "type": "generic"
 {{ end }}
+
+{{- define "integration_request" -}}
+{id,name,type,createdAt,installedAt,... on ApiDocIntegration{},... on ArgocdDeployIntegration{},... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on CircleciDeployIntegration{},... on DeployIntegration{},... on FluxIntegration{},... on GenericIntegration{},... on GitLabCIntegration{},... on GithubActionsIntegration{},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership},... on NewRelicIntegration{baseUrl,accountKey},... on OctopusDeployIntegration{}}
+{{- end }}

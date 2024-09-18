@@ -16,19 +16,13 @@ type ApiDocIntegrationFragment struct {
 	// TODO: nothing special?
 }
 
-type ArgocdDeployIntegrationFragment struct {
-	// TODO: nothing special?
-}
+type ArgocdDeployIntegrationFragment struct{}
 
 type AWSIntegrationFragment struct {
 	IAMRole              string   `graphql:"iamRole"`
 	ExternalID           string   `graphql:"externalId"`
 	OwnershipTagOverride bool     `graphql:"awsTagsOverrideOwnership"`
 	OwnershipTagKeys     []string `graphql:"ownershipTagKeys"`
-}
-
-type AzureDevopsIntegrationFragment struct {
-	// TODO: add fields
 }
 
 type AzureResourcesIntegrationFragment struct {
@@ -39,19 +33,7 @@ type AzureResourcesIntegrationFragment struct {
 	TenantId              string   `graphql:"tenantId"`
 }
 
-type BitbucketIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type CheckIntegrationFragment struct {
-	// TODO: add fields
-}
-
 type CircleciDeployIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type DatadogIntegrationFragment struct {
 	// TODO: add fields
 }
 
@@ -75,55 +57,7 @@ type GithubActionsIntegrationFragment struct {
 	// TODO: add fields
 }
 
-type GithubIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type GitlabIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type IssueTrackingIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type JenkinsIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type KubernetesIntegrationFragment struct {
-	// TODO: add fields
-}
-
 type OctopusDeployIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type OnPremGitlabIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type OpsgenieIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type PagerdutyIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type PayloadIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type ScimIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type SlackIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type TerraformIntegrationFragment struct {
 	// TODO: add fields
 }
 
