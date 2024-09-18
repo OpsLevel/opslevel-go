@@ -58,22 +58,15 @@ type CustomActionsTriggerDefinitionBase struct {
 type Integration struct {
 	IntegrationId
 
+	DisplayName string       `graphql:"displayName"` // The display name of the integration.
+	WebhookURL  *string      `graphql:"webhookUrl"`  // The endpoint to send events via webhook (if applicable).
 	CreatedAt   iso8601.Time `graphql:"createdAt"`   // The time this integration was created.
 	InstalledAt iso8601.Time `graphql:"installedAt"` // The time that this integration was successfully installed, if null, this indicates the integration was not completed installed.
 
-	ApiDocIntegrationFragment         `graphql:"... on ApiDocIntegration"`
-	ArgocdDeployIntegrationFragment   `graphql:"... on ArgocdDeployIntegration"`
 	AWSIntegrationFragment            `graphql:"... on AwsIntegration"`
 	AzureResourcesIntegrationFragment `graphql:"... on AzureResourcesIntegration"`
-	CircleciDeployIntegrationFragment `graphql:"... on CircleciDeployIntegration"`
-	DeployIntegrationFragment         `graphql:"... on DeployIntegration"`
-	FluxIntegrationFragment           `graphql:"... on FluxIntegration"`
-	GenericIntegrationFragment        `graphql:"... on GenericIntegration"`
-	GitLabCIIntegrationFragment       `graphql:"... on GitLabCIntegration"`
-	GithubActionsIntegrationFragment  `graphql:"... on GithubActionsIntegration"`
 	GoogleCloudIntegrationFragment    `graphql:"... on GoogleCloudIntegration"`
 	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
-	OctopusDeployIntegrationFragment  `graphql:"... on OctopusDeployIntegration"`
 }
 
 // ManualAlertSourceSync represents .

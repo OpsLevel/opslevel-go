@@ -7,16 +7,10 @@ import (
 )
 
 type IntegrationId struct {
-	Id   ID     `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
+	Id   ID     `json:"id"`   // The unique identifier of the integration.
+	Name string `json:"name"` // The name of the integration.
+	Type string `json:"type"` // The type of the integration.
 }
-
-type ApiDocIntegrationFragment struct {
-	// TODO: nothing special?
-}
-
-type ArgocdDeployIntegrationFragment struct{}
 
 type AWSIntegrationFragment struct {
 	IAMRole              string   `graphql:"iamRole"`
@@ -31,34 +25,6 @@ type AzureResourcesIntegrationFragment struct {
 	SubscriptionId        string   `graphql:"subscriptionId"`
 	TagsOverrideOwnership bool     `graphql:"tagsOverrideOwnership"`
 	TenantId              string   `graphql:"tenantId"`
-}
-
-type CircleciDeployIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type DeployIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type FluxIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type GenericIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type GitLabCIIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type GithubActionsIntegrationFragment struct {
-	// TODO: add fields
-}
-
-type OctopusDeployIntegrationFragment struct {
-	// TODO: add fields
 }
 
 type GoogleCloudProject struct {
