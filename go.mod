@@ -1,6 +1,6 @@
 module github.com/opslevel/opslevel-go/v2024
 
-go 1.22
+go 1.23
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
