@@ -8,7 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.14.0
 	github.com/gosimple/slug v1.14.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
-	github.com/hasura/go-graphql-client v0.13.0
+	github.com/hasura/go-graphql-client v0.13.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c
 	github.com/pkg/errors v0.9.1
@@ -21,6 +21,7 @@ require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
+	github.com/coder/websocket v1.8.12 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -40,5 +41,4 @@ require (
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
-	nhooyr.io/websocket v1.8.11 // indirect
 )
