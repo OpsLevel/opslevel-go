@@ -399,7 +399,7 @@ type CustomActionsTriggerEventStatusEnum string
 
 const (
 	CustomActionsTriggerEventStatusEnumPending CustomActionsTriggerEventStatusEnum = "PENDING" // A result has not been determined.
-	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed succesfully.
+	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed successfully.
 	CustomActionsTriggerEventStatusEnumFailure CustomActionsTriggerEventStatusEnum = "FAILURE" // The action failed to complete.
 )
 
@@ -746,7 +746,7 @@ type RepositoryVisibilityEnum string
 const (
 	RepositoryVisibilityEnumPrivate      RepositoryVisibilityEnum = "PRIVATE"      // Repositories that are private to the user.
 	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (Github, Gitlab).
-	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publically accessible.
+	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publicly accessible.
 	RepositoryVisibilityEnumOrganization RepositoryVisibilityEnum = "ORGANIZATION" // Repositories that are only accessible to organization users (ADO).
 )
 

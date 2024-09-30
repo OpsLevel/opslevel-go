@@ -793,7 +793,7 @@ type ManualCheckFrequencyUpdateInput struct {
 	FrequencyValue     *int                `json:"frequencyValue,omitempty" yaml:"frequencyValue,omitempty" example:"3"`                    // The value to be used together with the frequency scale. (Optional.)
 }
 
-// MemberInput represents input for specifiying members on a group.
+// MemberInput represents input for specifying members on a group.
 type MemberInput struct {
 	Email string `json:"email" yaml:"email" example:"first.last@domain.com"` // The user's email. (Required.)
 }
