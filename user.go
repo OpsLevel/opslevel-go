@@ -112,7 +112,7 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 	return &q.Account.User.Teams, nil
 }
 
-func (client *Client) InviteUser(email string, input UserInput, forceSendInvite *bool) (*User, error) {
+func (client *Client) InviteUser(email string, input UserInput, sendInvite bool) (*User, error) {
 	var m struct {
 		Payload struct {
 			User   User
@@ -122,7 +122,7 @@ func (client *Client) InviteUser(email string, input UserInput, forceSendInvite 
 	v := PayloadVariables{
 		"email":           email,
 		"input":           input,
-		"forceSendInvite": forceSendInvite,
+		"forceSendInvite": RefOf(sendInvite),
 	}
 	err := client.Mutate(&m, v, WithName("UserInvite"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)

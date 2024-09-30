@@ -21,12 +21,35 @@ func TestInviteUser(t *testing.T) {
 		SkipWelcomeEmail: ol.RefOf(false),
 	}
 	// Act
-	result, err := client.InviteUser("kyle@opslevel.com", userInput, ol.RefOf(true))
+	result, err := client.InviteUser("kyle@opslevel.com", userInput, true)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "Kyle Rockman", result.Name)
 	autopilot.Equals(t, ol.UserRoleUser, result.Role)
+}
+
+func TestInviteUserSkipSendInvite(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation UserInvite($email:String!$forceSendInvite:Boolean$input:UserInput!){userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite){user{id,email,htmlUrl,name,role},errors{message,path}}}`,
+		`{"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "role": "team_member", "skipWelcomeEmail": false }, "forceSendInvite": false}`,
+		`{"data": { "userInvite": { "user": { {{ template "user_id_email_1" }}, "name": "Kyle Rockman", "role": "team_member" }, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "user/invite_skip_send_invite", testRequest)
+	userInput := ol.UserInput{
+		Name:             ol.RefOf("Kyle Rockman"),
+		Role:             ol.RefOf(ol.UserRoleTeamMember),
+		SkipWelcomeEmail: ol.RefOf(false),
+	}
+	// Act
+	result, err := client.InviteUser("kyle@opslevel.com", userInput, false)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Kyle Rockman", result.Name)
+	autopilot.Equals(t, ol.UserRoleTeamMember, result.Role)
 }
 
 func TestGetUser(t *testing.T) {
