@@ -58,13 +58,15 @@ type CustomActionsTriggerDefinitionBase struct {
 type Integration struct {
 	IntegrationId
 
+	DisplayName string       `graphql:"displayName"` // The display name of the integration.
+	WebhookURL  *string      `graphql:"webhookUrl"`  // The endpoint to send events via webhook (if applicable).
 	CreatedAt   iso8601.Time `graphql:"createdAt"`   // The time this integration was created.
 	InstalledAt iso8601.Time `graphql:"installedAt"` // The time that this integration was successfully installed, if null, this indicates the integration was not completed installed.
 
 	AWSIntegrationFragment            `graphql:"... on AwsIntegration"`
 	AzureResourcesIntegrationFragment `graphql:"... on AzureResourcesIntegration"`
-	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
 	GoogleCloudIntegrationFragment    `graphql:"... on GoogleCloudIntegration"`
+	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
 }
 
 // ManualAlertSourceSync represents .
