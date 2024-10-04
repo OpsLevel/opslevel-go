@@ -101,6 +101,43 @@ type CheckAlertSourceUsageUpdateInput struct {
 	AlertSourceNamePredicate *PredicateUpdateInput `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`               // The condition that the alert source name should satisfy to be evaluated. (Optional.)
 }
 
+// CheckCodeIssueCreateInput specifies the input fields used to create a code issue check.
+type CheckCodeIssueCreateInput struct {
+	Name           string                        `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled        *bool                         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn       *iso8601.Time                 `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId     ID                            `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId        ID                            `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId        *ID                           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId       *ID                           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
+	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"NEW_ENUM_SET_DEFAULT"`                            // The type of constraint used in evaluation the code issues check. (Required.)
+	IssueName      *string                       `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_name"`                  // The issue name used for code issue lookup. (Optional.)
+	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                               // The resolution time recommended by the reporting source of the code issue. (Optional.)
+	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing. (Optional.)
+	IssueType      *[]string                     `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider. (Optional.)
+	Severity       *[]string                     `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue. (Optional.)
+}
+
+// CheckCodeIssueUpdateInput specifies the input fields used to update an exasting code issue check.
+type CheckCodeIssueUpdateInput struct {
+	Name           *string                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId     *ID                           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId        *ID                           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId        *ID                           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId       *ID                           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled        *bool                         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn       *iso8601.Time                 `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id             ID                            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"NEW_ENUM_SET_DEFAULT"`                                // The type of constraint used in evaluation the code issues check. (Required.)
+	IssueName      *string                       `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_name"`                      // The issue name used for code issue lookup. (Optional.)
+	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                                   // The resolution time recommended by the reporting source of the code issue. (Optional.)
+	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                               // The threshold count of code issues beyond which the check starts failing. (Optional.)
+	IssueType      *[]string                     `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`                  // The type of code issue to consider. (Optional.)
+	Severity       *[]string                     `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue. (Optional.)
+}
+
 // CheckCustomEventCreateInput represents creates a custom event check.
 type CheckCustomEventCreateInput struct {
 	Name             string        `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
@@ -593,6 +630,12 @@ type CheckToolUsageUpdateInput struct {
 type ChecksCopyToCampaignInput struct {
 	CampaignId ID       `json:"campaignId" yaml:"campaignId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                    // The ID of the existing campaign. (Required.)
 	CheckIds   []string `json:"checkIds" yaml:"checkIds" example:"['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']"` // The IDs of the existing rubric checks to be copied. (Required.)
+}
+
+// CodeIssueResolutionTimeInput represents the allowed threshold for how long an issue has been detected before the check starts failing.
+type CodeIssueResolutionTimeInput struct {
+	Unit  CodeIssueResolutionTimeUnitEnum `json:"unit" yaml:"unit" example:"NEW_ENUM_SET_DEFAULT"` // . (Required.)
+	Value int                             `json:"value" yaml:"value" example:"3"`                  // . (Required.)
 }
 
 // ContactCreateInput specifies the input fields used to create a contact.
