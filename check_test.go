@@ -1017,8 +1017,6 @@ func TestChecks(t *testing.T) {
 			autopilot.Equals(t, nil, err)
 			autopilot.Equals(t, id, result.Id)
 			autopilot.Equals(t, result, &tc.expectedCheck)
-			autopilot.Equals(t, "Performance", result.Category.Name)
-			autopilot.Equals(t, "Bronze", result.Level.Name)
 		})
 	}
 }
