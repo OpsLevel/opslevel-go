@@ -17,6 +17,7 @@ type AWSIntegrationFragment struct {
 	ExternalID           string   `graphql:"externalId"`
 	OwnershipTagOverride bool     `graphql:"awsTagsOverrideOwnership"`
 	OwnershipTagKeys     []string `graphql:"ownershipTagKeys"`
+	RegionOverride       []string `graphql:"regionOverride"`
 }
 
 type AzureResourcesIntegrationFragment struct {
@@ -53,11 +54,12 @@ type IntegrationConnection struct {
 }
 
 type AWSIntegrationInput struct {
-	Name                 *string  `json:"name,omitempty"`
-	IAMRole              *string  `json:"iamRole,omitempty"`
-	ExternalID           *string  `json:"externalId,omitempty"`
-	OwnershipTagOverride *bool    `json:"awsTagsOverrideOwnership,omitempty"`
-	OwnershipTagKeys     []string `json:"ownershipTagKeys"`
+	Name                 *string   `json:"name,omitempty"`
+	IAMRole              *string   `json:"iamRole,omitempty"`
+	ExternalID           *string   `json:"externalId,omitempty"`
+	OwnershipTagOverride *bool     `json:"awsTagsOverrideOwnership,omitempty"`
+	OwnershipTagKeys     []string  `json:"ownershipTagKeys"`
+	RegionOverride       *[]string `json:"regionOverride,omitempty"`
 }
 
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }

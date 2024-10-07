@@ -45,7 +45,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	)
 	testRequestEight := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys,regionOverride},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "integrations":{ "nodes":[{{ template "integration_1" }}] } }}}`,
 	)
