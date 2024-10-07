@@ -380,3 +380,18 @@ func TestDeleteIntegration(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 }
+
+func TestIntegrationReactivate(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation IntegrationReactivate($integration:IdentifierInput!){integrationReactivate(integration: $integration){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
+		`{"integration": { {{ template "id1" }} }}`,
+		`{"data": { "integrationReactivate": { "integration": { {{ template "id1" }} }, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "integration/reactivate", testRequest)
+	// Act
+	result, err := client.IntegrationReactivate(string(id1))
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+}

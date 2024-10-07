@@ -1,0 +1,3 @@
+kind: Feature
+body: new integrationReactivate() mutation can reactivate an invalidated or deactivated integration
+time: 2024-10-07T13:30:24.524221-05:00
