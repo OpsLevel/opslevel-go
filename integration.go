@@ -245,3 +245,17 @@ func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudI
 	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
+
+func (client *Client) IntegrationReactivate(identifier string) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"integrationReactivate(integration: $integration)"`
+	}
+	v := PayloadVariables{
+		"integration": *NewIdentifier(identifier),
+	}
+	err := client.Mutate(&m, v, WithName("IntegrationReactivate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
