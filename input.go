@@ -41,6 +41,7 @@ type AwsIntegrationInput struct {
 	ExternalId               *string   `json:"externalId,omitempty" yaml:"externalId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https:/docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
 	OwnershipTagKeys         *[]string `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
 	AwsTagsOverrideOwnership *bool     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty" example:"false"`    // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
+	RegionOverride           *[]string `json:"regionOverride,omitempty" yaml:"regionOverride,omitempty" example:"['us-east-1', 'eu-west-1']"`   // Overrides the AWS region(s) that will be synchronized by this integration. (Optional.)
 }
 
 // AzureResourcesIntegrationInput specifies the input fields used to create and update an Azure resources integration.
