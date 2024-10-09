@@ -389,7 +389,7 @@ func TestDeleteIntegration(t *testing.T) {
 func TestIntegrationReactivate(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation IntegrationReactivate($integration:IdentifierInput!){integrationReactivate(integration: $integration){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
+		`mutation IntegrationReactivate($integration:IdentifierInput!){integrationReactivate(integration: $integration){integration{id,name,type,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys,regionOverride},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on NewRelicIntegration{baseUrl,accountKey},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership}},errors{message,path}}}`,
 		`{"integration": { {{ template "id1" }} }}`,
 		`{"data": { "integrationReactivate": { "integration": { {{ template "id1" }} }, "errors": [] }}}`,
 	)
