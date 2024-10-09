@@ -232,6 +232,22 @@ var AllCampaignStatusEnum = []string{
 	string(CampaignStatusEnumEnded),
 }
 
+// CheckCodeIssueConstraintEnum represents the values allowed for the constraint type for the code issues check.
+type CheckCodeIssueConstraintEnum string
+
+const (
+	CheckCodeIssueConstraintEnumAny      CheckCodeIssueConstraintEnum = "any"      // The check will look for any code issues regardless of issue name.
+	CheckCodeIssueConstraintEnumExact    CheckCodeIssueConstraintEnum = "exact"    // The check will look for any code issues matching the issue name exactly.
+	CheckCodeIssueConstraintEnumContains CheckCodeIssueConstraintEnum = "contains" // The check will look for any code issues by name containing the issue name.
+)
+
+// All CheckCodeIssueConstraintEnum as []string
+var AllCheckCodeIssueConstraintEnum = []string{
+	string(CheckCodeIssueConstraintEnumAny),
+	string(CheckCodeIssueConstraintEnumExact),
+	string(CheckCodeIssueConstraintEnumContains),
+}
+
 // CheckResultStatusEnum represents the status of the check result.
 type CheckResultStatusEnum string
 
@@ -285,6 +301,7 @@ const (
 	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency.
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters.
 	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages.
+	CheckTypeCodeIssue           CheckType = "code_issue"            // Verifies that the severity and quantity of code issues does not exceed defined thresholds.
 )
 
 // All CheckType as []string
@@ -308,6 +325,23 @@ var AllCheckType = []string{
 	string(CheckTypeServiceDependency),
 	string(CheckTypeRepoGrep),
 	string(CheckTypePackageVersion),
+	string(CheckTypeCodeIssue),
+}
+
+// CodeIssueResolutionTimeUnitEnum represents the allowed values for duration units for the resolution time.
+type CodeIssueResolutionTimeUnitEnum string
+
+const (
+	CodeIssueResolutionTimeUnitEnumDay   CodeIssueResolutionTimeUnitEnum = "day"   // Day, as a duration.
+	CodeIssueResolutionTimeUnitEnumWeek  CodeIssueResolutionTimeUnitEnum = "week"  // Week, as a duration.
+	CodeIssueResolutionTimeUnitEnumMonth CodeIssueResolutionTimeUnitEnum = "month" // Month, as a duration.
+)
+
+// All CodeIssueResolutionTimeUnitEnum as []string
+var AllCodeIssueResolutionTimeUnitEnum = []string{
+	string(CodeIssueResolutionTimeUnitEnumDay),
+	string(CodeIssueResolutionTimeUnitEnumWeek),
+	string(CodeIssueResolutionTimeUnitEnumMonth),
 }
 
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
