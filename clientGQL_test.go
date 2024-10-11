@@ -168,3 +168,40 @@ func TestClientQuery(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "1234", string(q.Account.Id))
 }
+
+func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
+	return func(w http.ResponseWriter) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+	}
+}
+
+func TestClientQueryReturns404(t *testing.T) {
+	// Arrange
+	headers := map[string]string{"x": "x"}
+	request := `{ "query": "{account{id}}", "variables":{} }`
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/test_404",
+		httpResponseByCode(http.StatusNotFound),
+		GraphQLQueryTemplatedValidation(t, request))
+	client := ol.NewGQLClient(
+		ol.SetAPIToken("x"),
+		ol.SetMaxRetries(0),
+		ol.SetURL(url),
+		ol.SetHeaders(headers),
+		ol.SetUserAgentExtra("x"),
+		ol.SetTimeout(0),
+		ol.SetAPIVisibility("internal"),
+		ol.SetPageSize(100))
+	var q struct {
+		Account struct {
+			Id ol.ID
+		}
+	}
+	var v map[string]interface{}
+	// Act
+	err := client.Query(&q, v)
+	handledErrs := ol.HandleErrors(err, nil)
+	// Assert
+	autopilot.Equals(t, true, strings.Contains(handledErrs.Error(), fmt.Sprintf("HTTP %d", http.StatusNotFound)))
+	// autopilot.Ok(t, err)
+}

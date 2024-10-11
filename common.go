@@ -3,10 +3,12 @@ package opslevel
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"slices"
 	"strings"
 	"time"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -56,11 +58,29 @@ func RefTo[T any](v T) *T {
 	return &v
 }
 
-func HandleErrors(err error, errs []OpsLevelErrors) error {
-	if err != nil {
-		return err
+func HandleErrors(err error, opslevelErrs []OpsLevelErrors) error {
+	allErrs := err
+	if hasuraErrs, ok := err.(graphql.Errors); ok {
+		for _, hasuraErr := range hasuraErrs {
+			netErr := hasuraErr.Unwrap()
+			if netErr, ok := netErr.(graphql.NetworkError); ok {
+				allErrs = errors.Join(allErrs, formatHTTPStatusErrors(netErr))
+			}
+		}
 	}
-	return FormatErrors(errs)
+	if allErrs != nil {
+		return allErrs
+	}
+	return FormatErrors(opslevelErrs)
+}
+
+func formatHTTPStatusErrors(err graphql.NetworkError) error {
+	return fmt.Errorf(
+		"HTTP %d %s\n\t%s",
+		err.StatusCode(),
+		http.StatusText(err.StatusCode()),
+		err.Body(),
+	)
 }
 
 func FormatErrors(errs []OpsLevelErrors) error {
