@@ -3,6 +3,7 @@ package opslevel_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -176,7 +177,7 @@ func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
 	}
 }
 
-func TestClientQueryReturnsNotOk(t *testing.T) {
+func TestClientQueryHasBadHttpStatus(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
 	request := `{ "query": "{account{id}}", "variables":{} }`
@@ -201,10 +202,10 @@ func TestClientQueryReturnsNotOk(t *testing.T) {
 	// Act
 	err := client.Query(&q, v)
 	// Assert
-	autopilot.Equals(t, false, ol.IsHTTPStatusOk(err))
+	autopilot.Equals(t, true, ol.HasBadHttpStatus(err))
 }
 
-func TestClientQueryReturnsIsOk(t *testing.T) {
+func TestClientQueryHasOkHttpStatus(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
 	request := `{ "query": "{account{id}}", "variables":{} }`
@@ -229,5 +230,7 @@ func TestClientQueryReturnsIsOk(t *testing.T) {
 	// Act
 	err := client.Query(&q, v)
 	// Assert
-	autopilot.Equals(t, true, ol.IsHTTPStatusOk(err))
+	autopilot.Equals(t, false, ol.HasBadHttpStatus(err))
+	autopilot.Equals(t, false, ol.HasBadHttpStatus(nil))
+	autopilot.Equals(t, false, ol.HasBadHttpStatus(errors.New("asdf")))
 }
