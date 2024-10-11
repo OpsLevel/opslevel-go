@@ -28,3 +28,30 @@ type ServiceUpdateInputV2 struct {
 func (inputType ServiceUpdateInputV2) GetGraphQLType() string {
 	return "ServiceUpdateInput"
 }
+
+func ConvertServiceUpdateInput(input ServiceUpdateInput) ServiceUpdateInputV2 {
+	return ServiceUpdateInputV2{
+		Alias:                 NullableString(input.Alias),
+		Description:           NullableString(input.Description),
+		Framework:             NullableString(input.Framework),
+		Id:                    input.Id,
+		Language:              NullableString(input.Language),
+		LifecycleAlias:        NullableString(input.LifecycleAlias),
+		Name:                  NullableString(input.Name),
+		OwnerInput:            input.OwnerInput,
+		Parent:                input.Parent,
+		SkipAliasesValidation: input.SkipAliasesValidation,
+		Product:               NullableString(input.Product),
+		TierAlias:             NullableString(input.TierAlias),
+	}
+}
+
+func NullableString(value *string) *Nullable[string] {
+	if value == nil {
+		return nil
+	}
+	if *value == "" {
+		return NewNull()
+	}
+	return NewNullableFrom(*value)
+}

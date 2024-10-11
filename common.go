@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -78,6 +79,21 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	}
 
 	return allErrors
+}
+
+// Checks if error has any HTTP status code, and if it's 300 or greater
+func HasBadHttpStatus(err error) bool {
+	if hasuraErrs, ok := err.(graphql.Errors); ok {
+		for _, hasuraErr := range hasuraErrs {
+			netErr := hasuraErr.Unwrap()
+			if netErr, ok := netErr.(graphql.NetworkError); ok {
+				if netErr.StatusCode() >= 300 {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func NewISO8601Date(datetime string) iso8601.Time {

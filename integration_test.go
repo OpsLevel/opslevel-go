@@ -12,7 +12,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation AWSIntegrationCreate($input:AwsIntegrationInput!){awsIntegrationCreate(input: $input){integration{{ template "integration_request" }},errors{message,path}}}`,
-		`{"input": { "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role", "externalId": "123456789", "ownershipTagKeys": ["owner"] }}`,
+		`{"input": { "iamRole": "arn:aws:iam::XXXX:role/aws-integration-role", "externalId": "123456789", "ownershipTagKeys": ["owner"], "regionOverride": ["us-east-1"] }}`,
 		`{"data": {
       "awsIntegrationCreate": {
         "integration": {
@@ -26,6 +26,9 @@ func TestCreateAWSIntegration(t *testing.T) {
           "awsTagsOverrideOwnership": true,
           "ownershipTagKeys": [
             "owner"
+          ],
+          "regionOverride": [
+            "us-east-1"
           ]
         },
         "errors": []
@@ -34,12 +37,14 @@ func TestCreateAWSIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_aws", testRequest)
 	// Act
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
-		IAMRole:    opslevel.RefOf("arn:aws:iam::XXXX:role/aws-integration-role"),
-		ExternalID: opslevel.RefOf("123456789"),
+		IAMRole:        opslevel.RefOf("arn:aws:iam::XXXX:role/aws-integration-role"),
+		ExternalID:     opslevel.RefOf("123456789"),
+		RegionOverride: opslevel.RefOf([]string{"us-east-1"}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, []string{"us-east-1"}, result.RegionOverride)
 	autopilot.Equals(t, "AWS - XXXX", result.Name)
 }
 
@@ -408,4 +413,19 @@ func TestDeleteIntegration(t *testing.T) {
 	err := client.DeleteIntegration(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
+}
+
+func TestIntegrationReactivate(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation IntegrationReactivate($integration:IdentifierInput!){integrationReactivate(integration: $integration){integration{{ template "integration_request" }},errors{message,path}}}`,
+		`{"integration": { {{ template "id1" }} }}`,
+		`{"data": { "integrationReactivate": { "integration": { {{ template "id1" }} }, "errors": [] }}}`,
+	)
+	client := BestTestClient(t, "integration/reactivate", testRequest)
+	// Act
+	result, err := client.IntegrationReactivate(string(id1))
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
 }
