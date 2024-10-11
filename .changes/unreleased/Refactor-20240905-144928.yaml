@@ -1,3 +1,0 @@
-kind: Refactor
-body: 'BREAKING CHANGE: new argument sendInvite added to UserInvite() method to force send a user invite e-mail'
-time: 2024-09-05T14:49:28.926087-05:00
