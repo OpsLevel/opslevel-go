@@ -3,6 +3,7 @@ package opslevel_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -167,4 +168,69 @@ func TestClientQuery(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "1234", string(q.Account.Id))
+}
+
+func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
+	return func(w http.ResponseWriter) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+	}
+}
+
+func TestClientQueryHasBadHttpStatus(t *testing.T) {
+	// Arrange
+	headers := map[string]string{"x": "x"}
+	request := `{ "query": "{account{id}}", "variables":{} }`
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/test_404",
+		httpResponseByCode(http.StatusNotFound),
+		GraphQLQueryTemplatedValidation(t, request))
+	client := ol.NewGQLClient(
+		ol.SetAPIToken("x"),
+		ol.SetMaxRetries(0),
+		ol.SetURL(url),
+		ol.SetHeaders(headers),
+		ol.SetUserAgentExtra("x"),
+		ol.SetTimeout(0),
+		ol.SetAPIVisibility("internal"),
+		ol.SetPageSize(100))
+	var q struct {
+		Account struct {
+			Id ol.ID
+		}
+	}
+	var v map[string]interface{}
+	// Act
+	err := client.Query(&q, v)
+	// Assert
+	autopilot.Equals(t, true, ol.HasBadHttpStatus(err))
+}
+
+func TestClientQueryHasOkHttpStatus(t *testing.T) {
+	// Arrange
+	headers := map[string]string{"x": "x"}
+	request := `{ "query": "{account{id}}", "variables":{} }`
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/test_200",
+		httpResponseByCode(http.StatusOK),
+		GraphQLQueryTemplatedValidation(t, request))
+	client := ol.NewGQLClient(
+		ol.SetAPIToken("x"),
+		ol.SetMaxRetries(0),
+		ol.SetURL(url),
+		ol.SetHeaders(headers),
+		ol.SetUserAgentExtra("x"),
+		ol.SetTimeout(0),
+		ol.SetAPIVisibility("internal"),
+		ol.SetPageSize(100))
+	var q struct {
+		Account struct {
+			Id ol.ID
+		}
+	}
+	var v map[string]interface{}
+	// Act
+	err := client.Query(&q, v)
+	// Assert
+	autopilot.Equals(t, false, ol.HasBadHttpStatus(err))
+	autopilot.Equals(t, false, ol.HasBadHttpStatus(nil))
+	autopilot.Equals(t, false, ol.HasBadHttpStatus(errors.New("asdf")))
 }
