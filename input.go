@@ -696,6 +696,18 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty" yaml:"note,omitempty" example:"example_note"`                          // Additional information about the domain. (Optional.)
 }
 
+// EventIntegrationInput represents .
+type EventIntegrationInput struct {
+	Name *string              `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"` // The name of the event integration. (Optional.)
+	Type EventIntegrationEnum `json:"type" yaml:"type" example:"example_type"`                     // The type of event integration to create. (Required.)
+}
+
+// EventIntegrationUpdateInput represents .
+type EventIntegrationUpdateInput struct {
+	Id   ID     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the event integration to update. (Required.)
+	Name string `json:"name" yaml:"name" example:"example_name"`                // The name of the event integration. (Required.)
+}
+
 // ExternalUuidMutationInput specifies the input used for modifying a resource's external UUID.
 type ExternalUuidMutationInput struct {
 	ResourceId ID `json:"resourceId" yaml:"resourceId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource. (Required.)

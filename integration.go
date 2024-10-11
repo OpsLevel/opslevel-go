@@ -7,9 +7,9 @@ import (
 )
 
 type IntegrationId struct {
-	Id   ID     `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
+	Id   ID     `json:"id"`   // The unique identifier of the integration.
+	Name string `json:"name"` // The name of the integration.
+	Type string `json:"type"` // The type of the integration.
 }
 
 type AWSIntegrationFragment struct {
@@ -89,6 +89,20 @@ func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integrat
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) CreateEventIntegration(input EventIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"eventIntegrationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("EventIntegrationCreate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload struct {
@@ -157,6 +171,20 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationUpdate"))
+	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateEventIntegration(input EventIntegrationUpdateInput) (*Integration, error) {
+	var m struct {
+		Payload struct {
+			Integration *Integration
+			Errors      []OpsLevelErrors
+		} `graphql:"eventIntegrationUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("EventIntegrationUpdate"))
 	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
