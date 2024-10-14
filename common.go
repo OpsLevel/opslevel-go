@@ -81,16 +81,14 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return allErrors
 }
 
-// Checks if error has any HTTP status code, and if it's 300 or greater
-func HasBadHttpStatus(err error) bool {
-	if hasuraErrs, ok := err.(graphql.Errors); ok {
-		for _, hasuraErr := range hasuraErrs {
-			netErr := hasuraErr.Unwrap()
-			if netErr, ok := netErr.(graphql.NetworkError); ok {
-				if netErr.StatusCode() >= 300 {
-					return true
-				}
-			}
+// HasNotFoundError checks if the error is a graphql.Errors and has a path which means it's a not found error
+func HasNotFoundError(err error) bool {
+	if _, ok := err.(graphql.Errors); !ok {
+		return false
+	}
+	for _, hasuraErr := range err.(graphql.Errors) {
+		if len(hasuraErr.Path) > 0 {
+			return true
 		}
 	}
 	return false
