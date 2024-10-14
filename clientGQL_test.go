@@ -14,6 +14,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/hasura/go-graphql-client"
 	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 
@@ -177,7 +178,7 @@ func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
 	}
 }
 
-func TestClientQueryHasBadHttpStatus(t *testing.T) {
+func Test404ResponseNotAnOpsLevelApiError(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
 	request := `{ "query": "{account{id}}", "variables":{} }`
@@ -202,10 +203,10 @@ func TestClientQueryHasBadHttpStatus(t *testing.T) {
 	// Act
 	err := client.Query(&q, v)
 	// Assert
-	autopilot.Equals(t, true, ol.HasBadHttpStatus(err))
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(err))
 }
 
-func TestClientQueryHasOkHttpStatus(t *testing.T) {
+func TestGenericHasuraErrorNotAnOpsLevelApiError(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
 	request := `{ "query": "{account{id}}", "variables":{} }`
@@ -230,7 +231,15 @@ func TestClientQueryHasOkHttpStatus(t *testing.T) {
 	// Act
 	err := client.Query(&q, v)
 	// Assert
-	autopilot.Equals(t, false, ol.HasBadHttpStatus(err))
-	autopilot.Equals(t, false, ol.HasBadHttpStatus(nil))
-	autopilot.Equals(t, false, ol.HasBadHttpStatus(errors.New("asdf")))
+	_, isHasuraError := err.(graphql.Errors)
+	autopilot.Equals(t, true, isHasuraError)
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(err))
+}
+
+func TestGenericErrorIsNotAnOpsLevelApiError(t *testing.T) {
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(errors.New("asdf")))
+}
+
+func TestNilErrorIsNotAnOpsLevelApiError(t *testing.T) {
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(nil))
 }
