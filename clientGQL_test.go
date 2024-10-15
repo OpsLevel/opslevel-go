@@ -14,6 +14,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/hasura/go-graphql-client"
 	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 
@@ -177,7 +178,26 @@ func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
 	}
 }
 
-func TestClientQueryHasBadHttpStatus(t *testing.T) {
+func TestMissingTeamIsAnOpsLevelApiError(t *testing.T) {
+	testRequest := autopilot.NewTestRequest(
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ {{ template "id1" }} }`,
+		`{"errors": [
+				{
+					"message": "Team with id '{{ template "id1_string" }}' does not exist on this account",
+					"path": ["account", "team"],
+					"locations": [{"line": 1, "column": 32}]
+				}
+     ]}`,
+	)
+	client := BestTestClient(t, "team/missing_team", testRequest)
+	// Act
+	_, err := client.GetTeam(id1)
+	// Assert
+	autopilot.Equals(t, true, ol.IsOpsLevelApiError(err))
+}
+
+func Test404ResponseNotAnOpsLevelApiError(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
 	request := `{ "query": "{account{id}}", "variables":{} }`
@@ -202,10 +222,10 @@ func TestClientQueryHasBadHttpStatus(t *testing.T) {
 	// Act
 	err := client.Query(&q, v)
 	// Assert
-	autopilot.Equals(t, true, ol.HasBadHttpStatus(err))
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(err))
 }
 
-func TestClientQueryHasOkHttpStatus(t *testing.T) {
+func TestGenericHasuraErrorNotAnOpsLevelApiError(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
 	request := `{ "query": "{account{id}}", "variables":{} }`
@@ -230,7 +250,15 @@ func TestClientQueryHasOkHttpStatus(t *testing.T) {
 	// Act
 	err := client.Query(&q, v)
 	// Assert
-	autopilot.Equals(t, false, ol.HasBadHttpStatus(err))
-	autopilot.Equals(t, false, ol.HasBadHttpStatus(nil))
-	autopilot.Equals(t, false, ol.HasBadHttpStatus(errors.New("asdf")))
+	_, isHasuraError := err.(graphql.Errors)
+	autopilot.Equals(t, true, isHasuraError)
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(err))
+}
+
+func TestGenericErrorIsNotAnOpsLevelApiError(t *testing.T) {
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(errors.New("asdf")))
+}
+
+func TestNilErrorIsNotAnOpsLevelApiError(t *testing.T) {
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(nil))
 }
