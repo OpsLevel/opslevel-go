@@ -178,6 +178,25 @@ func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
 	}
 }
 
+func TestMissingTeamIsAnOpsLevelApiError(t *testing.T) {
+	testRequest := autopilot.NewTestRequest(
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ {{ template "id1" }} }`,
+		`{"errors": [
+				{
+					"message": "Team with id '{{ template "id1_string" }}' does not exist on this account",
+					"path": ["account", "team"],
+					"locations": [{"line": 1, "column": 32}]
+				}
+     ]}`,
+	)
+	client := BestTestClient(t, "team/missing_team", testRequest)
+	// Act
+	_, err := client.GetTeam(id1)
+	// Assert
+	autopilot.Equals(t, true, ol.IsOpsLevelApiError(err))
+}
+
 func Test404ResponseNotAnOpsLevelApiError(t *testing.T) {
 	// Arrange
 	headers := map[string]string{"x": "x"}
