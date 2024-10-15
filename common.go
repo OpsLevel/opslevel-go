@@ -81,8 +81,8 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	return allErrors
 }
 
-// HasNotFoundError checks if the error is a graphql.Errors and has a path which means it's a not found error
-func HasNotFoundError(err error) bool {
+// IsOpsLevelApiError checks if the error is returned by OpsLevel's API
+func IsOpsLevelApiError(err error) bool {
 	if _, ok := err.(graphql.Errors); !ok {
 		return false
 	}
