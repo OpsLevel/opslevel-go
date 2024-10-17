@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
+	"github.com/hasura/go-graphql-client"
 )
 
 type IntegrationId struct {
@@ -129,7 +130,10 @@ func (client *Client) GetIntegration(id ID) (*Integration, error) {
 	}
 	err := client.Query(&q, v, WithName("IntegrationGet"))
 	if q.Account.Integration.Id == "" {
-		err = fmt.Errorf("integration with ID '%s' not found", id)
+		err = graphql.Errors{graphql.Error{
+			Message: fmt.Sprintf("integration with ID '%s' not found", id),
+			Path:    []any{"account", "integration"},
+		}}
 	}
 	return &q.Account.Integration, HandleErrors(err, nil)
 }
