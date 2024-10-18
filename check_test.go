@@ -285,14 +285,14 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		},
 
 		"CreateCodeIssue": {
-			fixture: BuildCreateRequestAlt("CodeIssue", map[string]any{
+			fixture: BuildCreateRequest("CodeIssue", map[string]any{
 				"constraint":     "exact",
 				"issueName":      "test-issue",
 				"issueType":      []string{"bug", "error"},
 				"maxAllowed":     3,
 				"resolutionTime": map[string]any{"unit": "day", "value": 1},
 				"severity":       []string{"sev1", "sev2"},
-			}, map[string]any{}),
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckCodeIssueCreateInput](checkCreateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumExact
@@ -306,17 +306,24 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input.Severity = ol.RefOf([]string{"sev1", "sev2"})
 				return c.CreateCheckCodeIssue(*input)
 			},
-			expectedCheck: CheckWithExtras(map[string]any{}),
+			expectedCheck: CheckWithExtras(map[string]any{
+				"constraint":     "exact",
+				"issueName":      "test-issue",
+				"issueType":      []string{"bug", "error"},
+				"maxAllowed":     3,
+				"resolutionTime": map[string]any{"unit": "day", "value": 1},
+				"severity":       []string{"sev1", "sev2"},
+			}),
 		},
 		"UpdateCodeIssue": {
-			fixture: BuildUpdateRequestAlt("CodeIssue", map[string]any{
+			fixture: BuildUpdateRequest("CodeIssue", map[string]any{
 				"constraint":     "contains",
 				"issueName":      "test-issue-updated",
 				"issueType":      []string{"big-bug", "big-error"},
 				"maxAllowed":     1,
 				"resolutionTime": map[string]any{"unit": "week", "value": 1},
 				"severity":       []string{"sev1"},
-			}, map[string]any{}),
+			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumContains
@@ -330,7 +337,14 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input.Severity = ol.RefOf([]string{"sev1"})
 				return c.UpdateCheckCodeIssue(*input)
 			},
-			expectedCheck: CheckWithExtras(map[string]any{}),
+			expectedCheck: CheckWithExtras(map[string]any{
+				"constraint":     "contains",
+				"issueName":      "test-issue-updated",
+				"issueType":      []string{"big-bug", "big-error"},
+				"maxAllowed":     1,
+				"resolutionTime": map[string]any{"unit": "week", "value": 1},
+				"severity":       []string{"sev1"},
+			}),
 		},
 
 		"CreateGitBranchProtection": {
