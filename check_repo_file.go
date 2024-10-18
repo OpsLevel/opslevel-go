@@ -1,10 +1,10 @@
 package opslevel
 
 type RepositoryFileCheckFragment struct {
-	DirectorySearch       bool       `graphql:"directorySearch"`
-	Filepaths             []string   `graphql:"filePaths"`
-	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"`
-	UseAbsoluteRoot       bool       `graphql:"useAbsoluteRoot"`
+	DirectorySearch       bool       `graphql:"directorySearch"`       // Whether the check looks for the existence of a directory instead of a file.
+	FileContentsPredicate *Predicate `graphql:"fileContentsPredicate"` // Condition to match the file content.
+	Filepaths             []string   `graphql:"filePaths"`             // Restrict the search to certain file paths.
+	UseAbsoluteRoot       bool       `graphql:"useAbsoluteRoot"`       // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service).
 }
 
 func (client *Client) CreateCheckRepositoryFile(input CheckRepositoryFileCreateInput) (*Check, error) {

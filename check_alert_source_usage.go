@@ -1,8 +1,8 @@
 package opslevel
 
 type AlertSourceUsageCheckFragment struct {
-	AlertSourceNamePredicate *Predicate          `graphql:"alertSourceNamePredicate"`
-	AlertSourceType          AlertSourceTypeEnum `graphql:"alertSourceType"`
+	AlertSourceNamePredicate *Predicate          `graphql:"alertSourceNamePredicate"` // The condition that the alert source name should satisfy to be evaluated.
+	AlertSourceType          AlertSourceTypeEnum `graphql:"alertSourceType"`          // The type of the alert source.
 }
 
 func (client *Client) CreateCheckAlertSourceUsage(input CheckAlertSourceUsageCreateInput) (*Check, error) {

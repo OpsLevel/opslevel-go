@@ -1,7 +1,7 @@
 package opslevel
 
 type HasRecentDeployCheckFragment struct {
-	Days int `graphql:"days"`
+	Days int `graphql:"days"` // The number of days to check since the last deploy.
 }
 
 func (client *Client) CreateCheckHasRecentDeploy(input CheckHasRecentDeployCreateInput) (*Check, error) {

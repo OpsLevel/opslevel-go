@@ -1,8 +1,8 @@
 package opslevel
 
 type RepositorySearchCheckFragment struct {
-	FileExtensions        []string  `graphql:"fileExtensions"`
-	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"`
+	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"` // Condition to match the text content.
+	FileExtensions        []string  `graphql:"fileExtensions"`        // Restrict the search to files of given extensions.
 }
 
 func (client *Client) CreateCheckRepositorySearch(input CheckRepositorySearchCreateInput) (*Check, error) {

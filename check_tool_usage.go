@@ -1,10 +1,10 @@
 package opslevel
 
 type ToolUsageCheckFragment struct {
-	ToolCategory         ToolCategory `graphql:"toolCategory"`
-	ToolNamePredicate    *Predicate   `graphql:"toolNamePredicate"`
-	ToolUrlPredicate     *Predicate   `graphql:"toolUrlPredicate"`
-	EnvironmentPredicate *Predicate   `graphql:"environmentPredicate"`
+	EnvironmentPredicate *Predicate   `graphql:"environmentPredicate"` // The condition that the environment should satisfy to be evaluated.
+	ToolCategory         ToolCategory `graphql:"toolCategory"`         // The category that the tool belongs to.
+	ToolNamePredicate    *Predicate   `graphql:"toolNamePredicate"`    // The condition that the tool name should satisfy to be evaluated.
+	ToolUrlPredicate     *Predicate   `graphql:"toolUrlPredicate"`     // The condition that the tool url should satisfy to be evaluated.
 }
 
 func (client *Client) CreateCheckToolUsage(input CheckToolUsageCreateInput) (*Check, error) {
