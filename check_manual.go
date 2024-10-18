@@ -3,8 +3,8 @@ package opslevel
 import "github.com/relvacode/iso8601"
 
 type ManualCheckFragment struct {
-	UpdateFrequency       *ManualCheckFrequency `graphql:"updateFrequency"`
-	UpdateRequiresComment bool                  `graphql:"updateRequiresComment"`
+	UpdateFrequency       *ManualCheckFrequency `graphql:"updateFrequency"`       // The minimum frequency of the updates.
+	UpdateRequiresComment bool                  `graphql:"updateRequiresComment"` // Whether the check requires a comment or not.
 }
 
 type ManualCheckFrequency struct {

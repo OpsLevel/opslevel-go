@@ -112,7 +112,7 @@ type CheckCodeIssueCreateInput struct {
 	OwnerId        *ID                           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
 	FilterId       *ID                           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
 	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
-	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"NEW_ENUM_SET_DEFAULT"`                            // The type of constraint used in evaluation the code issues check. (Required.)
+	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"contains"`                                        // The type of constraint used in evaluation the code issues check. (Required.)
 	IssueName      *string                       `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_name"`                  // The issue name used for code issue lookup. (Optional.)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                               // The resolution time recommended by the reporting source of the code issue. (Optional.)
 	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing. (Optional.)
@@ -635,8 +635,8 @@ type ChecksCopyToCampaignInput struct {
 
 // CodeIssueResolutionTimeInput represents the allowed threshold for how long an issue has been detected before the check starts failing.
 type CodeIssueResolutionTimeInput struct {
-	Unit  CodeIssueResolutionTimeUnitEnum `json:"unit" yaml:"unit" example:"NEW_ENUM_SET_DEFAULT"` // . (Required.)
-	Value int                             `json:"value" yaml:"value" example:"3"`                  // . (Required.)
+	Unit  CodeIssueResolutionTimeUnitEnum `json:"unit" yaml:"unit" example:"day"` // . (Required.)
+	Value int                             `json:"value" yaml:"value" example:"3"` // . (Required.)
 }
 
 // ContactCreateInput specifies the input fields used to create a contact.

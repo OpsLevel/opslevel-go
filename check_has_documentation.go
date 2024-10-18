@@ -1,8 +1,8 @@
 package opslevel
 
 type HasDocumentationCheckFragment struct {
-	DocumentType    HasDocumentationTypeEnum    `graphql:"documentType"`
-	DocumentSubtype HasDocumentationSubtypeEnum `graphql:"documentSubtype"`
+	DocumentSubtype HasDocumentationSubtypeEnum `graphql:"documentSubtype"` // The subtype of the document.
+	DocumentType    HasDocumentationTypeEnum    `graphql:"documentType"`    // The type of the document.
 }
 
 func (client *Client) CreateCheckHasDocumentation(input CheckHasDocumentationCreateInput) (*Check, error) {
