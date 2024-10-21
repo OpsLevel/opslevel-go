@@ -153,6 +153,11 @@ func TestGetAliasableResource(t *testing.T) {
 			Aliases: []string{alias1, alias2, alias4},
 		},
 	)
+	system := autopilot.Register[ol.SystemId]("example_system",
+		ol.SystemId{
+			Id:      id1,
+			Aliases: []string{alias3},
+		})
 
 	requests := []autopilot.TestRequest{
 		autopilot.NewTestRequest(
@@ -175,6 +180,11 @@ func TestGetAliasableResource(t *testing.T) {
 			`{"alias": "{{ template "alias1" }}"}`,
 			`{ "data": { "account": {"team": {{ template "example_team" }}}}}`,
 		),
+		autopilot.NewTestRequest(
+			`query SystemGet($input:IdentifierInput!){account{system(input: $input){{ template "system_get" }}}}`,
+			`{"input": {"alias": "{{ template "alias1" }}"}}`,
+			`{ "data": { "account": {"system": {{ template "example_system"}}}}}`,
+		),
 	}
 	client := BestTestClient(t, "tags/get_aliasable_resource", requests...)
 	// Act
@@ -182,6 +192,7 @@ func TestGetAliasableResource(t *testing.T) {
 	service2, err2 := client.GetAliasableResource(ol.AliasOwnerTypeEnumService, alias1)
 	team1, err3 := client.GetAliasableResource(ol.AliasOwnerTypeEnumTeam, string(id1))
 	team2, err4 := client.GetAliasableResource(ol.AliasOwnerTypeEnumTeam, alias1)
+	system1, err5 := client.GetAliasableResource(ol.AliasOwnerTypeEnumSystem, alias1)
 	// Assert
 	autopilot.Ok(t, err1)
 	autopilot.Equals(t, service.Aliases, service1.GetAliases())
@@ -191,4 +202,6 @@ func TestGetAliasableResource(t *testing.T) {
 	autopilot.Equals(t, team.Aliases, team1.GetAliases())
 	autopilot.Ok(t, err4)
 	autopilot.Equals(t, team.Aliases, team2.GetAliases())
+	autopilot.Ok(t, err5)
+	autopilot.Equals(t, system.Aliases, system1.GetAliases())
 }
