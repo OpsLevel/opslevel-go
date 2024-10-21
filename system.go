@@ -62,12 +62,20 @@ func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (
 	return &q.Account.System.Tags, nil
 }
 
+func (systemId *SystemId) GetAliases() []string {
+	return systemId.Aliases
+}
+
 func (systemId *SystemId) ResourceId() ID {
 	return systemId.Id
 }
 
 func (systemId *SystemId) ResourceType() TaggableResource {
 	return TaggableResourceSystem
+}
+
+func (systemId *SystemId) AliasableType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumSystem
 }
 
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases

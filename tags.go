@@ -77,13 +77,10 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	case TaggableResourceUser:
 		taggableResource, err = client.GetUser(identifier)
 	default:
-		return nil, fmt.Errorf("not a taggable resource type: %s", string(resourceType))
+		err = fmt.Errorf("not a taggable resource type: %s", resourceType)
 	}
 
-	if err != nil {
-		return nil, err
-	}
-	return taggableResource, nil
+	return taggableResource, err
 }
 
 func (tagConnection *TagConnection) GetTagById(tagId ID) (*Tag, error) {

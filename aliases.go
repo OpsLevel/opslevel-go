@@ -2,7 +2,46 @@ package opslevel
 
 import (
 	"errors"
+	"fmt"
 )
+
+type AliasableResourceInterface interface {
+	GetAliases() []string
+	ResourceId() ID
+	AliasableType() AliasOwnerTypeEnum
+}
+
+func (client *Client) GetAliasableResource(resourceType AliasOwnerTypeEnum, identifier string) (AliasableResourceInterface, error) {
+	var err error
+	var aliasableResource AliasableResourceInterface
+
+	switch resourceType {
+	case AliasOwnerTypeEnumService:
+		if IsID(identifier) {
+			aliasableResource, err = client.GetService(ID(identifier))
+		} else {
+			aliasableResource, err = client.GetServiceWithAlias(identifier)
+		}
+	case AliasOwnerTypeEnumTeam:
+		if IsID(identifier) {
+			aliasableResource, err = client.GetTeam(ID(identifier))
+		} else {
+			aliasableResource, err = client.GetTeamWithAlias(identifier)
+		}
+	case AliasOwnerTypeEnumSystem:
+		aliasableResource, err = client.GetSystem(identifier)
+	case AliasOwnerTypeEnumDomain:
+		aliasableResource, err = client.GetDomain(identifier)
+	case AliasOwnerTypeEnumInfrastructureResource:
+		aliasableResource, err = client.GetInfrastructure(identifier)
+	case AliasOwnerTypeEnumScorecard:
+		aliasableResource, err = client.GetScorecard(identifier)
+	default:
+		err = fmt.Errorf("not a aliasable sresource type '%s'", resourceType)
+	}
+
+	return aliasableResource, err
+}
 
 func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, error) {
 	var output []string

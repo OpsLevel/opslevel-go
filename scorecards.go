@@ -37,6 +37,18 @@ type ScorecardCategoryConnection struct {
 	TotalCount int        `graphql:"totalCount"`
 }
 
+func (scorecard *ScorecardId) ResourceId() ID {
+	return scorecard.Id
+}
+
+func (scorecard *ScorecardId) AliasableType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumScorecard
+}
+
+func (scorecard *ScorecardId) GetAliases() []string {
+	return scorecard.Aliases
+}
+
 func (scorecard *ScorecardId) ReconcileAliases(client *Client, aliasesWanted []string) error {
 	aliasesToCreate, aliasesToDelete := extractAliases(scorecard.Aliases, aliasesWanted)
 

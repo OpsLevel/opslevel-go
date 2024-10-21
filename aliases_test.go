@@ -137,3 +137,27 @@ func TestDeleteAliasNotFound(t *testing.T) {
 		t.Error("expected number of errors to be > 1")
 	}
 }
+
+func TestGetAliasableResource(t *testing.T) {
+	requests := []autopilot.TestRequest{
+		autopilot.NewTestRequest(
+			``,
+			`{}`,
+			`{}`,
+		),
+		autopilot.NewTestRequest(
+			``,
+			`{}`,
+			`{}`,
+		),
+	}
+	client := BestTestClient(t, "tags/get_aliasable_resource", requests...)
+	// Act
+	service, err1 := client.GetAliasableResource(ol.AliasOwnerTypeEnumService, "")
+	team, err2 := client.GetAliasableResource(ol.AliasOwnerTypeEnumTeam, "")
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Equals(t, []string{"MyAwesomeAlias"}, service.GetAliases())
+	autopilot.Ok(t, err2)
+	autopilot.Equals(t, []string{"MyAwesomeAlias"}, team.GetAliases())
+}

@@ -109,12 +109,20 @@ func (infrastructureResource *InfrastructureResource) GetTags(client *Client, va
 	return &q.Account.InfrastructureResource.Tags, nil
 }
 
+func (infrastructureResource *InfrastructureResource) GetAliases() []string {
+	return infrastructureResource.Aliases
+}
+
 func (infrastructureResource *InfrastructureResource) ResourceId() ID {
 	return *NewID(infrastructureResource.Id)
 }
 
 func (infrastructureResource *InfrastructureResource) ResourceType() TaggableResource {
 	return TaggableResourceInfrastructureresource
+}
+
+func (infrastructureResource *InfrastructureResource) AliasableType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumInfrastructureResource
 }
 
 func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {
