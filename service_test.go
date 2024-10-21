@@ -589,7 +589,7 @@ func TestGetServiceWithAlias(t *testing.T) {
 func TestGetService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`{{ template "service_get" }}`,
+		`query ServiceGet($service:ID!){account{service(id: $service){{ template "service_get" }}}}}`,
 		`{ "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS81MzEx" }`,
 		`{ "data": {
     "account": {
