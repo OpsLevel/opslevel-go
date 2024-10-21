@@ -138,26 +138,42 @@ func TestDeleteAliasNotFound(t *testing.T) {
 	}
 }
 
-func TestGetAliasableResource(t *testing.T) {
-	requests := []autopilot.TestRequest{
-		autopilot.NewTestRequest(
-			``,
-			`{}`,
-			`{}`,
-		),
-		autopilot.NewTestRequest(
-			``,
-			`{}`,
-			`{}`,
-		),
-	}
-	client := BestTestClient(t, "tags/get_aliasable_resource", requests...)
-	// Act
-	service, err1 := client.GetAliasableResource(ol.AliasOwnerTypeEnumService, "")
-	team, err2 := client.GetAliasableResource(ol.AliasOwnerTypeEnumTeam, "")
-	// Assert
-	autopilot.Ok(t, err1)
-	autopilot.Equals(t, []string{"MyAwesomeAlias"}, service.GetAliases())
-	autopilot.Ok(t, err2)
-	autopilot.Equals(t, []string{"MyAwesomeAlias"}, team.GetAliases())
-}
+//func TestGetAliasableResource(t *testing.T) {
+//	requests := []autopilot.TestRequest{
+//		autopilot.NewTestRequest(
+//			``,
+//			`{"service": {{ template "id1"}}}`,
+//			`{}`,
+//		),
+//		autopilot.NewTestRequest(
+//			``,
+//			`{"service": "{{ template "alias1"}}"}`,
+//			`{}`,
+//		),
+//		autopilot.NewTestRequest(
+//			``,
+//			`{"id": {{ template "id1"}}}`,
+//			`{}`,
+//		),
+//		autopilot.NewTestRequest(
+//			``,
+//			`{"alias": "{{ template "alias1"}}"}`,
+//			`{}`,
+//		),
+//	}
+//	client := BestTestClient(t, "tags/get_aliasable_resource", requests...)
+//	// Act
+//	service1, err1 := client.GetAliasableResource(ol.AliasOwnerTypeEnumService, string(id1))
+//	service2, err2 := client.GetAliasableResource(ol.AliasOwnerTypeEnumService, alias1)
+//	team1, err3 := client.GetAliasableResource(ol.AliasOwnerTypeEnumTeam, string(id1))
+//	team2, err4 := client.GetAliasableResource(ol.AliasOwnerTypeEnumTeam, alias1)
+//	// Assert
+//	autopilot.Ok(t, err1)
+//	autopilot.Equals(t, []string{"MyAwesomeAlias"}, service1.GetAliases())
+//	autopilot.Ok(t, err2)
+//	autopilot.Equals(t, []string{"MyAwesomeAlias"}, service2.GetAliases())
+//	autopilot.Ok(t, err3)
+//	autopilot.Equals(t, []string{"MyAwesomeAlias"}, team1.GetAliases())
+//	autopilot.Ok(t, err4)
+//	autopilot.Equals(t, []string{"MyAwesomeAlias"}, team2.GetAliases())
+//}

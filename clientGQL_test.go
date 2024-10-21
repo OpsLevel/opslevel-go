@@ -28,6 +28,10 @@ var (
 	id2           = ol.ID(dataTemplater.ParseValue("id2_string"))
 	id3           = ol.ID(dataTemplater.ParseValue("id3_string"))
 	id4           = ol.ID(dataTemplater.ParseValue("id4_string"))
+	alias1        = dataTemplater.ParseValue("alias1")
+	alias2        = dataTemplater.ParseValue("alias2")
+	alias3        = dataTemplater.ParseValue("alias3")
+	alias4        = dataTemplater.ParseValue("alias4")
 )
 
 func TestMain(m *testing.M) {
@@ -128,7 +132,18 @@ func (testDataTemplater *TestDataTemplater) ParseTemplatedString(contents string
 	return strings.TrimSpace(data.String())
 }
 
+func stripWhitespace(input string) string {
+	// Remove newlines, tabs, and spaces
+	input = strings.ReplaceAll(input, "\n", "")
+	input = strings.ReplaceAll(input, "\t", "")
+	input = strings.ReplaceAll(input, "  ", "")
+	return input
+}
+
 func BestTestClient(t *testing.T, endpoint string, requests ...autopilot.TestRequest) *ol.Client {
+	for i, request := range requests {
+		requests[i].Request.Query = stripWhitespace(request.Request.Query)
+	}
 	urlToRegister := fmt.Sprintf("/LOCAL_TESTING/%s", endpoint)
 	registeredUrl := autopilot.RegisterPaginatedEndpoint(t, urlToRegister, requests...)
 	return ol.NewGQLClient(ol.SetAPIToken("x"), ol.SetMaxRetries(0), ol.SetURL(registeredUrl))
