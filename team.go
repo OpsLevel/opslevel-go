@@ -208,7 +208,6 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 }
 
 func (team *Team) GetAliases() []string {
-	// TODO: should this return Aliases or ManagedAliases ???
 	return team.Aliases
 }
 
