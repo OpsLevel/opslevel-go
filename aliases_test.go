@@ -142,7 +142,7 @@ func TestGetAliasableResource(t *testing.T) {
 	service := autopilot.Register[ol.ServiceId]("example_service",
 		ol.ServiceId{
 			Id:      id1,
-			Aliases: []string{alias1, alias2},
+			Aliases: []string{alias1, alias2, alias3},
 		},
 	)
 	team := autopilot.Register[ol.Team]("example_team",
@@ -150,7 +150,7 @@ func TestGetAliasableResource(t *testing.T) {
 			TeamId: ol.TeamId{
 				Id: id1,
 			},
-			Aliases: []string{alias1, alias2},
+			Aliases: []string{alias1, alias2, alias4},
 		},
 	)
 
