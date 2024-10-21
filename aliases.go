@@ -37,7 +37,7 @@ func (client *Client) GetAliasableResource(resourceType AliasOwnerTypeEnum, iden
 	case AliasOwnerTypeEnumScorecard:
 		aliasableResource, err = client.GetScorecard(identifier)
 	default:
-		err = fmt.Errorf("not a aliasable sresource type '%s'", resourceType)
+		err = fmt.Errorf("not an aliasable resource type '%s'", resourceType)
 	}
 
 	return aliasableResource, err
