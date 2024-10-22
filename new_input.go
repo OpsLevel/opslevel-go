@@ -51,7 +51,7 @@ func NullableString(value *string) *Nullable[string] {
 		return nil
 	}
 	if *value == "" {
-		return NewNull()
+		return NewNull[string]()
 	}
 	return NewNullableFrom(*value)
 }

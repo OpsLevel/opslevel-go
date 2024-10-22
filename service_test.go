@@ -351,10 +351,10 @@ func TestUpdateService(t *testing.T) {
 			Input: ol.ServiceUpdateInputV2{
 				Parent:         ol.NewIdentifier(),
 				Id:             ol.NewID("123456789"),
-				Description:    ol.NewNull(),
-				Framework:      ol.NewNull(),
-				TierAlias:      ol.NewNull(),
-				LifecycleAlias: ol.NewNull(),
+				Description:    ol.NewNull[string](),
+				Framework:      ol.NewNull[string](),
+				TierAlias:      ol.NewNull[string](),
+				LifecycleAlias: ol.NewNull[string](),
 			},
 		},
 		{
