@@ -291,39 +291,39 @@ type CheckManualUpdateInput struct {
 
 // CheckPackageVersionCreateInput represents information about the package version check to be created.
 type CheckPackageVersionCreateInput struct {
-	Name                       string                 `json:"name" yaml:"name" example:"example_name"`                                                             // The display name of the check. (Required.)
-	Enabled                    *bool                  `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                          // Whether the check is enabled or not. (Optional.)
-	EnableOn                   *iso8601.Time          `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`                     // The date when the check will be automatically enabled. (Optional.)
-	CategoryId                 ID                     `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                              // The id of the category the check belongs to. (Required.)
-	LevelId                    ID                     `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                    // The id of the level the check belongs to. (Required.)
-	OwnerId                    *ID                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                // The id of the team that owns the check. (Optional.)
-	FilterId                   *ID                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`              // The id of the filter of the check. (Optional.)
-	Notes                      *string                `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                                      // Additional information about the check. (Optional.)
-	PackageManager             PackageManagerEnum     `json:"packageManager" yaml:"packageManager" example:"NEW_ENUM_SET_DEFAULT"`                                 // The package manager (ecosystem) this package relates to. (Required.)
-	PackageName                string                 `json:"packageName" yaml:"packageName" example:"example_name"`                                               // The name of the package to be checked. (Required.)
-	PackageNameIsRegex         *bool                  `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`                    // Whether or not the value in the package name field is a regular expression. (Optional.)
-	PackageConstraint          PackageConstraintEnum  `json:"packageConstraint" yaml:"packageConstraint" example:"NEW_ENUM_SET_DEFAULT"`                           // The package constraint the service is to be checked for. (Required.)
-	MissingPackageResult       *CheckResultStatusEnum `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"NEW_ENUM_SET_DEFAULT"` // The check result if the package isn't being used by a service. (Optional.)
-	VersionConstraintPredicate *PredicateInput        `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`                    // The predicate that describes the version constraint the package must satisfy. (Optional.)
+	Name                       string                 `json:"name" yaml:"name" example:"example_name"`                                                // The display name of the check. (Required.)
+	Enabled                    *bool                  `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
+	EnableOn                   *iso8601.Time          `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
+	CategoryId                 ID                     `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to. (Required.)
+	LevelId                    ID                     `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
+	OwnerId                    *ID                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
+	FilterId                   *ID                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
+	Notes                      *string                `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                         // Additional information about the check. (Optional.)
+	PackageManager             PackageManagerEnum     `json:"packageManager" yaml:"packageManager" example:"golang"`                                  // The package manager (ecosystem) this package relates to. (Required.)
+	PackageName                string                 `json:"packageName" yaml:"packageName" example:"example_name"`                                  // The name of the package to be checked. (Required.)
+	PackageNameIsRegex         *bool                  `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`       // Whether or not the value in the package name field is a regular expression. (Optional.)
+	PackageConstraint          PackageConstraintEnum  `json:"packageConstraint" yaml:"packageConstraint" example:"matches_version"`                   // The package constraint the service is to be checked for. (Required.)
+	MissingPackageResult       *CheckResultStatusEnum `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"passed"`  // The check result if the package isn't being used by a service. (Optional.)
+	VersionConstraintPredicate *PredicateInput        `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`       // The predicate that describes the version constraint the package must satisfy. (Optional.)
 }
 
 // CheckPackageVersionUpdateInput represents information about the package version check to be updated.
 type CheckPackageVersionUpdateInput struct {
-	Name                       *string                `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                         // The display name of the check. (Optional.)
-	CategoryId                 *ID                    `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the category the check belongs to. (Optional.)
-	LevelId                    *ID                    `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                // The id of the level the check belongs to. (Optional.)
-	OwnerId                    *ID                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                // The id of the owner of the check. (Optional.)
-	FilterId                   *ID                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`              // The id of the filter the check belongs to. (Optional.)
-	Enabled                    *bool                  `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                          // Whether the check is enabled or not. (Optional.)
-	EnableOn                   *iso8601.Time          `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`                     // The date when the check will be automatically enabled. (Optional.)
-	Notes                      *string                `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                                      // Additional information about the check. (Optional.)
-	Id                         ID                     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                              // The id of the check to be updated. (Required.)
-	PackageManager             *PackageManagerEnum    `json:"packageManager,omitempty" yaml:"packageManager,omitempty" example:"NEW_ENUM_SET_DEFAULT"`             // The package manager (ecosystem) this package relates to. (Optional.)
-	PackageName                *string                `json:"packageName,omitempty" yaml:"packageName,omitempty" example:"example_name"`                           // The name of the package to be checked. (Optional.)
-	PackageNameIsRegex         *bool                  `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`                    // Whether or not the value in the package name field is a regular expression. (Optional.)
-	PackageConstraint          *PackageConstraintEnum `json:"packageConstraint,omitempty" yaml:"packageConstraint,omitempty" example:"NEW_ENUM_SET_DEFAULT"`       // The package constraint the service is to be checked for. (Optional.)
-	MissingPackageResult       *CheckResultStatusEnum `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"NEW_ENUM_SET_DEFAULT"` // The check result if the package isn't being used by a service. (Optional.)
-	VersionConstraintPredicate *PredicateUpdateInput  `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`                    // The predicate that describes the version constraint the package must satisfy. (Optional.)
+	Name                       *string                          `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                // The display name of the check. (Optional.)
+	CategoryId                 *ID                              `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
+	LevelId                    *ID                              `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
+	OwnerId                    *ID                              `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
+	FilterId                   *ID                              `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
+	Enabled                    *bool                            `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not. (Optional.)
+	EnableOn                   *iso8601.Time                    `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2024-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
+	Notes                      *string                          `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_notes"`                             // Additional information about the check. (Optional.)
+	Id                         ID                               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
+	PackageManager             *PackageManagerEnum              `json:"packageManager,omitempty" yaml:"packageManager,omitempty" example:"docker"`                  // The package manager (ecosystem) this package relates to. (Optional.)
+	PackageName                *string                          `json:"packageName,omitempty" yaml:"packageName,omitempty" example:"example_name"`                  // The name of the package to be checked. (Optional.)
+	PackageNameIsRegex         *bool                            `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`           // Whether or not the value in the package name field is a regular expression. (Optional.)
+	PackageConstraint          *PackageConstraintEnum           `json:"packageConstraint,omitempty" yaml:"packageConstraint,omitempty" example:"matches_version"`   // The package constraint the service is to be checked for. (Optional.)
+	MissingPackageResult       *Nullable[CheckResultStatusEnum] `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"failed"`      // The check result if the package isn't being used by a service. (Optional.)
+	VersionConstraintPredicate *PredicateUpdateInput            `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`           // The predicate that describes the version constraint the package must satisfy. (Optional.)
 }
 
 // CheckRepositoryFileCreateInput specifies the input fields used to create a repo file check.
@@ -739,6 +739,18 @@ type DomainInput struct {
 	Note        *string `json:"note,omitempty" yaml:"note,omitempty" example:"example_note"`                          // Additional information about the domain. (Optional.)
 }
 
+// EventIntegrationInput represents .
+type EventIntegrationInput struct {
+	Name *string              `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"` // The name of the event integration. (Optional.)
+	Type EventIntegrationEnum `json:"type" yaml:"type" example:"example_type"`                     // The type of event integration to create. (Required.)
+}
+
+// EventIntegrationUpdateInput represents .
+type EventIntegrationUpdateInput struct {
+	Id   ID     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the event integration to update. (Required.)
+	Name string `json:"name" yaml:"name" example:"example_name"`                // The name of the event integration. (Required.)
+}
+
 // ExternalUuidMutationInput specifies the input used for modifying a resource's external UUID.
 type ExternalUuidMutationInput struct {
 	ResourceId ID `json:"resourceId" yaml:"resourceId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource. (Required.)
@@ -868,11 +880,11 @@ type PredicateUpdateInput struct {
 
 // PropertyDefinitionInput represents the input for defining a property.
 type PropertyDefinitionInput struct {
-	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                                           // The name of the property definition. (Optional.)
-	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:""`                                                   // The schema of the property definition. (Optional.)
-	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_description"`                      // The description of the property definition. (Optional.)
-	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"NEW_ENUM_SET_DEFAULT"` // The display status of the custom property on service pages. (Optional.)
-	AllowedInConfigFiles  *bool                      `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"true"`                   // Whether or not the property is allowed to be set in opslevel.yml config files. (Optional.)
+	Name                  *string                    `json:"name,omitempty" yaml:"name,omitempty" example:"example_name"`                             // The name of the property definition. (Optional.)
+	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:""`                                     // The schema of the property definition. (Optional.)
+	Description           *string                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_description"`        // The description of the property definition. (Optional.)
+	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"hidden"` // The display status of the custom property on service pages. (Optional.)
+	AllowedInConfigFiles  *bool                      `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"true"`     // Whether or not the property is allowed to be set in opslevel.yml config files. (Optional.)
 }
 
 // PropertyInput represents the input for setting a property.

@@ -2,6 +2,8 @@ package opslevel
 
 import (
 	"fmt"
+
+	"github.com/hasura/go-graphql-client"
 )
 
 type Level struct {
@@ -65,7 +67,10 @@ func (client *Client) GetLevel(id ID) (*Level, error) {
 	}
 	err := client.Query(&q, v, WithName("LevelGet"))
 	if q.Account.Level.Id == "" {
-		err = fmt.Errorf("level with ID '%s' not found", id)
+		err = graphql.Errors{graphql.Error{
+			Message: fmt.Sprintf("level with ID '%s' not found", id),
+			Path:    []any{"account", "level"},
+		}}
 	}
 	return &q.Account.Level, HandleErrors(err, nil)
 }

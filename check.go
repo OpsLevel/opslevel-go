@@ -6,6 +6,7 @@ import (
 
 	"github.com/mitchellh/mapstructure"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -190,7 +191,10 @@ func (client *Client) GetCheck(id ID) (*Check, error) {
 	}
 	err := client.Query(&q, v, WithName("CheckGet"))
 	if q.Account.Check.Id == "" {
-		err = fmt.Errorf("check with ID '%s' not found", id)
+		err = graphql.Errors{graphql.Error{
+			Message: fmt.Sprintf("check with ID '%s' not found", id),
+			Path:    []any{"account", "check"},
+		}}
 	}
 	return &q.Account.Check, HandleErrors(err, nil)
 }

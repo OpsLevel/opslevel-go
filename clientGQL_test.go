@@ -3,6 +3,7 @@ package opslevel_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/hasura/go-graphql-client"
 	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
 
@@ -167,4 +169,96 @@ func TestClientQuery(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "1234", string(q.Account.Id))
+}
+
+func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
+	return func(w http.ResponseWriter) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(statusCode)
+	}
+}
+
+func TestMissingTeamIsAnOpsLevelApiError(t *testing.T) {
+	testRequest := autopilot.NewTestRequest(
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ {{ template "id1" }} }`,
+		`{"errors": [
+				{
+					"message": "Team with id '{{ template "id1_string" }}' does not exist on this account",
+					"path": ["account", "team"],
+					"locations": [{"line": 1, "column": 32}]
+				}
+     ]}`,
+	)
+	client := BestTestClient(t, "team/missing_team", testRequest)
+	// Act
+	_, err := client.GetTeam(id1)
+	// Assert
+	autopilot.Equals(t, true, ol.IsOpsLevelApiError(err))
+}
+
+func Test404ResponseNotAnOpsLevelApiError(t *testing.T) {
+	// Arrange
+	headers := map[string]string{"x": "x"}
+	request := `{ "query": "{account{id}}", "variables":{} }`
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/test_404",
+		httpResponseByCode(http.StatusNotFound),
+		GraphQLQueryTemplatedValidation(t, request))
+	client := ol.NewGQLClient(
+		ol.SetAPIToken("x"),
+		ol.SetMaxRetries(0),
+		ol.SetURL(url),
+		ol.SetHeaders(headers),
+		ol.SetUserAgentExtra("x"),
+		ol.SetTimeout(0),
+		ol.SetAPIVisibility("internal"),
+		ol.SetPageSize(100))
+	var q struct {
+		Account struct {
+			Id ol.ID
+		}
+	}
+	var v map[string]interface{}
+	// Act
+	err := client.Query(&q, v)
+	// Assert
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(err))
+}
+
+func TestGenericHasuraErrorNotAnOpsLevelApiError(t *testing.T) {
+	// Arrange
+	headers := map[string]string{"x": "x"}
+	request := `{ "query": "{account{id}}", "variables":{} }`
+	url := autopilot.RegisterEndpoint("/LOCAL_TESTING/test_200",
+		httpResponseByCode(http.StatusOK),
+		GraphQLQueryTemplatedValidation(t, request))
+	client := ol.NewGQLClient(
+		ol.SetAPIToken("x"),
+		ol.SetMaxRetries(0),
+		ol.SetURL(url),
+		ol.SetHeaders(headers),
+		ol.SetUserAgentExtra("x"),
+		ol.SetTimeout(0),
+		ol.SetAPIVisibility("internal"),
+		ol.SetPageSize(100))
+	var q struct {
+		Account struct {
+			Id ol.ID
+		}
+	}
+	var v map[string]interface{}
+	// Act
+	err := client.Query(&q, v)
+	// Assert
+	_, isHasuraError := err.(graphql.Errors)
+	autopilot.Equals(t, true, isHasuraError)
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(err))
+}
+
+func TestGenericErrorIsNotAnOpsLevelApiError(t *testing.T) {
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(errors.New("asdf")))
+}
+
+func TestNilErrorIsNotAnOpsLevelApiError(t *testing.T) {
+	autopilot.Equals(t, false, ol.IsOpsLevelApiError(nil))
 }

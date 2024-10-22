@@ -1,3 +1,0 @@
-kind: Feature
-body: add regionOverride field to AWS integration, for overriding multiple regions
-time: 2024-10-07T11:40:33.163202-05:00

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -78,6 +79,19 @@ func FormatErrors(errs []OpsLevelErrors) error {
 	}
 
 	return allErrors
+}
+
+// IsOpsLevelApiError checks if the error is returned by OpsLevel's API
+func IsOpsLevelApiError(err error) bool {
+	if _, ok := err.(graphql.Errors); !ok {
+		return false
+	}
+	for _, hasuraErr := range err.(graphql.Errors) {
+		if len(hasuraErr.Path) > 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func NewISO8601Date(datetime string) iso8601.Time {

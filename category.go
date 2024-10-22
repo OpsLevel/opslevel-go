@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gosimple/slug"
+	"github.com/hasura/go-graphql-client"
 )
 
 type Category struct {
@@ -46,7 +47,10 @@ func (client *Client) GetCategory(id ID) (*Category, error) {
 	}
 	err := client.Query(&q, v, WithName("CategoryGet"))
 	if q.Account.Category.Id == "" {
-		err = fmt.Errorf("category with ID '%s' not found", id)
+		err = graphql.Errors{graphql.Error{
+			Message: fmt.Sprintf("category with ID '%s' not found", id),
+			Path:    []any{"account", "category"},
+		}}
 	}
 	return &q.Account.Category, HandleErrors(err, nil)
 }

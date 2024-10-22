@@ -38,3 +38,7 @@
   "name": "Kubernetes",
   "type": "generic"
 {{ end }}
+
+{{- define "integration_request" -}}
+{id,name,type,displayName,webhookUrl,createdAt,installedAt,... on AwsIntegration{iamRole,externalId,awsTagsOverrideOwnership,ownershipTagKeys,regionOverride},... on AzureResourcesIntegration{aliases,ownershipTagKeys,subscriptionId,tagsOverrideOwnership,tenantId},... on GoogleCloudIntegration{aliases,clientEmail,ownershipTagKeys,projects{id,name,url},tagsOverrideOwnership},... on NewRelicIntegration{baseUrl,accountKey}}
+{{- end }}
