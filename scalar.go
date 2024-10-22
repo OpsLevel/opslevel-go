@@ -94,8 +94,13 @@ func (nullable Nullable[T]) MarshalJSON() ([]byte, error) {
 	return json.Marshal(nullable.Value)
 }
 
+// NewNull returns a Nullable string that will always marshal into `null`, can be used to unset fields
+func NewNull[T string]() *Nullable[T] {
+	return NewNullOf[T]()
+}
+
 // NewNull returns a Nullable that will always marshal into `null`, can be used to unset fields
-func NewNull[T NullableConstraint]() *Nullable[T] {
+func NewNullOf[T NullableConstraint]() *Nullable[T] {
 	return &Nullable[T]{
 		SetNull: true,
 	}
