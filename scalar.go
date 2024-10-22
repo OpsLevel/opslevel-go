@@ -99,7 +99,7 @@ func NewNull[T string]() *Nullable[T] {
 	return NewNullOf[T]()
 }
 
-// NewNull returns a Nullable that will always marshal into `null`, can be used to unset fields
+// NewNullOf returns a Nullable of any type that fits NullableConstraint that will always marshal into `null`, can be used to unset fields
 func NewNullOf[T NullableConstraint]() *Nullable[T] {
 	return &Nullable[T]{
 		SetNull: true,
