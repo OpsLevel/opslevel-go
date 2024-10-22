@@ -28,8 +28,8 @@ func (id *ID) MarshalJSON() ([]byte, error) {
 }
 
 type Identifier struct {
-	Id      ID       `graphql:"id"`
-	Aliases []string `graphql:"aliases"`
+	Id      ID       `graphql:"id" json:"id"`
+	Aliases []string `graphql:"aliases" json:"aliases"`
 }
 
 func (identifierInput IdentifierInput) MarshalJSON() ([]byte, error) {

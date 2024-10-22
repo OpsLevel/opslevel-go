@@ -91,12 +91,20 @@ func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (
 	return &q.Account.Domain.Tags, nil
 }
 
+func (domainId *DomainId) GetAliases() []string {
+	return domainId.Aliases
+}
+
 func (domainId *DomainId) ResourceId() ID {
 	return domainId.Id
 }
 
 func (domainId *DomainId) ResourceType() TaggableResource {
 	return TaggableResourceDomain
+}
+
+func (DomainId *DomainId) AliasableType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumDomain
 }
 
 func (domainId *DomainId) ChildSystems(client *Client, variables *PayloadVariables) (*SystemConnection, error) {

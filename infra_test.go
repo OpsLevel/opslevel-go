@@ -59,7 +59,7 @@ func TestCreateInfra(t *testing.T) {
 func TestGetInfra(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)}}}`,
+		`query InfrastructureResourceGet($all:Boolean!$input:IdentifierInput!){account{infrastructureResource(input: $input){{ template "infra_get" }}}}`,
 		`{"all": true, "input":{ {{ template "id1" }} }}`,
 		`{"data": { "account": { "infrastructureResource": {{ template "infra_1" }} }}}`,
 	)

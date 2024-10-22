@@ -114,7 +114,7 @@ func TestSystemAssignService(t *testing.T) {
 func TestSystemGetId(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,managedAliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}},note}}}`,
+		`query SystemGet($input:IdentifierInput!){account{system(input: $input){{ template "system_get" }}}}`,
 		`{ "input": { {{ template "id1" }} } }`,
 		`{"data": { "account": { "system": {{ template "system1_response" }} }}}`,
 	)

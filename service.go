@@ -92,6 +92,10 @@ func (service *Service) ResourceType() TaggableResource {
 	return TaggableResourceService
 }
 
+func (service *Service) AliasableType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumService
+}
+
 func (service *Service) HasAlias(alias string) bool {
 	for _, a := range service.Aliases {
 		if a == alias {
@@ -196,6 +200,10 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 		}
 	}
 	return service.Tags, nil
+}
+
+func (service *Service) GetAliases() []string {
+	return service.Aliases
 }
 
 func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*ToolConnection, error) {

@@ -100,6 +100,10 @@ func (team *Team) ResourceType() TaggableResource {
 	return TaggableResourceTeam
 }
 
+func (team *Team) AliasableType() AliasOwnerTypeEnum {
+	return AliasOwnerTypeEnumTeam
+}
+
 func (team *Team) Hydrate(client *Client) error {
 	team.Responsibilities = html.UnescapeString(team.Responsibilities)
 
@@ -201,6 +205,10 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 		}
 	}
 	return team.Tags, nil
+}
+
+func (team *Team) GetAliases() []string {
+	return team.Aliases
 }
 
 func CreateContactSlack(channel string, name *string) ContactInput {

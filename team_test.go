@@ -10,7 +10,7 @@ import (
 // Probably should be a feature of autopilot
 func getTestRequestWithAlias() autopilot.TestRequest {
 	return autopilot.NewTestRequest(
-		`query TeamGet($alias:String!){account{team(alias: $alias){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query TeamGet($alias:String!){account{team(alias: $alias){{ template "team_get" }}}}`,
 		`{"alias":"example"}`,
 		`{ "data": {
     "account": {

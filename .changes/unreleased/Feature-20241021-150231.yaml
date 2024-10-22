@@ -1,0 +1,4 @@
+kind: Feature
+body: Add new 'Aliasable' interface for working with resources that are allowed to
+  have aliases
+time: 2024-10-21T15:02:31.932205-05:00
