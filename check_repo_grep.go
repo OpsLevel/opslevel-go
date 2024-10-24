@@ -1,9 +1,9 @@
 package opslevel
 
 type RepositoryGrepCheckFragment struct {
-	DirectorySearch       bool      `graphql:"directorySearch"`
-	Filepaths             []string  `graphql:"filePaths"`
-	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"`
+	DirectorySearch       bool      `graphql:"directorySearch"`       // Whether the check looks for the existence of a directory instead of a file.
+	FileContentsPredicate Predicate `graphql:"fileContentsPredicate"` // Condition to match the file content.
+	Filepaths             []string  `graphql:"filePaths"`             // Restrict the search to certain file paths.
 }
 
 func (client *Client) CreateCheckRepositoryGrep(input CheckRepositoryGrepCreateInput) (*Check, error) {

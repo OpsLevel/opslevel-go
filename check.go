@@ -19,6 +19,7 @@ type CheckInputConstructor func() any
 
 var CheckCreateConstructors = map[CheckType]CheckInputConstructor{
 	CheckTypeAlertSourceUsage:    func() any { return &CheckAlertSourceUsageCreateInput{} },
+	CheckTypeCodeIssue:           func() any { return &CheckCodeIssueCreateInput{} },
 	CheckTypeCustom:              func() any { return &CheckCreateInput{} },
 	CheckTypeGeneric:             func() any { return &CheckCustomEventCreateInput{} },
 	CheckTypeGitBranchProtection: func() any { return &CheckGitBranchProtectionCreateInput{} },
@@ -41,6 +42,7 @@ var CheckCreateConstructors = map[CheckType]CheckInputConstructor{
 
 var CheckUpdateConstructors = map[CheckType]CheckInputConstructor{
 	CheckTypeAlertSourceUsage:    func() any { return &CheckAlertSourceUsageUpdateInput{} },
+	CheckTypeCodeIssue:           func() any { return &CheckCodeIssueUpdateInput{} },
 	CheckTypeCustom:              func() any { return &CheckUpdateInput{} },
 	CheckTypeGeneric:             func() any { return &CheckCustomEventUpdateInput{} },
 	CheckTypeGitBranchProtection: func() any { return &CheckGitBranchProtectionUpdateInput{} },
@@ -140,6 +142,8 @@ func (client *Client) CreateCheck(input any) (*Check, error) {
 	switch v := input.(type) {
 	case *CheckAlertSourceUsageCreateInput:
 		return client.CreateCheckAlertSourceUsage(*v)
+	case *CheckCodeIssueCreateInput:
+		return client.CreateCheckCodeIssue(*v)
 	case *CheckCustomEventCreateInput:
 		return client.CreateCheckCustomEvent(*v)
 	case *CheckGitBranchProtectionCreateInput:
@@ -226,6 +230,8 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 	switch v := input.(type) {
 	case *CheckAlertSourceUsageUpdateInput:
 		return client.UpdateCheckAlertSourceUsage(*v)
+	case *CheckCodeIssueUpdateInput:
+		return client.UpdateCheckCodeIssue(*v)
 	case *CheckCustomEventUpdateInput:
 		return client.UpdateCheckCustomEvent(*v)
 	case *CheckGitBranchProtectionUpdateInput:

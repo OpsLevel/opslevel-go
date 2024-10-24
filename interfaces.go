@@ -19,6 +19,7 @@ type Check struct {
 	Type        CheckType    `graphql:"type"`            // The type of check.
 
 	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
+	CodeIssueCheckFragment        `graphql:"... on CodeIssueCheck"`
 	CustomEventCheckFragment      `graphql:"... on CustomEventCheck"`
 	HasRecentDeployCheckFragment  `graphql:"... on HasRecentDeployCheck"`
 	ManualCheckFragment           `graphql:"... on ManualCheck"`

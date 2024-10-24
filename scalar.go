@@ -78,7 +78,7 @@ func IsID(value string) bool {
 
 // NullableConstraint defines what types can be nullable - keep separated using the union operator (pipe)
 type NullableConstraint interface {
-	~string
+	any
 }
 
 // Nullable can be used to unset a value using an OpsLevel input struct type, should always be instantiated using a constructor.

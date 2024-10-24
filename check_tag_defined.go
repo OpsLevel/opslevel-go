@@ -1,8 +1,8 @@
 package opslevel
 
 type TagDefinedCheckFragment struct {
-	TagKey       string     `graphql:"tagKey"`
-	TagPredicate *Predicate `graphql:"tagPredicate"`
+	TagKey       string     `graphql:"tagKey"`       // The tag key where the tag predicate should be applied.
+	TagPredicate *Predicate `graphql:"tagPredicate"` // The condition that should be satisfied by the tag value.
 }
 
 func (client *Client) CreateCheckTagDefined(input CheckTagDefinedCreateInput) (*Check, error) {
