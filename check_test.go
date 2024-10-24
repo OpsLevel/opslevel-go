@@ -284,41 +284,37 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 		},
 
-		"CreateCodeIssue": {
+		"CreateCodeIssueConstraintExact": {
 			fixture: BuildCreateRequest("CodeIssue", map[string]any{
-				"constraint":     "exact",
+				"constraint":     ol.CheckCodeIssueConstraintEnumExact,
 				"issueName":      "test-issue",
-				"issueType":      []string{"bug", "error"},
-				"maxAllowed":     3,
 				"resolutionTime": map[string]any{"unit": "day", "value": 1},
-				"severity":       []string{"sev1", "sev2"},
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckCodeIssueCreateInput](checkCreateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumExact
 				input.IssueName = ol.RefOf("test-issue")
-				input.IssueType = ol.RefOf([]string{"bug", "error"})
-				input.MaxAllowed = ol.RefOf(3)
+				input.IssueType = nil  // API NOTE - not allowed when constraint is "exact"
+				input.MaxAllowed = nil // API NOTE - not allowed when constraint is "exact"
 				input.ResolutionTime = ol.RefOf(ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumDay,
 					Value: 1,
 				})
-				input.Severity = ol.RefOf([]string{"sev1", "sev2"})
+				input.Severity = nil // API NOTE - not allowed when constraint is "exact"
 				return c.CreateCheckCodeIssue(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
-				"constraint":     "exact",
+				"constraint":     ol.CheckCodeIssueConstraintEnumExact,
 				"issueName":      "test-issue",
-				"issueType":      []string{"bug", "error"},
-				"maxAllowed":     3,
+				"issueType":      nil,
+				"maxAllowed":     nil,
 				"resolutionTime": map[string]any{"unit": "day", "value": 1},
-				"severity":       []string{"sev1", "sev2"},
+				"severity":       nil,
 			}),
 		},
-		"UpdateCodeIssue": {
+		"UpdateCodeIssueConstraintAny": {
 			fixture: BuildUpdateRequest("CodeIssue", map[string]any{
-				"constraint":     "contains",
-				"issueName":      "test-issue-updated",
+				"constraint":     ol.CheckCodeIssueConstraintEnumAny,
 				"issueType":      []string{"big-bug", "big-error"},
 				"maxAllowed":     1,
 				"resolutionTime": map[string]any{"unit": "week", "value": 1},
@@ -326,24 +322,55 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
-				input.Constraint = ol.CheckCodeIssueConstraintEnumContains
-				input.IssueName = ol.RefOf("test-issue-updated")
-				input.IssueType = ol.RefOf([]string{"big-bug", "big-error"})
-				input.MaxAllowed = ol.RefOf(1)
-				input.ResolutionTime = ol.RefOf(ol.CodeIssueResolutionTimeInput{
+				input.Constraint = ol.CheckCodeIssueConstraintEnumAny
+				input.IssueName = nil // API NOTE - not allowed when constraint is "any"
+				input.IssueType = ol.NewNullableFrom([]string{"big-bug", "big-error"})
+				input.MaxAllowed = ol.NewNullableFrom(1)
+				input.ResolutionTime = ol.NewNullableFrom(ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumWeek,
 					Value: 1,
 				})
-				input.Severity = ol.RefOf([]string{"sev1"})
+				input.Severity = ol.NewNullableFrom([]string{"sev1"})
 				return c.UpdateCheckCodeIssue(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
-				"constraint":     "contains",
-				"issueName":      "test-issue-updated",
+				"constraint":     ol.CheckCodeIssueConstraintEnumAny,
+				"issueName":      nil,
 				"issueType":      []string{"big-bug", "big-error"},
 				"maxAllowed":     1,
 				"resolutionTime": map[string]any{"unit": "week", "value": 1},
 				"severity":       []string{"sev1"},
+			}),
+		},
+		"UpdateCodeIssueConstraintContains": {
+			fixture: BuildUpdateRequest("CodeIssue", map[string]any{
+				"constraint":     ol.CheckCodeIssueConstraintEnumContains,
+				"issueName":      "code-issue-updated",
+				"issueType":      nil, // API NOTE - not allowed when constraint is "contains"
+				"maxAllowed":     1,
+				"resolutionTime": map[string]any{"unit": "week", "value": 1},
+				"severity":       nil, // API NOTE - not allowed when constraint is "contains"
+			}),
+			body: func(c *ol.Client) (*ol.Check, error) {
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
+				input.Constraint = ol.CheckCodeIssueConstraintEnumContains
+				input.IssueName = ol.RefOf("code-issue-updated")
+				input.IssueType = ol.NewNullOf[[]string]()
+				input.MaxAllowed = ol.NewNullableFrom(1)
+				input.ResolutionTime = ol.NewNullableFrom(ol.CodeIssueResolutionTimeInput{
+					Unit:  ol.CodeIssueResolutionTimeUnitEnumWeek,
+					Value: 1,
+				})
+				input.Severity = ol.NewNullOf[[]string]()
+				return c.UpdateCheckCodeIssue(*input)
+			},
+			expectedCheck: CheckWithExtras(map[string]any{
+				"constraint":     ol.CheckCodeIssueConstraintEnumContains,
+				"issueName":      "code-issue-updated",
+				"issueType":      nil,
+				"maxAllowed":     1,
+				"resolutionTime": map[string]any{"unit": "week", "value": 1},
+				"severity":       nil,
 			}),
 		},
 
