@@ -2,10 +2,10 @@ package opslevel
 
 type CodeIssueCheckFragment struct {
 	Constraint     CheckCodeIssueConstraintEnum `graphql:"constraint"`     // The type of constraint used in evaluation the code issues check.
-	IssueName      *string                      `graphql:"issueName"`      // The issue name used for code issue lookup.
+	IssueName      string                       `graphql:"issueName"`      // The issue name used for code issue lookup.
 	IssueType      []string                     `graphql:"issueType"`      // The type of code issue to consider.
-	MaxAllowed     *int                         `graphql:"maxAllowed"`     // The threshold count of code issues beyond which the check starts failing.
-	ResolutionTime *CodeIssueResolutionTime     `graphql:"resolutionTime"` // The resolution time recommended by the reporting source of the code issue.
+	MaxAllowed     int                          `graphql:"maxAllowed"`     // The threshold count of code issues beyond which the check starts failing.
+	ResolutionTime CodeIssueResolutionTime      `graphql:"resolutionTime"` // The resolution time recommended by the reporting source of the code issue.
 	Severity       []string                     `graphql:"severity"`       // The severity levels of the issue.
 }
 
