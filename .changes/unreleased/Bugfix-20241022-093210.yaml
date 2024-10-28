@@ -1,3 +1,0 @@
-kind: Bugfix
-body: 'BREAKING CHANGE: CheckPackageVersionUpdateInput changed to allow MissingPackageResult to be nullable'
-time: 2024-10-22T09:32:10.794966-05:00
