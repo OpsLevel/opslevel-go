@@ -988,7 +988,7 @@ type ServiceUpdateInput struct {
 	Language              *string          `json:"language,omitempty" yaml:"language,omitempty" example:"example_language"`                // The primary programming language that the service is written in. (Optional.)
 	Framework             *string          `json:"framework,omitempty" yaml:"framework,omitempty" example:"example_framework"`             // The primary software development framework that the service uses. (Optional.)
 	TierAlias             *string          `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" example:"example_alias"`                 // The software tier that the service belongs to. (Optional.)
-	OwnerInput            *IdentifierInput `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for the service. (Optional.)
+	OwnerInput            *IdentifierInput `json:"owner,omitempty" yaml:"owner,omitempty"`                                                 // The owner for the service. (Optional.)
 	LifecycleAlias        *string          `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" example:"example_alias"`       // The lifecycle stage of the service. (Optional.)
 	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows updating a service with invalid aliases. (Optional.)
 }
