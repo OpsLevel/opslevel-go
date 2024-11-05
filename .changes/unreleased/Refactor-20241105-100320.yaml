@@ -1,0 +1,3 @@
+kind: Refactor
+body: BREAKING CHANGE revert ServiceCreateInput and ServiceUpdateInput YAML struct tags back to before 2024 convention
+time: 2024-11-05T10:03:20.275463-06:00
