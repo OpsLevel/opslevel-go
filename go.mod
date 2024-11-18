@@ -4,10 +4,9 @@ go 1.23
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/go-playground/validator/v10 v10.22.1
+	github.com/go-playground/validator/v10 v10.23.0
 	github.com/go-resty/resty/v2 v2.15.3
 	github.com/gosimple/slug v1.14.0
-	github.com/graph-gophers/graphql-go v1.5.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/hasura/go-graphql-client v0.13.1
 	github.com/mitchellh/mapstructure v1.5.0
