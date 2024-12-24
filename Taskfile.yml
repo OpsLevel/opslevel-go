@@ -14,6 +14,7 @@ tasks:
     desc: Generate code based on PUBLIC GraphQL Interface
     aliases: [gen]
     cmds:
+      - "[ -f schema.graphql ] || curl https://app.opslevel.com/public/schemas/schema.graphql > schema.graphql"
       - go generate
       - gofumpt -w .
 

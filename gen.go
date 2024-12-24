@@ -5,6 +5,7 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"flag"
 	"fmt"
 	"go/format"
@@ -18,13 +19,14 @@ import (
 	"unicode"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/graph-gophers/graphql-go"
+	"github.com/graph-gophers/graphql-go/types"
 	"github.com/hasura/go-graphql-client/ident"
 	"github.com/opslevel/opslevel-go/v2024"
 )
 
 const (
 	connectionFile  string = "connection.go"
-	enumFile        string = "enum.go"
 	inputObjectFile string = "input.go"
 	interfacesFile  string = "interfaces.go"
 	objectFile      string = "object.go"
@@ -194,12 +196,44 @@ func GetSchema(client *opslevel.Client) (*GraphQLSchema, error) {
 	return &q.Schema, nil
 }
 
+//go:embed schema.graphql
+var schemaString string
+
 func main() {
 	flag.Parse()
+
+	opts := []graphql.SchemaOpt{
+		graphql.UseStringDescriptions(),
+	}
+	schema := graphql.MustParseSchema(schemaString, nil, opts...)
+	schemaAst := schema.ASTSchema()
+	genEnums(schemaAst.Enums)
 
 	err := run()
 	if err != nil {
 		log.Fatalln(err)
+	}
+}
+
+func genEnums(schemaEnums []*types.EnumTypeDefinition) {
+	var buf bytes.Buffer
+
+	buf.WriteString(header + "\n\n")
+
+	tmpl := template.New("enum")
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl.Funcs(templFuncMap)
+	template.Must(tmpl.ParseFiles("./templates/enum.tpl"))
+
+	for _, enum := range schemaEnums {
+		if err := tmpl.ExecuteTemplate(&buf, "enum", enum); err != nil {
+			panic(err)
+		}
+	}
+	out, err := format.Source(buf.Bytes())
+	err = os.WriteFile("enum.go", out, 0o644)
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -226,7 +260,6 @@ func run() error {
 		return err
 	}
 
-	enumSchema := GraphQLSchema{}
 	inputObjectSchema := GraphQLSchema{}
 	interfaceSchema := GraphQLSchema{}
 	objectSchema := GraphQLSchema{}
@@ -235,7 +268,7 @@ func run() error {
 	for _, t := range schema.Types {
 		switch t.Kind {
 		case "ENUM":
-			enumSchema.Types = append(enumSchema.Types, t)
+			continue
 		case "INPUT_OBJECT":
 			inputObjectSchema.Types = append(inputObjectSchema.Types, t)
 		case "INTERFACE":
@@ -257,8 +290,6 @@ func run() error {
 		switch filename {
 		case connectionFile:
 			subSchema = objectSchema
-		case enumFile:
-			subSchema = enumSchema
 		case inputObjectFile:
 			subSchema = inputObjectSchema
 		case interfacesFile:
@@ -378,28 +409,6 @@ var templates = map[string]*template.Template{
 	}
 	{{- end }}
 	  `),
-	enumFile: t(header + `
-{{range .Types | sortByName}}{{if and (eq .Kind "ENUM") (not (internal .Name))}}
-{{template "enum" .}}
-{{end}}{{end}}
-
-
-{{- define "enum" -}}
-{{ template "type_comment_description" . }}
-type {{.Name}} string
-
-const (
-{{- range .EnumValues }}
-	{{$.Name}}{{.Name | enumIdentifier}} {{$.Name}} = {{.Name | quote}} {{ template "field_comment_description" . }}
-{{- end }}
-)
-// All {{$.Name}} as []string
-var All{{$.Name}} = []string {
-	{{range .EnumValues}}string({{$.Name}}{{.Name | enumIdentifier}}),
-	{{end}}
-}
-{{- end -}}
-`),
 	inputObjectFile: t(header + `
 import "github.com/relvacode/iso8601"
 
