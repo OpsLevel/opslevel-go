@@ -197,7 +197,7 @@ func GetSchema(client *opslevel.Client) (*GraphQLSchema, error) {
 }
 
 //go:embed schema.graphql
-var schemaString string
+var graphqlSchema string
 
 func main() {
 	flag.Parse()
@@ -205,7 +205,7 @@ func main() {
 	opts := []graphql.SchemaOpt{
 		graphql.UseStringDescriptions(),
 	}
-	schema := graphql.MustParseSchema(schemaString, nil, opts...)
+	schema := graphql.MustParseSchema(graphqlSchema, nil, opts...)
 	schemaAst := schema.ASTSchema()
 	genEnums(schemaAst.Enums)
 
