@@ -26,13 +26,12 @@ import (
 )
 
 const (
-	connectionFile  string = "connection.go"
-	inputObjectFile string = "input.go"
-	interfacesFile  string = "interfaces.go"
-	objectFile      string = "object.go"
-	queryFile       string = "query.go"
-	mutationFile    string = "mutation.go"
-	payloadFile     string = "payload.go"
+	connectionFile string = "connection.go"
+	interfacesFile string = "interfaces.go"
+	objectFile     string = "object.go"
+	queryFile      string = "query.go"
+	mutationFile   string = "mutation.go"
+	payloadFile    string = "payload.go"
 	// scalarFile      string = "scalar.go" // NOTE: probably not useful
 	// unionFile       string = "union.go" // NOTE: probably not useful
 )
@@ -108,6 +107,97 @@ var stringTypeSuffixes = []string{
 	"userdeletepayload",
 	"url",
 	"yaml",
+}
+
+var enumExamples = map[string]string{
+	"AlertSourceStatusTypeEnum":                       opslevel.AllAlertSourceStatusTypeEnum[0],
+	"ApiDocumentSourceEnum":                           opslevel.AllApiDocumentSourceEnum[0],
+	"AlertSourceTypeEnum":                             opslevel.AllAlertSourceTypeEnum[0],
+	"AliasOwnerTypeEnum":                              opslevel.AllAliasOwnerTypeEnum[0],
+	"BasicTypeEnum":                                   opslevel.AllBasicTypeEnum[0],
+	"CampaignFilterEnum":                              opslevel.AllCampaignFilterEnum[0],
+	"CampaignReminderChannelEnum":                     opslevel.AllCampaignReminderChannelEnum[0],
+	"CampaignReminderFrequencyUnitEnum":               opslevel.AllCampaignReminderFrequencyUnitEnum[0],
+	"CampaignReminderTypeEnum":                        opslevel.AllCampaignReminderTypeEnum[0],
+	"CampaignServiceStatusEnum":                       opslevel.AllCampaignServiceStatusEnum[0],
+	"CampaignSortEnum":                                opslevel.AllCampaignSortEnum[0],
+	"CampaignStatusEnum":                              opslevel.AllCampaignStatusEnum[0],
+	"CheckCodeIssueConstraintEnum":                    opslevel.AllCheckCodeIssueConstraintEnum[0],
+	"CheckResultStatusEnum":                           opslevel.AllCheckResultStatusEnum[0],
+	"CheckStatus":                                     opslevel.AllCheckStatus[0],
+	"CheckType":                                       opslevel.AllCheckType[0],
+	"CodeIssueResolutionTimeUnitEnum":                 opslevel.AllCodeIssueResolutionTimeUnitEnum[0],
+	"ConnectiveEnum":                                  opslevel.AllConnectiveEnum[0],
+	"ContactType":                                     opslevel.AllContactType[0],
+	"CustomActionsEntityTypeEnum":                     opslevel.AllCustomActionsEntityTypeEnum[0],
+	"CustomActionsHttpMethodEnum":                     opslevel.AllCustomActionsHttpMethodEnum[0],
+	"CustomActionsTriggerDefinitionAccessControlEnum": opslevel.AllCustomActionsTriggerDefinitionAccessControlEnum[0],
+	"CustomActionsTriggerEventStatusEnum":             opslevel.AllCustomActionsTriggerEventStatusEnum[0],
+	"DayOfWeekEnum":                                   opslevel.AllDayOfWeekEnum[0],
+	"EventIntegrationEnum":                            opslevel.AllEventIntegrationEnum[0],
+	"FrequencyTimeScale":                              opslevel.AllFrequencyTimeScale[0],
+	"HasDocumentationSubtypeEnum":                     opslevel.AllHasDocumentationSubtypeEnum[0],
+	"HasDocumentationTypeEnum":                        opslevel.AllHasDocumentationTypeEnum[0],
+	"PackageConstraintEnum":                           opslevel.AllPackageConstraintEnum[0],
+	"PackageManagerEnum":                              opslevel.AllPackageManagerEnum[0],
+	"PayloadFilterEnum":                               opslevel.AllPayloadFilterEnum[0],
+	"PayloadSortEnum":                                 opslevel.AllPayloadSortEnum[0],
+	"PredicateKeyEnum":                                opslevel.AllPredicateKeyEnum[0],
+	"PredicateTypeEnum":                               opslevel.AllPredicateTypeEnum[0],
+	"PropertyDefinitionDisplayTypeEnum":               opslevel.AllPropertyDefinitionDisplayTypeEnum[0],
+	"PropertyDisplayStatusEnum":                       opslevel.AllPropertyDisplayStatusEnum[0],
+	"RelatedResourceRelationshipTypeEnum":             opslevel.AllRelatedResourceRelationshipTypeEnum[0],
+	"RelationshipTypeEnum":                            opslevel.AllRelationshipTypeEnum[0],
+	"RepositoryVisibilityEnum":                        opslevel.AllRepositoryVisibilityEnum[0],
+	"ResourceDocumentStatusTypeEnum":                  opslevel.AllResourceDocumentStatusTypeEnum[0],
+	"ScorecardSortEnum":                               opslevel.AllScorecardSortEnum[0],
+	"ServicePropertyTypeEnum":                         opslevel.AllServicePropertyTypeEnum[0],
+	"ServiceSortEnum":                                 opslevel.AllServiceSortEnum[0],
+	"SnykIntegrationRegionEnum":                       opslevel.AllSnykIntegrationRegionEnum[0],
+	"TaggableResource":                                opslevel.AllTaggableResource[0],
+	"ToolCategory":                                    opslevel.AllToolCategory[0],
+	"UserRole":                                        opslevel.AllUserRole[0],
+	"UsersFilterEnum":                                 opslevel.AllUsersFilterEnum[0],
+	"UsersInviteScopeEnum":                            opslevel.AllUsersInviteScopeEnum[0],
+	"VaultSecretsSortEnum":                            opslevel.AllVaultSecretsSortEnum[0],
+}
+
+var listExamples = map[string]string{
+	"channels":           "[]",
+	"checkIds":           "['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']",
+	"checkIdsToCopy":     "[]",
+	"checksToPromote":    "[]",
+	"contacts":           "[]",
+	"daysOfWeek":         "[]",
+	"dependsOn":          "[]",
+	"dependencyOf":       "[]",
+	"extendedTeamAccess": "[]",
+	"fileExtensions":     "['go', 'py', 'rb']",
+	"filePaths":          "['/usr/local/bin', '/home/opslevel']",
+	"issueType":          "['bug', 'error']",
+	"members":            "[]",
+	"ownershipTagKeys":   "['tag_key1', 'tag_key2']",
+	"predicates":         "[]",
+	"properties":         "[]",
+	"regionOverride":     "['us-east-1', 'eu-west-1']",
+	"reminderTypes":      "[]",
+	"severity":           "['sev1', 'sev2']",
+	"tags":               "[]",
+	"teamIds":            "[]",
+	"teams":              "[]",
+	"users":              "[]",
+}
+
+var scalarExamples = map[string]string{
+	"Boolean":         "false",
+	"ID":              "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
+	"Int":             `"3"`,
+	"ISO8601DateTime": "2025-01-05T01:00:00.000Z",
+	"Float":           "4.2069",
+	"String":          "example_value",
+	"JSON":            `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`,
+	"JSONSchema":      `SCHEMA_TBD`,
+	"JsonString":      "JSON_TBD",
 }
 
 var knownTypeMappings = map[string]string{
@@ -207,9 +297,66 @@ func main() {
 	}
 	schema := graphql.MustParseSchema(graphqlSchema, nil, opts...)
 	schemaAst := schema.ASTSchema()
+
+	inputObjects := map[string]*types.InputObject{}
+	objects := map[string]*types.ObjectTypeDefinition{}
+	enums := map[string]*types.EnumTypeDefinition{}
+	interfaces := map[string]*types.InterfaceTypeDefinition{}
+	unions := map[string]*types.Union{}
+	scalars := map[string]*types.ScalarTypeDefinition{}
+	for name, graphqlType := range schemaAst.Types {
+		switch v := graphqlType.(type) {
+		case *types.EnumTypeDefinition:
+			enums[name] = v
+		case *types.InputObject:
+			inputObjects[name] = v
+		case *types.InterfaceTypeDefinition:
+			interfaces[name] = v
+		case *types.ObjectTypeDefinition:
+			objects[name] = v
+		case *types.ScalarTypeDefinition:
+			scalars[name] = v
+		case *types.Union:
+			unions[name] = v
+		default:
+			panic(fmt.Errorf("Unknown GraphQL type: %v", v))
+		}
+	}
+	// genEnums2(enums)
 	genEnums(schemaAst.Enums)
+	genInputObjects(inputObjects)
 
 	err := run()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func sortedMapKeys[T any](schemaMap map[string]T) []string {
+	sortedNames := make([]string, 0, len(schemaMap))
+	for k := range schemaMap {
+		sortedNames = append(sortedNames, k)
+	}
+	slices.Sort(sortedNames)
+	return sortedNames
+}
+
+func genEnums2(schemaEnums map[string]*types.EnumTypeDefinition) {
+	var buf bytes.Buffer
+	buf.WriteString(header + "\n\n")
+
+	enumTmpl := template.New("enum")
+	enumTmpl.Funcs(sprig.TxtFuncMap())
+	enumTmpl.Funcs(templFuncMap)
+	template.Must(enumTmpl.ParseFiles("./templates/enum.tpl"))
+
+	for _, enumName := range sortedMapKeys(schemaEnums) {
+		if err := enumTmpl.ExecuteTemplate(&buf, "enum", schemaEnums[enumName]); err != nil {
+			panic(err)
+		}
+	}
+	out, err := format.Source(buf.Bytes())
+	err = os.WriteFile("enum.go", out, 0o644)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -232,6 +379,26 @@ func genEnums(schemaEnums []*types.EnumTypeDefinition) {
 	}
 	out, err := format.Source(buf.Bytes())
 	err = os.WriteFile("enum.go", out, 0o644)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func genInputObjects(inputObjects map[string]*types.InputObject) {
+	var buf bytes.Buffer
+	buf.WriteString(header + "\n\nimport \"github.com/relvacode/iso8601\"\n")
+
+	tmpl := template.New("inputs")
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl.Funcs(templFuncMap)
+	template.Must(tmpl.ParseFiles("./templates/inputObjects.tpl"))
+
+	for _, enumName := range sortedMapKeys(inputObjects) {
+		if err := tmpl.ExecuteTemplate(&buf, "inputs", inputObjects[enumName]); err != nil {
+			panic(err)
+		}
+	}
+	err := os.WriteFile("input.go", buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -290,8 +457,6 @@ func run() error {
 		switch filename {
 		case connectionFile:
 			subSchema = objectSchema
-		case inputObjectFile:
-			subSchema = inputObjectSchema
 		case interfacesFile:
 			subSchema = interfaceSchema
 		case objectFile:
@@ -409,40 +574,6 @@ var templates = map[string]*template.Template{
 	}
 	{{- end }}
 	  `),
-	inputObjectFile: t(header + `
-import "github.com/relvacode/iso8601"
-
-{{range .Types | sortByName}}{{if and (eq .Kind "INPUT_OBJECT") (not (internal .Name))}}
-{{ if and (not (hasPrefix "Campaign" .Name)) (not (hasPrefix "Group" .Name)) -}}
-{{template "input_object" .}}
-{{end}}{{end}}{{end}}
-
-{{- define "input_object" -}}
-{{ template "type_comment_description" . }}
-type {{.Name}} struct { {{range .InputFields }}
-  {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
-    {{- if isListType .Name }}[]{{ end -}}
-    {{- if and (hasSuffix "Id" .Name) (ne .Name "externalId") }}ID
-    {{- else if hasSuffix "Access" .Name }}IdentifierInput
-    {{- else if eq .Name "predicates" }}FilterPredicateInput
-    {{- else if eq .Name "tags" }}TagInput
-    {{- else if eq .Name "members" }}TeamMembershipUserInput
-    {{- else if eq .Name "contacts" }}ContactInput
-    {{- else if eq .Type.Name "UserRole" }}UserRole
-    {{- else if .Type.Name }}{{ template "converted_type" .Type }}
-    {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
-		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
-		` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + `
-
-  {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} example:"
-   {{- if isListType .Name }}[{{ end -}}
-     {{ example_tag_value . }}
-   {{- if isListType .Name }}]{{ end -}}"{{- end}}` +
-		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
-  {{- end}}
-}
-{{- end -}}
-`),
 	interfacesFile: t(header + `
   import "github.com/relvacode/iso8601"
 
@@ -891,6 +1022,115 @@ func renameMutation(s string) string {
 	return s
 }
 
+func fieldCommentDescription(fieldType *types.InputValueDefinition) string {
+	oneLineDescription := strings.ReplaceAll(fieldType.Desc, "\n", " ")
+	if _, ok := fieldType.Type.(*types.NonNull); ok {
+		return fmt.Sprintf(" // %s (Required.)", oneLineDescription)
+	}
+	return fmt.Sprintf(" // %s (Optional.)", oneLineDescription)
+}
+
+func exampleStructTag(field *types.InputValueDefinition) string {
+	var exampleValue string
+	var unwrappedType types.Type
+
+	if nonNullType, ok := field.Type.(*types.NonNull); ok {
+		unwrappedType = nonNullType.OfType
+	} else {
+		unwrappedType = field.Type
+	}
+
+	switch fieldType := unwrappedType.(type) {
+	case *types.EnumTypeDefinition:
+		if enumValue, ok := enumExamples[strings.TrimSuffix(fieldType.String(), "!")]; ok {
+			exampleValue = enumValue
+		} else {
+			exampleValue = "ENUM_TODO"
+		}
+	case *types.InputObject:
+		return "" // omit 'example' struct tag, implicit nested tag is used
+	case *types.ScalarTypeDefinition:
+		if scalarValue, ok := scalarExamples[strings.TrimSuffix(fieldType.String(), "!")]; ok {
+			exampleValue = scalarValue
+		} else {
+			exampleValue = "SCALAR_TODO"
+		}
+	case *types.List:
+		if listValue, ok := listExamples[field.Name.Name]; ok {
+			exampleValue = listValue
+		} else {
+			exampleValue = "LIST_TODO"
+		}
+	case *types.TypeName:
+		exampleValue = "TYPENAME_TODO"
+	default:
+		exampleValue = "UNKNOWN_TODO"
+	}
+
+	return fmt.Sprintf(` example:"%s"`, exampleValue)
+}
+
+func yamlStructTag(fieldType *types.InputValueDefinition) string {
+	jsonStructTag := jsonStructTag(fieldType)
+	return strings.Replace(jsonStructTag, "json", "yaml", 1)
+}
+
+func jsonStructTag(fieldType *types.InputValueDefinition) string {
+	fieldName := fieldType.Name.Name
+	if isNullable(fieldType.Type) {
+		return fmt.Sprintf(`json:"%s,omitempty"`, fieldName)
+	}
+	return fmt.Sprintf(`json:"%s"`, fieldName)
+}
+
+func graphqlTypeToGolang(graphqlType string) string {
+	var convertedType string
+	nullable := "*Nullable["
+	if strings.HasSuffix(graphqlType, "!") {
+		graphqlType = strings.TrimSuffix(graphqlType, "!")
+	} else {
+		// GraphQL nullable --> Go pointer
+		convertedType += nullable
+	}
+
+	// GraphQL list --> Go slice
+	if strings.HasPrefix(graphqlType, "[") {
+		graphqlType = strings.TrimPrefix(graphqlType, "[")
+		graphqlType = strings.TrimSuffix(graphqlType, "]")
+		// NOTE: pretty sure we don't support slices containing pointers
+		graphqlType = strings.TrimSuffix(graphqlType, "!")
+		convertedType += "[]"
+	}
+
+	// GraphQL scalars/types --> Go type
+	switch graphqlType {
+	case "Boolean":
+		convertedType += "bool"
+	case "Int":
+		convertedType += "int"
+	case "ISO8601DateTime":
+		convertedType += "iso8601.Time"
+	case "Float", "String":
+		convertedType += "string"
+	default:
+		convertedType += graphqlType
+	}
+
+	if strings.HasPrefix(convertedType, nullable) {
+		convertedType += "]"
+	}
+
+	return convertedType
+}
+
+func getFieldTypeNew(fieldType types.Type) string {
+	return graphqlTypeToGolang(fieldType.String())
+}
+
+func isNullable(fieldType types.Type) bool {
+	return fieldType.Kind() != "NON_NULL"
+}
+
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
 	// Examples: "alias", "address", "status", "levels"
@@ -964,7 +1204,7 @@ var templFuncMap = template.FuncMap{
 	"check_fragments":                     fragmentsForCheck,
 	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
 	"integration_fragments":               fragmentsForIntegration,
-	"get_field_type":                      getFieldType,
+	"get_field_type":                      getFieldTypeOld,
 	"get_input_field_type":                getInputFieldType,
 	"add_special_fields":                  addSpecialFields,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
@@ -974,8 +1214,13 @@ var templFuncMap = template.FuncMap{
 	"skip_object_field":                   skipObjectField,
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
-	"example_tag_value":                   getExampleValue,
 	"isListType":                          isPlural,
+	"getFieldType":                        getFieldTypeNew,
+	"exampleStructTag":                    exampleStructTag,
+	"jsonStructTag":                       jsonStructTag,
+	"yamlStructTag":                       yamlStructTag,
+	"fieldCommentDescription":             fieldCommentDescription,
+	"isTypeNullable":                      isNullable,
 	"renameMutation":                      renameMutation,
 	"renameMutationReturnType":            renameMutationReturnType,
 	"convertPayloadType":                  convertPayloadType,
@@ -1190,7 +1435,7 @@ func getInputFieldType(inputField GraphQLField) string {
 	return "string"
 }
 
-func getFieldType(objectName string, inputField GraphQLField) string {
+func getFieldTypeOld(objectName string, inputField GraphQLField) string {
 	lowercaseFieldName := strings.ToLower(inputField.Name)
 	switch {
 	case "type" == lowercaseFieldName:
@@ -1372,132 +1617,4 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 	}
 
 	return getInputFieldType(inputField)
-}
-
-func getExampleValueByFieldName(inputField GraphQLInputValue) string {
-	mapFieldTypeToExampleValue := map[string]string{
-		"DocumentSubtype":      "openapi",
-		"Address":              "support@company.com",
-		"Id":                   "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
-		"Definition":           "example_definition",
-		"Template":             `{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}`,
-		"Name":                 "example_name",
-		"Language":             "example_language",
-		"Alias":                "example_alias",
-		"Description":          "example_description",
-		"Email":                "first.last@domain.com",
-		"Data":                 "example_data",
-		"Note":                 "example_note",
-		"IamRole":              "example_role",
-		"DisplayType":          "example_type",
-		"HttpMethod":           "GET",
-		"Notes":                "example_notes",
-		"Value":                "example_value",
-		"Product":              "example_product",
-		"Framework":            "example_framework",
-		"Url":                  "john.doe@example.com",
-		"BaseDirectory":        "/home/opslevel.yaml",
-		"ExternalUrl":          "https://google.com",
-		"Responsibilities":     "example description of responsibilities",
-		"Environment":          "environment that tool belongs to",
-		"Arg":                  "example_arg",
-		"Extensions":           "'go', 'py', 'rb'",
-		"Paths":                "'/usr/local/bin', '/home/opslevel'",
-		"Ids":                  "'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'",
-		"TagKeys":              "'tag_key1', 'tag_key2'",
-		"Selector":             "example_selector",
-		"Condition":            "example_condition",
-		"Message":              "example_message",
-		"RequireContactMethod": "false",
-		"Identifier":           "example_identifier",
-		"DocumentType":         "api",
-	}
-	for k, v := range mapFieldTypeToExampleValue {
-		if k == inputField.Name ||
-			strings.ToLower(k[:1])+k[1:] == inputField.Name ||
-			strings.HasSuffix(inputField.Name, k) {
-			return v
-		}
-	}
-	return ""
-}
-
-func getExampleValueByFieldType(inputField GraphQLInputValue) string {
-	mapFieldTypeToExampleValue := map[string]string{
-		"Time":                        "2024-01-05T01:00:00.000Z",
-		"FrequencyTimeScale":          "week",
-		"ContactType":                 "slack",
-		"AlertSourceTypeEnum":         "pagerduty",
-		"AliasOwnerTypeEnum":          "scorecard",
-		"BasicTypeEnum":               "does_not_equal",
-		"ConnectiveEnum":              "or",
-		"CustomActionsEntityTypeEnum": "GLOBAL",
-		"CustomActionsHttpMethodEnum": "GET",
-		"CustomActionsTriggerDefinitionAccessControlEnum": "service_owners",
-		"RelationshipTypeEnum":                            "depends_on",
-		"PredicateKeyEnum":                                "filter_id",
-		"PredicateTypeEnum":                               "satisfies_jq_expression",
-		"ServicePropertyTypeEnum":                         "language",
-		"UsersFilterEnum":                                 "last_sign_in_at",
-		"UserRole":                                        "admin",
-		"ToolCategory":                                    "api_documentation",
-	}
-	for k, v := range mapFieldTypeToExampleValue {
-		if inputFieldMatchesType(inputField, k) {
-			return v
-		}
-	}
-	return ""
-}
-
-func inputFieldMatchesType(inputField GraphQLInputValue, fieldType string) bool {
-	if fieldType == inputField.Type.Name ||
-		fieldType == inputField.Type.OfType.OfTypeName ||
-		strings.ToLower(fieldType) == inputField.Type.Name ||
-		strings.HasSuffix(inputField.Type.Name, fieldType) ||
-		strings.HasSuffix(inputField.Type.OfType.OfTypeName, fieldType) {
-		return true
-	}
-	return false
-}
-
-func inputFieldNameMatchesName(inputField GraphQLInputValue, fieldName string) bool {
-	if fieldName == inputField.Name ||
-		strings.ToLower(fieldName[:1])+fieldName[1:] == inputField.Name ||
-		strings.HasSuffix(inputField.Name, fieldName) {
-		return true
-	}
-	return false
-}
-
-func getExampleValue(inputField GraphQLInputValue) string {
-	switch {
-	case inputFieldMatchesType(inputField, "Boolean"):
-		return "false"
-	case inputFieldMatchesType(inputField, "Int"):
-		return "3"
-	case inputFieldMatchesType(inputField, "JSON"):
-		return `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`
-	}
-
-	if valueByName := getExampleValueByFieldName(inputField); valueByName != "" {
-		return valueByName
-	}
-	if valueByType := getExampleValueByFieldType(inputField); valueByType != "" {
-		return valueByType
-	}
-
-	switch {
-	case inputFieldNameMatchesName(inputField, "Role"):
-		return "example_role"
-	case inputFieldNameMatchesName(inputField, "Key"):
-		return "XXX_example_key_XXX"
-	case inputFieldNameMatchesName(inputField, "Type"):
-		return "example_type"
-	case inputFieldNameMatchesName(inputField, "Method"):
-		return "example_method"
-	case inputFieldMatchesType(inputField, "Enum"):
-		return "NEW_ENUM_SET_DEFAULT"
-	}
-	return ""
 }
