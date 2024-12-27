@@ -626,12 +626,12 @@ func NewTagArgs(tag string) (TagArgs, error) {
 	switch len(kv) {
 	case 1:
 		return TagArgs{
-			Key: RefOf(kv[0]),
+			Key: NewNullableFrom(kv[0]),
 		}, nil
 	case 2:
 		return TagArgs{
-			Key:   RefOf(kv[0]),
-			Value: RefOf(kv[1]),
+			Key:   NewNullableFrom(kv[0]),
+			Value: NewNullableFrom(kv[1]),
 		}, nil
 	default:
 		return TagArgs{}, fmt.Errorf("cannot make a valid TagArg from: '%s' (not in format key:value)", tag)
@@ -704,7 +704,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
+func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
 		Payload struct {
 			Service Service
@@ -745,9 +745,9 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 func (client *Client) DeleteService(identifier string) error {
 	input := ServiceDeleteInput{}
 	if IsID(identifier) {
-		input.Id = NewID(identifier)
+		input.Id = NewNullableFrom(ID(identifier))
 	} else {
-		input.Alias = &identifier
+		input.Alias = NewNullableFrom(identifier)
 	}
 
 	var m struct {

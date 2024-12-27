@@ -20,12 +20,12 @@ func TestCreateFilter(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
-		Predicates: &[]ol.FilterPredicateInput{{
+		Connective: ol.NewNullableFrom(ol.ConnectiveEnumAnd),
+		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: ol.RefOf("1"),
-		}},
+			Value: ol.NewNullableFrom("1"),
+		}}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -46,19 +46,19 @@ func TestCreateFilterNested(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
-		Connective: ol.RefOf(ol.ConnectiveEnumOr),
-		Predicates: &[]ol.FilterPredicateInput{
+		Connective: ol.NewNullableFrom(ol.ConnectiveEnumOr),
+		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
+				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
+				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
 			},
-		},
+		}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -143,12 +143,12 @@ func TestUpdateFilter(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: ol.RefOf("Test Updated"),
-		Predicates: &[]ol.FilterPredicateInput{{
+		Name: ol.NewNullableFrom("Test Updated"),
+		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: ol.RefOf("1"),
-		}},
+			Value: ol.NewNullableFrom("1"),
+		}}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -168,20 +168,20 @@ func TestUpdateFilterNested(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
-		Name:       ol.RefOf("Tier 1-2 not deployed by us"),
-		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
-		Predicates: &[]ol.FilterPredicateInput{
+		Name:       ol.NewNullableFrom("Tier 1-2 not deployed by us"),
+		Connective: ol.NewNullableFrom(ol.ConnectiveEnumAnd),
+		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumDoesNotMatch,
-				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
+				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
+				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
 			},
-		},
+		}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -225,13 +225,13 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: ol.RefOf("Test Updated"),
-		Predicates: &[]ol.FilterPredicateInput{{
+		Name: ol.NewNullableFrom("Test Updated"),
+		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         ol.RefOf("1"),
-			CaseSensitive: ol.RefOf(true),
-		}},
+			Value:         ol.NewNullableFrom("1"),
+			CaseSensitive: ol.NewNullableFrom(true),
+		}}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -270,13 +270,13 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: ol.RefOf("Test Updated"),
-		Predicates: &[]ol.FilterPredicateInput{{
+		Name: ol.NewNullableFrom("Test Updated"),
+		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         ol.RefOf("1"),
-			CaseSensitive: ol.RefOf(false),
-		}},
+			Value:         ol.NewNullableFrom("1"),
+			CaseSensitive: ol.NewNullableFrom(false),
+		}}),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)

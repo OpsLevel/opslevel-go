@@ -17,8 +17,8 @@ func TestInviteUser(t *testing.T) {
 
 	client := BestTestClient(t, "user/invite", testRequest)
 	userInput := ol.UserInput{
-		Name:             ol.RefOf("Kyle Rockman"),
-		SkipWelcomeEmail: ol.RefOf(false),
+		Name:             ol.NewNullableFrom("Kyle Rockman"),
+		SkipWelcomeEmail: ol.NewNullableFrom(false),
 	}
 	// Act
 	result, err := client.InviteUser("kyle@opslevel.com", userInput, true)
@@ -39,9 +39,9 @@ func TestInviteUserSkipSendInvite(t *testing.T) {
 
 	client := BestTestClient(t, "user/invite_skip_send_invite", testRequest)
 	userInput := ol.UserInput{
-		Name:             ol.RefOf("Kyle Rockman"),
-		Role:             ol.RefOf(ol.UserRoleTeamMember),
-		SkipWelcomeEmail: ol.RefOf(false),
+		Name:             ol.NewNullableFrom("Kyle Rockman"),
+		Role:             ol.NewNullableFrom(ol.UserRoleTeamMember),
+		SkipWelcomeEmail: ol.NewNullableFrom(false),
 	}
 	// Act
 	result, err := client.InviteUser("kyle@opslevel.com", userInput, false)
@@ -166,8 +166,8 @@ func TestUpdateUser(t *testing.T) {
 	client := BestTestClient(t, "user/update", testRequest)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
-		Role:             ol.RefOf(ol.UserRoleAdmin),
-		SkipWelcomeEmail: ol.RefOf(false),
+		Role:             ol.NewNullableFrom(ol.UserRoleAdmin),
+		SkipWelcomeEmail: ol.NewNullableFrom(false),
 	})
 	// Assert
 	autopilot.Ok(t, err)

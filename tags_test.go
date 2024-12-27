@@ -190,8 +190,8 @@ func TestUpdateTag(t *testing.T) {
 	// Act
 	result, err := client.UpdateTag(ol.TagUpdateInput{
 		Id:    id1,
-		Key:   ol.RefOf("hello"),
-		Value: ol.RefOf("world!"),
+		Key:   ol.NewNullableFrom("hello"),
+		Value: ol.NewNullableFrom("world!"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

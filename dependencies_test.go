@@ -18,10 +18,10 @@ func TestCreateServiceDependency(t *testing.T) {
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
 		DependencyKey: ol.ServiceDependencyKey{
-			SourceIdentifier:      ol.NewIdentifier("example_2"),
-			DestinationIdentifier: ol.NewIdentifier("example_3"),
+			SourceIdentifier:      ol.NewNullableFrom(*ol.NewIdentifier("example_2")),
+			DestinationIdentifier: ol.NewNullableFrom(*ol.NewIdentifier("example_3")),
 		},
-		Notes: ol.RefOf("An example description"),
+		Notes: ol.NewNullableFrom("An example description"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

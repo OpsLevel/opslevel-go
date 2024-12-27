@@ -1,0 +1,3 @@
+kind: Refactor
+body: 'BREAKING CHANGE: "Nullable" type now wraps all optional struct fields of API input objects. This "Nullable" type enables fields to be set to the JSON "null" value.'
+time: 2024-12-27T10:33:59.906375-06:00

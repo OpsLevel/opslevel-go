@@ -29,31 +29,31 @@ var (
 
 	predicateInput = &ol.PredicateInput{
 		Type:  ol.PredicateTypeEnumEquals,
-		Value: ol.RefOf("Requests"),
+		Value: ol.NewNullableFrom("Requests"),
 	}
 
 	predicateUpdateInput = &ol.PredicateUpdateInput{
-		Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
-		Value: ol.RefOf("Requests"),
+		Type:  ol.NewNullableFrom(ol.PredicateTypeEnumEquals),
+		Value: ol.NewNullableFrom("Requests"),
 	}
 
 	checkNotes = "Hello World Check"
 
 	checkCreateInput = ol.CheckCreateInput{
 		Name:     "Hello World",
-		Enabled:  ol.RefOf(true),
+		Enabled:  ol.NewNullableFrom(true),
 		Category: id,
 		Level:    id,
-		Notes:    &checkNotes,
+		Notes:    ol.NewNullableFrom(checkNotes),
 	}
 
 	checkUpdateInput = ol.CheckUpdateInput{
 		Id:       id,
-		Name:     "Hello World",
-		Enabled:  ol.RefOf(true),
-		Category: id,
-		Level:    id,
-		Notes:    &checkNotes,
+		Name:     ol.NewNullableFrom("Hello World"),
+		Enabled:  ol.NewNullableFrom(true),
+		Category: ol.NewNullableFrom(id),
+		Level:    ol.NewNullableFrom(id),
+		Notes:    ol.NewNullableFrom(checkNotes),
 	}
 )
 
@@ -258,8 +258,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckAlertSourceUsageCreateInput](checkCreateInput)
-				input.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
-				input.AlertSourceNamePredicate = predicateInput
+				input.AlertSourceType = ol.NewNullableFrom(ol.AlertSourceTypeEnumDatadog)
+				input.AlertSourceNamePredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckAlertSourceUsage(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -274,8 +274,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckAlertSourceUsageUpdateInput](checkUpdateInput)
-				input.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
-				input.AlertSourceNamePredicate = predicateUpdateInput
+				input.AlertSourceType = ol.NewNullableFrom(ol.AlertSourceTypeEnumDatadog)
+				input.AlertSourceNamePredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckAlertSourceUsage(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -293,10 +293,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckCodeIssueCreateInput](checkCreateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumExact
-				input.IssueName = ol.RefOf("test-issue")
+				input.IssueName = ol.NewNullableFrom("test-issue")
 				input.IssueType = nil  // API NOTE - not allowed when constraint is "exact"
 				input.MaxAllowed = nil // API NOTE - not allowed when constraint is "exact"
-				input.ResolutionTime = ol.RefOf(ol.CodeIssueResolutionTimeInput{
+				input.ResolutionTime = ol.NewNullableFrom(ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumDay,
 					Value: 1,
 				})
@@ -354,7 +354,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumContains
-				input.IssueName = ol.RefOf("code-issue-updated")
+				input.IssueName = ol.NewNullableFrom("code-issue-updated")
 				input.IssueType = ol.NewNullOf[[]string]()
 				input.MaxAllowed = ol.NewNullableFrom(1)
 				input.ResolutionTime = ol.NewNullableFrom(ol.CodeIssueResolutionTimeInput{
@@ -404,7 +404,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: BuildUpdateRequest("HasRecentDeploy", map[string]any{"days": 5}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasRecentDeployUpdateInput](checkUpdateInput)
-				input.Days = ol.RefOf(5)
+				input.Days = ol.NewNullableFrom(5)
 				return c.UpdateCheckHasRecentDeploy(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{"days": 5}),
@@ -433,8 +433,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasDocumentationUpdateInput](checkUpdateInput)
-				input.DocumentType = ol.RefOf(ol.HasDocumentationTypeEnumAPI)
-				input.DocumentSubtype = ol.RefOf(ol.HasDocumentationSubtypeEnumOpenapi)
+				input.DocumentType = ol.NewNullableFrom(ol.HasDocumentationTypeEnumAPI)
+				input.DocumentSubtype = ol.NewNullableFrom(ol.HasDocumentationSubtypeEnumOpenapi)
 				return c.UpdateCheckHasDocumentation(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -463,9 +463,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckCustomEventCreateInput](checkCreateInput)
 				input.ServiceSelector = ".metadata.name"
 				input.SuccessCondition = ".metadata.name"
-				input.ResultMessage = ol.RefOf("#Hello World")
+				input.ResultMessage = ol.NewNullableFrom("#Hello World")
 				input.IntegrationId = id
-				input.PassPending = ol.RefOf(false)
+				input.PassPending = ol.NewNullableFrom(false)
 				return c.CreateCheckCustomEvent(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -496,11 +496,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
-				input.ServiceSelector = ol.RefOf(".metadata.name")
-				input.SuccessCondition = ol.RefOf(".metadata.name")
-				input.ResultMessage = ol.RefOf("#Hello World")
-				input.IntegrationId = &id
-				input.PassPending = ol.RefOf(false)
+				input.ServiceSelector = ol.NewNullableFrom(".metadata.name")
+				input.SuccessCondition = ol.NewNullableFrom(".metadata.name")
+				input.ResultMessage = ol.NewNullableFrom("#Hello World")
+				input.IntegrationId = ol.NewNullableFrom(id)
+				input.PassPending = ol.NewNullableFrom(false)
 				return c.UpdateCheckCustomEvent(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -518,31 +518,31 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    "",
+				"resultMessage":    ol.NewNull(),
 				"integrationId":    id,
 			}, map[string]any{
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    "",
+				"resultMessage":    ol.NewNull(),
 				"integration": ol.IntegrationId{
 					Id: id,
 				},
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
-				input.ServiceSelector = ol.RefOf(".metadata.name")
-				input.SuccessCondition = ol.RefOf(".metadata.name")
-				input.ResultMessage = ol.RefOf("")
-				input.IntegrationId = &id
-				input.PassPending = ol.RefOf(false)
+				input.ServiceSelector = ol.NewNullableFrom(".metadata.name")
+				input.SuccessCondition = ol.NewNullableFrom(".metadata.name")
+				input.ResultMessage = ol.NewNull()
+				input.IntegrationId = ol.NewNullableFrom(id)
+				input.PassPending = ol.NewNullableFrom(false)
 				return c.UpdateCheckCustomEvent(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    "",
+				"resultMessage":    ol.NewNull(),
 				"integration": ol.IntegrationId{
 					Id: id,
 				},
@@ -555,7 +555,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckManualCreateInput](checkCreateInput)
-				input.UpdateFrequency = ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
+				input.UpdateFrequency = ol.NewNullableFrom(
+					*ol.NewManualCheckFrequencyInput(
+						"2021-07-26T20:22:44.427Z",
+						ol.FrequencyTimeScaleWeek,
+						1,
+					))
 				return c.CreateCheckManual(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -569,7 +574,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckManualUpdateInput](checkUpdateInput)
-				input.UpdateFrequency = ol.NewManualCheckFrequencyUpdateInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
+				input.UpdateFrequency = ol.NewNullableFrom(
+					*ol.NewManualCheckFrequencyUpdateInput(
+						"2021-07-26T20:22:44.427Z",
+						ol.FrequencyTimeScaleWeek,
+						1,
+					))
 				return c.UpdateCheckManual(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -585,10 +595,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryFileCreateInput](checkCreateInput)
-				input.DirectorySearch = ol.RefOf(true)
+				input.DirectorySearch = ol.NewNullableFrom(true)
 				input.FilePaths = []string{"/src", "/test"}
-				input.FileContentsPredicate = predicateInput
-				input.UseAbsoluteRoot = ol.RefOf(true)
+				input.FileContentsPredicate = ol.NewNullableFrom(*predicateInput)
+				input.UseAbsoluteRoot = ol.NewNullableFrom(true)
 				return c.CreateCheckRepositoryFile(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -607,10 +617,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryFileUpdateInput](checkUpdateInput)
-				input.DirectorySearch = ol.RefOf(true)
-				input.FilePaths = &[]string{"/src", "/test", "/foo/bar"}
-				input.FileContentsPredicate = predicateUpdateInput
-				input.UseAbsoluteRoot = ol.RefOf(false)
+				input.DirectorySearch = ol.NewNullableFrom(true)
+				input.FilePaths = ol.NewNullableFrom([]string{"/src", "/test", "/foo/bar"})
+				input.FileContentsPredicate = ol.NewNullableFrom(*predicateUpdateInput)
+				input.UseAbsoluteRoot = ol.NewNullableFrom(false)
 				return c.UpdateCheckRepositoryFile(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -628,7 +638,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositoryGrepCreateInput](checkCreateInput)
-				input.DirectorySearch = ol.RefOf(true)
+				input.DirectorySearch = ol.NewNullableFrom(true)
 				input.FilePaths = []string{"**/hello.go"}
 				input.FileContentsPredicate = *predicateInput
 				return c.CreateCheckRepositoryGrep(*input)
@@ -647,9 +657,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
-				input.DirectorySearch = ol.RefOf(true)
-				input.FilePaths = &[]string{"go.mod", "**/go.mod"}
-				input.FileContentsPredicate = predicateUpdateInput
+				input.DirectorySearch = ol.NewNullableFrom(true)
+				input.FilePaths = ol.NewNullableFrom([]string{"go.mod", "**/go.mod"})
+				input.FileContentsPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckRepositoryGrep(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -666,9 +676,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
-				input.DirectorySearch = ol.RefOf(false)
-				input.FilePaths = &[]string{"**/go.mod"}
-				input.FileContentsPredicate = predicateUpdateInput
+				input.DirectorySearch = ol.NewNullableFrom(false)
+				input.FilePaths = ol.NewNullableFrom([]string{"**/go.mod"})
+				input.FileContentsPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckRepositoryGrep(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -700,7 +710,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositorySearchCreateInput](checkCreateInput)
-				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileExtensions = ol.NewNullableFrom([]string{"sbt", "py"})
 				input.FileContentsPredicate = *predicateInput
 				return c.CreateCheckRepositorySearch(*input)
 			},
@@ -716,8 +726,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositorySearchUpdateInput](checkUpdateInput)
-				input.FileExtensions = &[]string{"sbt", "py"}
-				input.FileContentsPredicate = predicateUpdateInput
+				input.FileExtensions = ol.NewNullableFrom([]string{"sbt", "py"})
+				input.FileContentsPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckRepositorySearch(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -766,10 +776,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckServiceOwnershipCreateInput](checkCreateInput)
-				input.RequireContactMethod = ol.RefOf(true)
-				input.ContactMethod = ol.RefOf(string(ol.ContactTypeSlack))
-				input.TagKey = ol.RefOf("updated_at")
-				input.TagPredicate = predicateInput
+				input.RequireContactMethod = ol.NewNullableFrom(true)
+				input.ContactMethod = ol.NewNullableFrom(string(ol.ContactTypeSlack))
+				input.TagKey = ol.NewNullableFrom("updated_at")
+				input.TagPredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckServiceOwnership(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -788,10 +798,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServiceOwnershipUpdateInput](checkUpdateInput)
-				input.RequireContactMethod = ol.RefOf(true)
-				input.ContactMethod = ol.RefOf(string(ol.ContactTypeEmail))
-				input.TagKey = ol.RefOf("updated_at")
-				input.TagPredicate = predicateUpdateInput
+				input.RequireContactMethod = ol.NewNullableFrom(true)
+				input.ContactMethod = ol.NewNullableFrom(string(ol.ContactTypeEmail))
+				input.TagKey = ol.NewNullableFrom("updated_at")
+				input.TagPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckServiceOwnership(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -809,7 +819,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckServicePropertyCreateInput](checkCreateInput)
 				input.ServiceProperty = ol.ServicePropertyTypeEnumFramework
-				input.PropertyValuePredicate = predicateInput
+				input.PropertyValuePredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckServiceProperty(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -826,8 +836,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckServicePropertyCreateInput](checkCreateInput)
 				input.ServiceProperty = ol.ServicePropertyTypeEnumCustomProperty
-				input.PropertyDefinition = ol.NewIdentifier(string(id))
-				input.PropertyValuePredicate = predicateInput
+				input.PropertyDefinition = ol.NewNullableFrom(*ol.NewIdentifier(string(id)))
+				input.PropertyValuePredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckServiceProperty(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -843,8 +853,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServicePropertyUpdateInput](checkUpdateInput)
-				input.ServiceProperty = ol.RefOf(ol.ServicePropertyTypeEnumFramework)
-				input.PropertyValuePredicate = predicateUpdateInput
+				input.ServiceProperty = ol.NewNullableFrom(ol.ServicePropertyTypeEnumFramework)
+				input.PropertyValuePredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckServiceProperty(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -858,7 +868,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServicePropertyUpdateInput](checkUpdateInput)
-				input.PropertyDefinition = ol.NewIdentifier(string(id))
+				input.PropertyDefinition = ol.NewNullableFrom(*ol.NewIdentifier(string(id)))
 				return c.UpdateCheckServiceProperty(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -873,7 +883,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckTagDefinedCreateInput](checkCreateInput)
 				input.TagKey = "app"
-				input.TagPredicate = predicateInput
+				input.TagPredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckTagDefined(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -888,8 +898,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckTagDefinedUpdateInput](checkUpdateInput)
-				input.TagKey = ol.RefOf("app")
-				input.TagPredicate = predicateUpdateInput
+				input.TagKey = ol.NewNullableFrom("app")
+				input.TagPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckTagDefined(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -907,9 +917,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckToolUsageCreateInput](checkCreateInput)
 				input.ToolCategory = ol.ToolCategoryMetrics
-				input.ToolNamePredicate = predicateInput
-				input.ToolUrlPredicate = predicateInput
-				input.EnvironmentPredicate = predicateInput
+				input.ToolNamePredicate = ol.NewNullableFrom(*predicateInput)
+				input.ToolUrlPredicate = ol.NewNullableFrom(*predicateInput)
+				input.EnvironmentPredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckToolUsage(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -928,10 +938,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				input.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
-				input.ToolNamePredicate = predicateUpdateInput
-				input.ToolUrlPredicate = predicateUpdateInput
-				input.EnvironmentPredicate = predicateUpdateInput
+				input.ToolCategory = ol.NewNullableFrom(ol.ToolCategoryMetrics)
+				input.ToolNamePredicate = ol.NewNullableFrom(*predicateUpdateInput)
+				input.ToolUrlPredicate = ol.NewNullableFrom(*predicateUpdateInput)
+				input.EnvironmentPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckToolUsage(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -949,9 +959,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				input.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
-				input.ToolUrlPredicate = &ol.PredicateUpdateInput{}
-				input.EnvironmentPredicate = &ol.PredicateUpdateInput{}
+				input.ToolCategory = ol.NewNullableFrom(ol.ToolCategoryMetrics)
+				input.ToolUrlPredicate = ol.NewNullOf[ol.PredicateUpdateInput]()
+				input.EnvironmentPredicate = ol.NewNullOf[ol.PredicateUpdateInput]()
 				return c.UpdateCheckToolUsage(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -973,10 +983,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckPackageVersionCreateInput](checkCreateInput)
 				input.PackageManager = ol.PackageManagerEnumCargo
 				input.PackageName = "cult"
-				input.PackageNameIsRegex = ol.RefOf(false)
+				input.PackageNameIsRegex = ol.NewNullableFrom(false)
 				input.PackageConstraint = ol.PackageConstraintEnumDoesNotExist
-				input.MissingPackageResult = ol.RefOf(ol.CheckResultStatusEnumPassed)
-				input.VersionConstraintPredicate = predicateInput
+				input.MissingPackageResult = ol.NewNullableFrom(ol.CheckResultStatusEnumPassed)
+				input.VersionConstraintPredicate = ol.NewNullableFrom(*predicateInput)
 				return c.CreateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -995,8 +1005,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
-				input.VersionConstraintPredicate = predicateUpdateInput
+				input.PackageManager = ol.NewNullableFrom(ol.PackageManagerEnumCargo)
+				input.VersionConstraintPredicate = ol.NewNullableFrom(*predicateUpdateInput)
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1011,8 +1021,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
-				input.VersionConstraintPredicate = &ol.PredicateUpdateInput{}
+				input.PackageManager = ol.NewNullableFrom(ol.PackageManagerEnumCargo)
+				input.VersionConstraintPredicate = ol.NewNullOf[ol.PredicateUpdateInput]()
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1057,12 +1067,12 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 		Id:         id,
-		Name:       ol.RefOf("Hello World"),
-		CategoryId: ol.RefOf(id),
-		Enabled:    ol.RefOf(true),
-		LevelId:    ol.RefOf(id),
-		FilterId:   ol.NewID(),
-		Notes:      ol.RefOf("Hello World Check"),
+		Name:       ol.NewNullableFrom("Hello World"),
+		CategoryId: ol.NewNullableFrom(id),
+		Enabled:    ol.NewNullableFrom(true),
+		LevelId:    ol.NewNullableFrom(id),
+		FilterId:   ol.NewNullOf[ol.ID](),
+		Notes:      ol.NewNullableFrom("Hello World Check"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1073,17 +1083,17 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 func TestCanUpdateNotesToNull(t *testing.T) {
 	// Arrange
 	testRequest := BuildUpdateRequest("CustomEvent", map[string]any{
-		"notes": "",
+		"notes": nil,
 	})
 	client := BestTestClient(t, "check/can_update_notes_to_null", testRequest)
 	// Act
 	result, err := client.UpdateCheckCustomEvent(ol.CheckCustomEventUpdateInput{
 		Id:         id,
-		Name:       ol.RefOf("Hello World"),
-		CategoryId: ol.RefOf(id),
-		Enabled:    ol.RefOf(true),
-		LevelId:    ol.RefOf(id),
-		Notes:      ol.RefOf(""),
+		Name:       ol.NewNullableFrom("Hello World"),
+		CategoryId: ol.NewNullableFrom(id),
+		Enabled:    ol.NewNullableFrom(true),
+		LevelId:    ol.NewNullableFrom(id),
+		Notes:      ol.NewNull(),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1155,12 +1165,15 @@ func TestJsonUnmarshalCreateCheckManual(t *testing.T) {
 }`
 	output := ol.CheckManualCreateInput{
 		Name:                  "Example",
-		Notes:                 ol.RefOf("Example Notes"),
+		Notes:                 ol.NewNullableFrom("Example Notes"),
 		UpdateRequiresComment: false,
 	}
 	// Act
 	buf1, err1 := ol.UnmarshalCheckCreateInput(ol.CheckTypeManual, []byte(data))
 	// Assert
+	stuff := buf1.(*ol.CheckManualCreateInput)
+	stuff2 := &output
+	fmt.Println(stuff2, stuff)
 	autopilot.Ok(t, err1)
 	autopilot.Equals(t, &output, buf1.(*ol.CheckManualCreateInput))
 }
@@ -1184,18 +1197,18 @@ func TestJsonUnmarshalCreateCheckToolUsage(t *testing.T) {
 }`
 	output := ol.CheckToolUsageCreateInput{
 		Name:  "Example",
-		Notes: ol.RefOf("Example Notes"),
-		EnvironmentPredicate: &ol.PredicateInput{
+		Notes: ol.NewNullableFrom("Example Notes"),
+		EnvironmentPredicate: ol.NewNullableFrom(ol.PredicateInput{
 			Type: ol.PredicateTypeEnum("exists"),
-		},
-		ToolNamePredicate: &ol.PredicateInput{
+		}),
+		ToolNamePredicate: ol.NewNullableFrom(ol.PredicateInput{
 			Type:  ol.PredicateTypeEnum("contains"),
-			Value: ol.RefOf("go"),
-		},
-		ToolUrlPredicate: &ol.PredicateInput{
+			Value: ol.NewNullableFrom("go"),
+		}),
+		ToolUrlPredicate: ol.NewNullableFrom(ol.PredicateInput{
 			Type:  ol.PredicateTypeEnum("starts_with"),
-			Value: ol.RefOf("https"),
-		},
+			Value: ol.NewNullableFrom("https"),
+		}),
 	}
 	// Act
 	buf1, err1 := ol.UnmarshalCheckCreateInput(ol.CheckTypeToolUsage, []byte(data))
@@ -1212,9 +1225,9 @@ func TestJsonUnmarshalUpdateCheckManual(t *testing.T) {
 	"updateRequiresComment": true
 }`
 	output := ol.CheckManualUpdateInput{
-		Name:                  ol.RefOf("Example"),
-		Notes:                 ol.RefOf("Example Notes"),
-		UpdateRequiresComment: ol.RefOf(true),
+		Name:                  ol.NewNullableFrom("Example"),
+		Notes:                 ol.NewNullableFrom("Example Notes"),
+		UpdateRequiresComment: ol.NewNullableFrom(true),
 	}
 	// Act
 	buf1, err1 := ol.UnmarshalCheckUpdateInput(ol.CheckTypeManual, []byte(data))
@@ -1241,19 +1254,19 @@ func TestJsonUnmarshalUpdateCheckToolUsage(t *testing.T) {
   }
 }`
 	output := ol.CheckToolUsageUpdateInput{
-		Name:  ol.RefOf("Example"),
-		Notes: ol.RefOf("Updated Notes"),
-		EnvironmentPredicate: &ol.PredicateUpdateInput{
-			Type: ol.RefOf(ol.PredicateTypeEnum("exists")),
-		},
-		ToolNamePredicate: &ol.PredicateUpdateInput{
-			Type:  ol.RefOf(ol.PredicateTypeEnum("contains")),
-			Value: ol.RefOf("go"),
-		},
-		ToolUrlPredicate: &ol.PredicateUpdateInput{
-			Type:  ol.RefOf(ol.PredicateTypeEnum("starts_with")),
-			Value: ol.RefOf("https"),
-		},
+		Name:  ol.NewNullableFrom("Example"),
+		Notes: ol.NewNullableFrom("Updated Notes"),
+		EnvironmentPredicate: ol.NewNullableFrom(ol.PredicateUpdateInput{
+			Type: ol.NewNullableFrom(ol.PredicateTypeEnum("exists")),
+		}),
+		ToolNamePredicate: ol.NewNullableFrom(ol.PredicateUpdateInput{
+			Type:  ol.NewNullableFrom(ol.PredicateTypeEnum("contains")),
+			Value: ol.NewNullableFrom("go"),
+		}),
+		ToolUrlPredicate: ol.NewNullableFrom(ol.PredicateUpdateInput{
+			Type:  ol.NewNullableFrom(ol.PredicateTypeEnum("starts_with")),
+			Value: ol.NewNullableFrom("https"),
+		}),
 	}
 	// Act
 	buf1, err1 := ol.UnmarshalCheckUpdateInput(ol.CheckTypeToolUsage, []byte(data))

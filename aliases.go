@@ -49,7 +49,7 @@ func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, err
 	for _, alias := range aliases {
 		input := AliasCreateInput{
 			Alias:   alias,
-			OwnerId: ownerId,
+			OwnerId: ID(ownerId),
 		}
 		result, err := client.CreateAlias(input)
 		allErrors = errors.Join(allErrors, err)

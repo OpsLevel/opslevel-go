@@ -191,7 +191,7 @@ var listExamples = map[string]string{
 var scalarExamples = map[string]string{
 	"Boolean":         "false",
 	"ID":              "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
-	"Int":             `"3"`,
+	"Int":             "3",
 	"ISO8601DateTime": "2025-01-05T01:00:00.000Z",
 	"Float":           "4.2069",
 	"String":          "example_value",
@@ -322,7 +322,6 @@ func main() {
 			panic(fmt.Errorf("Unknown GraphQL type: %v", v))
 		}
 	}
-	// genEnums2(enums)
 	genEnums(schemaAst.Enums)
 	genInputObjects(inputObjects)
 
@@ -339,27 +338,6 @@ func sortedMapKeys[T any](schemaMap map[string]T) []string {
 	}
 	slices.Sort(sortedNames)
 	return sortedNames
-}
-
-func genEnums2(schemaEnums map[string]*types.EnumTypeDefinition) {
-	var buf bytes.Buffer
-	buf.WriteString(header + "\n\n")
-
-	enumTmpl := template.New("enum")
-	enumTmpl.Funcs(sprig.TxtFuncMap())
-	enumTmpl.Funcs(templFuncMap)
-	template.Must(enumTmpl.ParseFiles("./templates/enum.tpl"))
-
-	for _, enumName := range sortedMapKeys(schemaEnums) {
-		if err := enumTmpl.ExecuteTemplate(&buf, "enum", schemaEnums[enumName]); err != nil {
-			panic(err)
-		}
-	}
-	out, err := format.Source(buf.Bytes())
-	err = os.WriteFile("enum.go", out, 0o644)
-	if err != nil {
-		log.Fatalln(err)
-	}
 }
 
 func genEnums(schemaEnums []*types.EnumTypeDefinition) {

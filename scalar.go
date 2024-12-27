@@ -38,9 +38,9 @@ func (identifierInput IdentifierInput) MarshalJSON() ([]byte, error) {
 	}
 	var out string
 	if identifierInput.Id != nil {
-		out = fmt.Sprintf(`{"id":"%s"}`, string(*identifierInput.Id))
+		out = fmt.Sprintf(`{"id":"%s"}`, string(identifierInput.Id.Value))
 	} else {
-		out = fmt.Sprintf(`{"alias":"%s"}`, *identifierInput.Alias)
+		out = fmt.Sprintf(`{"alias":"%s"}`, identifierInput.Alias.Value)
 	}
 	return []byte(out), nil
 }
@@ -49,11 +49,11 @@ func NewIdentifier(value ...string) *IdentifierInput {
 	if len(value) == 1 {
 		if IsID(value[0]) {
 			return &IdentifierInput{
-				Id: NewID(value[0]),
+				Id: NewNullableFrom(ID(value[0])),
 			}
 		}
 		return &IdentifierInput{
-			Alias: RefOf(value[0]),
+			Alias: NewNullableFrom(value[0]),
 		}
 	}
 	var output IdentifierInput
@@ -92,6 +92,11 @@ func (nullable Nullable[T]) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return json.Marshal(nullable.Value)
+}
+
+func (nullable *Nullable[T]) UnmarshalJSON(data []byte) error {
+	stuff := json.Unmarshal(data, &nullable.Value)
+	return stuff
 }
 
 // NewNull returns a Nullable string that will always marshal into `null`, can be used to unset fields

@@ -24,7 +24,7 @@ type PayloadVariables map[string]interface{}
 func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
 	omitDeactivedUsersFilter := UsersFilterInput{
 		Key:  UsersFilterEnumDeactivatedAt,
-		Type: RefOf(BasicTypeEnumEquals),
+		Type: NewNullableFrom(BasicTypeEnumEquals),
 	}
 	(*pv)["filter"] = RefOf([]UsersFilterInput{omitDeactivedUsersFilter})
 	return pv

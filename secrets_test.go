@@ -17,8 +17,8 @@ func TestCreateSecret(t *testing.T) {
 	client := BestTestClient(t, "secrets/create", testRequest)
 	// Act
 	secretInput := opslevel.SecretInput{
-		Owner: opslevel.NewIdentifier(string(id2)),
-		Value: opslevel.RefOf("my-secret"),
+		Owner: opslevel.NewNullableFrom(*opslevel.NewIdentifier(string(id2))),
+		Value: opslevel.NewNullableFrom("my-secret"),
 	}
 	result, err := client.CreateSecret("alias1", secretInput)
 
@@ -77,8 +77,8 @@ func TestUpdateSecret(t *testing.T) {
 	client := BestTestClient(t, "secrets/update", testRequest)
 	// Act
 	secretInput := opslevel.SecretInput{
-		Owner: opslevel.NewIdentifier(string(id2)),
-		Value: opslevel.RefOf("secret_value_2"),
+		Owner: opslevel.NewNullableFrom(*opslevel.NewIdentifier(string(id2))),
+		Value: opslevel.NewNullableFrom("secret_value_2"),
 	}
 	result, err := client.UpdateSecret(string(id2), secretInput)
 	// Assert

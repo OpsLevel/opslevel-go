@@ -18,8 +18,8 @@ func TestCreateRubricLevels(t *testing.T) {
 	// Act
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
-		Description: ol.RefOf("Created By Kyle"),
-		Index:       ol.RefOf(4),
+		Description: ol.NewNullableFrom("Created By Kyle"),
+		Index:       ol.NewNullableFrom(4),
 	})
 	// Assert
 	autopilot.Equals(t, "kyle", result.Alias)
@@ -131,8 +131,8 @@ func TestUpdateRubricLevel(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
-		Name:        ol.RefOf("Example"),
-		Description: ol.RefOf("An example description"),
+		Name:        ol.NewNullableFrom("Example"),
+		Description: ol.NewNullableFrom("An example description"),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
@@ -152,7 +152,7 @@ func TestUpdateRubricLevelNoName(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
-		Description: ol.RefOf("An example description"),
+		Description: ol.NewNullableFrom("An example description"),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
@@ -164,7 +164,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
-		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": "" }}`,
+		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": null }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
@@ -172,8 +172,8 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
-		Name:        ol.RefOf("Example"),
-		Description: ol.RefOf(""),
+		Name:        ol.NewNullableFrom("Example"),
+		Description: ol.NewNull(),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
@@ -193,7 +193,7 @@ func TestUpdateRubricLevelNoDescription(t *testing.T) {
 	// Act
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:   id1,
-		Name: ol.RefOf("Example"),
+		Name: ol.NewNullableFrom("Example"),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
