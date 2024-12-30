@@ -1084,11 +1084,13 @@ func graphqlTypeToGolang(graphqlType string) string {
 	switch graphqlType {
 	case "Boolean":
 		convertedType += "bool"
+	case "Float":
+		convertedType += "float64"
 	case "Int":
 		convertedType += "int"
 	case "ISO8601DateTime":
 		convertedType += "iso8601.Time"
-	case "Float", "String":
+	case "String":
 		convertedType += "string"
 	default:
 		convertedType += graphqlType
@@ -1103,6 +1105,50 @@ func graphqlTypeToGolang(graphqlType string) string {
 
 func getFieldTypeNew(fieldType types.Type) string {
 	return graphqlTypeToGolang(fieldType.String())
+}
+
+func getFieldTypeForObject(fieldType types.FieldDefinition) string {
+	goType := graphqlTypeToGolang(fieldType.Type.String())
+	if strings.HasPrefix(goType, "*Nullable[") {
+		goType = strings.TrimPrefix(goType, "*Nullable[")
+		goType = strings.TrimSuffix(goType, "]")
+	}
+
+	switch goType {
+	case "Filter":
+		return "FilterId"
+	case "JSONSchema":
+		return "JSON"
+	case "Service":
+		return "ServiceId"
+	case "Team":
+		goType = "TeamId"
+	case "User":
+		return "UserId"
+	}
+
+	if fieldType.Name == "AlertSource" && goType == "Integration" {
+		goType = "IntegrationId"
+	} else if fieldType.Name == "CustomActionsTriggerDefinition" && goType == "Action" {
+		goType = "CustomActionsId"
+	} else if fieldType.Name == "FilterPredicate" && goType == "CaseSensitive" {
+		goType = "*bool"
+	} else if fieldType.Name == "Property" {
+		switch goType {
+		case "[]Error":
+			goType = "[]OpsLevelErrors"
+		case "HasProperties":
+			goType = "EntityOwnerService"
+		case "JsonString":
+			goType = "*JsonString"
+		case "PropertyDefinition":
+			goType = "PropertyDefinitionId"
+		}
+	} else if fieldType.Name == "ServiceRepository" && goType == "Repository" {
+		goType = "RepositoryId"
+	}
+
+	return goType
 }
 
 func isNullable(fieldType types.Type) bool {
@@ -1193,7 +1239,7 @@ var templFuncMap = template.FuncMap{
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
 	"isListType":                          isPlural,
-	"getFieldType":                        getFieldTypeNew,
+	"getFieldTypeForInputObject":          getFieldTypeNew,
 	"exampleStructTag":                    exampleStructTag,
 	"jsonStructTag":                       jsonStructTag,
 	"yamlStructTag":                       yamlStructTag,
