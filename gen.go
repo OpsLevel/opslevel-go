@@ -376,6 +376,7 @@ func genInputObjects(inputObjects map[string]*types.InputObject) {
 			panic(err)
 		}
 	}
+	fmt.Println("writing input.go")
 	err := os.WriteFile("input.go", buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
