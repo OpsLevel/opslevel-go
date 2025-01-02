@@ -518,13 +518,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    ol.NewNull(),
+				"resultMessage":    ol.NewNullableFrom(""),
 				"integrationId":    id,
 			}, map[string]any{
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    ol.NewNull(),
+				"resultMessage":    ol.NewNullableFrom(""),
 				"integration": ol.IntegrationId{
 					Id: id,
 				},
@@ -533,7 +533,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCustomEventUpdateInput](checkUpdateInput)
 				input.ServiceSelector = ol.NewNullableFrom(".metadata.name")
 				input.SuccessCondition = ol.NewNullableFrom(".metadata.name")
-				input.ResultMessage = ol.NewNull()
+				input.ResultMessage = ol.NewNullableFrom("")
 				input.IntegrationId = ol.NewNullableFrom(id)
 				input.PassPending = ol.NewNullableFrom(false)
 				return c.UpdateCheckCustomEvent(*input)
@@ -542,7 +542,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    ol.NewNull(),
+				"resultMessage":    ol.NewNullableFrom(""),
 				"integration": ol.IntegrationId{
 					Id: id,
 				},

@@ -83,7 +83,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation WebhookActionUpdate($input:CustomActionsWebhookActionUpdateInput!){customActionsWebhookActionUpdate(input: $input){webhookAction{{ template "custom_actions_request" }},errors{message,path}}}`,
-		`{"input":{"id": "123456789","description":null,"headers":"{\"Accept\":\"application/json\"}"}}`,
+		`{"input":{"id": "123456789","description":"","headers":"{\"Accept\":\"application/json\"}"}}`,
 		`{"data": {"customActionsWebhookActionUpdate": { "webhookAction": {{ template "custom_action1" }}, "errors": [] }}}`,
 	)
 
@@ -92,7 +92,7 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          *newID,
-		Description: ol.NewNull(),
+		Description: ol.NewNullableFrom(""),
 		Headers:     ol.NewNullableFrom(ol.JSON{"Accept": "application/json"}),
 	})
 
@@ -122,7 +122,7 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}`,
-		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","filterId":"987654321","manualInputsDefinition":null, "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": null}}`,
+		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
 		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/create_trigger", testRequest)
@@ -132,8 +132,8 @@ func TestCreateTriggerDefinition(t *testing.T) {
 		Name:                   "Deploy Rollback",
 		AccessControl:          ol.NewNullableFrom(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
-		ResponseTemplate:       ol.NewNull(),
-		ManualInputsDefinition: ol.NewNull(),
+		ResponseTemplate:       ol.NewNullableFrom(""),
+		ManualInputsDefinition: ol.NewNullableFrom(""),
 		ActionId:               ol.NewNullableFrom(*newID),
 		OwnerId:                *newID,
 		FilterId:               ol.NewNullableFrom(ol.ID("987654321")),
@@ -147,7 +147,7 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}`,
-		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","extendedTeamAccess":[{"alias":"example_1"},{"alias":"example_1"}],"filterId":"987654321","manualInputsDefinition":null, "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": null}}`,
+		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"GLOBAL","extendedTeamAccess":[{"alias":"example_1"},{"alias":"example_1"}],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
 		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/create_trigger_with_global_entity", testRequest)
@@ -158,8 +158,8 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 		AccessControl:          ol.NewNullableFrom(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
 		ActionId:               ol.NewNullableFrom(*newID),
-		ManualInputsDefinition: ol.NewNull(),
-		ResponseTemplate:       ol.NewNull(),
+		ManualInputsDefinition: ol.NewNullableFrom(""),
+		ResponseTemplate:       ol.NewNullableFrom(""),
 		OwnerId:                *newID,
 		FilterId:               ol.NewNullableFrom(ol.ID("987654321")),
 		EntityType:             ol.NewNullableFrom(ol.CustomActionsEntityTypeEnumGlobal),
@@ -177,7 +177,7 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionCreate($input:CustomActionsTriggerDefinitionCreateInput!){customActionsTriggerDefinitionCreate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}`,
-		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","extendedTeamAccess":[],"filterId":"987654321","manualInputsDefinition":null, "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": null}}`,
+		`{"input":{"actionId":"123456789", "description":"Disables the Deploy Freeze","entityType":"SERVICE","extendedTeamAccess":[],"filterId":"987654321","manualInputsDefinition":"", "name":"Deploy Rollback","ownerId":"123456789", "accessControl": "everyone", "responseTemplate": ""}}`,
 		`{"data": {"customActionsTriggerDefinitionCreate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 
@@ -187,8 +187,8 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 		Name:                   "Deploy Rollback",
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
 		AccessControl:          ol.NewNullableFrom(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
-		ManualInputsDefinition: ol.NewNull(),
-		ResponseTemplate:       ol.NewNull(),
+		ManualInputsDefinition: ol.NewNullableFrom(""),
+		ResponseTemplate:       ol.NewNullableFrom(""),
 		ActionId:               ol.NewNullableFrom(*newID),
 		OwnerId:                *newID,
 		FilterId:               ol.NewNullableFrom(ol.ID("987654321")),
@@ -269,7 +269,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}`,
-		`{"input":{"id":"123456789", "name":"test", "description": null, "extendedTeamAccess": []}}`,
+		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": []}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/update_trigger2", testRequest)
@@ -278,7 +278,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:                 *newID,
 		Name:               ol.NewNullableFrom("test"),
-		Description:        ol.NewNull(),
+		Description:        ol.NewNullableFrom(""),
 		ExtendedTeamAccess: ol.NewNullableFrom([]ol.IdentifierInput{}),
 	})
 	// Assert
@@ -290,7 +290,7 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionUpdate($input:CustomActionsTriggerDefinitionUpdateInput!){customActionsTriggerDefinitionUpdate(input: $input){triggerDefinition{{ template "custom_actions_trigger_request" }},errors{message,path}}}`,
-		`{"input":{"id":"123456789", "name":"test", "description": null, "extendedTeamAccess": [{"alias": "123456789"}, { {{ template "id1" }} } ]}}`,
+		`{"input":{"id":"123456789", "name":"test", "description": "", "extendedTeamAccess": [{"alias": "123456789"}, { {{ template "id1" }} } ]}}`,
 		`{"data": {"customActionsTriggerDefinitionUpdate": { "triggerDefinition": {{ template "custom_action_trigger1" }}, "errors": [] }}}`,
 	)
 	client := BestTestClient(t, "custom_actions/update_trigger3", testRequest)
@@ -299,7 +299,7 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:          *newID,
 		Name:        ol.NewNullableFrom("test"),
-		Description: ol.NewNull(),
+		Description: ol.NewNullableFrom(""),
 		ExtendedTeamAccess: ol.NewNullableFrom([]ol.IdentifierInput{
 			*ol.NewIdentifier(string(*newID)),
 			*ol.NewIdentifier(string(id1)),

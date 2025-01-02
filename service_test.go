@@ -300,7 +300,7 @@ func TestUpdateService(t *testing.T) {
 	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycleAlias": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tierAlias": "tier_4"}}`
 	// delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`
 	delVarsV1DoesNotWorkExceptOnParent := `{"input":{"id": "123456789", "parent": null}}`
-	zeroVars := `{"input":{"description": null, "framework": null, "id": "123456789"}}`
+	zeroVars := `{"input":{"description": "", "framework": "", "id": "123456789"}}`
 	type TestCase struct {
 		Name  string
 		Vars  string
@@ -362,8 +362,8 @@ func TestUpdateService(t *testing.T) {
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInput{
 				Id:          ol.NewNullableFrom(ol.ID("123456789")),
-				Description: ol.NewNull(),
-				Framework:   ol.NewNull(),
+				Description: ol.NewNullableFrom(""),
+				Framework:   ol.NewNullableFrom(""),
 			},
 		},
 		// {

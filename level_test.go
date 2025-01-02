@@ -164,7 +164,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`mutation LevelUpdate($input:LevelUpdateInput!){levelUpdate(input: $input){level{alias,description,id,index,name},errors{message,path}}}`,
-		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": null }}`,
+		`{"input": { {{ template "id1" }}, "name": "{{ template "name1" }}", "description": "" }}`,
 		`{"data": { "levelUpdate": { "level": {{ template "level_1" }}, "errors": [] }}}`,
 	)
 
@@ -173,7 +173,7 @@ func TestUpdateRubricLevelEmptyDescription(t *testing.T) {
 	result, _ := client.UpdateLevel(ol.LevelUpdateInput{
 		Id:          id1,
 		Name:        ol.NewNullableFrom("Example"),
-		Description: ol.NewNull(),
+		Description: ol.NewNullableFrom(""),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Alias)
