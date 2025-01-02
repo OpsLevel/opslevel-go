@@ -109,58 +109,7 @@ var stringTypeSuffixes = []string{
 	"yaml",
 }
 
-var enumExamples = map[string]string{
-	"AlertSourceStatusTypeEnum":                       opslevel.AllAlertSourceStatusTypeEnum[0],
-	"ApiDocumentSourceEnum":                           opslevel.AllApiDocumentSourceEnum[0],
-	"AlertSourceTypeEnum":                             opslevel.AllAlertSourceTypeEnum[0],
-	"AliasOwnerTypeEnum":                              opslevel.AllAliasOwnerTypeEnum[0],
-	"BasicTypeEnum":                                   opslevel.AllBasicTypeEnum[0],
-	"CampaignFilterEnum":                              opslevel.AllCampaignFilterEnum[0],
-	"CampaignReminderChannelEnum":                     opslevel.AllCampaignReminderChannelEnum[0],
-	"CampaignReminderFrequencyUnitEnum":               opslevel.AllCampaignReminderFrequencyUnitEnum[0],
-	"CampaignReminderTypeEnum":                        opslevel.AllCampaignReminderTypeEnum[0],
-	"CampaignServiceStatusEnum":                       opslevel.AllCampaignServiceStatusEnum[0],
-	"CampaignSortEnum":                                opslevel.AllCampaignSortEnum[0],
-	"CampaignStatusEnum":                              opslevel.AllCampaignStatusEnum[0],
-	"CheckCodeIssueConstraintEnum":                    opslevel.AllCheckCodeIssueConstraintEnum[0],
-	"CheckResultStatusEnum":                           opslevel.AllCheckResultStatusEnum[0],
-	"CheckStatus":                                     opslevel.AllCheckStatus[0],
-	"CheckType":                                       opslevel.AllCheckType[0],
-	"CodeIssueResolutionTimeUnitEnum":                 opslevel.AllCodeIssueResolutionTimeUnitEnum[0],
-	"ConnectiveEnum":                                  opslevel.AllConnectiveEnum[0],
-	"ContactType":                                     opslevel.AllContactType[0],
-	"CustomActionsEntityTypeEnum":                     opslevel.AllCustomActionsEntityTypeEnum[0],
-	"CustomActionsHttpMethodEnum":                     opslevel.AllCustomActionsHttpMethodEnum[0],
-	"CustomActionsTriggerDefinitionAccessControlEnum": opslevel.AllCustomActionsTriggerDefinitionAccessControlEnum[0],
-	"CustomActionsTriggerEventStatusEnum":             opslevel.AllCustomActionsTriggerEventStatusEnum[0],
-	"DayOfWeekEnum":                                   opslevel.AllDayOfWeekEnum[0],
-	"EventIntegrationEnum":                            opslevel.AllEventIntegrationEnum[0],
-	"FrequencyTimeScale":                              opslevel.AllFrequencyTimeScale[0],
-	"HasDocumentationSubtypeEnum":                     opslevel.AllHasDocumentationSubtypeEnum[0],
-	"HasDocumentationTypeEnum":                        opslevel.AllHasDocumentationTypeEnum[0],
-	"PackageConstraintEnum":                           opslevel.AllPackageConstraintEnum[0],
-	"PackageManagerEnum":                              opslevel.AllPackageManagerEnum[0],
-	"PayloadFilterEnum":                               opslevel.AllPayloadFilterEnum[0],
-	"PayloadSortEnum":                                 opslevel.AllPayloadSortEnum[0],
-	"PredicateKeyEnum":                                opslevel.AllPredicateKeyEnum[0],
-	"PredicateTypeEnum":                               opslevel.AllPredicateTypeEnum[0],
-	"PropertyDefinitionDisplayTypeEnum":               opslevel.AllPropertyDefinitionDisplayTypeEnum[0],
-	"PropertyDisplayStatusEnum":                       opslevel.AllPropertyDisplayStatusEnum[0],
-	"RelatedResourceRelationshipTypeEnum":             opslevel.AllRelatedResourceRelationshipTypeEnum[0],
-	"RelationshipTypeEnum":                            opslevel.AllRelationshipTypeEnum[0],
-	"RepositoryVisibilityEnum":                        opslevel.AllRepositoryVisibilityEnum[0],
-	"ResourceDocumentStatusTypeEnum":                  opslevel.AllResourceDocumentStatusTypeEnum[0],
-	"ScorecardSortEnum":                               opslevel.AllScorecardSortEnum[0],
-	"ServicePropertyTypeEnum":                         opslevel.AllServicePropertyTypeEnum[0],
-	"ServiceSortEnum":                                 opslevel.AllServiceSortEnum[0],
-	"SnykIntegrationRegionEnum":                       opslevel.AllSnykIntegrationRegionEnum[0],
-	"TaggableResource":                                opslevel.AllTaggableResource[0],
-	"ToolCategory":                                    opslevel.AllToolCategory[0],
-	"UserRole":                                        opslevel.AllUserRole[0],
-	"UsersFilterEnum":                                 opslevel.AllUsersFilterEnum[0],
-	"UsersInviteScopeEnum":                            opslevel.AllUsersInviteScopeEnum[0],
-	"VaultSecretsSortEnum":                            opslevel.AllVaultSecretsSortEnum[0],
-}
+var enumExamples = map[string]string{}
 
 var listExamples = map[string]string{
 	"channels":           "[]",
@@ -297,6 +246,7 @@ func main() {
 	}
 	schema := graphql.MustParseSchema(graphqlSchema, nil, opts...)
 	schemaAst := schema.ASTSchema()
+	populateEnumExamples(schemaAst.Enums)
 
 	inputObjects := map[string]*types.InputObject{}
 	objects := map[string]*types.ObjectTypeDefinition{}
@@ -328,6 +278,12 @@ func main() {
 	err := run()
 	if err != nil {
 		log.Fatalln(err)
+	}
+}
+
+func populateEnumExamples(schemaEnums []*types.EnumTypeDefinition) {
+	for _, enum := range schemaEnums {
+		enumExamples[enum.Name] = enum.EnumValuesDefinition[0].EnumValue
 	}
 }
 
