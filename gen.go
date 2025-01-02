@@ -1071,50 +1071,6 @@ func getFieldTypeNew(fieldType types.Type) string {
 	return graphqlTypeToGolang(fieldType.String())
 }
 
-func getFieldTypeForObject(fieldType types.FieldDefinition) string {
-	goType := graphqlTypeToGolang(fieldType.Type.String())
-	if strings.HasPrefix(goType, "*Nullable[") {
-		goType = strings.TrimPrefix(goType, "*Nullable[")
-		goType = strings.TrimSuffix(goType, "]")
-	}
-
-	switch goType {
-	case "Filter":
-		return "FilterId"
-	case "JSONSchema":
-		return "JSON"
-	case "Service":
-		return "ServiceId"
-	case "Team":
-		goType = "TeamId"
-	case "User":
-		return "UserId"
-	}
-
-	if fieldType.Name == "AlertSource" && goType == "Integration" {
-		goType = "IntegrationId"
-	} else if fieldType.Name == "CustomActionsTriggerDefinition" && goType == "Action" {
-		goType = "CustomActionsId"
-	} else if fieldType.Name == "FilterPredicate" && goType == "CaseSensitive" {
-		goType = "*bool"
-	} else if fieldType.Name == "Property" {
-		switch goType {
-		case "[]Error":
-			goType = "[]OpsLevelErrors"
-		case "HasProperties":
-			goType = "EntityOwnerService"
-		case "JsonString":
-			goType = "*JsonString"
-		case "PropertyDefinition":
-			goType = "PropertyDefinitionId"
-		}
-	} else if fieldType.Name == "ServiceRepository" && goType == "Repository" {
-		goType = "RepositoryId"
-	}
-
-	return goType
-}
-
 func isNullable(fieldType types.Type) bool {
 	return fieldType.Kind() != "NON_NULL"
 }
