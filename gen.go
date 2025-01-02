@@ -139,14 +139,14 @@ var listExamples = map[string]string{
 
 var scalarExamples = map[string]string{
 	"Boolean":         "false",
-	"ID":              "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
-	"Int":             "3",
-	"ISO8601DateTime": "2025-01-05T01:00:00.000Z",
 	"Float":           "4.2069",
-	"String":          "example_value",
+	"ID":              "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
+	"ISO8601DateTime": "2025-01-05T01:00:00.000Z",
+	"Int":             "3",
 	"JSON":            `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`,
 	"JSONSchema":      `SCHEMA_TBD`,
 	"JsonString":      "JSON_TBD",
+	"String":          "example_value",
 }
 
 var knownTypeMappings = map[string]string{
@@ -973,6 +973,9 @@ func exampleStructTag(field *types.InputValueDefinition) string {
 	var exampleValue string
 	var unwrappedType types.Type
 
+	if field.Name.Name == "externalId" {
+		return fmt.Sprintf(` example:"%s"`, scalarExamples["ID"])
+	}
 	if nonNullType, ok := field.Type.(*types.NonNull); ok {
 		unwrappedType = nonNullType.OfType
 	} else {
