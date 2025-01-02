@@ -327,8 +327,12 @@ func genInputObjects(inputObjects map[string]*types.InputObject) {
 	tmpl.Funcs(templFuncMap)
 	template.Must(tmpl.ParseFiles("./templates/inputObjects.tpl"))
 
-	for _, enumName := range sortedMapKeys(inputObjects) {
-		if err := tmpl.ExecuteTemplate(&buf, "inputs", inputObjects[enumName]); err != nil {
+	for _, inputObjectName := range sortedMapKeys(inputObjects) {
+		// Skip campaign objects until tested later on
+		if strings.Contains(inputObjectName, "Campaign") {
+			continue
+		}
+		if err := tmpl.ExecuteTemplate(&buf, "inputs", inputObjects[inputObjectName]); err != nil {
 			panic(err)
 		}
 	}
