@@ -18,8 +18,7 @@ func TestServiceApiDocSettingsUpdate(t *testing.T) {
 
 	client := BestTestClient(t, "service/api_doc_settings_update", testRequest)
 	// Act
-	docSource := ol.ApiDocumentSourceEnumPull
-	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", &docSource)
+	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "/src/swagger.json", &ol.ApiDocumentSourceEnumPull)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)
@@ -56,8 +55,7 @@ func TestServiceApiDocSettingsUpdateDocPathNull(t *testing.T) {
 
 	client := BestTestClient(t, "service/api_doc_settings_update_doc_path_null", testRequest)
 	// Act
-	docSource := ol.ApiDocumentSourceEnumPull
-	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "", &docSource)
+	result, err := client.ServiceApiDocSettingsUpdate("service_alias", "", &ol.ApiDocumentSourceEnumPull)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)

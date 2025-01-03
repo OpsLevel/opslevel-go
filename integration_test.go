@@ -71,11 +71,11 @@ func TestCreateAzureResourcesIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_azure_resources", testRequest)
 	// Act
 	result, err := client.CreateIntegrationAzureResources(opslevel.AzureResourcesIntegrationInput{
-		Name:           opslevel.NewNullableFrom("new azure resources"),
-		TenantId:       opslevel.NewNullableFrom("12345678-1234-1234-1234-123456789abc"),
-		SubscriptionId: opslevel.NewNullableFrom("12345678-1234-1234-1234-123456789def"),
-		ClientId:       opslevel.NewNullableFrom("XXX_client_id_XXX"),
-		ClientSecret:   opslevel.NewNullableFrom("XXX_client_secret_XXX"),
+		Name:           opslevel.RefOf("new azure resources"),
+		TenantId:       opslevel.RefOf("12345678-1234-1234-1234-123456789abc"),
+		SubscriptionId: opslevel.RefOf("12345678-1234-1234-1234-123456789def"),
+		ClientId:       opslevel.RefOf("XXX_client_id_XXX"),
+		ClientSecret:   opslevel.RefOf("XXX_client_secret_XXX"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -106,7 +106,7 @@ func TestCreateEventIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_event", testRequest)
 	// Act
 	result, err := client.CreateEventIntegration(opslevel.EventIntegrationInput{
-		Name: opslevel.NewNullableFrom("Custom Event"),
+		Name: opslevel.RefOf("Custom Event"),
 		Type: opslevel.EventIntegrationEnumDeploy,
 	})
 	// Assert
@@ -140,11 +140,11 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_gcp", testRequest)
 	// Act
 	result, err := client.CreateIntegrationGCP(opslevel.GoogleCloudIntegrationInput{
-		Name:                  opslevel.NewNullableFrom("new gcp integration"),
+		Name:                  opslevel.RefOf("new gcp integration"),
 		OwnershipTagKeys:      &[]string{"owner", "team", "opslevel_team"},
-		PrivateKey:            opslevel.NewNullableFrom("XXX_PRIVATE_KEY_XXX"),
-		ClientEmail:           opslevel.NewNullableFrom("helloworld@appspot.gserviceaccount.com"),
-		TagsOverrideOwnership: opslevel.NewNullableFrom(true),
+		PrivateKey:            opslevel.RefOf("XXX_PRIVATE_KEY_XXX"),
+		ClientEmail:           opslevel.RefOf("helloworld@appspot.gserviceaccount.com"),
+		TagsOverrideOwnership: opslevel.RefOf(true),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -181,8 +181,8 @@ func TestCreateNewRelicIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/create_new_relic", testRequest)
 	// Act
 	result, err := client.CreateIntegrationNewRelic(opslevel.NewRelicIntegrationInput{
-		ApiKey:  opslevel.NewNullableFrom("123456789"),
-		BaseUrl: opslevel.NewNullableFrom("https://api.newrelic.com/graphql"),
+		ApiKey:  opslevel.RefOf("123456789"),
+		BaseUrl: opslevel.RefOf("https://api.newrelic.com/graphql"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -310,9 +310,9 @@ func TestUpdateAzureResourcesIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/update_azure_resources", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationAzureResources(string(id1), opslevel.AzureResourcesIntegrationInput{
-		Name:         opslevel.NewNullableFrom("updated azure resources"),
-		ClientId:     opslevel.NewNullableFrom("updated client id"),
-		ClientSecret: opslevel.NewNullableFrom("updated client secret"),
+		Name:         opslevel.RefOf("updated azure resources"),
+		ClientId:     opslevel.RefOf("updated client id"),
+		ClientSecret: opslevel.RefOf("updated client secret"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -348,11 +348,11 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	client := BestTestClient(t, "integration/update_gcp", testRequest)
 	// Act
 	result, err := client.UpdateIntegrationGCP(string(id1), opslevel.GoogleCloudIntegrationInput{
-		Name:                  opslevel.NewNullableFrom("updated gcp"),
+		Name:                  opslevel.RefOf("updated gcp"),
 		OwnershipTagKeys:      &[]string{"team", "opslevel_team"},
-		PrivateKey:            opslevel.NewNullableFrom("XXX_PRIVATE_KEY_2_XXX"),
-		ClientEmail:           opslevel.NewNullableFrom("helloworld_2@appspot.gserviceaccount.com"),
-		TagsOverrideOwnership: opslevel.NewNullableFrom(false),
+		PrivateKey:            opslevel.RefOf("XXX_PRIVATE_KEY_2_XXX"),
+		ClientEmail:           opslevel.RefOf("helloworld_2@appspot.gserviceaccount.com"),
+		TagsOverrideOwnership: opslevel.RefOf(false),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -392,7 +392,7 @@ func TestUpdateNewRelicIntegration(t *testing.T) {
 	result, err := client.UpdateIntegrationNewRelic(
 		string(id1),
 		opslevel.NewRelicIntegrationInput{
-			BaseUrl: opslevel.NewNullableFrom("https://api-test.newrelic.com/graphql"),
+			BaseUrl: opslevel.RefOf("https://api-test.newrelic.com/graphql"),
 		},
 	)
 	// Assert

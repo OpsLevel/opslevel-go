@@ -34,7 +34,7 @@ func TestJsonMarshalPredicateUpdateInputWithValue(t *testing.T) {
 	predicateWithValue := `{"type":"contains","value":"go"}`
 	outputWithValue := &ol.PredicateUpdateInput{
 		Type:  &ol.PredicateTypeEnumContains,
-		Value: ol.NewNullableFrom("go"),
+		Value: ol.RefOf("go"),
 	}
 	// Act
 	marshalledNullPredicate, err := json.Marshal(outputWithValue)

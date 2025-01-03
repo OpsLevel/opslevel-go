@@ -27,10 +27,10 @@ func TestCreateScorecard(t *testing.T) {
 	client := BestTestClient(t, "scorecards/create_scorecard", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
-		Description:                 ol.NewNullableFrom(description),
+		Description:                 ol.RefOf(description),
 		OwnerId:                     *fakeOwnerId,
-		FilterId:                    ol.NewNullableFrom(*fakeFilterId),
-		AffectsOverallServiceLevels: ol.NewNullableFrom(true),
+		FilterId:                    ol.RefOf(*fakeFilterId),
+		AffectsOverallServiceLevels: ol.RefOf(true),
 	})
 
 	autopilot.Ok(t, err)
@@ -53,10 +53,10 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 	client := BestTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
-		Description:                 ol.NewNullableFrom(description),
+		Description:                 ol.RefOf(description),
 		OwnerId:                     *fakeOwnerId,
-		FilterId:                    ol.NewNullableFrom(*fakeFilterId),
-		AffectsOverallServiceLevels: ol.NewNullableFrom(false),
+		FilterId:                    ol.RefOf(*fakeFilterId),
+		AffectsOverallServiceLevels: ol.RefOf(false),
 	})
 
 	autopilot.Ok(t, err)
@@ -79,10 +79,10 @@ func TestUpdateScorecard(t *testing.T) {
 
 	client := BestTestClient(t, "scorecards/update_scorecard", testRequest)
 	sc, err := client.UpdateScorecard(scorecardId, ol.ScorecardInput{
-		Description: ol.NewNullableFrom(description),
+		Description: ol.RefOf(description),
 		Name:        name,
 		OwnerId:     *newOwnerId,
-		FilterId:    ol.NewNullableFrom(*newFilterId),
+		FilterId:    ol.RefOf(*newFilterId),
 	})
 
 	autopilot.Ok(t, err)

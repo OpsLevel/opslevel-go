@@ -275,7 +275,7 @@ func (client *Client) DeleteCheck(id ID) error {
 		} `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": CheckDeleteInput{Id: NewNullableFrom(id)},
+		"input": CheckDeleteInput{Id: RefOf(id)},
 	}
 	err := client.Mutate(&m, v, WithName("CheckDelete"))
 	return HandleErrors(err, m.Payload.Errors)

@@ -238,7 +238,7 @@ func TestCreateService(t *testing.T) {
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: ol.NewNullableFrom("Foo service"),
+		Description: ol.RefOf("Foo service"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -263,12 +263,12 @@ func TestCreateServiceWithNote(t *testing.T) {
 	// Act
 	service, servicErr := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: ol.NewNullableFrom("Foo service"),
+		Description: ol.RefOf("Foo service"),
 	})
 	note := "Foo note"
 	service, noteErr := client.UpdateServiceNote(ol.ServiceNoteUpdateInput{
 		Service: *ol.NewIdentifier(string(service.Id)),
-		Note:    ol.NewNullableFrom(note),
+		Note:    ol.RefOf(note),
 	})
 	// Assert
 	autopilot.Ok(t, servicErr)
@@ -287,7 +287,7 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 	// Act
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
-		Description: ol.NewNullableFrom("Foo service"),
+		Description: ol.RefOf("Foo service"),
 		Parent:      ol.NewIdentifier("FooSystem"),
 	})
 	// Assert
@@ -312,12 +312,12 @@ func TestUpdateService(t *testing.T) {
 			Vars: addVars,
 			Input: ol.ServiceUpdateInput{
 				Parent:         ol.NewIdentifier("some_system"),
-				Id:             ol.NewNullableFrom(ol.ID("123456789")),
-				Name:           ol.NewNullableFrom("Hello World"),
-				Description:    ol.NewNullableFrom("The quick brown fox"),
-				Framework:      ol.NewNullableFrom("django"),
-				TierAlias:      ol.NewNullableFrom("tier_4"),
-				LifecycleAlias: ol.NewNullableFrom("pre-alpha"),
+				Id:             ol.RefOf(ol.ID("123456789")),
+				Name:           ol.RefOf("Hello World"),
+				Description:    ol.RefOf("The quick brown fox"),
+				Framework:      ol.RefOf("django"),
+				TierAlias:      ol.RefOf("tier_4"),
+				LifecycleAlias: ol.RefOf("pre-alpha"),
 			},
 		},
 		// {
@@ -326,11 +326,11 @@ func TestUpdateService(t *testing.T) {
 		// 	Input: ol.ServiceUpdateInputV2{
 		// 		Parent:         ol.NewIdentifier("some_system"),
 		// 		Id:             ol.NewID("123456789"),
-		// 		Name:           ol.NewNullableFrom("Hello World"),
-		// 		Description:    ol.NewNullableFrom("The quick brown fox"),
-		// 		Framework:      ol.NewNullableFrom("django"),
-		// 		TierAlias:      ol.NewNullableFrom("tier_4"),
-		// 		LifecycleAlias: ol.NewNullableFrom("pre-alpha"),
+		// 		Name:           ol.RefOf("Hello World"),
+		// 		Description:    ol.RefOf("The quick brown fox"),
+		// 		Framework:      ol.RefOf("django"),
+		// 		TierAlias:      ol.RefOf("tier_4"),
+		// 		LifecycleAlias: ol.RefOf("pre-alpha"),
 		// 	},
 		// },
 		{
@@ -338,7 +338,7 @@ func TestUpdateService(t *testing.T) {
 			Vars: delVarsV1DoesNotWorkExceptOnParent,
 			Input: ol.ServiceUpdateInput{
 				Parent:         &ol.IdentifierInput{},
-				Id:             ol.NewNullableFrom(ol.ID("123456789")),
+				Id:             ol.RefOf(ol.ID("123456789")),
 				Description:    nil,
 				Framework:      nil,
 				TierAlias:      nil,
@@ -361,16 +361,16 @@ func TestUpdateService(t *testing.T) {
 			Name: "set fields to zero value v1",
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInput{
-				Id:          ol.NewNullableFrom(ol.ID("123456789")),
-				Description: ol.NewNullableFrom(""),
-				Framework:   ol.NewNullableFrom(""),
+				Id:          ol.RefOf(ol.ID("123456789")),
+				Description: ol.RefOf(""),
+				Framework:   ol.RefOf(""),
 			},
 		},
 		// {
 		// 	Name: "set fields to zero value v2",
 		// 	Vars: zeroVars,
 		// 	Input: ol.ServiceUpdateInputV2{
-		// 		Id:          ol.NewNullableFrom(ol.ID("123456789")),
+		// 		Id:          ol.RefOf(ol.ID("123456789")),
 		// 		Description: ol.NewNull(),
 		// 		Framework:   ol.NewNull(),
 		// 	},

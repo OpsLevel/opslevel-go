@@ -626,12 +626,12 @@ func NewTagArgs(tag string) (TagArgs, error) {
 	switch len(kv) {
 	case 1:
 		return TagArgs{
-			Key: NewNullableFrom(kv[0]),
+			Key: RefOf(kv[0]),
 		}, nil
 	case 2:
 		return TagArgs{
-			Key:   NewNullableFrom(kv[0]),
-			Value: NewNullableFrom(kv[1]),
+			Key:   RefOf(kv[0]),
+			Value: RefOf(kv[1]),
 		}, nil
 	default:
 		return TagArgs{}, fmt.Errorf("cannot make a valid TagArg from: '%s' (not in format key:value)", tag)
@@ -745,9 +745,9 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 func (client *Client) DeleteService(identifier string) error {
 	input := ServiceDeleteInput{}
 	if IsID(identifier) {
-		input.Id = NewNullableFrom(ID(identifier))
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = NewNullableFrom(identifier)
+		input.Alias = RefOf(identifier)
 	}
 
 	var m struct {

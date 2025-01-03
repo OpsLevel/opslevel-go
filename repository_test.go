@@ -170,7 +170,7 @@ func TestUpdateRepository(t *testing.T) {
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:      id1,
-		OwnerId: ol.NewNullableFrom(ol.ID(string(id1))),
+		OwnerId: ol.RefOf(ol.ID(string(id1))),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -245,7 +245,7 @@ func TestUpdateServiceRepository(t *testing.T) {
 	// Act
 	resp, err := client.UpdateServiceRepository(ol.ServiceRepositoryUpdateInput{
 		Id:          id1,
-		DisplayName: ol.NewNullableFrom("Foobar"),
+		DisplayName: ol.RefOf("Foobar"),
 	})
 	// Assert
 	autopilot.Ok(t, err)

@@ -104,9 +104,9 @@ func (client *Client) AssignTagsWithTagInputs(identifier string, tags []TagInput
 		Tags: tags,
 	}
 	if IsID(identifier) {
-		input.Id = NewNullableFrom(ID(identifier))
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = NewNullableFrom(identifier)
+		input.Alias = RefOf(identifier)
 	}
 	return client.AssignTag(input)
 }
@@ -150,9 +150,9 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 			Value: value,
 		}
 		if IsID(identifier) {
-			input.Id = NewNullableFrom(ID(identifier))
+			input.Id = RefOf(ID(identifier))
 		} else {
-			input.Alias = NewNullableFrom(identifier)
+			input.Alias = RefOf(identifier)
 		}
 		newTag, err := client.CreateTag(input)
 		if err != nil {
@@ -224,7 +224,7 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 	for _, tag := range toCreate {
 		taggableResourceType := resourceType.ResourceType()
 		_, err := client.CreateTag(TagCreateInput{
-			Id:    NewNullableFrom(resourceType.ResourceId()),
+			Id:    RefOf(resourceType.ResourceId()),
 			Type:  &taggableResourceType,
 			Key:   tag.Key,
 			Value: tag.Value,

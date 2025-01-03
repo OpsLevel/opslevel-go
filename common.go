@@ -22,10 +22,9 @@ type PayloadVariables map[string]interface{}
 
 // WithoutDeactivedUsers filters out deactivated users on ListUsers query
 func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
-	enumEquals := BasicTypeEnumEquals
 	omitDeactivedUsersFilter := UsersFilterInput{
 		Key:  UsersFilterEnumDeactivatedAt,
-		Type: &enumEquals,
+		Type: &BasicTypeEnumEquals,
 	}
 	(*pv)["filter"] = &[]UsersFilterInput{omitDeactivedUsersFilter}
 	return pv

@@ -36,11 +36,11 @@ func (user *User) ResourceType() TaggableResource {
 func NewUserIdentifier(value string) *UserIdentifierInput {
 	if IsID(value) {
 		return &UserIdentifierInput{
-			Id: NewNullableFrom(ID(value)),
+			Id: RefOf(ID(value)),
 		}
 	}
 	return &UserIdentifierInput{
-		Email: NewNullableFrom(value),
+		Email: RefOf(value),
 	}
 }
 

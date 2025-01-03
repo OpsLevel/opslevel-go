@@ -27,8 +27,8 @@ func TestCreatePropertyDefinition(t *testing.T) {
 		Schema:               *schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register("property_definition_input", ol.PropertyDefinitionInput{
-		AllowedInConfigFiles: ol.NewNullableFrom(true),
-		Name:                 ol.NewNullableFrom("my-prop"),
+		AllowedInConfigFiles: ol.RefOf(true),
+		Name:                 ol.RefOf("my-prop"),
 		Schema:               schema,
 	})
 	testRequest := autopilot.NewTestRequest(
@@ -63,8 +63,8 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 		Schema:                *schemaAsJSON,
 	})
 	propertyDefinitionInput := autopilot.Register("property_definition_input", ol.PropertyDefinitionInput{
-		AllowedInConfigFiles:  ol.NewNullableFrom(false),
-		Description:           ol.NewNullableFrom("this description was added"),
+		AllowedInConfigFiles:  ol.RefOf(false),
+		Description:           ol.RefOf("this description was added"),
 		PropertyDisplayStatus: &ol.PropertyDisplayStatusEnumHidden,
 		Schema:                schema,
 	})

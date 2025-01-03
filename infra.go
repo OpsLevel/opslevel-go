@@ -131,14 +131,14 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 		Data:   input.Data,
 	}
 	if input.Owner != nil {
-		i.OwnerId = NewNullableFrom(*input.Owner)
+		i.OwnerId = RefOf(*input.Owner)
 	}
 	if input.Provider != nil {
-		i.ProviderResourceType = NewNullableFrom(input.Provider.Type)
+		i.ProviderResourceType = RefOf(input.Provider.Type)
 		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalUrl:  NewNullableFrom(input.Provider.URL),
-			ProviderName: NewNullableFrom(input.Provider.Name),
+			ExternalUrl:  RefOf(input.Provider.URL),
+			ProviderName: RefOf(input.Provider.Name),
 		}
 	}
 	var m struct {
@@ -230,14 +230,14 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
 	}
 	if input.Owner != nil {
-		i.OwnerId = NewNullableFrom(*input.Owner)
+		i.OwnerId = RefOf(*input.Owner)
 	}
 	if input.Provider != nil {
-		i.ProviderResourceType = NewNullableFrom(input.Provider.Type)
+		i.ProviderResourceType = RefOf(input.Provider.Type)
 		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
-			ExternalUrl:  NewNullableFrom(input.Provider.URL),
-			ProviderName: NewNullableFrom(input.Provider.Name),
+			ExternalUrl:  RefOf(input.Provider.URL),
+			ProviderName: RefOf(input.Provider.Name),
 		}
 	}
 	var m struct {

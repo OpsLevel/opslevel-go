@@ -242,12 +242,12 @@ func TestNewNullableWithValueString(t *testing.T) {
 	testCases := []TestCase{
 		{
 			Name:         "empty string using constructor",
-			Value:        ol.NewNullableFrom(""),
+			Value:        ol.RefOf(""),
 			OutputBuffer: `""`,
 		},
 		{
 			Name:         "hello world string using constructor",
-			Value:        ol.NewNullableFrom("hello world"),
+			Value:        ol.RefOf("hello world"),
 			OutputBuffer: `"hello world"`,
 		},
 		{

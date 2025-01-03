@@ -81,14 +81,14 @@ func TestCreateTeam(t *testing.T) {
 	// Arrange
 	contacts := autopilot.Register("contact_input_slice",
 		[]ol.ContactInput{
-			ol.CreateContactSlackHandle("@mozzie", ol.NewNullableFrom("")),
+			ol.CreateContactSlackHandle("@mozzie", ol.RefOf("")),
 			ol.CreateContactWeb("https://example.com", ol.RefOf("Homepage")),
 		},
 	)
 	input := autopilot.Register("team_create_input",
 		ol.TeamCreateInput{
 			Name:             "Example",
-			Responsibilities: ol.NewNullableFrom("Foo & bar"),
+			Responsibilities: ol.RefOf("Foo & bar"),
 			Contacts:         &contacts,
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		})
@@ -577,8 +577,8 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.TeamUpdateInput]("team_update_input",
 		ol.TeamUpdateInput{
-			Id:               ol.NewNullableFrom(id1),
-			Responsibilities: ol.NewNullableFrom("Foo & bar"),
+			Id:               ol.RefOf(id1),
+			Responsibilities: ol.RefOf("Foo & bar"),
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		},
 	)
@@ -686,8 +686,8 @@ func TestTeamAddMembership(t *testing.T) {
 	// Act
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
 	newMembership := ol.TeamMembershipUserInput{
-		Role: ol.NewNullableFrom("user"),
-		User: &ol.UserIdentifierInput{Id: ol.NewNullableFrom(id1), Email: ol.NewNullableFrom("kyle@opslevel.com")},
+		Role: ol.RefOf("user"),
+		User: &ol.UserIdentifierInput{Id: ol.RefOf(id1), Email: ol.RefOf("kyle@opslevel.com")},
 	}
 	result, err := clientWithTeamId.AddMemberships(&team.TeamId, newMembership)
 	// Assert
@@ -718,8 +718,8 @@ func TestTeamRemoveMembership(t *testing.T) {
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
 	membershipToDelete := ol.TeamMembershipUserInput{
-		Role: ol.NewNullableFrom("user"),
-		User: &ol.UserIdentifierInput{Id: ol.NewNullableFrom(id1), Email: ol.NewNullableFrom("kyle@opslevel.com")},
+		Role: ol.RefOf("user"),
+		User: &ol.UserIdentifierInput{Id: ol.RefOf(id1), Email: ol.RefOf("kyle@opslevel.com")},
 	}
 
 	result, err := client2.RemoveMemberships(&team.TeamId, membershipToDelete)
@@ -754,7 +754,7 @@ func TestTeamUpdateContact(t *testing.T) {
 		ol.ContactUpdateInput{
 			Id:          id1,
 			DisplayName: input.DisplayName,
-			Address:     ol.NewNullableFrom(input.Address),
+			Address:     ol.RefOf(input.Address),
 			Type:        &input.Type,
 		})
 	testRequest := autopilot.NewTestRequest(
@@ -773,13 +773,13 @@ func TestTeamUpdateContact(t *testing.T) {
 func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.ContactInput]("contact_input",
-		ol.ContactInput{Address: "#general", DisplayName: ol.NewNullableFrom("Main Channel")},
+		ol.ContactInput{Address: "#general", DisplayName: ol.RefOf("Main Channel")},
 	)
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input",
 		ol.ContactUpdateInput{
 			Id:          id2,
 			DisplayName: input.DisplayName,
-			Address:     ol.NewNullableFrom(input.Address),
+			Address:     ol.RefOf(input.Address),
 		})
 	testRequest := autopilot.NewTestRequest(
 		`mutation ContactUpdate($input:ContactUpdateInput!){contactUpdate(input: $input){contact{address,displayName,displayType,externalId,id,isDefault,type},errors{message,path}}}`,

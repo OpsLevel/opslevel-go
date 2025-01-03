@@ -24,7 +24,7 @@ func TestCreateFilter(t *testing.T) {
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: ol.NewNullableFrom("1"),
+			Value: ol.RefOf("1"),
 		}},
 	})
 	// Assert
@@ -51,12 +51,12 @@ func TestCreateFilterNested(t *testing.T) {
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
 			},
 		},
 	})
@@ -143,11 +143,11 @@ func TestUpdateFilter(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: ol.NewNullableFrom("Test Updated"),
+		Name: ol.RefOf("Test Updated"),
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
-			Value: ol.NewNullableFrom("1"),
+			Value: ol.RefOf("1"),
 		}},
 	})
 	// Assert
@@ -168,18 +168,18 @@ func TestUpdateFilterNested(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
-		Name:       ol.NewNullableFrom("Tier 1-2 not deployed by us"),
+		Name:       ol.RefOf("Tier 1-2 not deployed by us"),
 		Connective: &ol.ConnectiveEnumAnd,
 		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumDoesNotMatch,
-				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNTg"),
 			},
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
-				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
+				Value: ol.RefOf("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
 			},
 		},
 	})
@@ -225,12 +225,12 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: ol.NewNullableFrom("Test Updated"),
+		Name: ol.RefOf("Test Updated"),
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         ol.NewNullableFrom("1"),
-			CaseSensitive: ol.NewNullableFrom(true),
+			Value:         ol.RefOf("1"),
+			CaseSensitive: ol.RefOf(true),
 		}},
 	})
 	isTrue := true
@@ -271,12 +271,12 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	// Act
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
-		Name: ol.NewNullableFrom("Test Updated"),
+		Name: ol.RefOf("Test Updated"),
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
-			Value:         ol.NewNullableFrom("1"),
-			CaseSensitive: ol.NewNullableFrom(false),
+			Value:         ol.RefOf("1"),
+			CaseSensitive: ol.RefOf(false),
 		}},
 	})
 	isFalse := false

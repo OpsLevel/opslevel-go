@@ -18,7 +18,7 @@ func TestCreateSecret(t *testing.T) {
 	// Act
 	secretInput := opslevel.SecretInput{
 		Owner: opslevel.NewIdentifier(string(id2)),
-		Value: opslevel.NewNullableFrom("my-secret"),
+		Value: opslevel.RefOf("my-secret"),
 	}
 	result, err := client.CreateSecret("alias1", secretInput)
 
@@ -78,7 +78,7 @@ func TestUpdateSecret(t *testing.T) {
 	// Act
 	secretInput := opslevel.SecretInput{
 		Owner: opslevel.NewIdentifier(string(id2)),
-		Value: opslevel.NewNullableFrom("secret_value_2"),
+		Value: opslevel.RefOf("secret_value_2"),
 	}
 	result, err := client.UpdateSecret(string(id2), secretInput)
 	// Assert

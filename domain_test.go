@@ -11,10 +11,10 @@ func TestDomainCreate(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.DomainInput]("domain_create_input",
 		ol.DomainInput{
-			Name:        ol.NewNullableFrom("platform-test"),
-			Description: ol.NewNullableFrom("Domain created for testing."),
-			OwnerId:     ol.NewNullableFrom(id1),
-			Note:        ol.NewNullableFrom("additional note about platform-test domain"),
+			Name:        ol.RefOf("platform-test"),
+			Description: ol.RefOf("Domain created for testing."),
+			OwnerId:     ol.RefOf(id1),
+			Note:        ol.RefOf("additional note about platform-test domain"),
 		})
 
 	testRequest := autopilot.NewTestRequest(
@@ -269,10 +269,10 @@ func TestDomainUpdate(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.DomainInput]("domain_update_input",
 		ol.DomainInput{
-			Name:        ol.NewNullableFrom("platform-test-4"),
-			Description: ol.NewNullableFrom("Domain created for testing."),
-			OwnerId:     ol.NewNullableFrom(id3),
-			Note:        ol.NewNullableFrom("Please delete me"),
+			Name:        ol.RefOf("platform-test-4"),
+			Description: ol.RefOf("Domain created for testing."),
+			OwnerId:     ol.RefOf(id3),
+			Note:        ol.RefOf("Please delete me"),
 		})
 
 	testRequest := autopilot.NewTestRequest(

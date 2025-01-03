@@ -305,9 +305,9 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 		Address:     contact.Address,
 	}
 	if IsID(team) {
-		contactInput.OwnerId = NewNullableFrom(ID(team))
+		contactInput.OwnerId = RefOf(ID(team))
 	} else {
-		contactInput.TeamAlias = NewNullableFrom(team)
+		contactInput.TeamAlias = RefOf(team)
 	}
 
 	v := PayloadVariables{
@@ -459,7 +459,7 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	input := ContactUpdateInput{
 		Id:          id,
 		DisplayName: contact.DisplayName,
-		Address:     NewNullableFrom(contact.Address),
+		Address:     RefOf(contact.Address),
 	}
 	if contact.Type == "" {
 		input.Type = nil
@@ -476,9 +476,9 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 func (client *Client) DeleteTeam(identifier string) error {
 	input := TeamDeleteInput{}
 	if IsID(identifier) {
-		input.Id = NewNullableFrom(ID(identifier))
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = NewNullableFrom(identifier)
+		input.Alias = RefOf(identifier)
 	}
 
 	var m struct {
