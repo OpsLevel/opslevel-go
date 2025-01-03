@@ -321,16 +321,17 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"severity":       []string{"sev1"},
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
+				maxAllowed := 1
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumAny
 				input.IssueName = nil // API NOTE - not allowed when constraint is "any"
-				input.IssueType = &[]string{"big-bug", "big-error"}
-				input.MaxAllowed = ol.RefOf(1)
+				input.IssueType = ol.RefOf([]string{"big-bug", "big-error"})
+				input.MaxAllowed = &maxAllowed
 				input.ResolutionTime = &ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumWeek,
 					Value: 1,
 				}
-				input.Severity = &[]string{"sev1"}
+				input.Severity = ol.RefOf([]string{"sev1"})
 				return c.UpdateCheckCodeIssue(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -346,31 +347,32 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			fixture: BuildUpdateRequest("CodeIssue", map[string]any{
 				"constraint":     ol.CheckCodeIssueConstraintEnumContains,
 				"issueName":      "code-issue-updated",
-				"issueType":      &[]string{}, // API NOTE - not allowed when constraint is "contains"
+				"issueType":      nil, // API NOTE - not allowed when constraint is "contains"
 				"maxAllowed":     1,
 				"resolutionTime": map[string]any{"unit": "week", "value": 1},
-				"severity":       &[]string{}, // API NOTE - not allowed when constraint is "contains"
+				"severity":       nil, // API NOTE - not allowed when constraint is "contains"
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
+				maxAllowed := 1
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumContains
-				input.IssueName = ol.NewNullableFrom("code-issue-updated")
-				input.IssueType = &[]string{}
-				input.MaxAllowed = ol.NewNullableFrom(1)
+				input.IssueName = ol.RefOf("code-issue-updated")
+				input.IssueType = ol.RefOf(([]string)(nil))
+				input.MaxAllowed = &maxAllowed
 				input.ResolutionTime = &ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumWeek,
 					Value: 1,
 				}
-				input.Severity = &[]string{}
+				input.Severity = ol.RefOf(([]string)(nil))
 				return c.UpdateCheckCodeIssue(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
 				"constraint":     ol.CheckCodeIssueConstraintEnumContains,
 				"issueName":      "code-issue-updated",
-				"issueType":      &[]string{},
+				"issueType":      nil,
 				"maxAllowed":     1,
 				"resolutionTime": map[string]any{"unit": "week", "value": 1},
-				"severity":       &[]string{},
+				"severity":       nil,
 			}),
 		},
 
@@ -403,8 +405,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		"UpdateHasRecentDeploy": {
 			fixture: BuildUpdateRequest("HasRecentDeploy", map[string]any{"days": 5}),
 			body: func(c *ol.Client) (*ol.Check, error) {
+				maxAllowed := 5
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasRecentDeployUpdateInput](checkUpdateInput)
-				input.Days = ol.RefOf(5)
+				input.Days = &maxAllowed
 				return c.UpdateCheckHasRecentDeploy(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{"days": 5}),
@@ -616,7 +619,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryFileUpdateInput](checkUpdateInput)
 				input.DirectorySearch = ol.RefOf(true)
-				input.FilePaths = &[]string{"/src", "/test", "/foo/bar"}
+				input.FilePaths = ol.RefOf([]string{"/src", "/test", "/foo/bar"})
 				input.FileContentsPredicate = predicateUpdateInput
 				input.UseAbsoluteRoot = ol.RefOf(false)
 				return c.UpdateCheckRepositoryFile(*input)
@@ -656,7 +659,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
 				input.DirectorySearch = ol.RefOf(true)
-				input.FilePaths = &[]string{"go.mod", "**/go.mod"}
+				input.FilePaths = ol.RefOf([]string{"go.mod", "**/go.mod"})
 				input.FileContentsPredicate = predicateUpdateInput
 				return c.UpdateCheckRepositoryGrep(*input)
 			},
@@ -675,7 +678,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
 				input.DirectorySearch = ol.RefOf(false)
-				input.FilePaths = &[]string{"**/go.mod"}
+				input.FilePaths = ol.RefOf([]string{"**/go.mod"})
 				input.FileContentsPredicate = predicateUpdateInput
 				return c.UpdateCheckRepositoryGrep(*input)
 			},
@@ -708,7 +711,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositorySearchCreateInput](checkCreateInput)
-				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileExtensions = ol.RefOf([]string{"sbt", "py"})
 				input.FileContentsPredicate = *predicateInput
 				return c.CreateCheckRepositorySearch(*input)
 			},
@@ -724,7 +727,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositorySearchUpdateInput](checkUpdateInput)
-				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileExtensions = ol.RefOf([]string{"sbt", "py"})
 				input.FileContentsPredicate = predicateUpdateInput
 				return c.UpdateCheckRepositorySearch(*input)
 			},

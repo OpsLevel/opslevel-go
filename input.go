@@ -36,23 +36,23 @@ type AliasDeleteInput struct {
 
 // AwsIntegrationInput specifies the input fields used to create and update an AWS integration.
 type AwsIntegrationInput struct {
-	AwsTagsOverrideOwnership *Nullable[bool]   `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty" example:"false"`    // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
-	ExternalId               *Nullable[string] `json:"externalId,omitempty" yaml:"externalId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
-	IamRole                  *Nullable[string] `json:"iamRole,omitempty" yaml:"iamRole,omitempty" example:"example_value"`                              // The IAM role OpsLevel uses in order to access the AWS account. (Optional.)
-	Name                     *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                    // The name of the integration. (Optional.)
-	OwnershipTagKeys         *[]string         `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
-	RegionOverride           *[]string         `json:"regionOverride,omitempty" yaml:"regionOverride,omitempty" example:"['us-east-1', 'eu-west-1']"`   // Overrides the AWS region(s) that will be synchronized by this integration. (Optional.)
+	AwsTagsOverrideOwnership *Nullable[bool]     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty" example:"false"`    // Allow tags imported from AWS to override ownership set in OpsLevel directly. (Optional.)
+	ExternalId               *Nullable[string]   `json:"externalId,omitempty" yaml:"externalId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The External ID defined in the trust relationship to ensure OpsLevel is the only third party assuming this role (See https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html for more details). (Optional.)
+	IamRole                  *Nullable[string]   `json:"iamRole,omitempty" yaml:"iamRole,omitempty" example:"example_value"`                              // The IAM role OpsLevel uses in order to access the AWS account. (Optional.)
+	Name                     *Nullable[string]   `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                    // The name of the integration. (Optional.)
+	OwnershipTagKeys         *Nullable[[]string] `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
+	RegionOverride           *Nullable[[]string] `json:"regionOverride,omitempty" yaml:"regionOverride,omitempty" example:"['us-east-1', 'eu-west-1']"`   // Overrides the AWS region(s) that will be synchronized by this integration. (Optional.)
 }
 
 // AzureResourcesIntegrationInput specifies the input fields used to create and update an Azure resources integration.
 type AzureResourcesIntegrationInput struct {
-	ClientId              *Nullable[string] `json:"clientId,omitempty" yaml:"clientId,omitempty" example:"example_value"`                            // The client OpsLevel uses to access the Azure account. (Optional.)
-	ClientSecret          *Nullable[string] `json:"clientSecret,omitempty" yaml:"clientSecret,omitempty" example:"example_value"`                    // The client secret OpsLevel uses to access the Azure account. (Optional.)
-	Name                  *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                    // The name of the integration. (Optional.)
-	OwnershipTagKeys      *[]string         `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
-	SubscriptionId        *Nullable[string] `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"example_value"`                // The subscription OpsLevel uses to access the Azure account. (Optional.)
-	TagsOverrideOwnership *Nullable[bool]   `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`          // Allow tags imported from Azure to override ownership set in OpsLevel directly. (Optional.)
-	TenantId              *Nullable[string] `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"example_value"`                            // The tenant OpsLevel uses to access the Azure account. (Optional.)
+	ClientId              *Nullable[string]   `json:"clientId,omitempty" yaml:"clientId,omitempty" example:"example_value"`                            // The client OpsLevel uses to access the Azure account. (Optional.)
+	ClientSecret          *Nullable[string]   `json:"clientSecret,omitempty" yaml:"clientSecret,omitempty" example:"example_value"`                    // The client secret OpsLevel uses to access the Azure account. (Optional.)
+	Name                  *Nullable[string]   `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                    // The name of the integration. (Optional.)
+	OwnershipTagKeys      *Nullable[[]string] `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
+	SubscriptionId        *Nullable[string]   `json:"subscriptionId,omitempty" yaml:"subscriptionId,omitempty" example:"example_value"`                // The subscription OpsLevel uses to access the Azure account. (Optional.)
+	TagsOverrideOwnership *Nullable[bool]     `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`          // Allow tags imported from Azure to override ownership set in OpsLevel directly. (Optional.)
+	TenantId              *Nullable[string]   `json:"tenantId,omitempty" yaml:"tenantId,omitempty" example:"example_value"`                            // The tenant OpsLevel uses to access the Azure account. (Optional.)
 }
 
 // CategoryCreateInput specifies the input fields used to create a category.
@@ -110,14 +110,14 @@ type CheckCodeIssueCreateInput struct {
 	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
 	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
 	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                 // The issue name used for code issue lookup. (Optional.)
-	IssueType      *[]string                     `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider. (Optional.)
+	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider. (Optional.)
 	LevelId        ID                            `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
-	MaxAllowed     *Nullable[int]                `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing. (Optional.)
+	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing. (Optional.)
 	Name           string                        `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check. (Required.)
 	Notes          *Nullable[string]             `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check. (Optional.)
 	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check. (Optional.)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                               // The resolution time recommended by the reporting source of the code issue. (Optional.)
-	Severity       *[]string                     `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue. (Optional.)
+	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue. (Optional.)
 }
 
 // CheckCodeIssueUpdateInput specifies the input fields used to update an exasting code issue check.
@@ -129,14 +129,14 @@ type CheckCodeIssueUpdateInput struct {
 	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
 	Id             ID                            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
 	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                     // The issue name used for code issue lookup. (Optional.)
-	IssueType      *[]string                     `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`                  // The type of code issue to consider. (Optional.)
+	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`                  // The type of code issue to consider. (Optional.)
 	LevelId        *Nullable[ID]                 `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
-	MaxAllowed     *Nullable[int]                `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                               // The threshold count of code issues beyond which the check starts failing. (Optional.)
+	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                               // The threshold count of code issues beyond which the check starts failing. (Optional.)
 	Name           *Nullable[string]             `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check. (Optional.)
 	Notes          *Nullable[string]             `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check. (Optional.)
 	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check. (Optional.)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                                   // The resolution time recommended by the reporting source of the code issue. (Optional.)
-	Severity       *[]string                     `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue. (Optional.)
+	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue. (Optional.)
 }
 
 // CheckCopyInput represents information about the check(s) that are to be copied.
@@ -257,7 +257,7 @@ type CheckHasRecentDeployCreateInput struct {
 // CheckHasRecentDeployUpdateInput specifies the input fields used to update a has recent deploy check.
 type CheckHasRecentDeployUpdateInput struct {
 	CategoryId *Nullable[ID]           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to. (Optional.)
-	Days       *Nullable[int]          `json:"days,omitempty" yaml:"days,omitempty" example:"3"`                                           // The number of days to check since the last deploy. (Optional.)
+	Days       *int                    `json:"days,omitempty" yaml:"days,omitempty" example:"3"`                                           // The number of days to check since the last deploy. (Optional.)
 	EnableOn   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
 	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not. (Optional.)
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
@@ -357,7 +357,7 @@ type CheckRepositoryFileUpdateInput struct {
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`               // The date when the check will be automatically enabled. (Optional.)
 	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                    // Whether the check is enabled or not. (Optional.)
 	FileContentsPredicate *PredicateUpdateInput   `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                        // Condition to match the file content. (Optional.)
-	FilePaths             *[]string               `json:"filePaths,omitempty" yaml:"filePaths,omitempty" example:"['/usr/local/bin', '/home/opslevel']"` // Restrict the search to certain file paths. (Optional.)
+	FilePaths             *Nullable[[]string]     `json:"filePaths,omitempty" yaml:"filePaths,omitempty" example:"['/usr/local/bin', '/home/opslevel']"` // Restrict the search to certain file paths. (Optional.)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`        // The id of the filter the check belongs to. (Optional.)
 	Id                    ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the check to be updated. (Required.)
 	LevelId               *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the level the check belongs to. (Optional.)
@@ -389,7 +389,7 @@ type CheckRepositoryGrepUpdateInput struct {
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`               // The date when the check will be automatically enabled. (Optional.)
 	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                    // Whether the check is enabled or not. (Optional.)
 	FileContentsPredicate *PredicateUpdateInput   `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                        // Condition to match the file content. (Optional.)
-	FilePaths             *[]string               `json:"filePaths,omitempty" yaml:"filePaths,omitempty" example:"['/usr/local/bin', '/home/opslevel']"` // Restrict the search to certain file paths. (Optional.)
+	FilePaths             *Nullable[[]string]     `json:"filePaths,omitempty" yaml:"filePaths,omitempty" example:"['/usr/local/bin', '/home/opslevel']"` // Restrict the search to certain file paths. (Optional.)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`        // The id of the filter the check belongs to. (Optional.)
 	Id                    ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the check to be updated. (Required.)
 	LevelId               *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the level the check belongs to. (Optional.)
@@ -429,7 +429,7 @@ type CheckRepositorySearchCreateInput struct {
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled. (Optional.)
 	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not. (Optional.)
 	FileContentsPredicate PredicateInput          `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the text content. (Required.)
-	FileExtensions        *[]string               `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`  // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
+	FileExtensions        *Nullable[[]string]     `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`  // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check. (Optional.)
 	LevelId               ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to. (Required.)
 	Name                  string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check. (Required.)
@@ -443,7 +443,7 @@ type CheckRepositorySearchUpdateInput struct {
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled. (Optional.)
 	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not. (Optional.)
 	FileContentsPredicate *PredicateUpdateInput   `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                     // Condition to match the text content. (Optional.)
-	FileExtensions        *[]string               `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`      // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
+	FileExtensions        *Nullable[[]string]     `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`      // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']`. (Optional.)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to. (Optional.)
 	Id                    ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated. (Required.)
 	LevelId               *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to. (Optional.)
@@ -805,11 +805,11 @@ type FilterUpdateInput struct {
 
 // GoogleCloudIntegrationInput specifies the input fields used to create and update a Google Cloud integration.
 type GoogleCloudIntegrationInput struct {
-	ClientEmail           *Nullable[string] `json:"clientEmail,omitempty" yaml:"clientEmail,omitempty" example:"example_value"`                      // The service account email OpsLevel uses to access the Google Cloud account. (Optional.)
-	Name                  *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                    // The name of the integration. (Optional.)
-	OwnershipTagKeys      *[]string         `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
-	PrivateKey            *Nullable[string] `json:"privateKey,omitempty" yaml:"privateKey,omitempty" example:"example_value"`                        // The private key for the service account that OpsLevel uses to access the Google Cloud account. (Optional.)
-	TagsOverrideOwnership *Nullable[bool]   `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`          // Allow tags imported from Google Cloud to override ownership set in OpsLevel directly. (Optional.)
+	ClientEmail           *Nullable[string]   `json:"clientEmail,omitempty" yaml:"clientEmail,omitempty" example:"example_value"`                      // The service account email OpsLevel uses to access the Google Cloud account. (Optional.)
+	Name                  *Nullable[string]   `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                    // The name of the integration. (Optional.)
+	OwnershipTagKeys      *Nullable[[]string] `json:"ownershipTagKeys,omitempty" yaml:"ownershipTagKeys,omitempty" example:"['tag_key1', 'tag_key2']"` // An array of tag keys used to associate ownership from an integration. Max 5. (Optional.)
+	PrivateKey            *Nullable[string]   `json:"privateKey,omitempty" yaml:"privateKey,omitempty" example:"example_value"`                        // The private key for the service account that OpsLevel uses to access the Google Cloud account. (Optional.)
+	TagsOverrideOwnership *Nullable[bool]     `json:"tagsOverrideOwnership,omitempty" yaml:"tagsOverrideOwnership,omitempty" example:"false"`          // Allow tags imported from Google Cloud to override ownership set in OpsLevel directly. (Optional.)
 }
 
 // IdentifierInput specifies the input fields used to identify a resource.
@@ -842,7 +842,7 @@ type InfrastructureResourceSchemaInput struct {
 // LevelCreateInput specifies the input fields used to create a level. The new level will be added as the highest level (greatest level index).
 type LevelCreateInput struct {
 	Description *Nullable[string] `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the level. (Optional.)
-	Index       *Nullable[int]    `json:"index,omitempty" yaml:"index,omitempty" example:"3"`                         // an integer allowing this level to be inserted between others. Must be unique per Rubric. (Optional.)
+	Index       *int              `json:"index,omitempty" yaml:"index,omitempty" example:"3"`                         // an integer allowing this level to be inserted between others. Must be unique per Rubric. (Optional.)
 	Name        string            `json:"name" yaml:"name" example:"example_value"`                                   // The display name of the level. (Required.)
 }
 
@@ -1109,9 +1109,9 @@ type TagInput struct {
 
 // TagRelationshipKeysAssignInput represents the input for the `tagRelationshipKeysAssign` mutation.
 type TagRelationshipKeysAssignInput struct {
-	BelongsTo    *Nullable[string] `json:"belongsTo,omitempty" yaml:"belongsTo,omitempty" example:"example_value"` //  (Optional.)
-	DependencyOf *[]string         `json:"dependencyOf,omitempty" yaml:"dependencyOf,omitempty" example:"[]"`      //  (Optional.)
-	DependsOn    *[]string         `json:"dependsOn,omitempty" yaml:"dependsOn,omitempty" example:"[]"`            //  (Optional.)
+	BelongsTo    *Nullable[string]   `json:"belongsTo,omitempty" yaml:"belongsTo,omitempty" example:"example_value"` //  (Optional.)
+	DependencyOf *Nullable[[]string] `json:"dependencyOf,omitempty" yaml:"dependencyOf,omitempty" example:"[]"`      //  (Optional.)
+	DependsOn    *Nullable[[]string] `json:"dependsOn,omitempty" yaml:"dependsOn,omitempty" example:"[]"`            //  (Optional.)
 }
 
 // TagUpdateInput specifies the input fields used to update a tag.

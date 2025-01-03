@@ -141,7 +141,7 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	// Act
 	result, err := client.CreateIntegrationGCP(opslevel.GoogleCloudIntegrationInput{
 		Name:                  opslevel.RefOf("new gcp integration"),
-		OwnershipTagKeys:      &[]string{"owner", "team", "opslevel_team"},
+		OwnershipTagKeys:      opslevel.RefOf([]string{"owner", "team", "opslevel_team"}),
 		PrivateKey:            opslevel.RefOf("XXX_PRIVATE_KEY_XXX"),
 		ClientEmail:           opslevel.RefOf("helloworld@appspot.gserviceaccount.com"),
 		TagsOverrideOwnership: opslevel.RefOf(true),
@@ -349,7 +349,7 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	// Act
 	result, err := client.UpdateIntegrationGCP(string(id1), opslevel.GoogleCloudIntegrationInput{
 		Name:                  opslevel.RefOf("updated gcp"),
-		OwnershipTagKeys:      &[]string{"team", "opslevel_team"},
+		OwnershipTagKeys:      opslevel.RefOf([]string{"team", "opslevel_team"}),
 		PrivateKey:            opslevel.RefOf("XXX_PRIVATE_KEY_2_XXX"),
 		ClientEmail:           opslevel.RefOf("helloworld_2@appspot.gserviceaccount.com"),
 		TagsOverrideOwnership: opslevel.RefOf(false),

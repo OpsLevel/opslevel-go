@@ -16,10 +16,11 @@ func TestCreateRubricLevels(t *testing.T) {
 
 	client := BestTestClient(t, "rubric/level_create", testRequest)
 	// Act
+	index := 4
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
 		Description: ol.RefOf("Created By Kyle"),
-		Index:       ol.RefOf(4),
+		Index:       &index,
 	})
 	// Assert
 	autopilot.Equals(t, "kyle", result.Alias)

@@ -1033,6 +1033,7 @@ func graphqlTypeToGolang(graphqlType string) string {
 	isRequired := strings.HasSuffix(graphqlType, "!")
 	convertedType := strings.TrimSuffix(graphqlType, "!")
 
+	// GraphQL type to Go type: [String] -> *[]string
 	isSlice := strings.HasPrefix(convertedType, "[") && strings.HasSuffix(convertedType, "]")
 	if isSlice {
 		convertedType = strings.TrimPrefix(convertedType, "[")
@@ -1047,10 +1048,25 @@ func graphqlTypeToGolang(graphqlType string) string {
 		convertedType = "float64"
 	case "Int":
 		convertedType = "int"
+		if isSlice {
+			convertedType = "[]" + convertedType
+		}
+		if !isRequired {
+			convertedType = "*" + convertedType
+		}
+		return convertedType
 	case "ISO8601DateTime":
 		convertedType = "iso8601.Time"
 	case "String":
 		convertedType = "string"
+		if isSlice {
+			convertedType = "[]" + convertedType
+			if isRequired {
+				return convertedType
+			} else {
+				return wrapWithNullable(convertedType)
+			}
+		}
 	case "ID":
 		convertedType = "ID"
 	default:
