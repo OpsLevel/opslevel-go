@@ -18,10 +18,9 @@ func TestCreateFilter(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
-	andEnum := ol.ConnectiveEnumAnd
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: &andEnum,
+		Connective: &ol.ConnectiveEnumAnd,
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
@@ -45,10 +44,9 @@ func TestCreateFilterNested(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create_nested", testRequest)
 	// Act
-	orEnum := ol.ConnectiveEnumOr
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
-		Connective: &orEnum,
+		Connective: &ol.ConnectiveEnumOr,
 		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
@@ -168,11 +166,10 @@ func TestUpdateFilterNested(t *testing.T) {
 
 	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
-	andEnum := ol.ConnectiveEnumAnd
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
 		Name:       ol.NewNullableFrom("Tier 1-2 not deployed by us"),
-		Connective: &andEnum,
+		Connective: &ol.ConnectiveEnumAnd,
 		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,

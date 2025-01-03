@@ -133,10 +133,9 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_trigger", testRequest)
 
 	// Act
-	everyoneEnum := ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          &everyoneEnum,
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
 		ResponseTemplate:       ol.NewNullableFrom(""),
 		ManualInputsDefinition: ol.NewNullableFrom(""),
@@ -159,18 +158,16 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_trigger_with_global_entity", testRequest)
 
 	// Act
-	everyoneEnum := ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone
-	globalEnum := ol.CustomActionsEntityTypeEnumGlobal
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          &everyoneEnum,
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
 		ActionId:               ol.NewNullableFrom(*newID),
 		ManualInputsDefinition: ol.NewNullableFrom(""),
 		ResponseTemplate:       ol.NewNullableFrom(""),
 		OwnerId:                *newID,
 		FilterId:               ol.NewNullableFrom(ol.ID("987654321")),
-		EntityType:             &globalEnum,
+		EntityType:             &ol.CustomActionsEntityTypeEnumGlobal,
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier("example_1"),
 			*ol.NewIdentifier("example_1"),
@@ -191,11 +188,10 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 
 	client := BestTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", testRequest)
 	// Act
-	everyoneEnum := ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
-		AccessControl:          &everyoneEnum,
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		ManualInputsDefinition: ol.NewNullableFrom(""),
 		ResponseTemplate:       ol.NewNullableFrom(""),
 		ActionId:               ol.NewNullableFrom(*newID),

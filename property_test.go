@@ -19,14 +19,14 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	schemaAsJSON, schemaAsJSONErr := ol.NewJSON(schemaString)
 	autopilot.Ok(t, schemaErr)
 	autopilot.Ok(t, schemaAsJSONErr)
-	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
+	expectedPropertyDefinition := autopilot.Register("expected_property_definition", ol.PropertyDefinition{
 		Aliases:              []string{"my_prop"},
 		AllowedInConfigFiles: true,
 		Id:                   "XXX",
 		Name:                 "my-prop",
 		Schema:               *schemaAsJSON,
 	})
-	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+	propertyDefinitionInput := autopilot.Register("property_definition_input", ol.PropertyDefinitionInput{
 		AllowedInConfigFiles: ol.NewNullableFrom(true),
 		Name:                 ol.NewNullableFrom("my-prop"),
 		Schema:               schema,
@@ -53,7 +53,7 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 	schemaAsJSON, schemaAsJSONErr := ol.NewJSON(schemaString2)
 	autopilot.Ok(t, schemaErr)
 	autopilot.Ok(t, schemaAsJSONErr)
-	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition", ol.PropertyDefinition{
+	expectedPropertyDefinition := autopilot.Register("expected_property_definition", ol.PropertyDefinition{
 		Aliases:               []string{"my_prop"},
 		AllowedInConfigFiles:  false,
 		Description:           "this description was added",
@@ -62,11 +62,10 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
 		Schema:                *schemaAsJSON,
 	})
-	hiddenEnum := ol.PropertyDisplayStatusEnumHidden
-	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
+	propertyDefinitionInput := autopilot.Register("property_definition_input", ol.PropertyDefinitionInput{
 		AllowedInConfigFiles:  ol.NewNullableFrom(false),
 		Description:           ol.NewNullableFrom("this description was added"),
-		PropertyDisplayStatus: &hiddenEnum,
+		PropertyDisplayStatus: &ol.PropertyDisplayStatusEnumHidden,
 		Schema:                schema,
 	})
 	testRequest := autopilot.NewTestRequest(
@@ -105,7 +104,7 @@ func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
 	schema, schemaErr := ol.NewJSON(schemaString)
 	autopilot.Ok(t, schemaErr)
-	expectedPropertyDefinition := autopilot.Register[ol.PropertyDefinition]("expected_property_definition",
+	expectedPropertyDefinition := autopilot.Register("expected_property_definition",
 		ol.PropertyDefinition{
 			Aliases:              []string{"my_prop"},
 			AllowedInConfigFiles: true,
@@ -142,7 +141,7 @@ func TestListPropertyDefinitions(t *testing.T) {
 	autopilot.Ok(t, schemaPage1Err)
 	autopilot.Ok(t, schemaPage2Err)
 	autopilot.Ok(t, schemaPage3Err)
-	expectedPropDefsPageOne := autopilot.Register[[]ol.PropertyDefinition]("property_definitions", []ol.PropertyDefinition{
+	expectedPropDefsPageOne := autopilot.Register("property_definitions", []ol.PropertyDefinition{
 		{
 			AllowedInConfigFiles: true,
 			Aliases:              []string{"prop1"},
@@ -158,7 +157,7 @@ func TestListPropertyDefinitions(t *testing.T) {
 			Schema:               *schemaPage2,
 		},
 	})
-	expectedPropDefPageTwo := autopilot.Register[ol.PropertyDefinition]("property_definition_3", ol.PropertyDefinition{
+	expectedPropDefPageTwo := autopilot.Register("property_definition_3", ol.PropertyDefinition{
 		AllowedInConfigFiles: true,
 		Aliases:              []string{"prop3"},
 		Id:                   "XXX",
@@ -321,7 +320,7 @@ func TestGetServiceProperties(t *testing.T) {
 	value1 := ol.JsonString("true")
 	value2 := ol.JsonString("false")
 	value3 := ol.JsonString("\"Hello World!\"")
-	expectedPropsPageOne := autopilot.Register[[]ol.Property]("service_properties", []ol.Property{
+	expectedPropsPageOne := autopilot.Register("service_properties", []ol.Property{
 		{
 			Locked: true,
 			Definition: ol.PropertyDefinitionId{
@@ -341,7 +340,7 @@ func TestGetServiceProperties(t *testing.T) {
 			Value:            &value2,
 		},
 	})
-	expectedPropsPageTwo := autopilot.Register[[]ol.Property]("service_properties_3", []ol.Property{
+	expectedPropsPageTwo := autopilot.Register("service_properties_3", []ol.Property{
 		{
 			Locked: true,
 			Definition: ol.PropertyDefinitionId{

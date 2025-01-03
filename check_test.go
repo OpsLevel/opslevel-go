@@ -258,9 +258,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"alertSourceType":          ol.AlertSourceTypeEnumDatadog,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				datadogEnum := ol.AlertSourceTypeEnumDatadog
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckAlertSourceUsageCreateInput](checkCreateInput)
-				input.AlertSourceType = &datadogEnum
+				input.AlertSourceType = &ol.AlertSourceTypeEnumDatadog
 				input.AlertSourceNamePredicate = predicateInput
 				return c.CreateCheckAlertSourceUsage(*input)
 			},
@@ -275,9 +274,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"alertSourceType":          ol.AlertSourceTypeEnumDatadog,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				datadogEnum := ol.AlertSourceTypeEnumDatadog
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckAlertSourceUsageUpdateInput](checkUpdateInput)
-				input.AlertSourceType = &datadogEnum
+				input.AlertSourceType = &ol.AlertSourceTypeEnumDatadog
 				input.AlertSourceNamePredicate = predicateUpdateInput
 				return c.UpdateCheckAlertSourceUsage(*input)
 			},
@@ -435,11 +433,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"documentSubtype": ol.HasDocumentationSubtypeEnumOpenapi,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				apiEnum := ol.HasDocumentationTypeEnumAPI
-				openApiEnum := ol.HasDocumentationSubtypeEnumOpenapi
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasDocumentationUpdateInput](checkUpdateInput)
-				input.DocumentType = &apiEnum
-				input.DocumentSubtype = &openApiEnum
+				input.DocumentType = &ol.HasDocumentationTypeEnumAPI
+				input.DocumentSubtype = &ol.HasDocumentationSubtypeEnumOpenapi
 				return c.UpdateCheckHasDocumentation(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -855,9 +851,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"propertyValuePredicate": predicateUpdateInput,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				frameworkEnum := ol.ServicePropertyTypeEnumFramework
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServicePropertyUpdateInput](checkUpdateInput)
-				input.ServiceProperty = &frameworkEnum
+				input.ServiceProperty = &ol.ServicePropertyTypeEnumFramework
 				input.PropertyValuePredicate = predicateUpdateInput
 				return c.UpdateCheckServiceProperty(*input)
 			},
@@ -942,8 +937,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				metricsEnum := ol.ToolCategoryMetrics
-				input.ToolCategory = &metricsEnum
+				input.ToolCategory = &ol.ToolCategoryMetrics
 				input.ToolNamePredicate = predicateUpdateInput
 				input.ToolUrlPredicate = predicateUpdateInput
 				input.EnvironmentPredicate = predicateUpdateInput
@@ -964,8 +958,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				metricsEnum := ol.ToolCategoryMetrics
-				input.ToolCategory = &metricsEnum
+				input.ToolCategory = &ol.ToolCategoryMetrics
 				input.ToolUrlPredicate = &ol.PredicateUpdateInput{}
 				input.EnvironmentPredicate = &ol.PredicateUpdateInput{}
 				return c.UpdateCheckToolUsage(*input)
@@ -986,13 +979,12 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"versionConstraintPredicate": predicateInput,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				passedEnum := ol.CheckResultStatusEnumPassed
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckPackageVersionCreateInput](checkCreateInput)
 				input.PackageManager = ol.PackageManagerEnumCargo
 				input.PackageName = "cult"
 				input.PackageNameIsRegex = ol.NewNullableFrom(false)
 				input.PackageConstraint = ol.PackageConstraintEnumDoesNotExist
-				input.MissingPackageResult = &passedEnum
+				input.MissingPackageResult = &ol.CheckResultStatusEnumPassed
 				input.VersionConstraintPredicate = predicateInput
 				return c.CreateCheckPackageVersion(*input)
 			},
@@ -1011,9 +1003,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"versionConstraintPredicate": predicateUpdateInput,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				cargoEnum := ol.PackageManagerEnumCargo
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = &cargoEnum
+				input.PackageManager = &ol.PackageManagerEnumCargo
 				input.VersionConstraintPredicate = predicateUpdateInput
 				return c.UpdateCheckPackageVersion(*input)
 			},
@@ -1028,9 +1019,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"versionConstraintPredicate": nil,
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
-				cargoEnum := ol.PackageManagerEnumCargo
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = &cargoEnum
+				input.PackageManager = &ol.PackageManagerEnumCargo
 				input.VersionConstraintPredicate = &ol.PredicateUpdateInput{}
 				return c.UpdateCheckPackageVersion(*input)
 			},
@@ -1260,19 +1250,16 @@ func TestJsonUnmarshalUpdateCheckToolUsage(t *testing.T) {
     "value": "https"
   }
 }`
-	containsEnum := ol.PredicateTypeEnumContains
-	existsEnum := ol.PredicateTypeEnumExists
-	startsWithEnum := ol.PredicateTypeEnumStartsWith
 	output := ol.CheckToolUsageUpdateInput{
 		Name:                 ol.NewNullableFrom("Example"),
 		Notes:                ol.NewNullableFrom("Updated Notes"),
-		EnvironmentPredicate: &ol.PredicateUpdateInput{Type: &existsEnum},
+		EnvironmentPredicate: &ol.PredicateUpdateInput{Type: &ol.PredicateTypeEnumExists},
 		ToolNamePredicate: &ol.PredicateUpdateInput{
-			Type:  &containsEnum,
+			Type:  &ol.PredicateTypeEnumContains,
 			Value: ol.NewNullableFrom("go"),
 		},
 		ToolUrlPredicate: &ol.PredicateUpdateInput{
-			Type:  &startsWithEnum,
+			Type:  &ol.PredicateTypeEnumStartsWith,
 			Value: ol.NewNullableFrom("https"),
 		},
 	}
