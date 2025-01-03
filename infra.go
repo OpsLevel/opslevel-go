@@ -127,19 +127,19 @@ func (infrastructureResource *InfrastructureResource) AliasableType() AliasOwner
 
 func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureResource, error) {
 	i := InfrastructureResourceInput{
-		Schema: NewNullableFrom(InfrastructureResourceSchemaInput{Type: input.Schema}),
-		Data:   NewNullableFrom(*input.Data),
+		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
+		Data:   input.Data,
 	}
 	if input.Owner != nil {
 		i.OwnerId = NewNullableFrom(*input.Owner)
 	}
 	if input.Provider != nil {
 		i.ProviderResourceType = NewNullableFrom(input.Provider.Type)
-		i.ProviderData = NewNullableFrom(InfrastructureResourceProviderDataInput{
+		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
 			ExternalUrl:  NewNullableFrom(input.Provider.URL),
 			ProviderName: NewNullableFrom(input.Provider.Name),
-		})
+		}
 	}
 	var m struct {
 		Payload struct {
@@ -226,19 +226,19 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (*Infrastr
 
 func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) (*InfrastructureResource, error) {
 	i := InfrastructureResourceInput{
-		Data:   NewNullableFrom(*input.Data),
-		Schema: NewNullableFrom(InfrastructureResourceSchemaInput{Type: input.Schema}),
+		Data:   input.Data,
+		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
 	}
 	if input.Owner != nil {
 		i.OwnerId = NewNullableFrom(*input.Owner)
 	}
 	if input.Provider != nil {
 		i.ProviderResourceType = NewNullableFrom(input.Provider.Type)
-		i.ProviderData = NewNullableFrom(InfrastructureResourceProviderDataInput{
+		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
 			ExternalUrl:  NewNullableFrom(input.Provider.URL),
 			ProviderName: NewNullableFrom(input.Provider.Name),
-		})
+		}
 	}
 	var m struct {
 		Payload struct {

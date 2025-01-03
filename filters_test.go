@@ -18,14 +18,15 @@ func TestCreateFilter(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create", testRequest)
 	// Act
+	andEnum := ol.ConnectiveEnumAnd
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ol.NewNullableFrom(ol.ConnectiveEnumAnd),
-		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
+		Connective: &andEnum,
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
 			Value: ol.NewNullableFrom("1"),
-		}}),
+		}},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -44,10 +45,11 @@ func TestCreateFilterNested(t *testing.T) {
 
 	client := BestTestClient(t, "filter/create_nested", testRequest)
 	// Act
+	orEnum := ol.ConnectiveEnumOr
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
-		Connective: ol.NewNullableFrom(ol.ConnectiveEnumOr),
-		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{
+		Connective: &orEnum,
+		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumMatches,
@@ -58,7 +60,7 @@ func TestCreateFilterNested(t *testing.T) {
 				Type:  ol.PredicateTypeEnumMatches,
 				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjQ"),
 			},
-		}),
+		},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -144,11 +146,11 @@ func TestUpdateFilter(t *testing.T) {
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: ol.NewNullableFrom("Test Updated"),
-		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
 			Value: ol.NewNullableFrom("1"),
-		}}),
+		}},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -166,11 +168,12 @@ func TestUpdateFilterNested(t *testing.T) {
 
 	client := BestTestClient(t, "filter/update_nested", testRequest)
 	// Act
+	andEnum := ol.ConnectiveEnumAnd
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
 		Name:       ol.NewNullableFrom("Tier 1-2 not deployed by us"),
-		Connective: ol.NewNullableFrom(ol.ConnectiveEnumAnd),
-		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{
+		Connective: &andEnum,
+		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
 				Type:  ol.PredicateTypeEnumDoesNotMatch,
@@ -181,7 +184,7 @@ func TestUpdateFilterNested(t *testing.T) {
 				Type:  ol.PredicateTypeEnumMatches,
 				Value: ol.NewNullableFrom("Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzEyNjY"),
 			},
-		}),
+		},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -226,18 +229,19 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: ol.NewNullableFrom("Test Updated"),
-		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
 			Value:         ol.NewNullableFrom("1"),
 			CaseSensitive: ol.NewNullableFrom(true),
-		}}),
+		}},
 	})
+	isTrue := true
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.RefOf(true), result.Predicates[0].CaseSensitive)
+	autopilot.Equals(t, &isTrue, result.Predicates[0].CaseSensitive)
 }
 
 func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
@@ -271,18 +275,20 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:   "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tsaXN0LzYyMg",
 		Name: ol.NewNullableFrom("Test Updated"),
-		Predicates: ol.NewNullableFrom([]ol.FilterPredicateInput{{
+		Predicates: &[]ol.FilterPredicateInput{{
 			Key:           ol.PredicateKeyEnumTierIndex,
 			Type:          ol.PredicateTypeEnumEquals,
 			Value:         ol.NewNullableFrom("1"),
 			CaseSensitive: ol.NewNullableFrom(false),
-		}}),
+		}},
 	})
+	isFalse := false
+
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.RefOf(false), result.Predicates[0].CaseSensitive)
+	autopilot.Equals(t, &isFalse, result.Predicates[0].CaseSensitive)
 }
 
 func TestDeleteFilter(t *testing.T) {

@@ -38,11 +38,11 @@ func (p *Predicate) Validate() error {
 }
 
 func (p *PredicateUpdateInput) MarshalJSON() ([]byte, error) {
-	if p == nil || p.Type == nil || p.Type.Value == "" {
+	if p == nil || p.Type == nil || *p.Type == "" {
 		return []byte("null"), nil
 	}
 	m := map[string]string{
-		"type": string(p.Type.Value),
+		"type": string(*p.Type),
 	}
 
 	if p.Value != nil {

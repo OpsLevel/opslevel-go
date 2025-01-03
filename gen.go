@@ -329,7 +329,7 @@ func genInputObjects(inputObjects map[string]*types.InputObject) {
 
 	for _, inputObjectName := range sortedMapKeys(inputObjects) {
 		// Skip campaign objects until tested later on
-		if strings.Contains(inputObjectName, "Campaign") {
+		if strings.Contains(inputObjectName, "Campaign") || strings.Contains(inputObjectName, "Group") {
 			continue
 		}
 		if err := tmpl.ExecuteTemplate(&buf, "inputs", inputObjects[inputObjectName]); err != nil {
@@ -1025,46 +1025,54 @@ func jsonStructTag(fieldType *types.InputValueDefinition) string {
 	return fmt.Sprintf(`json:"%s"`, fieldName)
 }
 
+func wrapWithNullable(graphqlType string) string {
+	return "*Nullable[" + graphqlType + "]"
+}
+
 func graphqlTypeToGolang(graphqlType string) string {
-	var convertedType string
-	nullable := "*Nullable["
-	if strings.HasSuffix(graphqlType, "!") {
-		graphqlType = strings.TrimSuffix(graphqlType, "!")
-	} else {
-		// GraphQL nullable --> Go pointer
-		convertedType += nullable
+	isRequired := strings.HasSuffix(graphqlType, "!")
+	convertedType := strings.TrimSuffix(graphqlType, "!")
+
+	isSlice := strings.HasPrefix(convertedType, "[") && strings.HasSuffix(convertedType, "]")
+	if isSlice {
+		convertedType = strings.TrimPrefix(convertedType, "[")
+		convertedType = strings.TrimSuffix(convertedType, "]")
+		convertedType = strings.TrimSuffix(convertedType, "!")
 	}
 
-	// GraphQL list --> Go slice
-	if strings.HasPrefix(graphqlType, "[") {
-		graphqlType = strings.TrimPrefix(graphqlType, "[")
-		graphqlType = strings.TrimSuffix(graphqlType, "]")
-		// NOTE: pretty sure we don't support slices containing pointers
-		graphqlType = strings.TrimSuffix(graphqlType, "!")
-		convertedType += "[]"
-	}
-
-	// GraphQL scalars/types --> Go type
-	switch graphqlType {
+	switch convertedType {
 	case "Boolean":
-		convertedType += "bool"
+		convertedType = "bool"
 	case "Float":
-		convertedType += "float64"
+		convertedType = "float64"
 	case "Int":
-		convertedType += "int"
+		convertedType = "int"
 	case "ISO8601DateTime":
-		convertedType += "iso8601.Time"
+		convertedType = "iso8601.Time"
 	case "String":
-		convertedType += "string"
+		convertedType = "string"
+	case "ID":
+		convertedType = "ID"
 	default:
-		convertedType += graphqlType
+		if isSlice {
+			convertedType = "[]" + convertedType
+		}
+		if !isRequired {
+			convertedType = "*" + convertedType
+		}
+		return convertedType
 	}
 
-	if strings.HasPrefix(convertedType, nullable) {
-		convertedType += "]"
+	if isSlice {
+		convertedType = "[]" + convertedType
 	}
-
-	return convertedType
+	if isRequired {
+		return convertedType
+	}
+	if isSlice {
+		return "*" + convertedType
+	}
+	return wrapWithNullable(convertedType)
 }
 
 func getFieldTypeNew(fieldType types.Type) string {

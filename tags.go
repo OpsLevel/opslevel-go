@@ -222,9 +222,10 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 
 	toCreate, toDelete := reconcileTags(tagConnection.Nodes, tagsDesired)
 	for _, tag := range toCreate {
+		taggableResourceType := resourceType.ResourceType()
 		_, err := client.CreateTag(TagCreateInput{
 			Id:    NewNullableFrom(resourceType.ResourceId()),
-			Type:  NewNullableFrom(resourceType.ResourceType()),
+			Type:  &taggableResourceType,
 			Key:   tag.Key,
 			Value: tag.Value,
 		})

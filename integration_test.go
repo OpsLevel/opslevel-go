@@ -39,7 +39,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
 		IAMRole:        opslevel.RefOf("arn:aws:iam::XXXX:role/aws-integration-role"),
 		ExternalID:     opslevel.RefOf("123456789"),
-		RegionOverride: opslevel.RefOf([]string{"us-east-1"}),
+		RegionOverride: &[]string{"us-east-1"},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -141,7 +141,7 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	// Act
 	result, err := client.CreateIntegrationGCP(opslevel.GoogleCloudIntegrationInput{
 		Name:                  opslevel.NewNullableFrom("new gcp integration"),
-		OwnershipTagKeys:      opslevel.NewNullableFrom([]string{"owner", "team", "opslevel_team"}),
+		OwnershipTagKeys:      &[]string{"owner", "team", "opslevel_team"},
 		PrivateKey:            opslevel.NewNullableFrom("XXX_PRIVATE_KEY_XXX"),
 		ClientEmail:           opslevel.NewNullableFrom("helloworld@appspot.gserviceaccount.com"),
 		TagsOverrideOwnership: opslevel.NewNullableFrom(true),
@@ -349,7 +349,7 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	// Act
 	result, err := client.UpdateIntegrationGCP(string(id1), opslevel.GoogleCloudIntegrationInput{
 		Name:                  opslevel.NewNullableFrom("updated gcp"),
-		OwnershipTagKeys:      opslevel.NewNullableFrom([]string{"team", "opslevel_team"}),
+		OwnershipTagKeys:      &[]string{"team", "opslevel_team"},
 		PrivateKey:            opslevel.NewNullableFrom("XXX_PRIVATE_KEY_2_XXX"),
 		ClientEmail:           opslevel.NewNullableFrom("helloworld_2@appspot.gserviceaccount.com"),
 		TagsOverrideOwnership: opslevel.NewNullableFrom(false),

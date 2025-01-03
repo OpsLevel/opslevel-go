@@ -267,7 +267,7 @@ func TestCreateServiceWithNote(t *testing.T) {
 	})
 	note := "Foo note"
 	service, noteErr := client.UpdateServiceNote(ol.ServiceNoteUpdateInput{
-		Service: ol.IdentifierInput{Id: ol.NewNullableFrom(service.Id)},
+		Service: *ol.NewIdentifier(string(service.Id)),
 		Note:    ol.NewNullableFrom(note),
 	})
 	// Assert
@@ -288,7 +288,7 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 	result, err := client.CreateService(ol.ServiceCreateInput{
 		Name:        "Foo",
 		Description: ol.NewNullableFrom("Foo service"),
-		Parent:      ol.NewNullableFrom(*ol.NewIdentifier("FooSystem")),
+		Parent:      ol.NewIdentifier("FooSystem"),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -311,7 +311,7 @@ func TestUpdateService(t *testing.T) {
 			Name: "add fields v1",
 			Vars: addVars,
 			Input: ol.ServiceUpdateInput{
-				Parent:         ol.NewNullableFrom(*ol.NewIdentifier("some_system")),
+				Parent:         ol.NewIdentifier("some_system"),
 				Id:             ol.NewNullableFrom(ol.ID("123456789")),
 				Name:           ol.NewNullableFrom("Hello World"),
 				Description:    ol.NewNullableFrom("The quick brown fox"),
@@ -337,7 +337,7 @@ func TestUpdateService(t *testing.T) {
 			Name: "unset fields v1 - does not work except on parent",
 			Vars: delVarsV1DoesNotWorkExceptOnParent,
 			Input: ol.ServiceUpdateInput{
-				Parent:         ol.NewNullOf[ol.IdentifierInput](),
+				Parent:         &ol.IdentifierInput{},
 				Id:             ol.NewNullableFrom(ol.ID("123456789")),
 				Description:    nil,
 				Framework:      nil,

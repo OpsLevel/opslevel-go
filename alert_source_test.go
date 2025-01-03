@@ -19,7 +19,7 @@ func TestCreateAlertSourceService(t *testing.T) {
 	// Act
 	result, _ := client.CreateAlertSourceService(ol.AlertSourceServiceCreateInput{
 		Service:                       *ol.NewIdentifier("example"),
-		AlertSourceExternalIdentifier: ol.NewNullableFrom(*ol.NewAlertSource(ol.AlertSourceTypeEnumDatadog, "QWERTY")),
+		AlertSourceExternalIdentifier: ol.NewAlertSource(ol.AlertSourceTypeEnumDatadog, "QWERTY"),
 	})
 	// Assert
 	autopilot.Equals(t, "example", result.Service.Aliases[0])

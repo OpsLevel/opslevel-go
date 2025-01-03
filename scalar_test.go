@@ -219,8 +219,8 @@ func TestNewIdentifierArray(t *testing.T) {
 	s := []string{"my-service", "Z2lkOi8vMTIzNDU2Nzg5"}
 	result := ol.NewIdentifierArray(s)
 	// Assert
-	autopilot.Equals(t, "my-service", result[0].Alias.Value)
-	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), result[1].Id.Value)
+	autopilot.Equals(t, "my-service", *result[0].Alias)
+	autopilot.Equals(t, ol.ID("Z2lkOi8vMTIzNDU2Nzg5"), *result[1].Id)
 }
 
 func TestNewNullString(t *testing.T) {

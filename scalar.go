@@ -38,9 +38,9 @@ func (identifierInput IdentifierInput) MarshalJSON() ([]byte, error) {
 	}
 	var out string
 	if identifierInput.Id != nil {
-		out = fmt.Sprintf(`{"id":"%s"}`, string(identifierInput.Id.Value))
+		out = fmt.Sprintf(`{"id":"%s"}`, *identifierInput.Id)
 	} else {
-		out = fmt.Sprintf(`{"alias":"%s"}`, identifierInput.Alias.Value)
+		out = fmt.Sprintf(`{"alias":"%s"}`, *identifierInput.Alias)
 	}
 	return []byte(out), nil
 }
@@ -49,11 +49,11 @@ func NewIdentifier(value ...string) *IdentifierInput {
 	if len(value) == 1 {
 		if IsID(value[0]) {
 			return &IdentifierInput{
-				Id: NewNullableFrom(ID(value[0])),
+				Id: NewID(value[0]),
 			}
 		}
 		return &IdentifierInput{
-			Alias: NewNullableFrom(value[0]),
+			Alias: &value[0],
 		}
 	}
 	var output IdentifierInput

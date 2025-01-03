@@ -211,46 +211,38 @@ func (team *Team) GetAliases() []string {
 	return team.Aliases
 }
 
-func CreateContactSlack(channel string, name *string) ContactInput {
+func CreateContactSlack(channel string, name *Nullable[string]) ContactInput {
 	contactInput := ContactInput{
-		Type:    ContactTypeSlack,
-		Address: channel,
-	}
-	if name != nil {
-		contactInput.DisplayName = NewNullableFrom(*name)
+		Type:        ContactTypeSlack,
+		Address:     channel,
+		DisplayName: name,
 	}
 	return contactInput
 }
 
-func CreateContactSlackHandle(channel string, name *string) ContactInput {
+func CreateContactSlackHandle(channel string, name *Nullable[string]) ContactInput {
 	contactInput := ContactInput{
-		Type:    ContactTypeSlackHandle,
-		Address: channel,
-	}
-	if name != nil {
-		contactInput.DisplayName = NewNullableFrom(*name)
+		Type:        ContactTypeSlackHandle,
+		Address:     channel,
+		DisplayName: name,
 	}
 	return contactInput
 }
 
-func CreateContactEmail(email string, name *string) ContactInput {
+func CreateContactEmail(email string, name *Nullable[string]) ContactInput {
 	contactInput := ContactInput{
-		Type:    ContactTypeEmail,
-		Address: email,
-	}
-	if name != nil {
-		contactInput.DisplayName = NewNullableFrom(*name)
+		Type:        ContactTypeEmail,
+		Address:     email,
+		DisplayName: name,
 	}
 	return contactInput
 }
 
-func CreateContactWeb(address string, name *string) ContactInput {
+func CreateContactWeb(address string, name *Nullable[string]) ContactInput {
 	contactInput := ContactInput{
-		Type:    ContactTypeWeb,
-		Address: address,
-	}
-	if name != nil {
-		contactInput.DisplayName = NewNullableFrom(*name)
+		Type:        ContactTypeWeb,
+		Address:     address,
+		DisplayName: name,
 	}
 	return contactInput
 }
@@ -472,7 +464,7 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	if contact.Type == "" {
 		input.Type = nil
 	} else {
-		input.Type = NewNullableFrom(contact.Type)
+		input.Type = &contact.Type
 	}
 	v := PayloadVariables{
 		"input": input,

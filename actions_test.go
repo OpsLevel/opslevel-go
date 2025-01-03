@@ -20,10 +20,12 @@ func TestCreateWebhookAction(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
+	jsonHeaders, err := ol.NewJSON(`{"Content-Type": "application/json"}`)
+	autopilot.Ok(t, err)
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: ol.NewNullableFrom("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
-		Headers:        ol.NewNullableFrom(ol.JSON{"Content-Type": "application/json"}),
+		Headers:        jsonHeaders,
 		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
 		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
 	})
@@ -69,9 +71,10 @@ func TestUpdateWebhookAction(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/update_action", testRequest)
 
 	// Act
+	putHttpMethod := ol.CustomActionsHttpMethodEnumPut
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:         *newID,
-		HttpMethod: ol.NewNullableFrom(ol.CustomActionsHttpMethodEnumPut),
+		HttpMethod: &putHttpMethod,
 	})
 
 	// Assert
@@ -90,10 +93,12 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/update_action2", testRequest)
 
 	// Act
+	jsonHeaders, err := ol.NewJSON(`{"Accept": "application/json"}`)
+	autopilot.Ok(t, err)
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          *newID,
 		Description: ol.NewNullableFrom(""),
-		Headers:     ol.NewNullableFrom(ol.JSON{"Accept": "application/json"}),
+		Headers:     jsonHeaders,
 	})
 
 	// Assert
@@ -128,9 +133,10 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_trigger", testRequest)
 
 	// Act
+	everyoneEnum := ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          ol.NewNullableFrom(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &everyoneEnum,
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
 		ResponseTemplate:       ol.NewNullableFrom(""),
 		ManualInputsDefinition: ol.NewNullableFrom(""),
@@ -153,20 +159,22 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_trigger_with_global_entity", testRequest)
 
 	// Act
+	everyoneEnum := ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone
+	globalEnum := ol.CustomActionsEntityTypeEnumGlobal
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          ol.NewNullableFrom(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &everyoneEnum,
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
 		ActionId:               ol.NewNullableFrom(*newID),
 		ManualInputsDefinition: ol.NewNullableFrom(""),
 		ResponseTemplate:       ol.NewNullableFrom(""),
 		OwnerId:                *newID,
 		FilterId:               ol.NewNullableFrom(ol.ID("987654321")),
-		EntityType:             ol.NewNullableFrom(ol.CustomActionsEntityTypeEnumGlobal),
-		ExtendedTeamAccess: ol.NewNullableFrom([]ol.IdentifierInput{
+		EntityType:             &globalEnum,
+		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier("example_1"),
 			*ol.NewIdentifier("example_1"),
-		}),
+		},
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -183,16 +191,17 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 
 	client := BestTestClient(t, "custom_actions/create_trigger_with_null_extended_teams", testRequest)
 	// Act
+	everyoneEnum := ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
 		Description:            ol.NewNullableFrom("Disables the Deploy Freeze"),
-		AccessControl:          ol.NewNullableFrom(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &everyoneEnum,
 		ManualInputsDefinition: ol.NewNullableFrom(""),
 		ResponseTemplate:       ol.NewNullableFrom(""),
 		ActionId:               ol.NewNullableFrom(*newID),
 		OwnerId:                *newID,
 		FilterId:               ol.NewNullableFrom(ol.ID("987654321")),
-		ExtendedTeamAccess:     ol.NewNullableFrom([]ol.IdentifierInput{}),
+		ExtendedTeamAccess:     &[]ol.IdentifierInput{},
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -279,7 +288,7 @@ func TestUpdateTriggerDefinition2(t *testing.T) {
 		Id:                 *newID,
 		Name:               ol.NewNullableFrom("test"),
 		Description:        ol.NewNullableFrom(""),
-		ExtendedTeamAccess: ol.NewNullableFrom([]ol.IdentifierInput{}),
+		ExtendedTeamAccess: &[]ol.IdentifierInput{},
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -300,10 +309,10 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 		Id:          *newID,
 		Name:        ol.NewNullableFrom("test"),
 		Description: ol.NewNullableFrom(""),
-		ExtendedTeamAccess: ol.NewNullableFrom([]ol.IdentifierInput{
+		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier(string(*newID)),
 			*ol.NewIdentifier(string(id1)),
-		}),
+		},
 	})
 	// Assert
 	autopilot.Ok(t, err)

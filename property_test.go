@@ -29,7 +29,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		AllowedInConfigFiles: ol.NewNullableFrom(true),
 		Name:                 ol.NewNullableFrom("my-prop"),
-		Schema:               ol.NewNullableFrom(*schema),
+		Schema:               schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
@@ -62,11 +62,12 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 		PropertyDisplayStatus: ol.PropertyDisplayStatusEnumHidden,
 		Schema:                *schemaAsJSON,
 	})
+	hiddenEnum := ol.PropertyDisplayStatusEnumHidden
 	propertyDefinitionInput := autopilot.Register[ol.PropertyDefinitionInput]("property_definition_input", ol.PropertyDefinitionInput{
 		AllowedInConfigFiles:  ol.NewNullableFrom(false),
 		Description:           ol.NewNullableFrom("this description was added"),
-		PropertyDisplayStatus: ol.NewNullableFrom(ol.PropertyDisplayStatusEnumHidden),
-		Schema:                ol.NewNullableFrom(*schema),
+		PropertyDisplayStatus: &hiddenEnum,
+		Schema:                schema,
 	})
 	testRequest := autopilot.NewTestRequest(
 		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,

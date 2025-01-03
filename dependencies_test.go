@@ -18,8 +18,8 @@ func TestCreateServiceDependency(t *testing.T) {
 	// Act
 	result, err := client.CreateServiceDependency(ol.ServiceDependencyCreateInput{
 		DependencyKey: ol.ServiceDependencyKey{
-			SourceIdentifier:      ol.NewNullableFrom(*ol.NewIdentifier("example_2")),
-			DestinationIdentifier: ol.NewNullableFrom(*ol.NewIdentifier("example_3")),
+			SourceIdentifier:      ol.NewIdentifier("example_2"),
+			DestinationIdentifier: ol.NewIdentifier("example_3"),
 		},
 		Notes: ol.NewNullableFrom("An example description"),
 	})

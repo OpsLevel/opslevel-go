@@ -25,7 +25,7 @@ func NewManualCheckFrequencyUpdateInput(startingDate string, timeScale Frequency
 	startingDateIso := NewISO8601Date(startingDate)
 	return &ManualCheckFrequencyUpdateInput{
 		StartingDate:       NewNullableFrom(startingDateIso),
-		FrequencyTimeScale: NewNullableFrom(timeScale),
+		FrequencyTimeScale: &timeScale,
 		FrequencyValue:     NewNullableFrom(value),
 	}
 }
