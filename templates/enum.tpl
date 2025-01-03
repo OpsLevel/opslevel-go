@@ -3,7 +3,7 @@
 // {{.Name | title}} {{.Desc | clean | endSentence}}
 type {{.Name}} string
 
-const (
+var (
 {{- range .EnumValuesDefinition }}
 	{{$.Name}}{{.EnumValue | enumIdentifier}} {{$.Name}} = {{.EnumValue | quote}} // {{ .Desc | clean | fullSentence }}
 {{- end }}

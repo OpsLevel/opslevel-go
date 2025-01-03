@@ -5,7 +5,7 @@ package opslevel
 // AlertSourceStatusTypeEnum represents the monitor status level.
 type AlertSourceStatusTypeEnum string
 
-const (
+var (
 	AlertSourceStatusTypeEnumAlert        AlertSourceStatusTypeEnum = "alert"         // Monitor is reporting an alert.
 	AlertSourceStatusTypeEnumFetchingData AlertSourceStatusTypeEnum = "fetching_data" // Monitor currently being updated.
 	AlertSourceStatusTypeEnumNoData       AlertSourceStatusTypeEnum = "no_data"       // No data received yet. Ensure your monitors are configured correctly.
@@ -25,7 +25,7 @@ var AllAlertSourceStatusTypeEnum = []string{
 // AlertSourceTypeEnum represents the type of the alert source.
 type AlertSourceTypeEnum string
 
-const (
+var (
 	AlertSourceTypeEnumDatadog    AlertSourceTypeEnum = "datadog"     // A Datadog alert source (aka monitor).
 	AlertSourceTypeEnumIncidentIo AlertSourceTypeEnum = "incident_io" // An incident.io alert source (aka service).
 	AlertSourceTypeEnumNewRelic   AlertSourceTypeEnum = "new_relic"   // A New Relic alert source (aka service).
@@ -45,7 +45,7 @@ var AllAlertSourceTypeEnum = []string{
 // AliasOwnerTypeEnum represents the owner type an alias is assigned to.
 type AliasOwnerTypeEnum string
 
-const (
+var (
 	AliasOwnerTypeEnumDomain                 AliasOwnerTypeEnum = "domain"                  // Aliases that are assigned to domains.
 	AliasOwnerTypeEnumGroup                  AliasOwnerTypeEnum = "group"                   // Aliases that are assigned to groups.
 	AliasOwnerTypeEnumInfrastructureResource AliasOwnerTypeEnum = "infrastructure_resource" // Aliases that are assigned to infrastructure resources.
@@ -69,7 +69,7 @@ var AllAliasOwnerTypeEnum = []string{
 // ApiDocumentSourceEnum represents the source used to determine the preferred API document.
 type ApiDocumentSourceEnum string
 
-const (
+var (
 	ApiDocumentSourceEnumPull ApiDocumentSourceEnum = "PULL" // Use the document that was pulled by OpsLevel via a repo.
 	ApiDocumentSourceEnumPush ApiDocumentSourceEnum = "PUSH" // Use the document that was pushed to OpsLevel via an API Docs integration.
 )
@@ -83,7 +83,7 @@ var AllApiDocumentSourceEnum = []string{
 // BasicTypeEnum represents operations that can be used on filters.
 type BasicTypeEnum string
 
-const (
+var (
 	BasicTypeEnumDoesNotEqual BasicTypeEnum = "does_not_equal" // Does not equal a specific value.
 	BasicTypeEnumEquals       BasicTypeEnum = "equals"         // Equals a specific value.
 )
@@ -97,7 +97,7 @@ var AllBasicTypeEnum = []string{
 // CampaignFilterEnum represents fields that can be used as part of filter for campaigns.
 type CampaignFilterEnum string
 
-const (
+var (
 	CampaignFilterEnumID     CampaignFilterEnum = "id"     // Filter by `id` of campaign.
 	CampaignFilterEnumOwner  CampaignFilterEnum = "owner"  // Filter by campaign owner.
 	CampaignFilterEnumStatus CampaignFilterEnum = "status" // Filter by campaign status.
@@ -113,7 +113,7 @@ var AllCampaignFilterEnum = []string{
 // CampaignReminderChannelEnum represents the possible communication channels through which a campaign reminder can be delivered.
 type CampaignReminderChannelEnum string
 
-const (
+var (
 	CampaignReminderChannelEnumEmail          CampaignReminderChannelEnum = "email"           // A system for sending messages to one or more recipients via telecommunications links between computers using dedicated software or a web-based service.
 	CampaignReminderChannelEnumMicrosoftTeams CampaignReminderChannelEnum = "microsoft_teams" // A proprietary business communication platform developed by Microsoft.
 	CampaignReminderChannelEnumSlack          CampaignReminderChannelEnum = "slack"           // A cloud-based team communication platform developed by Slack Technologies.
@@ -129,7 +129,7 @@ var AllCampaignReminderChannelEnum = []string{
 // CampaignReminderFrequencyUnitEnum represents possible time units for the frequency at which campaign reminders are delivered.
 type CampaignReminderFrequencyUnitEnum string
 
-const (
+var (
 	CampaignReminderFrequencyUnitEnumDay   CampaignReminderFrequencyUnitEnum = "day"   // A period of twenty-four hours as a unit of time, reckoned from one midnight to the next, corresponding to a rotation of the earth on its axis.
 	CampaignReminderFrequencyUnitEnumMonth CampaignReminderFrequencyUnitEnum = "month" // Each of the twelve named periods into which a year is divided.
 	CampaignReminderFrequencyUnitEnumWeek  CampaignReminderFrequencyUnitEnum = "week"  // A period of seven days.
@@ -145,7 +145,7 @@ var AllCampaignReminderFrequencyUnitEnum = []string{
 // CampaignReminderTypeEnum represents type/Format of the notification.
 type CampaignReminderTypeEnum string
 
-const (
+var (
 	CampaignReminderTypeEnumEmail          CampaignReminderTypeEnum = "email"           // Notification will be sent via email.
 	CampaignReminderTypeEnumMicrosoftTeams CampaignReminderTypeEnum = "microsoft_teams" // Notification will be sent by microsoft teams.
 	CampaignReminderTypeEnumSlack          CampaignReminderTypeEnum = "slack"           // Notification will be sent by slack.
@@ -161,7 +161,7 @@ var AllCampaignReminderTypeEnum = []string{
 // CampaignServiceStatusEnum represents status of whether a service is passing all checks for a campaign or not.
 type CampaignServiceStatusEnum string
 
-const (
+var (
 	CampaignServiceStatusEnumFailing CampaignServiceStatusEnum = "failing" // Service is failing one or more checks in the campaign.
 	CampaignServiceStatusEnumPassing CampaignServiceStatusEnum = "passing" // Service is passing all the checks in the campaign.
 )
@@ -175,7 +175,7 @@ var AllCampaignServiceStatusEnum = []string{
 // CampaignSortEnum represents sort possibilities for campaigns.
 type CampaignSortEnum string
 
-const (
+var (
 	CampaignSortEnumChecksPassingAsc     CampaignSortEnum = "checks_passing_ASC"     // Sort by number of `checks passing` ascending.
 	CampaignSortEnumChecksPassingDesc    CampaignSortEnum = "checks_passing_DESC"    // Sort by number of `checks passing` descending.
 	CampaignSortEnumEndedDateAsc         CampaignSortEnum = "ended_date_ASC"         // Sort by `endedDate` ascending.
@@ -221,7 +221,7 @@ var AllCampaignSortEnum = []string{
 // CampaignStatusEnum represents the campaign status.
 type CampaignStatusEnum string
 
-const (
+var (
 	CampaignStatusEnumDelayed    CampaignStatusEnum = "delayed"     // Campaign is delayed.
 	CampaignStatusEnumDraft      CampaignStatusEnum = "draft"       // Campaign has been created but is not yet active.
 	CampaignStatusEnumEnded      CampaignStatusEnum = "ended"       // Campaign ended.
@@ -241,7 +241,7 @@ var AllCampaignStatusEnum = []string{
 // CheckCodeIssueConstraintEnum represents the values allowed for the constraint type for the code issues check.
 type CheckCodeIssueConstraintEnum string
 
-const (
+var (
 	CheckCodeIssueConstraintEnumAny      CheckCodeIssueConstraintEnum = "any"      // The check will look for any code issues regardless of issue name.
 	CheckCodeIssueConstraintEnumContains CheckCodeIssueConstraintEnum = "contains" // The check will look for any code issues by name containing the issue name.
 	CheckCodeIssueConstraintEnumExact    CheckCodeIssueConstraintEnum = "exact"    // The check will look for any code issues matching the issue name exactly.
@@ -257,7 +257,7 @@ var AllCheckCodeIssueConstraintEnum = []string{
 // CheckResultStatusEnum represents the status of the check result.
 type CheckResultStatusEnum string
 
-const (
+var (
 	CheckResultStatusEnumFailed CheckResultStatusEnum = "failed" // Indicates that the check has failed for the associated service.
 	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service..
 )
@@ -271,7 +271,7 @@ var AllCheckResultStatusEnum = []string{
 // CheckStatus represents the evaluation status of the check.
 type CheckStatus string
 
-const (
+var (
 	CheckStatusFailed  CheckStatus = "failed"  // The check evaluated to a falsy value based on some conditions.
 	CheckStatusPassed  CheckStatus = "passed"  // The check evaluated to a truthy value based on some conditions.
 	CheckStatusPending CheckStatus = "pending" // The check has not been evaluated yet..
@@ -287,7 +287,7 @@ var AllCheckStatus = []string{
 // CheckType represents the type of check.
 type CheckType string
 
-const (
+var (
 	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name.
 	CheckTypeCodeIssue           CheckType = "code_issue"            // Verifies that the severity and quantity of code issues does not exceed defined thresholds.
 	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing.
@@ -337,7 +337,7 @@ var AllCheckType = []string{
 // CodeIssueResolutionTimeUnitEnum represents the allowed values for duration units for the resolution time.
 type CodeIssueResolutionTimeUnitEnum string
 
-const (
+var (
 	CodeIssueResolutionTimeUnitEnumDay   CodeIssueResolutionTimeUnitEnum = "day"   // Day, as a duration.
 	CodeIssueResolutionTimeUnitEnumMonth CodeIssueResolutionTimeUnitEnum = "month" // Month, as a duration.
 	CodeIssueResolutionTimeUnitEnumWeek  CodeIssueResolutionTimeUnitEnum = "week"  // Week, as a duration.
@@ -353,7 +353,7 @@ var AllCodeIssueResolutionTimeUnitEnum = []string{
 // ConnectiveEnum represents the logical operator to be used in conjunction with multiple filters (requires filters to be supplied).
 type ConnectiveEnum string
 
-const (
+var (
 	ConnectiveEnumAnd ConnectiveEnum = "and" // Used to ensure **all** filters match for a given resource.
 	ConnectiveEnumOr  ConnectiveEnum = "or"  // Used to ensure **any** filters match for a given resource.
 )
@@ -367,7 +367,7 @@ var AllConnectiveEnum = []string{
 // ContactType represents the method of contact.
 type ContactType string
 
-const (
+var (
 	ContactTypeEmail          ContactType = "email"           // An email contact method.
 	ContactTypeGitHub         ContactType = "github"          // A GitHub handle.
 	ContactTypeMicrosoftTeams ContactType = "microsoft_teams" // A Microsoft Teams channel.
@@ -389,7 +389,7 @@ var AllContactType = []string{
 // CustomActionsEntityTypeEnum represents the entity types a custom action can be associated with.
 type CustomActionsEntityTypeEnum string
 
-const (
+var (
 	CustomActionsEntityTypeEnumGlobal  CustomActionsEntityTypeEnum = "GLOBAL"  // A custom action associated with the global scope (no particular entity type).
 	CustomActionsEntityTypeEnumService CustomActionsEntityTypeEnum = "SERVICE" // A custom action associated with services.
 )
@@ -403,7 +403,7 @@ var AllCustomActionsEntityTypeEnum = []string{
 // CustomActionsHttpMethodEnum represents an HTTP request method.
 type CustomActionsHttpMethodEnum string
 
-const (
+var (
 	CustomActionsHttpMethodEnumDelete CustomActionsHttpMethodEnum = "DELETE" // An HTTP DELETE request.
 	CustomActionsHttpMethodEnumGet    CustomActionsHttpMethodEnum = "GET"    // An HTTP GET request.
 	CustomActionsHttpMethodEnumPatch  CustomActionsHttpMethodEnum = "PATCH"  // An HTTP PATCH request.
@@ -423,7 +423,7 @@ var AllCustomActionsHttpMethodEnum = []string{
 // CustomActionsTriggerDefinitionAccessControlEnum represents who can see and use the trigger definition.
 type CustomActionsTriggerDefinitionAccessControlEnum string
 
-const (
+var (
 	CustomActionsTriggerDefinitionAccessControlEnumAdmins        CustomActionsTriggerDefinitionAccessControlEnum = "admins"         // Admin users.
 	CustomActionsTriggerDefinitionAccessControlEnumEveryone      CustomActionsTriggerDefinitionAccessControlEnum = "everyone"       // All users of OpsLevel.
 	CustomActionsTriggerDefinitionAccessControlEnumServiceOwners CustomActionsTriggerDefinitionAccessControlEnum = "service_owners" // The owners of a service.
@@ -439,7 +439,7 @@ var AllCustomActionsTriggerDefinitionAccessControlEnum = []string{
 // CustomActionsTriggerEventStatusEnum represents the status of the custom action trigger event.
 type CustomActionsTriggerEventStatusEnum string
 
-const (
+var (
 	CustomActionsTriggerEventStatusEnumFailure CustomActionsTriggerEventStatusEnum = "FAILURE" // The action failed to complete.
 	CustomActionsTriggerEventStatusEnumPending CustomActionsTriggerEventStatusEnum = "PENDING" // A result has not been determined.
 	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed successfully.
@@ -455,7 +455,7 @@ var AllCustomActionsTriggerEventStatusEnum = []string{
 // DayOfWeekEnum represents possible days of the week.
 type DayOfWeekEnum string
 
-const (
+var (
 	DayOfWeekEnumFriday    DayOfWeekEnum = "friday"    // Yesterday was Thursday. Tomorrow is Saturday. We so excited.
 	DayOfWeekEnumMonday    DayOfWeekEnum = "monday"    // Monday is the day of the week that takes place between Sunday and Tuesday.
 	DayOfWeekEnumSaturday  DayOfWeekEnum = "saturday"  // The day of the week before Sunday and following Friday, and (together with Sunday) forming part of the weekend.
@@ -479,7 +479,7 @@ var AllDayOfWeekEnum = []string{
 // EventIntegrationEnum represents the type of event integration.
 type EventIntegrationEnum string
 
-const (
+var (
 	EventIntegrationEnumApidoc        EventIntegrationEnum = "apiDoc"        // API Documentation integration.
 	EventIntegrationEnumAquasecurity  EventIntegrationEnum = "aquaSecurity"  // Aqua Security Custom Event Check integration.
 	EventIntegrationEnumArgocd        EventIntegrationEnum = "argocd"        // ArgoCD deploy integration.
@@ -551,7 +551,7 @@ var AllEventIntegrationEnum = []string{
 // FrequencyTimeScale represents the time scale type for the frequency.
 type FrequencyTimeScale string
 
-const (
+var (
 	FrequencyTimeScaleDay   FrequencyTimeScale = "day"   // Consider the time scale of days.
 	FrequencyTimeScaleMonth FrequencyTimeScale = "month" // Consider the time scale of months.
 	FrequencyTimeScaleWeek  FrequencyTimeScale = "week"  // Consider the time scale of weeks.
@@ -569,7 +569,7 @@ var AllFrequencyTimeScale = []string{
 // HasDocumentationSubtypeEnum represents the subtype of the document.
 type HasDocumentationSubtypeEnum string
 
-const (
+var (
 	HasDocumentationSubtypeEnumOpenapi HasDocumentationSubtypeEnum = "openapi" // Document is an OpenAPI document.
 )
 
@@ -581,7 +581,7 @@ var AllHasDocumentationSubtypeEnum = []string{
 // HasDocumentationTypeEnum represents the type of the document.
 type HasDocumentationTypeEnum string
 
-const (
+var (
 	HasDocumentationTypeEnumAPI  HasDocumentationTypeEnum = "api"  // Document is an API document.
 	HasDocumentationTypeEnumTech HasDocumentationTypeEnum = "tech" // Document is a Tech document.
 )
@@ -595,7 +595,7 @@ var AllHasDocumentationTypeEnum = []string{
 // PackageConstraintEnum represents possible values of a package version check constraint.
 type PackageConstraintEnum string
 
-const (
+var (
 	PackageConstraintEnumDoesNotExist   PackageConstraintEnum = "does_not_exist"  // The package must not be used by a service.
 	PackageConstraintEnumExists         PackageConstraintEnum = "exists"          // The package must be used by a service.
 	PackageConstraintEnumMatchesVersion PackageConstraintEnum = "matches_version" // The package usage by a service must match certain specified version constraints.
@@ -611,7 +611,7 @@ var AllPackageConstraintEnum = []string{
 // PackageManagerEnum represents supported software package manager types.
 type PackageManagerEnum string
 
-const (
+var (
 	PackageManagerEnumAlpm      PackageManagerEnum = "alpm"      // .
 	PackageManagerEnumApk       PackageManagerEnum = "apk"       // .
 	PackageManagerEnumBitbucket PackageManagerEnum = "bitbucket" // .
@@ -685,7 +685,7 @@ var AllPackageManagerEnum = []string{
 // PayloadFilterEnum represents fields that can be used as part of filters for payloads.
 type PayloadFilterEnum string
 
-const (
+var (
 	PayloadFilterEnumIntegrationID PayloadFilterEnum = "integration_id" // Filter by `integration` field. Note that this is an internal id, ex. "123".
 )
 
@@ -697,7 +697,7 @@ var AllPayloadFilterEnum = []string{
 // PayloadSortEnum represents sort possibilities for payloads.
 type PayloadSortEnum string
 
-const (
+var (
 	PayloadSortEnumCreatedAtAsc    PayloadSortEnum = "created_at_ASC"    // Order by `created_at` ascending.
 	PayloadSortEnumCreatedAtDesc   PayloadSortEnum = "created_at_DESC"   // Order by `created_at` descending.
 	PayloadSortEnumProcessedAtAsc  PayloadSortEnum = "processed_at_ASC"  // Order by `processed_at` ascending.
@@ -715,7 +715,7 @@ var AllPayloadSortEnum = []string{
 // PredicateKeyEnum represents fields that can be used as part of filter for services.
 type PredicateKeyEnum string
 
-const (
+var (
 	PredicateKeyEnumAliases        PredicateKeyEnum = "aliases"         // Filter by Alias attached to this service, if any.
 	PredicateKeyEnumCreationSource PredicateKeyEnum = "creation_source" // Filter by the creation source.
 	PredicateKeyEnumDomainID       PredicateKeyEnum = "domain_id"       // Filter by Domain that includes the System this service is assigned to, if any.
@@ -759,7 +759,7 @@ var AllPredicateKeyEnum = []string{
 // PredicateTypeEnum represents operations that can be used on predicates.
 type PredicateTypeEnum string
 
-const (
+var (
 	PredicateTypeEnumBelongsTo                  PredicateTypeEnum = "belongs_to"                   // Belongs to a group's hierarchy.
 	PredicateTypeEnumContains                   PredicateTypeEnum = "contains"                     // Contains a specific value.
 	PredicateTypeEnumDoesNotContain             PredicateTypeEnum = "does_not_contain"             // Does not contain a specific value.
@@ -803,7 +803,7 @@ var AllPredicateTypeEnum = []string{
 // PropertyDefinitionDisplayTypeEnum represents the set of possible display types of a property definition schema.
 type PropertyDefinitionDisplayTypeEnum string
 
-const (
+var (
 	PropertyDefinitionDisplayTypeEnumArray    PropertyDefinitionDisplayTypeEnum = "ARRAY"    // An array.
 	PropertyDefinitionDisplayTypeEnumBoolean  PropertyDefinitionDisplayTypeEnum = "BOOLEAN"  // A boolean.
 	PropertyDefinitionDisplayTypeEnumDropdown PropertyDefinitionDisplayTypeEnum = "DROPDOWN" // A dropdown.
@@ -825,7 +825,7 @@ var AllPropertyDefinitionDisplayTypeEnum = []string{
 // PropertyDisplayStatusEnum represents the display status of a custom property on service pages.
 type PropertyDisplayStatusEnum string
 
-const (
+var (
 	PropertyDisplayStatusEnumHidden  PropertyDisplayStatusEnum = "hidden"  // The property is not shown on the service page.
 	PropertyDisplayStatusEnumVisible PropertyDisplayStatusEnum = "visible" // The property is shown on the service page.
 )
@@ -839,7 +839,7 @@ var AllPropertyDisplayStatusEnum = []string{
 // RelatedResourceRelationshipTypeEnum represents the type of the relationship between two resources.
 type RelatedResourceRelationshipTypeEnum string
 
-const (
+var (
 	RelatedResourceRelationshipTypeEnumBelongsTo    RelatedResourceRelationshipTypeEnum = "belongs_to"    // The resource belongs to the node on the edge.
 	RelatedResourceRelationshipTypeEnumContains     RelatedResourceRelationshipTypeEnum = "contains"      // The resource contains the node on the edge.
 	RelatedResourceRelationshipTypeEnumDependencyOf RelatedResourceRelationshipTypeEnum = "dependency_of" // The resource is a dependency of the node on the edge.
@@ -859,7 +859,7 @@ var AllRelatedResourceRelationshipTypeEnum = []string{
 // RelationshipTypeEnum represents the type of relationship between two resources.
 type RelationshipTypeEnum string
 
-const (
+var (
 	RelationshipTypeEnumBelongsTo RelationshipTypeEnum = "belongs_to" // The source resource belongs to the target resource.
 	RelationshipTypeEnumDependsOn RelationshipTypeEnum = "depends_on" // The source resource depends on the target resource.
 )
@@ -873,7 +873,7 @@ var AllRelationshipTypeEnum = []string{
 // RepositoryVisibilityEnum represents possible visibility levels for repositories.
 type RepositoryVisibilityEnum string
 
-const (
+var (
 	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (Github, Gitlab).
 	RepositoryVisibilityEnumOrganization RepositoryVisibilityEnum = "ORGANIZATION" // Repositories that are only accessible to organization users (ADO).
 	RepositoryVisibilityEnumPrivate      RepositoryVisibilityEnum = "PRIVATE"      // Repositories that are private to the user.
@@ -891,7 +891,7 @@ var AllRepositoryVisibilityEnum = []string{
 // ResourceDocumentStatusTypeEnum represents status of a document on a resource.
 type ResourceDocumentStatusTypeEnum string
 
-const (
+var (
 	ResourceDocumentStatusTypeEnumHidden  ResourceDocumentStatusTypeEnum = "hidden"  // Document is hidden.
 	ResourceDocumentStatusTypeEnumPinned  ResourceDocumentStatusTypeEnum = "pinned"  // Document is pinned.
 	ResourceDocumentStatusTypeEnumVisible ResourceDocumentStatusTypeEnum = "visible" // Document is visible.
@@ -907,7 +907,7 @@ var AllResourceDocumentStatusTypeEnum = []string{
 // ScorecardSortEnum represents the possible options to sort the resulting list of scorecards.
 type ScorecardSortEnum string
 
-const (
+var (
 	ScorecardSortEnumAffectsoverallservicelevelsAsc  ScorecardSortEnum = "affectsOverallServiceLevels_ASC"  // Order by whether or not the checks on the scorecard affect the overall maturity, in ascending order.
 	ScorecardSortEnumAffectsoverallservicelevelsDesc ScorecardSortEnum = "affectsOverallServiceLevels_DESC" // Order by whether or not the checks on the scorecard affect the overall maturity, in descending order.
 	ScorecardSortEnumFilterAsc                       ScorecardSortEnum = "filter_ASC"                       // Order by the associated filter's name, in ascending order.
@@ -941,7 +941,7 @@ var AllScorecardSortEnum = []string{
 // ServicePropertyTypeEnum represents properties of services that can be validated.
 type ServicePropertyTypeEnum string
 
-const (
+var (
 	ServicePropertyTypeEnumCustomProperty ServicePropertyTypeEnum = "custom_property" // A custom property that is associated with the service.
 	ServicePropertyTypeEnumDescription    ServicePropertyTypeEnum = "description"     // The description of a service.
 	ServicePropertyTypeEnumFramework      ServicePropertyTypeEnum = "framework"       // The primary software development framework of a service.
@@ -971,7 +971,7 @@ var AllServicePropertyTypeEnum = []string{
 // ServiceSortEnum represents sort possibilities for services.
 type ServiceSortEnum string
 
-const (
+var (
 	ServiceSortEnumAlertStatusAsc    ServiceSortEnum = "alert_status_ASC"    // Sort by alert status ascending.
 	ServiceSortEnumAlertStatusDesc   ServiceSortEnum = "alert_status_DESC"   // Sort by alert status descending.
 	ServiceSortEnumChecksPassingAsc  ServiceSortEnum = "checks_passing_ASC"  // Sort by `checks_passing` ascending.
@@ -1025,7 +1025,7 @@ var AllServiceSortEnum = []string{
 // SnykIntegrationRegionEnum represents the data residency regions offered by Snyk.
 type SnykIntegrationRegionEnum string
 
-const (
+var (
 	SnykIntegrationRegionEnumAu SnykIntegrationRegionEnum = "AU" // Australia (https://api.au.snyk.io).
 	SnykIntegrationRegionEnumEu SnykIntegrationRegionEnum = "EU" // Europe (https://api.eu.snyk.io).
 	SnykIntegrationRegionEnumUs SnykIntegrationRegionEnum = "US" // USA (https://app.snyk.io).
@@ -1041,7 +1041,7 @@ var AllSnykIntegrationRegionEnum = []string{
 // TaggableResource represents possible types to apply tags to.
 type TaggableResource string
 
-const (
+var (
 	TaggableResourceDomain                 TaggableResource = "Domain"                 // Used to identify a Domain.
 	TaggableResourceInfrastructureresource TaggableResource = "InfrastructureResource" // Used to identify an Infrastructure Resource.
 	TaggableResourceRepository             TaggableResource = "Repository"             // Used to identify a Repository.
@@ -1065,7 +1065,7 @@ var AllTaggableResource = []string{
 // ToolCategory represents the specific categories that a tool can belong to.
 type ToolCategory string
 
-const (
+var (
 	ToolCategoryAdmin                 ToolCategory = "admin"                  // Tools used for administrative purposes.
 	ToolCategoryAPIDocumentation      ToolCategory = "api_documentation"      // Tools used as API documentation for this service.
 	ToolCategoryArchitectureDiagram   ToolCategory = "architecture_diagram"   // Tools used for diagramming architecture.
@@ -1121,7 +1121,7 @@ var AllToolCategory = []string{
 // UserRole represents a role that can be assigned to a user.
 type UserRole string
 
-const (
+var (
 	UserRoleAdmin          UserRole = "admin"           // An administrator on the account.
 	UserRoleStandardsAdmin UserRole = "standards_admin" // Full write access to Standards resources, including rubric, campaigns, and checks. User-level access to all other entities.
 	UserRoleTeamMember     UserRole = "team_member"     // Read access to all resources. Write access based on team membership.
@@ -1139,7 +1139,7 @@ var AllUserRole = []string{
 // UsersFilterEnum represents fields that can be used as part of filter for users.
 type UsersFilterEnum string
 
-const (
+var (
 	UsersFilterEnumDeactivatedAt UsersFilterEnum = "deactivated_at"  // Filter by the `deactivated_at` field.
 	UsersFilterEnumEmail         UsersFilterEnum = "email"           // Filter by `email` field.
 	UsersFilterEnumLastSignInAt  UsersFilterEnum = "last_sign_in_at" // Filter by the `last_sign_in_at` field.
@@ -1161,7 +1161,7 @@ var AllUsersFilterEnum = []string{
 // UsersInviteScopeEnum represents a classification of users to invite.
 type UsersInviteScopeEnum string
 
-const (
+var (
 	UsersInviteScopeEnumPending UsersInviteScopeEnum = "pending" // All users who have yet to log in to OpsLevel for the first time.
 )
 
@@ -1173,7 +1173,7 @@ var AllUsersInviteScopeEnum = []string{
 // VaultSecretsSortEnum represents sort possibilities for secrets.
 type VaultSecretsSortEnum string
 
-const (
+var (
 	VaultSecretsSortEnumSlugAsc       VaultSecretsSortEnum = "slug_ASC"        // Sort by slug ascending.
 	VaultSecretsSortEnumSlugDesc      VaultSecretsSortEnum = "slug_DESC"       // Sort by slug descending.
 	VaultSecretsSortEnumUpdatedAtAsc  VaultSecretsSortEnum = "updated_at_ASC"  // Sort by updated_at ascending.
