@@ -224,7 +224,7 @@ func TestNewIdentifierArray(t *testing.T) {
 }
 
 func TestNewNullString(t *testing.T) {
-	buf, err := json.Marshal(ol.NewNull())
+	buf, err := json.Marshal(ol.NewNull[string]())
 	if err != nil {
 		t.Errorf("got unexpected error: '%+v'", err)
 	}
@@ -242,12 +242,12 @@ func TestNewNullableWithValueString(t *testing.T) {
 	testCases := []TestCase{
 		{
 			Name:         "empty string using constructor",
-			Value:        ol.RefOf(""),
+			Value:        ol.NewNullableFrom(""),
 			OutputBuffer: `""`,
 		},
 		{
 			Name:         "hello world string using constructor",
-			Value:        ol.RefOf("hello world"),
+			Value:        ol.NewNullableFrom("hello world"),
 			OutputBuffer: `"hello world"`,
 		},
 		{

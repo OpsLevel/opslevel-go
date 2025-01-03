@@ -32,9 +32,8 @@ var (
 		Value: ol.RefOf("Requests"),
 	}
 
-	equalsEnum           = ol.PredicateTypeEnumEquals
 	predicateUpdateInput = &ol.PredicateUpdateInput{
-		Type:  &equalsEnum,
+		Type:  &ol.PredicateTypeEnumEquals,
 		Value: ol.RefOf("Requests"),
 	}
 
@@ -1082,7 +1081,7 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 func TestCanUpdateNotesToNull(t *testing.T) {
 	// Arrange
 	testRequest := BuildUpdateRequest("CustomEvent", map[string]any{
-		"notes": nil,
+		"notes": "",
 	})
 	client := BestTestClient(t, "check/can_update_notes_to_null", testRequest)
 	// Act
@@ -1092,7 +1091,7 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 		CategoryId: ol.RefOf(id),
 		Enabled:    ol.RefOf(true),
 		LevelId:    ol.RefOf(id),
-		Notes:      ol.NewNull(),
+		Notes:      ol.RefOf(""),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1170,9 +1169,6 @@ func TestJsonUnmarshalCreateCheckManual(t *testing.T) {
 	// Act
 	buf1, err1 := ol.UnmarshalCheckCreateInput(ol.CheckTypeManual, []byte(data))
 	// Assert
-	stuff := buf1.(*ol.CheckManualCreateInput)
-	stuff2 := &output
-	fmt.Println(stuff2, stuff)
 	autopilot.Ok(t, err1)
 	autopilot.Equals(t, &output, buf1.(*ol.CheckManualCreateInput))
 }
@@ -1197,13 +1193,13 @@ func TestJsonUnmarshalCreateCheckToolUsage(t *testing.T) {
 	output := ol.CheckToolUsageCreateInput{
 		Name:                 "Example",
 		Notes:                ol.RefOf("Example Notes"),
-		EnvironmentPredicate: &ol.PredicateInput{Type: ol.PredicateTypeEnum("exists")},
+		EnvironmentPredicate: &ol.PredicateInput{Type: ol.PredicateTypeEnumExists},
 		ToolNamePredicate: &ol.PredicateInput{
-			Type:  ol.PredicateTypeEnum("contains"),
+			Type:  ol.PredicateTypeEnumContains,
 			Value: ol.RefOf("go"),
 		},
 		ToolUrlPredicate: &ol.PredicateInput{
-			Type:  ol.PredicateTypeEnum("starts_with"),
+			Type:  ol.PredicateTypeEnumStartsWith,
 			Value: ol.RefOf("https"),
 		},
 	}
