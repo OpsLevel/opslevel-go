@@ -46,7 +46,7 @@ func (p *PredicateUpdateInput) MarshalJSON() ([]byte, error) {
 	}
 
 	if p.Value != nil {
-		m["value"] = *p.Value
+		m["value"] = p.Value.Value
 	}
 
 	return json.Marshal(m)

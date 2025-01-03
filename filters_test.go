@@ -20,7 +20,7 @@ func TestCreateFilter(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Kubernetes",
-		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
+		Connective: &ol.ConnectiveEnumAnd,
 		Predicates: &[]ol.FilterPredicateInput{{
 			Key:   ol.PredicateKeyEnumTierIndex,
 			Type:  ol.PredicateTypeEnumEquals,
@@ -46,7 +46,7 @@ func TestCreateFilterNested(t *testing.T) {
 	// Act
 	result, err := client.CreateFilter(ol.FilterCreateInput{
 		Name:       "Self deployed or Rails",
-		Connective: ol.RefOf(ol.ConnectiveEnumOr),
+		Connective: &ol.ConnectiveEnumOr,
 		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
@@ -169,7 +169,7 @@ func TestUpdateFilterNested(t *testing.T) {
 	result, err := client.UpdateFilter(ol.FilterUpdateInput{
 		Id:         "Z2lkOi8vb3BzbGV2ZWwvRmlsdGVyLzIzNDY",
 		Name:       ol.RefOf("Tier 1-2 not deployed by us"),
-		Connective: ol.RefOf(ol.ConnectiveEnumAnd),
+		Connective: &ol.ConnectiveEnumAnd,
 		Predicates: &[]ol.FilterPredicateInput{
 			{
 				Key:   ol.PredicateKeyEnumFilterID,
@@ -233,11 +233,12 @@ func TestUpdateFilterCaseSensitiveTrue(t *testing.T) {
 			CaseSensitive: ol.RefOf(true),
 		}},
 	})
+	isTrue := true
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.RefOf(true), result.Predicates[0].CaseSensitive)
+	autopilot.Equals(t, &isTrue, result.Predicates[0].CaseSensitive)
 }
 
 func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
@@ -278,11 +279,13 @@ func TestUpdateFilterCaseSensitiveFalse(t *testing.T) {
 			CaseSensitive: ol.RefOf(false),
 		}},
 	})
+	isFalse := false
+
 	// Assert
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, "Tier 1 Services", result.Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result.Predicates[0].Key)
-	autopilot.Equals(t, ol.RefOf(false), result.Predicates[0].CaseSensitive)
+	autopilot.Equals(t, &isFalse, result.Predicates[0].CaseSensitive)
 }
 
 func TestDeleteFilter(t *testing.T) {

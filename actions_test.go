@@ -20,10 +20,12 @@ func TestCreateWebhookAction(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
+	jsonHeaders, err := ol.NewJSON(`{"Content-Type": "application/json"}`)
+	autopilot.Ok(t, err)
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: ol.RefOf("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
-		Headers:        &ol.JSON{"Content-Type": "application/json"},
+		Headers:        jsonHeaders,
 		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
 		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
 	})
@@ -71,7 +73,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:         *newID,
-		HttpMethod: ol.RefOf(ol.CustomActionsHttpMethodEnumPut),
+		HttpMethod: &ol.CustomActionsHttpMethodEnumPut,
 	})
 
 	// Assert
@@ -90,10 +92,12 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/update_action2", testRequest)
 
 	// Act
+	jsonHeaders, err := ol.NewJSON(`{"Accept": "application/json"}`)
+	autopilot.Ok(t, err)
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          *newID,
 		Description: ol.RefOf(""),
-		Headers:     &ol.JSON{"Accept": "application/json"},
+		Headers:     jsonHeaders,
 	})
 
 	// Assert
@@ -130,13 +134,13 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          ol.RefOf(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		Description:            ol.RefOf("Disables the Deploy Freeze"),
 		ResponseTemplate:       ol.RefOf(""),
 		ManualInputsDefinition: ol.RefOf(""),
-		ActionId:               newID,
+		ActionId:               ol.RefOf(*newID),
 		OwnerId:                *newID,
-		FilterId:               ol.NewID("987654321"),
+		FilterId:               ol.RefOf(ol.ID("987654321")),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -155,14 +159,14 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          ol.RefOf(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		Description:            ol.RefOf("Disables the Deploy Freeze"),
-		ActionId:               newID,
+		ActionId:               ol.RefOf(*newID),
 		ManualInputsDefinition: ol.RefOf(""),
 		ResponseTemplate:       ol.RefOf(""),
 		OwnerId:                *newID,
-		FilterId:               ol.NewID("987654321"),
-		EntityType:             ol.RefOf(ol.CustomActionsEntityTypeEnumGlobal),
+		FilterId:               ol.RefOf(ol.ID("987654321")),
+		EntityType:             &ol.CustomActionsEntityTypeEnumGlobal,
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier("example_1"),
 			*ol.NewIdentifier("example_1"),
@@ -186,12 +190,12 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
 		Description:            ol.RefOf("Disables the Deploy Freeze"),
-		AccessControl:          ol.RefOf(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		ManualInputsDefinition: ol.RefOf(""),
 		ResponseTemplate:       ol.RefOf(""),
-		ActionId:               newID,
+		ActionId:               ol.RefOf(*newID),
 		OwnerId:                *newID,
-		FilterId:               ol.NewID("987654321"),
+		FilterId:               ol.RefOf(ol.ID("987654321")),
 		ExtendedTeamAccess:     &[]ol.IdentifierInput{},
 	})
 	// Assert
@@ -258,7 +262,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:       *newID,
-		FilterId: ol.NewID(),
+		FilterId: ol.NewNullOf[ol.ID](),
 	})
 	// Assert
 	autopilot.Ok(t, err)

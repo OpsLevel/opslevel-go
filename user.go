@@ -36,7 +36,7 @@ func (user *User) ResourceType() TaggableResource {
 func NewUserIdentifier(value string) *UserIdentifierInput {
 	if IsID(value) {
 		return &UserIdentifierInput{
-			Id: NewID(value),
+			Id: RefOf(ID(value)),
 		}
 	}
 	return &UserIdentifierInput{
@@ -122,7 +122,7 @@ func (client *Client) InviteUser(email string, input UserInput, sendInvite bool)
 	v := PayloadVariables{
 		"email":           email,
 		"input":           input,
-		"forceSendInvite": RefOf(sendInvite),
+		"forceSendInvite": &sendInvite,
 	}
 	err := client.Mutate(&m, v, WithName("UserInvite"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)

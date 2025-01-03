@@ -26,11 +26,11 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	}
 	v := PayloadVariables{
 		"service":   *NewIdentifier(service),
-		"docPath":   NullString(),
+		"docPath":   (*string)(nil),
 		"docSource": docSource,
 	}
 	if docPath != "" {
-		v["docPath"] = RefOf(docPath)
+		v["docPath"] = &docPath
 	}
 	err := client.Mutate(&m, v, WithName("ServiceApiDocSettingsUpdate"))
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)

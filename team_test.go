@@ -79,13 +79,13 @@ func getTestRequestWithAlias() autopilot.TestRequest {
 
 func TestCreateTeam(t *testing.T) {
 	// Arrange
-	contacts := autopilot.Register[[]ol.ContactInput]("contact_input_slice",
+	contacts := autopilot.Register("contact_input_slice",
 		[]ol.ContactInput{
-			ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
+			ol.CreateContactSlackHandle("@mozzie", ol.RefOf("")),
 			ol.CreateContactWeb("https://example.com", ol.RefOf("Homepage")),
 		},
 	)
-	input := autopilot.Register[ol.TeamCreateInput]("team_create_input",
+	input := autopilot.Register("team_create_input",
 		ol.TeamCreateInput{
 			Name:             "Example",
 			Responsibilities: ol.RefOf("Foo & bar"),
@@ -577,7 +577,7 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.TeamUpdateInput]("team_update_input",
 		ol.TeamUpdateInput{
-			Id:               &id1,
+			Id:               ol.RefOf(id1),
 			Responsibilities: ol.RefOf("Foo & bar"),
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		},
@@ -687,7 +687,7 @@ func TestTeamAddMembership(t *testing.T) {
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
 	newMembership := ol.TeamMembershipUserInput{
 		Role: ol.RefOf("user"),
-		User: &ol.UserIdentifierInput{Id: &id1, Email: ol.RefOf("kyle@opslevel.com")},
+		User: &ol.UserIdentifierInput{Id: ol.RefOf(id1), Email: ol.RefOf("kyle@opslevel.com")},
 	}
 	result, err := clientWithTeamId.AddMemberships(&team.TeamId, newMembership)
 	// Assert
@@ -719,7 +719,7 @@ func TestTeamRemoveMembership(t *testing.T) {
 	team, _ := client1.GetTeamWithAlias("example")
 	membershipToDelete := ol.TeamMembershipUserInput{
 		Role: ol.RefOf("user"),
-		User: &ol.UserIdentifierInput{Id: &id1, Email: ol.RefOf("kyle@opslevel.com")},
+		User: &ol.UserIdentifierInput{Id: ol.RefOf(id1), Email: ol.RefOf("kyle@opslevel.com")},
 	}
 
 	result, err := client2.RemoveMemberships(&team.TeamId, membershipToDelete)
@@ -753,7 +753,7 @@ func TestTeamUpdateContact(t *testing.T) {
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input_slack",
 		ol.ContactUpdateInput{
 			Id:          id1,
-			DisplayName: ol.RefOf(*input.DisplayName),
+			DisplayName: input.DisplayName,
 			Address:     ol.RefOf(input.Address),
 			Type:        &input.Type,
 		})
@@ -778,7 +778,7 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input",
 		ol.ContactUpdateInput{
 			Id:          id2,
-			DisplayName: ol.RefOf(*input.DisplayName),
+			DisplayName: input.DisplayName,
 			Address:     ol.RefOf(input.Address),
 		})
 	testRequest := autopilot.NewTestRequest(

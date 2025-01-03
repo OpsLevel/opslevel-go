@@ -55,12 +55,12 @@ type IntegrationConnection struct {
 }
 
 type AWSIntegrationInput struct {
-	Name                 *string   `json:"name,omitempty"`
-	IAMRole              *string   `json:"iamRole,omitempty"`
-	ExternalID           *string   `json:"externalId,omitempty"`
-	OwnershipTagOverride *bool     `json:"awsTagsOverrideOwnership,omitempty"`
-	OwnershipTagKeys     []string  `json:"ownershipTagKeys"`
-	RegionOverride       *[]string `json:"regionOverride,omitempty"`
+	ExternalID           *Nullable[string] `json:"externalId,omitempty"`
+	IAMRole              *Nullable[string] `json:"iamRole,omitempty"`
+	Name                 *Nullable[string] `json:"name,omitempty"`
+	OwnershipTagKeys     []string          `json:"ownershipTagKeys"`
+	OwnershipTagOverride *Nullable[bool]   `json:"awsTagsOverrideOwnership,omitempty"`
+	RegionOverride       *[]string         `json:"regionOverride,omitempty"`
 }
 
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }

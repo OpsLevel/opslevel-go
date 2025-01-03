@@ -24,9 +24,9 @@ type PayloadVariables map[string]interface{}
 func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
 	omitDeactivedUsersFilter := UsersFilterInput{
 		Key:  UsersFilterEnumDeactivatedAt,
-		Type: RefOf(BasicTypeEnumEquals),
+		Type: &BasicTypeEnumEquals,
 	}
-	(*pv)["filter"] = RefOf([]UsersFilterInput{omitDeactivedUsersFilter})
+	(*pv)["filter"] = &[]UsersFilterInput{omitDeactivedUsersFilter}
 	return pv
 }
 
@@ -49,12 +49,12 @@ func NullString() *string {
 	return output
 }
 
-func RefOf[T any](v T) *T {
-	return &v
+func RefOf[T NullableConstraint](value T) *Nullable[T] {
+	return NewNullableFrom(value)
 }
 
-func RefTo[T any](v T) *T {
-	return &v
+func RefTo[T NullableConstraint](value T) *Nullable[T] {
+	return NewNullableFrom(value)
 }
 
 func HandleErrors(err error, errs []OpsLevelErrors) error {

@@ -13,7 +13,7 @@ func TestDomainCreate(t *testing.T) {
 		ol.DomainInput{
 			Name:        ol.RefOf("platform-test"),
 			Description: ol.RefOf("Domain created for testing."),
-			OwnerId:     &id1,
+			OwnerId:     ol.RefOf(id1),
 			Note:        ol.RefOf("additional note about platform-test domain"),
 		})
 
@@ -271,7 +271,7 @@ func TestDomainUpdate(t *testing.T) {
 		ol.DomainInput{
 			Name:        ol.RefOf("platform-test-4"),
 			Description: ol.RefOf("Domain created for testing."),
-			OwnerId:     &id3,
+			OwnerId:     ol.RefOf(id3),
 			Note:        ol.RefOf("Please delete me"),
 		})
 

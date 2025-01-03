@@ -26,13 +26,12 @@ import (
 )
 
 const (
-	connectionFile  string = "connection.go"
-	inputObjectFile string = "input.go"
-	interfacesFile  string = "interfaces.go"
-	objectFile      string = "object.go"
-	queryFile       string = "query.go"
-	mutationFile    string = "mutation.go"
-	payloadFile     string = "payload.go"
+	connectionFile string = "connection.go"
+	interfacesFile string = "interfaces.go"
+	objectFile     string = "object.go"
+	queryFile      string = "query.go"
+	mutationFile   string = "mutation.go"
+	payloadFile    string = "payload.go"
 	// scalarFile      string = "scalar.go" // NOTE: probably not useful
 	// unionFile       string = "union.go" // NOTE: probably not useful
 )
@@ -108,6 +107,46 @@ var stringTypeSuffixes = []string{
 	"userdeletepayload",
 	"url",
 	"yaml",
+}
+
+var enumExamples = map[string]string{}
+
+var listExamples = map[string]string{
+	"channels":           "[]",
+	"checkIds":           "['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']",
+	"checkIdsToCopy":     "[]",
+	"checksToPromote":    "[]",
+	"contacts":           "[]",
+	"daysOfWeek":         "[]",
+	"dependsOn":          "[]",
+	"dependencyOf":       "[]",
+	"extendedTeamAccess": "[]",
+	"fileExtensions":     "['go', 'py', 'rb']",
+	"filePaths":          "['/usr/local/bin', '/home/opslevel']",
+	"issueType":          "['bug', 'error']",
+	"members":            "[]",
+	"ownershipTagKeys":   "['tag_key1', 'tag_key2']",
+	"predicates":         "[]",
+	"properties":         "[]",
+	"regionOverride":     "['us-east-1', 'eu-west-1']",
+	"reminderTypes":      "[]",
+	"severity":           "['sev1', 'sev2']",
+	"tags":               "[]",
+	"teamIds":            "[]",
+	"teams":              "[]",
+	"users":              "[]",
+}
+
+var scalarExamples = map[string]string{
+	"Boolean":         "false",
+	"Float":           "4.2069",
+	"ID":              "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
+	"ISO8601DateTime": "2025-01-05T01:00:00.000Z",
+	"Int":             "3",
+	"JSON":            `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`,
+	"JSONSchema":      `SCHEMA_TBD`,
+	"JsonString":      "JSON_TBD",
+	"String":          "example_value",
 }
 
 var knownTypeMappings = map[string]string{
@@ -207,12 +246,54 @@ func main() {
 	}
 	schema := graphql.MustParseSchema(graphqlSchema, nil, opts...)
 	schemaAst := schema.ASTSchema()
+	populateEnumExamples(schemaAst.Enums)
+
+	inputObjects := map[string]*types.InputObject{}
+	objects := map[string]*types.ObjectTypeDefinition{}
+	enums := map[string]*types.EnumTypeDefinition{}
+	interfaces := map[string]*types.InterfaceTypeDefinition{}
+	unions := map[string]*types.Union{}
+	scalars := map[string]*types.ScalarTypeDefinition{}
+	for name, graphqlType := range schemaAst.Types {
+		switch v := graphqlType.(type) {
+		case *types.EnumTypeDefinition:
+			enums[name] = v
+		case *types.InputObject:
+			inputObjects[name] = v
+		case *types.InterfaceTypeDefinition:
+			interfaces[name] = v
+		case *types.ObjectTypeDefinition:
+			objects[name] = v
+		case *types.ScalarTypeDefinition:
+			scalars[name] = v
+		case *types.Union:
+			unions[name] = v
+		default:
+			panic(fmt.Errorf("Unknown GraphQL type: %v", v))
+		}
+	}
 	genEnums(schemaAst.Enums)
+	genInputObjects(inputObjects)
 
 	err := run()
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func populateEnumExamples(schemaEnums []*types.EnumTypeDefinition) {
+	for _, enum := range schemaEnums {
+		enumExamples[enum.Name] = enum.EnumValuesDefinition[0].EnumValue
+	}
+}
+
+func sortedMapKeys[T any](schemaMap map[string]T) []string {
+	sortedNames := make([]string, 0, len(schemaMap))
+	for k := range schemaMap {
+		sortedNames = append(sortedNames, k)
+	}
+	slices.Sort(sortedNames)
+	return sortedNames
 }
 
 func genEnums(schemaEnums []*types.EnumTypeDefinition) {
@@ -232,6 +313,31 @@ func genEnums(schemaEnums []*types.EnumTypeDefinition) {
 	}
 	out, err := format.Source(buf.Bytes())
 	err = os.WriteFile("enum.go", out, 0o644)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func genInputObjects(inputObjects map[string]*types.InputObject) {
+	var buf bytes.Buffer
+	buf.WriteString(header + "\n\nimport \"github.com/relvacode/iso8601\"\n")
+
+	tmpl := template.New("inputs")
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl.Funcs(templFuncMap)
+	template.Must(tmpl.ParseFiles("./templates/inputObjects.tpl"))
+
+	for _, inputObjectName := range sortedMapKeys(inputObjects) {
+		// Skip campaign objects until tested later on
+		if strings.Contains(inputObjectName, "Campaign") || strings.Contains(inputObjectName, "Group") {
+			continue
+		}
+		if err := tmpl.ExecuteTemplate(&buf, "inputs", inputObjects[inputObjectName]); err != nil {
+			panic(err)
+		}
+	}
+	fmt.Println("writing input.go")
+	err := os.WriteFile("input.go", buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -290,8 +396,6 @@ func run() error {
 		switch filename {
 		case connectionFile:
 			subSchema = objectSchema
-		case inputObjectFile:
-			subSchema = inputObjectSchema
 		case interfacesFile:
 			subSchema = interfaceSchema
 		case objectFile:
@@ -409,40 +513,6 @@ var templates = map[string]*template.Template{
 	}
 	{{- end }}
 	  `),
-	inputObjectFile: t(header + `
-import "github.com/relvacode/iso8601"
-
-{{range .Types | sortByName}}{{if and (eq .Kind "INPUT_OBJECT") (not (internal .Name))}}
-{{ if and (not (hasPrefix "Campaign" .Name)) (not (hasPrefix "Group" .Name)) -}}
-{{template "input_object" .}}
-{{end}}{{end}}{{end}}
-
-{{- define "input_object" -}}
-{{ template "type_comment_description" . }}
-type {{.Name}} struct { {{range .InputFields }}
-  {{.Name | title}} {{if ne .Type.Kind "NON_NULL"}}*{{end -}}
-    {{- if isListType .Name }}[]{{ end -}}
-    {{- if and (hasSuffix "Id" .Name) (ne .Name "externalId") }}ID
-    {{- else if hasSuffix "Access" .Name }}IdentifierInput
-    {{- else if eq .Name "predicates" }}FilterPredicateInput
-    {{- else if eq .Name "tags" }}TagInput
-    {{- else if eq .Name "members" }}TeamMembershipUserInput
-    {{- else if eq .Name "contacts" }}ContactInput
-    {{- else if eq .Type.Name "UserRole" }}UserRole
-    {{- else if .Type.Name }}{{ template "converted_type" .Type }}
-    {{- else }}{{ .Type.OfType.OfTypeName | convertPayloadType  }}{{ end -}} ` + "`" +
-		`json:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` +
-		` yaml:"{{.Name | lowerFirst }}{{if ne .Type.Kind "NON_NULL"}},omitempty{{end}}"` + `
-
-  {{-  if and (not (hasSuffix "Input" .Type.Name)) (not (hasSuffix "Input" .Type.OfType.OfTypeName)) }} example:"
-   {{- if isListType .Name }}[{{ end -}}
-     {{ example_tag_value . }}
-   {{- if isListType .Name }}]{{ end -}}"{{- end}}` +
-		"`" + `{{ template "field_comment_description" . }} {{if eq .Type.Kind "NON_NULL"}}(Required.){{else}}(Optional.){{end}}
-  {{- end}}
-}
-{{- end -}}
-`),
 	interfacesFile: t(header + `
   import "github.com/relvacode/iso8601"
 
@@ -891,6 +961,144 @@ func renameMutation(s string) string {
 	return s
 }
 
+func fieldCommentDescription(fieldType *types.InputValueDefinition) string {
+	oneLineDescription := strings.ReplaceAll(fieldType.Desc, "\n", " ")
+	if _, ok := fieldType.Type.(*types.NonNull); ok {
+		return fmt.Sprintf(" // %s (Required.)", oneLineDescription)
+	}
+	return fmt.Sprintf(" // %s (Optional.)", oneLineDescription)
+}
+
+func exampleStructTag(field *types.InputValueDefinition) string {
+	var exampleValue string
+	var unwrappedType types.Type
+
+	if field.Name.Name == "externalId" {
+		return fmt.Sprintf(` example:"%s"`, scalarExamples["ID"])
+	}
+	if nonNullType, ok := field.Type.(*types.NonNull); ok {
+		unwrappedType = nonNullType.OfType
+	} else {
+		unwrappedType = field.Type
+	}
+
+	switch fieldType := unwrappedType.(type) {
+	case *types.EnumTypeDefinition:
+		if enumValue, ok := enumExamples[strings.TrimSuffix(fieldType.String(), "!")]; ok {
+			exampleValue = enumValue
+		} else {
+			exampleValue = "ENUM_TODO"
+		}
+	case *types.InputObject:
+		return "" // omit 'example' struct tag, implicit nested tag is used
+	case *types.ScalarTypeDefinition:
+		if scalarValue, ok := scalarExamples[strings.TrimSuffix(fieldType.String(), "!")]; ok {
+			exampleValue = scalarValue
+		} else {
+			exampleValue = "SCALAR_TODO"
+		}
+	case *types.List:
+		if listValue, ok := listExamples[field.Name.Name]; ok {
+			exampleValue = listValue
+		} else {
+			exampleValue = "LIST_TODO"
+		}
+	case *types.TypeName:
+		exampleValue = "TYPENAME_TODO"
+	default:
+		exampleValue = "UNKNOWN_TODO"
+	}
+
+	return fmt.Sprintf(` example:"%s"`, exampleValue)
+}
+
+func yamlStructTag(fieldType *types.InputValueDefinition) string {
+	jsonStructTag := jsonStructTag(fieldType)
+	return strings.Replace(jsonStructTag, "json", "yaml", 1)
+}
+
+func jsonStructTag(fieldType *types.InputValueDefinition) string {
+	fieldName := fieldType.Name.Name
+	if isNullable(fieldType.Type) {
+		return fmt.Sprintf(`json:"%s,omitempty"`, fieldName)
+	}
+	return fmt.Sprintf(`json:"%s"`, fieldName)
+}
+
+func wrapWithNullable(graphqlType string) string {
+	return "*Nullable[" + graphqlType + "]"
+}
+
+func graphqlTypeToGolang(graphqlType string) string {
+	isRequired := strings.HasSuffix(graphqlType, "!")
+	convertedType := strings.TrimSuffix(graphqlType, "!")
+
+	// GraphQL type to Go type: [String] -> *[]string
+	isSlice := strings.HasPrefix(convertedType, "[") && strings.HasSuffix(convertedType, "]")
+	if isSlice {
+		convertedType = strings.TrimPrefix(convertedType, "[")
+		convertedType = strings.TrimSuffix(convertedType, "]")
+		convertedType = strings.TrimSuffix(convertedType, "!")
+	}
+
+	switch convertedType {
+	case "Boolean":
+		convertedType = "bool"
+	case "Float":
+		convertedType = "float64"
+	case "Int":
+		convertedType = "int"
+		if isSlice {
+			convertedType = "[]" + convertedType
+		}
+		if !isRequired {
+			convertedType = "*" + convertedType
+		}
+		return convertedType
+	case "ISO8601DateTime":
+		convertedType = "iso8601.Time"
+	case "String":
+		convertedType = "string"
+		if isSlice {
+			convertedType = "[]" + convertedType
+			if isRequired {
+				return convertedType
+			} else {
+				return wrapWithNullable(convertedType)
+			}
+		}
+	case "ID":
+		convertedType = "ID"
+	default:
+		if isSlice {
+			convertedType = "[]" + convertedType
+		}
+		if !isRequired {
+			convertedType = "*" + convertedType
+		}
+		return convertedType
+	}
+
+	if isSlice {
+		convertedType = "[]" + convertedType
+	}
+	if isRequired {
+		return convertedType
+	}
+	if isSlice {
+		return "*" + convertedType
+	}
+	return wrapWithNullable(convertedType)
+}
+
+func getFieldTypeNew(fieldType types.Type) string {
+	return graphqlTypeToGolang(fieldType.String())
+}
+
+func isNullable(fieldType types.Type) bool {
+	return fieldType.Kind() != "NON_NULL"
+}
+
 func isPlural(s string) bool {
 	value := strings.ToLower(s)
 	// Examples: "alias", "address", "status", "levels"
@@ -964,7 +1172,7 @@ var templFuncMap = template.FuncMap{
 	"check_fragments":                     fragmentsForCheck,
 	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
 	"integration_fragments":               fragmentsForIntegration,
-	"get_field_type":                      getFieldType,
+	"get_field_type":                      getFieldTypeOld,
 	"get_input_field_type":                getInputFieldType,
 	"add_special_fields":                  addSpecialFields,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
@@ -974,8 +1182,13 @@ var templFuncMap = template.FuncMap{
 	"skip_object_field":                   skipObjectField,
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
-	"example_tag_value":                   getExampleValue,
 	"isListType":                          isPlural,
+	"getFieldTypeForInputObject":          getFieldTypeNew,
+	"exampleStructTag":                    exampleStructTag,
+	"jsonStructTag":                       jsonStructTag,
+	"yamlStructTag":                       yamlStructTag,
+	"fieldCommentDescription":             fieldCommentDescription,
+	"isTypeNullable":                      isNullable,
 	"renameMutation":                      renameMutation,
 	"renameMutationReturnType":            renameMutationReturnType,
 	"convertPayloadType":                  convertPayloadType,
@@ -1190,7 +1403,7 @@ func getInputFieldType(inputField GraphQLField) string {
 	return "string"
 }
 
-func getFieldType(objectName string, inputField GraphQLField) string {
+func getFieldTypeOld(objectName string, inputField GraphQLField) string {
 	lowercaseFieldName := strings.ToLower(inputField.Name)
 	switch {
 	case "type" == lowercaseFieldName:
@@ -1372,132 +1585,4 @@ func getFieldType(objectName string, inputField GraphQLField) string {
 	}
 
 	return getInputFieldType(inputField)
-}
-
-func getExampleValueByFieldName(inputField GraphQLInputValue) string {
-	mapFieldTypeToExampleValue := map[string]string{
-		"DocumentSubtype":      "openapi",
-		"Address":              "support@company.com",
-		"Id":                   "Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk",
-		"Definition":           "example_definition",
-		"Template":             `{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}`,
-		"Name":                 "example_name",
-		"Language":             "example_language",
-		"Alias":                "example_alias",
-		"Description":          "example_description",
-		"Email":                "first.last@domain.com",
-		"Data":                 "example_data",
-		"Note":                 "example_note",
-		"IamRole":              "example_role",
-		"DisplayType":          "example_type",
-		"HttpMethod":           "GET",
-		"Notes":                "example_notes",
-		"Value":                "example_value",
-		"Product":              "example_product",
-		"Framework":            "example_framework",
-		"Url":                  "john.doe@example.com",
-		"BaseDirectory":        "/home/opslevel.yaml",
-		"ExternalUrl":          "https://google.com",
-		"Responsibilities":     "example description of responsibilities",
-		"Environment":          "environment that tool belongs to",
-		"Arg":                  "example_arg",
-		"Extensions":           "'go', 'py', 'rb'",
-		"Paths":                "'/usr/local/bin', '/home/opslevel'",
-		"Ids":                  "'Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE'",
-		"TagKeys":              "'tag_key1', 'tag_key2'",
-		"Selector":             "example_selector",
-		"Condition":            "example_condition",
-		"Message":              "example_message",
-		"RequireContactMethod": "false",
-		"Identifier":           "example_identifier",
-		"DocumentType":         "api",
-	}
-	for k, v := range mapFieldTypeToExampleValue {
-		if k == inputField.Name ||
-			strings.ToLower(k[:1])+k[1:] == inputField.Name ||
-			strings.HasSuffix(inputField.Name, k) {
-			return v
-		}
-	}
-	return ""
-}
-
-func getExampleValueByFieldType(inputField GraphQLInputValue) string {
-	mapFieldTypeToExampleValue := map[string]string{
-		"Time":                        "2024-01-05T01:00:00.000Z",
-		"FrequencyTimeScale":          "week",
-		"ContactType":                 "slack",
-		"AlertSourceTypeEnum":         "pagerduty",
-		"AliasOwnerTypeEnum":          "scorecard",
-		"BasicTypeEnum":               "does_not_equal",
-		"ConnectiveEnum":              "or",
-		"CustomActionsEntityTypeEnum": "GLOBAL",
-		"CustomActionsHttpMethodEnum": "GET",
-		"CustomActionsTriggerDefinitionAccessControlEnum": "service_owners",
-		"RelationshipTypeEnum":                            "depends_on",
-		"PredicateKeyEnum":                                "filter_id",
-		"PredicateTypeEnum":                               "satisfies_jq_expression",
-		"ServicePropertyTypeEnum":                         "language",
-		"UsersFilterEnum":                                 "last_sign_in_at",
-		"UserRole":                                        "admin",
-		"ToolCategory":                                    "api_documentation",
-	}
-	for k, v := range mapFieldTypeToExampleValue {
-		if inputFieldMatchesType(inputField, k) {
-			return v
-		}
-	}
-	return ""
-}
-
-func inputFieldMatchesType(inputField GraphQLInputValue, fieldType string) bool {
-	if fieldType == inputField.Type.Name ||
-		fieldType == inputField.Type.OfType.OfTypeName ||
-		strings.ToLower(fieldType) == inputField.Type.Name ||
-		strings.HasSuffix(inputField.Type.Name, fieldType) ||
-		strings.HasSuffix(inputField.Type.OfType.OfTypeName, fieldType) {
-		return true
-	}
-	return false
-}
-
-func inputFieldNameMatchesName(inputField GraphQLInputValue, fieldName string) bool {
-	if fieldName == inputField.Name ||
-		strings.ToLower(fieldName[:1])+fieldName[1:] == inputField.Name ||
-		strings.HasSuffix(inputField.Name, fieldName) {
-		return true
-	}
-	return false
-}
-
-func getExampleValue(inputField GraphQLInputValue) string {
-	switch {
-	case inputFieldMatchesType(inputField, "Boolean"):
-		return "false"
-	case inputFieldMatchesType(inputField, "Int"):
-		return "3"
-	case inputFieldMatchesType(inputField, "JSON"):
-		return `{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}`
-	}
-
-	if valueByName := getExampleValueByFieldName(inputField); valueByName != "" {
-		return valueByName
-	}
-	if valueByType := getExampleValueByFieldType(inputField); valueByType != "" {
-		return valueByType
-	}
-
-	switch {
-	case inputFieldNameMatchesName(inputField, "Role"):
-		return "example_role"
-	case inputFieldNameMatchesName(inputField, "Key"):
-		return "XXX_example_key_XXX"
-	case inputFieldNameMatchesName(inputField, "Type"):
-		return "example_type"
-	case inputFieldNameMatchesName(inputField, "Method"):
-		return "example_method"
-	case inputFieldMatchesType(inputField, "Enum"):
-		return "NEW_ENUM_SET_DEFAULT"
-	}
-	return ""
 }

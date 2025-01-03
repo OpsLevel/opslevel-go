@@ -191,7 +191,7 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	}
 	// Add unique tags only
 	for _, tagNode := range q.Account.Team.Tags.Nodes {
-		if !slices.Contains[[]Tag, Tag](team.Tags.Nodes, tagNode) {
+		if !slices.Contains(team.Tags.Nodes, tagNode) {
 			team.Tags.Nodes = append(team.Tags.Nodes, tagNode)
 		}
 	}
@@ -211,36 +211,40 @@ func (team *Team) GetAliases() []string {
 	return team.Aliases
 }
 
-func CreateContactSlack(channel string, name *string) ContactInput {
-	return ContactInput{
+func CreateContactSlack(channel string, name *Nullable[string]) ContactInput {
+	contactInput := ContactInput{
 		Type:        ContactTypeSlack,
-		DisplayName: name,
 		Address:     channel,
+		DisplayName: name,
 	}
+	return contactInput
 }
 
-func CreateContactSlackHandle(channel string, name *string) ContactInput {
-	return ContactInput{
+func CreateContactSlackHandle(channel string, name *Nullable[string]) ContactInput {
+	contactInput := ContactInput{
 		Type:        ContactTypeSlackHandle,
-		DisplayName: name,
 		Address:     channel,
+		DisplayName: name,
 	}
+	return contactInput
 }
 
-func CreateContactEmail(email string, name *string) ContactInput {
-	return ContactInput{
+func CreateContactEmail(email string, name *Nullable[string]) ContactInput {
+	contactInput := ContactInput{
 		Type:        ContactTypeEmail,
-		DisplayName: name,
 		Address:     email,
+		DisplayName: name,
 	}
+	return contactInput
 }
 
-func CreateContactWeb(address string, name *string) ContactInput {
-	return ContactInput{
+func CreateContactWeb(address string, name *Nullable[string]) ContactInput {
+	contactInput := ContactInput{
 		Type:        ContactTypeWeb,
-		DisplayName: name,
 		Address:     address,
+		DisplayName: name,
 	}
+	return contactInput
 }
 
 func (team *Team) HasTag(key string, value string) bool {
@@ -301,9 +305,9 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 		Address:     contact.Address,
 	}
 	if IsID(team) {
-		contactInput.OwnerId = NewID(team)
+		contactInput.OwnerId = RefOf(ID(team))
 	} else {
-		contactInput.TeamAlias = &team
+		contactInput.TeamAlias = RefOf(team)
 	}
 
 	v := PayloadVariables{
@@ -455,7 +459,7 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	input := ContactUpdateInput{
 		Id:          id,
 		DisplayName: contact.DisplayName,
-		Address:     &contact.Address,
+		Address:     RefOf(contact.Address),
 	}
 	if contact.Type == "" {
 		input.Type = nil
@@ -472,9 +476,9 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 func (client *Client) DeleteTeam(identifier string) error {
 	input := TeamDeleteInput{}
 	if IsID(identifier) {
-		input.Id = NewID(identifier)
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = &identifier
+		input.Alias = RefOf(identifier)
 	}
 
 	var m struct {

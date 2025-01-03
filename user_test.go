@@ -40,7 +40,7 @@ func TestInviteUserSkipSendInvite(t *testing.T) {
 	client := BestTestClient(t, "user/invite_skip_send_invite", testRequest)
 	userInput := ol.UserInput{
 		Name:             ol.RefOf("Kyle Rockman"),
-		Role:             ol.RefOf(ol.UserRoleTeamMember),
+		Role:             &ol.UserRoleTeamMember,
 		SkipWelcomeEmail: ol.RefOf(false),
 	}
 	// Act
@@ -166,7 +166,7 @@ func TestUpdateUser(t *testing.T) {
 	client := BestTestClient(t, "user/update", testRequest)
 	// Act
 	result, err := client.UpdateUser("kyle@opslevel.com", ol.UserInput{
-		Role:             ol.RefOf(ol.UserRoleAdmin),
+		Role:             &ol.UserRoleAdmin,
 		SkipWelcomeEmail: ol.RefOf(false),
 	})
 	// Assert
