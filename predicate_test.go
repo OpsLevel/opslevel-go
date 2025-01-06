@@ -22,9 +22,7 @@ func TestJsonMarshalPredicateUpdateInputNull(t *testing.T) {
 func TestJsonMarshalPredicateUpdateInputNoValue(t *testing.T) {
 	// Arrange
 	predicateNoValue := `{"type":"exists"}`
-	outputNoValue := &ol.PredicateUpdateInput{
-		Type: ol.RefOf(ol.PredicateTypeEnum("exists")),
-	}
+	outputNoValue := &ol.PredicateUpdateInput{Type: &ol.PredicateTypeEnumExists}
 	// Act
 	marshalledNullPredicate, err := json.Marshal(outputNoValue)
 	autopilot.Ok(t, err)
@@ -35,7 +33,7 @@ func TestJsonMarshalPredicateUpdateInputWithValue(t *testing.T) {
 	// Arrange
 	predicateWithValue := `{"type":"contains","value":"go"}`
 	outputWithValue := &ol.PredicateUpdateInput{
-		Type:  ol.RefOf(ol.PredicateTypeEnum("contains")),
+		Type:  &ol.PredicateTypeEnumContains,
 		Value: ol.RefOf("go"),
 	}
 	// Act

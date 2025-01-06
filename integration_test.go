@@ -39,7 +39,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
 		IAMRole:        opslevel.RefOf("arn:aws:iam::XXXX:role/aws-integration-role"),
 		ExternalID:     opslevel.RefOf("123456789"),
-		RegionOverride: opslevel.RefOf([]string{"us-east-1"}),
+		RegionOverride: &[]string{"us-east-1"},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)

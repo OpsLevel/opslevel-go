@@ -18,7 +18,7 @@ func TestSystemCreate(t *testing.T) {
 	input := ol.SystemInput{
 		Name:        ol.RefOf("PlatformSystem3"),
 		Description: ol.RefOf("creating this for testing purposes"),
-		OwnerId:     &id4,
+		OwnerId:     ol.RefOf(id4),
 		Note:        ol.RefOf("hello world"),
 	}
 	// Act
@@ -179,7 +179,7 @@ func TestSystemUpdate(t *testing.T) {
 	input := ol.SystemInput{
 		Name:        ol.RefOf("PlatformSystem1"),
 		Description: ol.RefOf("Yolo!"),
-		OwnerId:     &id4,
+		OwnerId:     ol.RefOf(id4),
 		Note:        ol.RefOf("Please delete me"),
 	}
 	// Act

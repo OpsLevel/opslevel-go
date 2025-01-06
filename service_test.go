@@ -267,7 +267,7 @@ func TestCreateServiceWithNote(t *testing.T) {
 	})
 	note := "Foo note"
 	service, noteErr := client.UpdateServiceNote(ol.ServiceNoteUpdateInput{
-		Service: ol.IdentifierInput{Id: ol.RefOf(service.Id)},
+		Service: *ol.NewIdentifier(string(service.Id)),
 		Note:    ol.RefOf(note),
 	})
 	// Assert
@@ -298,13 +298,13 @@ func TestCreateServiceWithParentSystem(t *testing.T) {
 
 func TestUpdateService(t *testing.T) {
 	addVars := `{"input":{"description": "The quick brown fox", "framework": "django", "id": "123456789", "lifecycleAlias": "pre-alpha", "name": "Hello World", "parent": {"alias": "some_system"}, "tierAlias": "tier_4"}}`
-	delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`
+	// delVars := `{"input":{"description": null, "framework": null, "id": "123456789", "lifecycleAlias": null, "parent": null, "tierAlias": null}}`
 	delVarsV1DoesNotWorkExceptOnParent := `{"input":{"id": "123456789", "parent": null}}`
 	zeroVars := `{"input":{"description": "", "framework": "", "id": "123456789"}}`
 	type TestCase struct {
 		Name  string
 		Vars  string
-		Input ol.ServiceUpdater
+		Input ol.ServiceUpdateInput
 	}
 	testCases := []TestCase{
 		{
@@ -312,7 +312,7 @@ func TestUpdateService(t *testing.T) {
 			Vars: addVars,
 			Input: ol.ServiceUpdateInput{
 				Parent:         ol.NewIdentifier("some_system"),
-				Id:             ol.NewID("123456789"),
+				Id:             ol.RefOf(ol.ID("123456789")),
 				Name:           ol.RefOf("Hello World"),
 				Description:    ol.RefOf("The quick brown fox"),
 				Framework:      ol.RefOf("django"),
@@ -320,61 +320,61 @@ func TestUpdateService(t *testing.T) {
 				LifecycleAlias: ol.RefOf("pre-alpha"),
 			},
 		},
-		{
-			Name: "add fields v2",
-			Vars: addVars,
-			Input: ol.ServiceUpdateInputV2{
-				Parent:         ol.NewIdentifier("some_system"),
-				Id:             ol.NewID("123456789"),
-				Name:           ol.NewNullableFrom("Hello World"),
-				Description:    ol.NewNullableFrom("The quick brown fox"),
-				Framework:      ol.NewNullableFrom("django"),
-				TierAlias:      ol.NewNullableFrom("tier_4"),
-				LifecycleAlias: ol.NewNullableFrom("pre-alpha"),
-			},
-		},
+		// {
+		// 	Name: "add fields v2",
+		// 	Vars: addVars,
+		// 	Input: ol.ServiceUpdateInputV2{
+		// 		Parent:         ol.NewIdentifier("some_system"),
+		// 		Id:             ol.NewID("123456789"),
+		// 		Name:           ol.RefOf("Hello World"),
+		// 		Description:    ol.RefOf("The quick brown fox"),
+		// 		Framework:      ol.RefOf("django"),
+		// 		TierAlias:      ol.RefOf("tier_4"),
+		// 		LifecycleAlias: ol.RefOf("pre-alpha"),
+		// 	},
+		// },
 		{
 			Name: "unset fields v1 - does not work except on parent",
 			Vars: delVarsV1DoesNotWorkExceptOnParent,
 			Input: ol.ServiceUpdateInput{
-				Parent:         ol.NewIdentifier(),
-				Id:             ol.NewID("123456789"),
+				Parent:         &ol.IdentifierInput{},
+				Id:             ol.RefOf(ol.ID("123456789")),
 				Description:    nil,
 				Framework:      nil,
 				TierAlias:      nil,
 				LifecycleAlias: nil,
 			},
 		},
-		{
-			Name: "unset fields v2 - works on all including parent",
-			Vars: delVars,
-			Input: ol.ServiceUpdateInputV2{
-				Parent:         ol.NewIdentifier(),
-				Id:             ol.NewID("123456789"),
-				Description:    ol.NewNull(),
-				Framework:      ol.NewNull(),
-				TierAlias:      ol.NewNull(),
-				LifecycleAlias: ol.NewNull(),
-			},
-		},
+		// {
+		// 	Name: "unset fields v2 - works on all including parent",
+		// 	Vars: delVars,
+		// 	Input: ol.ServiceUpdateInputV2{
+		// 		Parent:         ol.NewIdentifier(),
+		// 		Id:             ol.NewID("123456789"),
+		// 		Description:    ol.NewNull(),
+		// 		Framework:      ol.NewNull(),
+		// 		TierAlias:      ol.NewNull(),
+		// 		LifecycleAlias: ol.NewNull(),
+		// 	},
+		// },
 		{
 			Name: "set fields to zero value v1",
 			Vars: zeroVars,
 			Input: ol.ServiceUpdateInput{
-				Id:          ol.NewID("123456789"),
+				Id:          ol.RefOf(ol.ID("123456789")),
 				Description: ol.RefOf(""),
 				Framework:   ol.RefOf(""),
 			},
 		},
-		{
-			Name: "set fields to zero value v2",
-			Vars: zeroVars,
-			Input: ol.ServiceUpdateInputV2{
-				Id:          ol.NewID("123456789"),
-				Description: ol.NewNullableFrom(""),
-				Framework:   ol.NewNullableFrom(""),
-			},
-		},
+		// {
+		// 	Name: "set fields to zero value v2",
+		// 	Vars: zeroVars,
+		// 	Input: ol.ServiceUpdateInputV2{
+		// 		Id:          ol.RefOf(ol.ID("123456789")),
+		// 		Description: ol.NewNull(),
+		// 		Framework:   ol.NewNull(),
+		// 	},
+		// },
 	}
 
 	for i, testCase := range testCases {

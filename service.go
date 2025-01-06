@@ -704,7 +704,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
+func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
 		Payload struct {
 			Service Service
@@ -745,9 +745,9 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 func (client *Client) DeleteService(identifier string) error {
 	input := ServiceDeleteInput{}
 	if IsID(identifier) {
-		input.Id = NewID(identifier)
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = &identifier
+		input.Alias = RefOf(identifier)
 	}
 
 	var m struct {

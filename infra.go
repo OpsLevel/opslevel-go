@@ -131,10 +131,10 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 		Data:   input.Data,
 	}
 	if input.Owner != nil {
-		i.OwnerId = input.Owner
+		i.OwnerId = RefOf(*input.Owner)
 	}
 	if input.Provider != nil {
-		i.ProviderResourceType = &input.Provider.Type
+		i.ProviderResourceType = RefOf(input.Provider.Type)
 		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
 			ExternalUrl:  RefOf(input.Provider.URL),
@@ -230,10 +230,10 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		Schema: &InfrastructureResourceSchemaInput{Type: input.Schema},
 	}
 	if input.Owner != nil {
-		i.OwnerId = input.Owner
+		i.OwnerId = RefOf(*input.Owner)
 	}
 	if input.Provider != nil {
-		i.ProviderResourceType = &input.Provider.Type
+		i.ProviderResourceType = RefOf(input.Provider.Type)
 		i.ProviderData = &InfrastructureResourceProviderDataInput{
 			AccountName:  input.Provider.Account,
 			ExternalUrl:  RefOf(input.Provider.URL),
