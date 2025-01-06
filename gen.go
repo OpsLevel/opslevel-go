@@ -31,7 +31,6 @@ const (
 	objectFile     string = "object.go"
 	queryFile      string = "query.go"
 	mutationFile   string = "mutation.go"
-	payloadFile    string = "payload.go"
 	// scalarFile      string = "scalar.go" // NOTE: probably not useful
 	// unionFile       string = "union.go" // NOTE: probably not useful
 )
@@ -272,6 +271,7 @@ func main() {
 			panic(fmt.Errorf("Unknown GraphQL type: %v", v))
 		}
 	}
+	genPayloadObjects(objects)
 	genEnums(schemaAst.Enums)
 	genInputObjects(inputObjects)
 
@@ -313,6 +313,34 @@ func genEnums(schemaEnums []*types.EnumTypeDefinition) {
 	}
 	out, err := format.Source(buf.Bytes())
 	err = os.WriteFile("enum.go", out, 0o644)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func genPayloadObjects(objects map[string]*types.ObjectTypeDefinition) {
+	var buf bytes.Buffer
+	buf.WriteString(header + "\n\nimport \"github.com/relvacode/iso8601\"\n")
+
+	tmpl := template.New("payload")
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl.Funcs(templFuncMap)
+	template.Must(tmpl.ParseFiles("./templates/payloadObjects.tpl"))
+
+	for _, objectName := range sortedMapKeys(objects) {
+		if !strings.HasSuffix(objectName, "Payload") {
+			continue
+		} else if strings.Contains(objectName, "Campaign") ||
+			strings.Contains(objectName, "Group") {
+			continue
+		}
+		if err := tmpl.ExecuteTemplate(&buf, "payload_objects", objects[objectName]); err != nil {
+			panic(err)
+		}
+	}
+
+	fmt.Println("writing payload.go")
+	err := os.WriteFile("payload.go", buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -401,8 +429,6 @@ func run() error {
 		case objectFile:
 			subSchema = objectSchema
 		case mutationFile:
-			subSchema = objectSchema
-		case payloadFile:
 			subSchema = objectSchema
 		case queryFile:
 			subSchema = objectSchema
@@ -531,26 +557,6 @@ var templates = map[string]*template.Template{
 	}
 	{{- end -}}
 		`),
-	payloadFile: t(header + `
-  import "github.com/relvacode/iso8601"
-
-	{{range .Types | sortByName}}{{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	{{template "payload_object" .}}
-	{{- end}}{{- end}}
-
-	{{- define "payload_object" -}}
-	{{ if and (hasSuffix "Payload" .Name) (not (skip_query .Name)) }}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct {
-	{{ range .Fields }}
-	  {{.Name | title}} {{ if isListType .Name }}[]{{- end -}}
-      {{- if eq .Name "targetCategory" -}}Category
-      {{- else }}{{ template "converted_type" . }}
-      {{- end }} {{ template "field_comment_description" . }}
-	{{- end }}
-	}
-	{{- end }}{{ end -}}
-	`),
 	// NOTE: "account" == objectSchema.Types[0]
 	// NOTE: "mutation" == objectSchema.Types[134]
 	queryFile: t(header + `
@@ -961,6 +967,56 @@ func renameMutation(s string) string {
 	return s
 }
 
+func getFieldTypeForInputObject(fieldType types.Type) string {
+	return graphqlTypeToGolang(fieldType.String())
+}
+
+func getFieldTypeForObject(fieldType types.FieldDefinition) string {
+	goType := graphqlTypeToGolang(fieldType.Type.String())
+	if strings.HasPrefix(goType, "*Nullable[") {
+		goType = strings.TrimPrefix(goType, "*Nullable[")
+		goType = strings.TrimSuffix(goType, "]")
+	}
+
+	switch goType {
+	case "[]Error":
+		return "[]OpsLevelErrors"
+	case "Filter":
+		return "FilterId"
+	case "JSONSchema":
+		return "JSON"
+	case "Service":
+		return "ServiceId"
+	case "Team":
+		goType = "TeamId"
+	case "User":
+		return "UserId"
+	}
+
+	if fieldType.Name == "AlertSource" && goType == "Integration" {
+		goType = "IntegrationId"
+	} else if fieldType.Name == "CustomActionsTriggerDefinition" && goType == "Action" {
+		goType = "CustomActionsId"
+	} else if fieldType.Name == "FilterPredicate" && goType == "CaseSensitive" {
+		goType = "*bool"
+	} else if fieldType.Name == "Property" {
+		switch goType {
+		case "[]Error":
+			goType = "[]OpsLevelErrors"
+		case "HasProperties":
+			goType = "EntityOwnerService"
+		case "JsonString":
+			goType = "*JsonString"
+		case "PropertyDefinition":
+			goType = "PropertyDefinitionId"
+		}
+	} else if fieldType.Name == "ServiceRepository" && goType == "Repository" {
+		goType = "RepositoryId"
+	}
+
+	return goType
+}
+
 func fieldCommentDescription(fieldType *types.InputValueDefinition) string {
 	oneLineDescription := strings.ReplaceAll(fieldType.Desc, "\n", " ")
 	if _, ok := fieldType.Type.(*types.NonNull); ok {
@@ -1091,10 +1147,6 @@ func graphqlTypeToGolang(graphqlType string) string {
 	return wrapWithNullable(convertedType)
 }
 
-func getFieldTypeNew(fieldType types.Type) string {
-	return graphqlTypeToGolang(fieldType.String())
-}
-
 func isNullable(fieldType types.Type) bool {
 	return fieldType.Kind() != "NON_NULL"
 }
@@ -1183,7 +1235,8 @@ var templFuncMap = template.FuncMap{
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
 	"isListType":                          isPlural,
-	"getFieldTypeForInputObject":          getFieldTypeNew,
+	"getFieldTypeForInputObject":          getFieldTypeForInputObject,
+	"getFieldTypeForObject":               getFieldTypeForObject,
 	"exampleStructTag":                    exampleStructTag,
 	"jsonStructTag":                       jsonStructTag,
 	"yamlStructTag":                       yamlStructTag,
