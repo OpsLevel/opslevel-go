@@ -7,11 +7,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-type Category struct {
-	Id   ID `json:"id"`
-	Name string
-}
-
 type CategoryConnection struct {
 	Nodes      []Category
 	PageInfo   PageInfo

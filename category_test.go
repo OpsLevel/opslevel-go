@@ -10,7 +10,7 @@ import (
 func TestCreateRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{id,name},errors{message,path}}}`,
+		`mutation CategoryCreate($input:CategoryCreateInput!){categoryCreate(input: $input){category{description,id,name},errors{message,path}}}`,
 		`{ "input": { "name": "Kyle" }}`,
 		`{"data": { "categoryCreate": { "category": { {{ template "id1" }}, "name": "Kyle" }, "errors": [] } }}`,
 	)
@@ -27,7 +27,7 @@ func TestCreateRubricCategory(t *testing.T) {
 func TestGetRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CategoryGet($id:ID!){account{category(id: $id){id,name}}}`,
+		`query CategoryGet($id:ID!){account{category(id: $id){description,id,name}}}`,
 		`{ {{ template "id2" }} }`,
 		`{"data": { "account": { "category": { {{ template "id3" }}, "name": "Reliability" } }}}`,
 	)
@@ -43,7 +43,7 @@ func TestGetRubricCategory(t *testing.T) {
 func TestGetMissingRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CategoryGet($id:ID!){account{category(id: $id){id,name}}}`,
+		`query CategoryGet($id:ID!){account{category(id: $id){description,id,name}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"data": { "account": { "category": null }}}`,
 	)
@@ -57,12 +57,12 @@ func TestGetMissingRubricCategory(t *testing.T) {
 func TestListRubricCategories(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}`,
+		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{description,id,name},{{ template "pagination_request" }},totalCount}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response1" }} }, { {{ template "rubric_categories_response2" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}`,
+		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{description,id,name},{{ template "pagination_request" }},totalCount}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "categories": { "nodes": [ { {{ template "rubric_categories_response3" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
@@ -85,7 +85,7 @@ func TestListRubricCategories(t *testing.T) {
 func TestUpdateRubricCategory(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{id,name},errors{message,path}}}`,
+		`mutation CategoryUpdate($input:CategoryUpdateInput!){categoryUpdate(input: $input){category{description,id,name},errors{message,path}}}`,
 		`{ "input": { {{ template "id4" }}, "name": "Emily" }}`,
 		`{"data": { "categoryUpdate": { "category": { {{ template "id4" }}, "name": "Emily" }, "errors": [] }}}`,
 	)
