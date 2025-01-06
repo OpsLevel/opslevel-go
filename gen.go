@@ -28,7 +28,6 @@ import (
 const (
 	connectionFile string = "connection.go"
 	interfacesFile string = "interfaces.go"
-	objectFile     string = "object.go"
 	queryFile      string = "query.go"
 	mutationFile   string = "mutation.go"
 	payloadFile    string = "payload.go"
@@ -147,6 +146,20 @@ var scalarExamples = map[string]string{
 	"JSONSchema":      `SCHEMA_TBD`,
 	"JsonString":      "JSON_TBD",
 	"String":          "example_value",
+}
+
+var objectNameFieldMappings = map[string]string{
+	"HttpMethod": "HTTPMethod",
+}
+
+var objectTypeFieldMappings = map[string]string{
+	"CustomActionsExternalAction": "CustomActionsId",
+	"Filter":                      "FilterId",
+	"JSONSchema":                  "JSON",
+	"Integration":                 "IntegrationId",
+	"Service":                     "ServiceId",
+	"Team":                        "TeamId",
+	"User":                        "UserId",
 }
 
 var knownTypeMappings = map[string]string{
@@ -272,6 +285,7 @@ func main() {
 			panic(fmt.Errorf("Unknown GraphQL type: %v", v))
 		}
 	}
+	genObjects(objects)
 	genEnums(schemaAst.Enums)
 	genInputObjects(inputObjects)
 
@@ -313,6 +327,58 @@ func genEnums(schemaEnums []*types.EnumTypeDefinition) {
 	}
 	out, err := format.Source(buf.Bytes())
 	err = os.WriteFile("enum.go", out, 0o644)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func genObjects(objects map[string]*types.ObjectTypeDefinition) {
+	var buf bytes.Buffer
+	buf.WriteString(header + "\n\nimport \"github.com/relvacode/iso8601\"\n")
+
+	tmpl := template.New("objects")
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl.Funcs(templFuncMap)
+	template.Must(tmpl.ParseFiles("./templates/objects.tpl"))
+
+	unwantedObjects := []string{"Account", "Error", "Mutation", "Query", "Warning"}
+	for _, unwantedObject := range unwantedObjects {
+		delete(objects, unwantedObject)
+	}
+
+	for _, objectName := range sortedMapKeys(objects) {
+		if strings.HasPrefix(objectName, "_") ||
+			strings.Contains(objectName, "Campaign") ||
+			strings.Contains(objectName, "Group") ||
+			strings.HasSuffix(objectName, "Connection") ||
+			strings.HasSuffix(objectName, "Edge") ||
+			strings.HasSuffix(objectName, "Payload") {
+			continue
+		}
+		// NOTE: temporary limit on generated objects
+		nameFirsLetter := []string{"A", "B", "C"}
+		if !slices.Contains(nameFirsLetter, string(objectName[0])) {
+			continue
+		}
+		// NOTE: skip these for now, some need Fragments, others extra attention
+		if strings.HasSuffix(objectName, "Check") ||
+			strings.HasPrefix(objectName, "CodeIssue") ||
+			objectName == "Contact" ||
+			objectName == "CustomActionsTriggerEvent" ||
+			objectName == "CustomActionsWebhookAction" {
+			continue
+		}
+		if err := tmpl.ExecuteTemplate(&buf, "objects", objects[objectName]); err != nil {
+			panic(err)
+		}
+	}
+	// NOTE: needed for field in AwsIntegration
+	if err := tmpl.ExecuteTemplate(&buf, "objects", objects["TagRelationshipKeys"]); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("writing object.go")
+	err := os.WriteFile("object.go", buf.Bytes(), 0o644)
 	if err != nil {
 		panic(err)
 	}
@@ -398,8 +464,6 @@ func run() error {
 			subSchema = objectSchema
 		case interfacesFile:
 			subSchema = interfaceSchema
-		case objectFile:
-			subSchema = objectSchema
 		case mutationFile:
 			subSchema = objectSchema
 		case payloadFile:
@@ -727,27 +791,6 @@ var templates = map[string]*template.Template{
 	}
 	{{- end}}{{ end }}{{- end}}
 	`),
-	objectFile: t(header + `
-  import "github.com/relvacode/iso8601"
-
-	{{range .Types | sortByName}}
-	  {{if and (eq .Kind "OBJECT") (not (internal .Name)) }}
-	  {{- if ne .Name "Account" }}
-	    {{template "object" .}}{{end}}
-	  {{- end}}
-	{{- end}}
-
-	{{- define "object" -}}
-	{{ if not (skip_object .Name) }}
-	{{ template "type_comment_description" . }}
-	type {{.Name}} struct { {{ add_special_fields .Name }}
-    {{ range .Fields }}
-    {{- if and (not (skip_object_field $.Name .Name)) (not (len .Args)) }}
-      {{ .Name | title}} {{ get_field_type $.Name . }} {{ template "graphql_struct_tag" . }} {{ template "field_comment_description" . }}
-	  {{- end -}}{{ end }}
-	}
-	{{- end }}{{- end -}}
-		`),
 	// 	scalarFile: t(header + `
 	// import (
 	// 	"encoding/base64"
@@ -961,6 +1004,51 @@ func renameMutation(s string) string {
 	return s
 }
 
+func getFieldTypeForInputObject(fieldType types.Type) string {
+	return graphqlTypeToGolang(fieldType.String())
+}
+
+func getFieldNameForObject(fieldName string) string {
+	if mappedName, ok := objectNameFieldMappings[fieldName]; ok {
+		return mappedName
+	}
+	return fieldName
+}
+
+func getFieldTypeForObject(fieldType types.FieldDefinition) string {
+	goType := graphqlTypeToGolang(fieldType.Type.String())
+	goType = strings.TrimPrefix(goType, "*")
+	goType = strings.TrimPrefix(goType, "Nullable[")
+	goType = strings.TrimSuffix(goType, "]")
+
+	if specialType, ok := objectTypeFieldMappings[goType]; ok {
+		return specialType
+	}
+
+	if fieldType.Name == "AlertSource" && goType == "Integration" {
+		goType = "IntegrationId"
+	} else if fieldType.Name == "CustomActionsTriggerDefinition" && goType == "Action" {
+		goType = "CustomActionsId"
+	} else if fieldType.Name == "FilterPredicate" && goType == "CaseSensitive" {
+		goType = "*bool"
+	} else if fieldType.Name == "Property" {
+		switch goType {
+		case "[]Error":
+			goType = "[]OpsLevelErrors"
+		case "HasProperties":
+			goType = "EntityOwnerService"
+		case "JsonString":
+			goType = "*JsonString"
+		case "PropertyDefinition":
+			goType = "PropertyDefinitionId"
+		}
+	} else if fieldType.Name == "ServiceRepository" && goType == "Repository" {
+		goType = "RepositoryId"
+	}
+
+	return goType
+}
+
 func fieldCommentDescription(fieldType *types.InputValueDefinition) string {
 	oneLineDescription := strings.ReplaceAll(fieldType.Desc, "\n", " ")
 	if _, ok := fieldType.Type.(*types.NonNull); ok {
@@ -1091,10 +1179,6 @@ func graphqlTypeToGolang(graphqlType string) string {
 	return wrapWithNullable(convertedType)
 }
 
-func getFieldTypeNew(fieldType types.Type) string {
-	return graphqlTypeToGolang(fieldType.String())
-}
-
 func isNullable(fieldType types.Type) bool {
 	return fieldType.Kind() != "NON_NULL"
 }
@@ -1172,7 +1256,6 @@ var templFuncMap = template.FuncMap{
 	"check_fragments":                     fragmentsForCheck,
 	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
 	"integration_fragments":               fragmentsForIntegration,
-	"get_field_type":                      getFieldTypeOld,
 	"get_input_field_type":                getInputFieldType,
 	"add_special_fields":                  addSpecialFields,
 	"add_special_interfaces_fields":       addSpecialInterfacesFields,
@@ -1183,7 +1266,9 @@ var templFuncMap = template.FuncMap{
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
 	"isListType":                          isPlural,
-	"getFieldTypeForInputObject":          getFieldTypeNew,
+	"getFieldNameForObject":               getFieldNameForObject,
+	"getFieldTypeForInputObject":          getFieldTypeForInputObject,
+	"getFieldTypeForObject":               getFieldTypeForObject,
 	"exampleStructTag":                    exampleStructTag,
 	"jsonStructTag":                       jsonStructTag,
 	"yamlStructTag":                       yamlStructTag,
@@ -1401,188 +1486,4 @@ func getInputFieldType(inputField GraphQLField) string {
 		return "iso8601.Time"
 	}
 	return "string"
-}
-
-func getFieldTypeOld(objectName string, inputField GraphQLField) string {
-	lowercaseFieldName := strings.ToLower(inputField.Name)
-	switch {
-	case "type" == lowercaseFieldName:
-		switch objectName {
-		case "AlertSource":
-			return "AlertSourceTypeEnum"
-		case "AlertSourceUsageCheck", "CustomCheck", "CustomEventCheck",
-			"GitBranchProtectionCheck", "HasDocumentationCheck", "HasRecentDeployCheck",
-			"ManualCheck", "PayloadCheck", "RepositoryFileCheck", "RepositoryGrepCheck",
-			"RepositoryIntegratedCheck", "RepositorySearchCheck", "ServiceConfigurationCheck",
-			"ServiceDependencyCheck", "ServiceOwnershipCheck", "ServicePropertyCheck",
-			"TagDefinedCheck", "ToolUsageCheck":
-			return "CheckType"
-		case "ApiDocIntegration", "AwsIntegration", "AzureDevopsIntegration",
-			"AzureDevopsPermissionError", "BitbucketIntegration", "CheckIntegration",
-			"DatadogIntegration", "DeployIntegration", "FluxIntegration", "GenericIntegration",
-			"GithubActionsIntegration", "GithubIntegration", "GitlabIntegration",
-			"InfrastructureResource", "InfrastructureResourceSchema", "Repository",
-			"IssueTrackingIntegration", "JenkinsIntegration", "KubernetesIntegration",
-			"NewRelicIntegration", "OctopusDeployIntegration", "OnPremGitlabIntegration",
-			"OpsgenieIntegration", "PagerdutyIntegration", "PayloadIntegration",
-			"RelationshipType", "ScimIntegration", "SlackIntegration", "TerraformIntegration":
-			return "string"
-		case "Contact":
-			return "ContactType"
-		case "FilterPredicate":
-			return "PredicateTypeEnum"
-		case "InfrastructureResourceProviderData":
-			return "DoubleCheckThis"
-		case "Predicate":
-			return "PredicateTypeEnum"
-		default:
-			return "any"
-		}
-	case objectName == "AlertSource" && lowercaseFieldName == "integration":
-		return "IntegrationId"
-	case objectName == "AlertSourceService":
-		switch lowercaseFieldName {
-		case "alertsource":
-			return "AlertSource"
-		case "service":
-			return "ServiceId"
-		case "status":
-			return "AlertSourceStatusTypeEnum"
-		}
-	case objectName == "CustomActionsTriggerDefinition":
-		switch lowercaseFieldName {
-		case "accesscontrol":
-			return "CustomActionsTriggerDefinitionAccessControlEnum"
-		case "action":
-			return "CustomActionsId"
-		case "entitytype":
-			return "CustomActionsEntityTypeEnum"
-		case "filter":
-			return "FilterId"
-		case "owner":
-			return "TeamId"
-		}
-	case objectName == "CustomActionsWebhookAction":
-		switch lowercaseFieldName {
-		case "headers":
-			return "JSON"
-		case "httpmethod":
-			return "CustomActionsHttpMethodEnum"
-		}
-	case objectName == "Domain":
-		switch lowercaseFieldName {
-		case "managedaliases":
-			return "[]string"
-		case "owner":
-			return "EntityOwner"
-		}
-	case objectName == "Filter":
-		switch lowercaseFieldName {
-		case "connective":
-			return "ConnectiveEnum"
-		case "predicates":
-			return "[]FilterPredicate"
-		}
-	case objectName == "FilterPredicate":
-		switch lowercaseFieldName {
-		case "casesensitive":
-			return "*bool"
-		case "key":
-			return "PredicateKeyEnum"
-		}
-	case objectName == "InfrastructureResource":
-		switch lowercaseFieldName {
-		case "data", "rawdata":
-			return "JSON"
-		case "id":
-			return "ID"
-		case "owner":
-			return "EntityOwner"
-		case "providerdata":
-			return "InfrastructureResourceProviderData"
-		}
-	case objectName == "InfrastructureResourceSchema" && lowercaseFieldName == "schema":
-		return "JSON"
-	case objectName == "Language" && lowercaseFieldName == "usage":
-		return "float64"
-	case objectName == "Repository":
-		switch lowercaseFieldName {
-		case "languages":
-			return "[]Language"
-		case "owner":
-			return "TeamId"
-		}
-	case objectName == "Scorecard":
-		switch lowercaseFieldName {
-		case "owner":
-			return "EntityOwner"
-		case "passingchecks", "servicecount", "totalchecks":
-			return "int"
-		}
-	case objectName == "Secret" && lowercaseFieldName == "owner":
-		return "TeamId"
-	case objectName == "Repository" && lowercaseFieldName == "owner":
-		return "TeamId"
-	case objectName == "Service":
-		switch lowercaseFieldName {
-		case "managedaliases":
-			return "[]string"
-		case "owner":
-			return "TeamId"
-		case "preferredapidocument":
-			return "*ServiceDocument"
-		case "preferredapidocumentsource":
-			return "*ApiDocumentSourceEnum"
-		}
-	case objectName == "ServiceDependency":
-		switch lowercaseFieldName {
-		case "destinationservice", "sourceservice":
-			return "ServiceId"
-		}
-	case objectName == "ServiceDocument" && lowercaseFieldName == "source":
-		return "ServiceDocumentSource"
-	case objectName == "ServiceRepository":
-		switch lowercaseFieldName {
-		case "repository":
-			return "RepositoryId"
-		case "service":
-			return "ServiceId"
-		}
-	case objectName == "System":
-		switch lowercaseFieldName {
-		case "managedaliases":
-			return "[]string"
-		case "owner":
-			return "EntityOwner"
-		case "parent":
-			return "Domain"
-		}
-	case objectName == "Team":
-		switch lowercaseFieldName {
-		case "contacts":
-			return "Contact"
-		case "managedaliases":
-			return "[]string"
-		case "parentteam":
-			return "TeamId"
-		}
-	case objectName == "TeamMembership":
-		switch lowercaseFieldName {
-		case "team":
-			return "TeamId"
-		case "user":
-			return "UserId"
-		}
-	case objectName == "Tool":
-		switch lowercaseFieldName {
-		case "category":
-			return "ToolCategory"
-		case "service":
-			return "ServiceId"
-		}
-	case objectName == "User" && lowercaseFieldName == "role":
-		return "UserRole"
-	}
-
-	return getInputFieldType(inputField)
 }
