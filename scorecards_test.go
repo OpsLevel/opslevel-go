@@ -168,12 +168,12 @@ func TestListScorecards(t *testing.T) {
 func TestListScorecardCategories(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id2" }}, "name": "quality" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id3" }}, "name": "ownership" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
