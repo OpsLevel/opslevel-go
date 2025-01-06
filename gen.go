@@ -148,6 +148,15 @@ var scalarExamples = map[string]string{
 	"String":          "example_value",
 }
 
+var objectTypeFieldMappings = map[string]string{
+	"filter":      "FilterId",
+	"jSONSchema":  "JSON",
+	"integration": "IntegrationId",
+	"service":     "ServiceId",
+	"team":        "TeamId",
+	"user":        "UserId",
+}
+
 var knownTypeMappings = map[string]string{
 	"data":                           "JSON",
 	"deletedmembers":                 "User",
@@ -327,17 +336,27 @@ func genObjects(objects map[string]*types.ObjectTypeDefinition) {
 	tmpl.Funcs(templFuncMap)
 	template.Must(tmpl.ParseFiles("./templates/objects.tpl"))
 
-	// NOTE: InfrastructureResource, Service and Team omitted for now...
-	unwantedObjects := []string{"Account", "Error", "Group", "InfrastructureResource", "Mutation", "Query", "Service", "Team", "Warning"}
+	unwantedObjects := []string{"Account", "Error", "Mutation", "Query", "Warning"}
 	for _, unwantedObject := range unwantedObjects {
 		delete(objects, unwantedObject)
 	}
 
 	for _, objectName := range sortedMapKeys(objects) {
 		if strings.HasPrefix(objectName, "_") ||
+			strings.Contains(objectName, "Campaign") ||
+			strings.Contains(objectName, "Group") ||
 			strings.HasSuffix(objectName, "Connection") ||
 			strings.HasSuffix(objectName, "Edge") ||
 			strings.HasSuffix(objectName, "Payload") {
+			continue
+		}
+		// NOTE: temporary limit on generated objects
+		nameFirsLetter := []string{"A", "B", "C", "D"}
+		if !slices.Contains(nameFirsLetter, string(objectName[0])) {
+			continue
+		}
+		// NOTE: skip for now since today <resource>Checks have Fragments
+		if strings.HasSuffix(objectName, "Check") {
 			continue
 		}
 		if err := tmpl.ExecuteTemplate(&buf, "objects", objects[objectName]); err != nil {
@@ -983,17 +1002,8 @@ func getFieldTypeForObject(fieldType types.FieldDefinition) string {
 		goType = strings.TrimSuffix(goType, "]")
 	}
 
-	switch goType {
-	case "Filter":
-		return "FilterId"
-	case "JSONSchema":
-		return "JSON"
-	case "Service":
-		return "ServiceId"
-	case "Team":
-		goType = "TeamId"
-	case "User":
-		return "UserId"
+	if specialType, ok := objectTypeFieldMappings[fieldType.Name]; ok {
+		return specialType
 	}
 
 	if fieldType.Name == "AlertSource" && goType == "Integration" {
