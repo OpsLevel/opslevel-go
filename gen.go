@@ -32,7 +32,6 @@ const (
 	mutationFile   string = "mutation.go"
 	payloadFile    string = "payload.go"
 	// scalarFile      string = "scalar.go" // NOTE: probably not useful
-	// unionFile       string = "union.go" // NOTE: probably not useful
 )
 
 var knownTypeIsName = []string{
@@ -285,6 +284,7 @@ func main() {
 			panic(fmt.Errorf("Unknown GraphQL type: %v", v))
 		}
 	}
+	genUnions(unions)
 	genObjects(objects)
 	genEnums(schemaAst.Enums)
 	genInputObjects(inputObjects)
@@ -308,6 +308,28 @@ func sortedMapKeys[T any](schemaMap map[string]T) []string {
 	}
 	slices.Sort(sortedNames)
 	return sortedNames
+}
+
+func genUnions(unions map[string]*types.Union) {
+	var buf bytes.Buffer
+
+	buf.WriteString(header + "\n\n")
+
+	tmpl := template.New("unions")
+	tmpl.Funcs(sprig.TxtFuncMap())
+	tmpl.Funcs(templFuncMap)
+	template.Must(tmpl.ParseFiles("./templates/unions.tpl"))
+	for _, union := range sortedMapKeys(unions) {
+		if err := tmpl.ExecuteTemplate(&buf, "union", unions[union]); err != nil {
+			panic(err)
+		}
+	}
+
+	fmt.Println("writing union.go")
+	err := os.WriteFile("union.go", buf.Bytes(), 0o644)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func genEnums(schemaEnums []*types.EnumTypeDefinition) {
@@ -472,8 +494,6 @@ func run() error {
 			subSchema = objectSchema
 		// case scalarFile:
 		// 	subSchema = scalarSchema
-		// case unionFile:
-		// 	subSchema = unionSchema
 		default:
 			panic("Unknown file: " + filename)
 		}
@@ -867,21 +887,6 @@ var templates = map[string]*template.Template{
 	// func NewString(value string) *string {
 	// 	return &value
 	// }`),
-	// 	unionFile: t(header + `
-	// {{range .Types | sortByName}}{{if and (eq .Kind "UNION") (not (internal .Name))}}
-	// {{template "union_object" .}}
-	// {{end}}{{end}}
-
-	// {{- define "union_object" -}}
-	// // Union{{.Name}} {{ template "description" . }}
-	// type Union{{.Name}} interface { {{range .PossibleTypes }}
-	//
-	//	    {{.Name}}Fragment() {{.Name}}Fragment{{end}}
-	//	}
-	//
-	// {{- end -}}
-	//
-	//	`),
 }
 
 func t(text string) *template.Template {
@@ -1252,7 +1257,6 @@ func firstCharLowered(s string) string {
 var templFuncMap = template.FuncMap{
 	"internal":                            func(s string) bool { return strings.HasPrefix(s, "__") },
 	"quote":                               strconv.Quote,
-	"join":                                strings.Join,
 	"check_fragments":                     fragmentsForCheck,
 	"custom_actions_ext_action_fragments": fragmentsForCustomActionsExtAction,
 	"integration_fragments":               fragmentsForIntegration,

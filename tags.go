@@ -7,11 +7,11 @@ import (
 	"slices"
 )
 
-type TagOwner string
+type TagOwnerEnum string
 
 const (
-	TagOwnerService    TagOwner = "Service"
-	TagOwnerRepository TagOwner = "Repository"
+	TagOwnerService    TagOwnerEnum = "Service"
+	TagOwnerRepository TagOwnerEnum = "Repository"
 )
 
 type TaggableResourceInterface interface {
