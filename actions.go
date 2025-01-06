@@ -15,22 +15,6 @@ type CustomActionsWebhookAction struct {
 	WebhookURL string                      `graphql:"webhookUrl"`
 }
 
-type CustomActionsTriggerDefinition struct {
-	Action                 CustomActionsId                                 `graphql:"action"`
-	Aliases                []string                                        `graphql:"aliases"`
-	Description            string                                          `graphql:"description"`
-	Filter                 FilterId                                        `graphql:"filter"`
-	Id                     ID                                              `graphql:"id"`
-	ManualInputsDefinition string                                          `graphql:"manualInputsDefinition"`
-	Name                   string                                          `graphql:"name"`
-	Owner                  TeamId                                          `graphql:"owner"`
-	Published              bool                                            `graphql:"published"`
-	Timestamps             Timestamps                                      `graphql:"timestamps"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `graphql:"accessControl"`
-	ResponseTemplate       string                                          `graphql:"responseTemplate"`
-	EntityType             CustomActionsEntityTypeEnum                     `graphql:"entityType"`
-}
-
 func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {

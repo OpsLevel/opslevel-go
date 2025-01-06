@@ -148,13 +148,18 @@ var scalarExamples = map[string]string{
 	"String":          "example_value",
 }
 
+var objectNameFieldMappings = map[string]string{
+	"HttpMethod": "HTTPMethod",
+}
+
 var objectTypeFieldMappings = map[string]string{
-	"filter":      "FilterId",
-	"jSONSchema":  "JSON",
-	"integration": "IntegrationId",
-	"service":     "ServiceId",
-	"team":        "TeamId",
-	"user":        "UserId",
+	"CustomActionsExternalAction": "CustomActionsId",
+	"Filter":                      "FilterId",
+	"JSONSchema":                  "JSON",
+	"Integration":                 "IntegrationId",
+	"Service":                     "ServiceId",
+	"Team":                        "TeamId",
+	"User":                        "UserId",
 }
 
 var knownTypeMappings = map[string]string{
@@ -351,17 +356,25 @@ func genObjects(objects map[string]*types.ObjectTypeDefinition) {
 			continue
 		}
 		// NOTE: temporary limit on generated objects
-		nameFirsLetter := []string{"A", "B", "C", "D"}
+		nameFirsLetter := []string{"A", "B", "C"}
 		if !slices.Contains(nameFirsLetter, string(objectName[0])) {
 			continue
 		}
-		// NOTE: skip for now since today <resource>Checks have Fragments
-		if strings.HasSuffix(objectName, "Check") {
+		// NOTE: skip these for now, some need Fragments, others extra attention
+		if strings.HasSuffix(objectName, "Check") ||
+			strings.HasPrefix(objectName, "CodeIssue") ||
+			objectName == "Contact" ||
+			objectName == "CustomActionsTriggerEvent" ||
+			objectName == "CustomActionsWebhookAction" {
 			continue
 		}
 		if err := tmpl.ExecuteTemplate(&buf, "objects", objects[objectName]); err != nil {
 			panic(err)
 		}
+	}
+	// NOTE: needed for field in AwsIntegration
+	if err := tmpl.ExecuteTemplate(&buf, "objects", objects["TagRelationshipKeys"]); err != nil {
+		panic(err)
 	}
 
 	fmt.Println("writing object.go")
@@ -995,14 +1008,20 @@ func getFieldTypeForInputObject(fieldType types.Type) string {
 	return graphqlTypeToGolang(fieldType.String())
 }
 
+func getFieldNameForObject(fieldName string) string {
+	if mappedName, ok := objectNameFieldMappings[fieldName]; ok {
+		return mappedName
+	}
+	return fieldName
+}
+
 func getFieldTypeForObject(fieldType types.FieldDefinition) string {
 	goType := graphqlTypeToGolang(fieldType.Type.String())
-	if strings.HasPrefix(goType, "*Nullable[") {
-		goType = strings.TrimPrefix(goType, "*Nullable[")
-		goType = strings.TrimSuffix(goType, "]")
-	}
+	goType = strings.TrimPrefix(goType, "*")
+	goType = strings.TrimPrefix(goType, "Nullable[")
+	goType = strings.TrimSuffix(goType, "]")
 
-	if specialType, ok := objectTypeFieldMappings[fieldType.Name]; ok {
+	if specialType, ok := objectTypeFieldMappings[goType]; ok {
 		return specialType
 	}
 
@@ -1247,6 +1266,7 @@ var templFuncMap = template.FuncMap{
 	"skip_query":                          skipQuery,
 	"skip_interface_field":                skipInterfaceField,
 	"isListType":                          isPlural,
+	"getFieldNameForObject":               getFieldNameForObject,
 	"getFieldTypeForInputObject":          getFieldTypeForInputObject,
 	"getFieldTypeForObject":               getFieldTypeForObject,
 	"exampleStructTag":                    exampleStructTag,
