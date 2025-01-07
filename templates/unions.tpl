@@ -10,8 +10,9 @@
 type {{.Name}} struct {
  {{ range .TypeNames }}
     {{- if not (contains "Group" . ) }}
-  {{.}} {{ if contains . (list "ApiDocIntegration" "InfrastructureResource" "ServiceRepository" | join " " ) }}{{ . }}
-        {{- else }}{{.}}Id{{- end }} `graphql:"... on {{.}}"`
+  {{.}} {{. -}}
+      {{- if not (contains . (list "ApiDocIntegration" "InfrastructureResource" "ServiceRepository" | join " " )) -}}Id
+      {{- end }} `graphql:"... on {{.}}"`
     {{- end }}
   {{- end }}
 }
