@@ -10,11 +10,6 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
-type CheckOwner struct {
-	Team TeamId `graphql:"... on Team"`
-	// User User `graphql:"... on User"` // TODO: will this be public?
-}
-
 type CheckInputConstructor func() any
 
 var CheckCreateConstructors = map[CheckType]CheckInputConstructor{

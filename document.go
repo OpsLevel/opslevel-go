@@ -1,10 +1,5 @@
 package opslevel
 
-type ServiceDocumentSource struct {
-	IntegrationId     `graphql:"... on ApiDocIntegration"`
-	ServiceRepository `graphql:"... on ServiceRepository"`
-}
-
 type ServiceDocument struct {
 	Id         ID                    `graphql:"id" json:"id"`
 	HtmlURL    string                `graphql:"htmlUrl" json:"htmUrl,omitempty"`

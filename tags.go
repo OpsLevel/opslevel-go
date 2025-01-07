@@ -7,13 +7,6 @@ import (
 	"slices"
 )
 
-type TagOwner string
-
-const (
-	TagOwnerService    TagOwner = "Service"
-	TagOwnerRepository TagOwner = "Repository"
-)
-
 type TaggableResourceInterface interface {
 	GetTags(*Client, *PayloadVariables) (*TagConnection, error)
 	ResourceId() ID
