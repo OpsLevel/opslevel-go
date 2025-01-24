@@ -7,16 +7,6 @@ import (
 	"slices"
 )
 
-type Contact struct {
-	Address     string
-	DisplayName string
-	DisplayType string
-	ExternalId  string
-	Id          ID
-	IsDefault   bool
-	Type        ContactType
-}
-
 type TeamId struct {
 	Alias string
 	Id    ID
