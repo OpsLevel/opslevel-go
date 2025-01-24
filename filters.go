@@ -7,26 +7,6 @@ import (
 	"github.com/gosimple/slug"
 )
 
-type FilterId struct {
-	Id   ID
-	Name string
-}
-
-type Filter struct {
-	FilterId
-	Connective ConnectiveEnum
-	HtmlUrl    string
-	Predicates []FilterPredicate
-}
-
-type FilterPredicate struct {
-	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
-	KeyData       string            `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"null"`
-	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
-	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
-	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
-}
-
 // Validate the FilterPredicate based on known expectations before sending to API
 func (filterPredicate *FilterPredicate) Validate() error {
 	// validation common to Predicate and FilterPredicate types

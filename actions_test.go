@@ -38,12 +38,12 @@ func TestCreateWebhookAction(t *testing.T) {
 func TestListCustomActions(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},{{ template "pagination_request" }},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},{{ template "pagination_request" }},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -224,12 +224,12 @@ func TestGetTriggerDefinition(t *testing.T) {
 func TestListTriggerDefinitions(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{accessControl,action{aliases,id},aliases,description,entityType,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,responseTemplate,timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}`,
+		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{{ template "custom_actions_trigger_request" }},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger1_response" }} }, { {{ template "custom_action_trigger2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{accessControl,action{aliases,id},aliases,description,entityType,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,responseTemplate,timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}`,
+		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{{ template "custom_actions_trigger_request" }},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -316,10 +316,11 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 
 func TestDeleteTriggerDefinition(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
-		{"input":{"alias":"123456789"}}
-	}`
+	request := autopilot.NewTestRequest(
+		`mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}`,
+		`{"input":{"alias":"123456789"}}`,
+		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [{{ template "error1" }}] }}}`,
+	)
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}`,
@@ -334,7 +335,7 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 
 	client := BestTestClient(t, "custom_actions/delete_trigger", testRequest)
 	clientErr := BestTestClient(t, "custom_actions/delete_trigger_err", testRequestError)
-	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
+	clientErr2 := BestTestClient(t, "custom_actions/delete_trigger_err2", request)
 	// Act
 	err := client.DeleteTriggerDefinition("123456789")
 	err2 := clientErr.DeleteTriggerDefinition("123456789")

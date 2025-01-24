@@ -9,12 +9,6 @@ type CustomActionsId struct {
 	Id      ID       `graphql:"id"`
 }
 
-type CustomActionsWebhookAction struct {
-	Headers    JSON                        `graphql:"headers" scalar:"true"`
-	HTTPMethod CustomActionsHttpMethodEnum `graphql:"httpMethod"`
-	WebhookURL string                      `graphql:"webhookUrl"`
-}
-
 func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
@@ -84,7 +78,7 @@ func (client *Client) GetCustomAction(input string) (*CustomActionsExternalActio
 		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
-	if q.Account.Action.Id == "" {
+	if q.Account.Action.CustomActionsId.Id == "" {
 		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)
