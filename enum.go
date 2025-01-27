@@ -568,9 +568,7 @@ var AllFrequencyTimeScale = []string{
 // HasDocumentationSubtypeEnum The subtype of the document
 type HasDocumentationSubtypeEnum string
 
-var (
-	HasDocumentationSubtypeEnumOpenapi HasDocumentationSubtypeEnum = "openapi" // Document is an OpenAPI document
-)
+var HasDocumentationSubtypeEnumOpenapi HasDocumentationSubtypeEnum = "openapi" // Document is an OpenAPI document
 
 // All HasDocumentationSubtypeEnum as []string
 var AllHasDocumentationSubtypeEnum = []string{
@@ -684,9 +682,7 @@ var AllPackageManagerEnum = []string{
 // PayloadFilterEnum Fields that can be used as part of filters for payloads
 type PayloadFilterEnum string
 
-var (
-	PayloadFilterEnumIntegrationID PayloadFilterEnum = "integration_id" // Filter by `integration` field. Note that this is an internal id, ex. "123"
-)
+var PayloadFilterEnumIntegrationID PayloadFilterEnum = "integration_id" // Filter by `integration` field. Note that this is an internal id, ex. "123"
 
 // All PayloadFilterEnum as []string
 var AllPayloadFilterEnum = []string{
@@ -1160,9 +1156,7 @@ var AllUsersFilterEnum = []string{
 // UsersInviteScopeEnum A classification of users to invite
 type UsersInviteScopeEnum string
 
-var (
-	UsersInviteScopeEnumPending UsersInviteScopeEnum = "pending" // All users who have yet to log in to OpsLevel for the first time
-)
+var UsersInviteScopeEnumPending UsersInviteScopeEnum = "pending" // All users who have yet to log in to OpsLevel for the first time
 
 // All UsersInviteScopeEnum as []string
 var AllUsersInviteScopeEnum = []string{

@@ -1,9 +1,10 @@
 package opslevel_test
 
 import (
+	"testing"
+
 	ol "github.com/opslevel/opslevel-go/v2024"
 	"github.com/rocktavious/autopilot/v2023"
-	"testing"
 )
 
 func TestComponentTypeCreate(t *testing.T) {
