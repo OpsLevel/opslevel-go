@@ -155,7 +155,7 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"owner", "team", "opslevel_team"})
 	autopilot.Equals(t, []string{"new_gcp_integration"}, result.GoogleCloudIntegrationFragment.Aliases)
 	autopilot.Equals(t, []opslevel.GoogleCloudProject{
-		{ID: "123", Name: "my-project-1", URL: "XXX_URL_XXX"},
+		{Id: "123", Name: "my-project-1", Url: "XXX_URL_XXX"},
 	}, result.Projects)
 }
 
@@ -363,7 +363,7 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"team", "opslevel_team"})
 	autopilot.Equals(t, []string{"new_gcp_integration", "updated_gcp"}, result.GoogleCloudIntegrationFragment.Aliases)
 	autopilot.Equals(t, []opslevel.GoogleCloudProject{
-		{ID: "123", Name: "my-project-1", URL: "XXX_URL_XXX"},
+		{Id: "123", Name: "my-project-1", Url: "XXX_URL_XXX"},
 	}, result.Projects)
 }
 

@@ -29,12 +29,6 @@ type AzureResourcesIntegrationFragment struct {
 	TenantId              string   `graphql:"tenantId"`
 }
 
-type GoogleCloudProject struct {
-	ID   string `graphql:"id"`
-	Name string `graphql:"name"`
-	URL  string `graphql:"url"`
-}
-
 type GoogleCloudIntegrationFragment struct {
 	Aliases               []string             `graphql:"aliases"`
 	ClientEmail           string               `graphql:"clientEmail"`
@@ -76,7 +70,7 @@ func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integrat
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"awsIntegrationCreate(input: $input)"`
 	}
 	// This is a default in the UI, so we must maintain it
@@ -94,7 +88,7 @@ func (client *Client) CreateEventIntegration(input EventIntegrationInput) (*Inte
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"eventIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -108,7 +102,7 @@ func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) 
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"newRelicIntegrationCreate(input: $input)"`
 	}
 
@@ -167,7 +161,7 @@ func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrati
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"awsIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
@@ -182,7 +176,7 @@ func (client *Client) UpdateEventIntegration(input EventIntegrationUpdateInput) 
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"eventIntegrationUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -196,7 +190,7 @@ func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewReli
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
 	}
 	v := PayloadVariables{
@@ -210,7 +204,7 @@ func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewReli
 func (client *Client) DeleteIntegration(identifier string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"integrationDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
@@ -224,7 +218,7 @@ func (client *Client) CreateIntegrationAzureResources(input AzureResourcesIntegr
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"azureResourcesIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -238,7 +232,7 @@ func (client *Client) UpdateIntegrationAzureResources(identifier string, input A
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"azureResourcesIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
@@ -253,7 +247,7 @@ func (client *Client) CreateIntegrationGCP(input GoogleCloudIntegrationInput) (*
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"googleCloudIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -267,7 +261,7 @@ func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudI
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"googleCloudIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
@@ -282,7 +276,7 @@ func (client *Client) IntegrationReactivate(identifier string) (*Integration, er
 	var m struct {
 		Payload struct {
 			Integration *Integration
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"integrationReactivate(integration: $integration)"`
 	}
 	v := PayloadVariables{

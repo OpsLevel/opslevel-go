@@ -7,16 +7,6 @@ import (
 	"slices"
 )
 
-type Contact struct {
-	Address     string
-	DisplayName string
-	DisplayType string
-	ExternalId  string
-	Id          ID
-	IsDefault   bool
-	Type        ContactType
-}
-
 type TeamId struct {
 	Alias string
 	Id    ID
@@ -49,12 +39,6 @@ type TeamConnection struct {
 	Nodes      []Team
 	PageInfo   PageInfo
 	TotalCount int
-}
-
-type TeamMembership struct {
-	Role string `graphql:"role"`
-	Team TeamId `graphql:"team"`
-	User UserId `graphql:"user"`
 }
 
 type TeamMembershipConnection struct {
@@ -260,7 +244,7 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	var m struct {
 		Payload struct {
 			Team   Team
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"teamCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -279,7 +263,7 @@ func (client *Client) AddMemberships(team *TeamId, memberships ...TeamMembership
 	var m struct {
 		Payload struct {
 			Memberships []TeamMembership `graphql:"memberships"`
-			Errors      []OpsLevelErrors
+			Errors      []Error
 		} `graphql:"teamMembershipCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -296,7 +280,7 @@ func (client *Client) AddContact(team string, contact ContactInput) (*Contact, e
 	var m struct {
 		Payload struct {
 			Contact Contact
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"contactCreate(input: $input)"`
 	}
 	contactInput := ContactCreateInput{
@@ -434,7 +418,7 @@ func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	var m struct {
 		Payload struct {
 			Team   Team
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"teamUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -453,7 +437,7 @@ func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, erro
 	var m struct {
 		Payload struct {
 			Contact Contact
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"contactUpdate(input: $input)"`
 	}
 	input := ContactUpdateInput{
@@ -483,9 +467,9 @@ func (client *Client) DeleteTeam(identifier string) error {
 
 	var m struct {
 		Payload struct {
-			Id     ID               `graphql:"deletedTeamId"`
-			Alias  string           `graphql:"deletedTeamAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Id     ID      `graphql:"deletedTeamId"`
+			Alias  string  `graphql:"deletedTeamAlias"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"teamDelete(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -499,7 +483,7 @@ func (client *Client) RemoveMemberships(team *TeamId, memberships ...TeamMembers
 	var m struct {
 		Payload struct {
 			Members []User `graphql:"deletedMembers"`
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"teamMembershipDelete(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -516,7 +500,7 @@ func (client *Client) RemoveContact(contact ID) error {
 	var m struct {
 		Payload struct {
 			Contact ID `graphql:"deletedContactId"`
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"contactDelete(input: $input)"`
 	}
 	v := PayloadVariables{

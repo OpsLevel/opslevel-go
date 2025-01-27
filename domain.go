@@ -6,19 +6,6 @@ import (
 	"slices"
 )
 
-type DomainId Identifier
-
-type Domain struct {
-	DomainId
-
-	Description    string      `graphql:"description"`
-	HTMLUrl        string      `graphql:"htmlUrl"`
-	ManagedAliases []string    `graphql:"managedAliases"` // A list of aliases that can be set by users. The unique identifier for the resource is omitted.
-	Name           string      `graphql:"name"`
-	Note           string      `graphql:"note"`
-	Owner          EntityOwner `graphql:"owner"`
-}
-
 type DomainConnection struct {
 	Nodes      []Domain `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
@@ -144,7 +131,7 @@ func (domainId *DomainId) AssignSystem(client *Client, systems ...string) error 
 	var m struct {
 		Payload struct {
 			Domain Domain
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"domainChildAssign(domain:$domain, childSystems:$childSystems)"`
 	}
 	v := PayloadVariables{
@@ -159,7 +146,7 @@ func (client *Client) CreateDomain(input DomainInput) (*Domain, error) {
 	var m struct {
 		Payload struct {
 			Domain Domain
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"domainCreate(input:$input)"`
 	}
 	v := PayloadVariables{
@@ -211,7 +198,7 @@ func (client *Client) UpdateDomain(identifier string, input DomainInput) (*Domai
 	var m struct {
 		Payload struct {
 			Domain Domain
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"domainUpdate(domain:$domain,input:$input)"`
 	}
 	v := PayloadVariables{
@@ -225,7 +212,7 @@ func (client *Client) UpdateDomain(identifier string, input DomainInput) (*Domai
 func (client *Client) DeleteDomain(identifier string) error {
 	var d struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"domainDelete(resource: $input)"`
 	}
 	v := PayloadVariables{

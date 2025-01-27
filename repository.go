@@ -7,11 +7,6 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
-type Language struct {
-	Name  string
-	Usage float64
-}
-
 type RepositoryId struct {
 	Id           ID
 	DefaultAlias string
@@ -40,19 +35,6 @@ type Repository struct {
 	Type               string
 	Url                string
 	Visible            bool
-}
-
-type RepositoryPath struct {
-	Href string
-	Path string
-}
-
-type ServiceRepository struct {
-	BaseDirectory string
-	DisplayName   string
-	Id            ID
-	Repository    RepositoryId
-	Service       ServiceId
 }
 
 type RepositoryConnection struct {
@@ -222,7 +204,7 @@ func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput
 	var m struct {
 		Payload struct {
 			ServiceRepository ServiceRepository
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"serviceRepositoryCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -336,7 +318,7 @@ func (client *Client) UpdateRepository(input RepositoryUpdateInput) (*Repository
 	var m struct {
 		Payload struct {
 			Repository Repository
-			Errors     []OpsLevelErrors
+			Errors     []Error
 		} `graphql:"repositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -350,7 +332,7 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 	var m struct {
 		Payload struct {
 			ServiceRepository ServiceRepository
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"serviceRepositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -364,7 +346,7 @@ func (client *Client) DeleteServiceRepository(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedId"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"serviceRepositoryDelete(input: $input)"`
 	}
 	v := PayloadVariables{

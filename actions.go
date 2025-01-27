@@ -9,28 +9,6 @@ type CustomActionsId struct {
 	Id      ID       `graphql:"id"`
 }
 
-type CustomActionsWebhookAction struct {
-	Headers    JSON                        `graphql:"headers" scalar:"true"`
-	HTTPMethod CustomActionsHttpMethodEnum `graphql:"httpMethod"`
-	WebhookURL string                      `graphql:"webhookUrl"`
-}
-
-type CustomActionsTriggerDefinition struct {
-	Action                 CustomActionsId                                 `graphql:"action"`
-	Aliases                []string                                        `graphql:"aliases"`
-	Description            string                                          `graphql:"description"`
-	Filter                 FilterId                                        `graphql:"filter"`
-	Id                     ID                                              `graphql:"id"`
-	ManualInputsDefinition string                                          `graphql:"manualInputsDefinition"`
-	Name                   string                                          `graphql:"name"`
-	Owner                  TeamId                                          `graphql:"owner"`
-	Published              bool                                            `graphql:"published"`
-	Timestamps             Timestamps                                      `graphql:"timestamps"`
-	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum `graphql:"accessControl"`
-	ResponseTemplate       string                                          `graphql:"responseTemplate"`
-	EntityType             CustomActionsEntityTypeEnum                     `graphql:"entityType"`
-}
-
 func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTeamAccess(client *Client, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {
@@ -80,7 +58,7 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 	var m struct {
 		Payload struct {
 			WebhookAction CustomActionsExternalAction
-			Errors        []OpsLevelErrors
+			Errors        []Error
 		} `graphql:"customActionsWebhookActionCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -100,7 +78,7 @@ func (client *Client) GetCustomAction(input string) (*CustomActionsExternalActio
 		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
-	if q.Account.Action.Id == "" {
+	if q.Account.Action.CustomActionsId.Id == "" {
 		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
 	}
 	return &q.Account.Action, HandleErrors(err, nil)
@@ -134,7 +112,7 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 	var m struct {
 		Payload struct {
 			WebhookAction CustomActionsExternalAction
-			Errors        []OpsLevelErrors
+			Errors        []Error
 		} `graphql:"customActionsWebhookActionUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -147,7 +125,7 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 func (client *Client) DeleteWebhookAction(input string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"customActionsWebhookActionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
@@ -161,7 +139,7 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	var m struct {
 		Payload struct {
 			TriggerDefinition CustomActionsTriggerDefinition
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
 	}
 	if input.AccessControl == nil {
@@ -222,7 +200,7 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 	var m struct {
 		Payload struct {
 			TriggerDefinition CustomActionsTriggerDefinition
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -235,7 +213,7 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 func (client *Client) DeleteTriggerDefinition(input string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
