@@ -127,7 +127,7 @@ func TestGetScorecard(t *testing.T) {
 	autopilot.Equals(t, *fakeFilterId, sc.Filter.Id)
 	autopilot.Equals(t, 10, sc.PassingChecks)
 	autopilot.Equals(t, 20, sc.ServiceCount)
-	autopilot.Equals(t, 30, sc.ChecksCount)
+	autopilot.Equals(t, 30, sc.TotalChecks)
 }
 
 func TestListScorecards(t *testing.T) {
