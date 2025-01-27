@@ -41,12 +41,6 @@ type TeamConnection struct {
 	TotalCount int
 }
 
-type TeamMembership struct {
-	Role string `graphql:"role"`
-	Team TeamId `graphql:"team"`
-	User UserId `graphql:"user"`
-}
-
 type TeamMembershipConnection struct {
 	Nodes      []TeamMembership
 	PageInfo   PageInfo

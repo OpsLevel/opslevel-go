@@ -20,7 +20,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "lifecycles":[{{ template "lifecycle_1" }}] }}}`,
 	)
 	testRequestThree := autopilot.NewTestRequest(
-		`query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,managedAliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}},note},{{ template "pagination_request" }}}}}`,
+		`query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "systems":{ "nodes":[{{ template "system1_response" }}] } }}}`,
 	)
