@@ -5,20 +5,6 @@ import (
 	"slices"
 )
 
-type UserId struct {
-	Id    ID
-	Email string
-}
-
-type User struct {
-	UserId
-	HTMLUrl string
-	Name    string
-	Role    UserRole
-	// We cannot have this here because its breaks a TON of queries
-	// Teams   *TeamIdConnection
-}
-
 type UserConnection struct {
 	Nodes      []User
 	PageInfo   PageInfo

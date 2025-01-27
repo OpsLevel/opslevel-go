@@ -119,11 +119,11 @@
             displayName,
             environment,
             id,
-            url,
             service{
                 id,
                 aliases
-            }
+            },
+            url
         },
         {{ template "pagination_request" }},
         totalCount

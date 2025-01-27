@@ -30,10 +30,6 @@ func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
 	return pv
 }
 
-type OpsLevelWarnings struct {
-	Message string
-}
-
 func NullString() *string {
 	var output *string
 	return output
