@@ -128,7 +128,7 @@ func (client *Client) RunnerRegister() (*Runner, error) {
 	var m struct {
 		Payload struct {
 			Runner Runner
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"runnerRegister"`
 	}
 	v := PayloadVariables{}
@@ -141,7 +141,7 @@ func (client *Client) RunnerGetPendingJob(runnerId ID, lastUpdateToken ID) (*Run
 		Payload struct {
 			RunnerJob       RunnerJob
 			LastUpdateToken ID
-			Errors          []OpsLevelErrors
+			Errors          []Error
 		} `graphql:"runnerGetPendingJob(runnerId: $id lastUpdateToken: $token)"`
 	}
 	v := PayloadVariables{
@@ -170,7 +170,7 @@ func (client *Client) RunnerScale(runnerId ID, currentReplicaCount, jobConcurren
 func (client *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"runnerAppendJobLog(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -183,7 +183,7 @@ func (client *Client) RunnerAppendJobLog(input RunnerAppendJobLogInput) error {
 func (client *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"runnerReportJobOutcome(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -196,7 +196,7 @@ func (client *Client) RunnerReportJobOutcome(input RunnerReportJobOutcomeInput) 
 func (client *Client) RunnerUnregister(runnerId ID) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"runnerUnregister(runnerId: $runnerId)"`
 	}
 	v := PayloadVariables{

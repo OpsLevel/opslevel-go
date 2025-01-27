@@ -16,7 +16,7 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	var m struct {
 		Payload struct {
 			Service Service
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
 	}
 	v := PayloadVariables{

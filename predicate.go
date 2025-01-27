@@ -7,11 +7,6 @@ import (
 	"strconv"
 )
 
-type Predicate struct {
-	Type  PredicateTypeEnum `graphql:"type"`
-	Value string            `graphql:"value"`
-}
-
 var existsTypes = []PredicateTypeEnum{
 	PredicateTypeEnumDoesNotExist,
 	PredicateTypeEnumExists,

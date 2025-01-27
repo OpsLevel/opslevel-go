@@ -117,6 +117,41 @@ type Contact struct {
 	Type        ContactType // The method of contact [email, slack, slack_handle, web, microsoft_teams] (Required)
 }
 
+// CustomActionsTemplate Template of a custom action
+type CustomActionsTemplate struct {
+	Action            CustomActionsTemplatesAction            // The template's action (Required)
+	Metadata          CustomActionsTemplatesMetadata          // The template's metadata (Required)
+	TriggerDefinition CustomActionsTemplatesTriggerDefinition // The template's trigger definition (Required)
+}
+
+// CustomActionsTemplatesAction The action of a custom action template
+type CustomActionsTemplatesAction struct {
+	Description    string                      // A description of what the action should accomplish (Optional)
+	Headers        JSON                        `scalar:"true"` // The headers sent along with the webhook, if any (Optional)
+	HttpMethod     CustomActionsHttpMethodEnum // The HTTP Method used to call the webhook action (Required)
+	LiquidTemplate string                      // The liquid template used to generate the data sent to the external action (Optional)
+	Name           string                      // The name of the external action (Required)
+	Url            string                      // The URL of the webhook action (Required)
+}
+
+// CustomActionsTemplatesMetadata The metadata about the custom action template
+type CustomActionsTemplatesMetadata struct {
+	Categories  []string // The categories for the custom action template (Required)
+	Description string   // The description of the custom action template (Optional)
+	Icon        string   // The icon for the custom action template (Optional)
+	Name        string   // The name of the custom action template (Required)
+}
+
+// CustomActionsTemplatesTriggerDefinition The definition of a potential trigger for a template custom action
+type CustomActionsTemplatesTriggerDefinition struct {
+	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum // The set of users that should be able to use the trigger definition (Required)
+	Description            string                                          // The description of what the trigger definition will do, supports Markdown (Optional)
+	ManualInputsDefinition string                                          // The YAML definition of any custom inputs for this trigger definition (Optional)
+	Name                   string                                          // The name of the trigger definition (Required)
+	Published              bool                                            // The published state of the action; true if the definition is ready for use; false if it is a draft (Required)
+	ResponseTemplate       string                                          // The liquid template used to parse the response from the External Action (Optional)
+}
+
 // CustomActionsTriggerDefinition The definition of a potential trigger for a custom action
 type CustomActionsTriggerDefinition struct {
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum // The set of users that should be able to use the trigger definition (Required)
@@ -146,38 +181,38 @@ type CustomActionsWebhookAction struct {
 	WebhookUrl     string                      // The URL of the webhook action (Required)
 }
 
-//// Deploy An event sent via webhook to track deploys
-//type Deploy struct {
-//	AssociatedUser      UserId       // The associated OpsLevel user for the deploy (Optional)
-//	Author              string       // The author of the deploy (Optional)
-//	CommitAuthorEmail   string       // The email of the commit (Optional)
-//	CommitAuthorName    string       // The author of the commit (Optional)
-//	CommitAuthoringDate iso8601.Time // The time the commit was authored (Optional)
-//	CommitBranch        string       // The branch the commit took place on (Optional)
-//	CommitMessage       string       // The commit message associated with the deploy (Optional)
-//	CommitSha           string       // The sha associated with the commit of the deploy (Optional)
-//	CommittedAt         iso8601.Time // The time the commit happened (Optional)
-//	CommitterEmail      string       // The email of the person who created the commit (Optional)
-//	CommitterName       string       // The name of the person who created the commit (Optional)
-//	DedupId             string       // The deduplication ID provided to prevent duplicate deploys (Optional)
-//	DeployNumber        string       // An identifier to keep track of the version of the deploy (Optional)
-//	DeployUrl           string       // The url the where the deployment can be found (Optional)
-//	DeployedAt          iso8601.Time // The time the deployment happened (Optional)
-//	DeployerEmail       string       // The email of who is responsible for the deployment (Optional)
-//	DeployerId          string       // An external id of who deployed (Optional)
-//	DeployerName        string       // The name of who is responsible for the deployment (Optional)
-//	Description         string       // The given description of the deploy (Required)
-//	Environment         string       // The environment in which the deployment happened in (Optional)
-//	Id                  ID           // The id of the deploy (Required)
-//	ProviderName        string       // The integration name of the deploy (Optional)
-//	ProviderType        string       // The integration type used the deploy (Optional)
-//	ProviderUrl         string       // The url to the deploy integration (Optional)
-//	Service             ServiceId    // The service object the deploy is attached to (Optional)
-//	ServiceAlias        string       // The alias used to associated this deploy to its service (Required)
-//	ServiceId           string       // The id the deploy is associated to (Optional)
-//	Status              string       // The deployment status (Optional)
-//}
-//
+// Deploy An event sent via webhook to track deploys
+type Deploy struct {
+	AssociatedUser      UserId       // The associated OpsLevel user for the deploy (Optional)
+	Author              string       // The author of the deploy (Optional)
+	CommitAuthorEmail   string       // The email of the commit (Optional)
+	CommitAuthorName    string       // The author of the commit (Optional)
+	CommitAuthoringDate iso8601.Time // The time the commit was authored (Optional)
+	CommitBranch        string       // The branch the commit took place on (Optional)
+	CommitMessage       string       // The commit message associated with the deploy (Optional)
+	CommitSha           string       // The sha associated with the commit of the deploy (Optional)
+	CommittedAt         iso8601.Time // The time the commit happened (Optional)
+	CommitterEmail      string       // The email of the person who created the commit (Optional)
+	CommitterName       string       // The name of the person who created the commit (Optional)
+	DedupId             string       // The deduplication ID provided to prevent duplicate deploys (Optional)
+	DeployNumber        string       // An identifier to keep track of the version of the deploy (Optional)
+	DeployUrl           string       // The url the where the deployment can be found (Optional)
+	DeployedAt          iso8601.Time // The time the deployment happened (Optional)
+	DeployerEmail       string       // The email of who is responsible for the deployment (Optional)
+	DeployerId          string       // An external id of who deployed (Optional)
+	DeployerName        string       // The name of who is responsible for the deployment (Optional)
+	Description         string       // The given description of the deploy (Required)
+	Environment         string       // The environment in which the deployment happened in (Optional)
+	Id                  ID           // The id of the deploy (Required)
+	ProviderName        string       // The integration name of the deploy (Optional)
+	ProviderType        string       // The integration type used the deploy (Optional)
+	ProviderUrl         string       // The url to the deploy integration (Optional)
+	Service             ServiceId    // The service object the deploy is attached to (Optional)
+	ServiceAlias        string       // The alias used to associated this deploy to its service (Required)
+	ServiceId           string       // The id the deploy is associated to (Optional)
+	Status              string       // The deployment status (Optional)
+}
+
 // DomainId A collection of related Systems
 type DomainId struct {
 	Id      ID       // The identifier of the object.
@@ -224,117 +259,63 @@ type FilterPredicate struct {
 	Value         string            // The value of the condition (Optional)
 }
 
-//
-//// GoogleCloudProject
-//type GoogleCloudProject struct {
-//	Id   string // The ID of the Google Cloud project (Required)
-//	Name string // The name of the Google Cloud project (Required)
-//	Url  string // The URL to the Google Cloud project (Required)
-//}
-//
-//// InfrastructureResource An Infrastructure Resource
-//type InfrastructureResource struct {
-//	Aliases              []string                           // The aliases attached to the infrastructure resource (Required)
-//	Data                 JSON                               // The properties that describe the Infrastructure Resource (Optional)
-//	Href                 string                             // The relative path for this. Ex. /services/shopping_cart (Required)
-//	Id                   ID                                 // The identifier of the object (Required)
-//	Integration          IntegrationId                      // The Integration that was used to import the InfrastructureResource data (Optional)
-//	LastSyncedAt         iso8601.Time                       // The date that the InfrastructureResource data was last refreshed (Optional)
-//	Name                 string                             // The name of the object (Required)
-//	Owner                EntityOwner                        // The owner of the object (Optional)
-//	OwnerLocked          bool                               // Whether the resource’s owner is locked (Optional)
-//	ProviderData         InfrastructureResourceProviderData // Data about the provider the infrastructure resource is from (Optional)
-//	ProviderResourceType string                             // The type of the infrastructure resource in its provider (Optional)
-//	RawData              JSON                               // The raw, untransformed data used by OpsLevel to populate the InfrastructureResource (Optional)
-//	Type                 string                             // The type of Infrastructure Resource (Required)
-//}
-//
-//// InfrastructureResourceProviderData Data about the provider the infrastructure resource is from
-//type InfrastructureResourceProviderData struct {
-//	AccountName  string // The account name of the provider (Required)
-//	ExternalUrl  string // The external URL of the infrastructure resource in its provider (Optional)
-//	ProviderName string // The name of the provider (e.g. AWS, GCP, Azure) (Optional)
-//}
-//
-//// InfrastructureResourceSchema A schema for Infrastructure Resources
-//type InfrastructureResourceSchema struct {
-//	Schema JSONSchema // The schema definition (Required)
-//	Type   string     // The schema type (Required)
-//}
-//
-//// Language A language that can be assigned to a repository
-//type Language struct {
-//	Name  string  // The name of the language (Required)
-//	Usage float64 // The percentage of the code written in that language (Required)
-//}
-//
-//// Level A performance rating that is used to grade your services against
-//type Level struct {
-//	Alias       string // The human-friendly, unique identifier for the level (Optional)
-//	Description string // A brief description of the level (Optional)
-//	Id          ID     // The unique identifier for the level (Required)
-//	Index       int    // The numerical representation of the level (highest is better) (Optional)
-//	Name        string // The display name of the level (Optional)
-//}
-//
-//// LevelCount The total number of services in each level
-//type LevelCount struct {
-//	Level        Level // A performance rating that is used to grade your services against (Required)
-//	ServiceCount int   // The number of services (Required)
-//}
-//
-//// Lifecycle A lifecycle represents the current development stage of a service
-//type Lifecycle struct {
-//	Alias       string // The human-friendly, unique identifier for the lifecycle (Optional)
-//	Description string // The lifecycle's description (Optional)
-//	Id          ID     // The unique identifier for the lifecycle (Required)
-//	Index       int    // The numerical representation of the lifecycle (Optional)
-//	Name        string // The lifecycle's display name (Optional)
-//}
-//
-//// ManualCheckFrequency
-//type ManualCheckFrequency struct {
-//	FrequencyTimeScale FrequencyTimeScale // The time scale type for the frequency (Required)
-//	FrequencyValue     int                // The value to be used together with the frequency scale (Required)
-//	StartingDate       iso8601.Time       // The date that the check will start to evaluate (Required)
-//}
-//
-//// PageInfo Information about pagination in a connection
-//type PageInfo struct {
-//	EndCursor       string // When paginating forwards, the cursor to continue (Optional)
-//	HasNextPage     bool   // When paginating forwards, are there more items? (Required)
-//	HasPreviousPage bool   // When paginating backwards, are there more items? (Required)
-//	StartCursor     string // When paginating backwards, the cursor to continue (Optional)
-//}
-//
-//// Predicate A condition used to select services
-//type Predicate struct {
-//	Type  PredicateTypeEnum // Type of operation to be used in the condition (Required)
-//	Value string            // The value of the condition (Optional)
-//}
-//
-//// Property A custom property value assigned to an entity
-//type Property struct {
-//	Definition       PropertyDefinition // The definition of the custom property, including its schema (Required)
-//	Locked           bool               // Whether the property is locked or not (Required)
-//	Owner            HasProperties      // The entity that the property has been assigned to (Required)
-//	ValidationErrors []Error            // Errors in current value, when validating against the definition (Required)
-//	Value            JsonString         // The value of the custom property (Optional)
-//}
-//
-//// PropertyDefinition The definition of a property
-//type PropertyDefinition struct {
-//	Alias                 string                            // The human-friendly, unique identifier of the property definition (Required)
-//	Aliases               []string                          // A list of human-friendly, unique identifiers of the property definition (Required)
-//	AllowedInConfigFiles  bool                              // Whether or not the property is allowed to be set in opslevel.yml config files (Required)
-//	Description           string                            // The description of the property definition (Required)
-//	DisplaySubtype        PropertyDefinitionDisplayTypeEnum // The secondary inferred type of the schema (Optional)
-//	DisplayType           PropertyDefinitionDisplayTypeEnum // The primary inferred type of the schema (Required)
-//	Id                    ID                                // The id of the property definition (Required)
-//	Name                  string                            // The name of the property definition (Required)
-//	PropertyDisplayStatus PropertyDisplayStatusEnum         // The display status of the custom property on service pages (Required)
-//	Schema                JSONSchema                        // The schema of the property definition (Required)
-//}
+// GoogleCloudProject
+type GoogleCloudProject struct {
+	Id   string // The ID of the Google Cloud project (Required)
+	Name string // The name of the Google Cloud project (Required)
+	Url  string // The URL to the Google Cloud project (Required)
+}
+
+// InfrastructureResourceProviderData Data about the provider the infrastructure resource is from
+type InfrastructureResourceProviderData struct {
+	AccountName  string // The account name of the provider (Required)
+	ExternalUrl  string // The external URL of the infrastructure resource in its provider (Optional)
+	ProviderName string // The name of the provider (e.g. AWS, GCP, Azure) (Optional)
+}
+
+// Language A language that can be assigned to a repository
+type Language struct {
+	Name  string  // The name of the language (Required)
+	Usage float64 // The percentage of the code written in that language (Required)
+}
+
+// Level A performance rating that is used to grade your services against
+type Level struct {
+	Alias       string // The human-friendly, unique identifier for the level (Optional)
+	Description string // A brief description of the level (Optional)
+	Id          ID     // The unique identifier for the level (Required)
+	Index       int    // The numerical representation of the level (highest is better) (Optional)
+	Name        string // The display name of the level (Optional)
+}
+
+// LevelCount The total number of services in each level
+type LevelCount struct {
+	Level        Level // A performance rating that is used to grade your services against (Required)
+	ServiceCount int   // The number of services (Required)
+}
+
+// Lifecycle A lifecycle represents the current development stage of a service
+type Lifecycle struct {
+	Alias       string // The human-friendly, unique identifier for the lifecycle (Optional)
+	Description string // The lifecycle's description (Optional)
+	Id          ID     // The unique identifier for the lifecycle (Required)
+	Index       int    // The numerical representation of the lifecycle (Optional)
+	Name        string // The lifecycle's display name (Optional)
+}
+
+// ManualCheckFrequency
+type ManualCheckFrequency struct {
+	FrequencyTimeScale FrequencyTimeScale // The time scale type for the frequency (Required)
+	FrequencyValue     int                // The value to be used together with the frequency scale (Required)
+	StartingDate       iso8601.Time       // The date that the check will start to evaluate (Required)
+}
+
+// Predicate A condition used to select services
+type Predicate struct {
+	Type  PredicateTypeEnum // Type of operation to be used in the condition (Required)
+	Value string            // The value of the condition (Optional)
+}
+
 //
 //// RepositoryId A repository contains code that pertains to a service
 //type RepositoryId struct {

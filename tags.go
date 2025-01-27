@@ -121,7 +121,7 @@ func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
 	var m struct {
 		Payload struct {
 			Tags   []Tag
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"tagAssign(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -161,7 +161,7 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	var m struct {
 		Payload struct {
 			Tag    Tag `json:"tag"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"tagCreate(input: $input)"`
 	}
 	if err := ValidateTagKey(input.Key); err != nil {
@@ -178,7 +178,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	var m struct {
 		Payload struct {
 			Tag    Tag
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"tagUpdate(input: $input)"`
 	}
 	if err := ValidateTagKey(input.Key.Value); err != nil {
@@ -194,7 +194,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 func (client *Client) DeleteTag(id ID) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"tagDelete(input: $input)"`
 	}
 	v := PayloadVariables{

@@ -16,7 +16,7 @@ func (client *Client) CreateAlertSourceService(input AlertSourceServiceCreateInp
 	var m struct {
 		Payload struct {
 			AlertSourceService AlertSourceService
-			Errors             []OpsLevelErrors
+			Errors             []Error
 		} `graphql:"alertSourceServiceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -57,7 +57,7 @@ func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 func (client *Client) DeleteAlertSourceService(id ID) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"alertSourceServiceDelete(input: $input)"`
 	}
 	v := PayloadVariables{

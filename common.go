@@ -34,11 +34,6 @@ type OpsLevelWarnings struct {
 	Message string
 }
 
-type OpsLevelErrors struct {
-	Message string
-	Path    []string
-}
-
 type Timestamps struct {
 	CreatedAt iso8601.Time `json:"createdAt"`
 	UpdatedAt iso8601.Time `json:"updatedAt"`
@@ -57,14 +52,14 @@ func RefTo[T NullableConstraint](value T) *Nullable[T] {
 	return NewNullableFrom(value)
 }
 
-func HandleErrors(err error, errs []OpsLevelErrors) error {
+func HandleErrors(err error, errs []Error) error {
 	if err != nil {
 		return err
 	}
 	return FormatErrors(errs)
 }
 
-func FormatErrors(errs []OpsLevelErrors) error {
+func FormatErrors(errs []Error) error {
 	if len(errs) == 0 {
 		return nil
 	}

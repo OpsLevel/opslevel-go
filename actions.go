@@ -58,7 +58,7 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 	var m struct {
 		Payload struct {
 			WebhookAction CustomActionsExternalAction
-			Errors        []OpsLevelErrors
+			Errors        []Error
 		} `graphql:"customActionsWebhookActionCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -112,7 +112,7 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 	var m struct {
 		Payload struct {
 			WebhookAction CustomActionsExternalAction
-			Errors        []OpsLevelErrors
+			Errors        []Error
 		} `graphql:"customActionsWebhookActionUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -125,7 +125,7 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 func (client *Client) DeleteWebhookAction(input string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"customActionsWebhookActionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
@@ -139,7 +139,7 @@ func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefiniti
 	var m struct {
 		Payload struct {
 			TriggerDefinition CustomActionsTriggerDefinition
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
 	}
 	if input.AccessControl == nil {
@@ -200,7 +200,7 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 	var m struct {
 		Payload struct {
 			TriggerDefinition CustomActionsTriggerDefinition
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -213,7 +213,7 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 func (client *Client) DeleteTriggerDefinition(input string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
