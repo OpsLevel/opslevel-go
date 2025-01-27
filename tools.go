@@ -1,15 +1,5 @@
 package opslevel
 
-type Tool struct {
-	Category      ToolCategory
-	CategoryAlias string `json:",omitempty"`
-	DisplayName   string
-	Environment   string `json:",omitempty"`
-	Id            ID     `json:",omitempty"`
-	Url           string
-	Service       ServiceId
-}
-
 type ToolConnection struct {
 	Nodes      []Tool
 	PageInfo   PageInfo

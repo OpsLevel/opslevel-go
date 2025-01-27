@@ -423,14 +423,14 @@ type TeamMembership struct {
 	User UserId // User for the membership (Required)
 }
 
-//// Tier A tier measures how critical or important a service is to your business
-//type Tier struct {
-//	Alias       string // The human-friendly, unique identifier for the tier (Optional)
-//	Description string // A brief description of the tier (Optional)
-//	Id          ID     // The unique identifier for the tier (Required)
-//	Index       int    // The numerical representation of the tier (Optional)
-//	Name        string // The display name of the tier (Optional)
-//}
+// Tier A tier measures how critical or important a service is to your business
+type Tier struct {
+	Alias       string // The human-friendly, unique identifier for the tier (Optional)
+	Description string // A brief description of the tier (Optional)
+	Id          ID     // The unique identifier for the tier (Required)
+	Index       int    // The numerical representation of the tier (Optional)
+	Name        string // The display name of the tier (Optional)
+}
 
 // Timestamps Relevant timestamps
 type Timestamps struct {
@@ -438,31 +438,30 @@ type Timestamps struct {
 	UpdatedAt iso8601.Time // The time at which the entity was most recently updated (Required)
 }
 
-//
-//// Tool A tool is used to support the operations of a service
-//type Tool struct {
-//	Category      ToolCategory // The category that the tool belongs to (Optional)
-//	CategoryAlias string       // The human-friendly, unique identifier for the tool's category (Optional)
-//	DisplayName   string       // The display name of the tool (Optional)
-//	Environment   string       // The environment that the tool belongs to (Optional)
-//	Id            ID           // The unique identifier for the tool (Required)
-//	Service       ServiceId    // The service that is associated to the tool (Required)
-//	Url           string       // The URL of the tool (Required)
-//}
-//
-//// UserId A user is someone who belongs to an organization
-//type UserId struct {
-//	Id    ID     // The unique identifier for the user.
-//	Email string // The user's email.
-//}
-//
-//// User A user is someone who belongs to an organization
-//type User struct {
-//	UserId
-//	HtmlUrl string   // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
-//	Name    string   // The user's full name (Required)
-//	Role    UserRole // The user's assigned role (Optional)
-//}
+// Tool A tool is used to support the operations of a service
+type Tool struct {
+	Category      ToolCategory // The category that the tool belongs to (Optional)
+	CategoryAlias string       // The human-friendly, unique identifier for the tool's category (Optional)
+	DisplayName   string       // The display name of the tool (Optional)
+	Environment   string       // The environment that the tool belongs to (Optional)
+	Id            ID           // The unique identifier for the tool (Required)
+	Service       ServiceId    // The service that is associated to the tool (Required)
+	Url           string       // The URL of the tool (Required)
+}
+
+// UserId A user is someone who belongs to an organization
+type UserId struct {
+	Id    ID     // The unique identifier for the user.
+	Email string // The user's email.
+}
+
+// User A user is someone who belongs to an organization
+type User struct {
+	UserId
+	HtmlUrl string   // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
+	Name    string   // The user's full name (Required)
+	Role    UserRole // The user's assigned role (Optional)
+}
 
 // Warning The warnings of the mutation
 type Warning struct {

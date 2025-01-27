@@ -144,7 +144,7 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
-			Warnings               []OpsLevelWarnings // TODO: handle warnings somehow
+			Warnings               []Warning // TODO: handle warnings somehow
 			Errors                 []Error
 		} `graphql:"infrastructureResourceCreate(input: $input)"`
 	}
@@ -243,7 +243,7 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
-			Warnings               []OpsLevelWarnings // TODO: handle warnings somehow
+			Warnings               []Warning // TODO: handle warnings somehow
 			Errors                 []Error
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
