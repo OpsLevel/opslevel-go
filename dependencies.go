@@ -37,7 +37,7 @@ func (client *Client) CreateServiceDependency(input ServiceDependencyCreateInput
 	var m struct {
 		Payload struct {
 			ServiceDependency *ServiceDependency
-			Errors            []OpsLevelErrors
+			Errors            []Error
 		} `graphql:"serviceDependencyCreate(inputV2: $input)"`
 	}
 	v := PayloadVariables{
@@ -116,7 +116,7 @@ func (service *Service) GetDependents(client *Client, variables *PayloadVariable
 func (client *Client) DeleteServiceDependency(id ID) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"serviceDependencyDelete(input: $input)"`
 	}
 	v := PayloadVariables{

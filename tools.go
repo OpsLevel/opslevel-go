@@ -20,7 +20,7 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	var m struct {
 		Payload struct {
 			Tool   Tool
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"toolCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -34,7 +34,7 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	var m struct {
 		Payload struct {
 			Tool   Tool
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"toolUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -47,7 +47,7 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 func (client *Client) DeleteTool(id ID) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"toolDelete(input: $input)"`
 	}
 	v := PayloadVariables{

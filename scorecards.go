@@ -101,8 +101,8 @@ func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVar
 func (client *Client) CreateScorecard(input ScorecardInput) (*Scorecard, error) {
 	var m struct {
 		Payload struct {
-			Scorecard Scorecard        `graphql:"scorecard"`
-			Errors    []OpsLevelErrors `graphql:"errors"`
+			Scorecard Scorecard `graphql:"scorecard"`
+			Errors    []Error   `graphql:"errors"`
 		} `graphql:"scorecardCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -159,8 +159,8 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardCon
 func (client *Client) UpdateScorecard(identifier string, input ScorecardInput) (*Scorecard, error) {
 	var m struct {
 		Payload struct {
-			Scorecard Scorecard        `graphql:"scorecard"`
-			Errors    []OpsLevelErrors `graphql:"errors"`
+			Scorecard Scorecard `graphql:"scorecard"`
+			Errors    []Error   `graphql:"errors"`
 		} `graphql:"scorecardUpdate(scorecard: $scorecard, input: $input)"`
 	}
 	scorecard := *NewIdentifier(identifier)
@@ -175,8 +175,8 @@ func (client *Client) UpdateScorecard(identifier string, input ScorecardInput) (
 func (client *Client) DeleteScorecard(identifier string) (*ID, error) {
 	var m struct {
 		Payload struct {
-			DeletedScorecardId ID               `graphql:"deletedScorecardId"`
-			Errors             []OpsLevelErrors `graphql:"errors"`
+			DeletedScorecardId ID      `graphql:"deletedScorecardId"`
+			Errors             []Error `graphql:"errors"`
 		} `graphql:"scorecardDelete(input: $input)"`
 	}
 	input := *NewIdentifier(identifier)

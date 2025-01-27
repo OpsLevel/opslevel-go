@@ -9,7 +9,7 @@ import (
 
 func TestFormatErrorsWorks(t *testing.T) {
 	// Arrange
-	errs := []ol.OpsLevelErrors{
+	errs := []ol.Error{
 		{Message: "can't be blank", Path: []string{"resource", "id"}},
 		{Message: "is not a valid input", Path: []string{"id"}},
 	}
@@ -24,7 +24,7 @@ func TestFormatErrorsWorks(t *testing.T) {
 
 func TestFormatErrorsNoPath(t *testing.T) {
 	// Arrange
-	errs := []ol.OpsLevelErrors{
+	errs := []ol.Error{
 		{Message: "can't be blank", Path: []string{"base"}},
 		{Message: "is not a valid input", Path: []string{""}},
 	}

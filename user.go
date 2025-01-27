@@ -116,7 +116,7 @@ func (client *Client) InviteUser(email string, input UserInput, sendInvite bool)
 	var m struct {
 		Payload struct {
 			User   User
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite)"`
 	}
 	v := PayloadVariables{
@@ -173,7 +173,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 	var m struct {
 		Payload struct {
 			User   User
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"userUpdate(user: $user input: $input)"`
 	}
 	v := PayloadVariables{
@@ -187,7 +187,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 func (client *Client) DeleteUser(user string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"userDelete(user: $user)"`
 	}
 	v := PayloadVariables{

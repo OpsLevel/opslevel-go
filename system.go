@@ -143,7 +143,7 @@ func (systemId *SystemId) AssignService(client *Client, services ...string) erro
 	var m struct {
 		Payload struct {
 			System System
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
 	}
 	v := PayloadVariables{
@@ -158,7 +158,7 @@ func (client *Client) CreateSystem(input SystemInput) (*System, error) {
 	var m struct {
 		Payload struct {
 			System System
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"systemCreate(input:$input)"`
 	}
 	v := PayloadVariables{
@@ -210,7 +210,7 @@ func (client *Client) UpdateSystem(identifier string, input SystemInput) (*Syste
 	var s struct {
 		Payload struct {
 			System System
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"systemUpdate(system:$system,input:$input)"`
 	}
 	v := PayloadVariables{
@@ -224,7 +224,7 @@ func (client *Client) UpdateSystem(identifier string, input SystemInput) (*Syste
 func (client *Client) DeleteSystem(identifier string) error {
 	var s struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"systemDelete(resource: $input)"`
 	}
 	v := PayloadVariables{

@@ -21,7 +21,7 @@ func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, erro
 	var m struct {
 		Payload struct {
 			Category Category
-			Errors   []OpsLevelErrors
+			Errors   []Error
 		} `graphql:"categoryCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -81,7 +81,7 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 	var m struct {
 		Payload struct {
 			Category Category
-			Errors   []OpsLevelErrors
+			Errors   []Error
 		} `graphql:"categoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -95,7 +95,7 @@ func (client *Client) DeleteCategory(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedCategoryId"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"categoryDelete(input: $input)"`
 	}
 	v := PayloadVariables{

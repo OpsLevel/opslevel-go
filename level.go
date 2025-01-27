@@ -6,14 +6,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-type Level struct {
-	Alias       string
-	Description string `json:"description,omitempty"`
-	Id          ID     `json:"id"`
-	Index       int
-	Name        string
-}
-
 type LevelConnection struct {
 	Nodes      []Level
 	PageInfo   PageInfo
@@ -46,7 +38,7 @@ func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 	var m struct {
 		Payload struct {
 			Level  Level
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"levelCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -96,7 +88,7 @@ func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {
 	var m struct {
 		Payload struct {
 			Level  Level
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"levelUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -110,7 +102,7 @@ func (client *Client) DeleteLevel(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedLevelId"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"levelDelete(input: $input)"`
 	}
 	v := PayloadVariables{

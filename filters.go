@@ -193,7 +193,7 @@ func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	var m struct {
 		Payload struct {
 			Filter Filter
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"filterCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -248,7 +248,7 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	var m struct {
 		Payload struct {
 			Filter Filter
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"filterUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -262,7 +262,7 @@ func (client *Client) DeleteFilter(id ID) error {
 	var m struct {
 		Payload struct {
 			Id     ID `graphql:"deletedId"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"filterDelete(input: $input)"`
 	}
 	v := PayloadVariables{
