@@ -652,12 +652,13 @@ type ComponentTypeInput struct {
 
 // ComponentTypePropertyDefinitionInput The input for defining a property
 type ComponentTypePropertyDefinitionInput struct {
-	Alias                 string                    `json:"alias" yaml:"alias" example:"example_value"`                          // The human-friendly, unique identifier for the resource (Required)
-	AllowedInConfigFiles  bool                      `json:"allowedInConfigFiles" yaml:"allowedInConfigFiles" example:"false"`    // Whether or not the property is allowed to be set in opslevel.yml config files (Required)
-	Description           string                    `json:"description" yaml:"description" example:"example_value"`              // The description of the property definition (Required)
-	Name                  string                    `json:"name" yaml:"name" example:"example_value"`                            // The name of the property definition (Required)
-	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus" yaml:"propertyDisplayStatus" example:"hidden"` // The display status of the custom property on service pages (Required)
-	Schema                JSONSchema                `json:"schema" yaml:"schema" example:"SCHEMA_TBD"`                           // The schema of the property definition (Required)
+	Alias                 string                    `json:"alias" yaml:"alias" example:"example_value"`                               // The human-friendly, unique identifier for the resource (Required)
+	AllowedInConfigFiles  bool                      `json:"allowedInConfigFiles" yaml:"allowedInConfigFiles" example:"false"`         // Whether or not the property is allowed to be set in opslevel.yml config files (Required)
+	Description           string                    `json:"description" yaml:"description" example:"example_value"`                   // The description of the property definition (Required)
+	LockedStatus          *PropertyLockedStatusEnum `json:"lockedStatus,omitempty" yaml:"lockedStatus,omitempty" example:"ui_locked"` // Restricts what sources are able to assign values to this property (Optional)
+	Name                  string                    `json:"name" yaml:"name" example:"example_value"`                                 // The name of the property definition (Required)
+	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus" yaml:"propertyDisplayStatus" example:"hidden"`      // The display status of the custom property on service pages (Required)
+	Schema                JSONSchema                `json:"schema" yaml:"schema" example:"SCHEMA_TBD"`                                // The schema of the property definition (Required)
 }
 
 // ContactCreateInput Specifies the input fields used to create a contact
@@ -802,6 +803,12 @@ type FilterUpdateInput struct {
 	Predicates *[]FilterPredicateInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`  // The list of predicates used to select which services apply to the filter. All existing predicates will be replaced by these predicates (Optional)
 }
 
+// FireHydrantIntegrationInput A FireHydrant integration input
+type FireHydrantIntegrationInput struct {
+	ApiKey *Nullable[string] `json:"apiKey,omitempty" yaml:"apiKey,omitempty" example:"example_value"` // The API Key for the FireHydrant API (Optional)
+	Name   *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`     // The name for the FireHydrant integration (Optional)
+}
+
 // GoogleCloudIntegrationInput Specifies the input fields used to create and update a Google Cloud integration
 type GoogleCloudIntegrationInput struct {
 	ClientEmail           *Nullable[string]   `json:"clientEmail,omitempty" yaml:"clientEmail,omitempty" example:"example_value"`                      // The service account email OpsLevel uses to access the Google Cloud account (Optional)
@@ -918,6 +925,7 @@ type PredicateUpdateInput struct {
 type PropertyDefinitionInput struct {
 	AllowedInConfigFiles  *Nullable[bool]            `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"false"`    // Whether or not the property is allowed to be set in opslevel.yml config files (Optional)
 	Description           *Nullable[string]          `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`              // The description of the property definition (Optional)
+	LockedStatus          *PropertyLockedStatusEnum  `json:"lockedStatus,omitempty" yaml:"lockedStatus,omitempty" example:"ui_locked"`                // Restricts what sources are able to assign values to this property (Optional)
 	Name                  *Nullable[string]          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                            // The name of the property definition (Optional)
 	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"hidden"` // The display status of the custom property on service pages (Optional)
 	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:"SCHEMA_TBD"`                           // The schema of the property definition (Optional)
@@ -925,10 +933,11 @@ type PropertyDefinitionInput struct {
 
 // PropertyInput The input for setting a property
 type PropertyInput struct {
-	Definition    IdentifierInput `json:"definition" yaml:"definition"`                                           // The definition of the property (Required)
-	Owner         IdentifierInput `json:"owner" yaml:"owner"`                                                     // The entity that the property has been assigned to (Required)
-	RunValidation *Nullable[bool] `json:"runValidation,omitempty" yaml:"runValidation,omitempty" example:"false"` // Validate the property value against the schema. On by default (Optional)
-	Value         JsonString      `json:"value" yaml:"value" example:"JSON_TBD"`                                  // The value of the property (Required)
+	Definition    IdentifierInput        `json:"definition" yaml:"definition"`                                           // The definition of the property (Required)
+	Owner         IdentifierInput        `json:"owner" yaml:"owner"`                                                     // The entity that the property has been assigned to (Required)
+	OwnerType     *PropertyOwnerTypeEnum `json:"ownerType,omitempty" yaml:"ownerType,omitempty" example:"COMPONENT"`     // The type of the entity that the property has been assigned to. Defaults to `COMPONENT` if alias is provided for `owner` and `definition` (Optional)
+	RunValidation *Nullable[bool]        `json:"runValidation,omitempty" yaml:"runValidation,omitempty" example:"false"` // Validate the property value against the schema. On by default (Optional)
+	Value         JsonString             `json:"value" yaml:"value" example:"JSON_TBD"`                                  // The value of the property (Required)
 }
 
 // RelationshipDefinition A source, target and relationship type specifying a relationship between two resources
@@ -1154,6 +1163,20 @@ type TeamMembershipUserInput struct {
 	Email *Nullable[string]    `json:"email,omitempty" yaml:"email,omitempty" example:"example_value"` // The user's email (Optional)
 	Role  *Nullable[string]    `json:"role,omitempty" yaml:"role,omitempty" example:"example_value"`   // The type of relationship this membership implies (Optional)
 	User  *UserIdentifierInput `json:"user,omitempty" yaml:"user,omitempty"`                           // The email address or ID of the user to add to a team (Optional)
+}
+
+// TeamPropertyDefinitionInput The input for defining a property
+type TeamPropertyDefinitionInput struct {
+	Alias        string                    `json:"alias" yaml:"alias" example:"example_value"`                               // The human-friendly, unique identifier for the resource (Required)
+	Description  string                    `json:"description" yaml:"description" example:"example_value"`                   // The description of the property definition (Required)
+	LockedStatus *PropertyLockedStatusEnum `json:"lockedStatus,omitempty" yaml:"lockedStatus,omitempty" example:"ui_locked"` // Restricts what sources are able to assign values to this property (Optional)
+	Name         string                    `json:"name" yaml:"name" example:"example_value"`                                 // The name of the property definition (Required)
+	Schema       JSONSchema                `json:"schema" yaml:"schema" example:"SCHEMA_TBD"`                                // The schema of the property definition (Required)
+}
+
+// TeamPropertyDefinitionsAssignInput Specifies the input fields used to define properties that apply to teams
+type TeamPropertyDefinitionsAssignInput struct {
+	Properties []TeamPropertyDefinitionInput `json:"properties" yaml:"properties" example:"[]"` // A list of property definitions (Required)
 }
 
 // TeamUpdateInput Specifies the input fields used to update a team

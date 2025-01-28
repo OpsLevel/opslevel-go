@@ -73,8 +73,8 @@ type CommonWeaknessEnumeration struct {
 
 // ComponentTypeId Information about a particular component type
 type ComponentTypeId struct {
-	Id    ID     // The id of the component type.
-	Alias string // The human-friendly, unique identifier of the component type.
+	Id      ID       // The id of the component type.
+	Aliases []string // A list of human-friendly, unique identifiers of the component type.
 }
 
 // ComponentType Information about a particular component type
@@ -421,6 +421,18 @@ type TeamMembership struct {
 	Role string // Role of the user on the Team (Optional)
 	Team TeamId // Team for the membership (Required)
 	User UserId // User for the membership (Required)
+}
+
+// TeamPropertyDefinition The definition of a property
+type TeamPropertyDefinition struct {
+	Alias          string                            // The human-friendly, unique identifier of the property definition (Required)
+	Description    string                            // The description of the property definition (Required)
+	DisplaySubtype PropertyDefinitionDisplayTypeEnum // The secondary inferred type of the schema (Optional)
+	DisplayType    PropertyDefinitionDisplayTypeEnum // The primary inferred type of the schema (Required)
+	Id             ID                                // The id of the property definition (Required)
+	LockedStatus   PropertyLockedStatusEnum          // Restricts what sources are able to assign values to this property (Required)
+	Name           string                            // The name of the property definition (Required)
+	Schema         JSONSchema                        `scalar:"true"` // The schema of the property definition (Required)
 }
 
 // Tier A tier measures how critical or important a service is to your business

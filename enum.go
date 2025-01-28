@@ -25,16 +25,18 @@ var AllAlertSourceStatusTypeEnum = []string{
 type AlertSourceTypeEnum string
 
 var (
-	AlertSourceTypeEnumDatadog    AlertSourceTypeEnum = "datadog"     // A Datadog alert source (aka monitor)
-	AlertSourceTypeEnumIncidentIo AlertSourceTypeEnum = "incident_io" // An incident.io alert source (aka service)
-	AlertSourceTypeEnumNewRelic   AlertSourceTypeEnum = "new_relic"   // A New Relic alert source (aka service)
-	AlertSourceTypeEnumOpsgenie   AlertSourceTypeEnum = "opsgenie"    // An Opsgenie alert source (aka service)
-	AlertSourceTypeEnumPagerduty  AlertSourceTypeEnum = "pagerduty"   // A PagerDuty alert source (aka service)
+	AlertSourceTypeEnumDatadog     AlertSourceTypeEnum = "datadog"      // A Datadog alert source (aka monitor)
+	AlertSourceTypeEnumFireHydrant AlertSourceTypeEnum = "fire_hydrant" // An FireHydrant alert source (aka service)
+	AlertSourceTypeEnumIncidentIo  AlertSourceTypeEnum = "incident_io"  // An incident.io alert source (aka service)
+	AlertSourceTypeEnumNewRelic    AlertSourceTypeEnum = "new_relic"    // A New Relic alert source (aka service)
+	AlertSourceTypeEnumOpsgenie    AlertSourceTypeEnum = "opsgenie"     // An Opsgenie alert source (aka service)
+	AlertSourceTypeEnumPagerduty   AlertSourceTypeEnum = "pagerduty"    // A PagerDuty alert source (aka service)
 )
 
 // All AlertSourceTypeEnum as []string
 var AllAlertSourceTypeEnum = []string{
 	string(AlertSourceTypeEnumDatadog),
+	string(AlertSourceTypeEnumFireHydrant),
 	string(AlertSourceTypeEnumIncidentIo),
 	string(AlertSourceTypeEnumNewRelic),
 	string(AlertSourceTypeEnumOpsgenie),
@@ -833,6 +835,34 @@ var (
 var AllPropertyDisplayStatusEnum = []string{
 	string(PropertyDisplayStatusEnumHidden),
 	string(PropertyDisplayStatusEnumVisible),
+}
+
+// PropertyLockedStatusEnum Values for which lock is assigned to a property definition to restrict what sources can assign values to it
+type PropertyLockedStatusEnum string
+
+var (
+	PropertyLockedStatusEnumUILocked PropertyLockedStatusEnum = "ui_locked" // Value assignments on the property cannot be changed through the UI
+	PropertyLockedStatusEnumUnlocked PropertyLockedStatusEnum = "unlocked"  // There are no restrictions on what sources can assign values to the property
+)
+
+// All PropertyLockedStatusEnum as []string
+var AllPropertyLockedStatusEnum = []string{
+	string(PropertyLockedStatusEnumUILocked),
+	string(PropertyLockedStatusEnumUnlocked),
+}
+
+// PropertyOwnerTypeEnum The possible entity types that a property can be assigned to
+type PropertyOwnerTypeEnum string
+
+var (
+	PropertyOwnerTypeEnumComponent PropertyOwnerTypeEnum = "COMPONENT" // A component
+	PropertyOwnerTypeEnumTeam      PropertyOwnerTypeEnum = "TEAM"      // A team
+)
+
+// All PropertyOwnerTypeEnum as []string
+var AllPropertyOwnerTypeEnum = []string{
+	string(PropertyOwnerTypeEnumComponent),
+	string(PropertyOwnerTypeEnumTeam),
 }
 
 // RelatedResourceRelationshipTypeEnum The type of the relationship between two resources
