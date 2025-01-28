@@ -75,7 +75,7 @@ func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string)
 	_, createErr := client.CreateAliases(service.Id, aliasesToCreate)
 
 	// update service to reflect API updates
-	updatedService, getErr := client.GetService(service.Id)
+	updatedService, getErr := client.GetServiceId(service.Id)
 	if updatedService != nil {
 		service.Aliases = updatedService.Aliases
 		service.ManagedAliases = updatedService.ManagedAliases
@@ -358,7 +358,7 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	return &q.Account.Service, nil
 }
 
-func (client *Client) GetService(id ID) (*Service, error) {
+func (client *Client) GetServiceId(id ID) (*Service, error) {
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`
@@ -374,6 +374,14 @@ func (client *Client) GetService(id ID) (*Service, error) {
 		return &q.Account.Service, err
 	}
 	return &q.Account.Service, nil
+}
+
+func (client *Client) GetService(identifier string) (*Service, error) {
+	if IsID(identifier) {
+		return client.GetServiceId(ID(identifier))
+	} else {
+		return client.GetServiceWithAlias(identifier)
+	}
 }
 
 func (client *Client) GetServiceCount() (int, error) {

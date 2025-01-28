@@ -1,0 +1,4 @@
+kind: Refactor
+body: 'BREAKING CHANGE: client.GetService now properly takes in an identifier and
+  calls the appropreate queries for alias or id'
+time: 2025-01-28T15:43:12.187193-06:00
