@@ -17,14 +17,14 @@ type InfrastructureResourceSchemaConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
-type InfrastructureResourceProviderData struct {
-	AccountName  string `json:"accountName" graphql:"accountName"`
-	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
-	ProviderName string `json:"providerName" graphql:"providerName"`
-}
+//type InfrastructureResourceProviderData struct {
+//	AccountName  string `json:"accountName" graphql:"accountName"`
+//	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
+//	ProviderName string `json:"providerName" graphql:"providerName"`
+//}
 
 type InfrastructureResource struct {
-	Id           string                             `json:"id"`
+	Id           ID                                 `json:"id"`
 	Aliases      []string                           `json:"aliases"`
 	Name         string                             `json:"name"`
 	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
@@ -64,7 +64,7 @@ func (infrastructureResource *InfrastructureResource) ReconcileAliases(client *C
 	_, createErr := client.CreateAliases(ID(infrastructureResource.Id), aliasesToCreate)
 
 	// update infrastructureResource to reflect API updates
-	updatedInfra, getErr := client.GetInfrastructure(infrastructureResource.Id)
+	updatedInfra, getErr := client.GetInfrastructure(string(infrastructureResource.Id))
 	if updatedInfra != nil {
 		infrastructureResource.Aliases = updatedInfra.Aliases
 	}
@@ -86,7 +86,7 @@ func (infrastructureResource *InfrastructureResource) GetTags(client *Client, va
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["infrastructureResource"] = *NewIdentifier(infrastructureResource.Id)
+	(*variables)["infrastructureResource"] = *NewIdentifier(string(infrastructureResource.Id))
 
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceTags")); err != nil {
 		return nil, err
@@ -114,7 +114,7 @@ func (infrastructureResource *InfrastructureResource) GetAliases() []string {
 }
 
 func (infrastructureResource *InfrastructureResource) ResourceId() ID {
-	return *NewID(infrastructureResource.Id)
+	return *NewID(string(infrastructureResource.Id))
 }
 
 func (infrastructureResource *InfrastructureResource) ResourceType() TaggableResource {
@@ -144,8 +144,8 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
-			Warnings               []OpsLevelWarnings // TODO: handle warnings somehow
-			Errors                 []OpsLevelErrors
+			Warnings               []Warning // TODO: handle warnings somehow
+			Errors                 []Error
 		} `graphql:"infrastructureResourceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -243,8 +243,8 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 	var m struct {
 		Payload struct {
 			InfrastructureResource InfrastructureResource
-			Warnings               []OpsLevelWarnings // TODO: handle warnings somehow
-			Errors                 []OpsLevelErrors
+			Warnings               []Warning // TODO: handle warnings somehow
+			Errors                 []Error
 		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
 	v := PayloadVariables{
@@ -259,7 +259,7 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 func (client *Client) DeleteInfrastructure(identifier string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"infrastructureResourceDelete(resource: $input)"`
 	}
 	v := PayloadVariables{

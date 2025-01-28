@@ -1,0 +1,3 @@
+kind: Refactor
+body: 'BREAKING CHANGE: ''OpsLevelErrors'' has been renamed to ''Error'''
+time: 2025-01-27T08:40:43.269477-06:00

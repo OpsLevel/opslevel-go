@@ -11,7 +11,7 @@ func TestCreateTool(t *testing.T) {
 	// Arrange
 	toolCreateInput := autopilot.Register[ol.ToolCreateInput]("tool_create_input", ol.NewExampleOf[ol.ToolCreateInput]())
 	testRequest := autopilot.NewTestRequest(
-		`mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
+		`mutation ToolCreate($input:ToolCreateInput!){toolCreate(input: $input){tool{category,categoryAlias,displayName,environment,id,service{id,aliases},url},errors{message,path}}}`,
 		`{ "input": {{ template "tool_create_input" }}}`,
 		`{"data": { "toolCreate": { "tool": {{ template "tool_1" }}, "errors": [] }}}`,
 	)
@@ -30,7 +30,7 @@ func TestUpdateTool(t *testing.T) {
 	// Arrange
 	toolUpdateInput := autopilot.Register[ol.ToolUpdateInput]("tool_update_input", ol.NewExampleOf[ol.ToolUpdateInput]())
 	testRequest := autopilot.NewTestRequest(
-		`mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,url,service{id,aliases}},errors{message,path}}}`,
+		`mutation ToolUpdate($input:ToolUpdateInput!){toolUpdate(input: $input){tool{category,categoryAlias,displayName,environment,id,service{id,aliases},url},errors{message,path}}}`,
 		`{ "input": {{ template "tool_update_input" }} }`,
 		`{"data": { "toolUpdate": { "tool": {{ template "tool_1_update" }}, "errors": [] }}}`,
 	)

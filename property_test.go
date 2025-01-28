@@ -327,7 +327,7 @@ func TestGetServiceProperties(t *testing.T) {
 				Id: id2,
 			},
 			Owner:            owner,
-			ValidationErrors: []ol.OpsLevelErrors{},
+			ValidationErrors: []ol.Error{},
 			Value:            &value1,
 		},
 		{
@@ -336,7 +336,7 @@ func TestGetServiceProperties(t *testing.T) {
 				Id: id3,
 			},
 			Owner:            owner,
-			ValidationErrors: []ol.OpsLevelErrors{},
+			ValidationErrors: []ol.Error{},
 			Value:            &value2,
 		},
 	})
@@ -347,7 +347,7 @@ func TestGetServiceProperties(t *testing.T) {
 				Id: id4,
 			},
 			Owner:            owner,
-			ValidationErrors: []ol.OpsLevelErrors{},
+			ValidationErrors: []ol.Error{},
 			Value:            &value3,
 		},
 	})

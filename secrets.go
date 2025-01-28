@@ -1,12 +1,5 @@
 package opslevel
 
-type Secret struct {
-	Alias      string     `json:"alias"`
-	ID         ID         `json:"id"`
-	Owner      TeamId     `json:"team"`
-	Timestamps Timestamps `json:"timestamps"`
-}
-
 type SecretsVaultsSecretConnection struct {
 	Nodes      []Secret
 	PageInfo   PageInfo
@@ -17,7 +10,7 @@ func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, er
 	var m struct {
 		Payload struct {
 			Secret Secret
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"secretsVaultsSecretCreate(alias: $alias, input: $input)"`
 	}
 	v := PayloadVariables{
@@ -57,7 +50,7 @@ func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (
 	var m struct {
 		Payload struct {
 			Secret Secret
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"secretsVaultsSecretUpdate(input: $input, secret: $secret)"`
 	}
 	v := PayloadVariables{
@@ -71,7 +64,7 @@ func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (
 func (client *Client) DeleteSecret(identifier string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"secretsVaultsSecretDelete(resource: $input)"`
 	}
 	v := PayloadVariables{"input": *NewIdentifier(identifier)}

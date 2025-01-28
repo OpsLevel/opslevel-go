@@ -2,10 +2,11 @@
 {
   id,
   aliases,
-  managedAliases,
-  name,
   description,
   htmlUrl,
+  managedAliases,
+  name,
+  note,
   owner{
     ... on Team{
       teamAlias:alias,
@@ -26,7 +27,6 @@
         id
       }
     }
-  },
-  note
+  }
 }
 {{- end -}}

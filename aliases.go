@@ -64,7 +64,7 @@ func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 		Payload struct {
 			Aliases []string
 			OwnerId string
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"aliasCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -118,7 +118,7 @@ func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	var m struct {
 		Payload struct {
 			Alias  string `graphql:"deletedAlias"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"aliasDelete(input: $input)"`
 	}
 	v := PayloadVariables{

@@ -1,0 +1,3 @@
+kind: Feature
+body: '''metadata'' field has been added to AlertSource struct'
+time: 2025-01-27T09:10:51.188114-06:00

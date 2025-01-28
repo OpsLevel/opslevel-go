@@ -1,0 +1,4 @@
+kind: Refactor
+body: Field 'ChecksCount' has been renamed to 'TotalChecks' on the struct 'Scorecard'
+  to match the API definition
+time: 2025-01-27T10:04:42.935235-06:00

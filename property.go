@@ -31,7 +31,7 @@ type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
 	Locked           bool                 `graphql:"locked"`
 	Owner            EntityOwnerService   `graphql:"owner"`
-	ValidationErrors []OpsLevelErrors     `graphql:"validationErrors"`
+	ValidationErrors []Error              `graphql:"validationErrors"`
 	Value            *JsonString          `graphql:"value"`
 }
 
@@ -45,7 +45,7 @@ func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*
 	var m struct {
 		Payload struct {
 			Definition PropertyDefinition `graphql:"definition"`
-			Errors     []OpsLevelErrors   `graphql:"errors"`
+			Errors     []Error            `graphql:"errors"`
 		} `graphql:"propertyDefinitionCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -59,7 +59,7 @@ func (client *Client) UpdatePropertyDefinition(identifier string, input Property
 	var m struct {
 		Payload struct {
 			Definition PropertyDefinition `graphql:"definition"`
-			Errors     []OpsLevelErrors   `graphql:"errors"`
+			Errors     []Error            `graphql:"errors"`
 		} `graphql:"propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input)"`
 	}
 	v := PayloadVariables{
@@ -114,7 +114,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*Pro
 func (client *Client) DeletePropertyDefinition(input string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"propertyDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
@@ -141,8 +141,8 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 	var m struct {
 		Payload struct {
-			Property Property         `graphql:"property"`
-			Errors   []OpsLevelErrors `graphql:"errors"`
+			Property Property `graphql:"property"`
+			Errors   []Error  `graphql:"errors"`
 		} `graphql:"propertyAssign(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -155,7 +155,7 @@ func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 func (client *Client) PropertyUnassign(owner string, definition string) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"propertyUnassign(owner: $owner, definition: $definition)"`
 	}
 	v := PayloadVariables{

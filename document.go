@@ -1,10 +1,5 @@
 package opslevel
 
-type ServiceDocumentSource struct {
-	IntegrationId     `graphql:"... on ApiDocIntegration"`
-	ServiceRepository `graphql:"... on ServiceRepository"`
-}
-
 type ServiceDocument struct {
 	Id         ID                    `graphql:"id" json:"id"`
 	HtmlURL    string                `graphql:"htmlUrl" json:"htmUrl,omitempty"`
@@ -21,7 +16,7 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	var m struct {
 		Payload struct {
 			Service Service
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
 	}
 	v := PayloadVariables{

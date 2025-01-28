@@ -10,11 +10,6 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
-type CheckOwner struct {
-	Team TeamId `graphql:"... on Team"`
-	// User User `graphql:"... on User"` // TODO: will this be public?
-}
-
 type CheckInputConstructor func() any
 
 var CheckCreateConstructors = map[CheckType]CheckInputConstructor{
@@ -135,7 +130,7 @@ func NewCheckUpdateInputTypeOf[T any](checkUpdateInput CheckUpdateInput) *T {
 // CheckResponsePayload encompasses CheckCreatePayload and CheckUpdatePayload into 1 struct
 type CheckResponsePayload struct {
 	Check  Check
-	Errors []OpsLevelErrors
+	Errors []Error
 }
 
 func (client *Client) CreateCheck(input any) (*Check, error) {
@@ -271,7 +266,7 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 func (client *Client) DeleteCheck(id ID) error {
 	var m struct {
 		Payload struct {
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{

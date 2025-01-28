@@ -39,7 +39,7 @@ func TestGetSecret(t *testing.T) {
 	result, err := client.GetSecret(string(id2))
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, id2, result.ID)
+	autopilot.Equals(t, id2, result.Id)
 }
 
 func TestListSecrets(t *testing.T) {
@@ -83,7 +83,7 @@ func TestUpdateSecret(t *testing.T) {
 	result, err := client.UpdateSecret(string(id2), secretInput)
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, id2, result.ID)
+	autopilot.Equals(t, id2, result.Id)
 	autopilot.Equals(t, id2, result.Owner.Id)
 }
 

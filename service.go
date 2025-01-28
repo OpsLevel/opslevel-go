@@ -312,7 +312,7 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	var m struct {
 		Payload struct {
 			Service Service
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"serviceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
@@ -708,7 +708,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 	var m struct {
 		Payload struct {
 			Service Service
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"serviceUpdate(input: $input)"`
 	}
 
@@ -728,7 +728,7 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 	var m struct {
 		Payload struct {
 			Service Service
-			Errors  []OpsLevelErrors
+			Errors  []Error
 		} `graphql:"serviceNoteUpdate(input: $input)"`
 	}
 
@@ -752,9 +752,9 @@ func (client *Client) DeleteService(identifier string) error {
 
 	var m struct {
 		Payload struct {
-			Id     ID               `graphql:"deletedServiceId"`
-			Alias  string           `graphql:"deletedServiceAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
+			Id     ID      `graphql:"deletedServiceId"`
+			Alias  string  `graphql:"deletedServiceAlias"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"serviceDelete(input: $input)"`
 	}
 	v := PayloadVariables{
