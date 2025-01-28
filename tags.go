@@ -39,7 +39,7 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	switch resourceType {
 	case TaggableResourceService:
 		if IsID(identifier) {
-			taggableResource, err = client.GetService(ID(identifier))
+			taggableResource, err = client.GetService(identifier)
 		} else {
 			taggableResource, err = client.GetServiceWithAlias(identifier)
 		}

@@ -18,7 +18,7 @@ func (client *Client) GetAliasableResource(resourceType AliasOwnerTypeEnum, iden
 	switch resourceType {
 	case AliasOwnerTypeEnumService:
 		if IsID(identifier) {
-			aliasableResource, err = client.GetService(ID(identifier))
+			aliasableResource, err = client.GetService(identifier)
 		} else {
 			aliasableResource, err = client.GetServiceWithAlias(identifier)
 		}
