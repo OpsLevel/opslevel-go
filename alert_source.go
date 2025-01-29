@@ -14,10 +14,7 @@ func NewAlertSource(kind AlertSourceTypeEnum, id string) *AlertSourceExternalIde
 
 func (client *Client) CreateAlertSourceService(input AlertSourceServiceCreateInput) (*AlertSourceService, error) {
 	var m struct {
-		Payload struct {
-			AlertSourceService AlertSourceService
-			Errors             []Error
-		} `graphql:"alertSourceServiceCreate(input: $input)"`
+		Payload AlertSourceServiceCreatePayload `graphql:"alertSourceServiceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -56,9 +53,7 @@ func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 
 func (client *Client) DeleteAlertSourceService(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []Error
-		} `graphql:"alertSourceServiceDelete(input: $input)"`
+		Payload BasePayload `graphql:"alertSourceServiceDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": AlertSourceDeleteInput{Id: id},

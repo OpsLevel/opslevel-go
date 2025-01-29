@@ -16,10 +16,7 @@ type ComponentTypeConnection struct {
 
 func (client *Client) CreateComponentType(input ComponentTypeInput) (*ComponentType, error) {
 	var m struct {
-		Payload struct {
-			ComponentType ComponentType
-			Errors        []Error
-		} `graphql:"componentTypeCreate(input:$input)"`
+		Payload ComponentTypePayload `graphql:"componentTypeCreate(input:$input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -83,10 +80,7 @@ func (client *Client) ListComponents(variables *PayloadVariables) (*ComponentCon
 
 func (client *Client) UpdateComponentType(identifier string, input ComponentTypeInput) (*ComponentType, error) {
 	var m struct {
-		Payload struct {
-			ComponentType ComponentType
-			Errors        []Error
-		} `graphql:"componentTypeUpdate(componentType:$target,input:$input)"`
+		Payload ComponentTypePayload `graphql:"componentTypeUpdate(componentType:$target,input:$input)"`
 	}
 	v := PayloadVariables{
 		"target": *NewIdentifier(identifier),
@@ -103,9 +97,7 @@ func (client *Client) UpdateComponent(input ComponentUpdateInput) (*Component, e
 
 func (client *Client) DeleteComponentType(identifier string) error {
 	var d struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"componentTypeDelete(resource:$target)"`
+		Payload BasePayload `graphql:"componentTypeDelete(resource:$target)"`
 	}
 	v := PayloadVariables{
 		"target": *NewIdentifier(identifier),

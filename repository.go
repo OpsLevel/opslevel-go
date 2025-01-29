@@ -202,10 +202,7 @@ func (client *Client) ConnectServiceRepository(service *ServiceId, repository *R
 
 func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput) (*ServiceRepository, error) {
 	var m struct {
-		Payload struct {
-			ServiceRepository ServiceRepository
-			Errors            []Error
-		} `graphql:"serviceRepositoryCreate(input: $input)"`
+		Payload ServiceRepositoryCreatePayload `graphql:"serviceRepositoryCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -316,10 +313,7 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 
 func (client *Client) UpdateRepository(input RepositoryUpdateInput) (*Repository, error) {
 	var m struct {
-		Payload struct {
-			Repository Repository
-			Errors     []Error
-		} `graphql:"repositoryUpdate(input: $input)"`
+		Payload RepositoryUpdatePayload `graphql:"repositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -330,10 +324,7 @@ func (client *Client) UpdateRepository(input RepositoryUpdateInput) (*Repository
 
 func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput) (*ServiceRepository, error) {
 	var m struct {
-		Payload struct {
-			ServiceRepository ServiceRepository
-			Errors            []Error
-		} `graphql:"serviceRepositoryUpdate(input: $input)"`
+		Payload ServiceRepositoryUpdatePayload `graphql:"serviceRepositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -344,7 +335,7 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 
 func (client *Client) DeleteServiceRepository(id ID) error {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			Id     ID `graphql:"deletedId"`
 			Errors []Error
 		} `graphql:"serviceRepositoryDelete(input: $input)"`

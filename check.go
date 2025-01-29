@@ -127,12 +127,6 @@ func NewCheckUpdateInputTypeOf[T any](checkUpdateInput CheckUpdateInput) *T {
 	return newCheck
 }
 
-// CheckResponsePayload encompasses CheckCreatePayload and CheckUpdatePayload into 1 struct
-type CheckResponsePayload struct {
-	Check  Check
-	Errors []Error
-}
-
 func (client *Client) CreateCheck(input any) (*Check, error) {
 	switch v := input.(type) {
 	case *CheckAlertSourceUsageCreateInput:
@@ -265,9 +259,7 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 
 func (client *Client) DeleteCheck(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []Error
-		} `graphql:"checkDelete(input: $input)"`
+		Payload BasePayload `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": CheckDeleteInput{Id: RefOf(id)},

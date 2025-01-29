@@ -14,10 +14,7 @@ type ServiceDocumentContent struct {
 
 func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource *ApiDocumentSourceEnum) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []Error
-		} `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
+		Payload ServiceUpdatePayload `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
 	}
 	v := PayloadVariables{
 		"service":   *NewIdentifier(service),
