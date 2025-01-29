@@ -469,7 +469,7 @@ func (client *Client) DeleteTeam(identifier string) error {
 
 func (client *Client) RemoveMemberships(team *TeamId, memberships ...TeamMembershipUserInput) ([]User, error) {
 	var m struct {
-		Payload struct { //TODO: need to fix this
+		Payload struct { // TODO: need to fix this
 			Members []User `graphql:"deletedMembers"`
 			Errors  []Error
 		} `graphql:"teamMembershipDelete(input: $input)"`
