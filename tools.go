@@ -8,10 +8,7 @@ type ToolConnection struct {
 
 func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	var m struct {
-		Payload struct {
-			Tool   Tool
-			Errors []Error
-		} `graphql:"toolCreate(input: $input)"`
+		Payload ToolCreatePayload `graphql:"toolCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -22,10 +19,7 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	var m struct {
-		Payload struct {
-			Tool   Tool
-			Errors []Error
-		} `graphql:"toolUpdate(input: $input)"`
+		Payload ToolUpdatePayload `graphql:"toolUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -36,9 +30,7 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 
 func (client *Client) DeleteTool(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []Error
-		} `graphql:"toolDelete(input: $input)"`
+		Payload BasePayload `graphql:"toolDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": ToolDeleteInput{Id: id},

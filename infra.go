@@ -142,17 +142,14 @@ func (client *Client) CreateInfrastructure(input InfraInput) (*InfrastructureRes
 		}
 	}
 	var m struct {
-		Payload struct {
-			InfrastructureResource InfrastructureResource
-			Warnings               []Warning // TODO: handle warnings somehow
-			Errors                 []Error
-		} `graphql:"infrastructureResourceCreate(input: $input)"`
+		Payload InfrastructureResourcePayload `graphql:"infrastructureResourceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": i,
 		"all":   true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceCreate"))
+	// TODO: handle m.Payload.Warnings somehow
 	return &m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
@@ -241,11 +238,7 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		}
 	}
 	var m struct {
-		Payload struct {
-			InfrastructureResource InfrastructureResource
-			Warnings               []Warning // TODO: handle warnings somehow
-			Errors                 []Error
-		} `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
+		Payload InfrastructureResourcePayload `graphql:"infrastructureResourceUpdate(infrastructureResource: $identifier, input: $input)"`
 	}
 	v := PayloadVariables{
 		"identifier": *NewIdentifier(identifier),
@@ -253,14 +246,13 @@ func (client *Client) UpdateInfrastructure(identifier string, input InfraInput) 
 		"all":        true,
 	}
 	err := client.Mutate(&m, v, WithName("InfrastructureResourceUpdate"))
+	// TODO: handle m.Payload.Warnings somehow
 	return &m.Payload.InfrastructureResource, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) DeleteInfrastructure(identifier string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"infrastructureResourceDelete(resource: $input)"`
+		Payload BasePayload `graphql:"infrastructureResourceDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),

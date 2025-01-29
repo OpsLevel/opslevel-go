@@ -310,10 +310,7 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []Error
-		} `graphql:"serviceCreate(input: $input)"`
+		Payload ServiceCreatePayload `graphql:"serviceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -714,10 +711,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 
 func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []Error
-		} `graphql:"serviceUpdate(input: $input)"`
+		Payload ServiceUpdatePayload `graphql:"serviceUpdate(input: $input)"`
 	}
 
 	v := PayloadVariables{
@@ -734,10 +728,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 
 func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []Error
-		} `graphql:"serviceNoteUpdate(input: $input)"`
+		Payload ServiceUpdatePayload `graphql:"serviceNoteUpdate(input: $input)"`
 	}
 
 	v := PayloadVariables{
@@ -759,7 +750,7 @@ func (client *Client) DeleteService(identifier string) error {
 	}
 
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			Id     ID      `graphql:"deletedServiceId"`
 			Alias  string  `graphql:"deletedServiceAlias"`
 			Errors []Error `graphql:"errors"`

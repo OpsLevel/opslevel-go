@@ -19,10 +19,7 @@ func (category *Category) Alias() string {
 
 func (client *Client) CreateCategory(input CategoryCreateInput) (*Category, error) {
 	var m struct {
-		Payload struct {
-			Category Category
-			Errors   []Error
-		} `graphql:"categoryCreate(input: $input)"`
+		Payload CategoryCreatePayload `graphql:"categoryCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -79,10 +76,7 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 
 func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, error) {
 	var m struct {
-		Payload struct {
-			Category Category
-			Errors   []Error
-		} `graphql:"categoryUpdate(input: $input)"`
+		Payload CategoryUpdatePayload `graphql:"categoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -93,9 +87,9 @@ func (client *Client) UpdateCategory(input CategoryUpdateInput) (*Category, erro
 
 func (client *Client) DeleteCategory(id ID) error {
 	var m struct {
-		Payload struct {
-			Id     ID `graphql:"deletedCategoryId"`
-			Errors []Error
+		Payload struct { // TODO: we don't need this but removing it breaks alot of tests
+			Id ID `graphql:"deletedCategoryId"`
+			BasePayload
 		} `graphql:"categoryDelete(input: $input)"`
 	}
 	v := PayloadVariables{

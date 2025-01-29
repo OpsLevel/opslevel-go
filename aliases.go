@@ -61,11 +61,7 @@ func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, err
 
 func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 	var m struct {
-		Payload struct {
-			Aliases []string
-			OwnerId string
-			Errors  []Error
-		} `graphql:"aliasCreate(input: $input)"`
+		Payload AliasCreatePayload `graphql:"aliasCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -116,9 +112,9 @@ func (client *Client) DeleteAliases(aliasOwnerType AliasOwnerTypeEnum, aliases [
 
 func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	var m struct {
-		Payload struct {
-			Alias  string `graphql:"deletedAlias"`
-			Errors []Error
+		Payload struct { // TODO: we don't need this but removing it breaks alot of tests
+			Alias string `graphql:"deletedAlias"`
+			BasePayload
 		} `graphql:"aliasDelete(input: $input)"`
 	}
 	v := PayloadVariables{

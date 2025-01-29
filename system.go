@@ -128,10 +128,7 @@ func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariab
 
 func (systemId *SystemId) AssignService(client *Client, services ...string) error {
 	var m struct {
-		Payload struct {
-			System System
-			Errors []Error
-		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
+		Payload SystemPayload `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
 	}
 	v := PayloadVariables{
 		"system":        *NewIdentifier(string(systemId.Id)),
@@ -143,10 +140,7 @@ func (systemId *SystemId) AssignService(client *Client, services ...string) erro
 
 func (client *Client) CreateSystem(input SystemInput) (*System, error) {
 	var m struct {
-		Payload struct {
-			System System
-			Errors []Error
-		} `graphql:"systemCreate(input:$input)"`
+		Payload SystemPayload `graphql:"systemCreate(input:$input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -195,10 +189,7 @@ func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnectio
 
 func (client *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
 	var s struct {
-		Payload struct {
-			System System
-			Errors []Error
-		} `graphql:"systemUpdate(system:$system,input:$input)"`
+		Payload SystemPayload `graphql:"systemUpdate(system:$system,input:$input)"`
 	}
 	v := PayloadVariables{
 		"system": *NewIdentifier(identifier),
@@ -210,9 +201,7 @@ func (client *Client) UpdateSystem(identifier string, input SystemInput) (*Syste
 
 func (client *Client) DeleteSystem(identifier string) error {
 	var s struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"systemDelete(resource: $input)"`
+		Payload BasePayload `graphql:"systemDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
