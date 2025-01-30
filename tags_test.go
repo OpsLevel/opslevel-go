@@ -187,11 +187,13 @@ func TestUpdateTag(t *testing.T) {
 	)
 
 	client := BestTestClient(t, "tagUpdate", testRequest)
+	hello := "hello"
+	world := "world!"
 	// Act
 	result, err := client.UpdateTag(ol.TagUpdateInput{
 		Id:    id1,
-		Key:   ol.RefOf("hello"),
-		Value: ol.RefOf("world!"),
+		Key:   &hello,
+		Value: &world,
 	})
 	// Assert
 	autopilot.Ok(t, err)

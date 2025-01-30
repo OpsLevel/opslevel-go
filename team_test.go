@@ -577,7 +577,7 @@ func TestUpdateTeam(t *testing.T) {
 	// Arrange
 	input := autopilot.Register[ol.TeamUpdateInput]("team_update_input",
 		ol.TeamUpdateInput{
-			Id:               ol.RefOf(id1),
+			Id:               &id1,
 			Responsibilities: ol.RefOf("Foo & bar"),
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		},
