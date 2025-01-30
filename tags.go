@@ -134,9 +134,9 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 			Value: value,
 		}
 		if IsID(identifier) {
-			input.Id = RefOf(ID(identifier))
+			input.Id = NewID(identifier)
 		} else {
-			input.Alias = RefOf(identifier)
+			input.Alias = &identifier
 		}
 		newTag, err := client.CreateTag(input)
 		if err != nil {
@@ -166,8 +166,10 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	var m struct {
 		Payload TagUpdatePayload `graphql:"tagUpdate(input: $input)"`
 	}
-	if err := ValidateTagKey(input.Key.Value); err != nil {
-		return nil, err
+	if input.Key != nil {
+		if err := ValidateTagKey(*input.Key); err != nil {
+			return nil, err
+		}
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -199,8 +201,9 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 	toCreate, toDelete := reconcileTags(tagConnection.Nodes, tagsDesired)
 	for _, tag := range toCreate {
 		taggableResourceType := resourceType.ResourceType()
+		taggableResourceID := resourceType.ResourceId()
 		_, err := client.CreateTag(TagCreateInput{
-			Id:    RefOf(resourceType.ResourceId()),
+			Id:    &taggableResourceID,
 			Type:  &taggableResourceType,
 			Key:   tag.Key,
 			Value: tag.Value,
