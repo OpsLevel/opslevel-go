@@ -8,10 +8,7 @@ type SecretsVaultsSecretConnection struct {
 
 func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, error) {
 	var m struct {
-		Payload struct {
-			Secret Secret
-			Errors []Error
-		} `graphql:"secretsVaultsSecretCreate(alias: $alias, input: $input)"`
+		Payload SecretPayload `graphql:"secretsVaultsSecretCreate(alias: $alias, input: $input)"`
 	}
 	v := PayloadVariables{
 		"alias": alias,
@@ -48,10 +45,7 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*Sec
 
 func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (*Secret, error) {
 	var m struct {
-		Payload struct {
-			Secret Secret
-			Errors []Error
-		} `graphql:"secretsVaultsSecretUpdate(input: $input, secret: $secret)"`
+		Payload SecretPayload `graphql:"secretsVaultsSecretUpdate(input: $input, secret: $secret)"`
 	}
 	v := PayloadVariables{
 		"input":  secretInput,
@@ -63,9 +57,7 @@ func (client *Client) UpdateSecret(identifier string, secretInput SecretInput) (
 
 func (client *Client) DeleteSecret(identifier string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"secretsVaultsSecretDelete(resource: $input)"`
+		Payload BasePayload `graphql:"secretsVaultsSecretDelete(resource: $input)"`
 	}
 	v := PayloadVariables{"input": *NewIdentifier(identifier)}
 	err := client.Mutate(&m, v, WithName("SecretsVaultsSecretDelete"))

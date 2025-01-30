@@ -56,7 +56,7 @@ type CustomActionsTriggerDefinitionsConnection struct {
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			WebhookAction CustomActionsExternalAction
 			Errors        []Error
 		} `graphql:"customActionsWebhookActionCreate(input: $input)"`
@@ -110,7 +110,7 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomAct
 
 func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdateInput) (*CustomActionsExternalAction, error) {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			WebhookAction CustomActionsExternalAction
 			Errors        []Error
 		} `graphql:"customActionsWebhookActionUpdate(input: $input)"`
@@ -124,9 +124,7 @@ func (client *Client) UpdateWebhookAction(input CustomActionsWebhookActionUpdate
 
 func (client *Client) DeleteWebhookAction(input string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"customActionsWebhookActionDelete(resource: $input)"`
+		Payload BasePayload `graphql:"customActionsWebhookActionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(input),
@@ -137,10 +135,7 @@ func (client *Client) DeleteWebhookAction(input string) error {
 
 func (client *Client) CreateTriggerDefinition(input CustomActionsTriggerDefinitionCreateInput) (*CustomActionsTriggerDefinition, error) {
 	var m struct {
-		Payload struct {
-			TriggerDefinition CustomActionsTriggerDefinition
-			Errors            []Error
-		} `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
+		Payload CustomActionsTriggerDefinitionCreatePayload `graphql:"customActionsTriggerDefinitionCreate(input: $input)"`
 	}
 	if input.AccessControl == nil {
 		input.AccessControl = &CustomActionsTriggerDefinitionAccessControlEnumEveryone
@@ -198,10 +193,7 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*Cust
 
 func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefinitionUpdateInput) (*CustomActionsTriggerDefinition, error) {
 	var m struct {
-		Payload struct {
-			TriggerDefinition CustomActionsTriggerDefinition
-			Errors            []Error
-		} `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
+		Payload CustomActionsTriggerDefinitionUpdatePayload `graphql:"customActionsTriggerDefinitionUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -212,9 +204,7 @@ func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefiniti
 
 func (client *Client) DeleteTriggerDefinition(input string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
+		Payload BasePayload `graphql:"customActionsTriggerDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(input),

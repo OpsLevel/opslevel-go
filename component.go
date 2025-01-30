@@ -1,5 +1,13 @@
 package opslevel
 
+type Component Service
+
+type ComponentCreateInput ServiceCreateInput
+
+type ComponentUpdateInput ServiceUpdateInput
+
+type ComponentConnection ServiceConnection
+
 type ComponentTypeConnection struct {
 	Nodes      []ComponentType `json:"nodes"`
 	PageInfo   PageInfo        `json:"pageInfo"`
@@ -8,16 +16,18 @@ type ComponentTypeConnection struct {
 
 func (client *Client) CreateComponentType(input ComponentTypeInput) (*ComponentType, error) {
 	var m struct {
-		Payload struct {
-			ComponentType ComponentType
-			Errors        []Error
-		} `graphql:"componentTypeCreate(input:$input)"`
+		Payload ComponentTypePayload `graphql:"componentTypeCreate(input:$input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("ComponentTypeCreate"))
 	return &m.Payload.ComponentType, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) CreateComponent(input ComponentCreateInput) (*Component, error) {
+	resource, err := client.CreateService(ServiceCreateInput(input))
+	return any(resource).(*Component), err
 }
 
 func (client *Client) GetComponentType(identifier string) (*ComponentType, error) {
@@ -31,6 +41,11 @@ func (client *Client) GetComponentType(identifier string) (*ComponentType, error
 	}
 	err := client.Query(&q, v, WithName("ComponentTypeGet"))
 	return &q.Account.ComponentType, HandleErrors(err, nil)
+}
+
+func (client *Client) GetComponent(identifier string) (*Component, error) {
+	resource, err := client.GetService(identifier)
+	return any(resource).(*Component), err
 }
 
 func (client *Client) ListComponentTypes(variables *PayloadVariables) (*ComponentTypeConnection, error) {
@@ -58,12 +73,14 @@ func (client *Client) ListComponentTypes(variables *PayloadVariables) (*Componen
 	return &q.Account.ComponentTypes, nil
 }
 
+func (client *Client) ListComponents(variables *PayloadVariables) (*ComponentConnection, error) {
+	resource, err := client.ListServices(variables)
+	return any(resource).(*ComponentConnection), err
+}
+
 func (client *Client) UpdateComponentType(identifier string, input ComponentTypeInput) (*ComponentType, error) {
 	var m struct {
-		Payload struct {
-			ComponentType ComponentType
-			Errors        []Error
-		} `graphql:"componentTypeUpdate(componentType:$target,input:$input)"`
+		Payload ComponentTypePayload `graphql:"componentTypeUpdate(componentType:$target,input:$input)"`
 	}
 	v := PayloadVariables{
 		"target": *NewIdentifier(identifier),
@@ -73,15 +90,22 @@ func (client *Client) UpdateComponentType(identifier string, input ComponentType
 	return &m.Payload.ComponentType, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) UpdateComponent(input ComponentUpdateInput) (*Component, error) {
+	resource, err := client.UpdateService(ServiceUpdateInput(input))
+	return any(resource).(*Component), err
+}
+
 func (client *Client) DeleteComponentType(identifier string) error {
 	var d struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"componentTypeDelete(resource:$target)"`
+		Payload BasePayload `graphql:"componentTypeDelete(resource:$target)"`
 	}
 	v := PayloadVariables{
 		"target": *NewIdentifier(identifier),
 	}
 	err := client.Mutate(&d, v, WithName("ComponentTypeDelete"))
 	return HandleErrors(err, d.Payload.Errors)
+}
+
+func (client *Client) DeleteComponent(identifier string) error {
+	return client.DeleteService(identifier)
 }

@@ -242,10 +242,7 @@ func (team *Team) HasTag(key string, value string) bool {
 
 func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	var m struct {
-		Payload struct {
-			Team   Team
-			Errors []Error
-		} `graphql:"teamCreate(input: $input)"`
+		Payload TeamCreatePayload `graphql:"teamCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -261,7 +258,7 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 
 func (client *Client) AddMemberships(team *TeamId, memberships ...TeamMembershipUserInput) ([]TeamMembership, error) {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: need to fix this
 			Memberships []TeamMembership `graphql:"memberships"`
 			Errors      []Error
 		} `graphql:"teamMembershipCreate(input: $input)"`
@@ -278,10 +275,7 @@ func (client *Client) AddMemberships(team *TeamId, memberships ...TeamMembership
 
 func (client *Client) AddContact(team string, contact ContactInput) (*Contact, error) {
 	var m struct {
-		Payload struct {
-			Contact Contact
-			Errors  []Error
-		} `graphql:"contactCreate(input: $input)"`
+		Payload ContactCreatePayload `graphql:"contactCreate(input: $input)"`
 	}
 	contactInput := ContactCreateInput{
 		Type:        contact.Type,
@@ -416,10 +410,7 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 
 func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	var m struct {
-		Payload struct {
-			Team   Team
-			Errors []Error
-		} `graphql:"teamUpdate(input: $input)"`
+		Payload TeamUpdatePayload `graphql:"teamUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -435,10 +426,7 @@ func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 
 func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, error) {
 	var m struct {
-		Payload struct {
-			Contact Contact
-			Errors  []Error
-		} `graphql:"contactUpdate(input: $input)"`
+		Payload ContactUpdatePayload `graphql:"contactUpdate(input: $input)"`
 	}
 	input := ContactUpdateInput{
 		Id:          id,
@@ -466,7 +454,7 @@ func (client *Client) DeleteTeam(identifier string) error {
 	}
 
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			Id     ID      `graphql:"deletedTeamId"`
 			Alias  string  `graphql:"deletedTeamAlias"`
 			Errors []Error `graphql:"errors"`
@@ -481,7 +469,7 @@ func (client *Client) DeleteTeam(identifier string) error {
 
 func (client *Client) RemoveMemberships(team *TeamId, memberships ...TeamMembershipUserInput) ([]User, error) {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: need to fix this
 			Members []User `graphql:"deletedMembers"`
 			Errors  []Error
 		} `graphql:"teamMembershipDelete(input: $input)"`
@@ -498,7 +486,7 @@ func (client *Client) RemoveMemberships(team *TeamId, memberships ...TeamMembers
 
 func (client *Client) RemoveContact(contact ID) error {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: need to fix this
 			Contact ID `graphql:"deletedContactId"`
 			Errors  []Error
 		} `graphql:"contactDelete(input: $input)"`

@@ -191,10 +191,7 @@ func (filter *Filter) Alias() string {
 
 func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	var m struct {
-		Payload struct {
-			Filter Filter
-			Errors []Error
-		} `graphql:"filterCreate(input: $input)"`
+		Payload FilterCreatePayload `graphql:"filterCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -246,10 +243,7 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 
 func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	var m struct {
-		Payload struct {
-			Filter Filter
-			Errors []Error
-		} `graphql:"filterUpdate(input: $input)"`
+		Payload FilterUpdatePayload `graphql:"filterUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -260,7 +254,7 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 
 func (client *Client) DeleteFilter(id ID) error {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			Id     ID `graphql:"deletedId"`
 			Errors []Error
 		} `graphql:"filterDelete(input: $input)"`

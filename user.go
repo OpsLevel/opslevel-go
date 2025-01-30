@@ -100,7 +100,7 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 
 func (client *Client) InviteUser(email string, input UserInput, sendInvite bool) (*User, error) {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: need to fix this
 			User   User
 			Errors []Error
 		} `graphql:"userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite)"`
@@ -157,10 +157,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 
 func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 	var m struct {
-		Payload struct {
-			User   User
-			Errors []Error
-		} `graphql:"userUpdate(user: $user input: $input)"`
+		Payload UserPayload `graphql:"userUpdate(user: $user input: $input)"`
 	}
 	v := PayloadVariables{
 		"user":  *NewUserIdentifier(user),
@@ -172,9 +169,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 
 func (client *Client) DeleteUser(user string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error
-		} `graphql:"userDelete(user: $user)"`
+		Payload BasePayload `graphql:"userDelete(user: $user)"`
 	}
 	v := PayloadVariables{
 		"user": *NewUserIdentifier(user),

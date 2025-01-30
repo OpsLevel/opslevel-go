@@ -43,10 +43,7 @@ type ServicePropertiesConnection struct {
 
 func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*PropertyDefinition, error) {
 	var m struct {
-		Payload struct {
-			Definition PropertyDefinition `graphql:"definition"`
-			Errors     []Error            `graphql:"errors"`
-		} `graphql:"propertyDefinitionCreate(input: $input)"`
+		Payload PropertyDefinitionPayload `graphql:"propertyDefinitionCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -57,10 +54,7 @@ func (client *Client) CreatePropertyDefinition(input PropertyDefinitionInput) (*
 
 func (client *Client) UpdatePropertyDefinition(identifier string, input PropertyDefinitionInput) (*PropertyDefinition, error) {
 	var m struct {
-		Payload struct {
-			Definition PropertyDefinition `graphql:"definition"`
-			Errors     []Error            `graphql:"errors"`
-		} `graphql:"propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input)"`
+		Payload PropertyDefinitionPayload `graphql:"propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input)"`
 	}
 	v := PayloadVariables{
 		"propertyDefinition": *NewIdentifier(identifier),
@@ -113,9 +107,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*Pro
 
 func (client *Client) DeletePropertyDefinition(input string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"propertyDefinitionDelete(resource: $input)"`
+		Payload BasePayload `graphql:"propertyDefinitionDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(input),
@@ -140,10 +132,7 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 	var m struct {
-		Payload struct {
-			Property Property `graphql:"property"`
-			Errors   []Error  `graphql:"errors"`
-		} `graphql:"propertyAssign(input: $input)"`
+		Payload PropertyPayload `graphql:"propertyAssign(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -154,9 +143,7 @@ func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 
 func (client *Client) PropertyUnassign(owner string, definition string) error {
 	var m struct {
-		Payload struct {
-			Errors []Error `graphql:"errors"`
-		} `graphql:"propertyUnassign(owner: $owner, definition: $definition)"`
+		Payload BasePayload `graphql:"propertyUnassign(owner: $owner, definition: $definition)"`
 	}
 	v := PayloadVariables{
 		"owner":      *NewIdentifier(owner),

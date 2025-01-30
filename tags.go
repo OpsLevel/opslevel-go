@@ -39,7 +39,7 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	switch resourceType {
 	case TaggableResourceService:
 		if IsID(identifier) {
-			taggableResource, err = client.GetService(ID(identifier))
+			taggableResource, err = client.GetService(identifier)
 		} else {
 			taggableResource, err = client.GetServiceWithAlias(identifier)
 		}
@@ -113,10 +113,7 @@ func (client *Client) AssignTags(identifier string, tags map[string]string) ([]T
 
 func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
 	var m struct {
-		Payload struct {
-			Tags   []Tag
-			Errors []Error
-		} `graphql:"tagAssign(input: $input)"`
+		Payload TagAssignPayload `graphql:"tagAssign(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -153,10 +150,7 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 
 func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	var m struct {
-		Payload struct {
-			Tag    Tag `json:"tag"`
-			Errors []Error
-		} `graphql:"tagCreate(input: $input)"`
+		Payload TagCreatePayload `graphql:"tagCreate(input: $input)"`
 	}
 	if err := ValidateTagKey(input.Key); err != nil {
 		return nil, err
@@ -170,10 +164,7 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 
 func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	var m struct {
-		Payload struct {
-			Tag    Tag
-			Errors []Error
-		} `graphql:"tagUpdate(input: $input)"`
+		Payload TagUpdatePayload `graphql:"tagUpdate(input: $input)"`
 	}
 	if err := ValidateTagKey(input.Key.Value); err != nil {
 		return nil, err
@@ -187,9 +178,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 
 func (client *Client) DeleteTag(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []Error
-		} `graphql:"tagDelete(input: $input)"`
+		Payload BasePayload `graphql:"tagDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": TagDeleteInput{Id: id},

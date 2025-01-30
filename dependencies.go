@@ -35,16 +35,13 @@ type ServiceDependentsConnection struct {
 
 func (client *Client) CreateServiceDependency(input ServiceDependencyCreateInput) (*ServiceDependency, error) {
 	var m struct {
-		Payload struct {
-			ServiceDependency *ServiceDependency
-			Errors            []Error
-		} `graphql:"serviceDependencyCreate(inputV2: $input)"`
+		Payload ServiceDependencyPayload `graphql:"serviceDependencyCreate(inputV2: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("ServiceDependencyCreate"))
-	return m.Payload.ServiceDependency, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.ServiceDependency, HandleErrors(err, m.Payload.Errors)
 }
 
 func (service *Service) GetDependencies(client *Client, variables *PayloadVariables) (*ServiceDependenciesConnection, error) {
@@ -115,9 +112,7 @@ func (service *Service) GetDependents(client *Client, variables *PayloadVariable
 
 func (client *Client) DeleteServiceDependency(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []Error
-		} `graphql:"serviceDependencyDelete(input: $input)"`
+		Payload BasePayload `graphql:"serviceDependencyDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": DeleteInput{Id: id},
