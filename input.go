@@ -1097,8 +1097,8 @@ type TagAssignInput struct {
 
 // TagCreateInput Specifies the input fields used to create a tag
 type TagCreateInput struct {
-	Alias *Nullable[string] `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The alias of the resource that this tag will be added to (Optional)
-	Id    *Nullable[ID]     `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource that this tag will be added to (Optional)
+	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The alias of the resource that this tag will be added to (Optional)
+	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource that this tag will be added to (Optional)
 	Key   string            `json:"key" yaml:"key" example:"example_value"`                                     // The tag's key (Required)
 	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" example:"Domain"`                      // The type of resource `alias` refers to, if `alias` is provided (Optional)
 	Value string            `json:"value" yaml:"value" example:"example_value"`                                 // The tag's value (Required)
@@ -1124,9 +1124,9 @@ type TagRelationshipKeysAssignInput struct {
 
 // TagUpdateInput Specifies the input fields used to update a tag
 type TagUpdateInput struct {
-	Id    ID                `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`         // The id of the tag to be updated (Required)
-	Key   *Nullable[string] `json:"key,omitempty" yaml:"key,omitempty" example:"example_value"`     // The tag's key (Optional)
-	Value *Nullable[string] `json:"value,omitempty" yaml:"value,omitempty" example:"example_value"` // The tag's value (Optional)
+	Id    ID      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`         // The id of the tag to be updated (Required)
+	Key   *string `json:"key,omitempty" yaml:"key,omitempty" example:"example_value"`     // The tag's key (Optional)
+	Value *string `json:"value,omitempty" yaml:"value,omitempty" example:"example_value"` // The tag's value (Optional)
 }
 
 // TeamCreateInput Specifies the input fields used to create a team
@@ -1181,9 +1181,9 @@ type TeamPropertyDefinitionsAssignInput struct {
 
 // TeamUpdateInput Specifies the input fields used to update a team
 type TeamUpdateInput struct {
-	Alias            *Nullable[string]          `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`                       // The alias of the team to be updated (Optional)
+	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`                       // The alias of the team to be updated (Optional)
 	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                                               // The group this team belongs to (Optional)
-	Id               *Nullable[ID]              `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The id of the team to be updated (Optional)
+	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The id of the team to be updated (Optional)
 	ManagerEmail     *Nullable[string]          `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" example:"example_value"`         // The email of the user who manages the team (Optional)
 	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty" example:"[]"`                              // A set of emails that identify users in OpsLevel (Optional)
 	Name             *Nullable[string]          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                         // The team's display name (Optional)
@@ -1196,8 +1196,8 @@ type ToolCreateInput struct {
 	Category     ToolCategory      `json:"category" yaml:"category" example:"admin"`                                                 // The category that the tool belongs to (Required)
 	DisplayName  string            `json:"displayName" yaml:"displayName" example:"example_value"`                                   // The display name of the tool (Required)
 	Environment  *Nullable[string] `json:"environment,omitempty" yaml:"environment,omitempty" example:"example_value"`               // The environment that the tool belongs to (Optional)
-	ServiceAlias *Nullable[string] `json:"serviceAlias,omitempty" yaml:"serviceAlias,omitempty" example:"example_value"`             // The alias of the service the tool will be assigned to (Optional)
-	ServiceId    *Nullable[ID]     `json:"serviceId,omitempty" yaml:"serviceId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the service the tool will be assigned to (Optional)
+	ServiceAlias *string           `json:"serviceAlias,omitempty" yaml:"serviceAlias,omitempty" example:"example_value"`             // The alias of the service the tool will be assigned to (Optional)
+	ServiceId    *ID               `json:"serviceId,omitempty" yaml:"serviceId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the service the tool will be assigned to (Optional)
 	Url          string            `json:"url" yaml:"url" example:"example_value"`                                                   // The URL of the tool (Required)
 }
 
