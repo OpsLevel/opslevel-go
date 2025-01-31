@@ -32,7 +32,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 		Schema:               schema,
 	})
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
+		`mutation PropertyDefinitionCreate($input:PropertyDefinitionInput!){propertyDefinitionCreate(input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},errors{message,path}}}`,
 		`{"input": {{ template "property_definition_input" }} }`,
 		fmt.Sprintf(`{"data":{"propertyDefinitionCreate":{"definition": {"aliases":["my_prop"],"allowedInConfigFiles":true,"id":"XXX","name":"my-prop","schema": %s}, "errors":[] }}}`, schemaString),
 	)
@@ -69,7 +69,7 @@ func TestUpdatePropertyDefinition(t *testing.T) {
 		Schema:                schema,
 	})
 	testRequest := autopilot.NewTestRequest(
-		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},errors{message,path}}}`,
+		`mutation PropertyDefinitionUpdate($input:PropertyDefinitionInput!$propertyDefinition:IdentifierInput!){propertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input){definition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},errors{message,path}}}`,
 		`{"propertyDefinition":{"alias":"my_prop"}, "input": {{ template "property_definition_input" }} }`,
 		fmt.Sprintf(`{"data":{"propertyDefinitionUpdate":{"definition": {"aliases":["my_prop"],"id":"XXX","name":"my-prop","description":"this description was added","propertyDisplayStatus":"hidden","schema": %s}, "errors":[] }}}`, schemaString2),
 	)
@@ -113,7 +113,7 @@ func TestGetPropertyDefinition(t *testing.T) {
 			Schema:               *schema,
 		})
 	testRequest := autopilot.NewTestRequest(
-		`query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema}}}`,
+		`query PropertyDefinitionGet($input:IdentifierInput!){account{propertyDefinition(input: $input){aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema}}}`,
 		`{"input":{"alias":"my_prop"}}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinition": {"aliases":["my_prop"],"allowedInConfigFiles":true,"id":"XXX","name":"my-prop","schema": %s }}}}`, schemaString),
 	)
@@ -165,12 +165,12 @@ func TestListPropertyDefinitions(t *testing.T) {
 		Schema:               *schemaPage3,
 	})
 	testRequestOne := autopilot.NewTestRequest(
-		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,
+		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"allowedInConfigFiles":true,"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"allowedInConfigFiles":false,"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},{{ template "pagination_request" }}}}}`,
+		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"allowedInConfigFiles":true,"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
 	)
