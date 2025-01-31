@@ -12,6 +12,7 @@ type PropertyDefinition struct {
 	DisplaySubtype        PropertyDefinitionDisplayTypeEnum `graphql:"displaySubtype" json:"displaySubtype"`
 	DisplayType           PropertyDefinitionDisplayTypeEnum `graphql:"displayType" json:"displayType"`
 	PropertyDisplayStatus PropertyDisplayStatusEnum         `graphql:"propertyDisplayStatus" json:"propertyDisplayStatus"`
+	LockedStatus          PropertyLockedStatusEnum          `graphql:"lockedStatus" json:"lockedStatus"`
 	Schema                JSON                              `json:"schema" scalar:"true"`
 }
 
