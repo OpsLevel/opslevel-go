@@ -1,5 +1,7 @@
 package opslevel
 
+import "fmt"
+
 type Component Service
 
 type ComponentCreateInput ServiceCreateInput
@@ -12,6 +14,40 @@ type ComponentTypeConnection struct {
 	Nodes      []ComponentType `json:"nodes"`
 	PageInfo   PageInfo        `json:"pageInfo"`
 	TotalCount int             `json:"totalCount" graphql:"-"`
+}
+
+func (s *ComponentType) GetProperties(client *Client, v *PayloadVariables) (*PropertyDefinitionConnection, error) {
+	var q struct {
+		Account struct {
+			ComponentType struct {
+				Properties *PropertyDefinitionConnection `graphql:"properties(after: $after, first: $first)"`
+			} `graphql:"componentType(input: $input)"`
+		}
+	}
+	if s.Id == "" {
+		return nil, fmt.Errorf("unable to get properties, invalid id: '%s'", s.Id)
+	}
+	if v == nil {
+		v = client.InitialPageVariablesPointer()
+	}
+	(*v)["input"] = *NewIdentifier(string(s.Id))
+	if err := client.Query(&q, *v, WithName("ComponentTypePropertyList")); err != nil {
+		return nil, err
+	}
+	if s.Properties == nil {
+		s.Properties = &PropertyDefinitionConnection{}
+	}
+	s.Properties.Nodes = append(s.Properties.Nodes, q.Account.ComponentType.Properties.Nodes...)
+	s.Properties.PageInfo = q.Account.ComponentType.Properties.PageInfo
+	s.Properties.TotalCount += q.Account.ComponentType.Properties.TotalCount
+	for s.Properties.PageInfo.HasNextPage {
+		(*v)["after"] = s.Properties.PageInfo.End
+		_, err := s.GetProperties(client, v)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return s.Properties, nil
 }
 
 func (client *Client) CreateComponentType(input ComponentTypeInput) (*ComponentType, error) {
