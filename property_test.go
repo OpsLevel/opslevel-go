@@ -16,7 +16,7 @@ const (
 func TestCreatePropertyDefinition(t *testing.T) {
 	// Arrange
 	schema, schemaErr := ol.NewJSONSchema(schemaString)
-	schemaAsJSON, schemaAsJSONErr := ol.NewJSONSchema(schemaString)
+	schemaAsJSON, schemaAsJSONErr := ol.NewJSON(schemaString)
 	autopilot.Ok(t, schemaErr)
 	autopilot.Ok(t, schemaAsJSONErr)
 	expectedPropertyDefinition := autopilot.Register("expected_property_definition", ol.PropertyDefinition{
@@ -50,7 +50,7 @@ func TestCreatePropertyDefinition(t *testing.T) {
 func TestUpdatePropertyDefinition(t *testing.T) {
 	// Arrange
 	schema, schemaErr := ol.NewJSONSchema(schemaString)
-	schemaAsJSON, schemaAsJSONErr := ol.NewJSONSchema(schemaString2)
+	schemaAsJSON, schemaAsJSONErr := ol.NewJSON(schemaString2)
 	autopilot.Ok(t, schemaErr)
 	autopilot.Ok(t, schemaAsJSONErr)
 	expectedPropertyDefinition := autopilot.Register("expected_property_definition", ol.PropertyDefinition{
@@ -102,7 +102,7 @@ func TestDeletePropertyDefinition(t *testing.T) {
 
 func TestGetPropertyDefinition(t *testing.T) {
 	// Arrange
-	schema, schemaErr := ol.NewJSONSchema(schemaString)
+	schema, schemaErr := ol.NewJSON(schemaString)
 	autopilot.Ok(t, schemaErr)
 	expectedPropertyDefinition := autopilot.Register("expected_property_definition",
 		ol.PropertyDefinition{
@@ -133,10 +133,10 @@ func TestGetPropertyDefinition(t *testing.T) {
 
 func TestListPropertyDefinitions(t *testing.T) {
 	// Arrange
-	schema, schemaErr := ol.NewJSONSchema(schemaString)
-	schemaPage1, schemaPage1Err := ol.NewJSONSchema(schemaString)
-	schemaPage2, schemaPage2Err := ol.NewJSONSchema(schemaString)
-	schemaPage3, schemaPage3Err := ol.NewJSONSchema(schemaString)
+	schema, schemaErr := ol.NewJSON(schemaString)
+	schemaPage1, schemaPage1Err := ol.NewJSON(schemaString)
+	schemaPage2, schemaPage2Err := ol.NewJSON(schemaString)
+	schemaPage3, schemaPage3Err := ol.NewJSON(schemaString)
 	autopilot.Ok(t, schemaErr)
 	autopilot.Ok(t, schemaPage1Err)
 	autopilot.Ok(t, schemaPage2Err)
@@ -167,12 +167,12 @@ func TestListPropertyDefinitions(t *testing.T) {
 	testRequestOne := autopilot.NewTestRequest(
 		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"allowedInConfigFiles":true,"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"allowedInConfigFiles":false,"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.AsString(), schema.AsString()),
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop1"],"allowedInConfigFiles":true,"id":"XXX","name":"prop1","schema": %s},{"aliases":["prop2"],"allowedInConfigFiles":false,"id":"XXX","name":"prop2","schema": %s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, schema.ToJSON(), schema.ToJSON()),
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query PropertyDefinitionList($after:String!$first:Int!){account{propertyDefinitions(after: $after, first: $first){nodes{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"allowedInConfigFiles":true,"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.AsString()),
+		fmt.Sprintf(`{"data":{"account":{"propertyDefinitions":{"nodes":[{"aliases":["prop3"],"allowedInConfigFiles":true,"id":"XXX","name":"prop3","schema": %s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, schema.ToJSON()),
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "properties/definition_list", requests...)
