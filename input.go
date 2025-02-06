@@ -82,7 +82,7 @@ type CheckAlertSourceUsageCreateInput struct {
 	FilterId                 *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId                  ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                     string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                    *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                    *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId                  *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -97,7 +97,7 @@ type CheckAlertSourceUsageUpdateInput struct {
 	Id                       ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId                  *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name                     *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                    *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                    *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId                  *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -113,7 +113,7 @@ type CheckCodeIssueCreateInput struct {
 	LevelId        ID                            `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing (Optional)
 	Name           string                        `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes          *Nullable[string]             `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                               // The resolution time recommended by the reporting source of the code issue (Optional)
 	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue (Optional)
@@ -132,7 +132,7 @@ type CheckCodeIssueUpdateInput struct {
 	LevelId        *Nullable[ID]                 `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                               // The threshold count of code issues beyond which the check starts failing (Optional)
 	Name           *Nullable[string]             `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes          *Nullable[string]             `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                                   // The resolution time recommended by the reporting source of the code issue (Optional)
 	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue (Optional)
@@ -155,7 +155,7 @@ type CheckCustomEventCreateInput struct {
 	IntegrationId    ID                      `json:"integrationId" yaml:"integrationId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The integration id this check will use (Required)
 	LevelId          ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name             string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes            *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes            *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId          *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	PassPending      *Nullable[bool]         `json:"passPending,omitempty" yaml:"passPending,omitempty" example:"false"`                     // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure (Optional)
 	ResultMessage    *Nullable[string]       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" example:"example_value"`         // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https://docs.opslevel.com/docs/checks/payload-checks/#liquid-templating) (Optional)
@@ -173,7 +173,7 @@ type CheckCustomEventUpdateInput struct {
 	IntegrationId    *Nullable[ID]           `json:"integrationId,omitempty" yaml:"integrationId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The integration id this check will use (Optional)
 	LevelId          *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the level the check belongs to (Optional)
 	Name             *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                     // The display name of the check (Optional)
-	Notes            *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                   // Additional information about the check (Optional)
+	Notes            *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                   // Additional information about the check (Optional)
 	OwnerId          *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the owner of the check (Optional)
 	PassPending      *Nullable[bool]         `json:"passPending,omitempty" yaml:"passPending,omitempty" example:"false"`                               // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure (Optional)
 	ResultMessage    *Nullable[string]       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" example:"example_value"`                   // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https://docs.opslevel.com/docs/checks/payload-checks/#liquid-templating) (Optional)
@@ -194,7 +194,7 @@ type CheckGitBranchProtectionCreateInput struct {
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -207,7 +207,7 @@ type CheckGitBranchProtectionUpdateInput struct {
 	Id         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -221,7 +221,7 @@ type CheckHasDocumentationCreateInput struct {
 	FilterId        *Nullable[ID]               `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId         ID                          `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name            string                      `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes           *Nullable[string]           `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes           *string                     `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId         *Nullable[ID]               `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -236,7 +236,7 @@ type CheckHasDocumentationUpdateInput struct {
 	Id              ID                           `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId         *Nullable[ID]                `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name            *Nullable[string]            `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes           *Nullable[string]            `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes           *string                      `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId         *Nullable[ID]                `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -249,7 +249,7 @@ type CheckHasRecentDeployCreateInput struct {
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -263,7 +263,7 @@ type CheckHasRecentDeployUpdateInput struct {
 	Id         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -275,7 +275,7 @@ type CheckManualCreateInput struct {
 	FilterId              *Nullable[ID]              `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId               ID                         `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                  string                     `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                 *Nullable[string]          `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                 *string                    `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]              `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	UpdateFrequency       *ManualCheckFrequencyInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`                             // Defines the minimum frequency of the updates (Optional)
 	UpdateRequiresComment bool                       `json:"updateRequiresComment" yaml:"updateRequiresComment" example:"false"`                     // Whether the check requires a comment or not (Required)
@@ -290,7 +290,7 @@ type CheckManualUpdateInput struct {
 	Id                    ID                               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId               *Nullable[ID]                    `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name                  *Nullable[string]                `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                 *Nullable[string]                `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                 *string                          `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	UpdateFrequency       *ManualCheckFrequencyUpdateInput `json:"updateFrequency,omitempty" yaml:"updateFrequency,omitempty"`                                 // Defines the minimum frequency of the updates (Optional)
 	UpdateRequiresComment *Nullable[bool]                  `json:"updateRequiresComment,omitempty" yaml:"updateRequiresComment,omitempty" example:"false"`     // Whether the check requires a comment or not (Optional)
@@ -305,7 +305,7 @@ type CheckPackageVersionCreateInput struct {
 	LevelId                    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	MissingPackageResult       *CheckResultStatusEnum  `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"failed"`  // The check result if the package isn't being used by a service (Optional)
 	Name                       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId                    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	PackageConstraint          PackageConstraintEnum   `json:"packageConstraint" yaml:"packageConstraint" example:"does_not_exist"`                    // The package constraint the service is to be checked for (Required)
 	PackageManager             PackageManagerEnum      `json:"packageManager" yaml:"packageManager" example:"alpm"`                                    // The package manager (ecosystem) this package relates to (Required)
@@ -324,7 +324,7 @@ type CheckPackageVersionUpdateInput struct {
 	LevelId                    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	MissingPackageResult       *CheckResultStatusEnum  `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"failed"`      // The check result if the package isn't being used by a service (Optional)
 	Name                       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId                    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	PackageConstraint          *PackageConstraintEnum  `json:"packageConstraint,omitempty" yaml:"packageConstraint,omitempty" example:"does_not_exist"`    // The package constraint the service is to be checked for (Optional)
 	PackageManager             *PackageManagerEnum     `json:"packageManager,omitempty" yaml:"packageManager,omitempty" example:"alpm"`                    // The package manager (ecosystem) this package relates to (Optional)
@@ -344,7 +344,7 @@ type CheckRepositoryFileCreateInput struct {
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId               ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                  string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                 *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional)
 }
@@ -361,7 +361,7 @@ type CheckRepositoryFileUpdateInput struct {
 	Id                    ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the check to be updated (Required)
 	LevelId               *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the level the check belongs to (Optional)
 	Name                  *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                  // The display name of the check (Optional)
-	Notes                 *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                // Additional information about the check (Optional)
+	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the owner of the check (Optional)
 	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`                    // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional)
 }
@@ -377,7 +377,7 @@ type CheckRepositoryGrepCreateInput struct {
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId               ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                  string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                 *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -393,7 +393,7 @@ type CheckRepositoryGrepUpdateInput struct {
 	Id                    ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                        // The id of the check to be updated (Required)
 	LevelId               *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the level the check belongs to (Optional)
 	Name                  *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                  // The display name of the check (Optional)
-	Notes                 *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                // Additional information about the check (Optional)
+	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the owner of the check (Optional)
 }
 
@@ -405,7 +405,7 @@ type CheckRepositoryIntegratedCreateInput struct {
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -418,7 +418,7 @@ type CheckRepositoryIntegratedUpdateInput struct {
 	Id         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -432,7 +432,7 @@ type CheckRepositorySearchCreateInput struct {
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId               ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                  string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                 *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -447,7 +447,7 @@ type CheckRepositorySearchUpdateInput struct {
 	Id                    ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId               *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name                  *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                 *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -459,7 +459,7 @@ type CheckServiceConfigurationCreateInput struct {
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -472,7 +472,7 @@ type CheckServiceConfigurationUpdateInput struct {
 	Id         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -484,7 +484,7 @@ type CheckServiceDependencyCreateInput struct {
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 }
 
@@ -497,7 +497,7 @@ type CheckServiceDependencyUpdateInput struct {
 	Id         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes      *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
@@ -510,7 +510,7 @@ type CheckServiceOwnershipCreateInput struct {
 	FilterId             *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId              ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                 string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId              *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	RequireContactMethod *Nullable[bool]         `json:"requireContactMethod,omitempty" yaml:"requireContactMethod,omitempty" example:"false"`   // Whether to require a contact method for a service owner or not (Optional)
 	TagKey               *Nullable[string]       `json:"tagKey,omitempty" yaml:"tagKey,omitempty" example:"example_value"`                       // The tag key that should exist for a service owner (Optional)
@@ -527,7 +527,7 @@ type CheckServiceOwnershipUpdateInput struct {
 	Id                   ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId              *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name                 *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId              *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	RequireContactMethod *Nullable[bool]         `json:"requireContactMethod,omitempty" yaml:"requireContactMethod,omitempty" example:"false"`       // Whether to require a contact method for a service owner or not (Optional)
 	TagKey               *Nullable[string]       `json:"tagKey,omitempty" yaml:"tagKey,omitempty" example:"example_value"`                           // The tag key that should exist for a service owner (Optional)
@@ -543,7 +543,7 @@ type CheckServicePropertyCreateInput struct {
 	FilterId               *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId                ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                   string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                  *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                  *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId                *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	PropertyDefinition     *IdentifierInput        `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`                       // The secondary key of the property that the check will verify (e.g. the specific custom property) (Optional)
 	PropertyValuePredicate *PredicateInput         `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"`               // The condition that should be satisfied by the service property value (Optional)
@@ -560,7 +560,7 @@ type CheckServicePropertyUpdateInput struct {
 	Id                     ID                       `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId                *Nullable[ID]            `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name                   *Nullable[string]        `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                  *Nullable[string]        `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                  *string                  `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId                *Nullable[ID]            `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	PropertyDefinition     *IdentifierInput         `json:"propertyDefinition,omitempty" yaml:"propertyDefinition,omitempty"`                           // The secondary key of the property that the check will verify (e.g. the specific custom property) (Optional)
 	PropertyValuePredicate *PredicateUpdateInput    `json:"propertyValuePredicate,omitempty" yaml:"propertyValuePredicate,omitempty"`                   // The condition that should be satisfied by the service property value (Optional)
@@ -575,7 +575,7 @@ type CheckTagDefinedCreateInput struct {
 	FilterId     *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId      ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name         string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes        *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes        *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId      *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	TagKey       string                  `json:"tagKey" yaml:"tagKey" example:"example_value"`                                           // The tag key where the tag predicate should be applied (Required)
 	TagPredicate *PredicateInput         `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                                   // The condition that should be satisfied by the tag value (Optional)
@@ -590,7 +590,7 @@ type CheckTagDefinedUpdateInput struct {
 	Id           ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId      *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name         *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes        *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes        *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId      *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	TagKey       *Nullable[string]       `json:"tagKey,omitempty" yaml:"tagKey,omitempty" example:"example_value"`                           // The tag key where the tag predicate should be applied (Optional)
 	TagPredicate *PredicateUpdateInput   `json:"tagPredicate,omitempty" yaml:"tagPredicate,omitempty"`                                       // The condition that should be satisfied by the tag value (Optional)
@@ -612,7 +612,7 @@ type CheckToolUsageCreateInput struct {
 	FilterId             *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId              ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                 string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes                *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
+	Notes                *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId              *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	ToolCategory         ToolCategory            `json:"toolCategory" yaml:"toolCategory" example:"admin"`                                       // The category that the tool belongs to (Required)
 	ToolNamePredicate    *PredicateInput         `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`                         // The condition that the tool name should satisfy to be evaluated (Optional)
@@ -629,7 +629,7 @@ type CheckToolUsageUpdateInput struct {
 	Id                   ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	LevelId              *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	Name                 *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	Notes                *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId              *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	ToolCategory         *ToolCategory           `json:"toolCategory,omitempty" yaml:"toolCategory,omitempty" example:"admin"`                       // The category that the tool belongs to (Optional)
 	ToolNamePredicate    *PredicateUpdateInput   `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`                             // The condition that the tool name should satisfy to be evaluated (Optional)

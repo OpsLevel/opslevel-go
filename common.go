@@ -30,6 +30,10 @@ func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
 	return pv
 }
 
+func NewString(value string) *string {
+	return &value
+}
+
 func NullString() *string {
 	var output *string
 	return output

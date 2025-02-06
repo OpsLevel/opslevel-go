@@ -19,6 +19,7 @@
     email,
     htmlUrl,
     name,
+    provisionedBy,
     role
   },
   memberships{
