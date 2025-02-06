@@ -316,21 +316,21 @@ type CheckPackageVersionCreateInput struct {
 
 // CheckPackageVersionUpdateInput Information about the package version check to be updated
 type CheckPackageVersionUpdateInput struct {
-	CategoryId                 *Nullable[ID]           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to (Optional)
-	EnableOn                   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled (Optional)
-	Enabled                    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not (Optional)
-	FilterId                   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to (Optional)
-	Id                         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
-	LevelId                    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
-	MissingPackageResult       *CheckResultStatusEnum  `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"failed"`      // The check result if the package isn't being used by a service (Optional)
-	Name                       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes                      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
-	OwnerId                    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
-	PackageConstraint          *PackageConstraintEnum  `json:"packageConstraint,omitempty" yaml:"packageConstraint,omitempty" example:"does_not_exist"`    // The package constraint the service is to be checked for (Optional)
-	PackageManager             *PackageManagerEnum     `json:"packageManager,omitempty" yaml:"packageManager,omitempty" example:"alpm"`                    // The package manager (ecosystem) this package relates to (Optional)
-	PackageName                *Nullable[string]       `json:"packageName,omitempty" yaml:"packageName,omitempty" example:"example_value"`                 // The name of the package to be checked (Optional)
-	PackageNameIsRegex         *Nullable[bool]         `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`           // Whether or not the value in the package name field is a regular expression (Optional)
-	VersionConstraintPredicate *PredicateUpdateInput   `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`           // The predicate that describes the version constraint the package must satisfy (Optional)
+	CategoryId                 *Nullable[ID]                    `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to (Optional)
+	EnableOn                   *Nullable[iso8601.Time]          `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled (Optional)
+	Enabled                    *Nullable[bool]                  `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not (Optional)
+	FilterId                   *Nullable[ID]                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to (Optional)
+	Id                         ID                               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
+	LevelId                    *Nullable[ID]                    `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
+	MissingPackageResult       *Nullable[CheckResultStatusEnum] `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"failed"`      // The check result if the package isn't being used by a service (Optional)
+	Name                       *Nullable[string]                `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
+	Notes                      *string                          `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
+	OwnerId                    *Nullable[ID]                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
+	PackageConstraint          *Nullable[PackageConstraintEnum] `json:"packageConstraint,omitempty" yaml:"packageConstraint,omitempty" example:"does_not_exist"`    // The package constraint the service is to be checked for (Optional)
+	PackageManager             *Nullable[PackageManagerEnum]    `json:"packageManager,omitempty" yaml:"packageManager,omitempty" example:"alpm"`                    // The package manager (ecosystem) this package relates to (Optional)
+	PackageName                *Nullable[string]                `json:"packageName,omitempty" yaml:"packageName,omitempty" example:"example_value"`                 // The name of the package to be checked (Optional)
+	PackageNameIsRegex         *Nullable[bool]                  `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`           // Whether or not the value in the package name field is a regular expression (Optional)
+	VersionConstraintPredicate *Nullable[PredicateUpdateInput]  `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`           // The predicate that describes the version constraint the package must satisfy (Optional)
 }
 
 // CheckRepositoryFileCreateInput Specifies the input fields used to create a repo file check
