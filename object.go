@@ -91,8 +91,8 @@ type ComponentType struct {
 
 // ComponentTypeIcon The icon for a component type
 type ComponentTypeIcon struct {
-	Color string // The color, represented as a hexcode, for the icon (Optional)
-	Name  string // The name of the icon in Phosphor icons for Vue, e.g. `PhBird`. See https://phosphoricons.com/ for a full list (Optional)
+	Color string                // The color, represented as a hexcode, for the icon (Optional)
+	Name  ComponentTypeIconEnum // The name of the icon in Phosphor icons for Vue, e.g. `PhBird`. See https://phosphoricons.com/ for a full list (Optional)
 }
 
 // ConfigError An error that occurred when syncing an opslevel.yml file
