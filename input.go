@@ -642,10 +642,17 @@ type CodeIssueResolutionTimeInput struct {
 	Value int                             `json:"value" yaml:"value" example:"3"` //  (Required)
 }
 
+// ComponentTypeIconInput The input for defining a component type's icon
+type ComponentTypeIconInput struct {
+	Color string                `json:"color" yaml:"color" example:"example_value"` // The color, represented as a hexcode, for the icon (Required)
+	Name  ComponentTypeIconEnum `json:"name" yaml:"name" example:"PhActivity"`      // The name of the icon in Phosphor icons for Vue, e.g. `PhBird`. See https://phosphoricons.com/ for a full list (Required)
+}
+
 // ComponentTypeInput Specifies the input fields used to create a component type
 type ComponentTypeInput struct {
 	Alias       *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
 	Description *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The unique alias of the component type (Optional)
+	Icon        *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
 	Name        *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)
 	Properties  *[]ComponentTypePropertyDefinitionInput `json:"properties,omitempty" yaml:"properties,omitempty" example:"[]"`              // A list of property definitions for the component type (Optional)
 }
