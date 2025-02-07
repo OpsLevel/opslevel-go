@@ -30,9 +30,18 @@ func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
 	return pv
 }
 
+func NewString(value string) *string {
+	return &value
+}
+
 func NullString() *string {
 	var output *string
 	return output
+}
+
+func NullOf[T NullableConstraint]() *Nullable[T] {
+	output := Nullable[T]{SetNull: true}
+	return &output
 }
 
 func RefOf[T NullableConstraint](value T) *Nullable[T] {

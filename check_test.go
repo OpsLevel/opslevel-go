@@ -44,7 +44,7 @@ var (
 		Enabled:  ol.RefOf(true),
 		Category: id,
 		Level:    id,
-		Notes:    ol.RefOf(checkNotes),
+		Notes:    ol.NewString(checkNotes),
 	}
 
 	checkUpdateInput = ol.CheckUpdateInput{
@@ -53,7 +53,7 @@ var (
 		Enabled:  ol.RefOf(true),
 		Category: ol.RefOf(id),
 		Level:    ol.RefOf(id),
-		Notes:    ol.RefOf(checkNotes),
+		Notes:    ol.NewString(checkNotes),
 	}
 )
 
@@ -1006,8 +1006,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = &ol.PackageManagerEnumCargo
-				input.VersionConstraintPredicate = predicateUpdateInput
+				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
+				input.VersionConstraintPredicate = ol.RefOf(*predicateUpdateInput)
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1022,8 +1022,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = &ol.PackageManagerEnumCargo
-				input.VersionConstraintPredicate = &ol.PredicateUpdateInput{}
+				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
+				input.VersionConstraintPredicate = ol.NullOf[ol.PredicateUpdateInput]()
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1073,7 +1073,7 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 		Enabled:    ol.RefOf(true),
 		LevelId:    ol.RefOf(id),
 		FilterId:   ol.NewNullOf[ol.ID](),
-		Notes:      ol.RefOf("Hello World Check"),
+		Notes:      ol.NewString("Hello World Check"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1094,7 +1094,7 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 		CategoryId: ol.RefOf(id),
 		Enabled:    ol.RefOf(true),
 		LevelId:    ol.RefOf(id),
-		Notes:      ol.RefOf(""),
+		Notes:      ol.NewString(""),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1166,7 +1166,7 @@ func TestJsonUnmarshalCreateCheckManual(t *testing.T) {
 }`
 	output := ol.CheckManualCreateInput{
 		Name:                  "Example",
-		Notes:                 ol.RefOf("Example Notes"),
+		Notes:                 ol.NewString("Example Notes"),
 		UpdateRequiresComment: false,
 	}
 	// Act
@@ -1195,7 +1195,7 @@ func TestJsonUnmarshalCreateCheckToolUsage(t *testing.T) {
 }`
 	output := ol.CheckToolUsageCreateInput{
 		Name:                 "Example",
-		Notes:                ol.RefOf("Example Notes"),
+		Notes:                ol.NewString("Example Notes"),
 		EnvironmentPredicate: &ol.PredicateInput{Type: ol.PredicateTypeEnumExists},
 		ToolNamePredicate: &ol.PredicateInput{
 			Type:  ol.PredicateTypeEnumContains,
@@ -1222,7 +1222,7 @@ func TestJsonUnmarshalUpdateCheckManual(t *testing.T) {
 }`
 	output := ol.CheckManualUpdateInput{
 		Name:                  ol.RefOf("Example"),
-		Notes:                 ol.RefOf("Example Notes"),
+		Notes:                 ol.NewString("Example Notes"),
 		UpdateRequiresComment: ol.RefOf(true),
 	}
 	// Act
@@ -1251,7 +1251,7 @@ func TestJsonUnmarshalUpdateCheckToolUsage(t *testing.T) {
 }`
 	output := ol.CheckToolUsageUpdateInput{
 		Name:                 ol.RefOf("Example"),
-		Notes:                ol.RefOf("Updated Notes"),
+		Notes:                ol.NewString("Updated Notes"),
 		EnvironmentPredicate: &ol.PredicateUpdateInput{Type: &ol.PredicateTypeEnumExists},
 		ToolNamePredicate: &ol.PredicateUpdateInput{
 			Type:  &ol.PredicateTypeEnumContains,

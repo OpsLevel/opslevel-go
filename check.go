@@ -91,7 +91,7 @@ type CheckCreateInput struct {
 	Filter   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
 	Level    ID                      `json:"levelId" yaml:"levelId" mapstructure:"levelId"`
 	Name     string                  `json:"name" yaml:"name" mapstructure:"name"`
-	Notes    *Nullable[string]       `json:"notes,omitempty" yaml:"notes,omitempty" mapstructure:"notes,omitempty"`
+	Notes    *string                 `json:"notes,omitempty" yaml:"notes,omitempty" mapstructure:"notes,omitempty"`
 	Owner    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
 }
 
@@ -115,7 +115,7 @@ type CheckUpdateInput struct {
 	Id       ID                      `json:"id" mapstructure:"id"`
 	Level    *Nullable[ID]           `json:"levelId,omitempty" mapstructure:"levelId,omitempty"`
 	Name     *Nullable[string]       `json:"name,omitempty" mapstructure:"name,omitempty"`
-	Notes    *Nullable[string]       `json:"notes,omitempty" mapstructure:"notes,omitempty"`
+	Notes    *string                 `json:"notes,omitempty" mapstructure:"notes,omitempty"`
 	Owner    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
 }
 

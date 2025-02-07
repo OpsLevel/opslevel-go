@@ -471,9 +471,10 @@ type UserId struct {
 // User A user is someone who belongs to an organization
 type User struct {
 	UserId
-	HtmlUrl string   // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
-	Name    string   // The user's full name (Required)
-	Role    UserRole // The user's assigned role (Optional)
+	HtmlUrl       string            // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
+	Name          string            // The user's full name (Required)
+	ProvisionedBy ProvisionedByEnum // What provisioned this user (Optional)
+	Role          UserRole          // The user's assigned role (Optional)
 }
 
 // Warning The warnings of the mutation

@@ -2967,6 +2967,34 @@ var AllPropertyOwnerTypeEnum = []string{
 	string(PropertyOwnerTypeEnumTeam),
 }
 
+// ProvisionedByEnum
+type ProvisionedByEnum string
+
+var (
+	ProvisionedByEnumAPICli          ProvisionedByEnum = "api_cli"          //
+	ProvisionedByEnumAPIOther        ProvisionedByEnum = "api_other"        //
+	ProvisionedByEnumAPITerraform    ProvisionedByEnum = "api_terraform"    //
+	ProvisionedByEnumBackstage       ProvisionedByEnum = "backstage"        //
+	ProvisionedByEnumIntegrationScim ProvisionedByEnum = "integration_scim" //
+	ProvisionedByEnumSsoOkta         ProvisionedByEnum = "sso_okta"         //
+	ProvisionedByEnumSsoOther        ProvisionedByEnum = "sso_other"        //
+	ProvisionedByEnumUnknown         ProvisionedByEnum = "unknown"          //
+	ProvisionedByEnumUser            ProvisionedByEnum = "user"             //
+)
+
+// All ProvisionedByEnum as []string
+var AllProvisionedByEnum = []string{
+	string(ProvisionedByEnumAPICli),
+	string(ProvisionedByEnumAPIOther),
+	string(ProvisionedByEnumAPITerraform),
+	string(ProvisionedByEnumBackstage),
+	string(ProvisionedByEnumIntegrationScim),
+	string(ProvisionedByEnumSsoOkta),
+	string(ProvisionedByEnumSsoOther),
+	string(ProvisionedByEnumUnknown),
+	string(ProvisionedByEnumUser),
+}
+
 // RelatedResourceRelationshipTypeEnum The type of the relationship between two resources
 type RelatedResourceRelationshipTypeEnum string
 
