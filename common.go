@@ -39,6 +39,11 @@ func NullString() *string {
 	return output
 }
 
+func NullOf[T NullableConstraint]() *Nullable[T] {
+	output := Nullable[T]{SetNull: true}
+	return &output
+}
+
 func RefOf[T NullableConstraint](value T) *Nullable[T] {
 	return NewNullableFrom(value)
 }

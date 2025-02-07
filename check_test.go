@@ -1006,8 +1006,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = &ol.PackageManagerEnumCargo
-				input.VersionConstraintPredicate = predicateUpdateInput
+				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
+				input.VersionConstraintPredicate = ol.RefOf(*predicateUpdateInput)
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1022,8 +1022,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
-				input.PackageManager = &ol.PackageManagerEnumCargo
-				input.VersionConstraintPredicate = &ol.PredicateUpdateInput{}
+				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
+				input.VersionConstraintPredicate = ol.NullOf[ol.PredicateUpdateInput]()
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
