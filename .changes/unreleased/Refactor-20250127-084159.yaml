@@ -1,4 +1,0 @@
-kind: Refactor
-body: 'BREAKING CHANGE: Struct ''GoogleCloudProject'' fields `ID` and `URL` are now
-  `Id` and `Url` respectively'
-time: 2025-01-27T08:41:59.292959-06:00

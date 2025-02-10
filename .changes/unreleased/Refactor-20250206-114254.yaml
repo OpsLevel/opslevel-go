@@ -1,4 +1,0 @@
-kind: Refactor
-body: 'BREAKING CHANGE: the `notes` field on check input types doesn''t support `null`
-  only `""` and `"filled"` values or not present.'
-time: 2025-02-06T11:42:54.981455-06:00

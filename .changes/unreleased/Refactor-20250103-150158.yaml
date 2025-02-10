@@ -1,3 +1,0 @@
-kind: Refactor
-body: "enums converted from consts to vars, e.g. opslevel.RefOf(opslevel.AlertSourceTypeEnumDatadog) should now be &opslevel.AlertSourceTypeEnumDatadog"
-time: 2025-01-03T15:01:58.276367-06:00

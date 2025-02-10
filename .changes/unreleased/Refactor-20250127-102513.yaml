@@ -1,3 +1,0 @@
-kind: Refactor
-body: Field 'ID' on struct 'Secret' has been renamed to 'Id' for consistency
-time: 2025-01-27T10:25:13.727106-06:00

@@ -1,3 +1,0 @@
-kind: Refactor
-body: convert enum consts into vars for easier pointer referencing
-time: 2025-01-03T11:25:44.967038-06:00
