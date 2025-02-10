@@ -15,7 +15,7 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client"
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 
 	"github.com/rs/zerolog"

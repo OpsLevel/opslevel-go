@@ -66,6 +66,8 @@ github.com/mitchellh/reflectwalk v1.0.2 h1:G2LzWKi524PWgd3mLHV8Y5k7s6XUvT0Gef6zx
 github.com/mitchellh/reflectwalk v1.0.2/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c h1:m4sNHcfkE02xZy1oxF2QVGfhHulamxw9UlzRM7c45QQ=
 github.com/opslevel/moredefaults v0.0.0-20240112142637-078c8ff8ba9c/go.mod h1:g2GSXVP6LO+5+AIsnMRPN+BeV86OXuFRTX7HXCDtYeI=
+github.com/opslevel/opslevel-go/v2025 v2024.12.24 h1:yqByehj/HBKcHV2xnZK9ozAhE+qQfXSWxtp6KLS1f9s=
+github.com/opslevel/opslevel-go/v2025 v2024.12.24/go.mod h1:cIwzFyu8HURaGdZKWtKn4pijsyYs8xP8uuDwqgohWgo=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
