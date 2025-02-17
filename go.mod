@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/go-playground/validator/v10 v10.24.0
+	github.com/go-playground/validator/v10 v10.25.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/gosimple/slug v1.15.0
 	github.com/hashicorp/go-retryablehttp v0.7.7
