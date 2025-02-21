@@ -48,7 +48,7 @@ client := opslevel.NewGQLClient(opslevel.SetAPIToken("XXX_API_TOKEN_XXX"))
 You can validate the client can successfully talk to the OpsLevel API.
 
 ```go
-client := opslevel.NewClient("XXX_API_TOKEN_XXX")
+client := opslevel.NewGQLClient(opslevel.SetAPIToken("XXX_API_TOKEN_XXX"))
 if err := client.Validate(); err != nil {
 	panic(err)
 }
@@ -59,7 +59,7 @@ Every resource (IE: service, lifecycle, tier, etc.) in OpsLevel API has a corres
 Find a service given an alias and print the owning team name:
 
 ```go
-foundService, foundServiceErr := client.GetServiceWithAlias("MyCoolService")
+foundService, foundServiceErr := client.GetService("MyCoolService")
 if foundServiceErr != nil {
 	panic(foundServiceErr)
 }
@@ -71,9 +71,9 @@ Create a new service in OpsLevel and print the ID:
 ```go
 serviceCreateInput := opslevel.ServiceCreateInput{
 	Name:        "MyCoolService",
-	Product:     "MyProduct",
-	Description: "The Coolest Service",
-	Language:    "go",
+	Description: opslevel.RefOf("The Coolest Service"),
+	Language:    opslevel.RefOf("go"),
+	OwnerAlias:  opslevel.RefOf("team-platform"),
 }
 newService, newServiceErr := client.CreateService(serviceCreateInput)
 if newServiceErr != nil {
@@ -85,7 +85,7 @@ fmt.Println(newService.Id)
 Assign the tag `{"hello": "world"}` to our newly created service and print all the tags currently on it:
 
 ```go
-allTagsOnThisService, assignTagsErr := client.AssignTags(newService.Id, map[string]string{"hello": "world"})
+allTagsOnThisService, assignTagsErr := client.AssignTags(string(newService.Id), map[string]string{"hello": "world"})
 if assignTagsErr != nil {
 	panic(assignTagsErr)
 }
@@ -97,7 +97,7 @@ for _, tagOnService := range allTagsOnThisService {
 List all the tags for a service:
 
 ```go
-myService, foundServiceErr := client.GetServiceWithAlias("MyCoolService")
+myService, foundServiceErr := client.GetService("MyCoolService")
 if foundServiceErr != nil {
 	panic(foundServiceErr)
 }
@@ -115,7 +115,7 @@ Build a lookup table of teams:
 ```go
 func GetTeams(client *opslevel.Client) (map[string]opslevel.Team, error) {
 	teams := make(map[string]opslevel.Team)
-	data, dataErr := client.ListTeams()
+	data, dataErr := client.ListTeams(nil)
 	if dataErr != nil {
 		return teams, dataErr
 	}
