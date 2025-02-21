@@ -33,7 +33,7 @@ Package `opslevel` provides an OpsLevel API client implementation.
 `opslevel` requires Go version 1.8 or later.
 
 ```bash
-go get -u github.com/opslevel/opslevel-go
+go get -u github.com/opslevel/opslevel-go/v2025
 ```
 
 # Usage
