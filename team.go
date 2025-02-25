@@ -20,7 +20,7 @@ type Team struct {
 	Contacts       []Contact
 
 	HTMLUrl          string
-	Manager          User
+	Manager          User // Deprecated: Use .GetMemberships() and Memberships field instead.
 	Memberships      *TeamMembershipConnection
 	Name             string
 	ParentTeam       TeamId
