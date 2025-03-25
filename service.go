@@ -12,6 +12,11 @@ type ServiceId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
+type ComponentType struct {
+	Id      ID       `json:"id"`
+	Aliases []string `json:"aliases,omitempty"`
+}
+
 // TODO: Lifecycle, TeamId, Tier should probably be pointers.
 type Service struct {
 	ApiDocumentPath string `json:"apiDocumentPath,omitempty"`
@@ -36,6 +41,7 @@ type Service struct {
 	Tier                       Tier                         `json:"tier,omitempty"`
 	Timestamps                 Timestamps                   `json:"timestamps"`
 	Tools                      *ToolConnection              `json:"tools,omitempty"`
+	Type                       *ComponentType               `json:"type,omitempty"`
 
 	Dependencies *ServiceDependenciesConnection `graphql:"-"`
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
