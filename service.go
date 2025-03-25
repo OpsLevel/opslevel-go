@@ -14,6 +14,7 @@ type ServiceId struct {
 
 type ComponentType struct {
 	Id      ID       `json:"id"`
+	Alias   string   `json:"alias,omitempty"`
 	Aliases []string `json:"aliases,omitempty"`
 }
 
