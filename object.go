@@ -23,6 +23,21 @@ type AlertSourceService struct {
 	Status      AlertSourceStatusTypeEnum // The status of the alert source (Required)
 }
 
+// ApprovalConfig Config for approval
+type ApprovalConfig struct {
+	ApprovalRequired bool   // Flag indicating approval is required (Required)
+	Teams            []Team // Teams that can approve (Required)
+	Users            []User // Users that can approve (Required)
+}
+
+// ApprovalResult The result details of an approvable resource being approved or denied
+type ApprovalResult struct {
+	Actor     Approver             // The actor that performed the approval/denial (Optional)
+	Comment   string               // The comment associated with the approval/denial (Optional)
+	DecidedAt iso8601.Time         // The time the resource was approved (Required)
+	Status    ApprovalDecisionEnum // The current decision status of the approval process (Required)
+}
+
 // AzureDevopsPermissionError
 type AzureDevopsPermissionError struct {
 	Name        string   // The name of the object that the error was encountered on (Required)
@@ -55,8 +70,9 @@ type CheckResult struct {
 
 // CheckStats Check stats shows a summary of check results
 type CheckStats struct {
-	TotalChecks        int // The number of existing checks for the resource (Required)
-	TotalPassingChecks int // The number of checks that are passing for the resource (Required)
+	PassingChecksPercentage float64 // The percentage of checks that are passing for the resource (Required)
+	TotalChecks             int     // The number of existing checks for the resource (Required)
+	TotalPassingChecks      int     // The number of checks that are passing for the resource (Required)
 }
 
 // CommonVulnerabilityEnumeration A category system for hardware and software weaknesses
@@ -158,6 +174,7 @@ type CustomActionsTriggerDefinition struct {
 	AccessControl          CustomActionsTriggerDefinitionAccessControlEnum // The set of users that should be able to use the trigger definition (Required)
 	Action                 CustomActionsId                                 // The action that would be triggered (Required)
 	Aliases                []string                                        // Any aliases for this trigger definition (Required)
+	ApprovalConfig         ApprovalConfig                                  // Configuration defining conditions of approval if it is required (Required)
 	Description            string                                          // The description of what the trigger definition will do, supports Markdown (Optional)
 	EntityType             CustomActionsEntityTypeEnum                     // The entity type associated with this trigger definition (Required)
 	Filter                 FilterId                                        // A filter defining which services this trigger definition applies to, if present (Optional)
@@ -173,6 +190,7 @@ type CustomActionsTriggerDefinition struct {
 // CustomActionsWebhookAction An external webhook action to be triggered by a custom action
 type CustomActionsWebhookAction struct {
 	Aliases        []string                    // Any aliases for this external action (Required)
+	Async          bool                        // Whether the action expects an additional, asynchronous response upon completion (Required)
 	Description    string                      // A description of what the action should accomplish (Optional)
 	Headers        JSON                        `scalar:"true"` // The headers sent along with the webhook, if any (Optional)
 	HttpMethod     CustomActionsHttpMethodEnum // The HTTP Method used to call the webhook action (Required)
@@ -339,6 +357,7 @@ type Scorecard struct {
 	Name                        string                  // Name of the scorecard (Required)
 	Owner                       EntityOwner             // The owner of this scorecard. Can currently either be a team or a group (Optional)
 	PassingChecks               int                     // The number of checks that are passing on this scorecard. A check executed against two services counts as two (Required)
+	PassingChecksPercentage     float64                 // The percentage of checks that are passing on this scorecard. A check executed against two services counts as two (Required)
 	ServiceCount                int                     // The number of services covered by this scorecard (Required)
 	ServicesReport              ScorecardServicesReport // Service stats regarding this scorecard (Optional)
 	Slug                        string                  // Slug of the scorecard (Required)
