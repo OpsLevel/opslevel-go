@@ -936,7 +936,7 @@ type ServiceCreateInput struct {
 	OwnerInput            *IdentifierInput `json:"ownerInput,omitempty" yaml:"owner,omitempty"`                                            // The owner for this service. (Optional.)
 	LifecycleAlias        *string          `json:"lifecycleAlias,omitempty" yaml:"lifecycle,omitempty" example:"example_alias"`            // The lifecycle stage of the service. (Optional.)
 	SkipAliasesValidation *bool            `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows for the creation of a service with invalid aliases. (Optional.)
-    Type                  *IdentifierInput `json:"type,omitempty" yaml:"type,omitempty"`                                                   // The type of the component. (Optional.)
+	Type                  *IdentifierInput `json:"type,omitempty" yaml:"type,omitempty"`                                                   // The type of the component. (Optional.)
 }
 
 // ServiceDeleteInput specifies the input fields used in the `serviceDelete` mutation.
