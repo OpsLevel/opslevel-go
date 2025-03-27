@@ -1,0 +1,3 @@
+kind: Feature
+body: Add error codes for different types of error to support better client error handling
+time: 2025-03-27T12:55:44.683709-05:00

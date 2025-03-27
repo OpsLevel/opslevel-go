@@ -253,7 +253,7 @@ func (client *Client) CreateTeam(input TeamCreateInput) (*Team, error) {
 	if err := m.Payload.Team.Hydrate(client); err != nil {
 		return &m.Payload.Team, err
 	}
-	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Team, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) AddMemberships(team *TeamId, memberships ...TeamMembershipUserInput) ([]TeamMembership, error) {
@@ -421,7 +421,7 @@ func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	if err := m.Payload.Team.Hydrate(client); err != nil {
 		return &m.Payload.Team, err
 	}
-	return &m.Payload.Team, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Team, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) UpdateContact(id ID, contact ContactInput) (*Contact, error) {
