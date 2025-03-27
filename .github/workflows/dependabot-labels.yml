@@ -7,5 +7,5 @@ on:
 
 jobs:
   dependabot-pr-label:
-    if: github.event.label.name == 'dependencies'
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'dependencies') }}
     uses: OpsLevel/actions/.github/workflows/dependabot_pr_labels.yml@main
