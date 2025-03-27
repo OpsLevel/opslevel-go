@@ -25,9 +25,9 @@ type AlertSourceService struct {
 
 // ApprovalConfig Config for approval
 type ApprovalConfig struct {
-	ApprovalRequired bool   // Flag indicating approval is required (Required)
-	Teams            []Team // Teams that can approve (Required)
-	Users            []User // Users that can approve (Required)
+	ApprovalRequired bool     // Flag indicating approval is required (Required)
+	Teams            []TeamId // Teams that can approve (Required)
+	Users            []UserId // Users that can approve (Required)
 }
 
 // ApprovalResult The result details of an approvable resource being approved or denied

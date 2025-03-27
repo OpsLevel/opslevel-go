@@ -35,7 +35,7 @@ type AliasDeleteInput struct {
 
 // ApprovalConfigInput Config for approval
 type ApprovalConfigInput struct {
-	ApprovalRequired *Nullable[bool]        `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
+	ApprovalRequired *bool                  `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
 	Teams            *[]IdentifierInput     `json:"teams,omitempty" yaml:"teams,omitempty" example:"[]"`                          // Teams that can approve (Optional)
 	Users            *[]UserIdentifierInput `json:"users,omitempty" yaml:"users,omitempty" example:"[]"`                          // Users that can approve (Optional)
 }
