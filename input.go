@@ -35,9 +35,9 @@ type AliasDeleteInput struct {
 
 // ApprovalConfigInput Config for approval
 type ApprovalConfigInput struct {
-	ApprovalRequired *bool                  `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
-	Teams            *[]IdentifierInput     `json:"teams,omitempty" yaml:"teams,omitempty" example:"[]"`                          // Teams that can approve (Optional)
-	Users            *[]UserIdentifierInput `json:"users,omitempty" yaml:"users,omitempty" example:"[]"`                          // Users that can approve (Optional)
+	ApprovalRequired *bool                 `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
+	Teams            []IdentifierInput     `json:"teams,omitempty" yaml:"teams,omitempty" example:"[]"`                          // Teams that can approve (Optional)
+	Users            []UserIdentifierInput `json:"users,omitempty" yaml:"users,omitempty" example:"[]"`                          // Users that can approve (Optional)
 }
 
 // AwsIntegrationInput Specifies the input fields used to create and update an AWS integration
@@ -746,7 +746,7 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 
 // CustomActionsWebhookActionCreateInput Specifies the input fields used in the `customActionsWebhookActionCreate` mutation
 type CustomActionsWebhookActionCreateInput struct {
-	Async          bool                        `json:"async" yaml:"async" example:"false"`                                                                                                                             // Whether the action expects an additional, asynchronous response upon completion (Required)
+	Async          *bool                       `json:"async,omitempty" yaml:"async,omitempty" example:"false"`                                                                                                         // Whether the action expects an additional, asynchronous response upon completion (Required)
 	Description    *Nullable[string]           `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                                                                                     // The description that gets assigned to the Webhook Action you're creating (Optional)
 	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered (Optional)
 	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" example:"DELETE"`                                                                                                                  // HTTP used when the Webhook is triggered. Either POST or PUT (Required)
