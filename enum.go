@@ -81,6 +81,20 @@ var AllApiDocumentSourceEnum = []string{
 	string(ApiDocumentSourceEnumPush),
 }
 
+// ApprovalDecisionEnum The set of possible outcomes for an approval decision
+type ApprovalDecisionEnum string
+
+var (
+	ApprovalDecisionEnumApproved ApprovalDecisionEnum = "APPROVED" //
+	ApprovalDecisionEnumDenied   ApprovalDecisionEnum = "DENIED"   //
+)
+
+// All ApprovalDecisionEnum as []string
+var AllApprovalDecisionEnum = []string{
+	string(ApprovalDecisionEnumApproved),
+	string(ApprovalDecisionEnumDenied),
+}
+
 // BasicTypeEnum Operations that can be used on filters
 type BasicTypeEnum string
 
@@ -2545,15 +2559,17 @@ var AllCustomActionsTriggerDefinitionAccessControlEnum = []string{
 type CustomActionsTriggerEventStatusEnum string
 
 var (
-	CustomActionsTriggerEventStatusEnumFailure CustomActionsTriggerEventStatusEnum = "FAILURE" // The action failed to complete
-	CustomActionsTriggerEventStatusEnumPending CustomActionsTriggerEventStatusEnum = "PENDING" // A result has not been determined
-	CustomActionsTriggerEventStatusEnumSuccess CustomActionsTriggerEventStatusEnum = "SUCCESS" // The action completed successfully
+	CustomActionsTriggerEventStatusEnumFailure         CustomActionsTriggerEventStatusEnum = "FAILURE"          // The action failed to complete
+	CustomActionsTriggerEventStatusEnumPending         CustomActionsTriggerEventStatusEnum = "PENDING"          // A result has not been determined
+	CustomActionsTriggerEventStatusEnumPendingApproval CustomActionsTriggerEventStatusEnum = "PENDING_APPROVAL" // The action is waiting for an approval before it executes
+	CustomActionsTriggerEventStatusEnumSuccess         CustomActionsTriggerEventStatusEnum = "SUCCESS"          // The action completed successfully
 )
 
 // All CustomActionsTriggerEventStatusEnum as []string
 var AllCustomActionsTriggerEventStatusEnum = []string{
 	string(CustomActionsTriggerEventStatusEnumFailure),
 	string(CustomActionsTriggerEventStatusEnumPending),
+	string(CustomActionsTriggerEventStatusEnumPendingApproval),
 	string(CustomActionsTriggerEventStatusEnumSuccess),
 }
 
@@ -2579,6 +2595,28 @@ var AllDayOfWeekEnum = []string{
 	string(DayOfWeekEnumThursday),
 	string(DayOfWeekEnumTuesday),
 	string(DayOfWeekEnumWednesday),
+}
+
+// DeployStatusEnum The possible statuses of a deploy
+type DeployStatusEnum string
+
+var (
+	DeployStatusEnumCanceled DeployStatusEnum = "canceled"  // The deploy was canceled
+	DeployStatusEnumFailure  DeployStatusEnum = "failure"   // The deploy failed
+	DeployStatusEnumNoStatus DeployStatusEnum = "no_status" // The deploy has no recognized status
+	DeployStatusEnumQueued   DeployStatusEnum = "queued"    // The deploy is queued
+	DeployStatusEnumRunning  DeployStatusEnum = "running"   // The deploy is currently running
+	DeployStatusEnumSuccess  DeployStatusEnum = "success"   // The deploy was successful
+)
+
+// All DeployStatusEnum as []string
+var AllDeployStatusEnum = []string{
+	string(DeployStatusEnumCanceled),
+	string(DeployStatusEnumFailure),
+	string(DeployStatusEnumNoStatus),
+	string(DeployStatusEnumQueued),
+	string(DeployStatusEnumRunning),
+	string(DeployStatusEnumSuccess),
 }
 
 // EventIntegrationEnum The type of event integration
@@ -2925,12 +2963,12 @@ var AllPropertyDefinitionDisplayTypeEnum = []string{
 	string(PropertyDefinitionDisplayTypeEnumText),
 }
 
-// PropertyDisplayStatusEnum The display status of a custom property on service pages
+// PropertyDisplayStatusEnum The UI display status of a custom property
 type PropertyDisplayStatusEnum string
 
 var (
-	PropertyDisplayStatusEnumHidden  PropertyDisplayStatusEnum = "hidden"  // The property is not shown on the service page
-	PropertyDisplayStatusEnumVisible PropertyDisplayStatusEnum = "visible" // The property is shown on the service page
+	PropertyDisplayStatusEnumHidden  PropertyDisplayStatusEnum = "hidden"  // The property is not shown on resource pages
+	PropertyDisplayStatusEnumVisible PropertyDisplayStatusEnum = "visible" // The property is shown on resource pages
 )
 
 // All PropertyDisplayStatusEnum as []string
