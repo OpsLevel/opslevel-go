@@ -59,7 +59,7 @@ func HasAPIErrors(errs []Error) error {
 		message += fmt.Sprintf("\n\t- '%s' %s", strings.Join(e.Path, "."), e.Message)
 	}
 
-	return NewClientError(ErrorAPIError, fmt.Errorf(message))
+	return NewClientError(ErrorAPIError, errors.New(message))
 }
 
 func IsResourceFound(resource any) error {
