@@ -22,9 +22,9 @@ type ClientError struct {
 	ErrorCode ErrorCode
 }
 
-func NewClientError(code ErrorCode, message string, args ...any) error {
+func NewClientError(code ErrorCode, err error) error {
 	return &ClientError{
-		error:     fmt.Errorf(message, args...),
+		error:     err,
 		ErrorCode: code,
 	}
 }
@@ -35,7 +35,7 @@ func HandleErrors(opts ...any) error {
 		switch v := opt.(type) {
 		case error:
 			if !IsOpsLevelApiError(v) {
-				output = errors.Join(output, NewClientError(ErrorRequestError, v.Error()))
+				output = errors.Join(output, NewClientError(ErrorRequestError, v))
 			} else {
 				output = errors.Join(output, v)
 			}
@@ -59,16 +59,16 @@ func HasAPIErrors(errs []Error) error {
 		message += fmt.Sprintf("\n\t- '%s' %s", strings.Join(e.Path, "."), e.Message)
 	}
 
-	return NewClientError(ErrorAPIError, message)
+	return NewClientError(ErrorAPIError, fmt.Errorf(message))
 }
 
 func IsResourceFound(resource any) error {
 	// TODO: Also Check if ID is valid somehow `.Id == ""`
 	if resource == nil {
-		return NewClientError(ErrorResourceNotFound, "resource '%T' not found", resource)
+		return NewClientError(ErrorResourceNotFound, fmt.Errorf("resource '%T' not found", resource))
 	}
 	if casted, ok := resource.(Identifiable); ok && casted.GetID() == "" {
-		return NewClientError(ErrorResourceNotFound, "resource '%T' not found", resource)
+		return NewClientError(ErrorResourceNotFound, fmt.Errorf("resource '%T' not found", resource))
 	}
 	return nil
 }

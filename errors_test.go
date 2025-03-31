@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"fmt"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2025"
@@ -41,8 +42,8 @@ func TestHasAPIErrorsNoPath(t *testing.T) {
 
 func TestIsResourceFoundError(t *testing.T) {
 	// Arrange
-	err1 := ol.NewClientError(ol.ErrorResourceNotFound, "resource 'Example' not found")
-	err2 := ol.NewClientError(ol.ErrorAPIError, "resource 'Example' not found")
+	err1 := ol.NewClientError(ol.ErrorResourceNotFound, fmt.Errorf("resource 'Example' not found"))
+	err2 := ol.NewClientError(ol.ErrorAPIError, fmt.Errorf("resource 'Example' not found"))
 	// Act
 	// Assert
 	autopilot.Equals(t, true, ol.ErrIs(err1, ol.ErrorResourceNotFound))
