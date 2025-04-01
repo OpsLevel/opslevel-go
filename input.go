@@ -35,9 +35,9 @@ type AliasDeleteInput struct {
 
 // ApprovalConfigInput Config for approval
 type ApprovalConfigInput struct {
-	ApprovalRequired *bool                 `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
-	Teams            []IdentifierInput     `json:"teams,omitempty" yaml:"teams,omitempty" example:"[]"`                          // Teams that can approve (Optional)
-	Users            []UserIdentifierInput `json:"users,omitempty" yaml:"users,omitempty" example:"[]"`                          // Users that can approve (Optional)
+	ApprovalRequired *bool                            `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
+	Teams            *Nullable[[]IdentifierInput]     `json:"teams,omitempty" yaml:"teams,omitempty" example:"[]"`                          // Teams that can approve (Optional)
+	Users            *Nullable[[]UserIdentifierInput] `json:"users,omitempty" yaml:"users,omitempty" example:"[]"`                          // Users that can approve (Optional)
 }
 
 // AwsIntegrationInput Specifies the input fields used to create and update an AWS integration
