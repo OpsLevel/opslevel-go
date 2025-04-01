@@ -321,7 +321,7 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	if err := m.Payload.Service.Hydrate(client); err != nil {
 		return &m.Payload.Service, err
 	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Service, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
@@ -723,7 +723,7 @@ func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) 
 	if err := m.Payload.Service.Hydrate(client); err != nil {
 		return &m.Payload.Service, err
 	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Service, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service, error) {
@@ -738,7 +738,7 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 		return nil, err
 	}
 
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Service, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) DeleteService(identifier string) error {

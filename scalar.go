@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+type Identifiable interface {
+	GetID() ID
+}
+
 type ID string
 
 func NewID(id ...string) *ID {
@@ -30,6 +34,10 @@ func (id *ID) MarshalJSON() ([]byte, error) {
 type Identifier struct {
 	Id      ID       `graphql:"id" json:"id"`
 	Aliases []string `graphql:"aliases" json:"aliases"`
+}
+
+func (s Identifier) GetID() ID {
+	return s.Id
 }
 
 func (identifierInput IdentifierInput) MarshalJSON() ([]byte, error) {

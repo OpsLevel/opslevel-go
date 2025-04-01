@@ -1,13 +1,9 @@
 package opslevel
 
 import (
-	"errors"
-	"fmt"
 	"slices"
-	"strings"
 	"time"
 
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -50,43 +46,6 @@ func RefOf[T NullableConstraint](value T) *Nullable[T] {
 
 func RefTo[T NullableConstraint](value T) *Nullable[T] {
 	return NewNullableFrom(value)
-}
-
-func HandleErrors(err error, errs []Error) error {
-	if err != nil {
-		return err
-	}
-	return FormatErrors(errs)
-}
-
-func FormatErrors(errs []Error) error {
-	if len(errs) == 0 {
-		return nil
-	}
-
-	allErrors := fmt.Errorf("OpsLevel API Errors:")
-	for _, err := range errs {
-		if len(err.Path) == 1 && err.Path[0] == "base" {
-			err.Path[0] = ""
-		}
-		newErr := fmt.Errorf("\t- '%s' %s", strings.Join(err.Path, "."), err.Message)
-		allErrors = errors.Join(allErrors, newErr)
-	}
-
-	return allErrors
-}
-
-// IsOpsLevelApiError checks if the error is returned by OpsLevel's API
-func IsOpsLevelApiError(err error) bool {
-	if _, ok := err.(graphql.Errors); !ok {
-		return false
-	}
-	for _, hasuraErr := range err.(graphql.Errors) {
-		if len(hasuraErr.Path) > 0 {
-			return true
-		}
-	}
-	return false
 }
 
 func NewISO8601Date(datetime string) iso8601.Time {

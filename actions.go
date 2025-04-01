@@ -1,6 +1,7 @@
 package opslevel
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -51,7 +52,7 @@ type CustomActionsExternalActionsConnection struct {
 type CustomActionsTriggerDefinitionsConnection struct {
 	Nodes      []CustomActionsTriggerDefinition
 	PageInfo   PageInfo
-	TotalCount int
+	TotalCount int `graphql:"-"`
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
@@ -65,7 +66,7 @@ func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreate
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("WebhookActionCreate"))
-	return &m.Payload.WebhookAction, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.WebhookAction, errors.Join(err, HasAPIErrors(m.Payload.Errors))
 }
 
 func (client *Client) GetCustomAction(input string) (*CustomActionsExternalAction, error) {
@@ -78,10 +79,7 @@ func (client *Client) GetCustomAction(input string) (*CustomActionsExternalActio
 		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("ExternalActionGet"))
-	if q.Account.Action.CustomActionsId.Id == "" {
-		err = fmt.Errorf("CustomActionsExternalAction with ID or Alias matching '%s' not found", input)
-	}
-	return &q.Account.Action, HandleErrors(err, nil)
+	return &q.Account.Action, HandleErrors(err, IsResourceFound(&q.Account.Action.CustomActionsId))
 }
 
 func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomActionsExternalActionsConnection, error) {
@@ -160,10 +158,7 @@ func (client *Client) GetTriggerDefinition(input string) (*CustomActionsTriggerD
 		"input": *NewIdentifier(input),
 	}
 	err := client.Query(&q, v, WithName("TriggerDefinitionGet"))
-	if q.Account.Definition.Id == "" {
-		err = fmt.Errorf("CustomActionsTriggerDefinition with ID or Alias matching '%s' not found", input)
-	}
-	return &q.Account.Definition, HandleErrors(err, nil)
+	return &q.Account.Definition, errors.Join(err, IsResourceFound(&q.Account.Definition))
 }
 
 func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*CustomActionsTriggerDefinitionsConnection, error) {
@@ -176,19 +171,20 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*Cust
 		variables = client.InitialPageVariablesPointer()
 	}
 	if err := client.Query(&q, *variables, WithName("TriggerDefinitionList")); err != nil {
-		return nil, err
+		return nil, HandleErrors(err)
 	}
+	q.Account.Definitions.TotalCount = len(q.Account.Definitions.Nodes)
 	for q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListTriggerDefinitions(variables)
 		if err != nil {
-			return nil, err
+			return &q.Account.Definitions, HandleErrors(err)
 		}
 		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
 		q.Account.Definitions.PageInfo = resp.PageInfo
 		q.Account.Definitions.TotalCount += resp.TotalCount
 	}
-	return &q.Account.Definitions, nil
+	return &q.Account.Definitions, HandleErrors(IsResourceFound(&q.Account.Definitions))
 }
 
 func (client *Client) UpdateTriggerDefinition(input CustomActionsTriggerDefinitionUpdateInput) (*CustomActionsTriggerDefinition, error) {
