@@ -32,7 +32,7 @@ type ApprovalConfig struct {
 
 // ApprovalResult The result details of an approvable resource being approved or denied
 type ApprovalResult struct {
-	Actor     Approver             // The actor that performed the approval/denial (Optional)
+	Actor     *Approver            // The actor that performed the approval/denial (Optional)
 	Comment   string               // The comment associated with the approval/denial (Optional)
 	DecidedAt iso8601.Time         // The time the resource was approved (Required)
 	Status    ApprovalDecisionEnum // The current decision status of the approval process (Required)
