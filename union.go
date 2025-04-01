@@ -2,6 +2,11 @@
 
 package opslevel
 
+// Approver The actor responsible for the approval/denial of an approvable resource.
+type Approver struct {
+	User UserId `graphql:"... on User"`
+}
+
 // CheckOwner represents the owner a check can belong to.
 type CheckOwner struct {
 	Team TeamId `graphql:"... on Team"`

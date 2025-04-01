@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2025"
@@ -374,4 +375,19 @@ func TestListExtendedTeamAccess(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "example", result[0].Alias)
 	autopilot.Equals(t, id1, result[0].TeamId.Id)
+}
+
+func TestApprovalConfigInput(t *testing.T) {
+	// Arrange
+	v1 := ol.ApprovalConfigInput{}
+	v2 := ol.ApprovalConfigInput{Teams: &[]ol.IdentifierInput{}}
+	// Act
+	j1, err1 := json.Marshal(v1)
+	j2, err2 := json.Marshal(v2)
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Ok(t, err2)
+	autopilot.Equals(t, `{}`, string(j1))
+	autopilot.Equals(t, `{"teams":[]}`, string(j2))
+	// Assert
 }

@@ -33,6 +33,13 @@ type AliasDeleteInput struct {
 	OwnerType AliasOwnerTypeEnum `json:"ownerType" yaml:"ownerType" example:"domain"` // The resource the alias you wish to delete belongs to (Required)
 }
 
+// ApprovalConfigInput Config for approval
+type ApprovalConfigInput struct {
+	ApprovalRequired *bool                  `json:"approvalRequired,omitempty" yaml:"approvalRequired,omitempty" example:"false"` // Flag indicating approval is required (Optional)
+	Teams            *[]IdentifierInput     `json:"teams,omitempty" yaml:"teams,omitempty" example:"[]"`                          // Teams that can approve (Optional)
+	Users            *[]UserIdentifierInput `json:"users,omitempty" yaml:"users,omitempty" example:"[]"`                          // Users that can approve (Optional)
+}
+
 // AwsIntegrationInput Specifies the input fields used to create and update an AWS integration
 type AwsIntegrationInput struct {
 	AwsTagsOverrideOwnership *Nullable[bool]     `json:"awsTagsOverrideOwnership,omitempty" yaml:"awsTagsOverrideOwnership,omitempty" example:"false"`    // Allow tags imported from AWS to override ownership set in OpsLevel directly (Optional)
@@ -651,7 +658,7 @@ type ComponentTypeIconInput struct {
 // ComponentTypeInput Specifies the input fields used to create a component type
 type ComponentTypeInput struct {
 	Alias       *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
-	Description *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The unique alias of the component type (Optional)
+	Description *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the component type (Optional)
 	Icon        *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
 	Name        *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)
 	Properties  *[]ComponentTypePropertyDefinitionInput `json:"properties,omitempty" yaml:"properties,omitempty" example:"[]"`              // A list of property definitions for the component type (Optional)
@@ -664,7 +671,7 @@ type ComponentTypePropertyDefinitionInput struct {
 	Description           string                    `json:"description" yaml:"description" example:"example_value"`                   // The description of the property definition (Required)
 	LockedStatus          *PropertyLockedStatusEnum `json:"lockedStatus,omitempty" yaml:"lockedStatus,omitempty" example:"ui_locked"` // Restricts what sources are able to assign values to this property (Optional)
 	Name                  string                    `json:"name" yaml:"name" example:"example_value"`                                 // The name of the property definition (Required)
-	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus" yaml:"propertyDisplayStatus" example:"hidden"`      // The display status of the custom property on service pages (Required)
+	PropertyDisplayStatus PropertyDisplayStatusEnum `json:"propertyDisplayStatus" yaml:"propertyDisplayStatus" example:"hidden"`      // The UI display status of the custom property (Required)
 	Schema                JSONSchema                `json:"schema" yaml:"schema" example:"SCHEMA_TBD"`                                // The schema of the property definition (Required)
 }
 
@@ -707,9 +714,10 @@ type ContactUpdateInput struct {
 type CustomActionsTriggerDefinitionCreateInput struct {
 	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" example:"admins"`                          // The set of users that should be able to use the trigger definition (Optional)
 	ActionId               *Nullable[ID]                                    `json:"actionId,omitempty" yaml:"actionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The action that will be triggered by the Trigger Definition (Optional)
+	ApprovalConfig         *ApprovalConfigInput                             `json:"approvalConfig,omitempty" yaml:"approvalConfig,omitempty"`                                         // Config for approval of action (Optional)
 	Description            *Nullable[string]                                `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                       // The description of what the Trigger Definition will do, supports Markdown (Optional)
-	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty" example:"GLOBAL"`                                // The entity type to associate with the Trigger Definition (Optional)
 	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" example:"[]"`                    // The set of additional teams who can invoke this Trigger Definition (Optional)
+	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty" example:"GLOBAL"`                                // The entity type to associate with the Trigger Definition (Optional Default: SERVICE)
 	FilterId               *Nullable[ID]                                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The filter that will determine which services apply to the Trigger Definition (Optional)
 	ManualInputsDefinition *Nullable[string]                                `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty" example:"example_value"` // The YAML definition of custom inputs for the Trigger Definition (Optional)
 	Name                   string                                           `json:"name" yaml:"name" example:"example_value"`                                                         // The name of the Trigger Definition (Required)
@@ -723,9 +731,10 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	AccessControl          *CustomActionsTriggerDefinitionAccessControlEnum `json:"accessControl,omitempty" yaml:"accessControl,omitempty" example:"admins"`                          // The set of users that should be able to use the trigger definition (Optional)
 	Action                 *CustomActionsWebhookActionUpdateInput           `json:"action,omitempty" yaml:"action,omitempty"`                                                         // The details for the action to update for the Trigger Definition (Optional)
 	ActionId               *Nullable[ID]                                    `json:"actionId,omitempty" yaml:"actionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The action that will be triggered by the Trigger Definition (Optional)
+	ApprovalConfig         *ApprovalConfigInput                             `json:"approvalConfig,omitempty" yaml:"approvalConfig,omitempty"`                                         // Config for approval of action (Optional)
 	Description            *Nullable[string]                                `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                       // The description of what the Trigger Definition will do, support Markdown (Optional)
-	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty" example:"GLOBAL"`                                // The entity type to associate with the Trigger Definition (Optional)
 	ExtendedTeamAccess     *[]IdentifierInput                               `json:"extendedTeamAccess,omitempty" yaml:"extendedTeamAccess,omitempty" example:"[]"`                    // The set of additional teams who can invoke this Trigger Definition (Optional)
+	EntityType             *CustomActionsEntityTypeEnum                     `json:"entityType,omitempty" yaml:"entityType,omitempty" example:"GLOBAL"`                                // The entity type to associate with the Trigger Definition (Optional Default: SERVICE)
 	FilterId               *Nullable[ID]                                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The filter that will determine which services apply to the Trigger Definition (Optional)
 	Id                     ID                                               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                           // The ID of the trigger definition (Required)
 	ManualInputsDefinition *Nullable[string]                                `json:"manualInputsDefinition,omitempty" yaml:"manualInputsDefinition,omitempty" example:"example_value"` // The YAML definition of custom inputs for the Trigger Definition (Optional)
@@ -737,6 +746,7 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 
 // CustomActionsWebhookActionCreateInput Specifies the input fields used in the `customActionsWebhookActionCreate` mutation
 type CustomActionsWebhookActionCreateInput struct {
+	Async          *bool                       `json:"async,omitempty" yaml:"async,omitempty" example:"false"`                                                                                                         // Whether the action expects an additional, asynchronous response upon completion (Required Default: false)
 	Description    *Nullable[string]           `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                                                                                     // The description that gets assigned to the Webhook Action you're creating (Optional)
 	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered (Optional)
 	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" example:"DELETE"`                                                                                                                  // HTTP used when the Webhook is triggered. Either POST or PUT (Required)
@@ -747,6 +757,7 @@ type CustomActionsWebhookActionCreateInput struct {
 
 // CustomActionsWebhookActionUpdateInput Inputs that specify the details of a Webhook Action you wish to update
 type CustomActionsWebhookActionUpdateInput struct {
+	Async          *bool                        `json:"async,omitempty" yaml:"async,omitempty" example:"false"`                                                                                                         // Whether the action expects an additional, asynchronous response upon completion (Optional)
 	Description    *Nullable[string]            `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                                                                                     // The description that gets assigned to the Webhook Action you're creating (Optional)
 	Headers        *JSON                        `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered (Optional)
 	HttpMethod     *CustomActionsHttpMethodEnum `json:"httpMethod,omitempty" yaml:"httpMethod,omitempty" example:"DELETE"`                                                                                              // HTTP used when the Webhook is triggered. Either POST or PUT (Optional)
@@ -934,7 +945,7 @@ type PropertyDefinitionInput struct {
 	Description           *Nullable[string]          `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`              // The description of the property definition (Optional)
 	LockedStatus          *PropertyLockedStatusEnum  `json:"lockedStatus,omitempty" yaml:"lockedStatus,omitempty" example:"ui_locked"`                // Restricts what sources are able to assign values to this property (Optional)
 	Name                  *Nullable[string]          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                            // The name of the property definition (Optional)
-	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"hidden"` // The display status of the custom property on service pages (Optional)
+	PropertyDisplayStatus *PropertyDisplayStatusEnum `json:"propertyDisplayStatus,omitempty" yaml:"propertyDisplayStatus,omitempty" example:"hidden"` // The UI display status of the custom property (Optional)
 	Schema                *JSONSchema                `json:"schema,omitempty" yaml:"schema,omitempty" example:"SCHEMA_TBD"`                           // The schema of the property definition (Optional)
 }
 
