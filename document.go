@@ -17,6 +17,12 @@ type ServiceDocumentContent struct {
 	Content string `graphql:"content" json:"content,omitempty"`
 }
 
+type ServiceDocumentsContentConnection struct {
+	Nodes      []ServiceDocumentContent
+	PageInfo   PageInfo
+	TotalCount int `graphql:"-"`
+}
+
 func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource *ApiDocumentSourceEnum) (*Service, error) {
 	var m struct {
 		Payload struct {
@@ -34,4 +40,22 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	}
 	err := client.Mutate(&m, v, WithName("ServiceApiDocSettingsUpdate"))
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) ServiceDocumentSearch(service string, searchTerm string, docType *DocumentTypeEnum, hidden *bool) ([]ServiceDocumentContent, error) {
+	var m struct {
+		Payload struct {
+			Service struct {
+				Documents ServiceDocumentsContentConnection `graphql:"documents(searchTerm: $searchTerm, type: $type, hidden: $hidden)"`
+			}
+		} `graphql:"service(service: $service)"`
+	}
+	v := PayloadVariables{
+		"service":    *NewIdentifier(service),
+		"searchTerm": &searchTerm,
+		"type":       docType,
+		"hidden":     hidden,
+	}
+	err := client.Query(&m, v, WithName("ServiceDocumentSearch"))
+	return m.Payload.Service.Documents.Nodes, err
 }
