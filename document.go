@@ -42,7 +42,7 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) ServiceDocumentSearch(service string, searchTerm string, docType *DocumentTypeEnum, hidden *bool) ([]ServiceDocumentContent, error) {
+func (client *Client) ServiceDocumentSearch(service string, searchTerm string, docType *HasDocumentationTypeEnum, hidden *bool) ([]ServiceDocumentContent, error) {
 	var m struct {
 		Payload struct {
 			Service struct {
