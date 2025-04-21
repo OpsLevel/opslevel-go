@@ -11,8 +11,9 @@ import (
 )
 
 type Client struct {
-	pageSize int
-	client   *graphql.Client
+	pageSize       int
+	client         *graphql.Client
+	defaultContext context.Context
 }
 
 func NewGQLClient(options ...Option) *Client {
@@ -40,8 +41,9 @@ func NewGQLClient(options ...Option) *Client {
 		})
 
 	return &Client{
-		pageSize: settings.pageSize,
-		client:   graphql.NewClient(url, standardClient).WithRequestModifier(modifier),
+		pageSize:       settings.pageSize,
+		client:         graphql.NewClient(url, standardClient).WithRequestModifier(modifier),
+		defaultContext: context.Background(),
 	}
 }
 
@@ -60,8 +62,16 @@ func (client *Client) InitialPageVariablesPointer() *PayloadVariables {
 	return &v
 }
 
+func (client *Client) SetCtx(ctx context.Context) {
+	client.defaultContext = ctx
+}
+
+func (client *Client) ResetCtx() {
+	client.defaultContext = context.Background()
+}
+
 func (client *Client) Query(q interface{}, variables map[string]interface{}, options ...graphql.Option) error {
-	return client.QueryCTX(context.Background(), q, variables, options...)
+	return client.QueryCTX(client.defaultContext, q, variables, options...)
 }
 
 func (client *Client) QueryCTX(ctx context.Context, q interface{}, variables map[string]interface{}, options ...graphql.Option) error {
@@ -69,7 +79,7 @@ func (client *Client) QueryCTX(ctx context.Context, q interface{}, variables map
 }
 
 func (client *Client) Mutate(m interface{}, variables map[string]interface{}, options ...graphql.Option) error {
-	return client.MutateCTX(context.Background(), m, variables, options...)
+	return client.MutateCTX(client.defaultContext, m, variables, options...)
 }
 
 func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables map[string]interface{}, options ...graphql.Option) error {
@@ -77,7 +87,7 @@ func (client *Client) MutateCTX(ctx context.Context, m interface{}, variables ma
 }
 
 func (client *Client) ExecRaw(q string, variables map[string]interface{}, options ...graphql.Option) ([]byte, error) {
-	return client.ExecRawCTX(context.Background(), q, variables, options...)
+	return client.ExecRawCTX(client.defaultContext, q, variables, options...)
 }
 
 func (client *Client) ExecRawCTX(ctx context.Context, q string, variables map[string]interface{}, options ...graphql.Option) ([]byte, error) {
