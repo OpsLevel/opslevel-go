@@ -42,20 +42,40 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) ServiceDocumentSearch(service string, searchTerm string, docType *HasDocumentationTypeEnum, hidden *bool) ([]ServiceDocumentContent, error) {
-	var m struct {
-		Payload struct {
-			Service struct {
-				Documents ServiceDocumentsContentConnection `graphql:"documents(searchTerm: $searchTerm, type: $type, hidden: $hidden)"`
-			}
-		} `graphql:"service(service: $service)"`
-	}
-	v := PayloadVariables{
-		"service":    *NewIdentifier(service),
-		"searchTerm": &searchTerm,
-		"type":       docType,
-		"hidden":     hidden,
-	}
-	err := client.Query(&m, v, WithName("ServiceDocumentSearch"))
-	return m.Payload.Service.Documents.Nodes, err
+type Document struct {
+	Id ID `graphql:"id" json:"id"`
 }
+
+type DocumentsConnection struct {
+	Nodes []Document
+}
+
+func (client *Client) DocumentSearch(searchTerm string) ([]Document, error) {
+	var q struct {
+		Account struct {
+			Documents DocumentsConnection `graphql:"documents(searchTerm: $searchTerm)"`
+		}
+	}
+
+	v := PayloadVariables{
+		"searchTerm": &searchTerm,
+	}
+	err := client.Query(&q, v, WithName("DocumentSearch"))
+	return q.Account.Documents.Nodes, err
+}
+
+// func (client *Client) ServiceDocumentSearch(searchTerm string) ([]Document, error) {
+// 	var q struct {
+// 		Account struct {
+// 			Services struct {
+// 				Documents DocumentsConnection `graphql:"documents(searchTerm: $searchTerm)"`
+// 			}
+// 		}
+// 	}
+
+// 	v := PayloadVariables{
+// 		"searchTerm": &searchTerm,
+// 	}
+// 	err := client.Query(&q, v, WithName("ServiceDocumentSearch"))
+// 	return q.Account.Services.Nodes, err
+// }
