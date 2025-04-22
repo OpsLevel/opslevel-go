@@ -287,7 +287,7 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 	var q struct {
 		Account struct {
 			Service struct {
-				Documents ServiceDocumentsConnection `graphql:"documents(after: $after, first: $first)"`
+				Documents ServiceDocumentsConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}

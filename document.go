@@ -42,15 +42,11 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }
 
-type Document struct {
-	Id ID `graphql:"id" json:"id"`
-}
-
 type DocumentsConnection struct {
-	Nodes []Document
+	Nodes []ServiceDocument
 }
 
-func (client *Client) DocumentSearch(searchTerm string) ([]Document, error) {
+func (client *Client) DocumentSearch(searchTerm string) (*DocumentsConnection, error) {
 	var q struct {
 		Account struct {
 			Documents DocumentsConnection `graphql:"documents(searchTerm: $searchTerm)"`
@@ -61,21 +57,5 @@ func (client *Client) DocumentSearch(searchTerm string) ([]Document, error) {
 		"searchTerm": &searchTerm,
 	}
 	err := client.Query(&q, v, WithName("DocumentSearch"))
-	return q.Account.Documents.Nodes, err
+	return &q.Account.Documents, err
 }
-
-// func (client *Client) ServiceDocumentSearch(searchTerm string) ([]Document, error) {
-// 	var q struct {
-// 		Account struct {
-// 			Services struct {
-// 				Documents DocumentsConnection `graphql:"documents(searchTerm: $searchTerm)"`
-// 			}
-// 		}
-// 	}
-
-// 	v := PayloadVariables{
-// 		"searchTerm": &searchTerm,
-// 	}
-// 	err := client.Query(&q, v, WithName("ServiceDocumentSearch"))
-// 	return q.Account.Services.Nodes, err
-// }
