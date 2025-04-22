@@ -11,6 +11,10 @@ type UserConnection struct {
 	TotalCount int
 }
 
+func (s *UserConnection) GetNodes() any {
+	return s.Nodes
+}
+
 func (user *User) ResourceId() ID {
 	return user.Id
 }

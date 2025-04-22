@@ -12,6 +12,10 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+func (s *DomainConnection) GetNodes() any {
+	return s.Nodes
+}
+
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (d *Domain) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}

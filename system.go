@@ -12,6 +12,10 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+func (s *SystemConnection) GetNodes() any {
+	return s.Nodes
+}
+
 func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {

@@ -35,10 +35,18 @@ type TeamIdConnection struct {
 	TotalCount int
 }
 
+func (s *TeamIdConnection) GetNodes() any {
+	return s.Nodes
+}
+
 type TeamConnection struct {
 	Nodes      []Team
 	PageInfo   PageInfo
 	TotalCount int
+}
+
+func (s *TeamConnection) GetNodes() any {
+	return s.Nodes
 }
 
 type TeamMembershipConnection struct {

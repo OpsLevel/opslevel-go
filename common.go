@@ -89,3 +89,7 @@ func extractAliases(existingAliases, aliasesWanted []string) ([]string, []string
 	}
 	return aliasesToCreate, aliasesToDelete
 }
+
+type Connection interface {
+	GetNodes() any
+}

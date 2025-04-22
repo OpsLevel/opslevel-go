@@ -49,6 +49,10 @@ type ServiceConnection struct {
 	TotalCount int
 }
 
+func (s *ServiceConnection) GetNodes() any {
+	return s.Nodes
+}
+
 type ServiceDocumentsConnection struct {
 	Nodes      []ServiceDocument
 	PageInfo   PageInfo

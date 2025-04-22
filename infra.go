@@ -42,6 +42,10 @@ type InfrastructureResourceConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
+func (s *InfrastructureResourceConnection) GetNodes() any {
+	return s.Nodes
+}
+
 type InfraProviderInput struct {
 	Account string `json:"account" yaml:"account" default:"Dev - 123456789"`
 	Name    string `json:"name" yaml:"name" default:"Google"`

@@ -185,6 +185,10 @@ type FilterConnection struct {
 	TotalCount int
 }
 
+func (s *FilterConnection) GetNodes() any {
+	return s.Nodes
+}
+
 func (filter *Filter) Alias() string {
 	return slug.Make(filter.Name)
 }
