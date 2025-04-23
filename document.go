@@ -12,12 +12,6 @@ type ServiceDocumentContent struct {
 	Content string `graphql:"content" json:"content,omitempty"`
 }
 
-type DocumentsConnection struct {
-	Nodes      []ServiceDocument
-	PageInfo   PageInfo
-	TotalCount int `graphql:"-"`
-}
-
 func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource *ApiDocumentSourceEnum) (*Service, error) {
 	var m struct {
 		Payload ServiceUpdatePayload `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
@@ -34,15 +28,18 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) ListDocuments(variables *PayloadVariables) (*DocumentsConnection, error) {
+func (client *Client) ListDocuments(variables *PayloadVariables) (*ServiceDocumentsConnection, error) {
 	var q struct {
 		Account struct {
-			Documents DocumentsConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
+			Documents ServiceDocumentsConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
 		}
 	}
 
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
+	}
+
+	if (*variables)["searchTerm"] == nil {
 		(*variables)["searchTerm"] = ""
 	}
 
