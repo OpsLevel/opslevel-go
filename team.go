@@ -142,7 +142,7 @@ func (team *Team) GetMemberships(client *Client, variables *PayloadVariables) (*
 	team.Memberships.Nodes = append(team.Memberships.Nodes, q.Account.Team.Memberships.Nodes...)
 	team.Memberships.PageInfo = q.Account.Team.Memberships.PageInfo
 	team.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
-	for team.Memberships.PageInfo.HasNextPage {
+	if team.Memberships.PageInfo.HasNextPage {
 		(*variables)["after"] = team.Memberships.PageInfo.End
 		_, err := team.GetMemberships(client, variables)
 		if err != nil {
@@ -181,7 +181,7 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	}
 	team.Tags.PageInfo = q.Account.Team.Tags.PageInfo
 	team.Tags.TotalCount += q.Account.Team.Tags.TotalCount
-	for team.Tags.PageInfo.HasNextPage {
+	if team.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = team.Tags.PageInfo.End
 		_, err := team.GetTags(client, variables)
 		if err != nil {
@@ -357,7 +357,7 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 		return nil, err
 	}
 
-	for q.Account.Teams.PageInfo.HasNextPage {
+	if q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeams(variables)
 		if err != nil {
@@ -390,7 +390,7 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 		return nil, err
 	}
 
-	for q.Account.Teams.PageInfo.HasNextPage {
+	if q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeamsWithManager(email, variables)
 		if err != nil {

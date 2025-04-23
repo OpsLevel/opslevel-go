@@ -58,7 +58,7 @@ func (client *Client) ListServicesMaturity(variables *PayloadVariables) (*Servic
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesMaturity(variables)
 		if err != nil {

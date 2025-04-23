@@ -66,7 +66,7 @@ func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVar
 		return nil, err
 	}
 
-	for q.Account.Scorecard.Categories.PageInfo.HasNextPage {
+	if q.Account.Scorecard.Categories.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Scorecard.Categories.PageInfo.End
 		resp, err := scorecard.ListCategories(client, variables)
 		if err != nil {
@@ -122,7 +122,7 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardCon
 	if err := client.Query(&q, *variables, WithName("ScorecardsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Scorecards.PageInfo.HasNextPage {
+	if q.Account.Scorecards.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Scorecards.PageInfo.End
 		resp, err := client.ListScorecards(variables)
 		if err != nil {

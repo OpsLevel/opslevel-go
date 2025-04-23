@@ -93,7 +93,7 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*Pro
 	if err := client.Query(&q, *variables, WithName("PropertyDefinitionList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Definitions.PageInfo.HasNextPage {
+	if q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListPropertyDefinitions(variables)
 		if err != nil {
@@ -178,7 +178,7 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 	}
 	service.Properties.Nodes = append(service.Properties.Nodes, q.Account.Service.Properties.Nodes...)
 	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo
-	for service.Properties.PageInfo.HasNextPage {
+	if service.Properties.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Properties.PageInfo.End
 		resp, err := service.GetProperties(client, variables)
 		if err != nil {

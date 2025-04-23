@@ -192,7 +192,7 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 	}
 	service.Tags.PageInfo = q.Account.Service.Tags.PageInfo
 	service.Tags.TotalCount += q.Account.Service.Tags.TotalCount
-	for service.Tags.PageInfo.HasNextPage {
+	if service.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Tags.PageInfo.End
 		_, err := service.GetTags(client, variables)
 		if err != nil {
@@ -231,7 +231,7 @@ func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*
 	service.Tools.Nodes = append(service.Tools.Nodes, q.Account.Service.Tools.Nodes...)
 	service.Tools.PageInfo = q.Account.Service.Tools.PageInfo
 	service.Tools.TotalCount += q.Account.Service.Tools.TotalCount
-	for service.Tools.PageInfo.HasNextPage {
+	if service.Tools.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Tools.PageInfo.End
 		_, err := service.GetTools(client, variables)
 		if err != nil {
@@ -266,7 +266,7 @@ func (service *Service) GetRepositories(client *Client, variables *PayloadVariab
 	service.Repositories.Edges = append(service.Repositories.Edges, q.Account.Service.Repositories.Edges...)
 	service.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
 	service.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
-	for service.Repositories.PageInfo.HasNextPage {
+	if service.Repositories.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Repositories.PageInfo.End
 		_, err := service.GetRepositories(client, variables)
 		if err != nil {
@@ -295,7 +295,7 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 	if err := client.Query(&q, *variables, WithName("ServiceDocumentsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Service.Documents.PageInfo.HasNextPage {
+	if q.Account.Service.Documents.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Service.Documents.PageInfo.End
 		resp, err := service.GetDocuments(client, variables)
 		if err != nil {
@@ -407,7 +407,7 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServices(variables)
 		if err != nil {
@@ -443,7 +443,7 @@ func (client *Client) ListServicesWithFilter(filterIdentifier string, variables 
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithFilter(filterIdentifier, variables)
 		if err != nil {
@@ -476,7 +476,7 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithFramework(framework, variables)
 		if err != nil {
@@ -509,7 +509,7 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithLanguage(language, variables)
 		if err != nil {
@@ -542,7 +542,7 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithLifecycle(lifecycle, variables)
 		if err != nil {
@@ -575,7 +575,7 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithOwner(owner, variables)
 		if err != nil {
@@ -608,7 +608,7 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithProduct(product, variables)
 		if err != nil {
@@ -658,7 +658,7 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithTag(tag, variables)
 		if err != nil {
@@ -691,7 +691,7 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 		return nil, err
 	}
 
-	for q.Account.Services.PageInfo.HasNextPage {
+	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithTier(tier, variables)
 		if err != nil {
