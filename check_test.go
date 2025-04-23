@@ -10,7 +10,7 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/pkg/jsonutil"
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -33,7 +33,7 @@ var (
 	}
 
 	predicateUpdateInput = &ol.PredicateUpdateInput{
-		Type:  ol.RefOf(ol.PredicateTypeEnumEquals),
+		Type:  &ol.PredicateTypeEnumEquals,
 		Value: ol.RefOf("Requests"),
 	}
 
@@ -44,16 +44,16 @@ var (
 		Enabled:  ol.RefOf(true),
 		Category: id,
 		Level:    id,
-		Notes:    &checkNotes,
+		Notes:    ol.NewString(checkNotes),
 	}
 
 	checkUpdateInput = ol.CheckUpdateInput{
 		Id:       id,
-		Name:     "Hello World",
+		Name:     ol.RefOf("Hello World"),
 		Enabled:  ol.RefOf(true),
-		Category: id,
-		Level:    id,
-		Notes:    &checkNotes,
+		Category: ol.RefOf(id),
+		Level:    ol.RefOf(id),
+		Notes:    ol.NewString(checkNotes),
 	}
 )
 
@@ -94,11 +94,11 @@ func BuildCheckMutation(name string, style RequestStyle) string {
 	text := TrimGraphQLString(`mutation Check[% .Name %][% .Style %]($input:Check[% .Name %][% .Style %]Input!){
   check[% .Name %][% .Style %](input: $input){
     check{
-      category{id,name},
+      category{description,id,name},
       description,
       enableOn,
       enabled,
-      filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},
+      filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},
       id,
       level{alias,description,id,index,name},
       name,
@@ -114,7 +114,7 @@ func BuildCheckMutation(name string, style RequestStyle) string {
       ... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},
       ... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},
       ... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},
-      ... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},propertyValuePredicate{type,value}},
+      ... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},
       ... on TagDefinedCheck{tagKey,tagPredicate{type,value}},
       ... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},
       ... on HasDocumentationCheck{documentSubtype,documentType},
@@ -258,7 +258,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckAlertSourceUsageCreateInput](checkCreateInput)
-				input.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
+				input.AlertSourceType = &ol.AlertSourceTypeEnumDatadog
 				input.AlertSourceNamePredicate = predicateInput
 				return c.CreateCheckAlertSourceUsage(*input)
 			},
@@ -274,7 +274,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckAlertSourceUsageUpdateInput](checkUpdateInput)
-				input.AlertSourceType = ol.RefOf(ol.AlertSourceTypeEnumDatadog)
+				input.AlertSourceType = &ol.AlertSourceTypeEnumDatadog
 				input.AlertSourceNamePredicate = predicateUpdateInput
 				return c.UpdateCheckAlertSourceUsage(*input)
 			},
@@ -296,10 +296,10 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input.IssueName = ol.RefOf("test-issue")
 				input.IssueType = nil  // API NOTE - not allowed when constraint is "exact"
 				input.MaxAllowed = nil // API NOTE - not allowed when constraint is "exact"
-				input.ResolutionTime = ol.RefOf(ol.CodeIssueResolutionTimeInput{
+				input.ResolutionTime = &ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumDay,
 					Value: 1,
-				})
+				}
 				input.Severity = nil // API NOTE - not allowed when constraint is "exact"
 				return c.CreateCheckCodeIssue(*input)
 			},
@@ -321,16 +321,17 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"severity":       []string{"sev1"},
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
+				maxAllowed := 1
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumAny
 				input.IssueName = nil // API NOTE - not allowed when constraint is "any"
-				input.IssueType = ol.NewNullableFrom([]string{"big-bug", "big-error"})
-				input.MaxAllowed = ol.NewNullableFrom(1)
-				input.ResolutionTime = ol.NewNullableFrom(ol.CodeIssueResolutionTimeInput{
+				input.IssueType = ol.RefOf([]string{"big-bug", "big-error"})
+				input.MaxAllowed = &maxAllowed
+				input.ResolutionTime = &ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumWeek,
 					Value: 1,
-				})
-				input.Severity = ol.NewNullableFrom([]string{"sev1"})
+				}
+				input.Severity = ol.RefOf([]string{"sev1"})
 				return c.UpdateCheckCodeIssue(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -352,16 +353,17 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"severity":       nil, // API NOTE - not allowed when constraint is "contains"
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
+				maxAllowed := 1
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckCodeIssueUpdateInput](checkUpdateInput)
 				input.Constraint = ol.CheckCodeIssueConstraintEnumContains
 				input.IssueName = ol.RefOf("code-issue-updated")
-				input.IssueType = ol.NewNullOf[[]string]()
-				input.MaxAllowed = ol.NewNullableFrom(1)
-				input.ResolutionTime = ol.NewNullableFrom(ol.CodeIssueResolutionTimeInput{
+				input.IssueType = ol.RefOf(([]string)(nil))
+				input.MaxAllowed = &maxAllowed
+				input.ResolutionTime = &ol.CodeIssueResolutionTimeInput{
 					Unit:  ol.CodeIssueResolutionTimeUnitEnumWeek,
 					Value: 1,
-				})
-				input.Severity = ol.NewNullOf[[]string]()
+				}
+				input.Severity = ol.RefOf(([]string)(nil))
 				return c.UpdateCheckCodeIssue(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -403,8 +405,9 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		"UpdateHasRecentDeploy": {
 			fixture: BuildUpdateRequest("HasRecentDeploy", map[string]any{"days": 5}),
 			body: func(c *ol.Client) (*ol.Check, error) {
+				maxAllowed := 5
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasRecentDeployUpdateInput](checkUpdateInput)
-				input.Days = ol.RefOf(5)
+				input.Days = &maxAllowed
 				return c.UpdateCheckHasRecentDeploy(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{"days": 5}),
@@ -433,8 +436,8 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckHasDocumentationUpdateInput](checkUpdateInput)
-				input.DocumentType = ol.RefOf(ol.HasDocumentationTypeEnumAPI)
-				input.DocumentSubtype = ol.RefOf(ol.HasDocumentationSubtypeEnumOpenapi)
+				input.DocumentType = &ol.HasDocumentationTypeEnumAPI
+				input.DocumentSubtype = &ol.HasDocumentationSubtypeEnumOpenapi
 				return c.UpdateCheckHasDocumentation(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -499,7 +502,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input.ServiceSelector = ol.RefOf(".metadata.name")
 				input.SuccessCondition = ol.RefOf(".metadata.name")
 				input.ResultMessage = ol.RefOf("#Hello World")
-				input.IntegrationId = &id
+				input.IntegrationId = ol.RefOf(id)
 				input.PassPending = ol.RefOf(false)
 				return c.UpdateCheckCustomEvent(*input)
 			},
@@ -518,13 +521,13 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    "",
+				"resultMessage":    ol.RefOf(""),
 				"integrationId":    id,
 			}, map[string]any{
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    "",
+				"resultMessage":    ol.RefOf(""),
 				"integration": ol.IntegrationId{
 					Id: id,
 				},
@@ -534,7 +537,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input.ServiceSelector = ol.RefOf(".metadata.name")
 				input.SuccessCondition = ol.RefOf(".metadata.name")
 				input.ResultMessage = ol.RefOf("")
-				input.IntegrationId = &id
+				input.IntegrationId = ol.RefOf(id)
 				input.PassPending = ol.RefOf(false)
 				return c.UpdateCheckCustomEvent(*input)
 			},
@@ -542,7 +545,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				"passPending":      false,
 				"serviceSelector":  ".metadata.name",
 				"successCondition": ".metadata.name",
-				"resultMessage":    "",
+				"resultMessage":    ol.RefOf(""),
 				"integration": ol.IntegrationId{
 					Id: id,
 				},
@@ -555,7 +558,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckManualCreateInput](checkCreateInput)
-				input.UpdateFrequency = ol.NewManualCheckFrequencyInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
+				input.UpdateFrequency = ol.NewManualCheckFrequencyInput(
+					"2021-07-26T20:22:44.427Z",
+					ol.FrequencyTimeScaleWeek,
+					1,
+				)
 				return c.CreateCheckManual(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -569,7 +576,11 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckManualUpdateInput](checkUpdateInput)
-				input.UpdateFrequency = ol.NewManualCheckFrequencyUpdateInput("2021-07-26T20:22:44.427Z", ol.FrequencyTimeScaleWeek, 1)
+				input.UpdateFrequency = ol.NewManualCheckFrequencyUpdateInput(
+					"2021-07-26T20:22:44.427Z",
+					ol.FrequencyTimeScaleWeek,
+					1,
+				)
 				return c.UpdateCheckManual(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -608,7 +619,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryFileUpdateInput](checkUpdateInput)
 				input.DirectorySearch = ol.RefOf(true)
-				input.FilePaths = &[]string{"/src", "/test", "/foo/bar"}
+				input.FilePaths = ol.RefOf([]string{"/src", "/test", "/foo/bar"})
 				input.FileContentsPredicate = predicateUpdateInput
 				input.UseAbsoluteRoot = ol.RefOf(false)
 				return c.UpdateCheckRepositoryFile(*input)
@@ -648,7 +659,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
 				input.DirectorySearch = ol.RefOf(true)
-				input.FilePaths = &[]string{"go.mod", "**/go.mod"}
+				input.FilePaths = ol.RefOf([]string{"go.mod", "**/go.mod"})
 				input.FileContentsPredicate = predicateUpdateInput
 				return c.UpdateCheckRepositoryGrep(*input)
 			},
@@ -667,7 +678,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositoryGrepUpdateInput](checkUpdateInput)
 				input.DirectorySearch = ol.RefOf(false)
-				input.FilePaths = &[]string{"**/go.mod"}
+				input.FilePaths = ol.RefOf([]string{"**/go.mod"})
 				input.FileContentsPredicate = predicateUpdateInput
 				return c.UpdateCheckRepositoryGrep(*input)
 			},
@@ -700,7 +711,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckCreateInputTypeOf[ol.CheckRepositorySearchCreateInput](checkCreateInput)
-				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileExtensions = ol.RefOf([]string{"sbt", "py"})
 				input.FileContentsPredicate = *predicateInput
 				return c.CreateCheckRepositorySearch(*input)
 			},
@@ -716,7 +727,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRepositorySearchUpdateInput](checkUpdateInput)
-				input.FileExtensions = &[]string{"sbt", "py"}
+				input.FileExtensions = ol.RefOf([]string{"sbt", "py"})
 				input.FileContentsPredicate = predicateUpdateInput
 				return c.UpdateCheckRepositorySearch(*input)
 			},
@@ -843,7 +854,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckServicePropertyUpdateInput](checkUpdateInput)
-				input.ServiceProperty = ol.RefOf(ol.ServicePropertyTypeEnumFramework)
+				input.ServiceProperty = &ol.ServicePropertyTypeEnumFramework
 				input.PropertyValuePredicate = predicateUpdateInput
 				return c.UpdateCheckServiceProperty(*input)
 			},
@@ -928,7 +939,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				input.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
+				input.ToolCategory = &ol.ToolCategoryMetrics
 				input.ToolNamePredicate = predicateUpdateInput
 				input.ToolUrlPredicate = predicateUpdateInput
 				input.EnvironmentPredicate = predicateUpdateInput
@@ -949,7 +960,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			}),
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](checkUpdateInput)
-				input.ToolCategory = ol.RefOf(ol.ToolCategoryMetrics)
+				input.ToolCategory = &ol.ToolCategoryMetrics
 				input.ToolUrlPredicate = &ol.PredicateUpdateInput{}
 				input.EnvironmentPredicate = &ol.PredicateUpdateInput{}
 				return c.UpdateCheckToolUsage(*input)
@@ -975,7 +986,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 				input.PackageName = "cult"
 				input.PackageNameIsRegex = ol.RefOf(false)
 				input.PackageConstraint = ol.PackageConstraintEnumDoesNotExist
-				input.MissingPackageResult = ol.RefOf(ol.CheckResultStatusEnumPassed)
+				input.MissingPackageResult = &ol.CheckResultStatusEnumPassed
 				input.VersionConstraintPredicate = predicateInput
 				return c.CreateCheckPackageVersion(*input)
 			},
@@ -996,7 +1007,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
 				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
-				input.VersionConstraintPredicate = predicateUpdateInput
+				input.VersionConstraintPredicate = ol.RefOf(*predicateUpdateInput)
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1012,7 +1023,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			body: func(c *ol.Client) (*ol.Check, error) {
 				input := ol.NewCheckUpdateInputTypeOf[ol.CheckPackageVersionUpdateInput](checkUpdateInput)
 				input.PackageManager = ol.RefOf(ol.PackageManagerEnumCargo)
-				input.VersionConstraintPredicate = &ol.PredicateUpdateInput{}
+				input.VersionConstraintPredicate = ol.NullOf[ol.PredicateUpdateInput]()
 				return c.UpdateCheckPackageVersion(*input)
 			},
 			expectedCheck: CheckWithExtras(map[string]any{
@@ -1022,7 +1033,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		},
 		"GetCheck": {
 			fixture: autopilot.NewTestRequest(
-				`query CheckGet($id:ID!){account{check(id: $id){category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}}}}`,
+				`query CheckGet($id:ID!){account{check(id: $id){category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}}}}`,
 				`{ "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2" }`,
 				`{ "data": { "account": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": null } } } }`,
 			),
@@ -1061,8 +1072,8 @@ func TestCanUpdateFilterToNull(t *testing.T) {
 		CategoryId: ol.RefOf(id),
 		Enabled:    ol.RefOf(true),
 		LevelId:    ol.RefOf(id),
-		FilterId:   ol.NewID(),
-		Notes:      ol.RefOf("Hello World Check"),
+		FilterId:   ol.NewNullOf[ol.ID](),
+		Notes:      ol.NewString("Hello World Check"),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1083,7 +1094,7 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 		CategoryId: ol.RefOf(id),
 		Enabled:    ol.RefOf(true),
 		LevelId:    ol.RefOf(id),
-		Notes:      ol.RefOf(""),
+		Notes:      ol.NewString(""),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -1094,12 +1105,12 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 func TestListChecks(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "checks": { "nodes": [ { {{ template "common_check_response" }} }, { {{ template "metrics_tool_check" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "checks": { "nodes": [ { {{ template "owner_defined_check" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
@@ -1121,7 +1132,7 @@ func TestListChecks(t *testing.T) {
 func TestGetMissingCheck(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CheckGet($id:ID!){account{check(id: $id){category{id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}}}}`,
+		`query CheckGet($id:ID!){account{check(id: $id){category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}}}}`,
 		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
 		`{ "data": { "account": { "check": null } } }`,
 	)
@@ -1155,7 +1166,7 @@ func TestJsonUnmarshalCreateCheckManual(t *testing.T) {
 }`
 	output := ol.CheckManualCreateInput{
 		Name:                  "Example",
-		Notes:                 ol.RefOf("Example Notes"),
+		Notes:                 ol.NewString("Example Notes"),
 		UpdateRequiresComment: false,
 	}
 	// Act
@@ -1183,17 +1194,15 @@ func TestJsonUnmarshalCreateCheckToolUsage(t *testing.T) {
   }
 }`
 	output := ol.CheckToolUsageCreateInput{
-		Name:  "Example",
-		Notes: ol.RefOf("Example Notes"),
-		EnvironmentPredicate: &ol.PredicateInput{
-			Type: ol.PredicateTypeEnum("exists"),
-		},
+		Name:                 "Example",
+		Notes:                ol.NewString("Example Notes"),
+		EnvironmentPredicate: &ol.PredicateInput{Type: ol.PredicateTypeEnumExists},
 		ToolNamePredicate: &ol.PredicateInput{
-			Type:  ol.PredicateTypeEnum("contains"),
+			Type:  ol.PredicateTypeEnumContains,
 			Value: ol.RefOf("go"),
 		},
 		ToolUrlPredicate: &ol.PredicateInput{
-			Type:  ol.PredicateTypeEnum("starts_with"),
+			Type:  ol.PredicateTypeEnumStartsWith,
 			Value: ol.RefOf("https"),
 		},
 	}
@@ -1213,7 +1222,7 @@ func TestJsonUnmarshalUpdateCheckManual(t *testing.T) {
 }`
 	output := ol.CheckManualUpdateInput{
 		Name:                  ol.RefOf("Example"),
-		Notes:                 ol.RefOf("Example Notes"),
+		Notes:                 ol.NewString("Example Notes"),
 		UpdateRequiresComment: ol.RefOf(true),
 	}
 	// Act
@@ -1241,17 +1250,15 @@ func TestJsonUnmarshalUpdateCheckToolUsage(t *testing.T) {
   }
 }`
 	output := ol.CheckToolUsageUpdateInput{
-		Name:  ol.RefOf("Example"),
-		Notes: ol.RefOf("Updated Notes"),
-		EnvironmentPredicate: &ol.PredicateUpdateInput{
-			Type: ol.RefOf(ol.PredicateTypeEnum("exists")),
-		},
+		Name:                 ol.RefOf("Example"),
+		Notes:                ol.NewString("Updated Notes"),
+		EnvironmentPredicate: &ol.PredicateUpdateInput{Type: &ol.PredicateTypeEnumExists},
 		ToolNamePredicate: &ol.PredicateUpdateInput{
-			Type:  ol.RefOf(ol.PredicateTypeEnum("contains")),
+			Type:  &ol.PredicateTypeEnumContains,
 			Value: ol.RefOf("go"),
 		},
 		ToolUrlPredicate: &ol.PredicateUpdateInput{
-			Type:  ol.RefOf(ol.PredicateTypeEnum("starts_with")),
+			Type:  &ol.PredicateTypeEnumStartsWith,
 			Value: ol.RefOf("https"),
 		},
 	}

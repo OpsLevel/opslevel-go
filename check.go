@@ -10,11 +10,6 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
-type CheckOwner struct {
-	Team TeamId `graphql:"... on Team"`
-	// User User `graphql:"... on User"` // TODO: will this be public?
-}
-
 type CheckInputConstructor func() any
 
 var CheckCreateConstructors = map[CheckType]CheckInputConstructor{
@@ -90,14 +85,14 @@ type CheckCreateInputProvider interface {
 }
 
 type CheckCreateInput struct {
-	Name     string        `json:"name" yaml:"name" mapstructure:"name"`
-	Enabled  *bool         `json:"enabled" yaml:"enabled" mapstructure:"enabled"`
-	EnableOn *iso8601.Time `json:"enableOn,omitempty" yaml:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
-	Category ID            `json:"categoryId" yaml:"categoryId" mapstructure:"categoryId"`
-	Level    ID            `json:"levelId" yaml:"levelId" mapstructure:"levelId"`
-	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
-	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
-	Notes    *string       `json:"notes" yaml:"notes" default:"Notes on Example Check" mapstructure:"notes"`
+	Category ID                      `json:"categoryId" yaml:"categoryId" mapstructure:"categoryId"`
+	EnableOn *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
+	Enabled  *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" mapstructure:"enabled"`
+	Filter   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
+	Level    ID                      `json:"levelId" yaml:"levelId" mapstructure:"levelId"`
+	Name     string                  `json:"name" yaml:"name" mapstructure:"name"`
+	Notes    *string                 `json:"notes,omitempty" yaml:"notes,omitempty" mapstructure:"notes,omitempty"`
+	Owner    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
 }
 
 func NewCheckCreateInputTypeOf[T any](checkCreateInput CheckCreateInput) *T {
@@ -113,15 +108,15 @@ type CheckUpdateInputProvider interface {
 }
 
 type CheckUpdateInput struct {
-	Id       ID            `json:"id" mapstructure:"id"`
-	Name     string        `json:"name,omitempty" mapstructure:"name,omitempty"`
-	Enabled  *bool         `json:"enabled,omitempty" mapstructure:"enabled,omitempty"`
-	EnableOn *iso8601.Time `json:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
-	Category ID            `json:"categoryId,omitempty" mapstructure:"categoryId,omitempty"`
-	Level    ID            `json:"levelId,omitempty" mapstructure:"levelId,omitempty"`
-	Owner    *ID           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
-	Filter   *ID           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
-	Notes    *string       `json:"notes,omitempty" mapstructure:"notes,omitempty"`
+	Category *Nullable[ID]           `json:"categoryId,omitempty" mapstructure:"categoryId,omitempty"`
+	EnableOn *Nullable[iso8601.Time] `json:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
+	Enabled  *Nullable[bool]         `json:"enabled,omitempty" mapstructure:"enabled,omitempty"`
+	Filter   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
+	Id       ID                      `json:"id" mapstructure:"id"`
+	Level    *Nullable[ID]           `json:"levelId,omitempty" mapstructure:"levelId,omitempty"`
+	Name     *Nullable[string]       `json:"name,omitempty" mapstructure:"name,omitempty"`
+	Notes    *string                 `json:"notes,omitempty" mapstructure:"notes,omitempty"`
+	Owner    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" mapstructure:"ownerId,omitempty"`
 }
 
 func NewCheckUpdateInputTypeOf[T any](checkUpdateInput CheckUpdateInput) *T {
@@ -130,12 +125,6 @@ func NewCheckUpdateInputTypeOf[T any](checkUpdateInput CheckUpdateInput) *T {
 		panic(err)
 	}
 	return newCheck
-}
-
-// CheckResponsePayload encompasses CheckCreatePayload and CheckUpdatePayload into 1 struct
-type CheckResponsePayload struct {
-	Check  Check
-	Errors []OpsLevelErrors
 }
 
 func (client *Client) CreateCheck(input any) (*Check, error) {
@@ -270,12 +259,10 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 
 func (client *Client) DeleteCheck(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors
-		} `graphql:"checkDelete(input: $input)"`
+		Payload BasePayload `graphql:"checkDelete(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": CheckDeleteInput{Id: &id},
+		"input": CheckDeleteInput{Id: RefOf(id)},
 	}
 	err := client.Mutate(&m, v, WithName("CheckDelete"))
 	return HandleErrors(err, m.Payload.Errors)

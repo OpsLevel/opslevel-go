@@ -7,11 +7,6 @@ import (
 	"strconv"
 )
 
-type Predicate struct {
-	Type  PredicateTypeEnum `graphql:"type"`
-	Value string            `graphql:"value"`
-}
-
 var existsTypes = []PredicateTypeEnum{
 	PredicateTypeEnumDoesNotExist,
 	PredicateTypeEnumExists,
@@ -46,7 +41,7 @@ func (p *PredicateUpdateInput) MarshalJSON() ([]byte, error) {
 	}
 
 	if p.Value != nil {
-		m["value"] = *p.Value
+		m["value"] = p.Value.Value
 	}
 
 	return json.Marshal(m)

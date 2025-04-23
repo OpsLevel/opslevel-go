@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	"github.com/opslevel/opslevel-go/v2024"
+	"github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -52,7 +52,7 @@ func TestCreateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -68,7 +68,7 @@ func TestGetInfra(t *testing.T) {
 	result, err := client.GetInfrastructure(string(id1))
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 }
 
@@ -145,7 +145,7 @@ func TestUpdateInfra(t *testing.T) {
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
-	autopilot.Equals(t, string(id1), result.Id)
+	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "my-big-query", result.Name)
 	autopilot.Equals(t, "Database", result.Schema)
 }
@@ -225,7 +225,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 	client := BestTestClient(t, "infrastructureResource/tags", requests...)
 	// Act
-	infra := opslevel.InfrastructureResource{Id: string(id1)}
+	infra := opslevel.InfrastructureResource{Id: id1}
 	resp, err := infra.GetTags(client, nil)
 	autopilot.Ok(t, err)
 	result := resp.Nodes
@@ -244,7 +244,7 @@ func TestInfraReconcileAliasesDeleteAll(t *testing.T) {
 	// Arrange
 	aliasesWanted := []string{}
 	infra := opslevel.InfrastructureResource{
-		Id:      string(id1),
+		Id:      id1,
 		Aliases: []string{"one", "two"},
 	}
 
@@ -281,7 +281,7 @@ func TestInfraReconcileAliases(t *testing.T) {
 	// Arrange
 	aliasesWanted := []string{"one", "two", "three"}
 	infra := opslevel.InfrastructureResource{
-		Id:      string(id1),
+		Id:      id1,
 		Aliases: []string{"one", "alpha", "beta"},
 	}
 

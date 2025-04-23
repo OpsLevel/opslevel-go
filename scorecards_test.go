@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -27,9 +27,9 @@ func TestCreateScorecard(t *testing.T) {
 	client := BestTestClient(t, "scorecards/create_scorecard", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
-		Description:                 &description,
+		Description:                 ol.RefOf(description),
 		OwnerId:                     *fakeOwnerId,
-		FilterId:                    fakeFilterId,
+		FilterId:                    ol.RefOf(*fakeFilterId),
 		AffectsOverallServiceLevels: ol.RefOf(true),
 	})
 
@@ -53,9 +53,9 @@ func TestCreateScorecardDoesNotAffectServiceLevels(t *testing.T) {
 	client := BestTestClient(t, "scorecards/create_scorecard_not_affects_service_levels", testRequest)
 	sc, err := client.CreateScorecard(ol.ScorecardInput{
 		Name:                        name,
-		Description:                 &description,
+		Description:                 ol.RefOf(description),
 		OwnerId:                     *fakeOwnerId,
-		FilterId:                    fakeFilterId,
+		FilterId:                    ol.RefOf(*fakeFilterId),
 		AffectsOverallServiceLevels: ol.RefOf(false),
 	})
 
@@ -79,10 +79,10 @@ func TestUpdateScorecard(t *testing.T) {
 
 	client := BestTestClient(t, "scorecards/update_scorecard", testRequest)
 	sc, err := client.UpdateScorecard(scorecardId, ol.ScorecardInput{
-		Description: &description,
+		Description: ol.RefOf(description),
 		Name:        name,
 		OwnerId:     *newOwnerId,
-		FilterId:    newFilterId,
+		FilterId:    ol.RefOf(*newFilterId),
 	})
 
 	autopilot.Ok(t, err)
@@ -127,7 +127,7 @@ func TestGetScorecard(t *testing.T) {
 	autopilot.Equals(t, *fakeFilterId, sc.Filter.Id)
 	autopilot.Equals(t, 10, sc.PassingChecks)
 	autopilot.Equals(t, 20, sc.ServiceCount)
-	autopilot.Equals(t, 30, sc.ChecksCount)
+	autopilot.Equals(t, 30, sc.TotalChecks)
 }
 
 func TestListScorecards(t *testing.T) {
@@ -168,12 +168,12 @@ func TestListScorecards(t *testing.T) {
 func TestListScorecardCategories(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
 		`{ {{ template "first_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id2" }}, "name": "quality" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
 		`{ {{ template "second_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id3" }}, "name": "ownership" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)

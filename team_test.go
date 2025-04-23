@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -79,13 +79,13 @@ func getTestRequestWithAlias() autopilot.TestRequest {
 
 func TestCreateTeam(t *testing.T) {
 	// Arrange
-	contacts := autopilot.Register[[]ol.ContactInput]("contact_input_slice",
+	contacts := autopilot.Register("contact_input_slice",
 		[]ol.ContactInput{
-			ol.CreateContactSlackHandle("@mozzie", ol.NullString()),
+			ol.CreateContactSlackHandle("@mozzie", ol.RefOf("")),
 			ol.CreateContactWeb("https://example.com", ol.RefOf("Homepage")),
 		},
 	)
-	input := autopilot.Register[ol.TeamCreateInput]("team_create_input",
+	input := autopilot.Register("team_create_input",
 		ol.TeamCreateInput{
 			Name:             "Example",
 			Responsibilities: ol.RefOf("Foo & bar"),
@@ -93,7 +93,7 @@ func TestCreateTeam(t *testing.T) {
 			ParentTeam:       ol.NewIdentifier("parent_team"),
 		})
 	testRequest := autopilot.NewTestRequest(
-		`mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}`,
+		`mutation TeamCreate($input:TeamCreateInput!){teamCreate(input: $input){team{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}`,
 		`{"input": {{ template "team_create_input" }} }`,
 		`{ "data": {
     "teamCreate": {
@@ -141,7 +141,7 @@ func TestCreateTeam(t *testing.T) {
 func TestGetTeam(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{ "data": {
     "account": {
@@ -292,7 +292,7 @@ func TestGetTeamWithAlias(t *testing.T) {
 func TestListTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -364,7 +364,7 @@ func TestListTeams(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": {
       "account": {
@@ -434,7 +434,7 @@ func TestListTeams(t *testing.T) {
 func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{ "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
@@ -506,7 +506,7 @@ func TestListTeamsWithManager(t *testing.T) {
         }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
 		`{ "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
@@ -583,7 +583,7 @@ func TestUpdateTeam(t *testing.T) {
 		},
 	)
 	testRequest := autopilot.NewTestRequest(
-		`mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}`,
+		`mutation TeamUpdate($input:TeamUpdateInput!){teamUpdate(input: $input){team{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}},errors{message,path}}}`,
 		`{"input": {{ template "team_update_input" }} }`,
 		`{ "data": {
       "teamUpdate": {
@@ -687,7 +687,7 @@ func TestTeamAddMembership(t *testing.T) {
 	team, _ := clientWithAlias.GetTeamWithAlias("example")
 	newMembership := ol.TeamMembershipUserInput{
 		Role: ol.RefOf("user"),
-		User: &ol.UserIdentifierInput{Id: &id1, Email: ol.RefOf("kyle@opslevel.com")},
+		User: &ol.UserIdentifierInput{Id: ol.RefOf(id1), Email: ol.RefOf("kyle@opslevel.com")},
 	}
 	result, err := clientWithTeamId.AddMemberships(&team.TeamId, newMembership)
 	// Assert
@@ -698,7 +698,7 @@ func TestTeamAddMembership(t *testing.T) {
 func TestTeamRemoveMembership(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation TeamMembershipDelete($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,role},errors{message,path}}}`,
+		`mutation TeamMembershipDelete($input:TeamMembershipDeleteInput!){teamMembershipDelete(input: $input){deletedMembers{id,email,htmlUrl,name,provisionedBy,role},errors{message,path}}}`,
 		`{"input": { "teamId": "{{ template "id1_string" }}", "members": [ { {{ template "team_membership_user_input_1" }} } ] }}`,
 		`{ "data": {
     "teamMembershipDelete": {
@@ -719,7 +719,7 @@ func TestTeamRemoveMembership(t *testing.T) {
 	team, _ := client1.GetTeamWithAlias("example")
 	membershipToDelete := ol.TeamMembershipUserInput{
 		Role: ol.RefOf("user"),
-		User: &ol.UserIdentifierInput{Id: &id1, Email: ol.RefOf("kyle@opslevel.com")},
+		User: &ol.UserIdentifierInput{Id: ol.RefOf(id1), Email: ol.RefOf("kyle@opslevel.com")},
 	}
 
 	result, err := client2.RemoveMemberships(&team.TeamId, membershipToDelete)
@@ -753,7 +753,7 @@ func TestTeamUpdateContact(t *testing.T) {
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input_slack",
 		ol.ContactUpdateInput{
 			Id:          id1,
-			DisplayName: ol.RefOf(*input.DisplayName),
+			DisplayName: input.DisplayName,
 			Address:     ol.RefOf(input.Address),
 			Type:        &input.Type,
 		})
@@ -778,7 +778,7 @@ func TestTeamUpdateContactWithTypeNil(t *testing.T) {
 	autopilot.Register[ol.ContactUpdateInput]("contact_update_input",
 		ol.ContactUpdateInput{
 			Id:          id2,
-			DisplayName: ol.RefOf(*input.DisplayName),
+			DisplayName: input.DisplayName,
 			Address:     ol.RefOf(input.Address),
 		})
 	testRequest := autopilot.NewTestRequest(
@@ -833,7 +833,7 @@ func TestTeamReconcileAliasesDeleteAll(t *testing.T) {
 	)
 	// get team
 	testRequestThree := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{ "data": { "account": { "team": { {{ template "id1" }}, "aliases": [], "managedAliases": [] }}}}`,
 	)
@@ -868,7 +868,7 @@ func TestTeamReconcileAliasesDeleteSome(t *testing.T) {
 	)
 	// get team
 	testRequestTwo := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{ "data": { "account": { "team": { {{ template "id1" }}, "aliases": ["two"], "managedAliases": ["two"] }}}}`,
 	)
@@ -921,7 +921,7 @@ func TestTeamReconcileAliases(t *testing.T) {
 	)
 	// get team
 	testRequestFive := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{ "data": { "account": { "team": { {{ template "id1" }}, "aliases": ["one", "two", "three"], "managedAliases": ["one", "two", "three"] }}}}`,
 	)

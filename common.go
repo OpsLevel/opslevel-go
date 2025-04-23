@@ -1,13 +1,9 @@
 package opslevel
 
 import (
-	"errors"
-	"fmt"
 	"slices"
-	"strings"
 	"time"
 
-	"github.com/hasura/go-graphql-client"
 	"github.com/relvacode/iso8601"
 )
 
@@ -24,24 +20,14 @@ type PayloadVariables map[string]interface{}
 func (pv *PayloadVariables) WithoutDeactivedUsers() *PayloadVariables {
 	omitDeactivedUsersFilter := UsersFilterInput{
 		Key:  UsersFilterEnumDeactivatedAt,
-		Type: RefOf(BasicTypeEnumEquals),
+		Type: &BasicTypeEnumEquals,
 	}
-	(*pv)["filter"] = RefOf([]UsersFilterInput{omitDeactivedUsersFilter})
+	(*pv)["filter"] = &[]UsersFilterInput{omitDeactivedUsersFilter}
 	return pv
 }
 
-type OpsLevelWarnings struct {
-	Message string
-}
-
-type OpsLevelErrors struct {
-	Message string
-	Path    []string
-}
-
-type Timestamps struct {
-	CreatedAt iso8601.Time `json:"createdAt"`
-	UpdatedAt iso8601.Time `json:"updatedAt"`
+func NewString(value string) *string {
+	return &value
 }
 
 func NullString() *string {
@@ -49,49 +35,17 @@ func NullString() *string {
 	return output
 }
 
-func RefOf[T any](v T) *T {
-	return &v
+func NullOf[T NullableConstraint]() *Nullable[T] {
+	output := Nullable[T]{SetNull: true}
+	return &output
 }
 
-func RefTo[T any](v T) *T {
-	return &v
+func RefOf[T NullableConstraint](value T) *Nullable[T] {
+	return NewNullableFrom(value)
 }
 
-func HandleErrors(err error, errs []OpsLevelErrors) error {
-	if err != nil {
-		return err
-	}
-	return FormatErrors(errs)
-}
-
-func FormatErrors(errs []OpsLevelErrors) error {
-	if len(errs) == 0 {
-		return nil
-	}
-
-	allErrors := fmt.Errorf("OpsLevel API Errors:")
-	for _, err := range errs {
-		if len(err.Path) == 1 && err.Path[0] == "base" {
-			err.Path[0] = ""
-		}
-		newErr := fmt.Errorf("\t- '%s' %s", strings.Join(err.Path, "."), err.Message)
-		allErrors = errors.Join(allErrors, newErr)
-	}
-
-	return allErrors
-}
-
-// IsOpsLevelApiError checks if the error is returned by OpsLevel's API
-func IsOpsLevelApiError(err error) bool {
-	if _, ok := err.(graphql.Errors); !ok {
-		return false
-	}
-	for _, hasuraErr := range err.(graphql.Errors) {
-		if len(hasuraErr.Path) > 0 {
-			return true
-		}
-	}
-	return false
+func RefTo[T NullableConstraint](value T) *Nullable[T] {
+	return NewNullableFrom(value)
 }
 
 func NewISO8601Date(datetime string) iso8601.Time {

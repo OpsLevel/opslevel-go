@@ -5,10 +5,6 @@ type EntityOwnerTeam struct {
 	Id    ID     `json:"id"`
 }
 
-type EntityOwner struct {
-	OnTeam EntityOwnerTeam `graphql:"... on Team"`
-}
-
 func (entityOwner *EntityOwner) Alias() string {
 	return entityOwner.OnTeam.Alias
 }

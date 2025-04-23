@@ -7,13 +7,6 @@ import (
 	"slices"
 )
 
-type TagOwner string
-
-const (
-	TagOwnerService    TagOwner = "Service"
-	TagOwnerRepository TagOwner = "Repository"
-)
-
 type TaggableResourceInterface interface {
 	GetTags(*Client, *PayloadVariables) (*TagConnection, error)
 	ResourceId() ID
@@ -24,12 +17,6 @@ var (
 	TagKeyRegex    = regexp.MustCompile(`\A[a-z][0-9a-z_\.\/\\-]*\z`)
 	TagKeyErrorMsg = "tag key name '%s' must start with a letter and be only lowercase alphanumerics, underscores, hyphens, periods, and slashes"
 )
-
-type Tag struct {
-	Id    ID     `json:"id"`
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
 
 func (t Tag) HasSameKeyValue(otherTag Tag) bool {
 	return t.Key == otherTag.Key && t.Value == otherTag.Value
@@ -52,7 +39,7 @@ func (client *Client) GetTaggableResource(resourceType TaggableResource, identif
 	switch resourceType {
 	case TaggableResourceService:
 		if IsID(identifier) {
-			taggableResource, err = client.GetService(ID(identifier))
+			taggableResource, err = client.GetService(identifier)
 		} else {
 			taggableResource, err = client.GetServiceWithAlias(identifier)
 		}
@@ -104,9 +91,9 @@ func (client *Client) AssignTagsWithTagInputs(identifier string, tags []TagInput
 		Tags: tags,
 	}
 	if IsID(identifier) {
-		input.Id = NewID(identifier)
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = &identifier
+		input.Alias = RefOf(identifier)
 	}
 	return client.AssignTag(input)
 }
@@ -126,10 +113,7 @@ func (client *Client) AssignTags(identifier string, tags map[string]string) ([]T
 
 func (client *Client) AssignTag(input TagAssignInput) ([]Tag, error) {
 	var m struct {
-		Payload struct {
-			Tags   []Tag
-			Errors []OpsLevelErrors
-		} `graphql:"tagAssign(input: $input)"`
+		Payload TagAssignPayload `graphql:"tagAssign(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -166,10 +150,7 @@ func (client *Client) CreateTags(identifier string, tags map[string]string) ([]T
 
 func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 	var m struct {
-		Payload struct {
-			Tag    Tag `json:"tag"`
-			Errors []OpsLevelErrors
-		} `graphql:"tagCreate(input: $input)"`
+		Payload TagCreatePayload `graphql:"tagCreate(input: $input)"`
 	}
 	if err := ValidateTagKey(input.Key); err != nil {
 		return nil, err
@@ -183,13 +164,12 @@ func (client *Client) CreateTag(input TagCreateInput) (*Tag, error) {
 
 func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 	var m struct {
-		Payload struct {
-			Tag    Tag
-			Errors []OpsLevelErrors
-		} `graphql:"tagUpdate(input: $input)"`
+		Payload TagUpdatePayload `graphql:"tagUpdate(input: $input)"`
 	}
-	if err := ValidateTagKey(*input.Key); err != nil {
-		return nil, err
+	if input.Key != nil {
+		if err := ValidateTagKey(*input.Key); err != nil {
+			return nil, err
+		}
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -200,9 +180,7 @@ func (client *Client) UpdateTag(input TagUpdateInput) (*Tag, error) {
 
 func (client *Client) DeleteTag(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors
-		} `graphql:"tagDelete(input: $input)"`
+		Payload BasePayload `graphql:"tagDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": TagDeleteInput{Id: id},
@@ -222,9 +200,11 @@ func (client *Client) ReconcileTags(resourceType TaggableResourceInterface, tags
 
 	toCreate, toDelete := reconcileTags(tagConnection.Nodes, tagsDesired)
 	for _, tag := range toCreate {
+		taggableResourceType := resourceType.ResourceType()
+		taggableResourceID := resourceType.ResourceId()
 		_, err := client.CreateTag(TagCreateInput{
-			Id:    RefOf(resourceType.ResourceId()),
-			Type:  RefOf(resourceType.ResourceType()),
+			Id:    &taggableResourceID,
+			Type:  &taggableResourceType,
 			Key:   tag.Key,
 			Value: tag.Value,
 		})

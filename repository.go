@@ -7,11 +7,6 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
-type Language struct {
-	Name  string
-	Usage float64
-}
-
 type RepositoryId struct {
 	Id           ID
 	DefaultAlias string
@@ -40,19 +35,6 @@ type Repository struct {
 	Type               string
 	Url                string
 	Visible            bool
-}
-
-type RepositoryPath struct {
-	Href string
-	Path string
-}
-
-type ServiceRepository struct {
-	BaseDirectory string
-	DisplayName   string
-	Id            ID
-	Repository    RepositoryId
-	Service       ServiceId
 }
 
 type RepositoryConnection struct {
@@ -220,10 +202,7 @@ func (client *Client) ConnectServiceRepository(service *ServiceId, repository *R
 
 func (client *Client) CreateServiceRepository(input ServiceRepositoryCreateInput) (*ServiceRepository, error) {
 	var m struct {
-		Payload struct {
-			ServiceRepository ServiceRepository
-			Errors            []OpsLevelErrors
-		} `graphql:"serviceRepositoryCreate(input: $input)"`
+		Payload ServiceRepositoryCreatePayload `graphql:"serviceRepositoryCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -334,10 +313,7 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 
 func (client *Client) UpdateRepository(input RepositoryUpdateInput) (*Repository, error) {
 	var m struct {
-		Payload struct {
-			Repository Repository
-			Errors     []OpsLevelErrors
-		} `graphql:"repositoryUpdate(input: $input)"`
+		Payload RepositoryUpdatePayload `graphql:"repositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -348,10 +324,7 @@ func (client *Client) UpdateRepository(input RepositoryUpdateInput) (*Repository
 
 func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput) (*ServiceRepository, error) {
 	var m struct {
-		Payload struct {
-			ServiceRepository ServiceRepository
-			Errors            []OpsLevelErrors
-		} `graphql:"serviceRepositoryUpdate(input: $input)"`
+		Payload ServiceRepositoryUpdatePayload `graphql:"serviceRepositoryUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -362,9 +335,9 @@ func (client *Client) UpdateServiceRepository(input ServiceRepositoryUpdateInput
 
 func (client *Client) DeleteServiceRepository(id ID) error {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			Id     ID `graphql:"deletedId"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"serviceRepositoryDelete(input: $input)"`
 	}
 	v := PayloadVariables{

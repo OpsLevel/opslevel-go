@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 
 	"github.com/rocktavious/autopilot/v2023"
 )
@@ -170,7 +170,7 @@ func TestUpdateRepository(t *testing.T) {
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:      id1,
-		OwnerId: ol.NewID(string(id1)),
+		OwnerId: ol.RefOf(ol.ID(string(id1))),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -207,7 +207,7 @@ func TestRepositoryUpdateOwnerNull(t *testing.T) {
 	// Act
 	resp, err := client.UpdateRepository(ol.RepositoryUpdateInput{
 		Id:      *ol.NewID(string(id1)),
-		OwnerId: ol.NewID(""),
+		OwnerId: ol.NewNullOf[ol.ID](),
 	})
 	// Assert
 	autopilot.Ok(t, err)

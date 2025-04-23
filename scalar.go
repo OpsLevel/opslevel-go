@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+type Identifiable interface {
+	GetID() ID
+}
+
 type ID string
 
 func NewID(id ...string) *ID {
@@ -32,13 +36,17 @@ type Identifier struct {
 	Aliases []string `graphql:"aliases" json:"aliases"`
 }
 
+func (s Identifier) GetID() ID {
+	return s.Id
+}
+
 func (identifierInput IdentifierInput) MarshalJSON() ([]byte, error) {
 	if identifierInput.Id == nil && identifierInput.Alias == nil {
 		return []byte("null"), nil
 	}
 	var out string
 	if identifierInput.Id != nil {
-		out = fmt.Sprintf(`{"id":"%s"}`, string(*identifierInput.Id))
+		out = fmt.Sprintf(`{"id":"%s"}`, *identifierInput.Id)
 	} else {
 		out = fmt.Sprintf(`{"alias":"%s"}`, *identifierInput.Alias)
 	}
@@ -53,7 +61,7 @@ func NewIdentifier(value ...string) *IdentifierInput {
 			}
 		}
 		return &IdentifierInput{
-			Alias: RefOf(value[0]),
+			Alias: &value[0],
 		}
 	}
 	var output IdentifierInput
@@ -92,6 +100,11 @@ func (nullable Nullable[T]) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return json.Marshal(nullable.Value)
+}
+
+func (nullable *Nullable[T]) UnmarshalJSON(data []byte) error {
+	stuff := json.Unmarshal(data, &nullable.Value)
+	return stuff
 }
 
 // NewNull returns a Nullable string that will always marshal into `null`, can be used to unset fields

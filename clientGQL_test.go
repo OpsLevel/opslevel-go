@@ -15,7 +15,7 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client"
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 
 	"github.com/rs/zerolog"
@@ -195,7 +195,7 @@ func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
 
 func TestMissingTeamIsAnOpsLevelApiError(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"errors": [
 				{

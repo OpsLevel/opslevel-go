@@ -3,14 +3,14 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
 func TestCreateAlertSourceService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{description,externalId,id,integration{id,name,type},name,type,url},id,service{id,aliases},status},errors{message,path}}}`,
+		`mutation AlertSourceServiceCreate($input:AlertSourceServiceCreateInput!){alertSourceServiceCreate(input: $input){alertSourceService{alertSource{description,externalId,id,integration{id,name,type},metadata,name,type,url},id,service{id,aliases},status},errors{message,path}}}`,
 		`{"input": { "alertSourceExternalIdentifier": { "externalId": "QWERTY", "type": "datadog" }, "service": { "alias": "example" }}}`,
 		`{"data": { "alertSourceServiceCreate": { "alertSourceService": { "service": { "aliases": ["example"] }}}}}`,
 	)
@@ -28,7 +28,7 @@ func TestCreateAlertSourceService(t *testing.T) {
 func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){description,externalId,id,integration{id,name,type},name,type,url}}}`,
+		`query AlertSourceGet($externalIdentifier:AlertSourceExternalIdentifier!){account{alertSource(externalIdentifier: $externalIdentifier){description,externalId,id,integration{id,name,type},metadata,name,type,url}}}`,
 		`{"externalIdentifier": { "type": "datadog", "externalId": "12345678" }}`,
 		`{"data": {
         "account": {
@@ -64,7 +64,7 @@ func TestGetAlertSourceWithExternalIdentifier(t *testing.T) {
 func TestGetAlertSource(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){description,externalId,id,integration{id,name,type},name,type,url}}}`,
+		`query AlertSourceGet($id:ID!){account{alertSource(id: $id){description,externalId,id,integration{id,name,type},metadata,name,type,url}}}`,
 		`{"id": "Z2lkOi8vb3BzbGV2ZWwvQWxlcnRTb3VyY2VzOjpQYWdlcmR1dHkvNjE" }`,
 		`{"data": {
         "account": {

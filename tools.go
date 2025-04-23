@@ -1,15 +1,5 @@
 package opslevel
 
-type Tool struct {
-	Category      ToolCategory
-	CategoryAlias string `json:",omitempty"`
-	DisplayName   string
-	Environment   string `json:",omitempty"`
-	Id            ID     `json:",omitempty"`
-	Url           string
-	Service       ServiceId
-}
-
 type ToolConnection struct {
 	Nodes      []Tool
 	PageInfo   PageInfo
@@ -18,10 +8,7 @@ type ToolConnection struct {
 
 func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	var m struct {
-		Payload struct {
-			Tool   Tool
-			Errors []OpsLevelErrors
-		} `graphql:"toolCreate(input: $input)"`
+		Payload ToolCreatePayload `graphql:"toolCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -32,10 +19,7 @@ func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 
 func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 	var m struct {
-		Payload struct {
-			Tool   Tool
-			Errors []OpsLevelErrors
-		} `graphql:"toolUpdate(input: $input)"`
+		Payload ToolUpdatePayload `graphql:"toolUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -46,9 +30,7 @@ func (client *Client) UpdateTool(input ToolUpdateInput) (*Tool, error) {
 
 func (client *Client) DeleteTool(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors
-		} `graphql:"toolDelete(input: $input)"`
+		Payload BasePayload `graphql:"toolDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": ToolDeleteInput{Id: id},

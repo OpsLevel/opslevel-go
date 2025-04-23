@@ -29,12 +29,6 @@ type AzureResourcesIntegrationFragment struct {
 	TenantId              string   `graphql:"tenantId"`
 }
 
-type GoogleCloudProject struct {
-	ID   string `graphql:"id"`
-	Name string `graphql:"name"`
-	URL  string `graphql:"url"`
-}
-
 type GoogleCloudIntegrationFragment struct {
 	Aliases               []string             `graphql:"aliases"`
 	ClientEmail           string               `graphql:"clientEmail"`
@@ -55,12 +49,12 @@ type IntegrationConnection struct {
 }
 
 type AWSIntegrationInput struct {
-	Name                 *string   `json:"name,omitempty"`
-	IAMRole              *string   `json:"iamRole,omitempty"`
-	ExternalID           *string   `json:"externalId,omitempty"`
-	OwnershipTagOverride *bool     `json:"awsTagsOverrideOwnership,omitempty"`
-	OwnershipTagKeys     []string  `json:"ownershipTagKeys"`
-	RegionOverride       *[]string `json:"regionOverride,omitempty"`
+	ExternalID           *Nullable[string] `json:"externalId,omitempty"`
+	IAMRole              *Nullable[string] `json:"iamRole,omitempty"`
+	Name                 *Nullable[string] `json:"name,omitempty"`
+	OwnershipTagKeys     []string          `json:"ownershipTagKeys"`
+	OwnershipTagOverride *Nullable[bool]   `json:"awsTagsOverrideOwnership,omitempty"`
+	RegionOverride       *[]string         `json:"regionOverride,omitempty"`
 }
 
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
@@ -74,10 +68,7 @@ func (integrationId *IntegrationId) Alias() string {
 
 func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"awsIntegrationCreate(input: $input)"`
+		Payload IntegrationCreatePayload `graphql:"awsIntegrationCreate(input: $input)"`
 	}
 	// This is a default in the UI, so we must maintain it
 	if len(input.OwnershipTagKeys) == 0 {
@@ -87,36 +78,30 @@ func (client *Client) CreateIntegrationAWS(input AWSIntegrationInput) (*Integrat
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationCreate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateEventIntegration(input EventIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"eventIntegrationCreate(input: $input)"`
+		Payload IntegrationCreatePayload `graphql:"eventIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("EventIntegrationCreate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateIntegrationNewRelic(input NewRelicIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"newRelicIntegrationCreate(input: $input)"`
+		Payload IntegrationCreatePayload `graphql:"newRelicIntegrationCreate(input: $input)"`
 	}
 
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationCreate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) GetIntegration(id ID) (*Integration, error) {
@@ -165,53 +150,42 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 
 func (client *Client) UpdateIntegrationAWS(identifier string, input AWSIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"awsIntegrationUpdate(integration: $integration input: $input)"`
+		Payload IntegrationUpdatePayload `graphql:"awsIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AWSIntegrationUpdate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateEventIntegration(input EventIntegrationUpdateInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"eventIntegrationUpdate(input: $input)"`
+		Payload IntegrationUpdatePayload `graphql:"eventIntegrationUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("EventIntegrationUpdate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateIntegrationNewRelic(identifier string, input NewRelicIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
+		Payload IntegrationUpdatePayload `graphql:"newRelicIntegrationUpdate(input: $input resource: $resource)"`
 	}
 	v := PayloadVariables{
 		"resource": *NewIdentifier(identifier),
 		"input":    input,
 	}
 	err := client.Mutate(&m, v, WithName("NewRelicIntegrationUpdate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) DeleteIntegration(identifier string) error {
 	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"integrationDelete(resource: $input)"`
+		Payload BasePayload `graphql:"integrationDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
@@ -222,72 +196,57 @@ func (client *Client) DeleteIntegration(identifier string) error {
 
 func (client *Client) CreateIntegrationAzureResources(input AzureResourcesIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"azureResourcesIntegrationCreate(input: $input)"`
+		Payload IntegrationCreatePayload `graphql:"azureResourcesIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("AzureResourcesIntegrationCreate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateIntegrationAzureResources(identifier string, input AzureResourcesIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"azureResourcesIntegrationUpdate(integration: $integration input: $input)"`
+		Payload IntegrationUpdatePayload `graphql:"azureResourcesIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("AzureResourcesIntegrationUpdate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) CreateIntegrationGCP(input GoogleCloudIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"googleCloudIntegrationCreate(input: $input)"`
+		Payload IntegrationCreatePayload `graphql:"googleCloudIntegrationCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationCreate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudIntegrationInput) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"googleCloudIntegrationUpdate(integration: $integration input: $input)"`
+		Payload IntegrationUpdatePayload `graphql:"googleCloudIntegrationUpdate(integration: $integration input: $input)"`
 	}
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationUpdate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) IntegrationReactivate(identifier string) (*Integration, error) {
 	var m struct {
-		Payload struct {
-			Integration *Integration
-			Errors      []OpsLevelErrors
-		} `graphql:"integrationReactivate(integration: $integration)"`
+		Payload IntegrationReactivatePayload `graphql:"integrationReactivate(integration: $integration)"`
 	}
 	v := PayloadVariables{
 		"integration": *NewIdentifier(identifier),
 	}
 	err := client.Mutate(&m, v, WithName("IntegrationReactivate"))
-	return m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }

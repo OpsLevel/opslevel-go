@@ -82,7 +82,7 @@ func (service *Service) ReconcileAliases(client *Client, aliasesWanted []string)
 	_, createErr := client.CreateAliases(service.Id, aliasesToCreate)
 
 	// update service to reflect API updates
-	updatedService, getErr := client.GetService(service.Id)
+	updatedService, getErr := client.GetServiceId(service.Id)
 	if updatedService != nil {
 		service.Aliases = updatedService.Aliases
 		service.ManagedAliases = updatedService.ManagedAliases
@@ -317,10 +317,7 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceCreate(input: $input)"`
+		Payload ServiceCreatePayload `graphql:"serviceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -331,7 +328,7 @@ func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) 
 	if err := m.Payload.Service.Hydrate(client); err != nil {
 		return &m.Payload.Service, err
 	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Service, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) GetServiceIdWithAlias(alias string) (*ServiceId, error) {
@@ -365,7 +362,7 @@ func (client *Client) GetServiceWithAlias(alias string) (*Service, error) {
 	return &q.Account.Service, nil
 }
 
-func (client *Client) GetService(id ID) (*Service, error) {
+func (client *Client) GetServiceId(id ID) (*Service, error) {
 	var q struct {
 		Account struct {
 			Service Service `graphql:"service(id: $service)"`
@@ -381,6 +378,14 @@ func (client *Client) GetService(id ID) (*Service, error) {
 		return &q.Account.Service, err
 	}
 	return &q.Account.Service, nil
+}
+
+func (client *Client) GetService(identifier string) (*Service, error) {
+	if IsID(identifier) {
+		return client.GetServiceId(ID(identifier))
+	} else {
+		return client.GetServiceWithAlias(identifier)
+	}
 }
 
 func (client *Client) GetServiceCount() (int, error) {
@@ -711,12 +716,9 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 	return &q.Account.Services, nil
 }
 
-func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
+func (client *Client) UpdateService(input ServiceUpdateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceUpdate(input: $input)"`
+		Payload ServiceUpdatePayload `graphql:"serviceUpdate(input: $input)"`
 	}
 
 	v := PayloadVariables{
@@ -728,15 +730,12 @@ func (client *Client) UpdateService(input ServiceUpdater) (*Service, error) {
 	if err := m.Payload.Service.Hydrate(client); err != nil {
 		return &m.Payload.Service, err
 	}
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Service, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceNoteUpdate(input: $input)"`
+		Payload ServiceUpdatePayload `graphql:"serviceNoteUpdate(input: $input)"`
 	}
 
 	v := PayloadVariables{
@@ -746,22 +745,22 @@ func (client *Client) UpdateServiceNote(input ServiceNoteUpdateInput) (*Service,
 		return nil, err
 	}
 
-	return &m.Payload.Service, FormatErrors(m.Payload.Errors)
+	return &m.Payload.Service, HandleErrors(m.Payload.Errors)
 }
 
 func (client *Client) DeleteService(identifier string) error {
 	input := ServiceDeleteInput{}
 	if IsID(identifier) {
-		input.Id = NewID(identifier)
+		input.Id = RefOf(ID(identifier))
 	} else {
-		input.Alias = &identifier
+		input.Alias = RefOf(identifier)
 	}
 
 	var m struct {
-		Payload struct {
-			Id     ID               `graphql:"deletedServiceId"`
-			Alias  string           `graphql:"deletedServiceAlias"`
-			Errors []OpsLevelErrors `graphql:"errors"`
+		Payload struct { // TODO: fix this
+			Id     ID      `graphql:"deletedServiceId"`
+			Alias  string  `graphql:"deletedServiceAlias"`
+			Errors []Error `graphql:"errors"`
 		} `graphql:"serviceDelete(input: $input)"`
 	}
 	v := PayloadVariables{

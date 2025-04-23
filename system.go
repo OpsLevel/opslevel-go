@@ -6,19 +6,6 @@ import (
 	"slices"
 )
 
-type SystemId Identifier
-
-type System struct {
-	SystemId
-	ManagedAliases []string    `graphql:"managedAliases"`
-	Name           string      `graphql:"name"`
-	Description    string      `graphql:"description"`
-	HTMLUrl        string      `graphql:"htmlUrl"`
-	Owner          EntityOwner `graphql:"owner"`
-	Parent         Domain      `graphql:"parent"`
-	Note           string      `graphql:"note"`
-}
-
 type SystemConnection struct {
 	Nodes      []System `json:"nodes"`
 	PageInfo   PageInfo `json:"pageInfo"`
@@ -141,10 +128,7 @@ func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariab
 
 func (systemId *SystemId) AssignService(client *Client, services ...string) error {
 	var m struct {
-		Payload struct {
-			System System
-			Errors []OpsLevelErrors
-		} `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
+		Payload SystemPayload `graphql:"systemChildAssign(system:$system, childServices:$childServices)"`
 	}
 	v := PayloadVariables{
 		"system":        *NewIdentifier(string(systemId.Id)),
@@ -156,10 +140,7 @@ func (systemId *SystemId) AssignService(client *Client, services ...string) erro
 
 func (client *Client) CreateSystem(input SystemInput) (*System, error) {
 	var m struct {
-		Payload struct {
-			System System
-			Errors []OpsLevelErrors
-		} `graphql:"systemCreate(input:$input)"`
+		Payload SystemPayload `graphql:"systemCreate(input:$input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -208,10 +189,7 @@ func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnectio
 
 func (client *Client) UpdateSystem(identifier string, input SystemInput) (*System, error) {
 	var s struct {
-		Payload struct {
-			System System
-			Errors []OpsLevelErrors
-		} `graphql:"systemUpdate(system:$system,input:$input)"`
+		Payload SystemPayload `graphql:"systemUpdate(system:$system,input:$input)"`
 	}
 	v := PayloadVariables{
 		"system": *NewIdentifier(identifier),
@@ -223,9 +201,7 @@ func (client *Client) UpdateSystem(identifier string, input SystemInput) (*Syste
 
 func (client *Client) DeleteSystem(identifier string) error {
 	var s struct {
-		Payload struct {
-			Errors []OpsLevelErrors `graphql:"errors"`
-		} `graphql:"systemDelete(resource: $input)"`
+		Payload BasePayload `graphql:"systemDelete(resource: $input)"`
 	}
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),

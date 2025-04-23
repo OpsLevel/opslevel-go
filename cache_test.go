@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -20,17 +20,17 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{ "lifecycles":[{{ template "lifecycle_1" }}] }}}`,
 	)
 	testRequestThree := autopilot.NewTestRequest(
-		`query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,managedAliases,name,description,htmlUrl,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}},note},{{ template "pagination_request" }}}}}`,
+		`query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "systems":{ "nodes":[{{ template "system1_response" }}] } }}}`,
 	)
 	testRequestFour := autopilot.NewTestRequest(
-		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}`,
+		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "teams":{ "nodes":[{{ template "team_1" }}] } }}}`,
 	)
 	testRequestFive := autopilot.NewTestRequest(
-		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{id,name},{{ template "pagination_request" }},totalCount}}}}`,
+		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{description,id,name},{{ template "pagination_request" }},totalCount}}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{"rubric":{ "categories":{ "nodes":[{{ template "category_1" }}] } }}}}`,
 	)
@@ -40,7 +40,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{"rubric":{ "levels":{ "nodes":[{{ template "level_1" }}] } }}}}`,
 	)
 	testRequestSeven := autopilot.NewTestRequest(
-		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{key,keyData,type,value,caseSensitive}},{{ template "pagination_request" }},totalCount}}}`,
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},{{ template "pagination_request" }},totalCount}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	)

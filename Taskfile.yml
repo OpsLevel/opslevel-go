@@ -10,30 +10,11 @@ tasks:
       - task: lint
       - task: test
 
-  generate:
-    desc: Generate code based on PUBLIC GraphQL Interface
-    aliases: [gen]
-    cmds:
-      - "[ -f schema.graphql ] || curl https://app.opslevel.com/public/schemas/schema.graphql > schema.graphql"
-      - defer: rm schema.graphql
-      - go generate
-      - gofumpt -w .
-
-  generate-internal:
-    desc: Generate code based on INTERNAL internal GraphQL Interface
-    aliases: [gen-internal]
-    env:
-      GRAPHQL_VISIBILITY: "internal"
-    cmds:
-      - go generate
-      - gofumpt -w .
-
   lint:
     desc: Formatting and linting
     cmds:
       - test -z "$(gofumpt -d -e . | tee /dev/stderr)"
       - golangci-lint run
-      - nilaway -test=false -include-pkgs='github.com/opslevel/opslevel-go' ./...
 
   fix:
     desc: Fix formatting and linting
@@ -41,7 +22,6 @@ tasks:
       - gofumpt -w .
       - go mod tidy
       - golangci-lint run --fix
-      - nilaway -fix -test=false -include-pkgs='github.com/opslevel/opslevel-go' ./...
 
   setup:
     desc: Setup linter, formatter, etc. for local testing and CI
@@ -50,8 +30,6 @@ tasks:
         vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
       - task: install-go-tool
         vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.1" }
-      - task: install-go-tool
-        vars: { GO_TOOL: "nilaway", GO_TOOL_PATH: "go.uber.org/nilaway/cmd/nilaway@latest" }
 
   test:
     desc: Run tests

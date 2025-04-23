@@ -5,20 +5,6 @@ import (
 	"slices"
 )
 
-type UserId struct {
-	Id    ID
-	Email string
-}
-
-type User struct {
-	UserId
-	HTMLUrl string
-	Name    string
-	Role    UserRole
-	// We cannot have this here because its breaks a TON of queries
-	// Teams   *TeamIdConnection
-}
-
 type UserConnection struct {
 	Nodes      []User
 	PageInfo   PageInfo
@@ -36,7 +22,7 @@ func (user *User) ResourceType() TaggableResource {
 func NewUserIdentifier(value string) *UserIdentifierInput {
 	if IsID(value) {
 		return &UserIdentifierInput{
-			Id: NewID(value),
+			Id: RefOf(ID(value)),
 		}
 	}
 	return &UserIdentifierInput{
@@ -114,15 +100,15 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 
 func (client *Client) InviteUser(email string, input UserInput, sendInvite bool) (*User, error) {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: need to fix this
 			User   User
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite)"`
 	}
 	v := PayloadVariables{
 		"email":           email,
 		"input":           input,
-		"forceSendInvite": RefOf(sendInvite),
+		"forceSendInvite": &sendInvite,
 	}
 	err := client.Mutate(&m, v, WithName("UserInvite"))
 	return &m.Payload.User, HandleErrors(err, m.Payload.Errors)
@@ -171,10 +157,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 
 func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 	var m struct {
-		Payload struct {
-			User   User
-			Errors []OpsLevelErrors
-		} `graphql:"userUpdate(user: $user input: $input)"`
+		Payload UserPayload `graphql:"userUpdate(user: $user input: $input)"`
 	}
 	v := PayloadVariables{
 		"user":  *NewUserIdentifier(user),
@@ -186,9 +169,7 @@ func (client *Client) UpdateUser(user string, input UserInput) (*User, error) {
 
 func (client *Client) DeleteUser(user string) error {
 	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors
-		} `graphql:"userDelete(user: $user)"`
+		Payload BasePayload `graphql:"userDelete(user: $user)"`
 	}
 	v := PayloadVariables{
 		"user": *NewUserIdentifier(user),

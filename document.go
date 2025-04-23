@@ -1,10 +1,5 @@
 package opslevel
 
-type ServiceDocumentSource struct {
-	IntegrationId     `graphql:"... on ApiDocIntegration"`
-	ServiceRepository `graphql:"... on ServiceRepository"`
-}
-
 type ServiceDocument struct {
 	Id         ID                    `graphql:"id" json:"id"`
 	HtmlURL    string                `graphql:"htmlUrl" json:"htmUrl,omitempty"`
@@ -25,18 +20,15 @@ type ServiceDocumentsContentConnection struct {
 
 func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string, docSource *ApiDocumentSourceEnum) (*Service, error) {
 	var m struct {
-		Payload struct {
-			Service Service
-			Errors  []OpsLevelErrors
-		} `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
+		Payload ServiceUpdatePayload `graphql:"serviceApiDocSettingsUpdate(service: $service, apiDocumentPath: $docPath, preferredApiDocumentSource: $docSource)"`
 	}
 	v := PayloadVariables{
 		"service":   *NewIdentifier(service),
-		"docPath":   NullString(),
+		"docPath":   (*string)(nil),
 		"docSource": docSource,
 	}
 	if docPath != "" {
-		v["docPath"] = RefOf(docPath)
+		v["docPath"] = &docPath
 	}
 	err := client.Mutate(&m, v, WithName("ServiceApiDocSettingsUpdate"))
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)

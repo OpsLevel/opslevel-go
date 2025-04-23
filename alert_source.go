@@ -1,22 +1,5 @@
 package opslevel
 
-type AlertSource struct {
-	Description string              `graphql:"description"`
-	ExternalId  string              `graphql:"externalId"`
-	Id          ID                  `graphql:"id"`
-	Integration IntegrationId       `graphql:"integration"`
-	Name        string              `graphql:"name"`
-	Type        AlertSourceTypeEnum `graphql:"type"`
-	Url         string              `graphql:"url"`
-}
-
-type AlertSourceService struct {
-	AlertSource AlertSource               `graphql:"alertSource"`
-	Id          ID                        `graphql:"id"`
-	Service     ServiceId                 `graphql:"service"`
-	Status      AlertSourceStatusTypeEnum `graphql:"status"`
-}
-
 type AlertSourceDeleteInput struct {
 	Id ID `json:"id"`
 }
@@ -31,10 +14,7 @@ func NewAlertSource(kind AlertSourceTypeEnum, id string) *AlertSourceExternalIde
 
 func (client *Client) CreateAlertSourceService(input AlertSourceServiceCreateInput) (*AlertSourceService, error) {
 	var m struct {
-		Payload struct {
-			AlertSourceService AlertSourceService
-			Errors             []OpsLevelErrors
-		} `graphql:"alertSourceServiceCreate(input: $input)"`
+		Payload AlertSourceServiceCreatePayload `graphql:"alertSourceServiceCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -73,9 +53,7 @@ func (client *Client) GetAlertSource(id ID) (*AlertSource, error) {
 
 func (client *Client) DeleteAlertSourceService(id ID) error {
 	var m struct {
-		Payload struct {
-			Errors []OpsLevelErrors
-		} `graphql:"alertSourceServiceDelete(input: $input)"`
+		Payload BasePayload `graphql:"alertSourceServiceDelete(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": AlertSourceDeleteInput{Id: id},

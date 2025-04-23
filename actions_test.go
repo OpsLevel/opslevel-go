@@ -1,9 +1,10 @@
 package opslevel_test
 
 import (
+	"encoding/json"
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -20,10 +21,12 @@ func TestCreateWebhookAction(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/create_action", testRequest)
 
 	// Act
+	jsonHeaders, err := ol.NewJSON(`{"Content-Type": "application/json"}`)
+	autopilot.Ok(t, err)
 	action, err := client.CreateWebhookAction(ol.CustomActionsWebhookActionCreateInput{
 		Name:           "Deploy Rollback",
 		LiquidTemplate: ol.RefOf("{\"token\": \"XXX\", \"ref\":\"main\", \"action\": \"rollback\"}"),
-		Headers:        &ol.JSON{"Content-Type": "application/json"},
+		Headers:        jsonHeaders,
 		HttpMethod:     ol.CustomActionsHttpMethodEnumPost,
 		WebhookUrl:     "https://gitlab.com/api/v4/projects/1/trigger/pipeline",
 	})
@@ -36,12 +39,12 @@ func TestCreateWebhookAction(t *testing.T) {
 func TestListCustomActions(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},{{ template "pagination_request" }},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{headers,httpMethod,webhookUrl}},{{ template "pagination_request" }},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }},totalCount}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
 	)
@@ -71,7 +74,7 @@ func TestUpdateWebhookAction(t *testing.T) {
 	// Act
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:         *newID,
-		HttpMethod: ol.RefOf(ol.CustomActionsHttpMethodEnumPut),
+		HttpMethod: &ol.CustomActionsHttpMethodEnumPut,
 	})
 
 	// Assert
@@ -90,10 +93,12 @@ func TestUpdateWebhookAction2(t *testing.T) {
 	client := BestTestClient(t, "custom_actions/update_action2", testRequest)
 
 	// Act
+	jsonHeaders, err := ol.NewJSON(`{"Accept": "application/json"}`)
+	autopilot.Ok(t, err)
 	action, err := client.UpdateWebhookAction(ol.CustomActionsWebhookActionUpdateInput{
 		Id:          *newID,
 		Description: ol.RefOf(""),
-		Headers:     &ol.JSON{"Accept": "application/json"},
+		Headers:     jsonHeaders,
 	})
 
 	// Assert
@@ -130,13 +135,13 @@ func TestCreateTriggerDefinition(t *testing.T) {
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          ol.RefOf(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		Description:            ol.RefOf("Disables the Deploy Freeze"),
 		ResponseTemplate:       ol.RefOf(""),
 		ManualInputsDefinition: ol.RefOf(""),
-		ActionId:               newID,
+		ActionId:               ol.RefOf(*newID),
 		OwnerId:                *newID,
-		FilterId:               ol.NewID("987654321"),
+		FilterId:               ol.RefOf(ol.ID("987654321")),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -155,14 +160,14 @@ func TestCreateTriggerDefinitionWithGlobalEntityType(t *testing.T) {
 	// Act
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
-		AccessControl:          ol.RefOf(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		Description:            ol.RefOf("Disables the Deploy Freeze"),
-		ActionId:               newID,
+		ActionId:               ol.RefOf(*newID),
 		ManualInputsDefinition: ol.RefOf(""),
 		ResponseTemplate:       ol.RefOf(""),
 		OwnerId:                *newID,
-		FilterId:               ol.NewID("987654321"),
-		EntityType:             ol.RefOf(ol.CustomActionsEntityTypeEnumGlobal),
+		FilterId:               ol.RefOf(ol.ID("987654321")),
+		EntityType:             &ol.CustomActionsEntityTypeEnumGlobal,
 		ExtendedTeamAccess: &[]ol.IdentifierInput{
 			*ol.NewIdentifier("example_1"),
 			*ol.NewIdentifier("example_1"),
@@ -186,12 +191,12 @@ func TestCreateTriggerDefinitionWithNullExtendedTeams(t *testing.T) {
 	trigger, err := client.CreateTriggerDefinition(ol.CustomActionsTriggerDefinitionCreateInput{
 		Name:                   "Deploy Rollback",
 		Description:            ol.RefOf("Disables the Deploy Freeze"),
-		AccessControl:          ol.RefOf(ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone),
+		AccessControl:          &ol.CustomActionsTriggerDefinitionAccessControlEnumEveryone,
 		ManualInputsDefinition: ol.RefOf(""),
 		ResponseTemplate:       ol.RefOf(""),
-		ActionId:               newID,
+		ActionId:               ol.RefOf(*newID),
 		OwnerId:                *newID,
-		FilterId:               ol.NewID("987654321"),
+		FilterId:               ol.RefOf(ol.ID("987654321")),
 		ExtendedTeamAccess:     &[]ol.IdentifierInput{},
 	})
 	// Assert
@@ -220,14 +225,14 @@ func TestGetTriggerDefinition(t *testing.T) {
 func TestListTriggerDefinitions(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},{{ template "pagination_request" }},totalCount}}}`,
+		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{{ template "custom_actions_trigger_request" }},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger1_response" }} }, { {{ template "custom_action_trigger2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger1_response" }} }, { {{ template "custom_action_trigger2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{action{aliases,id},aliases,description,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,timestamps{createdAt,updatedAt},accessControl,responseTemplate,entityType},{{ template "pagination_request" }},totalCount}}}`,
+		`query TriggerDefinitionList($after:String!$first:Int!){account{customActionsTriggerDefinitions(after: $after, first: $first){nodes{{ template "custom_actions_trigger_request" }},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+		`{ "data": { "account": { "customActionsTriggerDefinitions": { "nodes": [ { {{ template "custom_action_trigger3_response" }} } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
@@ -258,7 +263,7 @@ func TestUpdateTriggerDefinition(t *testing.T) {
 	// Act
 	trigger, err := client.UpdateTriggerDefinition(ol.CustomActionsTriggerDefinitionUpdateInput{
 		Id:       *newID,
-		FilterId: ol.NewID(),
+		FilterId: ol.NewNullOf[ol.ID](),
 	})
 	// Assert
 	autopilot.Ok(t, err)
@@ -312,10 +317,11 @@ func TestUpdateTriggerDefinition3(t *testing.T) {
 
 func TestDeleteTriggerDefinition(t *testing.T) {
 	// Arrange
-	request := `{"query":
-		"mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}",
-		{"input":{"alias":"123456789"}}
-	}`
+	request := autopilot.NewTestRequest(
+		`mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}`,
+		`{"input":{"alias":"123456789"}}`,
+		`{"data": {"customActionsTriggerDefinitionDelete": { "errors": [{{ template "error1" }}] }}}`,
+	)
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation TriggerDefinitionDelete($input:IdentifierInput!){customActionsTriggerDefinitionDelete(resource: $input){errors{message,path}}}`,
@@ -330,7 +336,7 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 
 	client := BestTestClient(t, "custom_actions/delete_trigger", testRequest)
 	clientErr := BestTestClient(t, "custom_actions/delete_trigger_err", testRequestError)
-	clientErr2 := ABetterTestClient(t, "custom_actions/delete_trigger_err2", request, "")
+	clientErr2 := BestTestClient(t, "custom_actions/delete_trigger_err2", request)
 	// Act
 	err := client.DeleteTriggerDefinition("123456789")
 	err2 := clientErr.DeleteTriggerDefinition("123456789")
@@ -346,12 +352,12 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 func TestListExtendedTeamAccess(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{{ template "extended_team_access_get_vars_1" }}`,
 		`{{ template "extended_team_access_response_1" }}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
 		`{{ template "extended_team_access_get_vars_2" }}`,
 		`{{ template "extended_team_access_response_2" }}`,
 	)
@@ -369,4 +375,19 @@ func TestListExtendedTeamAccess(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "example", result[0].Alias)
 	autopilot.Equals(t, id1, result[0].TeamId.Id)
+}
+
+func TestApprovalConfigInput(t *testing.T) {
+	// Arrange
+	v1 := ol.ApprovalConfigInput{}
+	v2 := ol.ApprovalConfigInput{Teams: &[]ol.IdentifierInput{}}
+	// Act
+	j1, err1 := json.Marshal(v1)
+	j2, err2 := json.Marshal(v2)
+	// Assert
+	autopilot.Ok(t, err1)
+	autopilot.Ok(t, err2)
+	autopilot.Equals(t, `{}`, string(j1))
+	autopilot.Equals(t, `{"teams":[]}`, string(j2))
+	// Assert
 }

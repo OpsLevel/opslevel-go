@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2024"
+	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -16,10 +16,11 @@ func TestCreateRubricLevels(t *testing.T) {
 
 	client := BestTestClient(t, "rubric/level_create", testRequest)
 	// Act
+	index := 4
 	result, _ := client.CreateLevel(ol.LevelCreateInput{
 		Name:        "Kyle",
 		Description: ol.RefOf("Created By Kyle"),
-		Index:       ol.RefOf(4),
+		Index:       &index,
 	})
 	// Assert
 	autopilot.Equals(t, "kyle", result.Alias)

@@ -1,16 +1,8 @@
 package opslevel
 
-import "github.com/relvacode/iso8601"
-
 type ManualCheckFragment struct {
 	UpdateFrequency       *ManualCheckFrequency `graphql:"updateFrequency"`       // The minimum frequency of the updates.
 	UpdateRequiresComment bool                  `graphql:"updateRequiresComment"` // Whether the check requires a comment or not.
-}
-
-type ManualCheckFrequency struct {
-	FrequencyTimeScale FrequencyTimeScale `graphql:"frequencyTimeScale"`
-	FrequencyValue     int                `graphql:"frequencyValue"`
-	StartingDate       iso8601.Time       `graphql:"startingDate"`
 }
 
 func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeScale, value int) *ManualCheckFrequencyInput {
@@ -24,9 +16,9 @@ func NewManualCheckFrequencyInput(startingDate string, timeScale FrequencyTimeSc
 func NewManualCheckFrequencyUpdateInput(startingDate string, timeScale FrequencyTimeScale, value int) *ManualCheckFrequencyUpdateInput {
 	startingDateIso := NewISO8601Date(startingDate)
 	return &ManualCheckFrequencyUpdateInput{
-		StartingDate:       &startingDateIso,
+		StartingDate:       RefOf(startingDateIso),
 		FrequencyTimeScale: &timeScale,
-		FrequencyValue:     &value,
+		FrequencyValue:     RefOf(value),
 	}
 }
 

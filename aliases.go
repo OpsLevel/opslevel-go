@@ -18,7 +18,7 @@ func (client *Client) GetAliasableResource(resourceType AliasOwnerTypeEnum, iden
 	switch resourceType {
 	case AliasOwnerTypeEnumService:
 		if IsID(identifier) {
-			aliasableResource, err = client.GetService(ID(identifier))
+			aliasableResource, err = client.GetService(identifier)
 		} else {
 			aliasableResource, err = client.GetServiceWithAlias(identifier)
 		}
@@ -49,7 +49,7 @@ func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, err
 	for _, alias := range aliases {
 		input := AliasCreateInput{
 			Alias:   alias,
-			OwnerId: ownerId,
+			OwnerId: ID(ownerId),
 		}
 		result, err := client.CreateAlias(input)
 		allErrors = errors.Join(allErrors, err)
@@ -61,11 +61,7 @@ func (client *Client) CreateAliases(ownerId ID, aliases []string) ([]string, err
 
 func (client *Client) CreateAlias(input AliasCreateInput) ([]string, error) {
 	var m struct {
-		Payload struct {
-			Aliases []string
-			OwnerId string
-			Errors  []OpsLevelErrors
-		} `graphql:"aliasCreate(input: $input)"`
+		Payload AliasCreatePayload `graphql:"aliasCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -116,9 +112,9 @@ func (client *Client) DeleteAliases(aliasOwnerType AliasOwnerTypeEnum, aliases [
 
 func (client *Client) DeleteAlias(input AliasDeleteInput) error {
 	var m struct {
-		Payload struct {
-			Alias  string `graphql:"deletedAlias"`
-			Errors []OpsLevelErrors
+		Payload struct { // TODO: we don't need this but removing it breaks alot of tests
+			Alias string `graphql:"deletedAlias"`
+			BasePayload
 		} `graphql:"aliasDelete(input: $input)"`
 	}
 	v := PayloadVariables{

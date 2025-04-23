@@ -7,26 +7,6 @@ import (
 	"github.com/gosimple/slug"
 )
 
-type FilterId struct {
-	Id   ID
-	Name string
-}
-
-type Filter struct {
-	FilterId
-	Connective ConnectiveEnum
-	HtmlUrl    string
-	Predicates []FilterPredicate
-}
-
-type FilterPredicate struct {
-	Key           PredicateKeyEnum  `json:"key" yaml:"key" default:"repository_ids"`
-	KeyData       string            `json:"keyData,omitempty" yaml:"keyData,omitempty" default:"null"`
-	Type          PredicateTypeEnum `json:"type" yaml:"type" default:"equals"`
-	Value         string            `json:"value,omitempty" yaml:"value,omitempty" default:"1"`
-	CaseSensitive *bool             `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" default:"false"`
-}
-
 // Validate the FilterPredicate based on known expectations before sending to API
 func (filterPredicate *FilterPredicate) Validate() error {
 	// validation common to Predicate and FilterPredicate types
@@ -211,10 +191,7 @@ func (filter *Filter) Alias() string {
 
 func (client *Client) CreateFilter(input FilterCreateInput) (*Filter, error) {
 	var m struct {
-		Payload struct {
-			Filter Filter
-			Errors []OpsLevelErrors
-		} `graphql:"filterCreate(input: $input)"`
+		Payload FilterCreatePayload `graphql:"filterCreate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -266,10 +243,7 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 
 func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 	var m struct {
-		Payload struct {
-			Filter Filter
-			Errors []OpsLevelErrors
-		} `graphql:"filterUpdate(input: $input)"`
+		Payload FilterUpdatePayload `graphql:"filterUpdate(input: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -280,9 +254,9 @@ func (client *Client) UpdateFilter(input FilterUpdateInput) (*Filter, error) {
 
 func (client *Client) DeleteFilter(id ID) error {
 	var m struct {
-		Payload struct {
+		Payload struct { // TODO: fix this
 			Id     ID `graphql:"deletedId"`
-			Errors []OpsLevelErrors
+			Errors []Error
 		} `graphql:"filterDelete(input: $input)"`
 	}
 	v := PayloadVariables{

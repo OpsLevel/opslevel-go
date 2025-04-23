@@ -3,7 +3,7 @@ package opslevel_test
 import (
 	"testing"
 
-	"github.com/opslevel/opslevel-go/v2024"
+	"github.com/opslevel/opslevel-go/v2025"
 
 	"github.com/rocktavious/autopilot/v2023"
 )
@@ -39,7 +39,7 @@ func TestCreateAWSIntegration(t *testing.T) {
 	result, err := client.CreateIntegrationAWS(opslevel.AWSIntegrationInput{
 		IAMRole:        opslevel.RefOf("arn:aws:iam::XXXX:role/aws-integration-role"),
 		ExternalID:     opslevel.RefOf("123456789"),
-		RegionOverride: opslevel.RefOf([]string{"us-east-1"}),
+		RegionOverride: &[]string{"us-east-1"},
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -155,7 +155,7 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"owner", "team", "opslevel_team"})
 	autopilot.Equals(t, []string{"new_gcp_integration"}, result.GoogleCloudIntegrationFragment.Aliases)
 	autopilot.Equals(t, []opslevel.GoogleCloudProject{
-		{ID: "123", Name: "my-project-1", URL: "XXX_URL_XXX"},
+		{Id: "123", Name: "my-project-1", Url: "XXX_URL_XXX"},
 	}, result.Projects)
 }
 
@@ -363,7 +363,7 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, result.GoogleCloudIntegrationFragment.OwnershipTagKeys, []string{"team", "opslevel_team"})
 	autopilot.Equals(t, []string{"new_gcp_integration", "updated_gcp"}, result.GoogleCloudIntegrationFragment.Aliases)
 	autopilot.Equals(t, []opslevel.GoogleCloudProject{
-		{ID: "123", Name: "my-project-1", URL: "XXX_URL_XXX"},
+		{Id: "123", Name: "my-project-1", Url: "XXX_URL_XXX"},
 	}, result.Projects)
 }
 
