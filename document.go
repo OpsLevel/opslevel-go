@@ -48,7 +48,7 @@ func (client *Client) ListDocuments(variables *PayloadVariables) (*ServiceDocume
 	}
 	q.Account.Documents.TotalCount = len(q.Account.Documents.Nodes)
 
-	for q.Account.Documents.PageInfo.HasNextPage {
+	if q.Account.Documents.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Documents.PageInfo.End
 
 		resp, err := client.ListDocuments(variables)
