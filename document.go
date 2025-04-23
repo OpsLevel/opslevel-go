@@ -63,3 +63,17 @@ func (client *Client) ListDocuments(variables *PayloadVariables) (*DocumentsConn
 	}
 	return &q.Account.Documents, nil
 }
+
+func (client *Client) GetDocument(id ID) (*ServiceDocumentContent, error) {
+	var q struct {
+		Account struct {
+			Document ServiceDocumentContent `graphql:"document(id: $id)"`
+		}
+	}
+
+	v := PayloadVariables{
+		"id": id,
+	}
+	err := client.Query(&q, v, WithName("DocumentGet"))
+	return &q.Account.Document, err
+}
