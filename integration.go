@@ -135,7 +135,7 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Integrations.PageInfo.HasNextPage {
+	if q.Account.Integrations.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Integrations.PageInfo.End
 		resp, err := client.ListIntegrations(variables)
 		if err != nil {

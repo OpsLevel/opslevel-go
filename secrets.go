@@ -30,7 +30,7 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*Sec
 	if err := client.Query(&q, *variables, WithName("SecretList")); err != nil {
 		return nil, err
 	}
-	for q.Account.SecretsVaultsSecrets.PageInfo.HasNextPage {
+	if q.Account.SecretsVaultsSecrets.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.SecretsVaultsSecrets.PageInfo.End
 		resp, err := client.ListSecretsVaultsSecret(variables)
 		if err != nil {

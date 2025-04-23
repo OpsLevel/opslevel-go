@@ -67,7 +67,7 @@ func (service *Service) GetDependencies(client *Client, variables *PayloadVariab
 	}
 	service.Dependencies.Edges = append(service.Dependencies.Edges, q.Account.Service.Dependencies.Edges...)
 	service.Dependencies.PageInfo = q.Account.Service.Dependencies.PageInfo
-	for service.Dependencies.PageInfo.HasNextPage {
+	if service.Dependencies.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Dependencies.PageInfo.End
 		_, err := service.GetDependencies(client, variables)
 		if err != nil {
@@ -100,7 +100,7 @@ func (service *Service) GetDependents(client *Client, variables *PayloadVariable
 	}
 	service.Dependents.Edges = append(service.Dependents.Edges, q.Account.Service.Dependents.Edges...)
 	service.Dependents.PageInfo = q.Account.Service.Dependents.PageInfo
-	for service.Dependents.PageInfo.HasNextPage {
+	if service.Dependents.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Dependents.PageInfo.End
 		_, err := service.GetDependents(client, variables)
 		if err != nil {
