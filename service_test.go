@@ -764,13 +764,13 @@ func TestGetService(t *testing.T) {
 func TestGetServiceDocuments(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceDocumentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}}`,
-		`{ "service": "{{ template "id1_string" }}", {{ template "first_page_variables" }} }`,
+		`query ServiceDocumentsList($after:String!$first:Int!$searchTerm:String!$service:ID!){account{service(id: $service){documents(searchTerm: $searchTerm, after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ "service": "{{ template "id1_string" }}", {{ template "first_page_variables" }}, "searchTerm": "" }`,
 		`{ "data": { "account": { "service": { "documents": { "nodes": [ {{ template "document_1" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceDocumentsList($after:String!$first:Int!$service:ID!){account{service(id: $service){documents(after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}}`,
-		`{ "service": "{{ template "id1_string" }}", {{ template "second_page_variables" }} }`,
+		`query ServiceDocumentsList($after:String!$first:Int!$searchTerm:String!$service:ID!){account{service(id: $service){documents(searchTerm: $searchTerm, after: $after, first: $first){nodes{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ "service": "{{ template "id1_string" }}", {{ template "second_page_variables" }}, "searchTerm": "" }`,
 		`{ "data": { "account": { "service": { "documents": { "nodes": [ {{ template "document_1" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
