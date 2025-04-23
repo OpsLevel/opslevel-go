@@ -280,7 +280,7 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 	var q struct {
 		Account struct {
 			Service struct {
-				Documents ServiceDocumentsConnection `graphql:"documents(after: $after, first: $first)"`
+				Documents ServiceDocumentsConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}
@@ -290,6 +290,9 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
+	}
+	if (*variables)["searchTerm"] == nil {
+		(*variables)["searchTerm"] = ""
 	}
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceDocumentsList")); err != nil {
