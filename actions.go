@@ -30,7 +30,7 @@ func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTe
 		return nil, err
 	}
 
-	for q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.HasNextPage {
+	if q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo.End
 		resp, err := customActionsTriggerDefinition.ExtendedTeamAccess(client, variables)
 		if err != nil {
@@ -94,7 +94,7 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomAct
 	if err := client.Query(&q, *variables, WithName("ExternalActionList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Actions.PageInfo.HasNextPage {
+	if q.Account.Actions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Actions.PageInfo.End
 		resp, err := client.ListCustomActions(variables)
 		if err != nil {
@@ -174,7 +174,7 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*Cust
 		return nil, HandleErrors(err)
 	}
 	q.Account.Definitions.TotalCount = len(q.Account.Definitions.Nodes)
-	for q.Account.Definitions.PageInfo.HasNextPage {
+	if q.Account.Definitions.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Definitions.PageInfo.End
 		resp, err := client.ListTriggerDefinitions(variables)
 		if err != nil {

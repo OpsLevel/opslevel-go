@@ -40,7 +40,7 @@ func (s *ComponentType) GetProperties(client *Client, v *PayloadVariables) (*Pro
 	s.Properties.Nodes = append(s.Properties.Nodes, q.Account.ComponentType.Properties.Nodes...)
 	s.Properties.PageInfo = q.Account.ComponentType.Properties.PageInfo
 	s.Properties.TotalCount += q.Account.ComponentType.Properties.TotalCount
-	for s.Properties.PageInfo.HasNextPage {
+	if s.Properties.PageInfo.HasNextPage {
 		(*v)["after"] = s.Properties.PageInfo.End
 		_, err := s.GetProperties(client, v)
 		if err != nil {
@@ -96,7 +96,7 @@ func (client *Client) ListComponentTypes(variables *PayloadVariables) (*Componen
 	if err := client.Query(&q, *variables, WithName("ComponentTypeList")); err != nil {
 		return nil, err
 	}
-	for q.Account.ComponentTypes.PageInfo.HasNextPage {
+	if q.Account.ComponentTypes.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.ComponentTypes.PageInfo.End
 		resp, err := client.ListComponentTypes(variables)
 		if err != nil {

@@ -228,7 +228,7 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 	if err := client.Query(&q, *variables, WithName("FilterList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Filters.PageInfo.HasNextPage {
+	if q.Account.Filters.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Filters.PageInfo.End
 		resp, err := client.ListFilters(variables)
 		if err != nil {

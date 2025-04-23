@@ -141,7 +141,7 @@ func (repository *Repository) GetServices(client *Client, variables *PayloadVari
 	repository.Services.Edges = append(repository.Services.Edges, q.Account.Repository.Services.Edges...)
 	repository.Services.PageInfo = q.Account.Repository.Services.PageInfo
 	repository.Services.TotalCount += q.Account.Repository.Services.TotalCount
-	for repository.Services.PageInfo.HasNextPage {
+	if repository.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = repository.Services.PageInfo.End
 		_, err := repository.GetServices(client, variables)
 		if err != nil {
@@ -180,7 +180,7 @@ func (repository *Repository) GetTags(client *Client, variables *PayloadVariable
 	}
 	repository.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
 	repository.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
-	for repository.Tags.PageInfo.HasNextPage {
+	if repository.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = repository.Tags.PageInfo.End
 		_, err := repository.GetTags(client, variables)
 		if err != nil {
@@ -260,7 +260,7 @@ func (client *Client) ListRepositories(variables *PayloadVariables) (*Repository
 	if err := client.Query(&q, *variables, WithName("RepositoryList")); err != nil {
 		return &q.Account.Repositories, err
 	}
-	for q.Account.Repositories.PageInfo.HasNextPage {
+	if q.Account.Repositories.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Repositories.PageInfo.End
 		resp, err := client.ListRepositories(variables)
 		if err != nil {
@@ -292,7 +292,7 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 	if err := client.Query(&q, *variables, WithName("RepositoryListWithTier")); err != nil {
 		return &q.Account.Repositories, err
 	}
-	for q.Account.Repositories.PageInfo.HasNextPage {
+	if q.Account.Repositories.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Repositories.PageInfo.End
 		resp, err := client.ListRepositoriesWithTier(tier, variables)
 		if err != nil {

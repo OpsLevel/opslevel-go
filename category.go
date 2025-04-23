@@ -61,7 +61,7 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 	if err := client.Query(&q, *variables, WithName("CategoryList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Rubric.Categories.PageInfo.HasNextPage {
+	if q.Account.Rubric.Categories.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Rubric.Categories.PageInfo.End
 		resp, err := client.ListCategories(variables)
 		if err != nil {
