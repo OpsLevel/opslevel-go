@@ -49,10 +49,18 @@ type CustomActionsExternalActionsConnection struct {
 	TotalCount int
 }
 
+func (s *CustomActionsExternalActionsConnection) GetNodes() any {
+	return s.Nodes
+}
+
 type CustomActionsTriggerDefinitionsConnection struct {
 	Nodes      []CustomActionsTriggerDefinition
 	PageInfo   PageInfo
 	TotalCount int `graphql:"-"`
+}
+
+func (s *CustomActionsTriggerDefinitionsConnection) GetNodes() any {
+	return s.Nodes
 }
 
 func (client *Client) CreateWebhookAction(input CustomActionsWebhookActionCreateInput) (*CustomActionsExternalAction, error) {
