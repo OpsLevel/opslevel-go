@@ -51,7 +51,7 @@ func (filterPredicate *FilterPredicate) validateCaseSensitivity() error {
 		PredicateTypeEnumSatisfiesJqExpression,
 	}
 	if slices.Contains(knownNotCaseSensitiveTypes, filterPredicate.Type) && *filterPredicate.CaseSensitive {
-		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set.", filterPredicate.Type)
+		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set", filterPredicate.Type)
 	}
 	return nil
 }
@@ -162,7 +162,7 @@ func (filterPredicate *FilterPredicate) validateKeyHasExpectedType() error {
 func (filterPredicate *FilterPredicate) validateValue() error {
 	if slices.Contains(existsTypes, filterPredicate.Type) {
 		if filterPredicate.Value != "" {
-			return fmt.Errorf("FilterPredicate type '%s' cannot have value set.", filterPredicate.Type)
+			return fmt.Errorf("FilterPredicate type '%s' cannot have value set", filterPredicate.Type)
 		}
 		return nil
 	}

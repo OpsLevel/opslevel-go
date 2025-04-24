@@ -55,7 +55,10 @@ func TemplatedResponse(response string) autopilot.ResponseWriter {
 	return func(w http.ResponseWriter) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, Templated(response))
+		_, err := fmt.Fprint(w, Templated(response))
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
