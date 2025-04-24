@@ -12,6 +12,10 @@ type SystemConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+func (s *SystemConnection) GetNodes() any {
+	return s.Nodes
+}
+
 func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
@@ -31,7 +35,7 @@ func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (
 	if err := client.Query(&q, *variables, WithName("SystemTagsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.System.Tags.PageInfo.HasNextPage {
+	if q.Account.System.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.System.Tags.PageInfo.End
 		resp, err := systemId.GetTags(client, variables)
 		if err != nil {
@@ -113,7 +117,7 @@ func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariab
 	if err := client.Query(&q, *variables, WithName("SystemChildServicesList")); err != nil {
 		return nil, err
 	}
-	for q.Account.System.ChildServices.PageInfo.HasNextPage {
+	if q.Account.System.ChildServices.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.System.ChildServices.PageInfo.End
 		resp, err := systemId.ChildServices(client, variables)
 		if err != nil {
@@ -174,7 +178,7 @@ func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnectio
 	if err := client.Query(&q, *variables, WithName("SystemsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Systems.PageInfo.HasNextPage {
+	if q.Account.Systems.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Systems.PageInfo.End
 		resp, err := client.ListSystems(variables)
 		if err != nil {

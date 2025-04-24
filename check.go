@@ -202,7 +202,7 @@ func (client *Client) ListChecks(variables *PayloadVariables) (*CheckConnection,
 	if err := client.Query(&q, *variables, WithName("CheckList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Rubric.Checks.PageInfo.HasNextPage {
+	if q.Account.Rubric.Checks.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Rubric.Checks.PageInfo.End
 		resp, err := client.ListChecks(variables)
 		if err != nil {

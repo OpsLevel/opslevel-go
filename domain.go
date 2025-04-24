@@ -12,6 +12,10 @@ type DomainConnection struct {
 	TotalCount int      `json:"totalCount" graphql:"-"`
 }
 
+func (s *DomainConnection) GetNodes() any {
+	return s.Nodes
+}
+
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (d *Domain) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
@@ -60,7 +64,7 @@ func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (
 	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Domain.Tags.PageInfo.HasNextPage {
+	if q.Account.Domain.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domain.Tags.PageInfo.End
 		resp, err := domainId.GetTags(client, variables)
 		if err != nil {
@@ -114,7 +118,7 @@ func (domainId *DomainId) ChildSystems(client *Client, variables *PayloadVariabl
 	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Domain.ChildSystems.PageInfo.HasNextPage {
+	if q.Account.Domain.ChildSystems.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domain.ChildSystems.PageInfo.End
 		resp, err := domainId.ChildSystems(client, variables)
 		if err != nil {
@@ -175,7 +179,7 @@ func (client *Client) ListDomains(variables *PayloadVariables) (*DomainConnectio
 	if err := client.Query(&q, *variables, WithName("DomainsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.Domains.PageInfo.HasNextPage {
+	if q.Account.Domains.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Domains.PageInfo.End
 		resp, err := client.ListDomains(variables)
 		if err != nil {

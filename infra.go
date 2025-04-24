@@ -42,6 +42,10 @@ type InfrastructureResourceConnection struct {
 	TotalCount int `graphql:"-"`
 }
 
+func (s *InfrastructureResourceConnection) GetNodes() any {
+	return s.Nodes
+}
+
 type InfraProviderInput struct {
 	Account string `json:"account" yaml:"account" default:"Dev - 123456789"`
 	Name    string `json:"name" yaml:"name" default:"Google"`
@@ -91,7 +95,7 @@ func (infrastructureResource *InfrastructureResource) GetTags(client *Client, va
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceTags")); err != nil {
 		return nil, err
 	}
-	for q.Account.InfrastructureResource.Tags.PageInfo.HasNextPage {
+	if q.Account.InfrastructureResource.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResource.Tags.PageInfo.End
 		resp, err := infrastructureResource.GetTags(client, variables)
 		if err != nil {
@@ -182,7 +186,7 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (*I
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceSchemaList")); err != nil {
 		return nil, err
 	}
-	for q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
+	if q.Account.InfrastructureResourceSchemas.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResourceSchemas.PageInfo.End
 		resp, err := client.ListInfrastructureSchemas(variables)
 		if err != nil {
@@ -208,7 +212,7 @@ func (client *Client) ListInfrastructure(variables *PayloadVariables) (*Infrastr
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceList")); err != nil {
 		return nil, err
 	}
-	for q.Account.InfrastructureResource.PageInfo.HasNextPage {
+	if q.Account.InfrastructureResource.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.InfrastructureResource.PageInfo.End
 		resp, err := client.ListInfrastructure(variables)
 		if err != nil {

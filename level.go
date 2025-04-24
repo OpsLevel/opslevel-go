@@ -24,7 +24,7 @@ func (conn *LevelConnection) Hydrate(client *Client) error {
 		"first": client.pageSize,
 	}
 	q.Account.Rubric.Levels.PageInfo = conn.PageInfo
-	for q.Account.Rubric.Levels.PageInfo.HasNextPage {
+	if q.Account.Rubric.Levels.PageInfo.HasNextPage {
 		v["after"] = q.Account.Rubric.Levels.PageInfo.End
 		if err := client.Query(&q, v); err != nil {
 			return err

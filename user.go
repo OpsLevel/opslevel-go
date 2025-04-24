@@ -11,6 +11,10 @@ type UserConnection struct {
 	TotalCount int
 }
 
+func (s *UserConnection) GetNodes() any {
+	return s.Nodes
+}
+
 func (user *User) ResourceId() ID {
 	return user.Id
 }
@@ -48,7 +52,7 @@ func (userId *UserId) GetTags(client *Client, variables *PayloadVariables) (*Tag
 	if err := client.Query(&q, *variables, WithName("UserTagsList")); err != nil {
 		return nil, err
 	}
-	for q.Account.User.Tags.PageInfo.HasNextPage {
+	if q.Account.User.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.User.Tags.PageInfo.End
 		resp, err := userId.GetTags(client, variables)
 		if err != nil {
@@ -85,7 +89,7 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil { // what goes in "" here and how is it derived?
 		return nil, err
 	}
-	for q.Account.User.Teams.PageInfo.HasNextPage {
+	if q.Account.User.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.User.Teams.PageInfo.End
 		conn, err := user.Teams(client, variables)
 		if err != nil {
@@ -142,7 +146,7 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 		return nil, err
 	}
 
-	for q.Account.Users.PageInfo.HasNextPage {
+	if q.Account.Users.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Users.PageInfo.End
 		resp, err := client.ListUsers(variables)
 		if err != nil {
