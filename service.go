@@ -292,9 +292,8 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 		return nil, fmt.Errorf("unable to get 'Documents', invalid service id: '%s'", service.Id)
 	}
 
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+	variables = client.PopulatePaginationParams(variables)
+
 	if (*variables)["searchTerm"] == nil {
 		(*variables)["searchTerm"] = ""
 	}
