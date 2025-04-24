@@ -29,7 +29,7 @@ tasks:
       - task: install-go-tool
         vars: { GO_TOOL: "gofumpt", GO_TOOL_PATH: "mvdan.cc/gofumpt@latest" }
       - task: install-go-tool
-        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint@v2.1.2" }
+        vars: { GO_TOOL: "golangci-lint", GO_TOOL_PATH: "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.2" }
 
   test:
     desc: Run tests
