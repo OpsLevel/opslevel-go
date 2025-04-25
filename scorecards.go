@@ -58,9 +58,8 @@ func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVar
 			} `graphql:"scorecard(input: $scorecard)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["scorecard"] = *NewIdentifier(string(scorecard.Id))
 	if err := client.Query(&q, *variables, WithName("ScorecardCategoryList")); err != nil {
 		return nil, err
@@ -116,9 +115,8 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardCon
 			Scorecards ScorecardConnection `graphql:"scorecards(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("ScorecardsList")); err != nil {
 		return nil, err
 	}

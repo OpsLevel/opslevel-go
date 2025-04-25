@@ -178,9 +178,8 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid service id: '%s'", service.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceTagsList")); err != nil {
 		return nil, err
@@ -221,9 +220,8 @@ func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get Tools, invalid service id: '%s'", service.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceToolsList")); err != nil {
 		return nil, err
@@ -256,9 +254,8 @@ func (service *Service) GetRepositories(client *Client, variables *PayloadVariab
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get Repositories, invalid service id: '%s'", service.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceRepositoriesList")); err != nil {
 		return nil, err
@@ -405,10 +402,8 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 			Services ServiceConnection `graphql:"services(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
 
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("ServiceList")); err != nil {
 		return nil, err
 	}
@@ -440,9 +435,8 @@ func (client *Client) ListServicesWithFilter(filterIdentifier string, variables 
 			Services ServiceConnection `graphql:"services(filterIdentifier: $filter, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["filter"] = NewIdentifier(filterIdentifier)
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithFilter")); err != nil {
@@ -473,9 +467,8 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 			Services ServiceConnection `graphql:"services(framework: $framework, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["framework"] = framework
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithFramework")); err != nil {
@@ -506,9 +499,8 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 			Services ServiceConnection `graphql:"services(language: $language, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["language"] = language
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithLanguage")); err != nil {
@@ -539,9 +531,8 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 			Services ServiceConnection `graphql:"services(lifecycleAlias: $lifecycle, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["lifecycle"] = lifecycle
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithLifecycle")); err != nil {
@@ -572,9 +563,8 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 			Services ServiceConnection `graphql:"services(ownerAlias: $owner, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["owner"] = owner
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithOwner")); err != nil {
@@ -605,9 +595,8 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 			Services ServiceConnection `graphql:"services(product: $product, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["product"] = product
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithProduct")); err != nil {
@@ -655,9 +644,8 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 			Services ServiceConnection `graphql:"services(tag: $tag, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["tag"] = tag
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithTag")); err != nil {
@@ -688,9 +676,8 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 			Services ServiceConnection `graphql:"services(tierAlias: $tier, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["tier"] = tier
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithTier")); err != nil {
