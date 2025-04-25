@@ -739,7 +739,7 @@ func TestTeamAddContact(t *testing.T) {
 	client2 := BestTestClient(t, "team/alias_add_contact", testRequest)
 	// Act
 	team, _ := client1.GetTeamWithAlias("example")
-	result, err := client2.AddContact(string(team.TeamId.Id), ol.CreateContactSlack("#general", nil))
+	result, err := client2.AddContact(string(team.Id), ol.CreateContactSlack("#general", nil))
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "#general", result.Address)

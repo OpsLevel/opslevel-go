@@ -369,12 +369,15 @@ func TestListExtendedTeamAccess(t *testing.T) {
 
 	// Act
 	resp, err := trigger.ExtendedTeamAccess(client, nil)
+	if resp == nil || resp.Nodes == nil || len(resp.Nodes) == 0 {
+		t.Error("Expected team access response to not be nil")
+	}
 	result := resp.Nodes
 
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, "example", result[0].Alias)
-	autopilot.Equals(t, id1, result[0].TeamId.Id)
+	autopilot.Equals(t, id1, result[0].Id)
 }
 
 func TestApprovalConfigInput(t *testing.T) {
