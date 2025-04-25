@@ -16,7 +16,10 @@ func testRestClientResponseWriter() autopilot.ResponseWriter {
 	return func(w http.ResponseWriter) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, testRestClientResponse)
+		_, err := fmt.Fprint(w, testRestClientResponse)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
