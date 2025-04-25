@@ -94,7 +94,7 @@ type Connection interface {
 	GetNodes() any
 }
 
-func MergeMaps(map1, map2 map[string]any) map[string]any {
+func MergeMaps(map1, map2 map[string]any) *map[string]any {
 	merged := make(map[string]any)
 
 	for key, value := range map1 {
@@ -107,5 +107,5 @@ func MergeMaps(map1, map2 map[string]any) map[string]any {
 		}
 	}
 
-	return merged
+	return &merged
 }

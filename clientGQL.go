@@ -106,7 +106,5 @@ func (client *Client) PopulatePaginationParams(variables *PayloadVariables) *Pay
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	*variables = MergeMaps((*variables), client.InitialPageVariables())
-
-	return variables
+	return (*PayloadVariables)(MergeMaps((*variables), client.InitialPageVariables()))
 }
