@@ -106,11 +106,7 @@ func (client *Client) PopulatePaginationParams(variables *PayloadVariables) *Pay
 		variables = client.InitialPageVariablesPointer()
 	}
 
-	if (*variables)["after"] == nil {
-		(*variables)["after"] = client.InitialPageVariables()["after"]
-	}
-	if (*variables)["first"] == nil {
-		(*variables)["first"] = client.InitialPageVariables()["first"]
-	}
+	*variables = MergeMaps((*variables), client.InitialPageVariables())
+
 	return variables
 }
