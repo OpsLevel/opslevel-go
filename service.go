@@ -167,6 +167,27 @@ func (service *Service) Hydrate(client *Client) error {
 	return nil
 }
 
+func (service *Service) GetSystem(client *Client, variables *PayloadVariables) (*System, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				System System `graphql:"system"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get system, invalid Service id: '%s'", service.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = service.Id
+	if err := client.Query(&q, *variables, WithName("ServiceSystemGet")); err != nil {
+		return nil, err
+	}
+	return &q.Account.Service.System, nil
+}
+
 func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
 	var q struct {
 		Account struct {
