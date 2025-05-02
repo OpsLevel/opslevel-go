@@ -40,6 +40,26 @@ func TestServiceTags(t *testing.T) {
 	autopilot.Equals(t, "true", result[1].Value)
 }
 
+func TestServiceSystem(t *testing.T) {
+	// Arrange
+	request := autopilot.NewTestRequest(
+		`query ServiceSystemGet($after:String!$first:Int!$service:ID!){account{service(id: $service){system{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}}}}}`,
+		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`{ "data": { "account": { "service": { "system": {{ template "system1_response" }} } } } }`,
+	)
+	client := BestTestClient(t, "service/system", request)
+	// Act
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	resp, err := service.GetSystem(client, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(resp.Id))
+}
+
 func TestServiceTools(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
