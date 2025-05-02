@@ -128,9 +128,8 @@ func (repository *Repository) GetServices(client *Client, variables *PayloadVari
 	if repository.Id == "" {
 		return nil, fmt.Errorf("unable to get Services, invalid repository id: '%s'", repository.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["id"] = repository.Id
 	if err := client.Query(&q, *variables, WithName("RepositoryServicesList")); err != nil {
 		return nil, err
@@ -162,9 +161,8 @@ func (repository *Repository) GetTags(client *Client, variables *PayloadVariable
 	if repository.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid repository id: '%s'", repository.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["id"] = repository.Id
 	if err := client.Query(&q, *variables, WithName("RepositoryTagsList")); err != nil {
 		return nil, err
@@ -285,9 +283,8 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 			Repositories RepositoryConnection `graphql:"repositories(tierAlias: $tier, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["tier"] = tier
 	if err := client.Query(&q, *variables, WithName("RepositoryListWithTier")); err != nil {
 		return &q.Account.Repositories, err

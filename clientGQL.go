@@ -100,3 +100,11 @@ func (client *Client) Validate() error {
 func WithName(name string) graphql.Option {
 	return graphql.OperationName(name)
 }
+
+func (client *Client) PopulatePaginationParams(variables *PayloadVariables) *PayloadVariables {
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+
+	return (*PayloadVariables)(MergeMaps((*variables), client.InitialPageVariables()))
+}

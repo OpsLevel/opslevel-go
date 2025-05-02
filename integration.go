@@ -129,9 +129,8 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 			Integrations IntegrationConnection `graphql:"integrations(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("IntegrationList")); err != nil {
 		return nil, err
 	}

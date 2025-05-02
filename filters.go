@@ -226,9 +226,8 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 			Filters FilterConnection `graphql:"filters(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("FilterList")); err != nil {
 		return nil, err
 	}

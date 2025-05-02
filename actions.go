@@ -21,9 +21,8 @@ func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTe
 	if customActionsTriggerDefinition.Id == "" {
 		return nil, fmt.Errorf("unable to get teams with ExtendedTeamAccess, invalid CustomActionsTriggerDefinition id: '%s'", customActionsTriggerDefinition.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["input"] = *NewIdentifier(string(customActionsTriggerDefinition.Id))
 
 	if err := client.Query(&q, *variables, WithName("ExtendedTeamAccessList")); err != nil {
@@ -96,9 +95,8 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomAct
 			Actions CustomActionsExternalActionsConnection `graphql:"customActionsExternalActions(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("ExternalActionList")); err != nil {
 		return nil, err
 	}
@@ -175,9 +173,8 @@ func (client *Client) ListTriggerDefinitions(variables *PayloadVariables) (*Cust
 			Definitions CustomActionsTriggerDefinitionsConnection `graphql:"customActionsTriggerDefinitions(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("TriggerDefinitionList")); err != nil {
 		return nil, HandleErrors(err)
 	}

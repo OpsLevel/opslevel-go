@@ -55,9 +55,8 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 			}
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("CategoryList")); err != nil {
 		return nil, err
 	}

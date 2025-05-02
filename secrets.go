@@ -24,9 +24,8 @@ func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*Sec
 			SecretsVaultsSecrets SecretsVaultsSecretConnection `graphql:"secretsVaultsSecrets(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("SecretList")); err != nil {
 		return nil, err
 	}

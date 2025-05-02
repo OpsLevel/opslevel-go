@@ -87,9 +87,8 @@ func (client *Client) ListPropertyDefinitions(variables *PayloadVariables) (*Pro
 			Definitions PropertyDefinitionConnection `graphql:"propertyDefinitions(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("PropertyDefinitionList")); err != nil {
 		return nil, err
 	}
@@ -166,9 +165,8 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get properties, invalid Service id: '%s'", service.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServicePropertiesList")); err != nil {
 		return nil, err
