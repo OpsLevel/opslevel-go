@@ -25,6 +25,7 @@ var AllAlertSourceStatusTypeEnum = []string{
 type AlertSourceTypeEnum string
 
 var (
+	AlertSourceTypeEnumCustom      AlertSourceTypeEnum = "custom"       // A custom alert source (aka service)
 	AlertSourceTypeEnumDatadog     AlertSourceTypeEnum = "datadog"      // A Datadog alert source (aka monitor)
 	AlertSourceTypeEnumFireHydrant AlertSourceTypeEnum = "fire_hydrant" // An FireHydrant alert source (aka service)
 	AlertSourceTypeEnumIncidentIo  AlertSourceTypeEnum = "incident_io"  // An incident.io alert source (aka service)
@@ -35,6 +36,7 @@ var (
 
 // All AlertSourceTypeEnum as []string
 var AllAlertSourceTypeEnum = []string{
+	string(AlertSourceTypeEnumCustom),
 	string(AlertSourceTypeEnumDatadog),
 	string(AlertSourceTypeEnumFireHydrant),
 	string(AlertSourceTypeEnumIncidentIo),
@@ -3041,7 +3043,9 @@ var (
 	RelatedResourceRelationshipTypeEnumContains     RelatedResourceRelationshipTypeEnum = "contains"      // The resource contains the node on the edge
 	RelatedResourceRelationshipTypeEnumDependencyOf RelatedResourceRelationshipTypeEnum = "dependency_of" // The resource is a dependency of the node on the edge
 	RelatedResourceRelationshipTypeEnumDependsOn    RelatedResourceRelationshipTypeEnum = "depends_on"    // The resource depends on the node on the edge
+	RelatedResourceRelationshipTypeEnumIsRelatedTo  RelatedResourceRelationshipTypeEnum = "is_related_to" // The resource is part of a specialized relationship defined on another node
 	RelatedResourceRelationshipTypeEnumMemberOf     RelatedResourceRelationshipTypeEnum = "member_of"     // The resource is a member of the node on the edge
+	RelatedResourceRelationshipTypeEnumRelatedTo    RelatedResourceRelationshipTypeEnum = "related_to"    // The resource has a specialized relationship to another node
 )
 
 // All RelatedResourceRelationshipTypeEnum as []string
@@ -3050,21 +3054,25 @@ var AllRelatedResourceRelationshipTypeEnum = []string{
 	string(RelatedResourceRelationshipTypeEnumContains),
 	string(RelatedResourceRelationshipTypeEnumDependencyOf),
 	string(RelatedResourceRelationshipTypeEnumDependsOn),
+	string(RelatedResourceRelationshipTypeEnumIsRelatedTo),
 	string(RelatedResourceRelationshipTypeEnumMemberOf),
+	string(RelatedResourceRelationshipTypeEnumRelatedTo),
 }
 
 // RelationshipTypeEnum The type of relationship between two resources
 type RelationshipTypeEnum string
 
 var (
-	RelationshipTypeEnumBelongsTo RelationshipTypeEnum = "belongs_to" // The source resource belongs to the target resource
-	RelationshipTypeEnumDependsOn RelationshipTypeEnum = "depends_on" // The source resource depends on the target resource
+	RelationshipTypeEnumBelongsTo RelationshipTypeEnum = "belongs_to" // The source resource belongs to the target resource. Can be used to allow Components to belong to Systems and Domains, or for Infrastructure to belong to Components
+	RelationshipTypeEnumDependsOn RelationshipTypeEnum = "depends_on" // The source resource depends on the target resource. Can be used to specify that a Component depends on some Infrastructure, or that a System depends on a Component
+	RelationshipTypeEnumRelatedTo RelationshipTypeEnum = "related_to" // The source resource is related to the target resource through a custom relationship definition. These are dynamic and can be used to extend our out-of-the-box relationships
 )
 
 // All RelationshipTypeEnum as []string
 var AllRelationshipTypeEnum = []string{
 	string(RelationshipTypeEnumBelongsTo),
 	string(RelationshipTypeEnumDependsOn),
+	string(RelationshipTypeEnumRelatedTo),
 }
 
 // RepositoryVisibilityEnum Possible visibility levels for repositories
