@@ -239,10 +239,10 @@ func (service *Service) GetLastDeploy(client *Client, variables *PayloadVariable
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get LastDeploy, invalid service id: '%s'", service.Id)
 	}
-	(*variables)["service"] = service.Id
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
+	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceLastDeploy")); err != nil {
 		return nil, err
 	}
