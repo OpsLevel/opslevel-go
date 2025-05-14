@@ -697,7 +697,6 @@ type ContactCreateInput struct {
 	ExternalId  *Nullable[string] `json:"externalId,omitempty" yaml:"externalId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The remote identifier of the contact method (Optional)
 	OwnerId     *Nullable[ID]     `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of this contact (Optional)
 	TeamAlias   *Nullable[string] `json:"teamAlias,omitempty" yaml:"teamAlias,omitempty" example:"example_value"`                     // The alias of the team the contact belongs to (Optional)
-	TeamId      *Nullable[ID]     `json:"teamId,omitempty" yaml:"teamId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`         // The id of the team the contact belongs to (Optional)
 	Type        ContactType       `json:"type" yaml:"type" example:"email"`                                                           // The method of contact [email, slack, slack_handle, web, microsoft_teams] (Required)
 }
 
@@ -1021,7 +1020,6 @@ type ServiceCreateInput struct {
 	Language              *Nullable[string] `json:"language,omitempty" yaml:"language,omitempty" example:"example_value"`                   // The primary programming language that the service is written in (Optional)
 	LifecycleAlias        *Nullable[string] `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" example:"example_value"`       // The lifecycle stage of the service (Optional)
 	Name                  string            `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the service (Required)
-	OwnerAlias            *Nullable[string] `json:"ownerAlias,omitempty" yaml:"ownerAlias,omitempty" example:"example_value"`               // The team that owns the service (Optional)
 	OwnerInput            *IdentifierInput  `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for this service (Optional)
 	Parent                *IdentifierInput  `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service (Optional)
 	Product               *Nullable[string] `json:"product,omitempty" yaml:"product,omitempty" example:"example_value"`                     // A product is an application that your end user interacts with. Multiple services can work together to power a single product (Optional)
@@ -1044,11 +1042,8 @@ type ServiceDependencyCreateInput struct {
 
 // ServiceDependencyKey A source, destination pair specifying a dependency between services
 type ServiceDependencyKey struct {
-	Destination           *Nullable[ID]     `json:"destination,omitempty" yaml:"destination,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the service that is depended upon (Optional)
-	DestinationIdentifier *IdentifierInput  `json:"destinationIdentifier,omitempty" yaml:"destinationIdentifier,omitempty"`                       // The ID or alias identifier of the service that is depended upon (Optional)
-	Notes                 *Nullable[string] `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                               // Notes about the dependency edge (Optional)
-	Source                *Nullable[ID]     `json:"source,omitempty" yaml:"source,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The ID of the service with the dependency (Optional)
-	SourceIdentifier      *IdentifierInput  `json:"sourceIdentifier,omitempty" yaml:"sourceIdentifier,omitempty"`                                 // The ID or alias identifier of the service with the dependency (Optional)
+	DestinationIdentifier *IdentifierInput `json:"destinationIdentifier,omitempty" yaml:"destinationIdentifier,omitempty"` // The ID or alias identifier of the service that is depended upon (Optional)
+	SourceIdentifier      *IdentifierInput `json:"sourceIdentifier,omitempty" yaml:"sourceIdentifier,omitempty"`           // The ID or alias identifier of the service with the dependency (Optional)
 }
 
 // ServiceLevelNotificationsUpdateInput Specifies the input fields used to update service level notification settings
@@ -1086,7 +1081,6 @@ type ServiceUpdateInput struct {
 	Language              *Nullable[string] `json:"language,omitempty" yaml:"language,omitempty" example:"example_value"`                   // The primary programming language that the service is written in (Optional)
 	LifecycleAlias        *Nullable[string] `json:"lifecycleAlias,omitempty" yaml:"lifecycleAlias,omitempty" example:"example_value"`       // The lifecycle stage of the service (Optional)
 	Name                  *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The display name of the service (Optional)
-	OwnerAlias            *Nullable[string] `json:"ownerAlias,omitempty" yaml:"ownerAlias,omitempty" example:"example_value"`               // The team that owns the service (Optional)
 	OwnerInput            *IdentifierInput  `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for the service (Optional)
 	Parent                *IdentifierInput  `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service (Optional)
 	Product               *Nullable[string] `json:"product,omitempty" yaml:"product,omitempty" example:"example_value"`                     // A product is an application that your end user interacts with. Multiple services can work together to power a single product (Optional)
@@ -1177,9 +1171,8 @@ type TagUpdateInput struct {
 // TeamCreateInput Specifies the input fields used to create a team
 type TeamCreateInput struct {
 	Contacts         *[]ContactInput            `json:"contacts,omitempty" yaml:"contacts,omitempty" example:"[]"`                            // The contacts for the team (Optional)
-	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                                               // The group this team belongs to (Optional)
-	ManagerEmail     *Nullable[string]          `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" example:"example_value"`         // The email of the user who manages the team (Optional)
 	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty" example:"[]"`                              // A set of emails that identify users in OpsLevel (Optional)
+	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                                               // The group this team belongs to (Optional)
 	Name             string                     `json:"name" yaml:"name" example:"example_value"`                                             // The team's display name (Required)
 	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`                                     // The parent team (Optional)
 	Responsibilities *Nullable[string]          `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" example:"example_value"` // A description of what the team is responsible for (Optional)
@@ -1205,9 +1198,8 @@ type TeamMembershipDeleteInput struct {
 
 // TeamMembershipUserInput Input for specifying members on a team
 type TeamMembershipUserInput struct {
-	Email *Nullable[string]    `json:"email,omitempty" yaml:"email,omitempty" example:"example_value"` // The user's email (Optional)
-	Role  *Nullable[string]    `json:"role,omitempty" yaml:"role,omitempty" example:"example_value"`   // The type of relationship this membership implies (Optional)
-	User  *UserIdentifierInput `json:"user,omitempty" yaml:"user,omitempty"`                           // The email address or ID of the user to add to a team (Optional)
+	Role *Nullable[string]    `json:"role,omitempty" yaml:"role,omitempty" example:"example_value"` // The type of relationship this membership implies (Optional)
+	User *UserIdentifierInput `json:"user,omitempty" yaml:"user,omitempty"`                         // The email address or ID of the user to add to a team (Optional)
 }
 
 // TeamPropertyDefinitionInput The input for defining a property
@@ -1226,11 +1218,10 @@ type TeamPropertyDefinitionsAssignInput struct {
 
 // TeamUpdateInput Specifies the input fields used to update a team
 type TeamUpdateInput struct {
+	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty" example:"[]"`                              // A set of emails that identify users in OpsLevel (Optional)
 	Alias            *string                    `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`                       // The alias of the team to be updated (Optional)
 	Group            *IdentifierInput           `json:"group,omitempty" yaml:"group,omitempty"`                                               // The group this team belongs to (Optional)
 	Id               *ID                        `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The id of the team to be updated (Optional)
-	ManagerEmail     *Nullable[string]          `json:"managerEmail,omitempty" yaml:"managerEmail,omitempty" example:"example_value"`         // The email of the user who manages the team (Optional)
-	Members          *[]TeamMembershipUserInput `json:"members,omitempty" yaml:"members,omitempty" example:"[]"`                              // A set of emails that identify users in OpsLevel (Optional)
 	Name             *Nullable[string]          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                         // The team's display name (Optional)
 	ParentTeam       *IdentifierInput           `json:"parentTeam,omitempty" yaml:"parentTeam,omitempty"`                                     // The parent team (Optional)
 	Responsibilities *Nullable[string]          `json:"responsibilities,omitempty" yaml:"responsibilities,omitempty" example:"example_value"` // A description of what the team is responsible for (Optional)
