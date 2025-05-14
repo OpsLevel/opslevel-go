@@ -758,6 +758,13 @@ type CustomActionsTriggerDefinitionUpdateInput struct {
 	ResponseTemplate       *Nullable[string]                                `json:"responseTemplate,omitempty" yaml:"responseTemplate,omitempty" example:"example_value"`             // The liquid template used to parse the response from the External Action (Optional)
 }
 
+// CustomActionsTriggerInvokeInput Inputs that specify the trigger definition to invoke, the user that invoked it, and what object it is invoked on
+type CustomActionsTriggerInvokeInput struct {
+	ManualInputs      JSON             `json:"manualInputs,omitempty" yaml:"manualInputs,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // Additional details provided for a specific invocation of this Custom Action (Optional Default: "{}")
+	TargetObject      *IdentifierInput `json:"targetObject,omitempty" yaml:"targetObject,omitempty"`                                                                                                                     // The identifier of the object to perform the custom action on (Optional)
+	TriggerDefinition IdentifierInput  `json:"triggerDefinition" yaml:"triggerDefinition"`                                                                                                                               // The trigger definition to invoke (Required)
+}
+
 // CustomActionsWebhookActionCreateInput Specifies the input fields used in the `customActionsWebhookActionCreate` mutation
 type CustomActionsWebhookActionCreateInput struct {
 	Async          *bool                       `json:"async,omitempty" yaml:"async,omitempty" example:"false"`                                                                                                         // Whether the action expects an additional, asynchronous response upon completion (Required Default: false)
