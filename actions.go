@@ -216,3 +216,14 @@ func (client *Client) DeleteTriggerDefinition(input string) error {
 	err := client.Mutate(&m, v, WithName("TriggerDefinitionDelete"))
 	return HandleErrors(err, m.Payload.Errors)
 }
+
+func (client *Client) InvokeAction(input CustomActionsTriggerInvokeInput) error {
+	var m struct {
+		Payload BasePayload `graphql:"customActionsTriggerInvoke(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("CustomActionsTriggerInvoke"))
+	return HandleErrors(err, m.Payload.Errors)
+}
