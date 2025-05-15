@@ -87,9 +87,8 @@ func (infrastructureResource *InfrastructureResource) GetTags(client *Client, va
 	if infrastructureResource.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid InfrastructureResource id: '%s'", infrastructureResource.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["infrastructureResource"] = *NewIdentifier(string(infrastructureResource.Id))
 
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceTags")); err != nil {
@@ -180,9 +179,8 @@ func (client *Client) ListInfrastructureSchemas(variables *PayloadVariables) (*I
 			InfrastructureResourceSchemas InfrastructureResourceSchemaConnection `graphql:"infrastructureResourceSchemas(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("InfrastructureResourceSchemaList")); err != nil {
 		return nil, err
 	}

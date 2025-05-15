@@ -35,9 +35,7 @@ func (client *Client) ListDocuments(variables *PayloadVariables) (*ServiceDocume
 		}
 	}
 
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+	variables = client.PopulatePaginationParams(variables)
 
 	if (*variables)["searchTerm"] == nil {
 		(*variables)["searchTerm"] = ""

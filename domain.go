@@ -56,9 +56,8 @@ func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (
 	if domainId.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid domain id: '%s'", domainId.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["domain"] = *NewIdentifier(string(domainId.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainTagsList")); err != nil {
@@ -109,10 +108,8 @@ func (domainId *DomainId) ChildSystems(client *Client, variables *PayloadVariabl
 	if domainId.Id == "" {
 		return nil, fmt.Errorf("unable to get Systems, invalid domain id: '%s'", domainId.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
 
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["domain"] = *NewIdentifier(string(domainId.Id))
 
 	if err := client.Query(&q, *variables, WithName("DomainChildSystemsList")); err != nil {
@@ -173,9 +170,8 @@ func (client *Client) ListDomains(variables *PayloadVariables) (*DomainConnectio
 			Domains DomainConnection `graphql:"domains(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("DomainsList")); err != nil {
 		return nil, err
 	}

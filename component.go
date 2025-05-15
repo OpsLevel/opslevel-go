@@ -27,9 +27,8 @@ func (s *ComponentType) GetProperties(client *Client, v *PayloadVariables) (*Pro
 	if s.Id == "" {
 		return nil, fmt.Errorf("unable to get properties, invalid id: '%s'", s.Id)
 	}
-	if v == nil {
-		v = client.InitialPageVariablesPointer()
-	}
+
+	v = client.PopulatePaginationParams(v)
 	(*v)["input"] = *NewIdentifier(string(s.Id))
 	if err := client.Query(&q, *v, WithName("ComponentTypePropertyList")); err != nil {
 		return nil, err
@@ -90,9 +89,8 @@ func (client *Client) ListComponentTypes(variables *PayloadVariables) (*Componen
 			ComponentTypes ComponentTypeConnection `graphql:"componentTypes(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("ComponentTypeList")); err != nil {
 		return nil, err
 	}

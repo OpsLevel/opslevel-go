@@ -93,3 +93,19 @@ func extractAliases(existingAliases, aliasesWanted []string) ([]string, []string
 type Connection interface {
 	GetNodes() any
 }
+
+func MergeMaps(map1, map2 map[string]any) *map[string]any {
+	merged := make(map[string]any)
+
+	for key, value := range map1 {
+		merged[key] = value
+	}
+
+	for key, value := range map2 {
+		if _, present := merged[key]; !present {
+			merged[key] = value
+		}
+	}
+
+	return &merged
+}

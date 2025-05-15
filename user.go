@@ -45,9 +45,8 @@ func (userId *UserId) GetTags(client *Client, variables *PayloadVariables) (*Tag
 	if userId.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid User id: '%s'", userId.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["user"] = userId.Id
 	if err := client.Query(&q, *variables, WithName("UserTagsList")); err != nil {
 		return nil, err
@@ -82,9 +81,8 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 	if user.Id == "" {
 		return nil, fmt.Errorf("unable to get teams, nil user id")
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["user"] = user.Id
 	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil { // what goes in "" here and how is it derived?
 		return nil, err

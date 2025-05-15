@@ -55,9 +55,8 @@ func (service *Service) GetDependencies(client *Client, variables *PayloadVariab
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get Dependencies, invalid service id: '%s'", service.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceDependenciesList")); err != nil {
 		return nil, err
@@ -88,9 +87,8 @@ func (service *Service) GetDependents(client *Client, variables *PayloadVariable
 	if service.Id == "" {
 		return nil, fmt.Errorf("unable to get Dependents, invalid service id: '%s'", service.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["service"] = service.Id
 	if err := client.Query(&q, *variables, WithName("ServiceDependentsList")); err != nil {
 		return nil, err

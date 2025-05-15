@@ -136,9 +136,8 @@ func (team *Team) GetMemberships(client *Client, variables *PayloadVariables) (*
 			} `graphql:"team(id: $team)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["team"] = team.Id
 	if err := client.Query(&q, *variables, WithName("TeamMembersList")); err != nil {
 		return nil, err
@@ -171,9 +170,8 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	if team.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid team id: '%s'", team.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["team"] = team.Id
 	if err := client.Query(&q, *variables, WithName("TeamTagsList")); err != nil {
 		return nil, err
@@ -357,10 +355,8 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 			Teams TeamConnection `graphql:"teams(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
 
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {
 		return nil, err
 	}
@@ -389,9 +385,8 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 			Teams TeamConnection `graphql:"teams(managerEmail: $email, after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["email"] = email
 
 	if err := client.Query(&q, *variables, WithName("TeamList")); err != nil {

@@ -51,9 +51,8 @@ func (client *Client) ListServicesMaturity(variables *PayloadVariables) (*Servic
 			Services ServiceMaturityConnection `graphql:"services(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("ServiceMaturityList")); err != nil {
 		return nil, err
 	}

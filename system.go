@@ -27,9 +27,8 @@ func (systemId *SystemId) GetTags(client *Client, variables *PayloadVariables) (
 	if systemId.Id == "" {
 		return nil, fmt.Errorf("unable to get Tags, invalid system id: '%s'", systemId.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["system"] = *NewIdentifier(string(systemId.Id))
 
 	if err := client.Query(&q, *variables, WithName("SystemTagsList")); err != nil {
@@ -108,10 +107,8 @@ func (systemId *SystemId) ChildServices(client *Client, variables *PayloadVariab
 	if systemId.Id == "" {
 		return nil, fmt.Errorf("unable to get Services, invalid system id: '%s'", systemId.Id)
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
 
+	variables = client.PopulatePaginationParams(variables)
 	(*variables)["system"] = *NewIdentifier(string(systemId.Id))
 
 	if err := client.Query(&q, *variables, WithName("SystemChildServicesList")); err != nil {
@@ -172,9 +169,8 @@ func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnectio
 			Systems SystemConnection `graphql:"systems(after: $after, first: $first)"`
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("SystemsList")); err != nil {
 		return nil, err
 	}

@@ -196,9 +196,8 @@ func (client *Client) ListChecks(variables *PayloadVariables) (*CheckConnection,
 			}
 		}
 	}
-	if variables == nil {
-		variables = client.InitialPageVariablesPointer()
-	}
+
+	variables = client.PopulatePaginationParams(variables)
 	if err := client.Query(&q, *variables, WithName("CheckList")); err != nil {
 		return nil, err
 	}
