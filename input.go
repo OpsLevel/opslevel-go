@@ -82,10 +82,10 @@ type CategoryUpdateInput struct {
 // CheckAlertSourceUsageCreateInput Specifies the input fields used to create an alert source usage check
 type CheckAlertSourceUsageCreateInput struct {
 	AlertSourceNamePredicate *PredicateInput         `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`           // The condition that the alert source name should satisfy to be evaluated (Optional)
-	AlertSourceType          *AlertSourceTypeEnum    `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty" example:"datadog"`           // The type of the alert source (Optional)
+	AlertSourceType          *AlertSourceTypeEnum    `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty" example:"custom"`            // The type of the alert source (Optional)
 	CategoryId               ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn                 *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled                  *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled                  *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId                 *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId                  ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                     string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -96,7 +96,7 @@ type CheckAlertSourceUsageCreateInput struct {
 // CheckAlertSourceUsageUpdateInput Specifies the input fields used to update an alert source usage check
 type CheckAlertSourceUsageUpdateInput struct {
 	AlertSourceNamePredicate *PredicateUpdateInput   `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`               // The condition that the alert source name should satisfy to be evaluated (Optional)
-	AlertSourceType          *AlertSourceTypeEnum    `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty" example:"datadog"`               // The type of the alert source (Optional)
+	AlertSourceType          *AlertSourceTypeEnum    `json:"alertSourceType,omitempty" yaml:"alertSourceType,omitempty" example:"custom"`                // The type of the alert source (Optional)
 	CategoryId               *Nullable[ID]           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to (Optional)
 	EnableOn                 *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled (Optional)
 	Enabled                  *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not (Optional)
@@ -113,7 +113,7 @@ type CheckCodeIssueCreateInput struct {
 	CategoryId     ID                            `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                             // The type of constraint used in evaluation the code issues check (Required)
 	EnableOn       *Nullable[iso8601.Time]       `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                 // The issue name used for code issue lookup (Optional)
 	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider (Optional)
@@ -157,7 +157,7 @@ type CheckCopyInput struct {
 type CheckCustomEventCreateInput struct {
 	CategoryId       ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn         *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled          *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled          *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId         *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	IntegrationId    ID                      `json:"integrationId" yaml:"integrationId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`           // The integration id this check will use (Required)
 	LevelId          ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
@@ -197,7 +197,7 @@ type CheckDeleteInput struct {
 type CheckGitBranchProtectionCreateInput struct {
 	CategoryId ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -224,7 +224,7 @@ type CheckHasDocumentationCreateInput struct {
 	DocumentSubtype HasDocumentationSubtypeEnum `json:"documentSubtype" yaml:"documentSubtype" example:"openapi"`                               // The subtype of the document (Required)
 	DocumentType    HasDocumentationTypeEnum    `json:"documentType" yaml:"documentType" example:"api"`                                         // The type of the document (Required)
 	EnableOn        *Nullable[iso8601.Time]     `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled         *Nullable[bool]             `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled         *Nullable[bool]             `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId        *Nullable[ID]               `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId         ID                          `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name            string                      `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -252,7 +252,7 @@ type CheckHasRecentDeployCreateInput struct {
 	CategoryId ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	Days       int                     `json:"days" yaml:"days" example:"3"`                                                           // The number of days to check since the last deploy (Required)
 	EnableOn   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -278,7 +278,7 @@ type CheckHasRecentDeployUpdateInput struct {
 type CheckManualCreateInput struct {
 	CategoryId            ID                         `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn              *Nullable[iso8601.Time]    `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled               *Nullable[bool]            `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled               *Nullable[bool]            `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId              *Nullable[ID]              `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId               ID                         `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                  string                     `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -307,7 +307,7 @@ type CheckManualUpdateInput struct {
 type CheckPackageVersionCreateInput struct {
 	CategoryId                 ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn                   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled                    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled                    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId                   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId                    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	MissingPackageResult       *CheckResultStatusEnum  `json:"missingPackageResult,omitempty" yaml:"missingPackageResult,omitempty" example:"failed"`  // The check result if the package isn't being used by a service (Optional)
@@ -343,9 +343,9 @@ type CheckPackageVersionUpdateInput struct {
 // CheckRepositoryFileCreateInput Specifies the input fields used to create a repo file check
 type CheckRepositoryFileCreateInput struct {
 	CategoryId            ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
-	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`             // Whether the check looks for the existence of a directory instead of a file (Optional)
+	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`             // Whether the check looks for the existence of a directory instead of a file (Optional Default: false)
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FileContentsPredicate *PredicateInput         `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                 // Condition to match the file content (Optional)
 	FilePaths             []string                `json:"filePaths" yaml:"filePaths" example:"['/usr/local/bin', '/home/opslevel']"`              // Restrict the search to certain file paths (Required)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
@@ -353,13 +353,13 @@ type CheckRepositoryFileCreateInput struct {
 	Name                  string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
 	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
-	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional)
+	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional Default: false)
 }
 
 // CheckRepositoryFileUpdateInput Specifies the input fields used to update a repo file check
 type CheckRepositoryFileUpdateInput struct {
 	CategoryId            *Nullable[ID]           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`    // The id of the category the check belongs to (Optional)
-	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`                    // Whether the check looks for the existence of a directory instead of a file (Optional)
+	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`                    // Whether the check looks for the existence of a directory instead of a file (Optional Default: false)
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`               // The date when the check will be automatically enabled (Optional)
 	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                    // Whether the check is enabled or not (Optional)
 	FileContentsPredicate *PredicateUpdateInput   `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                        // Condition to match the file content (Optional)
@@ -370,15 +370,15 @@ type CheckRepositoryFileUpdateInput struct {
 	Name                  *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                  // The display name of the check (Optional)
 	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the owner of the check (Optional)
-	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`                    // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional)
+	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`                    // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional Default: false)
 }
 
 // CheckRepositoryGrepCreateInput Specifies the input fields used to create a repo grep check
 type CheckRepositoryGrepCreateInput struct {
 	CategoryId            ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
-	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`             // Whether the check looks for the existence of a directory instead of a file (Optional)
+	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`             // Whether the check looks for the existence of a directory instead of a file (Optional Default: false)
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FileContentsPredicate PredicateInput          `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the file content (Required)
 	FilePaths             []string                `json:"filePaths" yaml:"filePaths" example:"['/usr/local/bin', '/home/opslevel']"`              // Restrict the search to certain file paths (Required)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
@@ -391,7 +391,7 @@ type CheckRepositoryGrepCreateInput struct {
 // CheckRepositoryGrepUpdateInput Specifies the input fields used to update a repo file check
 type CheckRepositoryGrepUpdateInput struct {
 	CategoryId            *Nullable[ID]           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`    // The id of the category the check belongs to (Optional)
-	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`                    // Whether the check looks for the existence of a directory instead of a file (Optional)
+	DirectorySearch       *Nullable[bool]         `json:"directorySearch,omitempty" yaml:"directorySearch,omitempty" example:"false"`                    // Whether the check looks for the existence of a directory instead of a file (Optional Default: false)
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`               // The date when the check will be automatically enabled (Optional)
 	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                    // Whether the check is enabled or not (Optional)
 	FileContentsPredicate *PredicateUpdateInput   `json:"fileContentsPredicate,omitempty" yaml:"fileContentsPredicate,omitempty"`                        // Condition to match the file content (Optional)
@@ -408,7 +408,7 @@ type CheckRepositoryGrepUpdateInput struct {
 type CheckRepositoryIntegratedCreateInput struct {
 	CategoryId ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -433,7 +433,7 @@ type CheckRepositoryIntegratedUpdateInput struct {
 type CheckRepositorySearchCreateInput struct {
 	CategoryId            ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn              *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled               *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FileContentsPredicate PredicateInput          `json:"fileContentsPredicate" yaml:"fileContentsPredicate"`                                     // Condition to match the text content (Required)
 	FileExtensions        *Nullable[[]string]     `json:"fileExtensions,omitempty" yaml:"fileExtensions,omitempty" example:"['go', 'py', 'rb']"`  // Restrict the search to files of given extensions. Extensions should contain only letters and numbers. For example: `['py', 'rb']` (Optional)
 	FilterId              *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
@@ -462,7 +462,7 @@ type CheckRepositorySearchUpdateInput struct {
 type CheckServiceConfigurationCreateInput struct {
 	CategoryId ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -487,7 +487,7 @@ type CheckServiceConfigurationUpdateInput struct {
 type CheckServiceDependencyCreateInput struct {
 	CategoryId ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name       string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -513,7 +513,7 @@ type CheckServiceOwnershipCreateInput struct {
 	CategoryId           ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	ContactMethod        *Nullable[string]       `json:"contactMethod,omitempty" yaml:"contactMethod,omitempty" example:"example_value"`         // The type of contact method that an owner should provide (Optional)
 	EnableOn             *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled              *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled              *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId             *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId              ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                 string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -546,7 +546,7 @@ type CheckServicePropertyCreateInput struct {
 	CategoryId             ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	ComponentType          *IdentifierInput        `json:"componentType,omitempty" yaml:"componentType,omitempty"`                                 // The Component Type that a custom property belongs to. Defaults to Service properties if not provided (Optional)
 	EnableOn               *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled                *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled                *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId               *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId                ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name                   string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -578,7 +578,7 @@ type CheckServicePropertyUpdateInput struct {
 type CheckTagDefinedCreateInput struct {
 	CategoryId   ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn     *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled      *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled      *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId     *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId      ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	Name         string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
@@ -614,7 +614,7 @@ type CheckToPromoteInput struct {
 type CheckToolUsageCreateInput struct {
 	CategoryId           ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	EnableOn             *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled              *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional)
+	Enabled              *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	EnvironmentPredicate *PredicateInput         `json:"environmentPredicate,omitempty" yaml:"environmentPredicate,omitempty"`                   // The condition that the environment should satisfy to be evaluated (Optional)
 	FilterId             *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	LevelId              ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
@@ -924,7 +924,7 @@ type OctopusDeployIntegrationInput struct {
 type PayloadFilterInput struct {
 	Arg  *Nullable[string] `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_value"`    // Value to be filtered (Optional)
 	Key  PayloadFilterEnum `json:"key" yaml:"key" example:"integration_id"`                       // Field to be filtered (Required)
-	Type *BasicTypeEnum    `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // Type of operation to be applied to value on the field (Optional)
+	Type *BasicTypeEnum    `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // Type of operation to be applied to value on the field (Optional Default: equals)
 }
 
 // PredicateInput A condition that should be satisfied
@@ -941,7 +941,7 @@ type PredicateUpdateInput struct {
 
 // PropertyDefinitionInput The input for defining a property
 type PropertyDefinitionInput struct {
-	AllowedInConfigFiles  *Nullable[bool]            `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"false"`    // Whether or not the property is allowed to be set in opslevel.yml config files (Optional)
+	AllowedInConfigFiles  *Nullable[bool]            `json:"allowedInConfigFiles,omitempty" yaml:"allowedInConfigFiles,omitempty" example:"false"`    // Whether or not the property is allowed to be set in opslevel.yml config files (Optional Default: true)
 	Description           *Nullable[string]          `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`              // The description of the property definition (Optional)
 	LockedStatus          *PropertyLockedStatusEnum  `json:"lockedStatus,omitempty" yaml:"lockedStatus,omitempty" example:"ui_locked"`                // Restricts what sources are able to assign values to this property (Optional)
 	Name                  *Nullable[string]          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                            // The name of the property definition (Optional)
@@ -954,7 +954,7 @@ type PropertyInput struct {
 	Definition    IdentifierInput        `json:"definition" yaml:"definition"`                                           // The definition of the property (Required)
 	Owner         IdentifierInput        `json:"owner" yaml:"owner"`                                                     // The entity that the property has been assigned to (Required)
 	OwnerType     *PropertyOwnerTypeEnum `json:"ownerType,omitempty" yaml:"ownerType,omitempty" example:"COMPONENT"`     // The type of the entity that the property has been assigned to. Defaults to `COMPONENT` if alias is provided for `owner` and `definition` (Optional)
-	RunValidation *Nullable[bool]        `json:"runValidation,omitempty" yaml:"runValidation,omitempty" example:"false"` // Validate the property value against the schema. On by default (Optional)
+	RunValidation *Nullable[bool]        `json:"runValidation,omitempty" yaml:"runValidation,omitempty" example:"false"` // Validate the property value against the schema. On by default (Optional Default: true)
 	Value         JsonString             `json:"value" yaml:"value" example:"JSON_TBD"`                                  // The value of the property (Required)
 }
 
@@ -998,7 +998,7 @@ type ServiceCreateInput struct {
 	OwnerInput            *IdentifierInput  `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for this service (Optional)
 	Parent                *IdentifierInput  `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service (Optional)
 	Product               *Nullable[string] `json:"product,omitempty" yaml:"product,omitempty" example:"example_value"`                     // A product is an application that your end user interacts with. Multiple services can work together to power a single product (Optional)
-	SkipAliasesValidation *Nullable[bool]   `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows for the creation of a service with invalid aliases (Optional)
+	SkipAliasesValidation *Nullable[bool]   `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows for the creation of a service with invalid aliases (Optional Default: false)
 	TierAlias             *Nullable[string] `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" example:"example_value"`                 // The software tier that the service belongs to (Optional)
 	Type                  *IdentifierInput  `json:"type,omitempty" yaml:"type,omitempty"`                                                   // The type of the component (Optional)
 }
@@ -1063,7 +1063,7 @@ type ServiceUpdateInput struct {
 	OwnerInput            *IdentifierInput  `json:"ownerInput,omitempty" yaml:"ownerInput,omitempty"`                                       // The owner for the service (Optional)
 	Parent                *IdentifierInput  `json:"parent,omitempty" yaml:"parent,omitempty"`                                               // The parent system for the service (Optional)
 	Product               *Nullable[string] `json:"product,omitempty" yaml:"product,omitempty" example:"example_value"`                     // A product is an application that your end user interacts with. Multiple services can work together to power a single product (Optional)
-	SkipAliasesValidation *Nullable[bool]   `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows updating a service with invalid aliases (Optional)
+	SkipAliasesValidation *Nullable[bool]   `json:"skipAliasesValidation,omitempty" yaml:"skipAliasesValidation,omitempty" example:"false"` // Allows updating a service with invalid aliases (Optional Default: false)
 	TierAlias             *Nullable[string] `json:"tierAlias,omitempty" yaml:"tierAlias,omitempty" example:"example_value"`                 // The software tier that the service belongs to (Optional)
 	Type                  *IdentifierInput  `json:"type,omitempty" yaml:"type,omitempty"`                                                   // The type of the component (Optional)
 }
@@ -1110,7 +1110,7 @@ type TagAssignInput struct {
 	Alias *Nullable[string] `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The alias of the resource that tags will be added to (Optional)
 	Id    *Nullable[ID]     `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource that the tags will be assigned to (Optional)
 	Tags  []TagInput        `json:"tags" yaml:"tags" example:"[]"`                                              // The desired tags to assign to the resource (Required)
-	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" example:"Domain"`                      // The type of resource `alias` refers to, if `alias` is provided (Optional)
+	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" example:"Domain"`                      // The type of resource `alias` refers to, if `alias` is provided (Optional Default: Service)
 }
 
 // TagCreateInput Specifies the input fields used to create a tag
@@ -1118,7 +1118,7 @@ type TagCreateInput struct {
 	Alias *string           `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The alias of the resource that this tag will be added to (Optional)
 	Id    *ID               `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource that this tag will be added to (Optional)
 	Key   string            `json:"key" yaml:"key" example:"example_value"`                                     // The tag's key (Required)
-	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" example:"Domain"`                      // The type of resource `alias` refers to, if `alias` is provided (Optional)
+	Type  *TaggableResource `json:"type,omitempty" yaml:"type,omitempty" example:"Domain"`                      // The type of resource `alias` refers to, if `alias` is provided (Optional Default: Service)
 	Value string            `json:"value" yaml:"value" example:"example_value"`                                 // The tag's value (Required)
 }
 
@@ -1250,7 +1250,7 @@ type UserInput struct {
 type UsersFilterInput struct {
 	Arg  *Nullable[string] `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_value"`    // Value to be filtered (Optional)
 	Key  UsersFilterEnum   `json:"key" yaml:"key" example:"deactivated_at"`                       // Field to be filtered (Required)
-	Type *BasicTypeEnum    `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // The operation applied to value on the field (Optional)
+	Type *BasicTypeEnum    `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"` // The operation applied to value on the field (Optional Default: equals)
 }
 
 // UsersInviteInput Specifies the input fields used in the `usersInvite` mutation
