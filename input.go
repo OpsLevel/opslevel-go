@@ -987,9 +987,26 @@ type PropertyInput struct {
 
 // RelationshipDefinition A source, target and relationship type specifying a relationship between two resources
 type RelationshipDefinition struct {
-	Source IdentifierInput      `json:"source" yaml:"source"`                  // The resource that is the source of the relationship. alias is ambiguous in this context and is not supported. Please supply an id (Required)
-	Target IdentifierInput      `json:"target" yaml:"target"`                  // The resource that is the target of the relationship. alias is ambiguous in this context and is not supported. Please supply an id (Required)
-	Type   RelationshipTypeEnum `json:"type" yaml:"type" example:"belongs_to"` // The type of the relationship between source and target (Required)
+	RelationshipDefinition *IdentifierInput     `json:"relationshipDefinition,omitempty" yaml:"relationshipDefinition,omitempty"` // A dynamic definition that specifies how the source and target are related (Optional)
+	Source                 IdentifierInput      `json:"source" yaml:"source"`                                                     // The resource that is the source of the relationship (Required)
+	Target                 IdentifierInput      `json:"target" yaml:"target"`                                                     // The resource that is the target of the relationship (Required)
+	Type                   RelationshipTypeEnum `json:"type" yaml:"type" example:"belongs_to"`                                    // The type of the relationship between source and target (Required)
+}
+
+// RelationshipDefinitionInput The input for defining a relationship on a component type
+type RelationshipDefinitionInput struct {
+	Alias         *string                              `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique identifier of the relationship (Optional)
+	ComponentType *IdentifierInput                     `json:"componentType,omitempty" yaml:"componentType,omitempty"`                     // The component type to create the relationship on (Optional)
+	Description   *Nullable[string]                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the relationship (Optional)
+	Metadata      *RelationshipDefinitionMetadataInput `json:"metadata,omitempty" yaml:"metadata,omitempty"`                               // The metadata of the relationship (Optional)
+	Name          *string                              `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the relationship (Optional)
+}
+
+// RelationshipDefinitionMetadataInput The metadata of the relationship
+type RelationshipDefinitionMetadataInput struct {
+	AllowedTypes []string `json:"allowedTypes,omitempty" yaml:"allowedTypes,omitempty" example:"LIST_TODO"` // The aliases of which types this relationship can target. Valid values include any component type alias on your account, or `team` (Optional)
+	MaxItems     *int     `json:"maxItems,omitempty" yaml:"maxItems,omitempty" example:"3"`                 // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
+	MinItems     *int     `json:"minItems,omitempty" yaml:"minItems,omitempty" example:"3"`                 // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
 }
 
 // RepositoryUpdateInput Specifies the input fields used to update a repository
