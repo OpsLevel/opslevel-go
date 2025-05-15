@@ -6,7 +6,15 @@ import "github.com/relvacode/iso8601"
 // AlertSourceExternalIdentifier Specifies the input needed to find an alert source with external information
 type AlertSourceExternalIdentifier struct {
 	ExternalId string              `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The external id of the alert (Required)
-	Type       AlertSourceTypeEnum `json:"type" yaml:"type" example:"datadog"`                                     // The type of the alert (Required)
+	Type       AlertSourceTypeEnum `json:"type" yaml:"type" example:"custom"`                                      // The type of the alert (Required)
+}
+
+// AlertSourceInput Input fields for the mutations to manage Alert Sources
+type AlertSourceInput struct {
+	Description *Nullable[string]               `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the alert source (Optional)
+	Identifier  ExternalResourceIdentifierInput `json:"identifier" yaml:"identifier"`                                               // The alert source identifier (Required)
+	Name        *Nullable[string]               `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the alert source (Optional)
+	Url         *Nullable[string]               `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"`                 // The url of the alert source (Optional)
 }
 
 // AlertSourceServiceCreateInput Specifies the input used for attaching an alert source to a service
@@ -19,6 +27,12 @@ type AlertSourceServiceCreateInput struct {
 // AlertSourceServiceDeleteInput Specifies the input fields used in the `alertSourceServiceDelete` mutation
 type AlertSourceServiceDeleteInput struct {
 	Id ID `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the alert source service to be deleted (Required)
+}
+
+// AlertSourceStatusUpdateInput Specifies the input fields used in the `alertSourceStatusUpdate` mutation
+type AlertSourceStatusUpdateInput struct {
+	AlertSource ExternalResourceIdentifierInput `json:"alertSource" yaml:"alertSource"`       // The alert source to be updated (Required)
+	Status      AlertSourceStatusTypeEnum       `json:"status" yaml:"status" example:"alert"` // The new status of the alert source (Required)
 }
 
 // AliasCreateInput The input for the `aliasCreate` mutation
@@ -790,6 +804,12 @@ type EventIntegrationInput struct {
 type EventIntegrationUpdateInput struct {
 	Id   ID     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the event integration to update (Required)
 	Name string `json:"name" yaml:"name" example:"example_value"`               // The name of the event integration (Required)
+}
+
+// ExternalResourceIdentifierInput Specifies the input fields to locate resouce created via API in OpsLevel
+type ExternalResourceIdentifierInput struct {
+	ExternalId  string          `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource in your system (Required)
+	Integration IdentifierInput `json:"integration" yaml:"integration"`                                         // The integration identifier (Required)
 }
 
 // ExternalUuidMutationInput Specifies the input used for modifying a resource's external UUID
