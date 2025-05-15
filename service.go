@@ -40,6 +40,7 @@ type Service struct {
 	Dependencies *ServiceDependenciesConnection `graphql:"-"`
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
 
+	LastDeploy *Deploy                      `graphql:"-"`
 	Properties *ServicePropertiesConnection `graphql:"-"`
 }
 
@@ -225,6 +226,27 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 		}
 	}
 	return service.Tags, nil
+}
+
+func (service *Service) GetLastDeploy(client *Client, variables *PayloadVariables) (*Deploy, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				LastDeploy Deploy
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get LastDeploy, invalid service id: '%s'", service.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = service.Id
+	if err := client.Query(&q, *variables, WithName("ServiceLastDeploy")); err != nil {
+		return nil, err
+	}
+	return &q.Account.Service.LastDeploy, nil
 }
 
 func (service *Service) GetAliases() []string {

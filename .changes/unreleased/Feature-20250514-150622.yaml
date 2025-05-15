@@ -1,0 +1,3 @@
+kind: Feature
+body: Add utility function to service struct to `GetLastDeploy` event
+time: 2025-05-14T15:06:22.701659-05:00
