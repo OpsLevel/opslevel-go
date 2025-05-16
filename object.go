@@ -338,6 +338,30 @@ type Predicate struct {
 	Value string            // The value of the condition (Optional)
 }
 
+// RelationshipDefinitionMetadata The metadata of the relationship
+type RelationshipDefinitionMetadata struct {
+	AllowedTypes []string // The aliases of which types this relationship can target. Valid values include any component type alias on your account, or `team` (Required)
+	MaxItems     int      // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
+	MinItems     int      // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
+}
+
+// RelationshipDefinitionType A dynamic definition for a relationship between one catalog entity to another
+type RelationshipDefinitionType struct {
+	Alias         string                         // The programmatic alias that can be used to reference the relationship in OpsLevel tooling (Required)
+	ComponentType ComponentTypeId                // The component type that the relationship belongs to (Required)
+	Description   string                         // The long-form descripion of what the relationship represents (Optional)
+	Id            ID                             // The ID of the relationship definition (Required)
+	Metadata      RelationshipDefinitionMetadata // JSON data that defines rules for how the relationship should be validated internally (Required)
+	Name          string                         // The human-readable name for a relationship (Required)
+}
+
+// RelationshipNode The relationship between two resources. A pair of source and destination resources
+type RelationshipNode struct {
+	Destination RelationshipResource // The catalog item that a relationship points to (Required)
+	Id          ID                   // The ID of the relationship (Required)
+	Source      RelationshipResource // The catalog item that a relationship stems from (Required)
+}
+
 // RepositoryPath The repository path used for this service
 type RepositoryPath struct {
 	Href string // The deep link to the repository path where the linked service's code exists (Required)
