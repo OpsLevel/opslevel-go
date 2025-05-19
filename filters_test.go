@@ -107,28 +107,27 @@ func TestGetMissingFilter(t *testing.T) {
 func TestListFilters(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},{{ template "pagination_request" }},totalCount}}}`,
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_kubernetes_response" }} }, { {{ template "filter_tier1service_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},{{ template "pagination_request" }},totalCount}}}`,
+		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+		`{"data": { "account": { "filters": { "nodes": [ { {{ template "filter_complex_kubernetes_response" }} } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "filter/list", requests...)
 	// Act
 	response, err := client.ListFilters(nil)
+	autopilot.Ok(t, err)
 	result := response.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Tier 1 Services", result[1].Name)
 	autopilot.Equals(t, ol.PredicateKeyEnumTierIndex, result[2].Predicates[0].Key)
-	// fmt.Println(Templated(requests[0].Request))
-	// panic(true)
 }
 
 func TestUpdateFilter(t *testing.T) {

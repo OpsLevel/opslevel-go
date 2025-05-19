@@ -7,12 +7,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-type CategoryConnection struct {
-	Nodes      []Category
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 func (category *Category) Alias() string {
 	return slug.Make(category.Name)
 }
@@ -69,8 +63,8 @@ func (client *Client) ListCategories(variables *PayloadVariables) (*CategoryConn
 		}
 		q.Account.Rubric.Categories.Nodes = append(q.Account.Rubric.Categories.Nodes, resp.Nodes...)
 		q.Account.Rubric.Categories.PageInfo = resp.PageInfo
-		q.Account.Rubric.Categories.TotalCount += resp.TotalCount
 	}
+	q.Account.Rubric.Categories.TotalCount = len(q.Account.Rubric.Categories.Nodes)
 	return &q.Account.Rubric.Categories, nil
 }
 

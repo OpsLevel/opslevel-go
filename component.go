@@ -8,13 +8,7 @@ type ComponentCreateInput ServiceCreateInput
 
 type ComponentUpdateInput ServiceUpdateInput
 
-type ComponentConnection ServiceConnection
-
-type ComponentTypeConnection struct {
-	Nodes      []ComponentType `json:"nodes"`
-	PageInfo   PageInfo        `json:"pageInfo"`
-	TotalCount int             `json:"totalCount" graphql:"-"`
-}
+type ComponentConnection ConnectionBase[Service]
 
 func (s *ComponentType) GetProperties(client *Client, v *PayloadVariables) (*PropertyDefinitionConnection, error) {
 	var q struct {

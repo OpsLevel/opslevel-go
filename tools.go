@@ -1,11 +1,5 @@
 package opslevel
 
-type ToolConnection struct {
-	Nodes      []Tool
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 func (client *Client) CreateTool(input ToolCreateInput) (*Tool, error) {
 	var m struct {
 		Payload ToolCreatePayload `graphql:"toolCreate(input: $input)"`

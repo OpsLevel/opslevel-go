@@ -26,12 +26,6 @@ func (t Tag) Flatten() string {
 	return fmt.Sprintf("%s:%s", t.Key, t.Value)
 }
 
-type TagConnection struct {
-	Nodes      []Tag
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 func (client *Client) GetTaggableResource(resourceType TaggableResource, identifier string) (TaggableResourceInterface, error) {
 	var err error
 	var taggableResource TaggableResourceInterface

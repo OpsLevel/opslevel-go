@@ -167,7 +167,7 @@ func TestDeleteInfra(t *testing.T) {
 func TestGetInfrastructureResourceTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "infrastructureResource": { {{template "id1" }} } }`,
 		`{
                   "data": {
@@ -191,8 +191,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                               "value": "prod"
                             }
                           ],
-                          {{ template "pagination_initial_pageInfo_response" }},
-                          "totalCount": 3
+                          {{ template "pagination_initial_pageInfo_response" }}
                         }
                       }
                     }
@@ -200,7 +199,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                 }`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query InfrastructureResourceTags($after:String!$first:Int!$infrastructureResource:IdentifierInput!){account{infrastructureResource(input: $infrastructureResource){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "infrastructureResource": { {{template "id1" }} }}`,
 		`{
                   "data": {
@@ -214,8 +213,7 @@ func TestGetInfrastructureResourceTags(t *testing.T) {
                               "value": "staging"
                             }
                           ],
-                          {{ template "pagination_second_pageInfo_response" }},
-                          "totalCount": 1
+                          {{ template "pagination_second_pageInfo_response" }}
                         }
                       }
                     }

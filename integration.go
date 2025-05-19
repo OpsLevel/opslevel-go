@@ -42,12 +42,6 @@ type NewRelicIntegrationFragment struct {
 	AccountKey string `graphql:"accountKey"`
 }
 
-type IntegrationConnection struct {
-	Nodes      []Integration
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 type AWSIntegrationInput struct {
 	ExternalID           *Nullable[string] `json:"externalId,omitempty"`
 	IAMRole              *Nullable[string] `json:"iamRole,omitempty"`
@@ -143,8 +137,8 @@ func (client *Client) ListIntegrations(variables *PayloadVariables) (*Integratio
 		}
 		q.Account.Integrations.Nodes = append(q.Account.Integrations.Nodes, resp.Nodes...)
 		q.Account.Integrations.PageInfo = resp.PageInfo
-		q.Account.Integrations.TotalCount += resp.TotalCount
 	}
+	q.Account.Integrations.TotalCount = len(q.Account.Integrations.Nodes)
 	return &q.Account.Integrations, nil
 }
 

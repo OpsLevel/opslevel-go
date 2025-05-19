@@ -44,22 +44,6 @@ type Service struct {
 	Properties *ServicePropertiesConnection `graphql:"-"`
 }
 
-type ServiceConnection struct {
-	Nodes      []Service
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (s *ServiceConnection) GetNodes() any {
-	return s.Nodes
-}
-
-type ServiceDocumentsConnection struct {
-	Nodes      []ServiceDocument
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (service *Service) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
@@ -135,11 +119,13 @@ func (service *Service) Hydrate(client *Client) error {
 	if service.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = service.Tags.PageInfo.End
-		_, err := service.GetTags(client, variables)
+		resp, err := service.GetTags(client, variables)
 		if err != nil {
 			return err
 		}
+		service.Tags = resp
 	}
+	service.Tags.TotalCount = len(service.Tags.Nodes)
 
 	if service.Tools == nil {
 		service.Tools = &ToolConnection{}
@@ -147,11 +133,13 @@ func (service *Service) Hydrate(client *Client) error {
 	if service.Tools.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = service.Tools.PageInfo.End
-		_, err := service.GetTools(client, variables)
+		resp, err := service.GetTools(client, variables)
 		if err != nil {
 			return err
 		}
+		service.Tools = resp
 	}
+	service.Tools.TotalCount = len(service.Tools.Nodes)
 
 	if service.Repositories == nil {
 		service.Repositories = &ServiceRepositoryConnection{}
@@ -159,11 +147,13 @@ func (service *Service) Hydrate(client *Client) error {
 	if service.Repositories.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = service.Repositories.PageInfo.End
-		_, err := service.GetRepositories(client, variables)
+		resp, err := service.GetRepositories(client, variables)
 		if err != nil {
 			return err
 		}
+		service.Repositories = resp
 	}
+	service.Repositories.TotalCount = len(service.Repositories.Edges)
 
 	return nil
 }
@@ -217,7 +207,6 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 		}
 	}
 	service.Tags.PageInfo = q.Account.Service.Tags.PageInfo
-	service.Tags.TotalCount += q.Account.Service.Tags.TotalCount
 	if service.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Tags.PageInfo.End
 		_, err := service.GetTags(client, variables)
@@ -225,6 +214,7 @@ func (service *Service) GetTags(client *Client, variables *PayloadVariables) (*T
 			return nil, err
 		}
 	}
+	service.Tags.TotalCount = len(service.Tags.Nodes)
 	return service.Tags, nil
 }
 
@@ -277,7 +267,6 @@ func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*
 	}
 	service.Tools.Nodes = append(service.Tools.Nodes, q.Account.Service.Tools.Nodes...)
 	service.Tools.PageInfo = q.Account.Service.Tools.PageInfo
-	service.Tools.TotalCount += q.Account.Service.Tools.TotalCount
 	if service.Tools.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Tools.PageInfo.End
 		_, err := service.GetTools(client, variables)
@@ -285,6 +274,7 @@ func (service *Service) GetTools(client *Client, variables *PayloadVariables) (*
 			return nil, err
 		}
 	}
+	service.Tools.TotalCount = len(service.Tools.Nodes)
 	return service.Tools, nil
 }
 
@@ -306,28 +296,24 @@ func (service *Service) GetRepositories(client *Client, variables *PayloadVariab
 	if err := client.Query(&q, *variables, WithName("ServiceRepositoriesList")); err != nil {
 		return nil, err
 	}
-	if service.Repositories == nil {
-		repositories := ServiceRepositoryConnection{}
-		service.Repositories = &repositories
-	}
-	service.Repositories.Edges = append(service.Repositories.Edges, q.Account.Service.Repositories.Edges...)
-	service.Repositories.PageInfo = q.Account.Service.Repositories.PageInfo
-	service.Repositories.TotalCount += q.Account.Service.Repositories.TotalCount
-	if service.Repositories.PageInfo.HasNextPage {
-		(*variables)["after"] = service.Repositories.PageInfo.End
-		_, err := service.GetRepositories(client, variables)
+	if q.Account.Service.Repositories.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Service.Repositories.PageInfo.End
+		resp, err := service.GetRepositories(client, variables)
 		if err != nil {
 			return nil, err
 		}
+		q.Account.Service.Repositories.Edges = append(q.Account.Service.Repositories.Edges, resp.Edges...)
+		q.Account.Service.Repositories.PageInfo = resp.PageInfo
 	}
-	return service.Repositories, nil
+	q.Account.Service.Repositories.TotalCount = len(q.Account.Service.Repositories.Edges)
+	return &q.Account.Service.Repositories, nil
 }
 
-func (service *Service) GetDocuments(client *Client, variables *PayloadVariables) (*ServiceDocumentsConnection, error) {
+func (service *Service) GetDocuments(client *Client, variables *PayloadVariables) (*ServiceDocumentConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
-				Documents ServiceDocumentsConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
+				Documents ServiceDocumentConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}
@@ -353,8 +339,8 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 		}
 		q.Account.Service.Documents.Nodes = append(q.Account.Service.Documents.Nodes, resp.Nodes...)
 		q.Account.Service.Documents.PageInfo = resp.PageInfo
-		q.Account.Service.Documents.TotalCount += resp.TotalCount
 	}
+	q.Account.Service.Documents.TotalCount = len(q.Account.Service.Documents.Nodes)
 	return &q.Account.Service.Documents, nil
 }
 
@@ -470,8 +456,8 @@ func (client *Client) ListServices(variables *PayloadVariables) (*ServiceConnect
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -506,8 +492,8 @@ func (client *Client) ListServicesWithFilter(filterIdentifier string, variables 
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -539,8 +525,8 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -572,8 +558,8 @@ func (client *Client) ListServicesWithLanguage(language string, variables *Paylo
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -605,8 +591,8 @@ func (client *Client) ListServicesWithLifecycle(lifecycle string, variables *Pay
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -638,8 +624,8 @@ func (client *Client) ListServicesWithOwner(owner string, variables *PayloadVari
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -671,8 +657,8 @@ func (client *Client) ListServicesWithProduct(product string, variables *Payload
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -721,8 +707,8 @@ func (client *Client) ListServicesWithTag(tag TagArgs, variables *PayloadVariabl
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 
@@ -754,8 +740,8 @@ func (client *Client) ListServicesWithTier(tier string, variables *PayloadVariab
 			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
 		}
 		q.Account.Services.PageInfo = resp.PageInfo
-		q.Account.Services.TotalCount += resp.TotalCount
 	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
 	return &q.Account.Services, nil
 }
 

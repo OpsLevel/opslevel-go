@@ -74,12 +74,6 @@ func UnmarshalCheckUpdateInput(checkType CheckType, data []byte) (any, error) {
 	return output, nil
 }
 
-type CheckConnection struct {
-	Nodes      []Check
-	PageInfo   PageInfo
-	TotalCount int
-}
-
 type CheckCreateInputProvider interface {
 	GetCheckCreateInput() *CheckCreateInput
 }
@@ -210,8 +204,8 @@ func (client *Client) ListChecks(variables *PayloadVariables) (*CheckConnection,
 		}
 		q.Account.Rubric.Checks.Nodes = append(q.Account.Rubric.Checks.Nodes, resp.Nodes...)
 		q.Account.Rubric.Checks.PageInfo = resp.PageInfo
-		q.Account.Rubric.Checks.TotalCount += resp.TotalCount
 	}
+	q.Account.Rubric.Checks.TotalCount = len(q.Account.Rubric.Checks.Nodes)
 	return &q.Account.Rubric.Checks, nil
 }
 

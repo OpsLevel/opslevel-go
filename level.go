@@ -6,34 +6,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-type LevelConnection struct {
-	Nodes      []Level
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (conn *LevelConnection) Hydrate(client *Client) error {
-	var q struct {
-		Account struct {
-			Rubric struct {
-				Levels LevelConnection `graphql:"levels(after: $after, first: $first)"`
-			}
-		}
-	}
-	v := PayloadVariables{
-		"first": client.pageSize,
-	}
-	q.Account.Rubric.Levels.PageInfo = conn.PageInfo
-	if q.Account.Rubric.Levels.PageInfo.HasNextPage {
-		v["after"] = q.Account.Rubric.Levels.PageInfo.End
-		if err := client.Query(&q, v); err != nil {
-			return err
-		}
-		conn.Nodes = append(conn.Nodes, q.Account.Rubric.Levels.Nodes...)
-	}
-	return nil
-}
-
 func (client *Client) CreateLevel(input LevelCreateInput) (*Level, error) {
 	var m struct {
 		Payload LevelCreatePayload `graphql:"levelCreate(input: $input)"`
@@ -64,21 +36,31 @@ func (client *Client) GetLevel(id ID) (*Level, error) {
 	return &q.Account.Level, HandleErrors(err, nil)
 }
 
-func (client *Client) ListLevels() ([]Level, error) {
+func (client *Client) ListLevels(variables *PayloadVariables) (*LevelConnection, error) {
 	var q struct {
 		Account struct {
 			Rubric struct {
-				Levels LevelConnection
+				Levels LevelConnection `graphql:"levels(after: $after, first: $first)"`
 			}
 		}
 	}
-	if err := client.Query(&q, nil); err != nil {
-		return q.Account.Rubric.Levels.Nodes, err
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
 	}
-	if err := q.Account.Rubric.Levels.Hydrate(client); err != nil {
-		return q.Account.Rubric.Levels.Nodes, err
+	if err := client.Query(&q, *variables, WithName("LevelsList")); err != nil {
+		return nil, err
 	}
-	return q.Account.Rubric.Levels.Nodes, nil
+	if q.Account.Rubric.Levels.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Rubric.Levels.PageInfo.End
+		resp, err := client.ListLevels(variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Rubric.Levels.Nodes = append(q.Account.Rubric.Levels.Nodes, resp.Nodes...)
+		q.Account.Rubric.Levels.PageInfo = resp.PageInfo
+	}
+	q.Account.Rubric.Levels.TotalCount = len(q.Account.Rubric.Levels.Nodes)
+	return &q.Account.Rubric.Levels, nil
 }
 
 func (client *Client) UpdateLevel(input LevelUpdateInput) (*Level, error) {

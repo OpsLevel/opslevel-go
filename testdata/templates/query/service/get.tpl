@@ -76,8 +76,7 @@
                 }
             }
         },
-        {{ template "pagination_request" }},
-        totalCount
+        {{ template "pagination_request" }}
     },
     defaultServiceRepository{
         baseDirectory,
@@ -98,8 +97,7 @@
             key,
             value
         },
-        {{ template "pagination_request" }},
-        totalCount
+        {{ template "pagination_request" }}
     },
     tier{
         alias,
@@ -125,7 +123,6 @@
             },
             url
         },
-        {{ template "pagination_request" }},
-        totalCount
+        {{ template "pagination_request" }}
     }
 {{- end }}

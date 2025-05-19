@@ -7,18 +7,6 @@ import (
 	"github.com/hasura/go-graphql-client"
 )
 
-type ScorecardConnection struct {
-	Nodes      []Scorecard `graphql:"nodes"`
-	PageInfo   PageInfo    `graphql:"pageInfo"`
-	TotalCount int         `graphql:"totalCount"`
-}
-
-type ScorecardCategoryConnection struct {
-	Nodes      []Category `graphql:"nodes"`
-	PageInfo   PageInfo   `graphql:"pageInfo"`
-	TotalCount int        `graphql:"totalCount"`
-}
-
 func (scorecard *ScorecardId) ResourceId() ID {
 	return scorecard.Id
 }
@@ -74,9 +62,8 @@ func (scorecard *Scorecard) ListCategories(client *Client, variables *PayloadVar
 		}
 		q.Account.Scorecard.Categories.Nodes = append(q.Account.Scorecard.Categories.Nodes, resp.Nodes...)
 		q.Account.Scorecard.Categories.PageInfo = resp.PageInfo
-		q.Account.Scorecard.Categories.TotalCount += resp.TotalCount
 	}
-
+	q.Account.Scorecard.Categories.TotalCount = len(q.Account.Scorecard.Categories.Nodes)
 	return &q.Account.Scorecard.Categories, nil
 }
 
@@ -130,8 +117,8 @@ func (client *Client) ListScorecards(variables *PayloadVariables) (*ScorecardCon
 		}
 		q.Account.Scorecards.Nodes = append(q.Account.Scorecards.Nodes, resp.Nodes...)
 		q.Account.Scorecards.PageInfo = resp.PageInfo
-		q.Account.Scorecards.TotalCount = len(q.Account.Scorecards.Nodes)
 	}
+	q.Account.Scorecards.TotalCount = len(q.Account.Scorecards.Nodes)
 	return &q.Account.Scorecards, nil
 }
 

@@ -6,16 +6,6 @@ import (
 	"slices"
 )
 
-type DomainConnection struct {
-	Nodes      []Domain `json:"nodes"`
-	PageInfo   PageInfo `json:"pageInfo"`
-	TotalCount int      `json:"totalCount" graphql:"-"`
-}
-
-func (s *DomainConnection) GetNodes() any {
-	return s.Nodes
-}
-
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (d *Domain) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
@@ -77,8 +67,8 @@ func (domainId *DomainId) GetTags(client *Client, variables *PayloadVariables) (
 			}
 		}
 		q.Account.Domain.Tags.PageInfo = resp.PageInfo
-		q.Account.Domain.Tags.TotalCount += resp.TotalCount
 	}
+	q.Account.Domain.Tags.TotalCount = len(q.Account.Domain.Tags.Nodes)
 	return &q.Account.Domain.Tags, nil
 }
 

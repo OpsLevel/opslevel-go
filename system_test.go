@@ -33,14 +33,14 @@ func TestSystemCreate(t *testing.T) {
 func TestSystemGetServices(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "system": { "id": "Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx" }}`,
-		`{ "data": { "account": { "system": { "childServices": { "nodes": [ {{ template "service_1" }}, {{ template "service_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
+		`{ "data": { "account": { "system": { "childServices": { "nodes": [ {{ template "service_1" }}, {{ template "service_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }},totalCount},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query SystemChildServicesList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){childServices(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "system": { "id": "Z2lkOi8vMTkyODM3NDY1NTY0NzM4Mjkx" }}`,
-		`{ "data": { "account": { "system": { "childServices": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		`{ "data": { "account": { "system": { "childServices": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
@@ -50,9 +50,10 @@ func TestSystemGetServices(t *testing.T) {
 	}
 	// Act
 	resp, err := system.ChildServices(client, nil)
+	autopilot.Ok(t, err)
 	result := resp.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "Foo", result[0].Name)
 	autopilot.Equals(t, "Bar", result[1].Name)
@@ -62,14 +63,14 @@ func TestSystemGetServices(t *testing.T) {
 func TestSystemGetTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "system": { {{ template "id3" }} } }`,
-		`{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
+		`{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ], {{ template "pagination_initial_pageInfo_response" }}}}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query SystemTagsList($after:String!$first:Int!$system:IdentifierInput!){account{system(input: $system){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "system": { {{ template "id3" }} }}`,
-		`{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		`{ "data": { "account": { "system": { "tags": { "nodes": [ {{ template "tag3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
@@ -79,9 +80,10 @@ func TestSystemGetTags(t *testing.T) {
 	}
 	// Act
 	resp, err := system.GetTags(client, nil)
+	autopilot.Ok(t, err)
 	result := resp.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "dev", result[0].Key)
 	autopilot.Equals(t, "true", result[0].Value)

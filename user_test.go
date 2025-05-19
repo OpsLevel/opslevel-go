@@ -73,14 +73,14 @@ func TestGetUser(t *testing.T) {
 func TestGetUserTeams(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}`,
+		`query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
-		`{ "data": { "account": { "user": { "teams": { "nodes": [ { {{ template "teamId_1" }} }, { {{ template "teamId_2" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}}`,
+		`{ "data": { "account": { "user": { "teams": { "nodes": [ { {{ template "teamId_1" }} }, { {{ template "teamId_2" }} } ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }},totalCount}}}}`,
+		`query UserTeamsList($after:String!$first:Int!$user:ID!){account{user(id: $user){teams(after: $after, first: $first){nodes{alias,id},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
-		`{ "data": { "account": { "user": { "teams": { "nodes": [ { {{ template "teamId_3"}} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		`{ "data": { "account": { "user": { "teams": { "nodes": [ { {{ template "teamId_3"}} } ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
@@ -92,9 +92,10 @@ func TestGetUserTeams(t *testing.T) {
 		},
 	}
 	resp, err := user.Teams(client, nil)
+	autopilot.Ok(t, err)
 	result := resp.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, resp.TotalCount)
 	autopilot.Equals(t, "example", result[0].Alias)
 	autopilot.Equals(t, "example_3", result[2].Alias)
@@ -103,23 +104,24 @@ func TestGetUserTeams(t *testing.T) {
 func TestListUser(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }},totalCount}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "filter": null, "first": 100 }`,
-		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }},totalCount}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }}}}}`,
 		`{ "after": "OA", "filter": null, "first": 100 }`,
-		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "user/list", requests...)
 	// Act
 	response, err := client.ListUsers(nil)
+	autopilot.Ok(t, err)
 	result := response.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Edgar Ochoa", result[1].Name)
 	autopilot.Equals(t, ol.UserRoleAdmin, result[1].Role)
@@ -130,14 +132,14 @@ func TestListUser(t *testing.T) {
 func TestListUserOmitDeactivated(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }},totalCount}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 100 }`,
-		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }},totalCount}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,htmlUrl,name,provisionedBy,role},{{ template "pagination_request" }}}}}`,
 		`{ "after": "OA", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 100 }`,
-		`{ "data": { "account": { "users": { "nodes": [], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 0 }}}}`,
+		`{ "data": { "account": { "users": { "nodes": [], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
@@ -146,9 +148,10 @@ func TestListUserOmitDeactivated(t *testing.T) {
 	payloadVars := client.InitialPageVariablesPointer().WithoutDeactivedUsers()
 
 	response, err := client.ListUsers(payloadVars)
+	autopilot.Ok(t, err)
 	result := response.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 2, response.TotalCount)
 	autopilot.Equals(t, 2, len(result))
 	autopilot.Equals(t, "Edgar Ochoa", result[1].Name)
@@ -211,7 +214,7 @@ func TestDeleteUserDoesNotExist(t *testing.T) {
 func TestGetUserTags(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "first_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
 		`{
         "data": {
@@ -235,8 +238,7 @@ func TestGetUserTags(t *testing.T) {
                     "value": "prod"
                   }
                 ],
-                {{ template "pagination_initial_pageInfo_response" }},
-                "totalCount": 3
+                {{ template "pagination_initial_pageInfo_response" }}
               }
             }
           }
@@ -244,7 +246,7 @@ func TestGetUserTags(t *testing.T) {
       }`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }},totalCount}}}}`,
+		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string"}}" }`,
 		`{
         "data": {
@@ -258,8 +260,7 @@ func TestGetUserTags(t *testing.T) {
                   "value": "tuna"
                 }
                 ],
-                {{ template "pagination_second_pageInfo_response" }},
-                "totalCount": 1
+                {{ template "pagination_second_pageInfo_response" }}
               }
           }
           }}}`,

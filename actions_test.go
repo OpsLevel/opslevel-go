@@ -39,23 +39,23 @@ func TestCreateWebhookAction(t *testing.T) {
 func TestListCustomActions(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action1_response" }} }, { {{ template "custom_action2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }},totalCount}}}`,
+		`query ExternalActionList($after:String!$first:Int!){account{customActionsExternalActions(after: $after, first: $first){nodes{{ template "custom_actions_request" }},{{ template "pagination_request" }}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+		`{ "data": { "account": { "customActionsExternalActions": { "nodes": [ { {{ template "custom_action3_response" }} } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "custom_actions/list_actions", requests...)
 	// Act
 	response, err := client.ListCustomActions(nil)
+	autopilot.Ok(t, err)
 	result := response.Nodes
 	// Assert
-	autopilot.Ok(t, err)
 	autopilot.Equals(t, 3, len(result))
 	autopilot.Equals(t, "Deploy Freeze", result[1].Name)
 	autopilot.Equals(t, "Page On-Call", result[2].Name)
@@ -352,12 +352,12 @@ func TestDeleteTriggerDefinition(t *testing.T) {
 func TestListExtendedTeamAccess(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}}`,
 		`{{ template "extended_team_access_get_vars_1" }}`,
 		`{{ template "extended_team_access_response_1" }}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }},totalCount},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }},totalCount}},{{ template "pagination_request" }},totalCount}}}}`,
+		`query ExtendedTeamAccessList($after:String!$first:Int!$input:IdentifierInput!){account{customActionsTriggerDefinition(input: $input){extendedTeamAccess(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,htmlUrl,name,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email}},{{ template "pagination_request" }}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}}`,
 		`{{ template "extended_team_access_get_vars_2" }}`,
 		`{{ template "extended_team_access_response_2" }}`,
 	)
@@ -372,10 +372,10 @@ func TestListExtendedTeamAccess(t *testing.T) {
 	if resp == nil || resp.Nodes == nil || len(resp.Nodes) == 0 {
 		t.Error("Expected team access response to not be nil")
 	}
+	autopilot.Ok(t, err)
 	result := resp.Nodes
 
 	// Assert
-	autopilot.Ok(t, err)
 	autopilot.Equals(t, "example", result[0].Alias)
 	autopilot.Equals(t, id1, result[0].Id)
 }

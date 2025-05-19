@@ -28,10 +28,10 @@ func (client *Client) ServiceApiDocSettingsUpdate(service string, docPath string
 	return &m.Payload.Service, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) ListDocuments(variables *PayloadVariables) (*ServiceDocumentsConnection, error) {
+func (client *Client) ListDocuments(variables *PayloadVariables) (*ServiceDocumentConnection, error) {
 	var q struct {
 		Account struct {
-			Documents ServiceDocumentsConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
+			Documents ServiceDocumentConnection `graphql:"documents(searchTerm: $searchTerm, after: $after, first: $first)"`
 		}
 	}
 
@@ -57,8 +57,8 @@ func (client *Client) ListDocuments(variables *PayloadVariables) (*ServiceDocume
 		}
 		q.Account.Documents.Nodes = append(q.Account.Documents.Nodes, resp.Nodes...)
 		q.Account.Documents.PageInfo = resp.PageInfo
-		q.Account.Documents.TotalCount += resp.TotalCount
 	}
+	q.Account.Documents.TotalCount = len(q.Account.Documents.Nodes)
 	return &q.Account.Documents, nil
 }
 
