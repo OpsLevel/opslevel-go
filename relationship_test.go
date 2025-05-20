@@ -7,9 +7,11 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
-var input ol.RelationshipDefinitionInput
-var resp1 ol.RelationshipDefinitionType
-var resp2 ol.RelationshipDefinitionType
+var (
+	input ol.RelationshipDefinitionInput
+	resp1 ol.RelationshipDefinitionType
+	resp2 ol.RelationshipDefinitionType
+)
 
 func init() {
 	AddSetup(func(m *testing.M) {
