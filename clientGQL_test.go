@@ -34,8 +34,8 @@ var (
 	alias4        = dataTemplater.ParseValue("alias4")
 	name1         = "Example 1"
 	name2         = "Example 2"
-	name3         = "Example 3"
-	name4         = "Example 4"
+	//name3         = "Example 3"
+	//name4         = "Example 4"
 
 	_setups []func(m *testing.M)
 )
