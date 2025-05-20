@@ -32,6 +32,12 @@ var (
 	alias2        = dataTemplater.ParseValue("alias2")
 	alias3        = dataTemplater.ParseValue("alias3")
 	alias4        = dataTemplater.ParseValue("alias4")
+	name1         = "Example 1"
+	name2         = "Example 2"
+	name3         = "Example 3"
+	name4         = "Example 4"
+
+	_setups []func(m *testing.M)
 )
 
 func TestMain(m *testing.M) {
@@ -39,8 +45,16 @@ func TestMain(m *testing.M) {
 	log.Logger = log.Output(output)
 	flag.Parse()
 	teardown := autopilot.Setup()
+	for _, fn := range _setups {
+		fn(m)
+	}
 	defer teardown()
 	os.Exit(m.Run())
+}
+
+// TODO: move this to Autopilot to help with test data preparation
+func AddSetup(fn func(m *testing.M)) {
+	_setups = append(_setups, fn)
 }
 
 func Templated(input string) string {
