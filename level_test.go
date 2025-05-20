@@ -69,7 +69,7 @@ func TestGetMissingRubricLevel(t *testing.T) {
 func TestListRubricLevels(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query LevelsList($after:String!$first:Int!){account{rubric{levels(after: $after, first: $first){nodes{alias,description,id,index,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
+		`query LevelsList($after:String!$first:Int!){account{rubric{levels(after: $after, first: $first){nodes{alias,description,id,index,name},{{ template "pagination_request" }}}}}}`,
 		`{"after":"","first":100}`,
 		`{
     "data": {

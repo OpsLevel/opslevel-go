@@ -35,7 +35,7 @@ func TestCache(t *testing.T) {
 		`{"data":{"account":{"rubric":{ "categories":{ "nodes":[{{ template "category_1" }}] } }}}}`,
 	)
 	testRequestSix := autopilot.NewTestRequest(
-		`query LevelsList($after:String!$first:Int!){account{rubric{levels(after: $after, first: $first){nodes{alias,description,id,index,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
+		`query LevelsList($after:String!$first:Int!){account{rubric{levels(after: $after, first: $first){nodes{alias,description,id,index,name},{{ template "pagination_request" }}}}}}`,
 		`{ "after": "", "first": 100 }`,
 		`{"data":{"account":{"rubric":{ "levels":{ "nodes":[{{ template "level_1" }}] } }}}}`,
 	)
