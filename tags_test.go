@@ -221,9 +221,9 @@ func TestReconcileTagsAPI(t *testing.T) {
 	domain := &ol.Domain{DomainId: ol.DomainId{Id: id3}}
 	requests := []autopilot.TestRequest{
 		autopilot.NewTestRequest(
-			`query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+			`query DomainTagsList($after:String!$domain:IdentifierInput!$first:Int!){account{domain(input: $domain){tags(after: $after, first: $first){nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
 			`{ {{ template "first_page_variables" }}, "domain": { {{ template "id3" }} } }`,
-			`{ "data": { "account": { "domain": { "tags": { "nodes": [{ {{ template "id1" }}, "key": "hello", "value": "world" }], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+			`{ "data": { "account": { "domain": { "tags": { "nodes": [{ {{ template "id1" }}, "key": "hello", "value": "world" }], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 		),
 		autopilot.NewTestRequest(
 			`mutation TagCreate($input:TagCreateInput!){tagCreate(input: $input){tag{id,key,value},errors{message,path}}}`,

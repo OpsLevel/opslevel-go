@@ -230,23 +230,24 @@ func TestGetMissingIntegration(t *testing.T) {
 func TestListIntegrations(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{{ template "integration_request" }},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{{ template "integration_request" }},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "deploy_integration_response" }} }, { {{ template "payload_integration_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "deploy_integration_response" }} }, { {{ template "payload_integration_response" }} } ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{{ template "integration_request" }},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}`,
+		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{{ template "integration_request" }},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "kubernetes_integration_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+		`{ "data": { "account": { "integrations": { "nodes": [ { {{ template "kubernetes_integration_response" }} } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "integration/list", requests...)
 	// Act
 	response, err := client.ListIntegrations(nil)
+	autopilot.Ok(t, err)
 	result := response.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "Payload", result[1].Name)
 	autopilot.Equals(t, "Kubernetes", result[2].Name)

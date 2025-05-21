@@ -179,16 +179,6 @@ func (filterPredicate *FilterPredicate) validateValue() error {
 	return nil
 }
 
-type FilterConnection struct {
-	Nodes      []Filter
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (s *FilterConnection) GetNodes() any {
-	return s.Nodes
-}
-
 func (filter *Filter) Alias() string {
 	return slug.Make(filter.Name)
 }
@@ -240,8 +230,8 @@ func (client *Client) ListFilters(variables *PayloadVariables) (*FilterConnectio
 		}
 		q.Account.Filters.Nodes = append(q.Account.Filters.Nodes, resp.Nodes...)
 		q.Account.Filters.PageInfo = resp.PageInfo
-		q.Account.Filters.TotalCount += resp.TotalCount
 	}
+	q.Account.Filters.TotalCount = len(q.Account.Filters.Nodes)
 	return &q.Account.Filters, nil
 }
 

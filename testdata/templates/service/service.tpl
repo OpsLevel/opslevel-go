@@ -23,8 +23,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     },
     "tags": {
         "nodes": [],
@@ -33,8 +32,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     },
     "tier": null,
     "tools": {
@@ -44,8 +42,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     }
 }
 {{ end }}
@@ -107,8 +104,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     },
     "tags": {
         "nodes": [],
@@ -117,8 +113,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     },
     "tier": null,
     "tools": {
@@ -128,8 +123,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     }
 }
 {{ end }}
@@ -159,8 +153,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     },
     "tags": {
         "nodes": [],
@@ -169,8 +162,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     },
     "tier": null,
     "tools": {
@@ -180,8 +172,7 @@
         "hasPreviousPage": false,
         "startCursor": null,
         "endCursor": null
-        },
-        "totalCount": 0
+        }
     }
 }
 {{ end }}

@@ -16,12 +16,6 @@ type PropertyDefinition struct {
 	Schema                JSONSchema                        `json:"schema" scalar:"true"`
 }
 
-type PropertyDefinitionConnection struct {
-	Nodes      []PropertyDefinition
-	PageInfo   PageInfo
-	TotalCount int `graphql:"-"`
-}
-
 type PropertyDefinitionId struct {
 	Id      ID       `json:"id"`
 	Aliases []string `json:"aliases,omitempty"`

@@ -29,31 +29,7 @@ type Team struct {
 }
 
 // TeamIdConnection exists to prevent circular references on User because Team has a UserConnection
-type TeamIdConnection struct {
-	Nodes      []TeamId
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (s *TeamIdConnection) GetNodes() any {
-	return s.Nodes
-}
-
-type TeamConnection struct {
-	Nodes      []Team
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (s *TeamConnection) GetNodes() any {
-	return s.Nodes
-}
-
-type TeamMembershipConnection struct {
-	Nodes      []TeamMembership
-	PageInfo   PageInfo
-	TotalCount int
-}
+type TeamIdConnection ConnectionBase[TeamId]
 
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (team *Team) UniqueIdentifiers() []string {
@@ -105,11 +81,13 @@ func (team *Team) Hydrate(client *Client) error {
 	if team.Memberships.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = team.Memberships.PageInfo.End
-		_, err := team.GetMemberships(client, variables)
+		resp, err := team.GetMemberships(client, variables)
 		if err != nil {
 			return err
 		}
+		team.Memberships = resp
 	}
+	team.Memberships.TotalCount = len(team.Memberships.Nodes)
 
 	if team.Tags == nil {
 		team.Tags = &TagConnection{}
@@ -117,11 +95,13 @@ func (team *Team) Hydrate(client *Client) error {
 	if team.Tags.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = team.Tags.PageInfo.End
-		_, err := team.GetTags(client, variables)
+		resp, err := team.GetTags(client, variables)
 		if err != nil {
 			return err
 		}
+		team.Tags = resp
 	}
+	team.Tags.TotalCount = len(team.Tags.Nodes)
 	return nil
 }
 
@@ -149,7 +129,6 @@ func (team *Team) GetMemberships(client *Client, variables *PayloadVariables) (*
 	}
 	team.Memberships.Nodes = append(team.Memberships.Nodes, q.Account.Team.Memberships.Nodes...)
 	team.Memberships.PageInfo = q.Account.Team.Memberships.PageInfo
-	team.Memberships.TotalCount += q.Account.Team.Memberships.TotalCount
 	if team.Memberships.PageInfo.HasNextPage {
 		(*variables)["after"] = team.Memberships.PageInfo.End
 		_, err := team.GetMemberships(client, variables)
@@ -157,6 +136,7 @@ func (team *Team) GetMemberships(client *Client, variables *PayloadVariables) (*
 			return nil, err
 		}
 	}
+	team.Memberships.TotalCount = len(team.Memberships.Nodes)
 	return team.Memberships, nil
 }
 
@@ -178,25 +158,17 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	if err := client.Query(&q, *variables, WithName("TeamTagsList")); err != nil {
 		return nil, err
 	}
-	if team.Tags == nil {
-		team.Tags = &TagConnection{}
-	}
-	// Add unique tags only
-	for _, tagNode := range q.Account.Team.Tags.Nodes {
-		if !slices.Contains(team.Tags.Nodes, tagNode) {
-			team.Tags.Nodes = append(team.Tags.Nodes, tagNode)
-		}
-	}
-	team.Tags.PageInfo = q.Account.Team.Tags.PageInfo
-	team.Tags.TotalCount += q.Account.Team.Tags.TotalCount
-	if team.Tags.PageInfo.HasNextPage {
-		(*variables)["after"] = team.Tags.PageInfo.End
-		_, err := team.GetTags(client, variables)
+	if q.Account.Team.Tags.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Team.Tags.PageInfo.End
+		resp, err := team.GetTags(client, variables)
 		if err != nil {
 			return nil, err
 		}
+		q.Account.Team.Tags.Nodes = append(q.Account.Team.Tags.Nodes, resp.Nodes...)
+		q.Account.Team.Tags.PageInfo = resp.PageInfo
 	}
-	return team.Tags, nil
+	q.Account.Team.Tags.TotalCount = len(q.Account.Team.Tags.Nodes)
+	return &q.Account.Team.Tags, nil
 }
 
 func (team *Team) GetAliases() []string {
@@ -378,8 +350,8 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
 		q.Account.Teams.PageInfo = resp.PageInfo
-		q.Account.Teams.TotalCount += resp.TotalCount
 	}
+	q.Account.Teams.TotalCount = len(q.Account.Teams.Nodes)
 	return &q.Account.Teams, nil
 }
 
@@ -411,8 +383,8 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
 		}
 		q.Account.Teams.PageInfo = resp.PageInfo
-		q.Account.Teams.TotalCount += resp.TotalCount
 	}
+	q.Account.Teams.TotalCount = len(q.Account.Teams.Nodes)
 	return &q.Account.Teams, nil
 }
 

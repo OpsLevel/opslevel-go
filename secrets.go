@@ -1,11 +1,5 @@
 package opslevel
 
-type SecretsVaultsSecretConnection struct {
-	Nodes      []Secret
-	PageInfo   PageInfo
-	TotalCount int `graphql:"-"`
-}
-
 func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, error) {
 	var m struct {
 		Payload SecretPayload `graphql:"secretsVaultsSecretCreate(alias: $alias, input: $input)"`
@@ -18,10 +12,10 @@ func (client *Client) CreateSecret(alias string, input SecretInput) (*Secret, er
 	return &m.Payload.Secret, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*SecretsVaultsSecretConnection, error) {
+func (client *Client) ListSecretsVaultsSecret(variables *PayloadVariables) (*SecretsVaultsSecretsConnection, error) {
 	var q struct {
 		Account struct {
-			SecretsVaultsSecrets SecretsVaultsSecretConnection `graphql:"secretsVaultsSecrets(after: $after, first: $first)"`
+			SecretsVaultsSecrets SecretsVaultsSecretsConnection `graphql:"secretsVaultsSecrets(after: $after, first: $first)"`
 		}
 	}
 	if variables == nil {

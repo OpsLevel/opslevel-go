@@ -29,15 +29,13 @@
     {{ template "team_membership_1" }},
     {{ template "team_membership_2" }}
   ],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 2
+  "pageInfo": {{ template "next_page_false" }}
 },
 "name": "{{ template "name1" }}",
 "responsibilities": null,
 "tags": {
   "nodes": [],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 0
+  "pageInfo": {{ template "next_page_false" }}
 }
 }
 {{ end }}
@@ -58,15 +56,13 @@
     {{ template "team_membership_1" }},
     {{ template "team_membership_2" }}
   ],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 2
+  "pageInfo": {{ template "next_page_false" }}
 },
 "name": "{{ template "name2" }}",
 "responsibilities": null,
 "tags": {
   "nodes": [],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 0
+  "pageInfo": {{ template "next_page_false" }}
 }
 }
 {{ end }}
@@ -87,15 +83,13 @@
     {{ template "team_membership_1" }},
     {{ template "team_membership_2" }}
   ],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 2
+  "pageInfo": {{ template "next_page_false" }}
 },
 "name": "{{ template "name3" }}",
 "responsibilities": null,
 "tags": {
   "nodes": [],
-  "pageInfo": {{ template "next_page_false" }},
-  "totalCount": 0
+  "pageInfo": {{ template "next_page_false" }}
 }
 }
 {{ end }}

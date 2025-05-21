@@ -37,13 +37,14 @@ type Repository struct {
 	Visible            bool
 }
 
+// RepositoryConnection The connection type for Repository
 type RepositoryConnection struct {
 	HiddenCount       int
 	Nodes             []Repository
 	OrganizationCount int
 	OwnedCount        int
 	PageInfo          PageInfo
-	TotalCount        int
+	TotalCount        int `graphql:"-"`
 	VisibleCount      int
 }
 
@@ -54,10 +55,11 @@ type RepositoryServiceEdge struct {
 	ServiceRepositories []ServiceRepository
 }
 
+// RepositoryServiceConnection The connection type for Service
 type RepositoryServiceConnection struct {
 	Edges      []RepositoryServiceEdge
 	PageInfo   PageInfo
-	TotalCount int
+	TotalCount int `graphql:"-"`
 }
 
 type ServiceRepositoryEdge struct {
@@ -65,10 +67,11 @@ type ServiceRepositoryEdge struct {
 	ServiceRepositories []ServiceRepository
 }
 
+// ServiceRepositoryConnection The connection type for Repository
 type ServiceRepositoryConnection struct {
 	Edges      []ServiceRepositoryEdge
 	PageInfo   PageInfo
-	TotalCount int
+	TotalCount int `graphql:"-"`
 }
 
 func (repository *Repository) ResourceId() ID {
@@ -97,11 +100,13 @@ func (repository *Repository) Hydrate(client *Client) error {
 	if repository.Services.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = repository.Services.PageInfo.End
-		_, err := repository.GetServices(client, variables)
+		resp, err := repository.GetServices(client, variables)
 		if err != nil {
 			return err
 		}
+		repository.Services = resp
 	}
+	repository.Services.TotalCount = len(repository.Services.Edges)
 
 	if repository.Tags == nil {
 		repository.Tags = &TagConnection{}
@@ -114,6 +119,7 @@ func (repository *Repository) Hydrate(client *Client) error {
 			return err
 		}
 	}
+	repository.Tags.TotalCount = len(repository.Tags.Nodes)
 	return nil
 }
 
@@ -135,20 +141,17 @@ func (repository *Repository) GetServices(client *Client, variables *PayloadVari
 	if err := client.Query(&q, *variables, WithName("RepositoryServicesList")); err != nil {
 		return nil, err
 	}
-	if repository.Services == nil {
-		repository.Services = &RepositoryServiceConnection{}
-	}
-	repository.Services.Edges = append(repository.Services.Edges, q.Account.Repository.Services.Edges...)
-	repository.Services.PageInfo = q.Account.Repository.Services.PageInfo
-	repository.Services.TotalCount += q.Account.Repository.Services.TotalCount
-	if repository.Services.PageInfo.HasNextPage {
-		(*variables)["after"] = repository.Services.PageInfo.End
-		_, err := repository.GetServices(client, variables)
+	if q.Account.Repository.Services.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Repository.Services.PageInfo.End
+		resp, err := repository.GetServices(client, variables)
 		if err != nil {
 			return nil, err
 		}
+		q.Account.Repository.Services.Edges = append(q.Account.Repository.Services.Edges, resp.Edges...)
+		q.Account.Repository.Services.PageInfo = resp.PageInfo
 	}
-	return repository.Services, nil
+	q.Account.Repository.Services.TotalCount = len(q.Account.Repository.Services.Edges)
+	return &q.Account.Repository.Services, nil
 }
 
 func (repository *Repository) GetTags(client *Client, variables *PayloadVariables) (*TagConnection, error) {
@@ -179,7 +182,6 @@ func (repository *Repository) GetTags(client *Client, variables *PayloadVariable
 		}
 	}
 	repository.Tags.PageInfo = q.Account.Repository.Tags.PageInfo
-	repository.Tags.TotalCount += q.Account.Repository.Tags.TotalCount
 	if repository.Tags.PageInfo.HasNextPage {
 		(*variables)["after"] = repository.Tags.PageInfo.End
 		_, err := repository.GetTags(client, variables)
@@ -187,6 +189,7 @@ func (repository *Repository) GetTags(client *Client, variables *PayloadVariable
 			return nil, err
 		}
 	}
+	repository.Tags.TotalCount = len(repository.Tags.Nodes)
 	return repository.Tags, nil
 }
 
@@ -274,8 +277,8 @@ func (client *Client) ListRepositories(variables *PayloadVariables) (*Repository
 			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
 		}
 		q.Account.Repositories.PageInfo = resp.PageInfo
-		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
+	q.Account.Repositories.TotalCount = len(q.Account.Repositories.Nodes)
 	return &q.Account.Repositories, nil
 }
 
@@ -306,8 +309,8 @@ func (client *Client) ListRepositoriesWithTier(tier string, variables *PayloadVa
 			q.Account.Repositories.Nodes = append(q.Account.Repositories.Nodes, node)
 		}
 		q.Account.Repositories.PageInfo = resp.PageInfo
-		q.Account.Repositories.TotalCount += resp.TotalCount
 	}
+	q.Account.Repositories.TotalCount = len(q.Account.Repositories.Nodes)
 	return &q.Account.Repositories, nil
 }
 

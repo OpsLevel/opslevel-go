@@ -11,18 +11,6 @@ type InfrastructureResourceSchema struct {
 	Schema JSON   `json:"schema" scalar:"true"`
 }
 
-type InfrastructureResourceSchemaConnection struct {
-	Nodes      []InfrastructureResourceSchema
-	PageInfo   PageInfo
-	TotalCount int `graphql:"-"`
-}
-
-//type InfrastructureResourceProviderData struct {
-//	AccountName  string `json:"accountName" graphql:"accountName"`
-//	ExternalURL  string `json:"externalUrl" graphql:"externalUrl"`
-//	ProviderName string `json:"providerName" graphql:"providerName"`
-//}
-
 type InfrastructureResource struct {
 	Id           ID                                 `json:"id"`
 	Aliases      []string                           `json:"aliases"`
@@ -34,16 +22,6 @@ type InfrastructureResource struct {
 	OwnerLocked  bool                               `json:"ownerLocked" graphql:"ownerLocked @include(if: $all)"`
 	ParsedData   JSON                               `json:"data" scalar:"true" graphql:"data @include(if: $all)"`
 	Data         JSON                               `json:"rawData" scalar:"true" graphql:"rawData @include(if: $all)"`
-}
-
-type InfrastructureResourceConnection struct {
-	Nodes      []InfrastructureResource
-	PageInfo   PageInfo
-	TotalCount int `graphql:"-"`
-}
-
-func (s *InfrastructureResourceConnection) GetNodes() any {
-	return s.Nodes
 }
 
 type InfraProviderInput struct {
@@ -108,8 +86,8 @@ func (infrastructureResource *InfrastructureResource) GetTags(client *Client, va
 			}
 		}
 		q.Account.InfrastructureResource.Tags.PageInfo = resp.PageInfo
-		q.Account.InfrastructureResource.Tags.TotalCount += resp.TotalCount
 	}
+	q.Account.InfrastructureResource.Tags.TotalCount = len(q.Account.InfrastructureResource.Tags.Nodes)
 	return &q.Account.InfrastructureResource.Tags, nil
 }
 

@@ -39,8 +39,7 @@
       hasPreviousPage,
       startCursor,
       endCursor
-    },
-    totalCount
+    }
   },
   name,
   parentTeam{
@@ -59,8 +58,7 @@
       hasPreviousPage,
       startCursor,
       endCursor
-    },
-    totalCount
+    }
   }
 }
 {{- end }}

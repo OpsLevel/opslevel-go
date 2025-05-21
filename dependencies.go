@@ -23,11 +23,13 @@ type ServiceDependentsEdge struct {
 	Notes  string     `graphql:"notes"`
 }
 
+// ServiceDependenciesConnection The connection type for Service
 type ServiceDependenciesConnection struct {
 	Edges    []ServiceDependenciesEdge `graphql:"edges"`
 	PageInfo PageInfo
 }
 
+// ServiceDependentsConnection The connection type for Service
 type ServiceDependentsConnection struct {
 	Edges    []ServiceDependentsEdge `graphql:"edges"`
 	PageInfo PageInfo

@@ -189,12 +189,12 @@ func (cacher *Cacher) doCacheCategories(client *Client) {
 func (cacher *Cacher) doCacheLevels(client *Client) {
 	log.Debug().Msg("Caching 'Level' lookup table from API ...")
 
-	data, dataErr := client.ListLevels()
+	data, dataErr := client.ListLevels(nil)
 	if dataErr != nil {
 		log.Warn().Msgf("===> Failed to list all 'Level' from API - REASON: %s", dataErr.Error())
 	}
 
-	for _, item := range data {
+	for _, item := range data.Nodes {
 		cacher.Levels[item.Alias] = item
 	}
 }

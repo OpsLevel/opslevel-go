@@ -135,21 +135,22 @@ func TestListScorecards(t *testing.T) {
 	testRequestOne := autopilot.NewTestRequest(
 		`{{ template "scorecard_list_query" }}`,
 		`{{ template "pagination_initial_query_variables" }}`,
-		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_1_response" }} }, { {{ template "scorecard_2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 2 }}}}`,
+		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_1_response" }} }, { {{ template "scorecard_2_response" }} } ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`{{ template "scorecard_list_query" }}`,
 		`{{ template "pagination_second_query_variables" }}`,
-		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_3_response" }} } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}`,
+		`{ "data": { "account": { "scorecards": { "nodes": [ { {{ template "scorecard_3_response" }} } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
 	client := BestTestClient(t, "scorecards/list_scorecards", requests...)
 	// Act
 	response, err := client.ListScorecards(nil)
+	autopilot.Ok(t, err)
 	result := response.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 3, response.TotalCount)
 	autopilot.Equals(t, "first scorecard", result[0].Name)
 	autopilot.Equals(t, ol.ConnectiveEnumAnd, result[0].Filter.Connective)
@@ -168,14 +169,14 @@ func TestListScorecards(t *testing.T) {
 func TestListScorecardCategories(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
 		`{ {{ template "first_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
-		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id2" }}, "name": "quality" } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id2" }}, "name": "quality" } ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}}`,
+		`query ScorecardCategoryList($after:String!$first:Int!$scorecard:IdentifierInput!){account{scorecard(input: $scorecard){categories(after: $after, first: $first){nodes{description,id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
 		`{ {{ template "second_page_variables" }}, "scorecard": { {{ template "id1" }} } }`,
-		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id3" }}, "name": "ownership" } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 }}}}}`,
+		`{ "data": { "account": { "scorecard": { "categories": { "nodes": [ { {{ template "id3" }}, "name": "ownership" } ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
 
@@ -187,9 +188,10 @@ func TestListScorecardCategories(t *testing.T) {
 		},
 	}
 	resp, err := scorecard.ListCategories(client, nil)
+	autopilot.Ok(t, err)
 	result := resp.Nodes
 	// Assert
-	autopilot.Ok(t, err)
+
 	autopilot.Equals(t, 2, resp.TotalCount)
 	autopilot.Equals(t, id2, result[0].Id)
 	autopilot.Equals(t, "quality", result[0].Name)

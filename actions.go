@@ -38,19 +38,9 @@ func (customActionsTriggerDefinition *CustomActionsTriggerDefinition) ExtendedTe
 		}
 		q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.Nodes = append(q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.Nodes, resp.Nodes...)
 		q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.PageInfo = resp.PageInfo
-		q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.TotalCount += resp.TotalCount
 	}
+	q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.TotalCount = len(q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess.Nodes)
 	return &q.Account.CustomActionsTriggerDefinition.ExtendedTeamAccess, nil
-}
-
-type CustomActionsExternalActionsConnection struct {
-	Nodes      []CustomActionsExternalAction
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (s *CustomActionsExternalActionsConnection) GetNodes() any {
-	return s.Nodes
 }
 
 type CustomActionsTriggerDefinitionsConnection struct {
@@ -111,6 +101,7 @@ func (client *Client) ListCustomActions(variables *PayloadVariables) (*CustomAct
 		q.Account.Actions.Nodes = append(q.Account.Actions.Nodes, resp.Nodes...)
 		q.Account.Actions.PageInfo = resp.PageInfo
 	}
+	q.Account.Actions.TotalCount = len(q.Account.Actions.Nodes)
 	return &q.Account.Actions, nil
 }
 

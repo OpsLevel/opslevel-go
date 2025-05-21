@@ -5,16 +5,6 @@ import (
 	"slices"
 )
 
-type UserConnection struct {
-	Nodes      []User
-	PageInfo   PageInfo
-	TotalCount int
-}
-
-func (s *UserConnection) GetNodes() any {
-	return s.Nodes
-}
-
 func (user *User) ResourceId() ID {
 	return user.Id
 }
@@ -65,9 +55,9 @@ func (userId *UserId) GetTags(client *Client, variables *PayloadVariables) (*Tag
 			}
 		}
 		q.Account.User.Tags.PageInfo = resp.PageInfo
-		q.Account.User.Tags.TotalCount += resp.TotalCount
-	}
 
+	}
+	q.Account.User.Tags.TotalCount = len(q.Account.User.Tags.Nodes)
 	return &q.Account.User.Tags, nil
 }
 
@@ -97,8 +87,8 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 		}
 		q.Account.User.Teams.Nodes = append(q.Account.User.Teams.Nodes, conn.Nodes...)
 		q.Account.User.Teams.PageInfo = conn.PageInfo
-		q.Account.User.Teams.TotalCount += conn.TotalCount
 	}
+	q.Account.User.Teams.TotalCount = len(q.Account.User.Teams.Nodes)
 	return &q.Account.User.Teams, nil
 }
 
@@ -154,8 +144,8 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 		}
 		q.Account.Users.Nodes = append(q.Account.Users.Nodes, resp.Nodes...)
 		q.Account.Users.PageInfo = resp.PageInfo
-		q.Account.Users.TotalCount += resp.TotalCount
 	}
+	q.Account.Users.TotalCount = len(q.Account.Users.Nodes)
 	return &q.Account.Users, nil
 }
 

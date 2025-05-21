@@ -54,7 +54,7 @@ query ScorecardGet($input:IdentifierInput!){account{scorecard(input: $input){id,
     "data":{"account":{"scorecard":{"aliases":["existing_scorecard"],"id":"Z2lkOi8vMTIzNDU2Nzg5MTAK","description":"hello there!","filter":{"connective":null,"htmlUrl":"https://app.opslevel.com/filters/123456123","id":"Z2lkOi8vMTIzNDU2MTIzCg==","name":"some filter","predicates":[]},"name":"fetched scorecard","owner":{"id":"Z2lkOi8vMTIzNDU2Nzg5Cg=="},"passingChecks":10,"serviceCount":20,"totalChecks":30}}}
 }{{ end }}
 
-{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{id,aliases,affectsOverallServiceLevels,description,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},href,name,owner{... on Team{teamAlias:alias,id}},passingChecks,passingChecksPercentage,serviceCount,servicesReport{levelCounts{level{alias,description,id,index,name},serviceCount}},slug,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor},totalCount}}}{{ end }}
+{{- define "scorecard_list_query" }}query ScorecardsList($after:String!$first:Int!){account{scorecards(after: $after, first: $first){nodes{id,aliases,affectsOverallServiceLevels,description,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},href,name,owner{... on Team{teamAlias:alias,id}},passingChecks,passingChecksPercentage,serviceCount,servicesReport{levelCounts{level{alias,description,id,index,name},serviceCount}},slug,totalChecks},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}{{ end }}
 
 {{- define "scorecard_1_response" }}
     "id":"Z2lkOi8vMTExMTExMTEK",
