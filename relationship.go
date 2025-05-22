@@ -16,6 +16,20 @@ func (client *Client) CreateRelationshipDefinition(input RelationshipDefinitionI
 	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) CreateRelationship(input RelationshipDefinition) (*RelationshipType, error) {
+	var m struct {
+		Payload struct {
+			Relationship RelationshipType
+			Errors       []Error
+		} `graphql:"relationshipDefinitionCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("RelationshipCreate"))
+	return &m.Payload.Relationship, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) GetRelationshipDefinition(identifier string) (*RelationshipDefinitionType, error) {
 	var q struct {
 		Account struct {
@@ -84,5 +98,20 @@ func (client *Client) DeleteRelationshipDefinition(identifier string) (*ID, erro
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("RelationshipDefinitionDelete"))
+	return &m.Payload.DeletedId, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) DeleteRelationship(identifier string) (*ID, error) {
+	var m struct {
+		Payload struct {
+			DeletedId ID      `graphql:"deletedId"`
+			Errors    []Error `graphql:"errors"`
+		} `graphql:"relationshipDelete(resource: $input)"`
+	}
+	input := *NewIdentifier(identifier)
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("RelationshipDelete"))
 	return &m.Payload.DeletedId, HandleErrors(err, m.Payload.Errors)
 }

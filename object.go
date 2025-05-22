@@ -362,6 +362,14 @@ type RelationshipNode struct {
 	Source      RelationshipResource // The catalog item that a relationship stems from (Required)
 }
 
+// RelationshipType The type specifying a relationship between two resources
+type RelationshipType struct {
+	Id     ID                   // The ID of the relationship (Required)
+	Source RelationshipResource // The resource that is the source of the relationship (Required)
+	Target RelationshipResource // The resource that is the target of the relationship (Required)
+	Type   RelationshipTypeEnum // The type of the relationship between source and target (Required)
+}
+
 // RepositoryPath The repository path used for this service
 type RepositoryPath struct {
 	Href string // The deep link to the repository path where the linked service's code exists (Required)
