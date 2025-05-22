@@ -376,6 +376,14 @@ type RepositoryPath struct {
 	Path string // The path where the linked service's code exists, relative to the root of the repository (Required)
 }
 
+// SBOMGenerationConfiguration The configuration details that explain whether SBOM generation is allowed for the repository
+type SBOMGenerationConfiguration struct {
+	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM autogeneration is disabled (Optional)
+	Enabled          bool                                       // Whether SBOM autogeneration is enabled through all associated configuration objects (Required)
+	NextGenerationAt iso8601.Time                               // The approximate time at which a new software bill of material will be generated for this repository (Optional)
+	State            RepositorySBOMGenerationConfigEnum         // The configuration option set by the current object (Optional)
+}
+
 // ScorecardId A scorecard
 type ScorecardId struct {
 	Id      ID       // A reference to the scorecard.

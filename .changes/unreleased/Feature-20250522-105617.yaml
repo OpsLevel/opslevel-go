@@ -1,0 +1,3 @@
+kind: Feature
+body: Add ability to configure sbom generation on Repository Update
+time: 2025-05-22T10:56:17.629557-05:00
