@@ -41,6 +41,7 @@ type RelationshipResource struct {
 	InfrastructureResource InfrastructureResource `graphql:"... on InfrastructureResource"`
 	Service                Service                `graphql:"... on Service"`
 	System                 SystemId               `graphql:"... on System"`
+	Team                   TeamId                 `graphql:"... on Team"`
 }
 
 // ServiceDocumentSource represents the source of a document.
