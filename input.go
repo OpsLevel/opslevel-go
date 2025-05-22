@@ -1011,9 +1011,10 @@ type RelationshipDefinitionMetadataInput struct {
 
 // RepositoryUpdateInput Specifies the input fields used to update a repository
 type RepositoryUpdateInput struct {
-	Id      ID              `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                               // The id of the repository to be updated (Required)
-	OwnerId *Nullable[ID]   `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The team that owns the repository (Optional)
-	Visible *Nullable[bool] `json:"visible,omitempty" yaml:"visible,omitempty" example:"false"`                           // Indicates if the repository is visible (Optional)
+	Id             ID                                  `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                               // The id of the repository to be updated (Required)
+	OwnerId        *Nullable[ID]                       `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The team that owns the repository (Optional)
+	SbomGeneration *RepositorySBOMGenerationConfigEnum `json:"sbomGeneration,omitempty" yaml:"sbomGeneration,omitempty" example:"opt_in"`            // The desired configuration state at the repository level for SBOM generation (Optional)
+	Visible        *Nullable[bool]                     `json:"visible,omitempty" yaml:"visible,omitempty" example:"false"`                           // Indicates if the repository is visible (Optional)
 }
 
 // ScorecardInput Input used to create scorecards

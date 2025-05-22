@@ -3075,6 +3075,36 @@ var AllRelationshipTypeEnum = []string{
 	string(RelationshipTypeEnumRelatedTo),
 }
 
+// RepositorySBOMGenerationConfigEnum The enumerated list of configuration values for SBOM generation at the repository level
+type RepositorySBOMGenerationConfigEnum string
+
+var (
+	RepositorySBOMGenerationConfigEnumOptIn  RepositorySBOMGenerationConfigEnum = "opt_in"  // Indicates that the repository will opt in to automated SBOM generation if it would be otherwise enabled at an integration or account level
+	RepositorySBOMGenerationConfigEnumOptOut RepositorySBOMGenerationConfigEnum = "opt_out" // Indicates that the repository will opt out of automated SBOM generation if it would be otherwise enabled at an integration or account level
+)
+
+// All RepositorySBOMGenerationConfigEnum as []string
+var AllRepositorySBOMGenerationConfigEnum = []string{
+	string(RepositorySBOMGenerationConfigEnumOptIn),
+	string(RepositorySBOMGenerationConfigEnumOptOut),
+}
+
+// RepositorySBOMGenerationDisabledReasonEnum The set of values that explain why SBOM autogeneration is disabled
+type RepositorySBOMGenerationDisabledReasonEnum string
+
+var (
+	RepositorySBOMGenerationDisabledReasonEnumAccount     RepositorySBOMGenerationDisabledReasonEnum = "account"     // SBOM autogeneration is disabled at the account level
+	RepositorySBOMGenerationDisabledReasonEnumIntegration RepositorySBOMGenerationDisabledReasonEnum = "integration" // SBOM autogeneration is disabled at the integration level
+	RepositorySBOMGenerationDisabledReasonEnumRepository  RepositorySBOMGenerationDisabledReasonEnum = "repository"  // SBOM autogeneration is disabled at the repository level
+)
+
+// All RepositorySBOMGenerationDisabledReasonEnum as []string
+var AllRepositorySBOMGenerationDisabledReasonEnum = []string{
+	string(RepositorySBOMGenerationDisabledReasonEnumAccount),
+	string(RepositorySBOMGenerationDisabledReasonEnumIntegration),
+	string(RepositorySBOMGenerationDisabledReasonEnumRepository),
+}
+
 // RepositoryVisibilityEnum Possible visibility levels for repositories
 type RepositoryVisibilityEnum string
 
