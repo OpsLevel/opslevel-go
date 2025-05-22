@@ -79,7 +79,7 @@ func (client *Client) UpdateRelationshipDefinition(identifier string, input Rela
 		Payload RelationshipDefinitionPayload `graphql:"relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input)"`
 	}
 	v := PayloadVariables{
-		"identifier": NewIdentifier(identifier),
+		"identifier": *NewIdentifier(identifier),
 		"input":      input,
 	}
 	err := client.Mutate(&m, v, WithName("RelationshipDefinitionUpdate"))
