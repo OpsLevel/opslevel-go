@@ -37,11 +37,11 @@ type EntityOwner struct {
 
 // RelationshipResource represents a resource that can have relationships to other resources.
 type RelationshipResource struct {
-	Domain                 DomainId               `graphql:"... on Domain"`
-	InfrastructureResource InfrastructureResource `graphql:"... on InfrastructureResource"`
-	Service                Service                `graphql:"... on Service"`
-	System                 SystemId               `graphql:"... on System"`
-	Team                   TeamId                 `graphql:"... on Team"`
+	Domain                 DomainId                 `graphql:"... on Domain"`
+	InfrastructureResource InfrastructureResourceId `graphql:"... on InfrastructureResource"`
+	Service                ServiceId                `graphql:"... on Service"`
+	System                 SystemId                 `graphql:"... on System"`
+	Team                   TeamId                   `graphql:"... on Team"`
 }
 
 // ServiceDocumentSource represents the source of a document.

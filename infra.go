@@ -11,10 +11,14 @@ type InfrastructureResourceSchema struct {
 	Schema JSON   `json:"schema" scalar:"true"`
 }
 
+type InfrastructureResourceId struct {
+	Id      ID       `json:"id"`
+	Aliases []string `json:"aliases"`
+	Name    string   `json:"name"`
+}
+
 type InfrastructureResource struct {
-	Id           ID                                 `json:"id"`
-	Aliases      []string                           `json:"aliases"`
-	Name         string                             `json:"name"`
+	InfrastructureResourceId
 	Schema       string                             `json:"type" graphql:"type @include(if: $all)"`
 	ProviderType string                             `json:"providerResourceType" graphql:"providerResourceType @include(if: $all)"`
 	ProviderData InfrastructureResourceProviderData `json:"providerData" graphql:"providerData @include(if: $all)"`

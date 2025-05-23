@@ -21,7 +21,7 @@ func (client *Client) CreateRelationship(input RelationshipDefinition) (*Relatio
 		Payload struct {
 			Relationship RelationshipType
 			Errors       []Error
-		} `graphql:"relationshipDefinitionCreate(input: $input)"`
+		} `graphql:"relationshipCreate(relationshipDefinition: $input)"`
 	}
 	v := PayloadVariables{
 		"input": input,
@@ -106,11 +106,10 @@ func (client *Client) DeleteRelationship(identifier string) (*ID, error) {
 		Payload struct {
 			DeletedId ID      `graphql:"deletedId"`
 			Errors    []Error `graphql:"errors"`
-		} `graphql:"relationshipDelete(resource: $input)"`
+		} `graphql:"relationshipDelete(input: $input)"`
 	}
-	input := *NewIdentifier(identifier)
 	v := PayloadVariables{
-		"input": input,
+		"input": DeleteInput{Id: ID(identifier)},
 	}
 	err := client.Mutate(&m, v, WithName("RelationshipDelete"))
 	return &m.Payload.DeletedId, HandleErrors(err, m.Payload.Errors)
