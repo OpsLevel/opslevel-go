@@ -51,6 +51,13 @@ func (client *Client) ListRelationshipDefinitions(variables *PayloadVariables) (
 	}
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
+	} else {
+		if (*variables)["first"] == nil {
+			(*variables)["first"] = 100
+		}
+		if (*variables)["after"] == nil {
+			(*variables)["after"] = ""
+		}
 	}
 	if (*variables)["componentType"] == nil {
 		(*variables)["componentType"] = &IdentifierInput{}
