@@ -13,28 +13,29 @@ type RepositoryId struct {
 }
 
 type Repository struct {
-	ArchivedAt         iso8601.Time
-	CreatedOn          iso8601.Time
-	DefaultAlias       string
-	DefaultBranch      string
-	Description        string
-	Forked             bool
-	HtmlUrl            string
-	Id                 ID
-	Languages          []Language
-	LastOwnerChangedAt iso8601.Time
-	Locked             bool
-	Name               string
-	Organization       string
-	Owner              TeamId
-	Private            bool
-	RepoKey            string
-	Services           *RepositoryServiceConnection
-	Tags               *TagConnection
-	Tier               Tier
-	Type               string
-	Url                string
-	Visible            bool
+	ArchivedAt                  iso8601.Time
+	CreatedOn                   iso8601.Time
+	DefaultAlias                string
+	DefaultBranch               string
+	Description                 string
+	Forked                      bool
+	HtmlUrl                     string
+	Id                          ID
+	Languages                   []Language
+	LastOwnerChangedAt          iso8601.Time
+	Locked                      bool
+	Name                        string
+	Organization                string
+	Owner                       TeamId
+	Private                     bool
+	RepoKey                     string
+	SBOMGenerationConfiguration SBOMGenerationConfiguration
+	Services                    *RepositoryServiceConnection
+	Tags                        *TagConnection
+	Tier                        Tier
+	Type                        string
+	Url                         string
+	Visible                     bool
 }
 
 // RepositoryConnection The connection type for Repository
