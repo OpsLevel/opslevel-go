@@ -143,3 +143,33 @@ func TestRelationshipDefinitionDelete(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 }
+
+func TestGetRelationship(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query RelationshipGet($input:ID!){account{relationship(id: $input){id,source{... on Domain{id,aliases},... on InfrastructureResource{id,aliases,name},... on Service{id,aliases},... on System{id,aliases},... on Team{alias,id}},target{... on Domain{id,aliases},... on InfrastructureResource{id,aliases,name},... on Service{id,aliases},... on System{id,aliases},... on Team{alias,id}},type}}}`,
+		`{"input": "{{ template "id1_string" }}" }`,
+		`{"data": {"account": {"relationship": {
+			"id": "{{ template "id1_string" }}",
+			"source": {
+				"id": "{{ template "id2_string" }}",
+				"aliases": ["source-alias"]
+			},
+			"target": {
+				"id": "{{ template "id3_string" }}",
+				"aliases": ["target-alias"]
+			},
+			"type": "belongs_to"
+		}}}}`,
+	)
+
+	client := BestTestClient(t, "relationship/get", testRequest)
+	// Act
+	result, err := client.GetRelationship(string(id1))
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, id2, result.Source.Domain.Id)
+	autopilot.Equals(t, id3, result.Target.Domain.Id)
+	autopilot.Equals(t, ol.RelationshipTypeEnumBelongsTo, result.Type)
+}
