@@ -37,6 +37,7 @@ type EntityOwner struct {
 
 // RelationshipResource represents a resource that can have relationships to other resources.
 type RelationshipResource struct {
+	Type                   TypeIdentifier           `graphql:"__typename"` // The type of fragment returned
 	Domain                 DomainId                 `graphql:"... on Domain"`
 	InfrastructureResource InfrastructureResourceId `graphql:"... on InfrastructureResource"`
 	Service                ServiceId                `graphql:"... on Service"`
