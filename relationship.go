@@ -1,5 +1,7 @@
 package opslevel
 
+import "fmt"
+
 type RelationshipDefinitionPayload struct {
 	Definition RelationshipDefinitionType // The relationship that was defined.
 	BasePayload
@@ -40,6 +42,22 @@ func (client *Client) GetRelationshipDefinition(identifier string) (*Relationshi
 		"input": *NewIdentifier(identifier),
 	}
 	err := client.Query(&q, v, WithName("RelationshipDefinitionGet"))
+	return &q.Account.Resource, HandleErrors(err, nil)
+}
+
+func (client *Client) GetRelationship(identifier string) (*RelationshipType, error) {
+	if !IsID(identifier) {
+		return nil, fmt.Errorf("identifier '%s' is not a valid ID", identifier)
+	}
+	var q struct {
+		Account struct {
+			Resource RelationshipType `graphql:"relationship(id: $input)"`
+		}
+	}
+	v := PayloadVariables{
+		"input": *NewID(identifier),
+	}
+	err := client.Query(&q, v, WithName("RelationshipGet"))
 	return &q.Account.Resource, HandleErrors(err, nil)
 }
 
