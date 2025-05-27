@@ -147,15 +147,17 @@ func TestRelationshipDefinitionDelete(t *testing.T) {
 func TestGetRelationship(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RelationshipGet($input:ID!){account{relationship(id: $input){id,source{... on Domain{id,aliases},... on InfrastructureResource{id,aliases,name},... on Service{id,aliases},... on System{id,aliases},... on Team{alias,id}},target{... on Domain{id,aliases},... on InfrastructureResource{id,aliases,name},... on Service{id,aliases},... on System{id,aliases},... on Team{alias,id}},type}}}`,
+		`query RelationshipGet($input:ID!){account{relationship(id: $input){id,source{__typename,... on Domain{id,aliases},... on InfrastructureResource{id,aliases,name},... on Service{id,aliases},... on System{id,aliases},... on Team{alias,id}},target{__typename,... on Domain{id,aliases},... on InfrastructureResource{id,aliases,name},... on Service{id,aliases},... on System{id,aliases},... on Team{alias,id}},type}}}`,
 		`{"input": "{{ template "id1_string" }}" }`,
 		`{"data": {"account": {"relationship": {
 			"id": "{{ template "id1_string" }}",
 			"source": {
+				"__typename": "Domain",
 				"id": "{{ template "id2_string" }}",
 				"aliases": ["source-alias"]
 			},
 			"target": {
+				"__typename": "System",
 				"id": "{{ template "id3_string" }}",
 				"aliases": ["target-alias"]
 			},
@@ -170,6 +172,8 @@ func TestGetRelationship(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, id2, result.Source.Domain.Id)
-	autopilot.Equals(t, id3, result.Target.Domain.Id)
+	autopilot.Equals(t, ol.ID(""), result.Source.System.Id)
+	autopilot.Equals(t, ol.ID(""), result.Target.Domain.Id)
+	autopilot.Equals(t, id3, result.Target.System.Id)
 	autopilot.Equals(t, ol.RelationshipTypeEnumBelongsTo, result.Type)
 }
