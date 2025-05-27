@@ -52,11 +52,11 @@ type ServiceDocumentSource struct {
 
 // TagOwner represents a resource that a tag can be applied to.
 type TagOwner struct {
-	Domain                 DomainId               `graphql:"... on Domain"`
-	InfrastructureResource InfrastructureResource `graphql:"... on InfrastructureResource"`
-	Repository             Repository             `graphql:"... on Repository"`
-	Service                Service                `graphql:"... on Service"`
-	System                 SystemId               `graphql:"... on System"`
-	Team                   TeamId                 `graphql:"... on Team"`
-	User                   UserId                 `graphql:"... on User"`
+	Domain                 DomainId                 `graphql:"... on Domain"`
+	InfrastructureResource InfrastructureResourceId `graphql:"... on InfrastructureResource"`
+	Repository             Repository               `graphql:"... on Repository"`
+	Service                Service                  `graphql:"... on Service"`
+	System                 SystemId                 `graphql:"... on System"`
+	Team                   TeamId                   `graphql:"... on Team"`
+	User                   UserId                   `graphql:"... on User"`
 }
