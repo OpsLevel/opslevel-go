@@ -39,9 +39,10 @@ jobs:
             ${{ runner.os }}-go-
       - name: Run quality checks and tests
         run: task ci
+      - name: Install goveralls
+        run: go install github.com/mattn/goveralls@latest
       - name: Upload Coverage
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./coverage.txt
-          fail_ci_if_error: false
-          verbose: true
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: goveralls -coverprofile=coverage.out -service=github
+
