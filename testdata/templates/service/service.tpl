@@ -11,6 +11,15 @@
     "language": null,
     "lifecycle": null,
     "locked": true,
+    "maturityReport": {
+        "overallLevel": {
+            "name": "Beginner",
+            "alias" : "beginner",
+            "description": "Services in this level are below the minimum standard to ship to production.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMTc",
+            "index": 0
+        }
+    },
     "name": "Foo",
     "owner": null,
     "preferredApiDocument": null,
@@ -59,6 +68,15 @@
     "language": null,
     "lifecycle": null,
     "name": "Bar",
+    "maturityReport": {
+        "overallLevel": {
+            "name": "Beginner",
+            "alias" : "beginner",
+            "description": "Services in this level are below the minimum standard to ship to production.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMTc",
+            "index": 0
+        }
+    },
     "owner": null,
     "preferredApiDocument": null,
     "preferredApiDocumentSource": "PULL",
@@ -140,8 +158,17 @@
     "language": null,
     "lifecycle": null,
     "locked": true,
-    "name": "Foo",
     "note": "Foo note",
+    "maturityReport": {
+        "overallLevel": {
+            "name": "Beginner",
+            "alias" : "beginner",
+            "description": "Services in this level are below the minimum standard to ship to production.",
+            "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMTc",
+            "index": 0
+        }
+    },
+    "name": "Foo",
     "owner": null,
     "preferredApiDocument": null,
     "preferredApiDocumentSource": "PULL",

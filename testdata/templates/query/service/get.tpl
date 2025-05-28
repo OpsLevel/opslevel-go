@@ -16,6 +16,15 @@
     },
     locked,
     managedAliases,
+    maturityReport{
+        overallLevel{
+            alias,
+            description,
+            id,
+            index,
+            name
+        }
+    },
     name,
     note,
     owner{
