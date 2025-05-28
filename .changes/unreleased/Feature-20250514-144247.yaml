@@ -1,3 +1,0 @@
-kind: Feature
-body: Add `client.CreateOrUpdateAlertSource` and `client.UpdateAlertSourceStatus` to interface with the new generic alert source APIs
-time: 2025-05-14T14:42:47.635522-05:00
