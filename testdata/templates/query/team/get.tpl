@@ -17,8 +17,8 @@
   manager{
     id,
     email,
-    htmlUrl,
     name,
+    htmlUrl,
     provisionedBy,
     role
   },
@@ -31,7 +31,8 @@
       },
       user{
         id,
-        email
+        email,
+        name
       }
     },
     pageInfo{

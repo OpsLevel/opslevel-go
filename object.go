@@ -528,13 +528,13 @@ type Tool struct {
 type UserId struct {
 	Id    ID     // The unique identifier for the user.
 	Email string // The user's email.
+	Name  string // The user's full name (Required)
 }
 
 // User A user is someone who belongs to an organization
 type User struct {
 	UserId
 	HtmlUrl       string            // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
-	Name          string            // The user's full name (Required)
 	ProvisionedBy ProvisionedByEnum // What provisioned this user (Optional)
 	Role          UserRole          // The user's assigned role (Optional)
 }
