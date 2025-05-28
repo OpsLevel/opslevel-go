@@ -119,7 +119,7 @@
     }
 {{ end }}
 {{- define "custom_actions_request" }}{aliases,id,description,liquidTemplate,name,... on CustomActionsWebhookAction{aliases,async,description,headers,httpMethod,id,liquidTemplate,name,webhookUrl}}{{ end }}
-{{- define "custom_actions_trigger_request" }}{accessControl,action{aliases,id},aliases,approvalConfig{approvalRequired,teams{alias,id},users{id,email}},description,entityType,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,responseTemplate,timestamps{createdAt,updatedAt}}{{ end }}
+{{- define "custom_actions_trigger_request" }}{accessControl,action{aliases,id},aliases,approvalConfig{approvalRequired,teams{alias,id},users{id,email,name}},description,entityType,filter{id,name},id,manualInputsDefinition,name,owner{alias,id},published,responseTemplate,timestamps{createdAt,updatedAt}}{{ end }}
 {{- define "custom_action1" }}{
     "aliases": [],
     "description": null,

@@ -1,0 +1,3 @@
+kind: Feature
+body: Move user 'name' to 'UserId' struct so it comes out in the CLI
+time: 2025-05-28T10:11:52.523322-05:00
