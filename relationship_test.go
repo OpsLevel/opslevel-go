@@ -113,7 +113,7 @@ func TestRelationshipDefinitionList(t *testing.T) {
 func TestRelationshipDefinitionUpdate(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RelationshipDefinitionUpdate($identifier:IdentifierInput$input:RelationshipDefinitionInput!){relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
+		`mutation RelationshipDefinitionUpdate($identifier:IdentifierInput!$input:RelationshipDefinitionInput!){relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
 		`{"identifier": { {{ template "id1" }} }, "input": {{ template "relationship_definition_input" }} }`,
 		`{"data": {"relationshipDefinitionUpdate": {"definition": {{ template "relationship_definition1_response" }} }}}`,
 	)
