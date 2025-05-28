@@ -19,24 +19,24 @@ type Service struct {
 	Framework       string `json:"framework,omitempty"`
 	HtmlURL         string `json:"htmlUrl"`
 	ServiceId
-	Language                   string                       `json:"language,omitempty"`
-	Lifecycle                  Lifecycle                    `json:"lifecycle,omitempty"`
-	Locked                     bool                         `json:"locked" graphql:"locked"`
-	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
-	MaturityReport             MaturityOverallLevel         `json:"maturityReport" graphql:"maturityReport"`
-	Name                       string                       `json:"name,omitempty"`
-	Note                       string                       `json:"note,omitempty"`
-	Owner                      TeamId                       `json:"owner,omitempty"`
-	Parent                     *SystemId                    `json:"parent,omitempty" graphql:"parent"`
-	PreferredApiDocument       *ServiceDocument             `json:"preferredApiDocument,omitempty"`
-	PreferredApiDocumentSource *ApiDocumentSourceEnum       `json:"preferredApiDocumentSource,omitempty"`
-	Product                    string                       `json:"product,omitempty"`
-	Repositories               *ServiceRepositoryConnection `json:"repos,omitempty" graphql:"repos"`
-	Repository                 *ServiceRepository           `graphql:"defaultServiceRepository" json:"defaultServiceRepository"`
-	Tags                       *TagConnection               `json:"tags,omitempty"`
-	Tier                       Tier                         `json:"tier,omitempty"`
-	Timestamps                 Timestamps                   `json:"timestamps"`
-	Tools                      *ToolConnection              `json:"tools,omitempty"`
+	Language                   string                         `json:"language,omitempty"`
+	Lifecycle                  Lifecycle                      `json:"lifecycle,omitempty"`
+	Locked                     bool                           `json:"locked" graphql:"locked"`
+	ManagedAliases             []string                       `json:"managedAliases,omitempty"`
+	MaturityReport             MaturityReportOnlyOverallLevel `json:"maturityReport" graphql:"maturityReport"`
+	Name                       string                         `json:"name,omitempty"`
+	Note                       string                         `json:"note,omitempty"`
+	Owner                      TeamId                         `json:"owner,omitempty"`
+	Parent                     *SystemId                      `json:"parent,omitempty" graphql:"parent"`
+	PreferredApiDocument       *ServiceDocument               `json:"preferredApiDocument,omitempty"`
+	PreferredApiDocumentSource *ApiDocumentSourceEnum         `json:"preferredApiDocumentSource,omitempty"`
+	Product                    string                         `json:"product,omitempty"`
+	Repositories               *ServiceRepositoryConnection   `json:"repos,omitempty" graphql:"repos"`
+	Repository                 *ServiceRepository             `graphql:"defaultServiceRepository" json:"defaultServiceRepository"`
+	Tags                       *TagConnection                 `json:"tags,omitempty"`
+	Tier                       Tier                           `json:"tier,omitempty"`
+	Timestamps                 Timestamps                     `json:"timestamps"`
+	Tools                      *ToolConnection                `json:"tools,omitempty"`
 
 	Dependencies *ServiceDependenciesConnection `graphql:"-"`
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
