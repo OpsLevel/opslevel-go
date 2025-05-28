@@ -5,6 +5,10 @@ type CategoryBreakdown struct {
 	Level    Level
 }
 
+type MaturityOverallLevel struct {
+	OverallLevel Level
+}
+
 type MaturityReport struct {
 	CategoryBreakdown []CategoryBreakdown
 	OverallLevel      Level

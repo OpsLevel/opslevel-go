@@ -23,7 +23,7 @@ type Service struct {
 	Lifecycle                  Lifecycle                    `json:"lifecycle,omitempty"`
 	Locked                     bool                         `json:"locked" graphql:"locked"`
 	ManagedAliases             []string                     `json:"managedAliases,omitempty"`
-	MaturityReport             MaturityReport               `json:"maturityReport" graphql:"maturityReport"`
+	MaturityReport             MaturityOverallLevel         `json:"maturityReport" graphql:"maturityReport"`
 	Name                       string                       `json:"name,omitempty"`
 	Note                       string                       `json:"note,omitempty"`
 	Owner                      TeamId                       `json:"owner,omitempty"`

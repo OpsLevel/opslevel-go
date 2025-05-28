@@ -12,17 +12,6 @@
     "lifecycle": null,
     "locked": true,
     "maturityReport": {
-        "categoryBreakdown": [
-            {
-                "category": {
-                    "name": "Security",
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTU"
-                },
-                "level": {
-                    "index": 0
-                }
-            }
-        ],
         "overallLevel": {
             "name": "Beginner",
             "alias" : "beginner",
@@ -80,17 +69,6 @@
     "lifecycle": null,
     "name": "Bar",
     "maturityReport": {
-        "categoryBreakdown": [
-            {
-                "category": {
-                    "name": "Security",
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTU"
-                },
-                "level": {
-                    "index": 0
-                }
-            }
-        ],
         "overallLevel": {
             "name": "Beginner",
             "alias" : "beginner",
@@ -182,17 +160,6 @@
     "locked": true,
     "note": "Foo note",
     "maturityReport": {
-        "categoryBreakdown": [
-            {
-                "category": {
-                    "name": "Security",
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvQ2F0ZWdvcnkvMTU"
-                },
-                "level": {
-                    "index": 0
-                }
-            }
-        ],
         "overallLevel": {
             "name": "Beginner",
             "alias" : "beginner",

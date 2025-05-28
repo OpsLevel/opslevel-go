@@ -17,20 +17,6 @@
     locked,
     managedAliases,
     maturityReport{
-        categoryBreakdown{
-            category{
-                description,
-                id,
-                name
-            },
-            level{
-                alias,
-                description,
-                id,
-                index,
-                name
-            }
-        },
         overallLevel{
             alias,
             description,
