@@ -9,6 +9,8 @@ import (
 
 	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 type IDTester struct {
@@ -270,6 +272,138 @@ func TestNewNullableWithValueString(t *testing.T) {
 			if string(buf) != testCase.OutputBuffer {
 				t.Errorf("got unexpected output: '%s' (expected '%s')", string(buf), testCase.OutputBuffer)
 			}
+		})
+	}
+}
+
+type TestObject struct {
+	One   *ol.Nullable[string]
+	Two   *ol.Nullable[bool]
+	Three *ol.Nullable[float64]
+}
+
+func TestNullableYAML(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected TestObject
+	}{
+		{
+			name: "simple values",
+			input: `
+one: "hello world"
+two: true
+three: 42.5
+`,
+			expected: TestObject{
+				One:   ol.NewNullableFrom("hello world"),
+				Two:   ol.NewNullableFrom(true),
+				Three: ol.NewNullableFrom(42.5),
+			},
+		},
+		{
+			name: "null values",
+			input: `
+one: null
+two: null
+three: null
+`,
+			expected: TestObject{
+				One:   nil,
+				Two:   nil,
+				Three: nil,
+			},
+		},
+		{
+			name: "mixed values",
+			input: `
+one: "test"
+two: null
+three: 3.14
+`,
+			expected: TestObject{
+				One:   ol.NewNullableFrom("test"),
+				Two:   nil,
+				Three: ol.NewNullableFrom(3.14),
+			},
+		},
+		{
+			name: "structured format",
+			input: `
+one:
+  value: "structured"
+  setNull: false
+two:
+  value: true
+  setNull: false
+three:
+  value: 99.9
+  setNull: false
+`,
+			expected: TestObject{
+				One:   ol.NewNullableFrom("structured"),
+				Two:   ol.NewNullableFrom(true),
+				Three: ol.NewNullableFrom(99.9),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Test unmarshaling
+			var result TestObject
+			err := yaml.Unmarshal([]byte(tt.input), &result)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expected, result)
+
+			// Test marshaling
+			output, err := yaml.Marshal(result)
+			assert.NoError(t, err)
+
+			// Unmarshal the output to verify it matches
+			var verify TestObject
+			err = yaml.Unmarshal(output, &verify)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expected, verify)
+		})
+	}
+}
+
+func TestNullableYAMLInvalid(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+	}{
+		{
+			name: "invalid type for string",
+			input: `
+one:
+  - cannot
+  - convert
+  - array
+  - to
+  - string
+`,
+		},
+		{
+			name: "invalid type for bool",
+			input: `
+two: "not a bool"
+`,
+		},
+		{
+			name: "invalid type for float",
+			input: `
+three: "not a number"
+`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var result TestObject
+			err := yaml.Unmarshal([]byte(tt.input), &result)
+			assert.Error(t, err)
 		})
 	}
 }
