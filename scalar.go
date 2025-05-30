@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Identifiable interface {
@@ -105,6 +107,56 @@ func (nullable Nullable[T]) MarshalJSON() ([]byte, error) {
 func (nullable *Nullable[T]) UnmarshalJSON(data []byte) error {
 	stuff := json.Unmarshal(data, &nullable.Value)
 	return stuff
+}
+
+// UnmarshalYAML implements the yaml.Unmarshaler interface
+func (nullable *Nullable[T]) UnmarshalYAML(value *yaml.Node) error {
+	// Handle null values
+	if value.Kind == yaml.ScalarNode && value.Tag == "!!null" {
+		*nullable = Nullable[T]{
+			SetNull: true,
+		}
+		return nil
+	}
+
+	// Handle direct value unmarshaling
+	if value.Kind == yaml.ScalarNode {
+		var v T
+		if err := value.Decode(&v); err != nil {
+			return err
+		}
+		*nullable = Nullable[T]{
+			Value:   v,
+			SetNull: false,
+		}
+		return nil
+	}
+
+	// Handle structured format
+	if value.Kind == yaml.MappingNode {
+		for i := 0; i < len(value.Content); i += 2 {
+			key := value.Content[i]
+			val := value.Content[i+1]
+			
+			if key.Value == "value" {
+				var v T
+				if err := val.Decode(&v); err != nil {
+					return err
+				}
+				nullable.Value = v
+				nullable.SetNull = false
+			} else if key.Value == "setNull" {
+				var setNull bool
+				if err := val.Decode(&setNull); err != nil {
+					return err
+				}
+				nullable.SetNull = setNull
+			}
+		}
+		return nil
+	}
+
+	return fmt.Errorf("invalid YAML node kind: %v", value.Kind)
 }
 
 // NewNull returns a Nullable string that will always marshal into `null`, can be used to unset fields
