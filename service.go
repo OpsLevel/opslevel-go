@@ -37,6 +37,7 @@ type Service struct {
 	Tier                       Tier                           `json:"tier,omitempty"`
 	Timestamps                 Timestamps                     `json:"timestamps"`
 	Tools                      *ToolConnection                `json:"tools,omitempty"`
+	Type                       *ComponentTypeId               `json:"type,omitempty"`
 
 	Dependencies *ServiceDependenciesConnection `graphql:"-"`
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
