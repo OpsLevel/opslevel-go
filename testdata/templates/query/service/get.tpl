@@ -133,5 +133,6 @@
             url
         },
         {{ template "pagination_request" }}
-    }
+    },
+    type{id,aliases}
 {{- end }}
