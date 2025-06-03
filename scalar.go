@@ -138,14 +138,15 @@ func (nullable *Nullable[T]) UnmarshalYAML(value *yaml.Node) error {
 			key := value.Content[i]
 			val := value.Content[i+1]
 
-			if key.Value == "value" {
+			switch key.Value {
+			case "value":
 				var v T
 				if err := val.Decode(&v); err != nil {
 					return err
 				}
 				nullable.Value = v
 				nullable.SetNull = false
-			} else if key.Value == "setNull" {
+			case "setNull":
 				var setNull bool
 				if err := val.Decode(&setNull); err != nil {
 					return err
