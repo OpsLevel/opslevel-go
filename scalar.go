@@ -137,7 +137,7 @@ func (nullable *Nullable[T]) UnmarshalYAML(value *yaml.Node) error {
 		for i := 0; i < len(value.Content); i += 2 {
 			key := value.Content[i]
 			val := value.Content[i+1]
-			
+
 			if key.Value == "value" {
 				var v T
 				if err := val.Decode(&v); err != nil {
