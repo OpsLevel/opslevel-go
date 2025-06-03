@@ -2,9 +2,10 @@ package opslevel_test
 
 import (
 	"encoding/json"
+	"testing"
+
 	ol "github.com/opslevel/opslevel-go/v2025"
 	"github.com/rocktavious/autopilot/v2023"
-	"testing"
 )
 
 func TestRelationshipResourceUnmarshalJSON(t *testing.T) {
