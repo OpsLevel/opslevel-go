@@ -31,6 +31,12 @@ type CategoryConnection ConnectionBase[Category]
 // CheckConnection The connection type for Check
 type CheckConnection ConnectionBase[Check]
 
+// CheckResultsByLevelConnection The connection type for CheckResultsByLevel
+type CheckResultsByLevelConnection ConnectionBase[CheckResultsByLevel]
+
+// CheckResultsConnection The connection type for CheckResult
+type CheckResultsConnection ConnectionBase[CheckResult]
+
 // ComponentTypeConnection The connection type for ComponentType
 type ComponentTypeConnection ConnectionBase[ComponentType]
 
@@ -85,8 +91,14 @@ type ScorecardCheckConnection ConnectionBase[Check]
 // ScorecardConnection The connection type for Scorecard
 type ScorecardConnection ConnectionBase[Scorecard]
 
+// ScorecardStatsConnection The connection type for ScorecardStats
+type ScorecardStatsConnection ConnectionBase[ScorecardStats]
+
 // SecretsVaultsSecretsConnection The connection type for Secret
 type SecretsVaultsSecretsConnection ConnectionBase[Secret]
+
+// ServiceCategoryConnection The connection type for Category
+type ServiceCategoryConnection ConnectionBase[Category]
 
 // ServiceConnection The connection type for Service
 type ServiceConnection ConnectionBase[Service]

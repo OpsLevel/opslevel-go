@@ -347,6 +347,26 @@ func (service *Service) GetDocuments(client *Client, variables *PayloadVariables
 	return &q.Account.Service.Documents, nil
 }
 
+func (service *Service) GetServiceStats(client *Client) (*ServiceStats, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				ServiceStats ServiceStats
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get 'ServiceStats', invalid service id: '%s'", service.Id)
+	}
+
+	variables := &PayloadVariables{}
+	(*variables)["service"] = service.Id
+	if err := client.Query(&q, *variables, WithName("GetServiceStats")); err != nil {
+		return nil, err
+	}
+	return &q.Account.Service.ServiceStats, nil
+}
+
 func (client *Client) CreateService(input ServiceCreateInput) (*Service, error) {
 	var m struct {
 		Payload ServiceCreatePayload `graphql:"serviceCreate(input: $input)"`

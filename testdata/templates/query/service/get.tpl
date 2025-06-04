@@ -19,6 +19,7 @@
     maturityReport{
         overallLevel{
             alias,
+            checks{id,name},
             description,
             id,
             index,

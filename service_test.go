@@ -249,7 +249,7 @@ func TestServiceRepositories(t *testing.T) {
 func TestCreateService(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
+		`mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
 		`{ "input": { "name": "Foo", "description": "Foo service" } }`,
 		`{ "data": { "serviceCreate": { "service": {{ template "service_1" }}, "errors": [] } }}`,
 	)
@@ -267,12 +267,12 @@ func TestCreateService(t *testing.T) {
 func TestCreateServiceWithNote(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
+		`mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
 		`{ "input": { "name": "Foo", "description": "Foo service" } }`,
 		`{ "data": { "serviceCreate": { "service": {{ template "service_1" }}, "errors": [] } }}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`mutation ServiceUpdateNote($input:ServiceNoteUpdateInput!){serviceNoteUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},errors{message,path}}}`,
+		`mutation ServiceUpdateNote($input:ServiceNoteUpdateInput!){serviceNoteUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},errors{message,path}}}`,
 		`{ "input": { "service": { {{ template "id1" }} }, "note": "Foo note" } }`,
 		`{ "data": { "serviceNoteUpdate": { "service": {{ template "service_with_note" }}, "errors": [] } }}`,
 	)
@@ -298,7 +298,7 @@ func TestCreateServiceWithNote(t *testing.T) {
 func TestCreateServiceWithParentSystem(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
+		`mutation ServiceCreate($input:ServiceCreateInput!){serviceCreate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
 		`{ "input": { "name": "Foo", "description": "Foo service", "parent": {"alias": "FooSystem"} } }`,
 		`{ "data": { "serviceCreate": { "service": {{ template "service_1" }}, "errors": [] } }}`,
 	)
@@ -399,7 +399,7 @@ func TestUpdateService(t *testing.T) {
 	for i, testCase := range testCases {
 		t.Run(testCase.Name, func(t *testing.T) {
 			testRequest := autopilot.NewTestRequest(
-				`mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
+				`mutation ServiceUpdate($input:ServiceUpdateInput!){serviceUpdate(input: $input){service{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},errors{message,path}}}`,
 				testCase.Vars,
 				`{"data": {"serviceUpdate": { "service": {{ template "service_1" }}, "errors": [] }}}`,
 			)
@@ -432,7 +432,7 @@ func TestGetServiceIdWithAlias(t *testing.T) {
 func TestGetServiceWithAlias(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query ServiceGet($service:String!){account{service(alias: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}}}}`,
+		`query ServiceGet($service:String!){account{service(alias: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}}}}`,
 		`{ "service": "coredns" }`,
 		`{ "data": {
     "account": {
@@ -803,15 +803,259 @@ func TestGetServiceDocuments(t *testing.T) {
 	// autopilot.Equals(t, "Foo", result[0].HtmlURL)
 }
 
+func TestGetServiceStats(t *testing.T) {
+	testRequest := autopilot.NewTestRequest(
+		`query GetServiceStats($service:ID!){account{service(id: $service){serviceStats{rubric{categoryLevel{alias,checks{id,name},description,id,index,name},checkResults{byLevel{nodes{items{nodes{check{id,name},lastUpdated,message,service{id,aliases},serviceAlias,status},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},level{alias,checks{id,name},description,id,index,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},nextLevel{level{alias,checks{id,name},description,id,index,name}}},level{alias,checks{id,name},description,id,index,name}}}}}}`,
+		`{ "service": "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx" }`,
+		`{ "data": {
+    "account": {
+      "service": {
+        "serviceStats": {
+          "rubric": {
+            "categoryLevel": null,
+            "checkResults": {
+              "byLevel": {
+                "nodes": [
+                  {
+                    "items": {
+                      "nodes": [
+                        {
+                          "check": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpTZXJ2aWNlUHJvcGVydHkvNDc2OA",
+                            "name": "Has Tier Defined"
+                          },
+                          "lastUpdated": "2025-06-05T19:52:54.177040Z",
+                          "message": "The service has a tier.",
+                          "service": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8x",
+                            "aliases": []
+                          },
+                          "serviceAlias": "",
+                          "status": "passed"
+                        }
+                      ],
+                      "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false,
+                        "startCursor": "MQ",
+                        "endCursor": "Nw"
+                      }
+                    },
+                    "level": {
+                      "alias": "bronze",
+                      "checks": [
+                        {
+                          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpTZXJ2aWNlUHJvcGVydHkvNDc2OA",
+                          "name": "Has Tier Defined"
+                        }
+                      ],
+                      "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.",
+                      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI0",
+                      "index": 1,
+                      "name": "🥉 Bronze"
+                    }
+                  },
+                  {
+                    "items": {
+                      "nodes": [
+                        {
+                          "check": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpBbGVydFNvdXJjZVVzYWdlLzczODA",
+                            "name": "On-call configured for each service"
+                          },
+                          "lastUpdated": "2025-06-05T19:52:53.931285Z",
+                          "message": "The component is using a On-call alert source.",
+                          "service": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8x",
+                            "aliases": []
+                          },
+                          "serviceAlias": "",
+                          "status": "passed"
+                        }
+                      ],
+                      "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false,
+                        "startCursor": "MQ",
+                        "endCursor": "Ng"
+                      }
+                    },
+                    "level": {
+                      "alias": "silver",
+                      "checks": [
+                        {
+                          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpBbGVydFNvdXJjZVVzYWdlLzczODA",
+                          "name": "On-call configured for each service"
+                        }
+                      ],
+                      "description": "Services in this level satisfy important and critical checks. This is considered healthy but there is room for improvement.",
+                      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI1",
+                      "index": 2,
+                      "name": "🥈 Silver"
+                    }
+                  },
+                  {
+                    "items": {
+                      "nodes": [
+                        {
+                          "check": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpSZXBvRmlsZS82ODU1",
+                            "name": "Has 'Readme.md'"
+                          },
+                          "lastUpdated": "2025-06-05T19:54:40.256998Z",
+                          "message": "Repo files <a href='https://github.com/helpify/helpify/blob/main/README.md' target='_blank'>Readme.md, README.md, README.MD, readme.md or Readme.MD</a> exists.",
+                          "service": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8x",
+                            "aliases": []
+                          },
+                          "serviceAlias": "",
+                          "status": "passed"
+                        }
+                      ],
+                      "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false,
+                        "startCursor": "MQ",
+                        "endCursor": "Ng"
+                      }
+                    },
+                    "level": {
+                      "alias": "gold",
+                      "checks": [
+                        {
+                          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpSZXBvRmlsZS82ODU1",
+                          "name": "Has 'Readme.md'"
+                        }
+                      ],
+                      "description": "Services in this level satisfy critical, important and useful checks. This is the level all services should aspire to be in.",
+                      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI2",
+                      "index": 3,
+                      "name": "🥇 Gold"
+                    }
+                  },
+                  {
+                    "items": {
+                      "nodes": [
+                        {
+                          "check": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzc1Njc",
+                            "name": "No Version Bump PR/MR older than 14d"
+                          },
+                          "lastUpdated": "2025-06-05T12:16:53.897400Z",
+                          "message": "### Check failed\n  Service **opslevel** has version bump MRs older than 14 days.",
+                          "service": {
+                            "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS8x",
+                            "aliases": [
+                            ]
+                          },
+                          "serviceAlias": "",
+                          "status": "failed"
+                        }
+                      ],
+                      "pageInfo": {
+                        "hasNextPage": false,
+                        "hasPreviousPage": false,
+                        "startCursor": "MQ",
+                        "endCursor": "NQ"
+                      }
+                    },
+                    "level": {
+                      "alias": "platinum",
+                      "checks": [
+                        {
+                          "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzc1Njc",
+                          "name": "No Version Bump PR/MR older than 14d"
+                        }
+                      ],
+                      "description": "Services in this level satisfy above and beyond checks. This is the equivalent of getting an A+ and doing all your extra credit assignments.",
+                      "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMTAyOA",
+                      "index": 4,
+                      "name": "💎 Platinum"
+                    }
+                  }
+                ],
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "hasPreviousPage": false,
+                  "startCursor": "MQ",
+                  "endCursor": "NA"
+                }
+              },
+              "nextLevel": {
+                "level": {
+                  "alias": "platinum",
+                  "checks": [
+                    {
+                      "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpHZW5lcmljLzc1Njc",
+                      "name": "No Version Bump PR/MR older than 14d"
+                    }
+                  ],
+                  "description": "Services in this level satisfy above and beyond checks. This is the equivalent of getting an A+ and doing all your extra credit assignments.",
+                  "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMTAyOA",
+                  "index": 4,
+                  "name": "💎 Platinum"
+                }
+              }
+            },
+            "level": {
+              "alias": "gold",
+              "checks": [
+                {
+                  "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpSZXBvRmlsZS82ODU1",
+                  "name": "Has 'Readme.md'"
+                }
+              ],
+              "description": "Services in this level satisfy critical, important and useful checks. This is the level all services should aspire to be in.",
+              "id": "Z2lkOi8vb3BzbGV2ZWwvTGV2ZWwvMjI2",
+              "index": 3,
+              "name": "🥇 Gold"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`,
+	)
+	client := BestTestClient(t, "service/get_service_stats", testRequest)
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: id1,
+		},
+	}
+	// Act
+	resp, err := service.GetServiceStats(client)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "🥇 Gold", resp.Rubric.Level.Name)
+	autopilot.Equals(t, "Has 'Readme.md'", resp.Rubric.Level.Checks[0].Name)
+	autopilot.Equals(t, ol.CheckStatus("passed"), resp.Rubric.CheckResults.ByLevel.Nodes[0].Items.Nodes[0].Status)
+	autopilot.Equals(t, ol.CheckStatus("failed"), resp.Rubric.CheckResults.ByLevel.Nodes[3].Items.Nodes[0].Status)
+}
+
+func TestGetServiceStatsInvalidServiceId(t *testing.T) {
+	client := BestTestClient(t, "service/get_service_stats_invalid_service")
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "",
+		},
+	}
+	// Act
+	_, err := service.GetServiceStats(client)
+	// Assert
+	autopilot.Equals(t, "unable to get 'ServiceStats', invalid service id: ''", err.Error())
+}
+
 func TestListServices(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }} }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }} }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -833,12 +1077,12 @@ func TestListServices(t *testing.T) {
 func TestListServicesWithFilter(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithFilter($after:String!$filter:IdentifierInput$first:Int!){account{services(filterIdentifier: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query ServiceListWithFilter($after:String!$filter:IdentifierInput$first:Int!){account{services(filterIdentifier: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ {{ template "first_page_variables" }}, "filter": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithFilter($after:String!$filter:IdentifierInput$first:Int!){account{services(filterIdentifier: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query ServiceListWithFilter($after:String!$filter:IdentifierInput$first:Int!){account{services(filterIdentifier: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ {{ template "second_page_variables" }}, "filter": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -859,12 +1103,12 @@ func TestListServicesWithFilter(t *testing.T) {
 func TestListServicesWithFramework(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "framework": "postgres" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithFramework($after:String!$first:Int!$framework:String!){account{services(framework: $framework, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "framework": "postgres" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -885,12 +1129,12 @@ func TestListServicesWithFramework(t *testing.T) {
 func TestListServicesWithLanguage(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "language": "postgres" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithLanguage($after:String!$first:Int!$language:String!){account{services(language: $language, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "language": "postgres" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -911,12 +1155,12 @@ func TestListServicesWithLanguage(t *testing.T) {
 func TestListServicesWithOwner(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "owner": "postgres" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithOwner($after:String!$first:Int!$owner:String!){account{services(ownerAlias: $owner, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "owner": "postgres" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -937,12 +1181,12 @@ func TestListServicesWithOwner(t *testing.T) {
 func TestListServicesWithTag(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "tag": { "key": "app", "value": "worker" } }`,
 		`{"data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithTag($after:String!$first:Int!$tag:TagArgs!){account{services(tag: $tag, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "tag": { "key": "app", "value": "worker" } }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -965,12 +1209,12 @@ func TestListServicesWithTag(t *testing.T) {
 func TestListServicesWithTier(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithTier($after:String!$first:Int!$tier:String!){account{services(tierAlias: $tier, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithTier($after:String!$first:Int!$tier:String!){account{services(tierAlias: $tier, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "tier": "tier_1" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithTier($after:String!$first:Int!$tier:String!){account{services(tierAlias: $tier, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithTier($after:String!$first:Int!$tier:String!){account{services(tierAlias: $tier, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "tier": "tier_1" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -991,12 +1235,12 @@ func TestListServicesWithTier(t *testing.T) {
 func TestListServicesWithLifecycle(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithLifecycle($after:String!$first:Int!$lifecycle:String!){account{services(lifecycleAlias: $lifecycle, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithLifecycle($after:String!$first:Int!$lifecycle:String!){account{services(lifecycleAlias: $lifecycle, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "lifecycle": "alpha" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithLifecycle($after:String!$first:Int!$lifecycle:String!){account{services(lifecycleAlias: $lifecycle, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithLifecycle($after:String!$first:Int!$lifecycle:String!){account{services(lifecycleAlias: $lifecycle, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "lifecycle": "alpha" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -1017,12 +1261,12 @@ func TestListServicesWithLifecycle(t *testing.T) {
 func TestListServicesWithProduct(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query ServiceListWithProduct($after:String!$first:Int!$product:String!){account{services(product: $product, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithProduct($after:String!$first:Int!$product:String!){account{services(product: $product, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "first_page_variables" }}, "product": "test" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceListWithProduct($after:String!$first:Int!$product:String!){account{services(product: $product, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
+		`query ServiceListWithProduct($after:String!$first:Int!$product:String!){account{services(product: $product, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},{{ template "pagination_request" }}},type{id,aliases}},{{ template "pagination_request" }}}}}`,
 		`{ {{ template "second_page_variables" }}, "product": "test" }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -1093,7 +1337,7 @@ func TestServiceReconcileAliasesDeleteAll(t *testing.T) {
 	)
 	// get service
 	testRequestThree := autopilot.NewTestRequest(
-		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
 		`{ "service": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "service": { {{ template "id1" }}, "aliases": [], "managedAliases": [] }}}}`,
 	)
@@ -1127,7 +1371,7 @@ func TestServiceReconcileAliasesDeleteSome(t *testing.T) {
 		`{"data": { "aliasDelete": {"errors": [] }}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
 		`{ "service": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "service": { {{ template "id1" }}, "aliases": [ "two" ], "managedAliases": [ "two" ] }}}}`,
 	)
@@ -1180,7 +1424,7 @@ func TestServiceReconcileAliases(t *testing.T) {
 	)
 	// get service
 	testRequestFive := autopilot.NewTestRequest(
-		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
 		`{ "service": "{{ template "id1_string" }}" }`,
 		`{ "data": { "account": { "service": { {{ template "id1" }}, "aliases": ["one", "two", "three"], "managedAliases": ["one", "two", "three"] }}}}`,
 	)
