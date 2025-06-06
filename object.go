@@ -60,12 +60,18 @@ type CategoryLevel struct {
 
 // CheckResult The result for a given Check
 type CheckResult struct {
-	Check        Check        // The check of check result (Required)
+	Check        CheckId      // The check of check result (Required)
 	LastUpdated  iso8601.Time // The time the check most recently ran (Required)
 	Message      string       // The check message (Required)
 	Service      ServiceId    // The service of check result (Optional)
 	ServiceAlias string       // The alias for the service (Optional)
 	Status       CheckStatus  // The check status (Required)
+}
+
+// CheckResultsByLevel The check results grouped by level
+type CheckResultsByLevel struct {
+	Items CheckResultsConnection // A list of check results by level (Optional)
+	Level Level                  // The check result level (Optional)
 }
 
 // CheckStats Check stats shows a summary of check results
@@ -303,11 +309,12 @@ type Language struct {
 
 // Level A performance rating that is used to grade your services against
 type Level struct {
-	Alias       string // The human-friendly, unique identifier for the level (Optional)
-	Description string // A brief description of the level (Optional)
-	Id          ID     // The unique identifier for the level (Required)
-	Index       int    // The numerical representation of the level (highest is better) (Optional)
-	Name        string // The display name of the level (Optional)
+	Alias       string    // The human-friendly, unique identifier for the level (Optional)
+	Checks      []CheckId // The checks that belong to the level (Optional)
+	Description string    // A brief description of the level (Optional)
+	Id          ID        // The unique identifier for the level (Required)
+	Index       int       // The numerical representation of the level (highest is better) (Optional)
+	Name        string    // The display name of the level (Optional)
 }
 
 // LevelCount The total number of services in each level
@@ -376,6 +383,13 @@ type RepositoryPath struct {
 	Path string // The path where the linked service's code exists, relative to the root of the repository (Required)
 }
 
+// RubricReport The check result information for the service's rubric
+type RubricReport struct {
+	CategoryLevel Level               // The level of a specific category (Optional)
+	CheckResults  ServiceCheckResults // The service check results (Optional)
+	Level         Level               // The overall level of the service (Optional)
+}
+
 // SBOMGenerationConfiguration The configuration details that explain whether SBOM generation is allowed for the repository
 type SBOMGenerationConfiguration struct {
 	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM autogeneration is disabled (Optional)
@@ -412,12 +426,24 @@ type ScorecardServicesReport struct {
 	LevelCounts []LevelCount // Services per level regarding this scorecard (Required)
 }
 
+// ScorecardStats Service maturity information about a scorecard
+type ScorecardStats struct {
+	CheckResults ServiceCheckResults // The service check results (Optional)
+	Scorecard    Scorecard           // The scorecard (Optional)
+}
+
 // Secret A sensitive value
 type Secret struct {
 	Alias      string     // A human reference for the secret (Required)
 	Id         ID         // A reference for the secret (Required)
 	Owner      TeamId     // The owner of this secret (Optional)
 	Timestamps Timestamps // Relevant timestamps (Required)
+}
+
+// ServiceCheckResults The service check results
+type ServiceCheckResults struct {
+	ByLevel   CheckResultsByLevelConnection // The list of service check results grouped by level (Optional)
+	NextLevel ServiceNextLevel              // The next level for this service to achieve and the associated checks (Optional)
 }
 
 // ServiceLevelNotifications
@@ -432,6 +458,11 @@ type ServiceMaturityReport struct {
 	OverallLevel       Level           // The overall level for this service (Required)
 }
 
+// ServiceNextLevel The next level for a service to achieve and the associated checks
+type ServiceNextLevel struct {
+	Level Level // The next level for a service to achieve (Optional)
+}
+
 // ServiceRepository A record of the connection between a service and a repository
 type ServiceRepository struct {
 	BaseDirectory string       // The directory in the repository where service information exists, including the opslevel.yml file. This path is always returned without leading and trailing slashes (Optional)
@@ -439,6 +470,11 @@ type ServiceRepository struct {
 	Id            ID           // ID of the service repository (Required)
 	Repository    RepositoryId // The repository that is part of this connection (Required)
 	Service       ServiceId    // The service that is part of this connection (Required)
+}
+
+// ServiceStats The summary of check results for this service
+type ServiceStats struct {
+	Rubric RubricReport // The check result information for the service's rubric (Required)
 }
 
 // Stats An object that contains statistics

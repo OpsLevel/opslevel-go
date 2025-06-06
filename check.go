@@ -10,6 +10,11 @@ import (
 	"github.com/relvacode/iso8601"
 )
 
+type CheckId struct {
+	Id   ID     `json:"id"`
+	Name string `json:"name"`
+}
+
 type CheckInputConstructor func() any
 
 var CheckCreateConstructors = map[CheckType]CheckInputConstructor{

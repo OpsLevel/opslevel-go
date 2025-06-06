@@ -1,0 +1,3 @@
+kind: Feature
+body: "Add `client.GetServiceStats` function, which includes Rubric and CheckResults data to retrieve maturity report information for a service"
+time: 2025-06-06T10:25:56.068277-04:00
