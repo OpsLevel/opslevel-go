@@ -45,6 +45,49 @@ type AzureDevopsPermissionError struct {
 	Type        string   // The type of the object that the error was encountered on (Required)
 }
 
+// Campaign A campaign is a fixed time initiative that allows you to attach checks to and progress through towards completion
+type Campaign struct {
+	CheckStats      Stats              // A summary of check results on the campaign (Optional)
+	EndedDate       iso8601.Time       // The date the campaign ended (Optional)
+	Filter          FilterId           // The filter that the campaign belongs to (Optional)
+	HtmlUrl         string             // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
+	Id              ID                 // The id of the campaign (Required)
+	Name            string             // The name of the campaign (Required)
+	Owner           TeamId             // The team that owns the campaign (Optional)
+	ProjectBrief    string             // The project brief of the campaign (Optional)
+	RawProjectBrief string             // The raw unsanitized project brief of the campaign (Optional)
+	Reminder        CampaignReminder   // Configuration of an optional campaign reminder (Optional)
+	ServiceStats    Stats              // A summary of services that completed the campaign (Optional)
+	StartDate       iso8601.Time       // The date the campaign will start (Optional)
+	Status          CampaignStatusEnum // The status of the campaign (Required)
+	TargetDate      iso8601.Time       // The target date the campaign should end (Optional)
+}
+
+// CampaignReminder Configuration of an optional campaign reminder
+type CampaignReminder struct {
+	Channels            []CampaignReminderChannelEnum     // The communication channels through which the reminder will be delivered (Required)
+	DaysOfWeek          []DayOfWeekEnum                   // A list of weekdays on which the reminders will be delivered. Only available with weekly frequency (Optional)
+	DefaultSlackChannel string                            // The name of the Slack channel that will be notified if a team doesn't have a default Slack contact (Optional)
+	Frequency           int                               // The interval at which reminders will be delivered (Required)
+	FrequencyUnit       CampaignReminderFrequencyUnitEnum // The time unit of the value in the 'frequency' field (Required)
+	Message             string                            // The message that will be delivered as the reminder (Optional)
+	NextOccurrence      iso8601.Time                      // The point in time at which the next reminder will be delivered based on the current configuration (Optional)
+	TimeOfDay           string                            // The time of day at which the reminder will be delivered. Format: "HH:MM" (Required)
+	Timezone            string                            // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")) (Required)
+}
+
+// CampaignSendReminderOutcomeTeams Summarizes list of teams returned from attempt to send reminders for their failed campaigns
+type CampaignSendReminderOutcomeTeams struct {
+	ReminderType CampaignReminderTypeEnum // The reminder type linked to the attempt at notifying the listed teams (Required)
+	TeamIds      []ID                     // List of team_ids in this group of teams (Optional)
+	TotalCount   int                      // Count of number of teams listed (Required)
+}
+
+// CampaignTeam Team from the campaign context
+type CampaignTeam struct {
+	Team TeamId // The team impacted by the campaign (Required)
+}
+
 // Category A category is used to group related checks in a rubric
 type Category struct {
 	Description string // The description of the category (Optional)
