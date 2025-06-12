@@ -19,7 +19,8 @@ func (v *ListCampaignsVariables) AsPayloadVariables() *PayloadVariables {
 		variables["sortBy"] = *v.SortBy
 	}
 	if v.Status != nil {
-		variables["status"] = *v.Status
+		// cast status to match filter argument type
+		variables["status"] = string(*v.Status)
 	}
 	return &variables
 }
@@ -53,7 +54,7 @@ func (client *Client) ListCampaigns(campaignVariables *ListCampaignsVariables) (
 
 	var q struct {
 		Account struct {
-			Campaigns CampaignConnection `graphql:"campaigns(first: $first, after: $after, sortBy: $sortBy, status: $status)"`
+			Campaigns CampaignConnection `graphql:"campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}])"`
 		}
 	}
 
