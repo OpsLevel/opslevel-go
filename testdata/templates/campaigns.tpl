@@ -43,7 +43,7 @@
     {{ template "id2" }},
     "name": "Campaign 2",
     "htmlUrl": "https://app.opslevel.com/campaigns/campaign2",
-    "status": "ended",
+    "status": "in_progress",
     "checkStats": {
         "total": 5,
         "totalSuccessful": 5
@@ -69,7 +69,7 @@
     {{ template "id3" }},
     "name": "Campaign 3",
     "htmlUrl": "https://app.opslevel.com/campaigns/campaign3",
-    "status": "draft",
+    "status": "in_progress",
     "checkStats": {
         "total": 1,
         "totalSuccessful": 0
