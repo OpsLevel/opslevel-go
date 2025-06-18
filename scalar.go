@@ -109,6 +109,13 @@ func (nullable *Nullable[T]) UnmarshalJSON(data []byte) error {
 	return stuff
 }
 
+func (nullable *Nullable[T]) MarshalYAML() (interface{}, error) {
+	if nullable == nil || nullable.SetNull {
+		return nil, nil
+	}
+	return nullable.Value, nil
+}
+
 // UnmarshalYAML implements the yaml.Unmarshaler interface
 func (nullable *Nullable[T]) UnmarshalYAML(value *yaml.Node) error {
 	// Handle null values
