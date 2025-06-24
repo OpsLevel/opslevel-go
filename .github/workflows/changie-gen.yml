@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   generate-changelog:
-    if: contains(github.event.pull_request.labels.*.name, 'dependabot')
+    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
     env:
       MAIN_BRANCH: ${{ github.event.workflow_run.pull_requests[0].base.ref }}
       PR_BRANCH: ${{ github.event.workflow_run.pull_requests[0].head.ref }}
