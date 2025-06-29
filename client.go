@@ -2,6 +2,7 @@ package opslevel
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"runtime"
 	"strings"
@@ -9,24 +10,25 @@ import (
 )
 
 type ClientSettings struct {
-	url      string
-	token    string
-	timeout  time.Duration
-	retries  int
-	headers  map[string]string
-	pageSize int // Only Used by GQL
+	url       string
+	token     string
+	timeout   time.Duration
+	retries   int
+	headers   map[string]string
+	pageSize  int // Only Used by GQL
+	transport http.RoundTripper
 }
 
 type Option func(*ClientSettings)
 
 func newClientSettings(options ...Option) *ClientSettings {
 	settings := &ClientSettings{
-		url:     "https://app.opslevel.com",
-		token:   os.Getenv("OPSLEVEL_API_TOKEN"),
-		timeout: time.Second * 10,
-		retries: 10,
-
-		pageSize: 100,
+		url:       "https://app.opslevel.com",
+		token:     os.Getenv("OPSLEVEL_API_TOKEN"),
+		timeout:   time.Second * 10,
+		retries:   10,
+		pageSize:  100,
+		transport: http.DefaultTransport,
 		headers: map[string]string{
 			"User-Agent":         buildUserAgent(""),
 			"GraphQL-Visibility": "public",
@@ -87,6 +89,12 @@ func SetAPIVisibility(visibility string) Option {
 func SetPageSize(size int) Option {
 	return func(c *ClientSettings) {
 		c.pageSize = size
+	}
+}
+
+func SetTransport(transport http.RoundTripper) Option {
+	return func(c *ClientSettings) {
+		c.transport = transport
 	}
 }
 
