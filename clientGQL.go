@@ -23,6 +23,8 @@ func NewGQLClient(options ...Option) *Client {
 	retryClient.Logger = nil
 
 	standardClient := retryClient.StandardClient()
+	standardClient.Transport = settings.transport
+
 	var url string
 	if strings.Contains(settings.url, "/LOCAL_TESTING/") {
 		url = settings.url
