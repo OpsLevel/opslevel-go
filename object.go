@@ -613,6 +613,7 @@ type UserId struct {
 // User A user is someone who belongs to an organization
 type User struct {
 	UserId
+	Contacts      []Contact         // The contacts for the user (Optional)
 	HtmlUrl       string            // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
 	ProvisionedBy ProvisionedByEnum // What provisioned this user (Optional)
 	Role          UserRole          // The user's assigned role (Optional)

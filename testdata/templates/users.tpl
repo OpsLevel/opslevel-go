@@ -16,6 +16,11 @@
 {
 {{ template "user_id_email_1" }},
 "name": "Kyle Rockman",
+"contacts": [
+  {{ template "contact_1" }}
+],
+"htmlUrl": "https://app.opslevel.com/users/kyle",
+"provisionedBy": "manual",
 "role": "user"
 }
 {{ end }}
@@ -23,6 +28,11 @@
 {
 {{ template "user_id_email_1" }},
 "name": "Kyle Rockman",
+"contacts": [
+  {{ template "contact_1" }}
+],
+"htmlUrl": "https://app.opslevel.com/users/kyle",
+"provisionedBy": "manual",
 "role": "admin"
 }
 {{ end }}
@@ -30,6 +40,11 @@
 {
 {{ template "user_id_email_2" }},
 "name": "Edgar Ochoa",
+"contacts": [
+  {{ template "contact_2" }}
+],
+"htmlUrl": "https://app.opslevel.com/users/edgar",
+"provisionedBy": "manual",
 "role": "admin"
 }
 {{ end }}
@@ -38,6 +53,11 @@
 "email": "matthew@opslevel.com",
 "id": "3",
 "name": "Matthew Brahms",
+"contacts": [
+  {{ template "contact_3" }}
+],
+"htmlUrl": "https://app.opslevel.com/users/matthew",
+"provisionedBy": "manual",
 "role": "admin"
 }
 {{ end }}
