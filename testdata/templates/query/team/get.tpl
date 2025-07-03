@@ -18,6 +18,15 @@
     id,
     email,
     name,
+    contacts{
+      address,
+      displayName,
+      displayType,
+      externalId,
+      id,
+      isDefault,
+      type
+    },
     htmlUrl,
     provisionedBy,
     role
