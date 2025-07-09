@@ -931,3 +931,23 @@ func TestTeamReconcileAliases(t *testing.T) {
 	autopilot.Equals(t, team.Aliases, aliasesWanted)
 	autopilot.Equals(t, team.ManagedAliases, aliasesWanted)
 }
+
+func TestSearchTeams(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query TeamSearch($after:String!$first:Int!$searchTerm:String!){account{teams(searchTerm: $searchTerm, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{"searchTerm": "DevOps", "after": "", "first": 100}`,
+		`{ "data": { "account": { "teams": { "nodes": [ { "alias": "devops", "id": "id1", "aliases": ["devops"], "managedAliases": ["devops"], "contacts": [], "htmlUrl": "https://app.opslevel.com/teams/devops", "manager": { "id": "user1", "email": "manager@opslevel.com", "name": "Manager" }, "memberships": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }, "name": "DevOps", "parentTeam": null, "responsibilities": "Own Infra & Tools.", "tags": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } } } ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } } } } }`,
+	)
+
+	client := BestTestClient(t, "team/search", testRequest)
+	// Act
+	response, err := client.SearchTeams("DevOps", nil)
+	result := response.Nodes
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+	autopilot.Equals(t, "devops", result[0].Alias)
+	autopilot.Equals(t, "DevOps", result[0].Name)
+	autopilot.Equals(t, "Own Infra & Tools.", result[0].Responsibilities)
+}

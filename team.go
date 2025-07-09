@@ -388,6 +388,39 @@ func (client *Client) ListTeamsWithManager(email string, variables *PayloadVaria
 	return &q.Account.Teams, nil
 }
 
+func (client *Client) SearchTeams(searchTerm string, variables *PayloadVariables) (*TeamConnection, error) {
+	var q struct {
+		Account struct {
+			Teams TeamConnection `graphql:"teams(searchTerm: $searchTerm, after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["searchTerm"] = searchTerm
+
+	if err := client.Query(&q, *variables, WithName("TeamSearch")); err != nil {
+		return nil, err
+	}
+
+	if q.Account.Teams.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Teams.PageInfo.End
+		resp, err := client.SearchTeams(searchTerm, variables)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return nil, err
+			}
+			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
+		}
+		q.Account.Teams.PageInfo = resp.PageInfo
+	}
+	q.Account.Teams.TotalCount = len(q.Account.Teams.Nodes)
+	return &q.Account.Teams, nil
+}
+
 func (client *Client) UpdateTeam(input TeamUpdateInput) (*Team, error) {
 	var m struct {
 		Payload TeamUpdatePayload `graphql:"teamUpdate(input: $input)"`
