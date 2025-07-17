@@ -46,6 +46,16 @@ type Service struct {
 	Properties *ServicePropertiesConnection `graphql:"-"`
 }
 
+// ServiceFilterInput is the input object for filtering services.
+type ServiceFilterInput struct {
+	Key           PredicateKeyEnum      `json:"key,omitempty"`
+	Arg           string                `json:"arg,omitempty"`
+	Type          PredicateTypeEnum     `json:"type,omitempty"`
+	Connective    *ConnectiveEnum       `json:"connective,omitempty" yaml:"connective,omitempty" example:"and"` // The logical operator to be used in conjunction with predicates (Optional)
+	Predicates    *[]ServiceFilterInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`  // The list of predicates used to select which services apply to the filter (Optional)
+	CaseSensitive bool                  `json:"caseSensitive"`
+}
+
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (service *Service) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
@@ -538,6 +548,39 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
 		resp, err := client.ListServicesWithFramework(framework, variables)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return nil, err
+			}
+			q.Account.Services.Nodes = append(q.Account.Services.Nodes, node)
+		}
+		q.Account.Services.PageInfo = resp.PageInfo
+	}
+	q.Account.Services.TotalCount = len(q.Account.Services.Nodes)
+	return &q.Account.Services, nil
+}
+
+func (client *Client) ListServicesWithInputFilter(filters []ServiceFilterInput, variables *PayloadVariables) (*ServiceConnection, error) {
+	var q struct {
+		Account struct {
+			Services ServiceConnection `graphql:"services(filter: $filter, after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["filter"] = filters
+
+	if err := client.Query(&q, *variables, WithName("ServiceListWithInputFilter")); err != nil {
+		return nil, err
+	}
+
+	if q.Account.Services.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Services.PageInfo.End
+		resp, err := client.ListServicesWithInputFilter(filters, variables)
 		if err != nil {
 			return nil, err
 		}
