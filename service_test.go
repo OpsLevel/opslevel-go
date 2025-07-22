@@ -476,7 +476,7 @@ func TestGetServiceWithAlias(t *testing.T) {
           "edges": [
             {
               "node": {
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodUIvMjY1MTk",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
                 "defaultAlias": "github.com:rocktavious/autopilot"
               },
               "serviceRepositories": [
@@ -485,7 +485,7 @@ func TestGetServiceWithAlias(t *testing.T) {
                   "displayName": "rocktavious/autopilot",
                   "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNw",
                   "repository": {
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodUIvMjY1MTk",
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
                     "defaultAlias": "github.com:rocktavious/autopilot"
                   },
                   "service": {
@@ -653,7 +653,7 @@ func TestGetService(t *testing.T) {
           "edges": [
             {
               "node": {
-                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodUIvMjY1MTk",
+                "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
                 "defaultAlias": "github.com:rocktavious/autopilot"
               },
               "serviceRepositories": [
@@ -662,7 +662,7 @@ func TestGetService(t *testing.T) {
                   "displayName": "rocktavious/autopilot",
                   "id": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZVJlcG9zaXRvcnkvNDIxNw",
                   "repository": {
-                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodUIvMjY1MTk",
+                    "id": "Z2lkOi8vb3BzbGV2ZWwvUmVwb3NpdG9yaWVzOjpHaXRodWIvMjY1MTk",
                     "defaultAlias": "github.com:rocktavious/autopilot"
                   },
                   "service": {
@@ -1078,12 +1078,12 @@ func TestListServicesWithFilter(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
 		`query ServiceListWithFilter($after:String!$filter:IdentifierInput$first:Int!){account{services(filterIdentifier: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
-		`{ "filter": {"id": "{{ template "id1_string" }}"}, {{ template "first_page_variables" }} }`,
+		`{ {{ template "first_page_variables" }}, "filter": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query ServiceListWithFilter($after:String!$filter:IdentifierInput$first:Int!){account{services(filterIdentifier: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
-		`{ "filter": {"id": "{{ template "id1_string" }}"}, {{ template "second_page_variables" }} }`,
+		`{ {{ template "second_page_variables" }}, "filter": { {{ template "id1" }} } }`,
 		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_2" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
