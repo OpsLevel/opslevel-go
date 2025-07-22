@@ -563,7 +563,7 @@ func (client *Client) ListServicesWithFramework(framework string, variables *Pay
 	return &q.Account.Services, nil
 }
 
-func (client *Client) ListServicesWithInputFilter(filters []ServiceFilterInput, variables *PayloadVariables) (*ServiceConnection, error) {
+func (client *Client) ListServicesWithInputFilter(filter ServiceFilterInput, variables *PayloadVariables) (*ServiceConnection, error) {
 	var q struct {
 		Account struct {
 			Services ServiceConnection `graphql:"services(filter: $filter, after: $after, first: $first)"`
@@ -572,7 +572,7 @@ func (client *Client) ListServicesWithInputFilter(filters []ServiceFilterInput, 
 	if variables == nil {
 		variables = client.InitialPageVariablesPointer()
 	}
-	(*variables)["filter"] = filters
+	(*variables)["filter"] = []ServiceFilterInput{filter} // GraphQL expects an array of filters
 
 	if err := client.Query(&q, *variables, WithName("ServiceListWithInputFilter")); err != nil {
 		return nil, err
@@ -580,7 +580,7 @@ func (client *Client) ListServicesWithInputFilter(filters []ServiceFilterInput, 
 
 	if q.Account.Services.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Services.PageInfo.End
-		resp, err := client.ListServicesWithInputFilter(filters, variables)
+		resp, err := client.ListServicesWithInputFilter(filter, variables)
 		if err != nil {
 			return nil, err
 		}
