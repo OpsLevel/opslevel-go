@@ -630,10 +630,10 @@ func TestGetService(t *testing.T) {
           "alias": "developers",
           "id": "Z2lkOi8vb3BzbGV2ZWwvVGVhbS84NDk"
         },
-		"parent": {
+        "parent": {
           "id": "Z2lkOi8vb3BzbGV2ZWwvRW50aXR5T2JqZWN0LzExOTc",
           "aliases": ["just_updated_this_with_an_alias","taimoor_s_orange_system","update_2_lol"]
-		},
+        },
         "preferredApiDocument": {
           "id": "Z2lkOi8vb3BzbGV2ZWwvRG9jdW1lbnRzOjpBcGkvOTU0MQ",
           "htmlUrl": null,
@@ -1438,4 +1438,234 @@ func TestServiceReconcileAliases(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, service.Aliases, aliasesWanted)
 	autopilot.Equals(t, service.ManagedAliases, aliasesWanted)
+}
+
+func TestListServicesWithInputFilter(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{ "filter": [{ "key": "name", "arg": "Foo", "type": "equals", "caseSensitive": false }], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": "MQ", "endCursor": "MQ" } }}}}`,
+	)
+	client := BestTestClient(t, "service/list_with_input_filter", testRequest)
+	// Act
+	filter := ol.ServiceFilterInput{
+		Key:           ol.PredicateKeyEnumName,
+		Arg:           "Foo",
+		Type:          ol.PredicateTypeEnumEquals,
+		CaseSensitive: false,
+	}
+	response, err := client.ListServicesWithInputFilter(filter, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+	if len(response.Nodes) > 0 {
+		autopilot.Equals(t, "Foo", response.Nodes[0].Name)
+		autopilot.Equals(t, "Z2lkOi8vMTIzNDU2Nzg5OTg3NjU0MzIx", string(response.Nodes[0].Id))
+	}
+}
+
+func TestListServicesWithInputFilterAnd(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{ "filter": [{ "connective": "and", "caseSensitive": false, "predicates": [{ "key": "language", "arg": "Ruby", "type": "contains", "caseSensitive": false }, { "key": "tier_index", "arg": "1", "type": "equals", "caseSensitive": false }] }], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": "MQ", "endCursor": "MQ" } }}}}`,
+	)
+	client := BestTestClient(t, "service/list_with_input_filter_and", testRequest)
+
+	// Act - Complex filter: language is Ruby AND tier index is 1
+	predicates := []ol.ServiceFilterInput{
+		{
+			Key:  ol.PredicateKeyEnumLanguage,
+			Arg:  "Ruby",
+			Type: ol.PredicateTypeEnumContains,
+		},
+		{
+			Key:  ol.PredicateKeyEnumTierIndex,
+			Arg:  "1",
+			Type: ol.PredicateTypeEnumEquals,
+		},
+	}
+
+	complexFilter := ol.ServiceFilterInput{
+		Connective: &ol.ConnectiveEnumAnd,
+		Predicates: &predicates,
+	}
+
+	response, err := client.ListServicesWithInputFilter(complexFilter, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+}
+
+func TestListServicesWithInputFilterOr(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{ "filter": [{ "connective": "or", "caseSensitive": false, "predicates": [{ "key": "language", "arg": "Ruby", "type": "contains", "caseSensitive": false }, { "key": "language", "arg": "Go", "type": "contains", "caseSensitive": false }] }], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }}, {{ template "service_2" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": "MQ", "endCursor": "Mg" } }}}}`,
+	)
+	client := BestTestClient(t, "service/list_with_input_filter_or", testRequest)
+
+	// Act - OR filter: language is Ruby OR Go
+	orPredicates := []ol.ServiceFilterInput{
+		{
+			Key:  ol.PredicateKeyEnumLanguage,
+			Arg:  "Ruby",
+			Type: ol.PredicateTypeEnumContains,
+		},
+		{
+			Key:  ol.PredicateKeyEnumLanguage,
+			Arg:  "Go",
+			Type: ol.PredicateTypeEnumContains,
+		},
+	}
+
+	orFilter := ol.ServiceFilterInput{
+		Connective: &ol.ConnectiveEnumOr,
+		Predicates: &orPredicates,
+	}
+
+	response, err := client.ListServicesWithInputFilter(orFilter, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, response.TotalCount)
+}
+
+func TestListServicesWithInputFilterNested(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{ "filter": [{ "connective": "and", "caseSensitive": false, "predicates": [{ "connective": "or", "caseSensitive": false, "predicates": [{ "key": "language", "arg": "Ruby", "type": "contains", "caseSensitive": false }, { "key": "language", "arg": "Go", "type": "contains", "caseSensitive": false }] }, { "key": "tier_index", "arg": "1", "type": "equals", "caseSensitive": false }] }], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": "MQ", "endCursor": "MQ" } }}}}`,
+	)
+	client := BestTestClient(t, "service/list_with_input_filter_nested", testRequest)
+
+	// Act - Nested filter: (language is Ruby OR Go) AND tier index is 1
+	orPredicates := []ol.ServiceFilterInput{
+		{
+			Key:  ol.PredicateKeyEnumLanguage,
+			Arg:  "Ruby",
+			Type: ol.PredicateTypeEnumContains,
+		},
+		{
+			Key:  ol.PredicateKeyEnumLanguage,
+			Arg:  "Go",
+			Type: ol.PredicateTypeEnumContains,
+		},
+	}
+
+	orFilter := ol.ServiceFilterInput{
+		Connective: &ol.ConnectiveEnumOr,
+		Predicates: &orPredicates,
+	}
+
+	gigaPredicates := []ol.ServiceFilterInput{
+		orFilter,
+		{
+			Key:  ol.PredicateKeyEnumTierIndex,
+			Arg:  "1",
+			Type: ol.PredicateTypeEnumEquals,
+		},
+	}
+
+	nestedFilter := ol.ServiceFilterInput{
+		Connective: &ol.ConnectiveEnumAnd,
+		Predicates: &gigaPredicates,
+	}
+
+	response, err := client.ListServicesWithInputFilter(nestedFilter, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+}
+
+func TestListServicesWithInputFilterMultiplePredicateTypes(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		// The filter is a single AND filter with multiple predicates, not a flat array
+		`{ "filter": [{ "connective": "and", "caseSensitive": false, "predicates": [
+				{ "key": "name", "arg": "api", "type": "contains", "caseSensitive": true },
+				{ "key": "product", "arg": "test", "type": "does_not_contain", "caseSensitive": false },
+				{ "key": "tier_index", "arg": "3", "type": "greater_than_or_equal_to", "caseSensitive": false }
+			]}], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": "MQ", "endCursor": "MQ" } }}}}`,
+	)
+	client := BestTestClient(t, "service/list_with_input_filter_multiple_types", testRequest)
+
+	// Act - Multiple filters with different predicate types (all in a single AND filter)
+	predicates := []ol.ServiceFilterInput{
+		{
+			Key:           ol.PredicateKeyEnumName,
+			Arg:           "api",
+			Type:          ol.PredicateTypeEnumContains,
+			CaseSensitive: true,
+		},
+		{
+			Key:  ol.PredicateKeyEnumProduct,
+			Arg:  "test",
+			Type: ol.PredicateTypeEnumDoesNotContain,
+		},
+		{
+			Key:  ol.PredicateKeyEnumTierIndex,
+			Arg:  "3",
+			Type: ol.PredicateTypeEnumGreaterThanOrEqualTo,
+		},
+	}
+
+	filter := ol.ServiceFilterInput{
+		Connective: &ol.ConnectiveEnumAnd,
+		Predicates: &predicates,
+	}
+
+	response, err := client.ListServicesWithInputFilter(filter, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+}
+
+func TestListServicesWithInputFilterCaseSensitivity(t *testing.T) {
+	// Test case sensitive match
+	testRequestMatch := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{ "filter": [{ "key": "name", "arg": "Foo", "type": "equals", "caseSensitive": true }], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [ {{ template "service_1" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": "MQ", "endCursor": "MQ" } }}}}`,
+	)
+
+	// Test case sensitive non-match (different case)
+	testRequestNoMatch := autopilot.NewTestRequest(
+		`query ServiceListWithInputFilter($after:String!$filter:[ServiceFilterInput!]!$first:Int!){account{services(filter: $filter, after: $after, first: $first){nodes{apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`{ "filter": [{ "key": "name", "arg": "foo", "type": "equals", "caseSensitive": true }], {{ template "first_page_variables" }} }`,
+		`{ "data": { "account": { "services": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }}}}`,
+	)
+
+	requests := []autopilot.TestRequest{testRequestMatch, testRequestNoMatch}
+	client := BestTestClient(t, "service/list_with_input_filter_case_sensitivity", requests...)
+
+	// Act & Assert - Test case sensitive match (should find service "Foo")
+	filterMatch := ol.ServiceFilterInput{
+		Key:           ol.PredicateKeyEnumName,
+		Arg:           "Foo",
+		Type:          ol.PredicateTypeEnumEquals,
+		CaseSensitive: true,
+	}
+	response, err := client.ListServicesWithInputFilter(filterMatch, nil)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+	if len(response.Nodes) > 0 {
+		autopilot.Equals(t, "Foo", response.Nodes[0].Name)
+	}
+
+	// Act & Assert - Test case sensitive non-match (should NOT find service with "foo" when name is "Foo")
+	filterNoMatch := ol.ServiceFilterInput{
+		Key:           ol.PredicateKeyEnumName,
+		Arg:           "foo", // lowercase - should not match "Foo" when case sensitive
+		Type:          ol.PredicateTypeEnumEquals,
+		CaseSensitive: true,
+	}
+	response, err = client.ListServicesWithInputFilter(filterNoMatch, nil)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 0, response.TotalCount)
 }
