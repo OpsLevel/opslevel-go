@@ -1,4 +1,0 @@
-kind: Feature
-body: Add `ListServicesWithInputFilter` method for constructing service queries with
-  ad hoc filters.
-time: 2025-07-17T08:23:10.305942-07:00
