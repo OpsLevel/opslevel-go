@@ -352,6 +352,8 @@ type CheckPackageVersionUpdateInput struct {
 	PackageName                *Nullable[string]                `json:"packageName,omitempty" yaml:"packageName,omitempty" example:"example_value"`                 // The name of the package to be checked (Optional)
 	PackageNameIsRegex         *Nullable[bool]                  `json:"packageNameIsRegex,omitempty" yaml:"packageNameIsRegex,omitempty" example:"false"`           // Whether or not the value in the package name field is a regular expression (Optional)
 	VersionConstraintPredicate *Nullable[PredicateUpdateInput]  `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`           // The predicate that describes the version constraint the package must satisfy (Optional)
+}
+
 // CheckRelationshipCreateInput Specifies the input fields used to create a relationships check
 type CheckRelationshipCreateInput struct {
 	CategoryId                 ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                             // The id of the category the check belongs to (Required)
