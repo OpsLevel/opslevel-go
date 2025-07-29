@@ -318,6 +318,7 @@ var (
 	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service
 	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages
 	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service
+	CheckTypeRelationship        CheckType = "relationship"          // Verifies that the component has a specific number of relationship items defined for a specific relationship definition, with support for minimum, maximum, or exact count requirements
 	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service’s repository for the existence or contents of a specific file
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters
 	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service’s repository for specific contents in any file
@@ -342,6 +343,7 @@ var AllCheckType = []string{
 	string(CheckTypeManual),
 	string(CheckTypePackageVersion),
 	string(CheckTypePayload),
+	string(CheckTypeRelationship),
 	string(CheckTypeRepoFile),
 	string(CheckTypeRepoGrep),
 	string(CheckTypeRepoSearch),
@@ -3069,6 +3071,20 @@ var AllRelatedResourceRelationshipTypeEnum = []string{
 	string(RelatedResourceRelationshipTypeEnumIsRelatedTo),
 	string(RelatedResourceRelationshipTypeEnumMemberOf),
 	string(RelatedResourceRelationshipTypeEnumRelatedTo),
+}
+
+// RelationshipDefinitionManagementRuleOperator The operator used in a relationship definition management rule
+type RelationshipDefinitionManagementRuleOperator string
+
+var (
+	RelationshipDefinitionManagementRuleOperatorArrayContains RelationshipDefinitionManagementRuleOperator = "ARRAY_CONTAINS" //
+	RelationshipDefinitionManagementRuleOperatorEquals        RelationshipDefinitionManagementRuleOperator = "EQUALS"         //
+)
+
+// All RelationshipDefinitionManagementRuleOperator as []string
+var AllRelationshipDefinitionManagementRuleOperator = []string{
+	string(RelationshipDefinitionManagementRuleOperatorArrayContains),
+	string(RelationshipDefinitionManagementRuleOperatorEquals),
 }
 
 // RelationshipTypeEnum The type of relationship between two resources
