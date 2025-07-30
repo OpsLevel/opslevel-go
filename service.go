@@ -46,16 +46,6 @@ type Service struct {
 	Properties *ServicePropertiesConnection `graphql:"-"`
 }
 
-// ServiceFilterInput is the input object for filtering services.
-type ServiceFilterInput struct {
-	Key           PredicateKeyEnum      `json:"key,omitempty"`
-	Arg           string                `json:"arg,omitempty"`
-	Type          PredicateTypeEnum     `json:"type,omitempty"`
-	Connective    *ConnectiveEnum       `json:"connective,omitempty" yaml:"connective,omitempty" example:"and"` // The logical operator to be used in conjunction with predicates (Optional)
-	Predicates    *[]ServiceFilterInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`  // The list of predicates used to select which services apply to the filter (Optional)
-	CaseSensitive bool                  `json:"caseSensitive"`
-}
-
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases
 func (service *Service) UniqueIdentifiers() []string {
 	uniqueIdentifiers := []string{}
