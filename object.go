@@ -412,7 +412,6 @@ type RelationshipDefinitionType struct {
 	Id            ID                             // The ID of the relationship definition (Required)
 	Metadata      RelationshipDefinitionMetadata // JSON data that defines rules for how the relationship should be validated internally (Required)
 	Name          string                         // The human-readable name for a relationship (Required)
-	Name            string                                 // The human-readable name for a relationship (Required)
 }
 
 // RelationshipNode The relationship between two resources. A pair of source and destination resources

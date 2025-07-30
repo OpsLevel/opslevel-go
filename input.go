@@ -1160,12 +1160,12 @@ type ServiceDependencyKey struct {
 
 // ServiceFilterInput Input to be used to filter types
 type ServiceFilterInput struct {
-	Arg           *Nullable[string]    `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_value"`             // Value to be filtered (Optional)
-	CaseSensitive *Nullable[bool]      `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" example:"false"` // Whether or not the filter should be case sensitive (Optional)
-	Connective    *ConnectiveEnum      `json:"connective,omitempty" yaml:"connective,omitempty" example:"and"`         // The logical operator to be used in conjunction with multiple filters (requires predicates to be supplied) (Optional Default: or)
-	Key           *ServiceFilterEnum   `json:"key,omitempty" yaml:"key,omitempty" example:"alert_status"`              // Field to be filtered (Optional)
-	Predicates    []ServiceFilterInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`          // A list of service filter input (Optional)
-	Type          *TypeEnum            `json:"type,omitempty" yaml:"type,omitempty" example:"belongs_to"`              // Type of operation to be applied to value on the field (Optional Default: equals)
+	Arg           string               `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_value"`     // Value to be filtered (Optional)
+	CaseSensitive bool                 `json:"caseSensitive" yaml:"caseSensitive"`                             // Whether or not the filter should be case sensitive (Optional)
+	Connective    *ConnectiveEnum      `json:"connective,omitempty" yaml:"connective,omitempty" example:"and"` // The logical operator to be used in conjunction with multiple filters (requires predicates to be supplied) (Optional Default: or)
+	Key           *ServiceFilterEnum   `json:"key,omitempty" yaml:"key,omitempty" example:"alert_status"`      // Field to be filtered (Optional)
+	Predicates    []ServiceFilterInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`  // A list of service filter input (Optional)
+	Type          *TypeEnum            `json:"type,omitempty" yaml:"type,omitempty" example:"belongs_to"`      // Type of operation to be applied to value on the field (Optional Default: equals)
 }
 
 // ServiceLevelNotificationsUpdateInput Specifies the input fields used to update service level notification settings

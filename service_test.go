@@ -1450,10 +1450,10 @@ func TestListServicesWithInputFilter(t *testing.T) {
 	client := BestTestClient(t, "service/list_with_input_filter", testRequest)
 	// Act
 	filter := ol.ServiceFilterInput{
-		Key:           ol.PredicateKeyEnumName,
 		Arg:           "Foo",
-		Type:          ol.PredicateTypeEnumEquals,
 		CaseSensitive: false,
+		Key:           &ol.ServiceFilterEnumName,
+		Type:          &ol.TypeEnumEquals,
 	}
 	response, err := client.ListServicesWithInputFilter(filter, nil)
 	// Assert
@@ -1477,20 +1477,20 @@ func TestListServicesWithInputFilterAnd(t *testing.T) {
 	// Act - Complex filter: language is Ruby AND tier index is 1
 	predicates := []ol.ServiceFilterInput{
 		{
-			Key:  ol.PredicateKeyEnumLanguage,
 			Arg:  "Ruby",
-			Type: ol.PredicateTypeEnumContains,
+			Key:  &ol.ServiceFilterEnumLanguage,
+			Type: &ol.TypeEnumContains,
 		},
 		{
-			Key:  ol.PredicateKeyEnumTierIndex,
 			Arg:  "1",
-			Type: ol.PredicateTypeEnumEquals,
+			Key:  &ol.ServiceFilterEnumTierIndex,
+			Type: &ol.TypeEnumEquals,
 		},
 	}
 
 	complexFilter := ol.ServiceFilterInput{
 		Connective: &ol.ConnectiveEnumAnd,
-		Predicates: &predicates,
+		Predicates: predicates,
 	}
 
 	response, err := client.ListServicesWithInputFilter(complexFilter, nil)
@@ -1511,20 +1511,20 @@ func TestListServicesWithInputFilterOr(t *testing.T) {
 	// Act - OR filter: language is Ruby OR Go
 	orPredicates := []ol.ServiceFilterInput{
 		{
-			Key:  ol.PredicateKeyEnumLanguage,
 			Arg:  "Ruby",
-			Type: ol.PredicateTypeEnumContains,
+			Key:  &ol.ServiceFilterEnumLanguage,
+			Type: &ol.TypeEnumContains,
 		},
 		{
-			Key:  ol.PredicateKeyEnumLanguage,
 			Arg:  "Go",
-			Type: ol.PredicateTypeEnumContains,
+			Key:  &ol.ServiceFilterEnumLanguage,
+			Type: &ol.TypeEnumContains,
 		},
 	}
 
 	orFilter := ol.ServiceFilterInput{
 		Connective: &ol.ConnectiveEnumOr,
-		Predicates: &orPredicates,
+		Predicates: orPredicates,
 	}
 
 	response, err := client.ListServicesWithInputFilter(orFilter, nil)
@@ -1545,34 +1545,34 @@ func TestListServicesWithInputFilterNested(t *testing.T) {
 	// Act - Nested filter: (language is Ruby OR Go) AND tier index is 1
 	orPredicates := []ol.ServiceFilterInput{
 		{
-			Key:  ol.PredicateKeyEnumLanguage,
 			Arg:  "Ruby",
-			Type: ol.PredicateTypeEnumContains,
+			Key:  &ol.ServiceFilterEnumLanguage,
+			Type: &ol.TypeEnumContains,
 		},
 		{
-			Key:  ol.PredicateKeyEnumLanguage,
 			Arg:  "Go",
-			Type: ol.PredicateTypeEnumContains,
+			Key:  &ol.ServiceFilterEnumLanguage,
+			Type: &ol.TypeEnumContains,
 		},
 	}
 
 	orFilter := ol.ServiceFilterInput{
 		Connective: &ol.ConnectiveEnumOr,
-		Predicates: &orPredicates,
+		Predicates: orPredicates,
 	}
 
 	gigaPredicates := []ol.ServiceFilterInput{
 		orFilter,
 		{
-			Key:  ol.PredicateKeyEnumTierIndex,
 			Arg:  "1",
-			Type: ol.PredicateTypeEnumEquals,
+			Key:  &ol.ServiceFilterEnumTierIndex,
+			Type: &ol.TypeEnumEquals,
 		},
 	}
 
 	nestedFilter := ol.ServiceFilterInput{
 		Connective: &ol.ConnectiveEnumAnd,
-		Predicates: &gigaPredicates,
+		Predicates: gigaPredicates,
 	}
 
 	response, err := client.ListServicesWithInputFilter(nestedFilter, nil)
@@ -1598,26 +1598,26 @@ func TestListServicesWithInputFilterMultiplePredicateTypes(t *testing.T) {
 	// Act - Multiple filters with different predicate types (all in a single AND filter)
 	predicates := []ol.ServiceFilterInput{
 		{
-			Key:           ol.PredicateKeyEnumName,
 			Arg:           "api",
-			Type:          ol.PredicateTypeEnumContains,
 			CaseSensitive: true,
+			Key:           &ol.ServiceFilterEnumName,
+			Type:          &ol.TypeEnumContains,
 		},
 		{
-			Key:  ol.PredicateKeyEnumProduct,
 			Arg:  "test",
-			Type: ol.PredicateTypeEnumDoesNotContain,
+			Key:  &ol.ServiceFilterEnumProduct,
+			Type: &ol.TypeEnumDoesNotContain,
 		},
 		{
-			Key:  ol.PredicateKeyEnumTierIndex,
 			Arg:  "3",
-			Type: ol.PredicateTypeEnumGreaterThanOrEqualTo,
+			Key:  &ol.ServiceFilterEnumTierIndex,
+			Type: &ol.TypeEnumGreaterThanOrEqualTo,
 		},
 	}
 
 	filter := ol.ServiceFilterInput{
 		Connective: &ol.ConnectiveEnumAnd,
-		Predicates: &predicates,
+		Predicates: predicates,
 	}
 
 	response, err := client.ListServicesWithInputFilter(filter, nil)
@@ -1646,10 +1646,10 @@ func TestListServicesWithInputFilterCaseSensitivity(t *testing.T) {
 
 	// Act & Assert - Test case sensitive match (should find service "Foo")
 	filterMatch := ol.ServiceFilterInput{
-		Key:           ol.PredicateKeyEnumName,
 		Arg:           "Foo",
-		Type:          ol.PredicateTypeEnumEquals,
 		CaseSensitive: true,
+		Key:           &ol.ServiceFilterEnumName,
+		Type:          &ol.TypeEnumEquals,
 	}
 	response, err := client.ListServicesWithInputFilter(filterMatch, nil)
 	autopilot.Ok(t, err)
@@ -1660,10 +1660,10 @@ func TestListServicesWithInputFilterCaseSensitivity(t *testing.T) {
 
 	// Act & Assert - Test case sensitive non-match (should NOT find service with "foo" when name is "Foo")
 	filterNoMatch := ol.ServiceFilterInput{
-		Key:           ol.PredicateKeyEnumName,
 		Arg:           "foo", // lowercase - should not match "Foo" when case sensitive
-		Type:          ol.PredicateTypeEnumEquals,
 		CaseSensitive: true,
+		Key:           &ol.ServiceFilterEnumName,
+		Type:          &ol.TypeEnumEquals,
 	}
 	response, err = client.ListServicesWithInputFilter(filterNoMatch, nil)
 	autopilot.Ok(t, err)
