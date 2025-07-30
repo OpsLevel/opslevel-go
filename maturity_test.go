@@ -134,7 +134,7 @@ func TestListServicesMaturity(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`query ServiceMaturityList($after:String!$first:Int!){account{services(after: $after, first: $first){nodes{name,maturityReport{categoryBreakdown{category{description,id,name},level{alias,checks{id,name},description,id,index,name}},overallLevel{alias,checks{id,name},description,id,index,name}}},{{ template "pagination_request" }}}}}`,
-		`{"after":"", "first":100}`,
+		`{"after":"", "first":500}`,
 		`{
   "data": {
     "account": {

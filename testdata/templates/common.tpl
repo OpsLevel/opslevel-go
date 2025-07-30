@@ -46,22 +46,22 @@
 }{{ end }}
 {{- define "first_page_variables" }}
 "after": "",
-"first": 100
+"first": 500
 {{ end }}
 {{- define "second_page_variables" }}
 "after": "OA",
-"first": 100
+"first": 500
 {{ end }}
 {{- define "pagination_initial_query_variables" }}
 {
     "after": "",
-    "first": 100
+    "first": 500
 }
 {{ end }}
 {{- define "pagination_second_query_variables" }}
 {
 	"after": "OA",
-	"first": 100
+	"first": 500
 }
 {{ end }}
 {{- define "next_page_false" }}
