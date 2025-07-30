@@ -3,9 +3,10 @@ package opslevel
 import (
 	"context"
 	"fmt"
-	"github.com/hasura/go-graphql-client"
 	"net/http"
 	"strings"
+
+	"github.com/hasura/go-graphql-client"
 )
 
 type Client struct {
@@ -16,7 +17,7 @@ type Client struct {
 func NewGQLClient(options ...Option) *Client {
 	settings := newClientSettings(options...)
 
-	var httpClient = &http.Client{
+	httpClient := &http.Client{
 		Transport: settings.transport,
 		Timeout:   settings.timeout,
 	}
