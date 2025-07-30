@@ -30,6 +30,15 @@ type CustomActionsAssociatedObject struct {
 	Service Service `graphql:"... on Service"`
 }
 
+// DocumentSource
+type DocumentSource struct {
+	//ApiDocIntegration ApiDocIntegration `graphql:"... on ApiDocIntegration"`
+	Repository        RepositoryId        `graphql:"... on Repository"`
+	Service           ServiceId           `graphql:"... on Service"`
+	ServiceRepository ServiceRepository   `graphql:"... on ServiceRepository"`
+}
+
+
 // EntityOwner represents the Group or Team owning the entity.
 type EntityOwner struct {
 	OnTeam EntityOwnerTeam `graphql:"... on Team"`
