@@ -1,0 +1,3 @@
+kind: Refactor
+body: Remove hashicorp retryable http client in favor of the go standard http client and hasura/go-graphql-client new retry functionality
+time: 2025-07-30T10:01:01.225506-04:00
