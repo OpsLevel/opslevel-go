@@ -3,11 +3,9 @@ package opslevel
 import (
 	"context"
 	"fmt"
+	"github.com/hasura/go-graphql-client"
 	"net/http"
 	"strings"
-
-	"github.com/hashicorp/go-retryablehttp"
-	"github.com/hasura/go-graphql-client"
 )
 
 type Client struct {
@@ -18,12 +16,10 @@ type Client struct {
 func NewGQLClient(options ...Option) *Client {
 	settings := newClientSettings(options...)
 
-	retryClient := retryablehttp.NewClient()
-	retryClient.RetryMax = settings.retries
-	retryClient.Logger = nil
-
-	standardClient := retryClient.StandardClient()
-	standardClient.Transport = settings.transport
+	var httpClient = &http.Client{
+		Transport: settings.transport,
+		Timeout:   settings.timeout,
+	}
 
 	var url string
 	if strings.Contains(settings.url, "/LOCAL_TESTING/") {
@@ -43,7 +39,9 @@ func NewGQLClient(options ...Option) *Client {
 
 	return &Client{
 		pageSize: settings.pageSize,
-		client:   graphql.NewClient(url, standardClient).WithRequestModifier(modifier),
+		client: graphql.NewClient(url, httpClient,
+			graphql.WithRetry(settings.retries),
+		).WithRequestModifier(modifier),
 	}
 }
 
