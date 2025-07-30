@@ -32,7 +32,6 @@ type CustomActionsAssociatedObject struct {
 
 // DocumentSource
 type DocumentSource struct {
-	//ApiDocIntegration ApiDocIntegration `graphql:"... on ApiDocIntegration"`
 	Repository        RepositoryId        `graphql:"... on Repository"`
 	Service           ServiceId           `graphql:"... on Service"`
 	ServiceRepository ServiceRepository   `graphql:"... on ServiceRepository"`
