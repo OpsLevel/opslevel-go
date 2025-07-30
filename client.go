@@ -27,7 +27,7 @@ func newClientSettings(options ...Option) *ClientSettings {
 		token:     os.Getenv("OPSLEVEL_API_TOKEN"),
 		timeout:   time.Second * 10,
 		retries:   10,
-		pageSize:  100,
+		pageSize:  500,
 		transport: http.DefaultTransport,
 		headers: map[string]string{
 			"User-Agent":         buildUserAgent(""),
