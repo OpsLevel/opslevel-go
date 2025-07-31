@@ -118,7 +118,8 @@ func BuildCheckMutation(name string, style RequestStyle) string {
       ... on TagDefinedCheck{tagKey,tagPredicate{type,value}},
       ... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},
       ... on HasDocumentationCheck{documentSubtype,documentType},
-      ... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}
+      ... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}},
+      ... on RelationshipCheck{relationshipCountPredicate{type,value},relationshipDefinition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}
 	},
 	errors{message,path}
   }
@@ -752,6 +753,55 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 			},
 			expectedCheck: CheckWithExtras(map[string]any{}),
 		},
+		"CreateRelationship": {
+			fixture: BuildCreateRequestAlt("Relationship", map[string]any{
+				"relationshipCountPredicate": predicateInput,
+				"relationshipDefinitionId":   id,
+			}, map[string]any{
+				"relationshipCountPredicate": predicateInput,
+				"relationshipDefinition": ol.RelationshipDefinitionType{
+					Id: id,
+				},
+			}),
+			body: func(c *ol.Client) (*ol.Check, error) {
+				input := ol.NewCheckCreateInputTypeOf[ol.CheckRelationshipCreateInput](checkCreateInput)
+				input.RelationshipCountPredicate = *predicateInput
+				input.RelationshipDefinitionId = id
+				return c.CreateCheckRelationship(*input)
+			},
+			expectedCheck: CheckWithExtras(map[string]any{
+				"relationshipCountPredicate": predicateInput,
+				"relationshipDefinition": ol.RelationshipDefinitionType{
+					Id: id,
+				},
+			}),
+		},
+		"UpdateRelationship": {
+			fixture: BuildUpdateRequestAlt("Relationship", map[string]any{
+				"relationshipCountPredicate": predicateUpdateInput,
+				"relationshipDefinitionId":   id,
+			}, map[string]any{
+				"relationshipCountPredicate": predicateUpdateInput,
+				"relationshipDefinition": ol.RelationshipDefinitionType{
+					Id: id,
+				},
+			}),
+			body: func(c *ol.Client) (*ol.Check, error) {
+				input := ol.NewCheckUpdateInputTypeOf[ol.CheckRelationshipUpdateInput](checkUpdateInput)
+				input.RelationshipCountPredicate = &ol.PredicateInput{
+					Type:  *predicateUpdateInput.Type,
+					Value: predicateUpdateInput.Value,
+				}
+				input.RelationshipDefinitionId = &id
+				return c.UpdateCheckRelationship(*input)
+			},
+			expectedCheck: CheckWithExtras(map[string]any{
+				"relationshipCountPredicate": predicateUpdateInput,
+				"relationshipDefinition": ol.RelationshipDefinitionType{
+					Id: id,
+				},
+			}),
+		},
 		"CreateServiceConfiguration": {
 			fixture: BuildCreateRequest("ServiceConfiguration", map[string]any{}),
 			body: func(c *ol.Client) (*ol.Check, error) {
@@ -1033,7 +1083,7 @@ func getCheckTestCases() map[string]TmpCheckTestCase {
 		},
 		"GetCheck": {
 			fixture: autopilot.NewTestRequest(
-				`query CheckGet($id:ID!){account{check(id: $id){category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}}}}`,
+				`query CheckGet($id:ID!){account{check(id: $id){category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}},... on RelationshipCheck{relationshipCountPredicate{type,value},relationshipDefinition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}}}}`,
 				`{ "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2" }`,
 				`{ "data": { "account": { "check": { "category": { "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "name": "Performance" }, "description": "Requires a JSON payload to be sent to the integration endpoint to complete a check for the service.", "enabled": true, "filter": null, "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "level": { "alias": "bronze", "description": "Services in this level satisfy critical checks. This is the minimum standard to ship to production.", "id": "Z2lkOi8vb3BzbGV2ZWwvMTIzNDU2", "index": 1, "name": "Bronze" }, "name": "Hello World", "notes": null } } } }`,
 			),
@@ -1054,7 +1104,9 @@ func TestChecks(t *testing.T) {
 			// Act
 			result, err := tc.body(client)
 			// Assert
-			autopilot.Equals(t, nil, err)
+			if err != nil {
+				panic(err)
+			}
 			autopilot.Equals(t, id, result.Id)
 			autopilot.Equals(t, result, &tc.expectedCheck)
 		})
@@ -1105,12 +1157,12 @@ func TestCanUpdateNotesToNull(t *testing.T) {
 func TestListChecks(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
+		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}},... on RelationshipCheck{relationshipCountPredicate{type,value},relationshipDefinition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
 		`{{ template "pagination_initial_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "checks": { "nodes": [ { {{ template "common_check_response" }} }, { {{ template "metrics_tool_check" }} } ], {{ template "pagination_initial_pageInfo_response" }} }}}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
+		`query CheckList($after:String!$first:Int!){account{rubric{checks(after: $after, first: $first){nodes{category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}},... on RelationshipCheck{relationshipCountPredicate{type,value},relationshipDefinition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}`,
 		`{{ template "pagination_second_query_variables" }}`,
 		`{ "data": { "account": { "rubric": { "checks": { "nodes": [ { {{ template "owner_defined_check" }} } ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
 	)
@@ -1132,7 +1184,7 @@ func TestListChecks(t *testing.T) {
 func TestGetMissingCheck(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CheckGet($id:ID!){account{check(id: $id){category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}}}}}`,
+		`query CheckGet($id:ID!){account{check(id: $id){category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}},... on RelationshipCheck{relationshipCountPredicate{type,value},relationshipDefinition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}}}}`,
 		`{ "id": "Z2lkOi8vb3BzbGV2ZWwvQ2hlY2tzOjpIYXNPd25lci8yNDEf" }`,
 		`{ "data": { "account": { "check": null } } }`,
 	)
