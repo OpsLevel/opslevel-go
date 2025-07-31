@@ -284,6 +284,15 @@ type Deploy struct {
 	Status              string           // The deployment status (Optional)
 }
 
+// Document A document that is attached to resource(s) in OpsLevel
+type Document struct {
+	Content    string         // The contents of the document (Optional)
+	HtmlUrl    string         // The URL of the document, if any (Optional)
+	Id         ID             // The ID of the Document (Required)
+	Source     DocumentSource // The source of the document (Required)
+	Timestamps Timestamps     // When the document was created and updated (Required)
+}
+
 // DomainId A collection of related Systems
 type DomainId struct {
 	Id      ID       // The identifier of the object.
@@ -390,7 +399,7 @@ type Predicate struct {
 
 // RelationshipDefinitionMetadata The metadata of the relationship
 type RelationshipDefinitionMetadata struct {
-	AllowedTypes []string // The aliases of which types this relationship can target. Valid values include any component type alias on your account, or `team` (Required)
+	AllowedTypes []string // The aliases of which types this relationship can target. Valid values include any component type alias on your account, `team`, or `user` (Required)
 	MaxItems     int      // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
 	MinItems     int      // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
 }
@@ -438,7 +447,7 @@ type SBOMGenerationConfiguration struct {
 	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM autogeneration is disabled (Optional)
 	Enabled          bool                                       // Whether SBOM autogeneration is enabled through all associated configuration objects (Required)
 	NextGenerationAt iso8601.Time                               // The approximate time at which a new software bill of material will be generated for this repository (Optional)
-	State            RepositorySBOMGenerationConfigEnum         // The configuration option set by the current object (Optional)
+	State            RepositorySBOMGenerationConfigEnum         // The configuration option set by the current object (Required)
 }
 
 // ScorecardId A scorecard

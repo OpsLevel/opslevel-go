@@ -318,6 +318,7 @@ var (
 	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service
 	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages
 	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service
+	CheckTypeRelationship        CheckType = "relationship"          // Verifies that the component has a specific number of relationship items defined for a specific relationship definition, with support for minimum, maximum, or exact count requirements
 	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service’s repository for the existence or contents of a specific file
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters
 	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service’s repository for specific contents in any file
@@ -342,6 +343,7 @@ var AllCheckType = []string{
 	string(CheckTypeManual),
 	string(CheckTypePackageVersion),
 	string(CheckTypePayload),
+	string(CheckTypeRelationship),
 	string(CheckTypeRepoFile),
 	string(CheckTypeRepoGrep),
 	string(CheckTypeRepoSearch),
@@ -2857,56 +2859,46 @@ var AllPayloadSortEnum = []string{
 type PredicateKeyEnum string
 
 var (
-	PredicateKeyEnumAliases           PredicateKeyEnum = "aliases"            // Filter by Alias attached to this service, if any
-	PredicateKeyEnumAlertStatus       PredicateKeyEnum = "alert_status"       // Filter by alert status field
-	PredicateKeyEnumComponentTypeID   PredicateKeyEnum = "component_type_id"  // Filter by the `component_type` field
-	PredicateKeyEnumCreationSource    PredicateKeyEnum = "creation_source"    // Filter by the creation source
-	PredicateKeyEnumDeployEnvironment PredicateKeyEnum = "deploy_environment" // Filter by the existence of a deploy to an environment
-	PredicateKeyEnumDomainID          PredicateKeyEnum = "domain_id"          // Filter by Domain that includes the System this service is assigned to, if any
-	PredicateKeyEnumFilterID          PredicateKeyEnum = "filter_id"          // Filter by another filter
-	PredicateKeyEnumFramework         PredicateKeyEnum = "framework"          // Filter by `framework` field
-	PredicateKeyEnumGroupIDs          PredicateKeyEnum = "group_ids"          // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
-	PredicateKeyEnumLanguage          PredicateKeyEnum = "language"           // Filter by `language` field
-	PredicateKeyEnumLevelIndex        PredicateKeyEnum = "level_index"        // Filter by level field
-	PredicateKeyEnumLifecycleIndex    PredicateKeyEnum = "lifecycle_index"    // Filter by `lifecycle` field
-	PredicateKeyEnumName              PredicateKeyEnum = "name"               // Filter by `name` field
-	PredicateKeyEnumOwnerID           PredicateKeyEnum = "owner_id"           // Filter by `owner` field
-	PredicateKeyEnumOwnerIDs          PredicateKeyEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
-	PredicateKeyEnumProduct           PredicateKeyEnum = "product"            // Filter by `product` field
-	PredicateKeyEnumProperties        PredicateKeyEnum = "properties"         // Filter by custom-defined properties
-	PredicateKeyEnumProperty          PredicateKeyEnum = "property"           // Filter by a custom-defined property value
-	PredicateKeyEnumRelationship      PredicateKeyEnum = "relationship"       // Filter by the existence of a relationship to another catalog component
-	PredicateKeyEnumRepositoryIDs     PredicateKeyEnum = "repository_ids"     // Filter by Repository that this service is attached to, if any
-	PredicateKeyEnumSystemID          PredicateKeyEnum = "system_id"          // Filter by System that this service is assigned to, if any
-	PredicateKeyEnumTag               PredicateKeyEnum = "tag"                // Filter by tag field
-	PredicateKeyEnumTags              PredicateKeyEnum = "tags"               // Filter by `tags` field
-	PredicateKeyEnumTierIndex         PredicateKeyEnum = "tier_index"         // Filter by `tier` field
+	PredicateKeyEnumAliases         PredicateKeyEnum = "aliases"           // Filter by Alias attached to this service, if any
+	PredicateKeyEnumComponentTypeID PredicateKeyEnum = "component_type_id" // Filter by the `component_type` field
+	PredicateKeyEnumCreationSource  PredicateKeyEnum = "creation_source"   // Filter by the creation source
+	PredicateKeyEnumDomainID        PredicateKeyEnum = "domain_id"         // Filter by Domain that includes the System this service is assigned to, if any
+	PredicateKeyEnumFilterID        PredicateKeyEnum = "filter_id"         // Filter by another filter
+	PredicateKeyEnumFramework       PredicateKeyEnum = "framework"         // Filter by `framework` field
+	PredicateKeyEnumGroupIDs        PredicateKeyEnum = "group_ids"         // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
+	PredicateKeyEnumLanguage        PredicateKeyEnum = "language"          // Filter by `language` field
+	PredicateKeyEnumLifecycleIndex  PredicateKeyEnum = "lifecycle_index"   // Filter by `lifecycle` field
+	PredicateKeyEnumName            PredicateKeyEnum = "name"              // Filter by `name` field
+	PredicateKeyEnumOwnerID         PredicateKeyEnum = "owner_id"          // Filter by `owner` field
+	PredicateKeyEnumOwnerIDs        PredicateKeyEnum = "owner_ids"         // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
+	PredicateKeyEnumProduct         PredicateKeyEnum = "product"           // Filter by `product` field
+	PredicateKeyEnumProperties      PredicateKeyEnum = "properties"        // Filter by custom-defined properties
+	PredicateKeyEnumRelationships   PredicateKeyEnum = "relationships"     // Filter by `relationships`
+	PredicateKeyEnumRepositoryIDs   PredicateKeyEnum = "repository_ids"    // Filter by Repository that this service is attached to, if any
+	PredicateKeyEnumSystemID        PredicateKeyEnum = "system_id"         // Filter by System that this service is assigned to, if any
+	PredicateKeyEnumTags            PredicateKeyEnum = "tags"              // Filter by `tags` field
+	PredicateKeyEnumTierIndex       PredicateKeyEnum = "tier_index"        // Filter by `tier` field
 )
 
 // All PredicateKeyEnum as []string
 var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumAliases),
-	string(PredicateKeyEnumAlertStatus),
 	string(PredicateKeyEnumComponentTypeID),
 	string(PredicateKeyEnumCreationSource),
-	string(PredicateKeyEnumDeployEnvironment),
 	string(PredicateKeyEnumDomainID),
 	string(PredicateKeyEnumFilterID),
 	string(PredicateKeyEnumFramework),
 	string(PredicateKeyEnumGroupIDs),
 	string(PredicateKeyEnumLanguage),
-	string(PredicateKeyEnumLevelIndex),
 	string(PredicateKeyEnumLifecycleIndex),
 	string(PredicateKeyEnumName),
 	string(PredicateKeyEnumOwnerID),
 	string(PredicateKeyEnumOwnerIDs),
 	string(PredicateKeyEnumProduct),
 	string(PredicateKeyEnumProperties),
-	string(PredicateKeyEnumProperty),
-	string(PredicateKeyEnumRelationship),
+	string(PredicateKeyEnumRelationships),
 	string(PredicateKeyEnumRepositoryIDs),
 	string(PredicateKeyEnumSystemID),
-	string(PredicateKeyEnumTag),
 	string(PredicateKeyEnumTags),
 	string(PredicateKeyEnumTierIndex),
 }
@@ -3071,6 +3063,20 @@ var AllRelatedResourceRelationshipTypeEnum = []string{
 	string(RelatedResourceRelationshipTypeEnumRelatedTo),
 }
 
+// RelationshipDefinitionManagementRuleOperator The operator used in a relationship definition management rule
+type RelationshipDefinitionManagementRuleOperator string
+
+var (
+	RelationshipDefinitionManagementRuleOperatorArrayContains RelationshipDefinitionManagementRuleOperator = "ARRAY_CONTAINS" //
+	RelationshipDefinitionManagementRuleOperatorEquals        RelationshipDefinitionManagementRuleOperator = "EQUALS"         //
+)
+
+// All RelationshipDefinitionManagementRuleOperator as []string
+var AllRelationshipDefinitionManagementRuleOperator = []string{
+	string(RelationshipDefinitionManagementRuleOperatorArrayContains),
+	string(RelationshipDefinitionManagementRuleOperatorEquals),
+}
+
 // RelationshipTypeEnum The type of relationship between two resources
 type RelationshipTypeEnum string
 
@@ -3183,6 +3189,60 @@ var AllScorecardSortEnum = []string{
 	string(ScorecardSortEnumPassingcheckfractionDesc),
 	string(ScorecardSortEnumServicecountAsc),
 	string(ScorecardSortEnumServicecountDesc),
+}
+
+// ServiceFilterEnum Fields that can be used as part of filter for services
+type ServiceFilterEnum string
+
+var (
+	ServiceFilterEnumAlertStatus       ServiceFilterEnum = "alert_status"       // Filter by `alert status` field
+	ServiceFilterEnumAliases           ServiceFilterEnum = "aliases"            // Filter by Alias attached to this service, if any
+	ServiceFilterEnumComponentTypeID   ServiceFilterEnum = "component_type_id"  // Filter by the type of service
+	ServiceFilterEnumCreationSource    ServiceFilterEnum = "creation_source"    // Filter by the creation source
+	ServiceFilterEnumDeployEnvironment ServiceFilterEnum = "deploy_environment" // Filter by the existence of a deploy to an environment
+	ServiceFilterEnumDomainID          ServiceFilterEnum = "domain_id"          // Filter by Domain that includes the System this service is assigned to, if any
+	ServiceFilterEnumFilterID          ServiceFilterEnum = "filter_id"          // Filter by another filter
+	ServiceFilterEnumFramework         ServiceFilterEnum = "framework"          // Filter by `framework` field
+	ServiceFilterEnumGroupIDs          ServiceFilterEnum = "group_ids"          // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
+	ServiceFilterEnumLanguage          ServiceFilterEnum = "language"           // Filter by `language` field
+	ServiceFilterEnumLevelIndex        ServiceFilterEnum = "level_index"        // Filter by `level` field
+	ServiceFilterEnumLifecycleIndex    ServiceFilterEnum = "lifecycle_index"    // Filter by `lifecycle` field
+	ServiceFilterEnumName              ServiceFilterEnum = "name"               // Filter by `name` field
+	ServiceFilterEnumOwnerID           ServiceFilterEnum = "owner_id"           // Filter by `owner` field
+	ServiceFilterEnumOwnerIDs          ServiceFilterEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
+	ServiceFilterEnumProduct           ServiceFilterEnum = "product"            // Filter by `product` field
+	ServiceFilterEnumProperty          ServiceFilterEnum = "property"           // Filter by a custom-defined property value
+	ServiceFilterEnumRelationship      ServiceFilterEnum = "relationship"       // Filter by the existence of a relationship to another catalog component
+	ServiceFilterEnumRepositoryIDs     ServiceFilterEnum = "repository_ids"     // Filter by Repository that this service is attached to, if any
+	ServiceFilterEnumSystemID          ServiceFilterEnum = "system_id"          // Filter by System that this service is assigned to, if any
+	ServiceFilterEnumTag               ServiceFilterEnum = "tag"                // Filter by `tag` field
+	ServiceFilterEnumTierIndex         ServiceFilterEnum = "tier_index"         // Filter by `tier` field
+)
+
+// All ServiceFilterEnum as []string
+var AllServiceFilterEnum = []string{
+	string(ServiceFilterEnumAlertStatus),
+	string(ServiceFilterEnumAliases),
+	string(ServiceFilterEnumComponentTypeID),
+	string(ServiceFilterEnumCreationSource),
+	string(ServiceFilterEnumDeployEnvironment),
+	string(ServiceFilterEnumDomainID),
+	string(ServiceFilterEnumFilterID),
+	string(ServiceFilterEnumFramework),
+	string(ServiceFilterEnumGroupIDs),
+	string(ServiceFilterEnumLanguage),
+	string(ServiceFilterEnumLevelIndex),
+	string(ServiceFilterEnumLifecycleIndex),
+	string(ServiceFilterEnumName),
+	string(ServiceFilterEnumOwnerID),
+	string(ServiceFilterEnumOwnerIDs),
+	string(ServiceFilterEnumProduct),
+	string(ServiceFilterEnumProperty),
+	string(ServiceFilterEnumRelationship),
+	string(ServiceFilterEnumRepositoryIDs),
+	string(ServiceFilterEnumSystemID),
+	string(ServiceFilterEnumTag),
+	string(ServiceFilterEnumTierIndex),
 }
 
 // ServicePropertyTypeEnum Properties of services that can be validated
@@ -3363,6 +3423,50 @@ var AllToolCategory = []string{
 	string(ToolCategorySecurityScans),
 	string(ToolCategoryStatusPage),
 	string(ToolCategoryWiki),
+}
+
+// TypeEnum Operations that can be used on filters
+type TypeEnum string
+
+var (
+	TypeEnumBelongsTo                  TypeEnum = "belongs_to"                   // Belongs to a group's hierarchy
+	TypeEnumContains                   TypeEnum = "contains"                     // Contains a specific value
+	TypeEnumDoesNotContain             TypeEnum = "does_not_contain"             // Does not contain a specific value
+	TypeEnumDoesNotEqual               TypeEnum = "does_not_equal"               // Does not equal a specific value
+	TypeEnumDoesNotExist               TypeEnum = "does_not_exist"               // Specific attribute does not exist
+	TypeEnumDoesNotMatch               TypeEnum = "does_not_match"               // A certain filter is not matched
+	TypeEnumDoesNotMatchRegex          TypeEnum = "does_not_match_regex"         // Does not match a value using a regular expression
+	TypeEnumEndsWith                   TypeEnum = "ends_with"                    // Ends with a specific value
+	TypeEnumEquals                     TypeEnum = "equals"                       // Equals a specific value
+	TypeEnumExists                     TypeEnum = "exists"                       // Specific attribute exists
+	TypeEnumGreaterThanOrEqualTo       TypeEnum = "greater_than_or_equal_to"     // Greater than or equal to a specific value (numeric only)
+	TypeEnumLessThanOrEqualTo          TypeEnum = "less_than_or_equal_to"        // Less than or equal to a specific value (numeric only)
+	TypeEnumMatches                    TypeEnum = "matches"                      // A certain filter is matched
+	TypeEnumMatchesRegex               TypeEnum = "matches_regex"                // Matches a value using a regular expression
+	TypeEnumSatisfiesJqExpression      TypeEnum = "satisfies_jq_expression"      // Satisfies an expression defined in jq (property value only)
+	TypeEnumSatisfiesVersionConstraint TypeEnum = "satisfies_version_constraint" // Satisfies version constraint (tag value only)
+	TypeEnumStartsWith                 TypeEnum = "starts_with"                  // Starts with a specific value
+)
+
+// All TypeEnum as []string
+var AllTypeEnum = []string{
+	string(TypeEnumBelongsTo),
+	string(TypeEnumContains),
+	string(TypeEnumDoesNotContain),
+	string(TypeEnumDoesNotEqual),
+	string(TypeEnumDoesNotExist),
+	string(TypeEnumDoesNotMatch),
+	string(TypeEnumDoesNotMatchRegex),
+	string(TypeEnumEndsWith),
+	string(TypeEnumEquals),
+	string(TypeEnumExists),
+	string(TypeEnumGreaterThanOrEqualTo),
+	string(TypeEnumLessThanOrEqualTo),
+	string(TypeEnumMatches),
+	string(TypeEnumMatchesRegex),
+	string(TypeEnumSatisfiesJqExpression),
+	string(TypeEnumSatisfiesVersionConstraint),
+	string(TypeEnumStartsWith),
 }
 
 // UserRole A role that can be assigned to a user

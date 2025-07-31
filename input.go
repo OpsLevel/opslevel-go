@@ -354,6 +354,35 @@ type CheckPackageVersionUpdateInput struct {
 	VersionConstraintPredicate *Nullable[PredicateUpdateInput]  `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`           // The predicate that describes the version constraint the package must satisfy (Optional)
 }
 
+// CheckRelationshipCreateInput Specifies the input fields used to create a relationships check
+type CheckRelationshipCreateInput struct {
+	CategoryId                 ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                             // The id of the category the check belongs to (Required)
+	EnableOn                   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`                    // The date when the check will be automatically enabled (Optional)
+	Enabled                    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                         // Whether the check is enabled or not (Optional Default: false)
+	FilterId                   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the filter of the check (Optional)
+	LevelId                    ID                      `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                   // The id of the level the check belongs to (Required)
+	Name                       string                  `json:"name" yaml:"name" example:"example_value"`                                                           // The display name of the check (Required)
+	Notes                      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                     // Additional information about the check (Optional)
+	OwnerId                    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`               // The id of the team that owns the check (Optional)
+	RelationshipCountPredicate PredicateInput          `json:"relationshipCountPredicate" yaml:"relationshipCountPredicate"`                                       // The condition that should be satisfied by the number of RelatedTo relationships (Required)
+	RelationshipDefinitionId   ID                      `json:"relationshipDefinitionId" yaml:"relationshipDefinitionId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // Count relationships of a specific relationship definition (Required)
+}
+
+// CheckRelationshipUpdateInput Specifies the input fields used to update a relationships check
+type CheckRelationshipUpdateInput struct {
+	CategoryId                 *Nullable[ID]           `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                             // The id of the category the check belongs to (Optional)
+	EnableOn                   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`                                        // The date when the check will be automatically enabled (Optional)
+	Enabled                    *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                                             // Whether the check is enabled or not (Optional)
+	FilterId                   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the filter the check belongs to (Optional)
+	Id                         ID                      `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                 // The id of the check to be updated (Required)
+	LevelId                    *Nullable[ID]           `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                   // The id of the level the check belongs to (Optional)
+	Name                       *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                                           // The display name of the check (Optional)
+	Notes                      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                                         // Additional information about the check (Optional)
+	OwnerId                    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                   // The id of the owner of the check (Optional)
+	RelationshipCountPredicate *PredicateInput         `json:"relationshipCountPredicate,omitempty" yaml:"relationshipCountPredicate,omitempty"`                                       // The condition that should be satisfied by the number of RelatedTo relationships (Optional)
+	RelationshipDefinitionId   *ID                     `json:"relationshipDefinitionId,omitempty" yaml:"relationshipDefinitionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // Count relationships of a specific relationship definition (Optional)
+}
+
 // CheckRepositoryFileCreateInput Specifies the input fields used to create a repo file check
 type CheckRepositoryFileCreateInput struct {
 	CategoryId            ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
@@ -788,6 +817,11 @@ type CustomActionsWebhookActionUpdateInput struct {
 	WebhookUrl     *Nullable[string]            `json:"webhookUrl,omitempty" yaml:"webhookUrl,omitempty" example:"example_value"`                                                                                       // The URL that you wish to send the Webhook too when triggered (Optional)
 }
 
+// CustomIntegrationInput Input for upserting a custom integration
+type CustomIntegrationInput struct {
+	Name *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"` // Name of the custom integration type (Optional)
+}
+
 // DeleteInput Specifies the input fields used to delete an entity
 type DeleteInput struct {
 	Id ID `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the entity to be deleted (Required)
@@ -1004,7 +1038,7 @@ type RelationshipDefinitionInput struct {
 
 // RelationshipDefinitionMetadataInput The metadata of the relationship
 type RelationshipDefinitionMetadataInput struct {
-	AllowedTypes []string `json:"allowedTypes,omitempty" yaml:"allowedTypes,omitempty" example:"LIST_TODO"` // The aliases of which types this relationship can target. Valid values include any component type alias on your account, or `team` (Optional)
+	AllowedTypes []string `json:"allowedTypes,omitempty" yaml:"allowedTypes,omitempty" example:"LIST_TODO"` // The aliases of which types this relationship can target. Valid values include any component type alias on your account, `team`, or `user` (Optional)
 	MaxItems     *int     `json:"maxItems,omitempty" yaml:"maxItems,omitempty" example:"3"`                 // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
 	MinItems     *int     `json:"minItems,omitempty" yaml:"minItems,omitempty" example:"3"`                 // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
 }
@@ -1069,6 +1103,16 @@ type ServiceDependencyKey struct {
 	SourceIdentifier      *IdentifierInput  `json:"sourceIdentifier,omitempty" yaml:"sourceIdentifier,omitempty"`                                 // The ID or alias identifier of the service with the dependency (Optional)
 }
 
+// ServiceFilterInput Input to be used to filter types
+type ServiceFilterInput struct {
+	Arg           string               `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_value"`     // Value to be filtered (Optional)
+	CaseSensitive bool                 `json:"caseSensitive" yaml:"caseSensitive"`                             // Whether or not the filter should be case sensitive (Optional)
+	Connective    *ConnectiveEnum      `json:"connective,omitempty" yaml:"connective,omitempty" example:"and"` // The logical operator to be used in conjunction with multiple filters (requires predicates to be supplied) (Optional Default: or)
+	Key           *ServiceFilterEnum   `json:"key,omitempty" yaml:"key,omitempty" example:"alert_status"`      // Field to be filtered (Optional)
+	Predicates    []ServiceFilterInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`  // A list of service filter input (Optional)
+	Type          *TypeEnum            `json:"type,omitempty" yaml:"type,omitempty" example:"belongs_to"`      // Type of operation to be applied to value on the field (Optional Default: equals)
+}
+
 // ServiceLevelNotificationsUpdateInput Specifies the input fields used to update service level notification settings
 type ServiceLevelNotificationsUpdateInput struct {
 	EnableSlackNotifications *Nullable[bool] `json:"enableSlackNotifications,omitempty" yaml:"enableSlackNotifications,omitempty" example:"false"` // Whether or not to enable receiving slack notifications on service level changes (Optional)
@@ -1116,6 +1160,7 @@ type ServiceUpdateInput struct {
 // SnykIntegrationInput Specifies the input fields used to create and update a Snyk integration
 type SnykIntegrationInput struct {
 	ApiKey  *Nullable[string]          `json:"apiKey,omitempty" yaml:"apiKey,omitempty" example:"example_value"`   // The API Key for the Snyk API (Optional)
+	BaseUrl *Nullable[string]          `json:"baseUrl,omitempty" yaml:"baseUrl,omitempty" example:"example_value"` // The base url for your Snyk installation (Optional)
 	GroupId *Nullable[string]          `json:"groupId,omitempty" yaml:"groupId,omitempty" example:"example_value"` // The group ID for the Snyk API (Optional)
 	Name    *Nullable[string]          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`       // The name of the integration (Optional)
 	Region  *SnykIntegrationRegionEnum `json:"region,omitempty" yaml:"region,omitempty" example:"AU"`              // The region in which your data is hosted (Optional)
