@@ -380,7 +380,7 @@ type CheckRelationshipUpdateInput struct {
 	Notes                      *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                                         // Additional information about the check (Optional)
 	OwnerId                    *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                   // The id of the owner of the check (Optional)
 	RelationshipCountPredicate *PredicateInput         `json:"relationshipCountPredicate,omitempty" yaml:"relationshipCountPredicate,omitempty"`                                       // The condition that should be satisfied by the number of RelatedTo relationships (Optional)
-	RelationshipDefinitionId   *Nullable[ID]           `json:"relationshipDefinitionId,omitempty" yaml:"relationshipDefinitionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // Count relationships of a specific relationship definition (Optional)
+	RelationshipDefinitionId   *ID           `json:"relationshipDefinitionId,omitempty" yaml:"relationshipDefinitionId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // Count relationships of a specific relationship definition (Optional)
 }
 
 // CheckRepositoryFileCreateInput Specifies the input fields used to create a repo file check
