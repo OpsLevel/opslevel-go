@@ -122,43 +122,6 @@ type CheckAlertSourceUsageUpdateInput struct {
 	OwnerId                  *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
-// CheckCodeIssueCreateInput Specifies the input fields used to create a code issue check
-type CheckCodeIssueCreateInput struct {
-	CategoryId     ID                            `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
-	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                             // The type of constraint used in evaluation the code issues check (Required)
-	EnableOn       *Nullable[iso8601.Time]       `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
-	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
-	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
-	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                 // The issue name used for code issue lookup (Optional)
-	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider (Optional)
-	LevelId        ID                            `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
-	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing (Optional)
-	Name           string                        `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
-	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
-	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
-	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                               // The resolution time recommended by the reporting source of the code issue (Optional)
-	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue (Optional)
-}
-
-// CheckCodeIssueUpdateInput Specifies the input fields used to update an exasting code issue check
-type CheckCodeIssueUpdateInput struct {
-	CategoryId     *Nullable[ID]                 `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to (Optional)
-	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                                 // The type of constraint used in evaluation the code issues check (Required)
-	EnableOn       *Nullable[iso8601.Time]       `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled (Optional)
-	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not (Optional)
-	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to (Optional)
-	Id             ID                            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
-	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                     // The issue name used for code issue lookup (Optional)
-	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`                  // The type of code issue to consider (Optional)
-	LevelId        *Nullable[ID]                 `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
-	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                               // The threshold count of code issues beyond which the check starts failing (Optional)
-	Name           *Nullable[string]             `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
-	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
-	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
-	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                                   // The resolution time recommended by the reporting source of the code issue (Optional)
-	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue (Optional)
-}
-
 // CheckCopyInput Information about the check(s) that are to be copied
 type CheckCopyInput struct {
 	CheckIds         []ID            `json:"checkIds" yaml:"checkIds" example:"['Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk', 'Z2lkOi8vc2VydmljZS85ODc2NTQzMjE']"` // The IDs of the checks to be copied (Required)
@@ -684,67 +647,6 @@ type CheckToolUsageUpdateInput struct {
 	ToolCategory         *ToolCategory           `json:"toolCategory,omitempty" yaml:"toolCategory,omitempty" example:"admin"`                       // The category that the tool belongs to (Optional)
 	ToolNamePredicate    *PredicateUpdateInput   `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`                             // The condition that the tool name should satisfy to be evaluated (Optional)
 	ToolUrlPredicate     *PredicateUpdateInput   `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`                               // The condition that the tool url should satisfy to be evaluated (Optional)
-}
-
-// CodeIssueIdentifierInput Input for identifying a code issue
-type CodeIssueIdentifierInput struct {
-	CodeIssueProject CodeIssueProjectIdentifierInput `json:"codeIssueProject" yaml:"codeIssueProject"`                               // Identifier of the code issue project to associate with this issue (Required)
-	ExternalId       string                          `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // External identifier for this issue (Required)
-}
-
-// CodeIssueInput Input for creating a new code issue
-type CodeIssueInput struct {
-	Cves          []CommonVulnerabilityEnumerationInput `json:"cves,omitempty" yaml:"cves,omitempty" example:"LIST_TODO"`                                // List of CVE identifiers related to this issue (Optional)
-	Cwes          []CommonWeaknessEnumerationInput      `json:"cwes,omitempty" yaml:"cwes,omitempty" example:"LIST_TODO"`                                // List of CWE identifiers related to this issue (Optional)
-	Identifier    CodeIssueIdentifierInput              `json:"identifier" yaml:"identifier"`                                                            // Identifier of the code issue project to associate with this issue (Required)
-	IntroducedAt  *Nullable[iso8601.Time]               `json:"introducedAt,omitempty" yaml:"introducedAt,omitempty" example:"2025-01-05T01:00:00.000Z"` // Timestamp when this issue was introduced (Optional)
-	IssueCategory *Nullable[string]                     `json:"issueCategory,omitempty" yaml:"issueCategory,omitempty" example:"example_value"`          // Category of this code issue. Required to create code issue (Optional)
-	Name          *Nullable[string]                     `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                            // Name of the code issue. Required to create code issue (Optional)
-	Severity      *Nullable[string]                     `json:"severity,omitempty" yaml:"severity,omitempty" example:"example_value"`                    // Severity level of this issue (Optional)
-	Url           *Nullable[string]                     `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"`                              // URL with more information about this issue (Optional)
-}
-
-// CodeIssueProjectIdentifierInput Input for upserting a code issue project by external ID
-type CodeIssueProjectIdentifierInput struct {
-	ExternalId  string          `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // External ID of the code issue project (Required)
-	Integration IdentifierInput `json:"integration" yaml:"integration"`                                         // Integration Identifier (Required)
-}
-
-// CodeIssueProjectInput Input for upserting a code issue project by external ID
-type CodeIssueProjectInput struct {
-	Identifier CodeIssueProjectIdentifierInput `json:"identifier" yaml:"identifier"`                                 // Code Issue Project Identifier (Required)
-	Name       *Nullable[string]               `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"` // Name of code issue project (Optional)
-	Url        *Nullable[string]               `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"`   // URL of code issue project (Optional)
-}
-
-// CodeIssueProjectResourceConnectInput Input for connecting a code issue project to a service / repository using their IDs
-type CodeIssueProjectResourceConnectInput struct {
-	CodeIssueProjectIds []ID `json:"codeIssueProjectIds" yaml:"codeIssueProjectIds" example:"LIST_TODO"`     // IDs of the code issue project to connect (Required)
-	ResourceId          ID   `json:"resourceId" yaml:"resourceId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // ID of the service or repository to connect to the code issue project (Required)
-}
-
-// CodeIssueProjectResourceDisconnectInput Input for disconnecting a code issue project from a service using their IDs
-type CodeIssueProjectResourceDisconnectInput struct {
-	CodeIssueProjectId ID `json:"codeIssueProjectId" yaml:"codeIssueProjectId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // ID of the code issue project to disconnect (Required)
-	ResourceId         ID `json:"resourceId" yaml:"resourceId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // ID of the service to disconnect from the code issue project (Required)
-}
-
-// CodeIssueResolutionTimeInput The allowed threshold for how long an issue has been detected before the check starts failing
-type CodeIssueResolutionTimeInput struct {
-	Unit  CodeIssueResolutionTimeUnitEnum `json:"unit" yaml:"unit" example:"day"` //  (Required)
-	Value int                             `json:"value" yaml:"value" example:"3"` //  (Required)
-}
-
-// CommonVulnerabilityEnumerationInput Input for a Common Vulnerability Enumeration
-type CommonVulnerabilityEnumerationInput struct {
-	Identifier string            `json:"identifier" yaml:"identifier" example:"example_value"`       //  (Required)
-	Url        *Nullable[string] `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"` //  (Optional)
-}
-
-// CommonWeaknessEnumerationInput Input for a Common Weakness Enumeration
-type CommonWeaknessEnumerationInput struct {
-	Identifier string            `json:"identifier" yaml:"identifier" example:"example_value"`       //  (Required)
-	Url        *Nullable[string] `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"` //  (Optional)
 }
 
 // ComponentTypeIconInput The input for defining a component type's icon
