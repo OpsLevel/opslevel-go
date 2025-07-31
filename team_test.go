@@ -431,7 +431,7 @@ func TestListTeamsWithManager(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
 		`query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
-		`{ "after": "", "first": 100, "email": "kyle@opslevel.com" }`,
+		`{ "after": "", "first": 500, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
         "teams": {
@@ -502,7 +502,7 @@ func TestListTeamsWithManager(t *testing.T) {
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query TeamList($after:String!$email:String!$first:Int!){account{teams(managerEmail: $email, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
-		`{ "after": "OA", "first": 100, "email": "kyle@opslevel.com" }`,
+		`{ "after": "OA", "first": 500, "email": "kyle@opslevel.com" }`,
 		`{ "data": {
       "account": {
         "teams": {
@@ -936,7 +936,7 @@ func TestSearchTeams(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`query TeamSearch($after:String!$first:Int!$searchTerm:String!){account{teams(searchTerm: $searchTerm, after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
-		`{"searchTerm": "DevOps", "after": "", "first": 100}`,
+		`{"searchTerm": "DevOps", "after": "", "first": 500}`,
 		`{ "data": { "account": { "teams": { "nodes": [ { "alias": "devops", "id": "id1", "aliases": ["devops"], "managedAliases": ["devops"], "contacts": [], "htmlUrl": "https://app.opslevel.com/teams/devops", "manager": { "id": "user1", "email": "manager@opslevel.com", "name": "Manager" }, "memberships": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }, "name": "DevOps", "parentTeam": null, "responsibilities": "Own Infra & Tools.", "tags": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } } } ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } } } } }`,
 	)
 

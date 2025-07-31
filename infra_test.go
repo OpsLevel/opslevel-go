@@ -102,12 +102,12 @@ func TestListInfra(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
 		`query InfrastructureResourceList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "all": true, "first": 100 }`,
+		`{ "after": "", "all": true, "first": 500 }`,
 		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_1" }}, {{ template "infra_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query InfrastructureResourceList($after:String!$all:Boolean!$first:Int!){account{infrastructureResources(after: $after, first: $first){nodes{id,aliases,name,type @include(if: $all),providerResourceType @include(if: $all),providerData @include(if: $all){accountName,externalUrl,providerName},owner @include(if: $all){... on Team{teamAlias:alias,id}},ownerLocked @include(if: $all),data @include(if: $all),rawData @include(if: $all)},{{ template "pagination_request" }}}}}`,
-		`{ "after": "OA", "all": true, "first": 100 }`,
+		`{ "after": "OA", "all": true, "first": 500 }`,
 		`{ "data": { "account": { "infrastructureResources": { "nodes": [ {{ template "infra_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}

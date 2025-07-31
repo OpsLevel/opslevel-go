@@ -70,7 +70,7 @@ func TestListRubricLevels(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
 		`query LevelsList($after:String!$first:Int!){account{rubric{levels(after: $after, first: $first){nodes{alias,checks{id,name},description,id,index,name},{{ template "pagination_request" }}}}}}`,
-		`{"after":"","first":100}`,
+		`{"after":"","first":500}`,
 		`{
     "data": {
       "account": {

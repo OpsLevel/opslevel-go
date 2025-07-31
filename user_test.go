@@ -105,12 +105,12 @@ func TestListUser(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
 		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "filter": null, "first": 100 }`,
+		`{ "after": "", "filter": null, "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
-		`{ "after": "OA", "filter": null, "first": 100 }`,
+		`{ "after": "OA", "filter": null, "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
@@ -133,12 +133,12 @@ func TestListUserOmitDeactivated(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
 		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 100 }`,
+		`{ "after": "", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
 		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
-		`{ "after": "OA", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 100 }`,
+		`{ "after": "OA", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
 	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}

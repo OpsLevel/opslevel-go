@@ -21,42 +21,42 @@ func TestCache(t *testing.T) {
 	)
 	testRequestThree := autopilot.NewTestRequest(
 		`query SystemsList($after:String!$first:Int!){account{systems(after: $after, first: $first){nodes{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{ "systems":{ "nodes":[{{ template "system1_response" }}] } }}}`,
 	)
 	testRequestFour := autopilot.NewTestRequest(
 		`query TeamList($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},memberships{nodes{role,team{alias,id},user{id,email,name}},{{ template "pagination_request" }}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{ "teams":{ "nodes":[{{ template "team_1" }}] } }}}`,
 	)
 	testRequestFive := autopilot.NewTestRequest(
 		`query CategoryList($after:String!$first:Int!){account{rubric{categories(after: $after, first: $first){nodes{description,id,name},{{ template "pagination_request" }}}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{"rubric":{ "categories":{ "nodes":[{{ template "category_1" }}] } }}}}`,
 	)
 	testRequestSix := autopilot.NewTestRequest(
 		`query LevelsList($after:String!$first:Int!){account{rubric{levels(after: $after, first: $first){nodes{alias,checks{id,name},description,id,index,name},{{ template "pagination_request" }}}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{"rubric":{ "levels":{ "nodes":[{{ template "level_1" }}] } }}}}`,
 	)
 	testRequestSeven := autopilot.NewTestRequest(
 		`query FilterList($after:String!$first:Int!){account{filters(after: $after, first: $first){nodes{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{ "filters":{ "nodes":[{{ template "filter_1" }}] } }}}`,
 	)
 	testRequestEight := autopilot.NewTestRequest(
 		`query IntegrationList($after:String!$first:Int!){account{integrations(after: $after, first: $first){nodes{{ template "integration_request" }},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{ "integrations":{ "nodes":[{{ template "integration_1" }}] } }}}`,
 	)
 	testRequestNine := autopilot.NewTestRequest(
 		`query RepositoryList($after:String!$first:Int!$visible:Boolean!){account{repositories(after: $after, first: $first, visible: $visible){hiddenCount,nodes{archivedAt,createdOn,defaultAlias,defaultBranch,description,forked,htmlUrl,id,languages{name,usage},lastOwnerChangedAt,locked,name,organization,owner{alias,id},private,repoKey,sbomGenerationConfiguration{disabledReason,enabled,nextGenerationAt,state},services{edges{atRoot,node{id,aliases},paths{href,path},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},{{ template "pagination_request" }}},tags{nodes{id,key,value},{{ template "pagination_request" }}},tier{alias,description,id,index,name},type,url,visible},organizationCount,ownedCount,{{ template "pagination_request" }},visibleCount}}}`,
-		`{ "after": "", "first": 100, "visible": true }`,
+		`{ "after": "", "first": 500, "visible": true }`,
 		`{"data":{"account":{ "repositories":{ "hiddenCount": 0, "nodes":[{{ template "repository_1" }}] } }}}`,
 	)
 	testRequestTen := autopilot.NewTestRequest(
 		`query InfrastructureResourceSchemaList($after:String!$first:Int!){account{infrastructureResourceSchemas(after: $after, first: $first){nodes{type,schema},{{ template "pagination_request" }}}}}`,
-		`{ "after": "", "first": 100 }`,
+		`{ "after": "", "first": 500 }`,
 		`{"data":{"account":{ "infrastructureResourceSchemas":{ "nodes":[ {{ template "infra_schema_1" }} ] }}}}`,
 	)
 	testRequestEleven := autopilot.TestRequest{}
