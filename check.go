@@ -38,6 +38,7 @@ var CheckCreateConstructors = map[CheckType]CheckInputConstructor{
 	CheckTypeTagDefined:          func() any { return &CheckTagDefinedCreateInput{} },
 	CheckTypeToolUsage:           func() any { return &CheckToolUsageCreateInput{} },
 	CheckTypePackageVersion:      func() any { return &CheckPackageVersionCreateInput{} },
+	CheckTypeRelationship:        func() any { return &CheckRelationshipCreateInput{} },
 }
 
 var CheckUpdateConstructors = map[CheckType]CheckInputConstructor{
@@ -61,6 +62,7 @@ var CheckUpdateConstructors = map[CheckType]CheckInputConstructor{
 	CheckTypeTagDefined:          func() any { return &CheckTagDefinedUpdateInput{} },
 	CheckTypeToolUsage:           func() any { return &CheckToolUsageUpdateInput{} },
 	CheckTypePackageVersion:      func() any { return &CheckPackageVersionUpdateInput{} },
+	CheckTypeRelationship:        func() any { return &CheckRelationshipUpdateInput{} },
 }
 
 func UnmarshalCheckCreateInput(checkType CheckType, data []byte) (any, error) {
@@ -164,6 +166,8 @@ func (client *Client) CreateCheck(input any) (*Check, error) {
 		return client.CreateCheckToolUsage(*v)
 	case *CheckPackageVersionCreateInput:
 		return client.CreateCheckPackageVersion(*v)
+	case *CheckRelationshipCreateInput:
+		return client.CreateCheckRelationship(*v)
 	}
 	return nil, fmt.Errorf("unknown input type %T", input)
 }
@@ -252,6 +256,8 @@ func (client *Client) UpdateCheck(input any) (*Check, error) {
 		return client.UpdateCheckToolUsage(*v)
 	case *CheckPackageVersionUpdateInput:
 		return client.UpdateCheckPackageVersion(*v)
+	case *CheckRelationshipUpdateInput:
+		return client.UpdateCheckRelationship(*v)
 	}
 	return nil, fmt.Errorf("unknown input type %T", input)
 }
