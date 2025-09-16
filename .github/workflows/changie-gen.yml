@@ -12,23 +12,18 @@ permissions:
 jobs:
   generate-changelog:
     if: contains(github.event.pull_request.labels.*.name, 'dependencies')
-    env:
-      MAIN_BRANCH: ${{ github.event.workflow_run.pull_requests[0].base.ref }}
-      PR_BRANCH: ${{ github.event.workflow_run.pull_requests[0].head.ref }}
     runs-on: ubuntu-latest
     # NOTE: "github.event.workflow_run.conclusion" check needed within "steps"
     steps:
     - name: Checkout branch that Dependabot labeled
       uses: actions/checkout@v5
       with:
-        ref: ${{ env.PR_BRANCH }}
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check if changelog file exists already
       shell: bash
       id: changelog_check
       run: |
-        git fetch origin ${{ env.MAIN_BRANCH }}
         if [[ -n $(git diff --name-only main -- .changes/unreleased/*.yaml) ]]; then
           echo "exists=true" >> $GITHUB_OUTPUT
           echo "Changelog already exists for this PR, skip creating a new one"
@@ -42,7 +37,7 @@ jobs:
       uses: miniscruff/changie-action@v2
       with:
         version: latest
-        args: new --kind Dependency --body "${{ github.event.workflow_run.display_title }}"
+        args: new --kind Dependency --body "${{ github.event.pull_request.title }}"
 
     - name: Commit & Push changes
       if: steps.changelog_check.outputs.exists == 'false'
