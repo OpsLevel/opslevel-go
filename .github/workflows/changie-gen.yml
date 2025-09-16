@@ -19,14 +19,12 @@ jobs:
     # NOTE: "github.event.workflow_run.conclusion" check needed within "steps"
     steps:
     - name: Checkout branch that Dependabot labeled
-      if: github.event.workflow_run.conclusion == 'success'
       uses: actions/checkout@v5
       with:
         ref: ${{ env.PR_BRANCH }}
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check if changelog file exists already
-      if: github.event.workflow_run.conclusion == 'success'
       shell: bash
       id: changelog_check
       run: |
@@ -40,18 +38,14 @@ jobs:
         fi
 
     - name: Create changie log
-      if: >-
-        github.event.workflow_run.conclusion == 'success' &&
-        steps.changelog_check.outputs.exists == 'false'
+      if: steps.changelog_check.outputs.exists == 'false'
       uses: miniscruff/changie-action@v2
       with:
         version: latest
         args: new --kind Dependency --body "${{ github.event.workflow_run.display_title }}"
 
     - name: Commit & Push changes
-      if: >-
-        github.event.workflow_run.conclusion == 'success' &&
-        steps.changelog_check.outputs.exists == 'false'
+      if: steps.changelog_check.outputs.exists == 'false'
       shell: bash
       run: |
         git config user.name "OpsLevel Bots"
