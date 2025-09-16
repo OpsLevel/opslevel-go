@@ -13,11 +13,11 @@ jobs:
   generate-changelog:
     if: contains(github.event.pull_request.labels.*.name, 'dependencies')
     runs-on: ubuntu-latest
-    # NOTE: "github.event.workflow_run.conclusion" check needed within "steps"
     steps:
     - name: Checkout branch that Dependabot labeled
       uses: actions/checkout@v5
       with:
+        ref: ${{ github.event.pull_request.head.ref }}
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check if changelog file exists already
