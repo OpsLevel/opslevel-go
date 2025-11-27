@@ -3469,6 +3469,14 @@ var AllTypeEnum = []string{
 	string(TypeEnumStartsWith),
 }
 
+type RelationshipOperatorEnum string
+
+var RelationshipOperatorEnumEquals = "EQUALS" // Matches a specific value
+
+var AllRelationshipOperatorEnum = []string{
+	string(RelationshipOperatorEnumEquals),
+}
+
 // UserRole A role that can be assigned to a user
 type UserRole string
 
