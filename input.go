@@ -1039,13 +1039,13 @@ type RelationshipDefinitionInput struct {
 
 // RelationshipDefinitionManagementRulesInput The management rules for the relationship
 type RelationshipDefinitionManagementRulesInput struct {
-	Operator              RelationshipOperatorEnum `json:"operator" yaml:"operator" example:"EQUALS"`
-	SourceProperty        string                   `json:"sourceProperty" yaml:"sourceProperty" example:"alias"`
-	SourcePropertyBuiltin bool                     `json:"sourcePropertyBuiltin" yaml:"sourcePropertyBuiltin" example:"true"`
-	TargetCategory        *Nullable[string]        `json:"targetCategory,omitempty" yaml:"targetCategory,omitempty" example:"infrastructure"`
-	TargetProperty        string                   `json:"targetProperty" yaml:"targetProperty"  example:"alias"`
-	TargetPropertyBuiltin bool                     `json:"targetPropertyBuiltin" yaml:"targetPropertyBuiltin" example:"true"`
-	TargetType            *Nullable[string]        `json:"targetType,omitempty" yaml:"targetType,omitempty" example:"team"`
+	Operator              RelationshipOperatorEnum `json:"operator" yaml:"operator" example:"EQUALS"`                                         // The condition for this rule (Required)
+	SourceProperty        string                   `json:"sourceProperty" yaml:"sourceProperty" example:"alias"`                              // The source property for this rule  (Required)
+	SourcePropertyBuiltin bool                     `json:"sourcePropertyBuiltin" yaml:"sourcePropertyBuiltin" example:"true"`                 // Indicates if the property is a built in property or a custom property  (Required)
+	TargetCategory        *Nullable[string]        `json:"targetCategory,omitempty" yaml:"targetCategory,omitempty" example:"infrastructure"` // The target category that this rule will target  (Optional)
+	TargetProperty        string                   `json:"targetProperty" yaml:"targetProperty"  example:"alias"`                             // The target property for this rule on either the target type or target category  (Required)
+	TargetPropertyBuiltin bool                     `json:"targetPropertyBuiltin" yaml:"targetPropertyBuiltin" example:"true"`                 // Indicates if the property is a built in property or a custom property  (Required)
+	TargetType            *Nullable[string]        `json:"targetType,omitempty" yaml:"targetType,omitempty" example:"team"`                   // The target type that this rule will target (Optional)
 }
 
 // RelationshipDefinitionMetadataInput The metadata of the relationship

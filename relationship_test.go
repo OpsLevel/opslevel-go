@@ -22,7 +22,8 @@ func init() {
 				Description:   ol.RefOf("Example Description"),
 				ComponentType: ol.NewIdentifier("example"),
 				Metadata: &ol.RelationshipDefinitionMetadataInput{
-					AllowedTypes: []string{"example"},
+					AllowedCategories: []string{"infrastructure"},
+					AllowedTypes:      []string{"example"},
 				},
 			})
 		resp1 = autopilot.Register[ol.RelationshipDefinitionType]("relationship_definition1_response",
@@ -31,7 +32,8 @@ func init() {
 				Alias: alias1,
 				Name:  name1,
 				Metadata: ol.RelationshipDefinitionMetadata{
-					AllowedTypes: []string{"example"},
+					AllowedCategories: []string{"infrastructure"},
+					AllowedTypes:      []string{"example"},
 				},
 			})
 		resp2 = autopilot.Register[ol.RelationshipDefinitionType]("relationship_definition2_response",
@@ -40,7 +42,8 @@ func init() {
 				Alias: alias2,
 				Name:  name2,
 				Metadata: ol.RelationshipDefinitionMetadata{
-					AllowedTypes: []string{"example2", "example3"},
+					AllowedCategories: []string{"infrastructure"},
+					AllowedTypes:      []string{"example2", "example3"},
 				},
 			})
 	})
@@ -49,7 +52,7 @@ func init() {
 func TestRelationshipDefinitionCreate(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RelationshipDefinitionCreate($input:RelationshipDefinitionInput!){relationshipDefinitionCreate(input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
+		`mutation RelationshipDefinitionCreate($input:RelationshipDefinitionInput!){relationshipDefinitionCreate(input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedCategories,allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
 		`{"input": {{ template "relationship_definition_input" }} }`,
 		`{"data": {"relationshipDefinitionCreate": {"definition": {{ template "relationship_definition1_response" }} }}}`,
 	)
@@ -61,13 +64,14 @@ func TestRelationshipDefinitionCreate(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, resp1.Id, result.Id)
 	autopilot.Equals(t, resp1.Alias, result.Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
 }
 
 func TestRelationshipDefinitionGet(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RelationshipDefinitionGet($input:IdentifierInput!){account{relationshipDefinition(input: $input){alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}}`,
+		`query RelationshipDefinitionGet($input:IdentifierInput!){account{relationshipDefinition(input: $input){alias,componentType{id,aliases},description,id,metadata{allowedCategories,allowedTypes,maxItems,minItems},name}}}`,
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": {"account": {"relationshipDefinition": {{ template "relationship_definition1_response" }} }}}`,
 	)
@@ -79,18 +83,19 @@ func TestRelationshipDefinitionGet(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, resp1.Id, result.Id)
 	autopilot.Equals(t, resp1.Alias, result.Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
 }
 
 func TestRelationshipDefinitionList(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,metadata{allowedCategories,allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ {{ template "first_page_variables" }}, "componentType": null, "resource": null}`,
 		`{ "data": { "account": { "relationshipDefinitions": { "nodes": [ {{ template "relationship_definition1_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,metadata{allowedCategories,allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ {{ template "second_page_variables" }}, "componentType": null, "resource": null}`,
 		`{ "data": { "account": { "relationshipDefinitions": { "nodes": [ {{ template "relationship_definition2_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -104,16 +109,18 @@ func TestRelationshipDefinitionList(t *testing.T) {
 	autopilot.Equals(t, 2, result.TotalCount)
 	autopilot.Equals(t, resp1.Id, result.Nodes[0].Id)
 	autopilot.Equals(t, resp1.Alias, result.Nodes[0].Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Nodes[0].Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Nodes[0].Metadata.AllowedTypes)
 	autopilot.Equals(t, resp2.Id, result.Nodes[1].Id)
 	autopilot.Equals(t, resp2.Alias, result.Nodes[1].Alias)
+	autopilot.Equals(t, resp2.Metadata.AllowedCategories, result.Nodes[1].Metadata.AllowedCategories)
 	autopilot.Equals(t, resp2.Metadata.AllowedTypes, result.Nodes[1].Metadata.AllowedTypes)
 }
 
 func TestRelationshipDefinitionUpdate(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RelationshipDefinitionUpdate($identifier:IdentifierInput!$input:RelationshipDefinitionInput!){relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
+		`mutation RelationshipDefinitionUpdate($identifier:IdentifierInput!$input:RelationshipDefinitionInput!){relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedCategories,allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
 		`{"identifier": { {{ template "id1" }} }, "input": {{ template "relationship_definition_input" }} }`,
 		`{"data": {"relationshipDefinitionUpdate": {"definition": {{ template "relationship_definition1_response" }} }}}`,
 	)
@@ -126,6 +133,7 @@ func TestRelationshipDefinitionUpdate(t *testing.T) {
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, resp1.Id, result.Id)
 	autopilot.Equals(t, resp1.Alias, result.Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
 }
 
