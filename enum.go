@@ -3471,10 +3471,14 @@ var AllTypeEnum = []string{
 
 type RelationshipOperatorEnum string
 
-var RelationshipOperatorEnumEquals = "EQUALS" // Matches a specific value
+var (
+	RelationshipOperatorEnumEquals        RelationshipOperatorEnum = "EQUALS"         // Matches a specific value
+	RelationshipOperatorEnumArrayContains RelationshipOperatorEnum = "ARRAY_CONTAINS" // Matches any value within an array
+)
 
 var AllRelationshipOperatorEnum = []string{
 	string(RelationshipOperatorEnumEquals),
+	string(RelationshipOperatorEnumArrayContains),
 }
 
 // UserRole A role that can be assigned to a user

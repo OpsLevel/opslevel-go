@@ -28,11 +28,20 @@ func init() {
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
 						TargetPropertyBuiltin: false,
+						TargetCategory:        ol.RefOf("infrastructure"),
+					},
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "name",
+						SourcePropertyBuiltin: true,
+						TargetProperty:        "alias",
+						TargetPropertyBuiltin: true,
+						TargetType:            ol.RefOf("service"),
 					},
 				},
 				Metadata: &ol.RelationshipDefinitionMetadataInput{
 					AllowedCategories: []string{"infrastructure"},
-					AllowedTypes:      []string{"example"},
+					AllowedTypes:      []string{"service"},
 				},
 			})
 		resp1 = autopilot.Register[ol.RelationshipDefinitionType]("relationship_definition1_response",
@@ -47,6 +56,15 @@ func init() {
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
 						TargetPropertyBuiltin: false,
+						TargetCategory:        ol.RefOf("infrastructure"),
+					},
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "name",
+						SourcePropertyBuiltin: true,
+						TargetProperty:        "alias",
+						TargetPropertyBuiltin: true,
+						TargetType:            ol.RefOf("service"),
 					},
 				},
 				Metadata: ol.RelationshipDefinitionMetadata{
@@ -66,6 +84,7 @@ func init() {
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
 						TargetPropertyBuiltin: false,
+						TargetCategory:        ol.RefOf("infrastructure"),
 					},
 				},
 				Metadata: ol.RelationshipDefinitionMetadata{
@@ -94,13 +113,20 @@ func TestRelationshipDefinitionCreate(t *testing.T) {
 	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
 	autopilot.Equals(t, len(resp1.ManagementRules), len(result.ManagementRules))
-	if len(result.ManagementRules) > 0 {
-		autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
-		autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
-	}
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetCategory, result.ManagementRules[0].TargetCategory)
+
+	autopilot.Equals(t, resp1.ManagementRules[1].Operator, result.ManagementRules[1].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourceProperty, result.ManagementRules[1].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourcePropertyBuiltin, result.ManagementRules[1].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetProperty, result.ManagementRules[1].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetPropertyBuiltin, result.ManagementRules[1].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetType, result.ManagementRules[1].TargetType)
 }
 
 func TestRelationshipDefinitionGet(t *testing.T) {
@@ -121,13 +147,20 @@ func TestRelationshipDefinitionGet(t *testing.T) {
 	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
 	autopilot.Equals(t, len(resp1.ManagementRules), len(result.ManagementRules))
-	if len(result.ManagementRules) > 0 {
-		autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
-		autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
-	}
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetCategory, result.ManagementRules[0].TargetCategory)
+
+	autopilot.Equals(t, resp1.ManagementRules[1].Operator, result.ManagementRules[1].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourceProperty, result.ManagementRules[1].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourcePropertyBuiltin, result.ManagementRules[1].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetProperty, result.ManagementRules[1].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetPropertyBuiltin, result.ManagementRules[1].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetType, result.ManagementRules[1].TargetType)
 }
 
 func TestRelationshipDefinitionList(t *testing.T) {
@@ -160,28 +193,29 @@ func TestRelationshipDefinitionList(t *testing.T) {
 	autopilot.Equals(t, resp2.Metadata.AllowedTypes, result.Nodes[1].Metadata.AllowedTypes)
 
 	autopilot.Equals(t, len(resp1.ManagementRules), len(result.Nodes[0].ManagementRules))
-	if len(result.Nodes[0].ManagementRules) > 0 {
-		autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.Nodes[0].ManagementRules[0].Operator)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.Nodes[0].ManagementRules[0].SourceProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.Nodes[0].ManagementRules[0].SourcePropertyBuiltin)
-	}
 
-	autopilot.Equals(t, resp2.Id, result.Nodes[1].Id)
-	autopilot.Equals(t, resp2.Alias, result.Nodes[1].Alias)
-	autopilot.Equals(t, resp2.Metadata.AllowedCategories, result.Nodes[1].Metadata.AllowedCategories)
-	autopilot.Equals(t, resp2.Metadata.AllowedTypes, result.Nodes[1].Metadata.AllowedTypes)
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.Nodes[0].ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.Nodes[0].ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.Nodes[0].ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.Nodes[0].ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.Nodes[0].ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetCategory, result.Nodes[0].ManagementRules[0].TargetCategory)
+
+	autopilot.Equals(t, resp1.ManagementRules[1].Operator, result.Nodes[0].ManagementRules[1].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourceProperty, result.Nodes[0].ManagementRules[1].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourcePropertyBuiltin, result.Nodes[0].ManagementRules[1].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetProperty, result.Nodes[0].ManagementRules[1].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetPropertyBuiltin, result.Nodes[0].ManagementRules[1].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetType, result.Nodes[0].ManagementRules[1].TargetType)
+
 	autopilot.Equals(t, len(resp2.ManagementRules), len(result.Nodes[1].ManagementRules))
-	if len(result.Nodes[1].ManagementRules) > 0 {
-		autopilot.Equals(t, resp2.ManagementRules[0].Operator, result.Nodes[1].ManagementRules[0].Operator)
-		autopilot.Equals(t, resp2.ManagementRules[0].SourceProperty, result.Nodes[1].ManagementRules[0].SourceProperty)
-		autopilot.Equals(t, resp2.ManagementRules[0].SourcePropertyBuiltin, result.Nodes[1].ManagementRules[0].SourcePropertyBuiltin)
-		autopilot.Equals(t, resp2.ManagementRules[0].TargetProperty, result.Nodes[1].ManagementRules[0].TargetProperty)
-		autopilot.Equals(t, resp2.ManagementRules[0].TargetPropertyBuiltin, result.Nodes[1].ManagementRules[0].TargetPropertyBuiltin)
 
-		if resp2.ManagementRules[0].TargetCategory != nil {
-			autopilot.Equals(t, resp2.ManagementRules[0].TargetCategory, result.Nodes[1].ManagementRules[0].TargetCategory)
-		}
-	}
+	autopilot.Equals(t, resp2.ManagementRules[0].Operator, result.Nodes[1].ManagementRules[0].Operator)
+	autopilot.Equals(t, resp2.ManagementRules[0].SourceProperty, result.Nodes[1].ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp2.ManagementRules[0].SourcePropertyBuiltin, result.Nodes[1].ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp2.ManagementRules[0].TargetProperty, result.Nodes[1].ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp2.ManagementRules[0].TargetPropertyBuiltin, result.Nodes[1].ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp2.ManagementRules[0].TargetCategory, result.Nodes[1].ManagementRules[0].TargetCategory)
 }
 
 func TestRelationshipDefinitionUpdate(t *testing.T) {
@@ -204,13 +238,12 @@ func TestRelationshipDefinitionUpdate(t *testing.T) {
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
 
 	autopilot.Equals(t, len(resp1.ManagementRules), len(result.ManagementRules))
-	if len(result.ManagementRules) > 0 {
-		autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
-		autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
-		autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
-	}
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
 }
 
 func TestRelationshipDefinitionDelete(t *testing.T) {
