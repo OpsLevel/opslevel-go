@@ -1029,18 +1029,31 @@ type RelationshipDefinition struct {
 
 // RelationshipDefinitionInput The input for defining a relationship on a component type
 type RelationshipDefinitionInput struct {
-	Alias         *string                              `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique identifier of the relationship (Optional)
-	ComponentType *IdentifierInput                     `json:"componentType,omitempty" yaml:"componentType,omitempty"`                     // The component type to create the relationship on (Optional)
-	Description   *Nullable[string]                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the relationship (Optional)
-	Metadata      *RelationshipDefinitionMetadataInput `json:"metadata,omitempty" yaml:"metadata,omitempty"`                               // The metadata of the relationship (Optional)
-	Name          *string                              `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the relationship (Optional)
+	Alias           *string                                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique identifier of the relationship (Optional)
+	ComponentType   *IdentifierInput                              `json:"componentType,omitempty" yaml:"componentType,omitempty"`                     // The component type to create the relationship on (Optional)
+	Description     *Nullable[string]                             `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the relationship (Optional)
+	ManagementRules *[]RelationshipDefinitionManagementRulesInput `json:"managementRules,omitempty" yaml:"managementRules,omitempty"`                 // The management rules for the relationship (Optional)
+	Metadata        *RelationshipDefinitionMetadataInput          `json:"metadata,omitempty" yaml:"metadata,omitempty"`                               // The metadata of the relationship (Optional)
+	Name            *string                                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the relationship (Optional)
+}
+
+// RelationshipDefinitionManagementRulesInput The management rules for the relationship
+type RelationshipDefinitionManagementRulesInput struct {
+	Operator              RelationshipOperatorEnum `json:"operator" yaml:"operator" example:"EQUALS"`                                         // The condition for this rule (Required)
+	SourceProperty        string                   `json:"sourceProperty" yaml:"sourceProperty" example:"alias"`                              // The source property for this rule  (Required)
+	SourcePropertyBuiltin bool                     `json:"sourcePropertyBuiltin" yaml:"sourcePropertyBuiltin" example:"true"`                 // Indicates if the property is a built in property or a custom property  (Required)
+	TargetCategory        *Nullable[string]        `json:"targetCategory,omitempty" yaml:"targetCategory,omitempty" example:"infrastructure"` // The target category that this rule will target  (Optional)
+	TargetProperty        string                   `json:"targetProperty" yaml:"targetProperty"  example:"alias"`                             // The target property for this rule on either the target type or target category  (Required)
+	TargetPropertyBuiltin bool                     `json:"targetPropertyBuiltin" yaml:"targetPropertyBuiltin" example:"true"`                 // Indicates if the property is a built in property or a custom property  (Required)
+	TargetType            *Nullable[string]        `json:"targetType,omitempty" yaml:"targetType,omitempty" example:"team"`                   // The target type that this rule will target (Optional)
 }
 
 // RelationshipDefinitionMetadataInput The metadata of the relationship
 type RelationshipDefinitionMetadataInput struct {
-	AllowedTypes []string `json:"allowedTypes,omitempty" yaml:"allowedTypes,omitempty" example:"LIST_TODO"` // The aliases of which types this relationship can target. Valid values include any component type alias on your account, `team`, or `user` (Optional)
-	MaxItems     *int     `json:"maxItems,omitempty" yaml:"maxItems,omitempty" example:"3"`                 // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
-	MinItems     *int     `json:"minItems,omitempty" yaml:"minItems,omitempty" example:"3"`                 // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
+	AllowedCategories []string `json:"allowedCategories,omitempty" yaml:"allowedCategories,omitempty" example:"infrastructure"` // The aliases of which categories this relationship can target. Valid values include any component category on your account (Optional)
+	AllowedTypes      []string `json:"allowedTypes,omitempty" yaml:"allowedTypes,omitempty" example:"team"`                     // The aliases of which types this relationship can target. Valid values include any component type alias on your account, `team`, or `user` (Optional)
+	MaxItems          *int     `json:"maxItems,omitempty" yaml:"maxItems,omitempty" example:"3"`                                // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
+	MinItems          *int     `json:"minItems,omitempty" yaml:"minItems,omitempty" example:"3"`                                // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
 }
 
 // RepositoryUpdateInput Specifies the input fields used to update a repository

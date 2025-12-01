@@ -397,21 +397,35 @@ type Predicate struct {
 	Value string            // The value of the condition (Optional)
 }
 
+// RelationshipDefinitionManagementRules The management rules for the relationship
+
+type RelationshipDefinitionManagementRules struct {
+	Operator              RelationshipOperatorEnum // The condition for this rule
+	SourceProperty        string                   // The source property for this rule  (Required)
+	SourcePropertyBuiltin bool                     // Indicates if the property is a built in property or a custom property  (Required)
+	TargetCategory        *Nullable[string]        // The target category that this rule will target  (Optional)
+	TargetProperty        string                   // The target property for this rule on either the target type or target category  (Required)
+	TargetPropertyBuiltin bool                     // Indicates if the property is a built in property or a custom property  (Required)
+	TargetType            *Nullable[string]        // The target type that this rule will target (Optional)
+}
+
 // RelationshipDefinitionMetadata The metadata of the relationship
 type RelationshipDefinitionMetadata struct {
-	AllowedTypes []string // The aliases of which types this relationship can target. Valid values include any component type alias on your account, `team`, or `user` (Required)
-	MaxItems     int      // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
-	MinItems     int      // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
+	AllowedCategories []string // The aliases of which categories this relationship can target. Valid values include any component category on your account (Required)
+	AllowedTypes      []string // The aliases of which types this relationship can target. Valid values include any component type alias on your account, `team`, or `user` (Required)
+	MaxItems          int      // The maximum number of records this relationship can associate to the component type. Defaults to null (no maximum) (Optional)
+	MinItems          int      // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
 }
 
 // RelationshipDefinitionType A dynamic definition for a relationship between one catalog entity to another
 type RelationshipDefinitionType struct {
-	Alias         string                         // The programmatic alias that can be used to reference the relationship in OpsLevel tooling (Required)
-	ComponentType ComponentTypeId                // The component type that the relationship belongs to (Required)
-	Description   string                         // The long-form descripion of what the relationship represents (Optional)
-	Id            ID                             // The ID of the relationship definition (Required)
-	Metadata      RelationshipDefinitionMetadata // JSON data that defines rules for how the relationship should be validated internally (Required)
-	Name          string                         // The human-readable name for a relationship (Required)
+	Alias           string                                  // The programmatic alias that can be used to reference the relationship in OpsLevel tooling (Required)
+	ComponentType   ComponentTypeId                         // The component type that the relationship belongs to (Required)
+	Description     string                                  // The long-form descripion of what the relationship represents (Optional)
+	Id              ID                                      // The ID of the relationship definition (Required)
+	ManagementRules []RelationshipDefinitionManagementRules // The management rules for the relationship (Optional)
+	Metadata        RelationshipDefinitionMetadata          // JSON data that defines rules for how the relationship should be validated internally (Required)
+	Name            string                                  // The human-readable name for a relationship (Required)
 }
 
 // RelationshipNode The relationship between two resources. A pair of source and destination resources

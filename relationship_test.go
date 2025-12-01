@@ -21,8 +21,27 @@ func init() {
 				Name:          &name1,
 				Description:   ol.RefOf("Example Description"),
 				ComponentType: ol.NewIdentifier("example"),
+				ManagementRules: &[]ol.RelationshipDefinitionManagementRulesInput{
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "owner",
+						SourcePropertyBuiltin: false,
+						TargetProperty:        "team",
+						TargetPropertyBuiltin: false,
+						TargetCategory:        ol.RefOf("infrastructure"),
+					},
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "name",
+						SourcePropertyBuiltin: true,
+						TargetProperty:        "alias",
+						TargetPropertyBuiltin: true,
+						TargetType:            ol.RefOf("service"),
+					},
+				},
 				Metadata: &ol.RelationshipDefinitionMetadataInput{
-					AllowedTypes: []string{"example"},
+					AllowedCategories: []string{"infrastructure"},
+					AllowedTypes:      []string{"service"},
 				},
 			})
 		resp1 = autopilot.Register[ol.RelationshipDefinitionType]("relationship_definition1_response",
@@ -30,8 +49,27 @@ func init() {
 				Id:    id1,
 				Alias: alias1,
 				Name:  name1,
+				ManagementRules: []ol.RelationshipDefinitionManagementRules{
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "owner",
+						SourcePropertyBuiltin: false,
+						TargetProperty:        "team",
+						TargetPropertyBuiltin: false,
+						TargetCategory:        ol.RefOf("infrastructure"),
+					},
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "name",
+						SourcePropertyBuiltin: true,
+						TargetProperty:        "alias",
+						TargetPropertyBuiltin: true,
+						TargetType:            ol.RefOf("service"),
+					},
+				},
 				Metadata: ol.RelationshipDefinitionMetadata{
-					AllowedTypes: []string{"example"},
+					AllowedCategories: []string{"infrastructure"},
+					AllowedTypes:      []string{"example"},
 				},
 			})
 		resp2 = autopilot.Register[ol.RelationshipDefinitionType]("relationship_definition2_response",
@@ -39,8 +77,19 @@ func init() {
 				Id:    id2,
 				Alias: alias2,
 				Name:  name2,
+				ManagementRules: []ol.RelationshipDefinitionManagementRules{
+					{
+						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						SourceProperty:        "owner",
+						SourcePropertyBuiltin: false,
+						TargetProperty:        "team",
+						TargetPropertyBuiltin: false,
+						TargetCategory:        ol.RefOf("infrastructure"),
+					},
+				},
 				Metadata: ol.RelationshipDefinitionMetadata{
-					AllowedTypes: []string{"example2", "example3"},
+					AllowedCategories: []string{"infrastructure"},
+					AllowedTypes:      []string{"example2", "example3"},
 				},
 			})
 	})
@@ -49,7 +98,7 @@ func init() {
 func TestRelationshipDefinitionCreate(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RelationshipDefinitionCreate($input:RelationshipDefinitionInput!){relationshipDefinitionCreate(input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
+		`mutation RelationshipDefinitionCreate($input:RelationshipDefinitionInput!){relationshipDefinitionCreate(input: $input){definition{alias,componentType{id,aliases},description,id,managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType},metadata{allowedCategories,allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
 		`{"input": {{ template "relationship_definition_input" }} }`,
 		`{"data": {"relationshipDefinitionCreate": {"definition": {{ template "relationship_definition1_response" }} }}}`,
 	)
@@ -61,13 +110,29 @@ func TestRelationshipDefinitionCreate(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, resp1.Id, result.Id)
 	autopilot.Equals(t, resp1.Alias, result.Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
+	autopilot.Equals(t, len(resp1.ManagementRules), len(result.ManagementRules))
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetCategory, result.ManagementRules[0].TargetCategory)
+
+	autopilot.Equals(t, resp1.ManagementRules[1].Operator, result.ManagementRules[1].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourceProperty, result.ManagementRules[1].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourcePropertyBuiltin, result.ManagementRules[1].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetProperty, result.ManagementRules[1].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetPropertyBuiltin, result.ManagementRules[1].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetType, result.ManagementRules[1].TargetType)
 }
 
 func TestRelationshipDefinitionGet(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query RelationshipDefinitionGet($input:IdentifierInput!){account{relationshipDefinition(input: $input){alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name}}}`,
+		`query RelationshipDefinitionGet($input:IdentifierInput!){account{relationshipDefinition(input: $input){alias,componentType{id,aliases},description,id,managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType},metadata{allowedCategories,allowedTypes,maxItems,minItems},name}}}`,
 		`{"input": { {{ template "id1" }} }}`,
 		`{"data": {"account": {"relationshipDefinition": {{ template "relationship_definition1_response" }} }}}`,
 	)
@@ -79,18 +144,34 @@ func TestRelationshipDefinitionGet(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, resp1.Id, result.Id)
 	autopilot.Equals(t, resp1.Alias, result.Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
+	autopilot.Equals(t, len(resp1.ManagementRules), len(result.ManagementRules))
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetCategory, result.ManagementRules[0].TargetCategory)
+
+	autopilot.Equals(t, resp1.ManagementRules[1].Operator, result.ManagementRules[1].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourceProperty, result.ManagementRules[1].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourcePropertyBuiltin, result.ManagementRules[1].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetProperty, result.ManagementRules[1].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetPropertyBuiltin, result.ManagementRules[1].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetType, result.ManagementRules[1].TargetType)
 }
 
 func TestRelationshipDefinitionList(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType},metadata{allowedCategories,allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ {{ template "first_page_variables" }}, "componentType": null, "resource": null}`,
 		`{ "data": { "account": { "relationshipDefinitions": { "nodes": [ {{ template "relationship_definition1_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query RelationshipDefinitionList($after:String!$componentType:IdentifierInput$first:Int!$resource:ID){account{relationshipDefinitions(after: $after, first: $first, componentType: $componentType, resource: $resource){nodes{alias,componentType{id,aliases},description,id,managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType},metadata{allowedCategories,allowedTypes,maxItems,minItems},name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ {{ template "second_page_variables" }}, "componentType": null, "resource": null}`,
 		`{ "data": { "account": { "relationshipDefinitions": { "nodes": [ {{ template "relationship_definition2_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -104,16 +185,43 @@ func TestRelationshipDefinitionList(t *testing.T) {
 	autopilot.Equals(t, 2, result.TotalCount)
 	autopilot.Equals(t, resp1.Id, result.Nodes[0].Id)
 	autopilot.Equals(t, resp1.Alias, result.Nodes[0].Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Nodes[0].Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Nodes[0].Metadata.AllowedTypes)
 	autopilot.Equals(t, resp2.Id, result.Nodes[1].Id)
 	autopilot.Equals(t, resp2.Alias, result.Nodes[1].Alias)
+	autopilot.Equals(t, resp2.Metadata.AllowedCategories, result.Nodes[1].Metadata.AllowedCategories)
 	autopilot.Equals(t, resp2.Metadata.AllowedTypes, result.Nodes[1].Metadata.AllowedTypes)
+
+	autopilot.Equals(t, len(resp1.ManagementRules), len(result.Nodes[0].ManagementRules))
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.Nodes[0].ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.Nodes[0].ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.Nodes[0].ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.Nodes[0].ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.Nodes[0].ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetCategory, result.Nodes[0].ManagementRules[0].TargetCategory)
+
+	autopilot.Equals(t, resp1.ManagementRules[1].Operator, result.Nodes[0].ManagementRules[1].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourceProperty, result.Nodes[0].ManagementRules[1].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].SourcePropertyBuiltin, result.Nodes[0].ManagementRules[1].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetProperty, result.Nodes[0].ManagementRules[1].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetPropertyBuiltin, result.Nodes[0].ManagementRules[1].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[1].TargetType, result.Nodes[0].ManagementRules[1].TargetType)
+
+	autopilot.Equals(t, len(resp2.ManagementRules), len(result.Nodes[1].ManagementRules))
+
+	autopilot.Equals(t, resp2.ManagementRules[0].Operator, result.Nodes[1].ManagementRules[0].Operator)
+	autopilot.Equals(t, resp2.ManagementRules[0].SourceProperty, result.Nodes[1].ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp2.ManagementRules[0].SourcePropertyBuiltin, result.Nodes[1].ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp2.ManagementRules[0].TargetProperty, result.Nodes[1].ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp2.ManagementRules[0].TargetPropertyBuiltin, result.Nodes[1].ManagementRules[0].TargetPropertyBuiltin)
+	autopilot.Equals(t, resp2.ManagementRules[0].TargetCategory, result.Nodes[1].ManagementRules[0].TargetCategory)
 }
 
 func TestRelationshipDefinitionUpdate(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RelationshipDefinitionUpdate($identifier:IdentifierInput!$input:RelationshipDefinitionInput!){relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input){definition{alias,componentType{id,aliases},description,id,metadata{allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
+		`mutation RelationshipDefinitionUpdate($identifier:IdentifierInput!$input:RelationshipDefinitionInput!){relationshipDefinitionUpdate(relationshipDefinition: $identifier, input: $input){definition{alias,componentType{id,aliases},description,id,managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType},metadata{allowedCategories,allowedTypes,maxItems,minItems},name},errors{message,path}}}`,
 		`{"identifier": { {{ template "id1" }} }, "input": {{ template "relationship_definition_input" }} }`,
 		`{"data": {"relationshipDefinitionUpdate": {"definition": {{ template "relationship_definition1_response" }} }}}`,
 	)
@@ -126,7 +234,16 @@ func TestRelationshipDefinitionUpdate(t *testing.T) {
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, resp1.Id, result.Id)
 	autopilot.Equals(t, resp1.Alias, result.Alias)
+	autopilot.Equals(t, resp1.Metadata.AllowedCategories, result.Metadata.AllowedCategories)
 	autopilot.Equals(t, resp1.Metadata.AllowedTypes, result.Metadata.AllowedTypes)
+
+	autopilot.Equals(t, len(resp1.ManagementRules), len(result.ManagementRules))
+
+	autopilot.Equals(t, resp1.ManagementRules[0].Operator, result.ManagementRules[0].Operator)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourceProperty, result.ManagementRules[0].SourceProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].SourcePropertyBuiltin, result.ManagementRules[0].SourcePropertyBuiltin)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetProperty, result.ManagementRules[0].TargetProperty)
+	autopilot.Equals(t, resp1.ManagementRules[0].TargetPropertyBuiltin, result.ManagementRules[0].TargetPropertyBuiltin)
 }
 
 func TestRelationshipDefinitionDelete(t *testing.T) {
