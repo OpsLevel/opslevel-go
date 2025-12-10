@@ -21,9 +21,9 @@ func init() {
 				Name:          &name1,
 				Description:   ol.RefOf("Example Description"),
 				ComponentType: ol.NewIdentifier("example"),
-				ManagementRules: &[]ol.RelationshipDefinitionManagementRulesInput{
+				ManagementRules: &[]ol.ManagementRuleInput{
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
@@ -31,7 +31,7 @@ func init() {
 						TargetCategory:        ol.RefOf("infrastructure"),
 					},
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "name",
 						SourcePropertyBuiltin: true,
 						TargetProperty:        "alias",
@@ -51,7 +51,7 @@ func init() {
 				Name:  name1,
 				ManagementRules: []ol.RelationshipDefinitionManagementRules{
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
@@ -59,7 +59,7 @@ func init() {
 						TargetCategory:        ol.RefOf("infrastructure"),
 					},
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "name",
 						SourcePropertyBuiltin: true,
 						TargetProperty:        "alias",
@@ -79,7 +79,7 @@ func init() {
 				Name:  name2,
 				ManagementRules: []ol.RelationshipDefinitionManagementRules{
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",

@@ -397,16 +397,15 @@ type Predicate struct {
 	Value string            // The value of the condition (Optional)
 }
 
-// RelationshipDefinitionManagementRules The management rules for the relationship
-
-type RelationshipDefinitionManagementRules struct {
-	Operator              RelationshipOperatorEnum // The condition for this rule
-	SourceProperty        string                   // The source property for this rule  (Required)
-	SourcePropertyBuiltin bool                     // Indicates if the property is a built in property or a custom property  (Required)
-	TargetCategory        *Nullable[string]        // The target category that this rule will target  (Optional)
-	TargetProperty        string                   // The target property for this rule on either the target type or target category  (Required)
-	TargetPropertyBuiltin bool                     // Indicates if the property is a built in property or a custom property  (Required)
-	TargetType            *Nullable[string]        // The target type that this rule will target (Optional)
+// RelationshipDefinitionManagementRule A rule that defines how a relationship is automatically managed
+type RelationshipDefinitionManagementRule struct {
+	Operator              RelationshipDefinitionManagementRuleOperator // The operator used to compare the source and target properties (Required)
+	SourceProperty        string                                       // The property on the source component type that is used in the rule (Required)
+	SourcePropertyBuiltin bool                                         // Whether the source property is a built-in property (Required)
+	TargetCategory        string                                       // A component type category that is the target category for the rule (Optional)
+	TargetProperty        string                                       // The property on the target type that is used in the rule (Required)
+	TargetPropertyBuiltin bool                                         // Whether the target property is a built-in property (Required)
+	TargetType            string                                       // The target type for the rule (i.e., a component type alias, 'team', or 'user') (Optional)
 }
 
 // RelationshipDefinitionMetadata The metadata of the relationship
@@ -419,13 +418,13 @@ type RelationshipDefinitionMetadata struct {
 
 // RelationshipDefinitionType A dynamic definition for a relationship between one catalog entity to another
 type RelationshipDefinitionType struct {
-	Alias           string                                  // The programmatic alias that can be used to reference the relationship in OpsLevel tooling (Required)
-	ComponentType   ComponentTypeId                         // The component type that the relationship belongs to (Required)
-	Description     string                                  // The long-form descripion of what the relationship represents (Optional)
-	Id              ID                                      // The ID of the relationship definition (Required)
-	ManagementRules []RelationshipDefinitionManagementRules // The management rules for the relationship (Optional)
-	Metadata        RelationshipDefinitionMetadata          // JSON data that defines rules for how the relationship should be validated internally (Required)
-	Name            string                                  // The human-readable name for a relationship (Required)
+	Alias           string                                 // The programmatic alias that can be used to reference the relationship in OpsLevel tooling (Required)
+	ComponentType   ComponentTypeId                        // The component type that the relationship belongs to (Required)
+	Description     string                                 // The long-form descripion of what the relationship represents (Optional)
+	Id              ID                                     // The ID of the relationship definition (Required)
+	ManagementRules []RelationshipDefinitionManagementRule // Rules that define how relationships will be automatically created and deleted (Required)
+	Metadata        RelationshipDefinitionMetadata         // JSON data that defines rules for how the relationship should be validated internally (Required)
+	Name            string                                 // The human-readable name for a relationship (Required)
 }
 
 // RelationshipNode The relationship between two resources. A pair of source and destination resources
