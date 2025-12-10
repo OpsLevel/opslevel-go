@@ -700,11 +700,12 @@ type ComponentTypeIconInput struct {
 
 // ComponentTypeInput Specifies the input fields used to create a component type
 type ComponentTypeInput struct {
-	Alias       *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
-	Description *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the component type (Optional)
-	Icon        *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
-	Name        *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)
-	Properties  *[]ComponentTypePropertyDefinitionInput `json:"properties,omitempty" yaml:"properties,omitempty" example:"[]"`              // A list of property definitions for the component type (Optional)
+	Alias             *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
+	Description       *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the component type (Optional)
+	Icon              *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
+	Name              *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)
+	OwnerRelationship *OwnerRelationshipInput                 `json:"ownerRelationship,omitempty" yaml:"ownerRelationship,omitempty"`             // The owner relationship for the component type (Optional)
+	Properties        *[]ComponentTypePropertyDefinitionInput `json:"properties,omitempty" yaml:"properties,omitempty" example:"[]"`              // A list of property definitions for the component type (Optional)
 }
 
 // ComponentTypePropertyDefinitionInput The input for defining a property
@@ -979,6 +980,11 @@ type OctopusDeployIntegrationInput struct {
 	ApiKey      *Nullable[string] `json:"apiKey,omitempty" yaml:"apiKey,omitempty" example:"example_value"`           // The API Key for the Octopus Deploy API (Optional)
 	InstanceUrl *Nullable[string] `json:"instanceUrl,omitempty" yaml:"instanceUrl,omitempty" example:"example_value"` // The URL the Octopus Deploy instance if hosted on (Optional)
 	Name        *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the integration (Optional)
+}
+
+// OwnerRelationshipInput The input for defining the owner relationship for a component type.
+type OwnerRelationshipInput struct {
+	ManagementRules *[]RelationshipDefinitionManagementRulesInput `json:"managementRules,omitempty" yaml:"managementRules,omitempty"` // The management rules for the relationship (Optional)
 }
 
 // PayloadFilterInput Input to be used to filter types
