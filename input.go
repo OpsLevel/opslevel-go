@@ -993,7 +993,7 @@ type OctopusDeployIntegrationInput struct {
 	Name        *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the integration (Optional)
 }
 
-// OwnerRelationshipInput The input for defining the owner relationship for a component type.
+// OwnerRelationshipInput The input for defining the owner relationship for a component type
 type OwnerRelationshipInput struct {
 	ManagementRules *[]ManagementRuleInput `json:"managementRules,omitempty" yaml:"managementRules,omitempty"` // The management rules for the relationship (Optional)
 }

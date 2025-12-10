@@ -49,7 +49,7 @@ func init() {
 				Id:    id1,
 				Alias: alias1,
 				Name:  name1,
-				ManagementRules: []ol.RelationshipDefinitionManagementRules{
+				ManagementRules: []ol.RelationshipDefinitionManagementRule{
 					{
 						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
@@ -77,7 +77,7 @@ func init() {
 				Id:    id2,
 				Alias: alias2,
 				Name:  name2,
-				ManagementRules: []ol.RelationshipDefinitionManagementRules{
+				ManagementRules: []ol.RelationshipDefinitionManagementRule{
 					{
 						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",

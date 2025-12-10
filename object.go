@@ -402,10 +402,10 @@ type RelationshipDefinitionManagementRule struct {
 	Operator              RelationshipDefinitionManagementRuleOperator // The operator used to compare the source and target properties (Required)
 	SourceProperty        string                                       // The property on the source component type that is used in the rule (Required)
 	SourcePropertyBuiltin bool                                         // Whether the source property is a built-in property (Required)
-	TargetCategory        string                                       // A component type category that is the target category for the rule (Optional)
+	TargetCategory        *Nullable[string]                            // A component type category that is the target category for the rule (Optional)
 	TargetProperty        string                                       // The property on the target type that is used in the rule (Required)
 	TargetPropertyBuiltin bool                                         // Whether the target property is a built-in property (Required)
-	TargetType            string                                       // The target type for the rule (i.e., a component type alias, 'team', or 'user') (Optional)
+	TargetType            *Nullable[string]                            // The target type for the rule (i.e., a component type alias, 'team', or 'user') (Optional)
 }
 
 // RelationshipDefinitionMetadata The metadata of the relationship
