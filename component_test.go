@@ -15,11 +15,23 @@ func TestComponentTypeCreate(t *testing.T) {
 			Name:        ol.RefOf("Example"),
 			Description: ol.RefOf("Example Description"),
 			Properties:  &[]ol.ComponentTypePropertyDefinitionInput{},
+			OwnerRelationship: &ol.OwnerRelationshipInput{
+				ManagementRules: &[]ol.ManagementRuleInput{
+					{
+						Operator:              ol.RelationshipDefinitionManagementRuleOperatorEquals,
+						SourceProperty:        "tag_key_eq:owner",
+						SourcePropertyBuiltin: true,
+						TargetProperty:        "name",
+						TargetPropertyBuiltin: true,
+						TargetType:            ol.NewNullableFrom("team"),
+					},
+				},
+			},
 		})
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation ComponentTypeCreate($input:ComponentTypeInput!){componentTypeCreate(input:$input){componentType{{ template "component_type_graphql" }},errors{message,path}}}`,
-		`{"input": {"alias": "example", "name": "Example", "description": "Example Description", "properties": []} }`,
+		`{"input": {"alias": "example", "name": "Example", "description": "Example Description", "properties": [], "ownerRelationship": {"managementRules": [{"operator": "EQUALS", "sourceProperty": "tag_key_eq:owner", "sourcePropertyBuiltin": true, "targetProperty": "name", "targetPropertyBuiltin": true, "targetType": "team"}]} }}`,
 		`{"data": {"componentTypeCreate": {"componentType": {{ template "component_type_1_response" }} }}}`,
 	)
 
@@ -81,11 +93,23 @@ func TestComponentTypeUpdate(t *testing.T) {
 			Name:        ol.RefOf("Example"),
 			Description: ol.RefOf("Example Description"),
 			Properties:  &[]ol.ComponentTypePropertyDefinitionInput{},
+			OwnerRelationship: &ol.OwnerRelationshipInput{
+				ManagementRules: &[]ol.ManagementRuleInput{
+					{
+						Operator:              ol.RelationshipDefinitionManagementRuleOperatorEquals,
+						SourceProperty:        "tag_key_eq:owner",
+						SourcePropertyBuiltin: true,
+						TargetProperty:        "name",
+						TargetPropertyBuiltin: true,
+						TargetType:            ol.NewNullableFrom("team"),
+					},
+				},
+			},
 		})
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation ComponentTypeUpdate($input:ComponentTypeInput!$target:IdentifierInput!){componentTypeUpdate(componentType:$target,input:$input){componentType{{ template "component_type_graphql" }},errors{message,path}}}`,
-		`{"input": {"alias": "example", "name": "Example", "description": "Example Description", "properties": []}, "target": { {{ template "id1" }} }}`,
+		`{"input": {"alias": "example", "name": "Example", "description": "Example Description", "properties": [], "ownerRelationship": {"managementRules": [{"operator": "EQUALS", "sourceProperty": "tag_key_eq:owner", "sourcePropertyBuiltin": true, "targetProperty": "name", "targetPropertyBuiltin": true, "targetType": "team"}]}}, "target": { {{ template "id1" }} }}`,
 		`{"data": {"componentTypeUpdate": {"componentType": {{ template "component_type_1_response" }} }}}`,
 	)
 
