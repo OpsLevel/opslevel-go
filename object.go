@@ -145,13 +145,14 @@ type ComponentTypeId struct {
 // ComponentType Information about a particular component type
 type ComponentType struct {
 	ComponentTypeId
-	Description string                        // The description of the component type (Optional)
-	Href        string                        // The relative path to link to the component type (Required)
-	Icon        ComponentTypeIcon             // The icon associated with the component type (Required)
-	IsDefault   bool                          // Whether or not the component type is the default (Required)
-	Name        string                        // The name of the component type (Required)
-	Timestamps  Timestamps                    // When the component type was created and updated (Required)
-	Properties  *PropertyDefinitionConnection `graphql:"-"`
+	Description       string                        // The description of the component type (Optional)
+	Href              string                        // The relative path to link to the component type (Required)
+	Icon              ComponentTypeIcon             // The icon associated with the component type (Required)
+	IsDefault         bool                          // Whether or not the component type is the default (Required)
+	Name              string                        // The name of the component type (Required)
+	OwnerRelationship OwnerRelationshipType         // The owner relationship for this component type (Required)
+	Timestamps        Timestamps                    // When the component type was created and updated (Required)
+	Properties        *PropertyDefinitionConnection `graphql:"-"`
 }
 
 // ComponentTypeIcon The icon for a component type
@@ -389,6 +390,11 @@ type ManualCheckFrequency struct {
 	FrequencyTimeScale FrequencyTimeScale // The time scale type for the frequency (Required)
 	FrequencyValue     int                // The value to be used together with the frequency scale (Required)
 	StartingDate       iso8601.Time       // The date that the check will start to evaluate (Required)
+}
+
+// OwnerRelationshipType The owner relationship for a component type
+type OwnerRelationshipType struct {
+	ManagementRules []RelationshipDefinitionManagementRule // The management rules for the owner relationship (Required)
 }
 
 // Predicate A condition used to select services
