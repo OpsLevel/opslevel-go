@@ -145,14 +145,14 @@ type ComponentTypeId struct {
 // ComponentType Information about a particular component type
 type ComponentType struct {
 	ComponentTypeId
-	Description string                        // The description of the component type (Optional)
-	Href        string                        // The relative path to link to the component type (Required)
-	Icon        ComponentTypeIcon             // The icon associated with the component type (Required)
-	IsDefault   bool                          // Whether or not the component type is the default (Required)
-	Name        string                        // The name of the component type (Required)
+	Description       string                        // The description of the component type (Optional)
+	Href              string                        // The relative path to link to the component type (Required)
+	Icon              ComponentTypeIcon             // The icon associated with the component type (Required)
+	IsDefault         bool                          // Whether or not the component type is the default (Required)
+	Name              string                        // The name of the component type (Required)
 	OwnerRelationship OwnerRelationshipType         // The owner relationship for this component type (Required)
-	Timestamps  Timestamps                    // When the component type was created and updated (Required)
-	Properties  *PropertyDefinitionConnection `graphql:"-"`
+	Timestamps        Timestamps                    // When the component type was created and updated (Required)
+	Properties        *PropertyDefinitionConnection `graphql:"-"`
 }
 
 // ComponentTypeIcon The icon for a component type
