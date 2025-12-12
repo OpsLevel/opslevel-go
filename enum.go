@@ -2859,30 +2859,32 @@ var AllPayloadSortEnum = []string{
 type PredicateKeyEnum string
 
 var (
-	PredicateKeyEnumAliases         PredicateKeyEnum = "aliases"           // Filter by Alias attached to this service, if any
-	PredicateKeyEnumComponentTypeID PredicateKeyEnum = "component_type_id" // Filter by the `component_type` field
-	PredicateKeyEnumCreationSource  PredicateKeyEnum = "creation_source"   // Filter by the creation source
-	PredicateKeyEnumDomainID        PredicateKeyEnum = "domain_id"         // Filter by Domain that includes the System this service is assigned to, if any
-	PredicateKeyEnumFilterID        PredicateKeyEnum = "filter_id"         // Filter by another filter
-	PredicateKeyEnumFramework       PredicateKeyEnum = "framework"         // Filter by `framework` field
-	PredicateKeyEnumGroupIDs        PredicateKeyEnum = "group_ids"         // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
-	PredicateKeyEnumLanguage        PredicateKeyEnum = "language"          // Filter by `language` field
-	PredicateKeyEnumLifecycleIndex  PredicateKeyEnum = "lifecycle_index"   // Filter by `lifecycle` field
-	PredicateKeyEnumName            PredicateKeyEnum = "name"              // Filter by `name` field
-	PredicateKeyEnumOwnerID         PredicateKeyEnum = "owner_id"          // Filter by `owner` field
-	PredicateKeyEnumOwnerIDs        PredicateKeyEnum = "owner_ids"         // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
-	PredicateKeyEnumProduct         PredicateKeyEnum = "product"           // Filter by `product` field
-	PredicateKeyEnumProperties      PredicateKeyEnum = "properties"        // Filter by custom-defined properties
-	PredicateKeyEnumRelationships   PredicateKeyEnum = "relationships"     // Filter by `relationships`
-	PredicateKeyEnumRepositoryIDs   PredicateKeyEnum = "repository_ids"    // Filter by Repository that this service is attached to, if any
-	PredicateKeyEnumSystemID        PredicateKeyEnum = "system_id"         // Filter by System that this service is assigned to, if any
-	PredicateKeyEnumTags            PredicateKeyEnum = "tags"              // Filter by `tags` field
-	PredicateKeyEnumTierIndex       PredicateKeyEnum = "tier_index"        // Filter by `tier` field
+	PredicateKeyEnumAliases           PredicateKeyEnum = "aliases"            // Filter by Alias attached to this service, if any
+	PredicateKeyEnumComponentCategory PredicateKeyEnum = "component_category" // Filter by the component type category for this service
+	PredicateKeyEnumComponentTypeID   PredicateKeyEnum = "component_type_id"  // Filter by the `component_type` field
+	PredicateKeyEnumCreationSource    PredicateKeyEnum = "creation_source"    // Filter by the creation source
+	PredicateKeyEnumDomainID          PredicateKeyEnum = "domain_id"          // Filter by Domain that includes the System this service is assigned to, if any
+	PredicateKeyEnumFilterID          PredicateKeyEnum = "filter_id"          // Filter by another filter
+	PredicateKeyEnumFramework         PredicateKeyEnum = "framework"          // Filter by `framework` field
+	PredicateKeyEnumGroupIDs          PredicateKeyEnum = "group_ids"          // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
+	PredicateKeyEnumLanguage          PredicateKeyEnum = "language"           // Filter by `language` field
+	PredicateKeyEnumLifecycleIndex    PredicateKeyEnum = "lifecycle_index"    // Filter by `lifecycle` field
+	PredicateKeyEnumName              PredicateKeyEnum = "name"               // Filter by `name` field
+	PredicateKeyEnumOwnerID           PredicateKeyEnum = "owner_id"           // Filter by `owner` field
+	PredicateKeyEnumOwnerIDs          PredicateKeyEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
+	PredicateKeyEnumProduct           PredicateKeyEnum = "product"            // Filter by `product` field
+	PredicateKeyEnumProperties        PredicateKeyEnum = "properties"         // Filter by custom-defined properties
+	PredicateKeyEnumRelationships     PredicateKeyEnum = "relationships"      // Filter by `relationships`
+	PredicateKeyEnumRepositoryIDs     PredicateKeyEnum = "repository_ids"     // Filter by Repository that this service is attached to, if any
+	PredicateKeyEnumSystemID          PredicateKeyEnum = "system_id"          // Filter by System that this service is assigned to, if any
+	PredicateKeyEnumTags              PredicateKeyEnum = "tags"               // Filter by `tags` field
+	PredicateKeyEnumTierIndex         PredicateKeyEnum = "tier_index"         // Filter by `tier` field
 )
 
 // All PredicateKeyEnum as []string
 var AllPredicateKeyEnum = []string{
 	string(PredicateKeyEnumAliases),
+	string(PredicateKeyEnumComponentCategory),
 	string(PredicateKeyEnumComponentTypeID),
 	string(PredicateKeyEnumCreationSource),
 	string(PredicateKeyEnumDomainID),
@@ -3467,18 +3469,6 @@ var AllTypeEnum = []string{
 	string(TypeEnumSatisfiesJqExpression),
 	string(TypeEnumSatisfiesVersionConstraint),
 	string(TypeEnumStartsWith),
-}
-
-type RelationshipOperatorEnum string
-
-var (
-	RelationshipOperatorEnumEquals        RelationshipOperatorEnum = "EQUALS"         // Matches a specific value
-	RelationshipOperatorEnumArrayContains RelationshipOperatorEnum = "ARRAY_CONTAINS" // Matches any value within an array
-)
-
-var AllRelationshipOperatorEnum = []string{
-	string(RelationshipOperatorEnumEquals),
-	string(RelationshipOperatorEnumArrayContains),
 }
 
 // UserRole A role that can be assigned to a user

@@ -21,9 +21,9 @@ func init() {
 				Name:          &name1,
 				Description:   ol.RefOf("Example Description"),
 				ComponentType: ol.NewIdentifier("example"),
-				ManagementRules: &[]ol.RelationshipDefinitionManagementRulesInput{
+				ManagementRules: &[]ol.ManagementRuleInput{
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
@@ -31,7 +31,7 @@ func init() {
 						TargetCategory:        ol.RefOf("infrastructure"),
 					},
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "name",
 						SourcePropertyBuiltin: true,
 						TargetProperty:        "alias",
@@ -49,9 +49,9 @@ func init() {
 				Id:    id1,
 				Alias: alias1,
 				Name:  name1,
-				ManagementRules: []ol.RelationshipDefinitionManagementRules{
+				ManagementRules: []ol.RelationshipDefinitionManagementRule{
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",
@@ -59,7 +59,7 @@ func init() {
 						TargetCategory:        ol.RefOf("infrastructure"),
 					},
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "name",
 						SourcePropertyBuiltin: true,
 						TargetProperty:        "alias",
@@ -77,9 +77,9 @@ func init() {
 				Id:    id2,
 				Alias: alias2,
 				Name:  name2,
-				ManagementRules: []ol.RelationshipDefinitionManagementRules{
+				ManagementRules: []ol.RelationshipDefinitionManagementRule{
 					{
-						Operator:              ol.RelationshipOperatorEnum(ol.RelationshipOperatorEnumEquals),
+						Operator:              ol.RelationshipDefinitionManagementRuleOperator(ol.RelationshipDefinitionManagementRuleOperatorEquals),
 						SourceProperty:        "owner",
 						SourcePropertyBuiltin: false,
 						TargetProperty:        "team",

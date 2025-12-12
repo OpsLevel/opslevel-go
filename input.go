@@ -700,11 +700,12 @@ type ComponentTypeIconInput struct {
 
 // ComponentTypeInput Specifies the input fields used to create a component type
 type ComponentTypeInput struct {
-	Alias       *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
-	Description *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the component type (Optional)
-	Icon        *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
-	Name        *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)
-	Properties  *[]ComponentTypePropertyDefinitionInput `json:"properties,omitempty" yaml:"properties,omitempty" example:"[]"`              // A list of property definitions for the component type (Optional)
+	Alias             *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
+	Description       *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the component type (Optional)
+	Icon              *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
+	Name              *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)
+	OwnerRelationship *OwnerRelationshipInput                 `json:"ownerRelationship,omitempty" yaml:"ownerRelationship,omitempty"`             // The owner relationship for the component type (Optional)
+	Properties        *[]ComponentTypePropertyDefinitionInput `json:"properties,omitempty" yaml:"properties,omitempty" example:"[]"`              // A list of property definitions for the component type (Optional)
 }
 
 // ComponentTypePropertyDefinitionInput The input for defining a property
@@ -943,6 +944,17 @@ type LevelUpdateInput struct {
 	Name        *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The display name of the level (Optional)
 }
 
+// ManagementRuleInput A rule that defines how a relationship is automatically managed
+type ManagementRuleInput struct {
+	Operator              RelationshipDefinitionManagementRuleOperator `json:"operator,omitempty" yaml:"operator,omitempty" example:"ARRAY_CONTAINS"`            // The operator used to compare the source and target properties (Required Default: EQUALS)
+	SourceProperty        string                                       `json:"sourceProperty" yaml:"sourceProperty" example:"example_value"`                     // The property on the source component type that is used in the rule (Required)
+	SourcePropertyBuiltin bool                                         `json:"sourcePropertyBuiltin" yaml:"sourcePropertyBuiltin" example:"false"`               // Whether the source property is a built-in property (Required)
+	TargetCategory        *Nullable[string]                            `json:"targetCategory,omitempty" yaml:"targetCategory,omitempty" example:"example_value"` // A component type category that is the target category for the rule (Optional)
+	TargetProperty        string                                       `json:"targetProperty" yaml:"targetProperty" example:"example_value"`                     // The property on the target type that is used in the rule (Required)
+	TargetPropertyBuiltin bool                                         `json:"targetPropertyBuiltin" yaml:"targetPropertyBuiltin" example:"false"`               // Whether the target property is a built-in property (Required)
+	TargetType            *Nullable[string]                            `json:"targetType,omitempty" yaml:"targetType,omitempty" example:"example_value"`         // The target type for the rule (i.e., a component type alias, 'team', or 'user') (Optional)
+}
+
 // ManualCheckFrequencyInput Defines a frequency for the check update
 type ManualCheckFrequencyInput struct {
 	FrequencyTimeScale FrequencyTimeScale `json:"frequencyTimeScale" yaml:"frequencyTimeScale" example:"day"`          // The time scale type for the frequency (Required)
@@ -979,6 +991,11 @@ type OctopusDeployIntegrationInput struct {
 	ApiKey      *Nullable[string] `json:"apiKey,omitempty" yaml:"apiKey,omitempty" example:"example_value"`           // The API Key for the Octopus Deploy API (Optional)
 	InstanceUrl *Nullable[string] `json:"instanceUrl,omitempty" yaml:"instanceUrl,omitempty" example:"example_value"` // The URL the Octopus Deploy instance if hosted on (Optional)
 	Name        *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the integration (Optional)
+}
+
+// OwnerRelationshipInput The input for defining the owner relationship for a component type
+type OwnerRelationshipInput struct {
+	ManagementRules *[]ManagementRuleInput `json:"managementRules,omitempty" yaml:"managementRules,omitempty"` // The management rules for the relationship (Optional)
 }
 
 // PayloadFilterInput Input to be used to filter types
@@ -1029,23 +1046,12 @@ type RelationshipDefinition struct {
 
 // RelationshipDefinitionInput The input for defining a relationship on a component type
 type RelationshipDefinitionInput struct {
-	Alias           *string                                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique identifier of the relationship (Optional)
-	ComponentType   *IdentifierInput                              `json:"componentType,omitempty" yaml:"componentType,omitempty"`                     // The component type to create the relationship on (Optional)
-	Description     *Nullable[string]                             `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the relationship (Optional)
-	ManagementRules *[]RelationshipDefinitionManagementRulesInput `json:"managementRules,omitempty" yaml:"managementRules,omitempty"`                 // The management rules for the relationship (Optional)
-	Metadata        *RelationshipDefinitionMetadataInput          `json:"metadata,omitempty" yaml:"metadata,omitempty"`                               // The metadata of the relationship (Optional)
-	Name            *string                                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the relationship (Optional)
-}
-
-// RelationshipDefinitionManagementRulesInput The management rules for the relationship
-type RelationshipDefinitionManagementRulesInput struct {
-	Operator              RelationshipOperatorEnum `json:"operator" yaml:"operator" example:"EQUALS"`                                         // The condition for this rule (Required)
-	SourceProperty        string                   `json:"sourceProperty" yaml:"sourceProperty" example:"alias"`                              // The source property for this rule  (Required)
-	SourcePropertyBuiltin bool                     `json:"sourcePropertyBuiltin" yaml:"sourcePropertyBuiltin" example:"true"`                 // Indicates if the property is a built in property or a custom property  (Required)
-	TargetCategory        *Nullable[string]        `json:"targetCategory,omitempty" yaml:"targetCategory,omitempty" example:"infrastructure"` // The target category that this rule will target  (Optional)
-	TargetProperty        string                   `json:"targetProperty" yaml:"targetProperty"  example:"alias"`                             // The target property for this rule on either the target type or target category  (Required)
-	TargetPropertyBuiltin bool                     `json:"targetPropertyBuiltin" yaml:"targetPropertyBuiltin" example:"true"`                 // Indicates if the property is a built in property or a custom property  (Required)
-	TargetType            *Nullable[string]        `json:"targetType,omitempty" yaml:"targetType,omitempty" example:"team"`                   // The target type that this rule will target (Optional)
+	Alias           *string                              `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique identifier of the relationship (Optional)
+	ComponentType   *IdentifierInput                     `json:"componentType,omitempty" yaml:"componentType,omitempty"`                     // The component type to create the relationship on (Optional)
+	Description     *Nullable[string]                    `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the relationship (Optional)
+	ManagementRules *[]ManagementRuleInput               `json:"managementRules,omitempty" yaml:"managementRules,omitempty"`                 // The management rules for the relationship (Optional)
+	Metadata        *RelationshipDefinitionMetadataInput `json:"metadata,omitempty" yaml:"metadata,omitempty"`                               // The metadata of the relationship (Optional)
+	Name            *string                              `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the relationship (Optional)
 }
 
 // RelationshipDefinitionMetadataInput The metadata of the relationship
