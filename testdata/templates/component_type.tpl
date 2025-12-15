@@ -1,5 +1,5 @@
 {{- define "component_type_graphql" }}
-{id,aliases,description,href,icon{color,name},isDefault,name,timestamps{createdAt,updatedAt}}
+{id,aliases,description,href,icon{color,name},isDefault,name,ownerRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},timestamps{createdAt,updatedAt}}
 {{end}}
 {{- define "component_type_1_response" }}
 {
@@ -13,6 +13,19 @@
     "icon": {
       "color": "#FFFFFF",
       "name": "PhBird"
+    },
+    "ownerRelationship": {
+      "managementRules": [
+        {
+          "operator": "EQUALS",
+          "sourceProperty": "tag_key_eq:owner",
+          "sourcePropertyBuiltin": true,
+          "targetCategory": null,
+          "targetProperty": "name",
+          "targetPropertyBuiltin": true,
+          "targetType": "team"
+        }
+      ]
     }
 }
 {{end}}
