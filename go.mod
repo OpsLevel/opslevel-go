@@ -9,7 +9,7 @@ require (
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/gosimple/slug v1.15.0
-	github.com/hasura/go-graphql-client v0.14.4
+	github.com/hasura/go-graphql-client v0.15.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/opslevel/moredefaults v0.0.0-20240529152742-17d1318a3c12
 	github.com/pkg/errors v0.9.1
@@ -24,7 +24,7 @@ require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-	github.com/coder/websocket v1.8.13 // indirect
+	github.com/coder/websocket v1.8.14 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
