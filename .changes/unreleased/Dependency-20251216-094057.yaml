@@ -1,0 +1,3 @@
+kind: Dependency
+body: upgrade go-graphql-client to v0.15.1
+time: 2025-12-16T09:40:57.010472-05:00
