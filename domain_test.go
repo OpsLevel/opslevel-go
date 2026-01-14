@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"strings"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2025"
@@ -303,4 +304,44 @@ func TestDomainDelete(t *testing.T) {
 	err := client.DeleteDomain("platformdomain3")
 	// Assert
 	autopilot.Ok(t, err)
+}
+
+func TestDomainGetWithHTMLEntities(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query DomainGet($input:IdentifierInput!){account{domain(input: $input){id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}}}`,
+		`{"input": { {{ template "id1" }} } }`,
+		`{"data": {"account": {"domain": {
+			{{ template "id1" }},
+			"aliases": ["test-domain"],
+			"name": "TestDomain",
+			"description": "A domain with &lt;html&gt; &amp; special characters &quot;quoted&quot;",
+			"htmlUrl": "https://app.opslevel.com/catalog/domains/test-domain",
+			"note": "Note with &lt;b&gt;bold&lt;/b&gt; and &amp; ampersand",
+			"managedAliases": []
+		}}}}`,
+	)
+
+	client := BestTestClient(t, "domain/html_entities", testRequest)
+	// Act
+	result, err := client.GetDomain(string(id1))
+	// Assert
+	autopilot.Ok(t, err)
+
+	// Verify HTML entities are unescaped
+	if strings.Contains(result.Description, "&lt;") || strings.Contains(result.Description, "&gt;") ||
+		strings.Contains(result.Description, "&amp;") || strings.Contains(result.Description, "&quot;") {
+		t.Errorf("Domain Description still contains HTML entities: %s", result.Description)
+	}
+	if strings.Contains(result.Note, "&lt;") || strings.Contains(result.Note, "&gt;") ||
+		strings.Contains(result.Note, "&amp;") {
+		t.Errorf("Domain Note still contains HTML entities: %s", result.Note)
+	}
+
+	// Verify expected unescaped values
+	expectedDescription := `A domain with <html> & special characters "quoted"`
+	expectedNote := "Note with <b>bold</b> and & ampersand"
+
+	autopilot.Equals(t, expectedDescription, result.Description)
+	autopilot.Equals(t, expectedNote, result.Note)
 }

@@ -1,6 +1,7 @@
 package opslevel_test
 
 import (
+	"strings"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2025"
@@ -324,4 +325,53 @@ func TestSystemReconcileAliases(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, system.Aliases, aliasesWanted)
+}
+
+func TestSystemGetWithHTMLEntities(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query SystemGet($input:IdentifierInput!){account{system(input: $input){id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}}}}`,
+		`{"input": { {{ template "id1" }} } }`,
+		`{"data": {"account": {"system": {
+			{{ template "id1" }},
+			"aliases": ["test-system"],
+			"name": "TestSystem",
+			"description": "System with &lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt; and &amp; symbol",
+			"htmlUrl": "https://app.opslevel.com/catalog/systems/test-system",
+			"note": "Note: &lt;p&gt;paragraph&lt;/p&gt; &amp; more &quot;text&quot;",
+			"managedAliases": [],
+			"parent": {
+				{{ template "id2" }},
+				"aliases": [],
+				"name": "ParentDomain",
+				"description": "",
+				"htmlUrl": "https://app.opslevel.com/catalog/domains/parent",
+				"note": "",
+				"managedAliases": []
+			}
+		}}}}`,
+	)
+
+	client := BestTestClient(t, "system/html_entities", testRequest)
+	// Act
+	result, err := client.GetSystem(string(id1))
+	// Assert
+	autopilot.Ok(t, err)
+
+	// Verify HTML entities are unescaped
+	if strings.Contains(result.Description, "&lt;") || strings.Contains(result.Description, "&gt;") ||
+		strings.Contains(result.Description, "&amp;") || strings.Contains(result.Description, "&#39;") {
+		t.Errorf("System Description still contains HTML entities: %s", result.Description)
+	}
+	if strings.Contains(result.Note, "&lt;") || strings.Contains(result.Note, "&gt;") ||
+		strings.Contains(result.Note, "&amp;") || strings.Contains(result.Note, "&quot;") {
+		t.Errorf("System Note still contains HTML entities: %s", result.Note)
+	}
+
+	// Verify expected unescaped values
+	expectedDescription := "System with <script>alert('xss')</script> and & symbol"
+	expectedNote := `Note: <p>paragraph</p> & more "text"`
+
+	autopilot.Equals(t, expectedDescription, result.Description)
+	autopilot.Equals(t, expectedNote, result.Note)
 }

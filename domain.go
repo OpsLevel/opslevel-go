@@ -3,6 +3,7 @@ package opslevel
 import (
 	"errors"
 	"fmt"
+	"html"
 	"slices"
 )
 
@@ -16,6 +17,12 @@ func (d *Domain) UniqueIdentifiers() []string {
 	}
 
 	return uniqueIdentifiers
+}
+
+func (d *Domain) Hydrate(client *Client) error {
+	d.Description = html.UnescapeString(d.Description)
+	d.Note = html.UnescapeString(d.Note)
+	return nil
 }
 
 func (d *Domain) ReconcileAliases(client *Client, aliasesWanted []string) error {
@@ -140,8 +147,13 @@ func (client *Client) CreateDomain(input DomainInput) (*Domain, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v, WithName("DomainCreate"))
-	return &m.Payload.Domain, HandleErrors(err, m.Payload.Errors)
+	if err := client.Mutate(&m, v, WithName("DomainCreate")); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Domain.Hydrate(client); err != nil {
+		return &m.Payload.Domain, err
+	}
+	return &m.Payload.Domain, HandleErrors(nil, m.Payload.Errors)
 }
 
 func (client *Client) GetDomain(identifier string) (*Domain, error) {
@@ -153,8 +165,13 @@ func (client *Client) GetDomain(identifier string) (*Domain, error) {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := client.Query(&q, v, WithName("DomainGet"))
-	return &q.Account.Domain, HandleErrors(err, nil)
+	if err := client.Query(&q, v, WithName("DomainGet")); err != nil {
+		return nil, err
+	}
+	if err := q.Account.Domain.Hydrate(client); err != nil {
+		return &q.Account.Domain, err
+	}
+	return &q.Account.Domain, nil
 }
 
 func (client *Client) ListDomains(variables *PayloadVariables) (*DomainConnection, error) {
@@ -175,7 +192,12 @@ func (client *Client) ListDomains(variables *PayloadVariables) (*DomainConnectio
 		if err != nil {
 			return nil, err
 		}
-		q.Account.Domains.Nodes = append(q.Account.Domains.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return nil, err
+			}
+			q.Account.Domains.Nodes = append(q.Account.Domains.Nodes, node)
+		}
 		q.Account.Domains.PageInfo = resp.PageInfo
 	}
 	q.Account.Domains.TotalCount = len(q.Account.Domains.Nodes)
@@ -190,8 +212,13 @@ func (client *Client) UpdateDomain(identifier string, input DomainInput) (*Domai
 		"domain": *NewIdentifier(identifier),
 		"input":  input,
 	}
-	err := client.Mutate(&m, v, WithName("DomainUpdate"))
-	return &m.Payload.Domain, HandleErrors(err, m.Payload.Errors)
+	if err := client.Mutate(&m, v, WithName("DomainUpdate")); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.Domain.Hydrate(client); err != nil {
+		return &m.Payload.Domain, err
+	}
+	return &m.Payload.Domain, HandleErrors(nil, m.Payload.Errors)
 }
 
 func (client *Client) DeleteDomain(identifier string) error {

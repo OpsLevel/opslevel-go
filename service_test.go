@@ -2,6 +2,7 @@ package opslevel_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2025"
@@ -1668,4 +1669,67 @@ func TestListServicesWithInputFilterCaseSensitivity(t *testing.T) {
 	response, err = client.ListServicesWithInputFilter(filterNoMatch, nil)
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, 0, response.TotalCount)
+}
+
+func TestServiceGetWithHTMLEntities(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query ServiceGet($service:ID!){account{service(id: $service){apiDocumentPath,description,framework,htmlUrl,id,aliases,language,lifecycle{alias,description,id,index,name},locked,managedAliases,maturityReport{overallLevel{alias,checks{id,name},description,id,index,name}},name,note,owner{alias,id},parent{id,aliases},preferredApiDocument{id,htmlUrl,source{... on ApiDocIntegration{id,name,type},... on ServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},timestamps{createdAt,updatedAt}},preferredApiDocumentSource,product,repos{edges{node{id,defaultAlias},serviceRepositories{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},defaultServiceRepository{baseDirectory,displayName,id,repository{id,defaultAlias},service{id,aliases}},tags{nodes{id,key,value},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},tier{alias,description,id,index,name},timestamps{createdAt,updatedAt},tools{nodes{category,categoryAlias,displayName,environment,id,service{id,aliases},url},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},type{id,aliases}}}}`,
+		`{ "service": "{{ template "id1_string" }}" }`,
+		`{"data": {"account": {"service": {
+			{{ template "id1" }},
+			"aliases": ["test-service"],
+			"name": "TestService",
+			"description": "Service with &lt;em&gt;emphasis&lt;/em&gt; &amp; &quot;quotes&quot;",
+			"htmlUrl": "https://app.opslevel.com/services/test-service",
+			"note": "Additional notes: &lt;strong&gt;important&lt;/strong&gt; &amp; critical",
+			"product": "Product with &amp; ampersand",
+			"apiDocumentPath": null,
+			"framework": null,
+			"language": null,
+			"lifecycle": null,
+			"locked": false,
+			"managedAliases": [],
+			"maturityReport": null,
+			"owner": null,
+			"parent": null,
+			"preferredApiDocument": null,
+			"preferredApiDocumentSource": null,
+			"repos": {"edges": [], "pageInfo": {"hasNextPage": false, "hasPreviousPage": false, "startCursor": "", "endCursor": ""}},
+			"defaultServiceRepository": null,
+			"tags": {"nodes": [], "pageInfo": {"hasNextPage": false, "hasPreviousPage": false, "startCursor": "", "endCursor": ""}},
+			"tier": null,
+			"timestamps": null,
+			"tools": {"nodes": [], "pageInfo": {"hasNextPage": false, "hasPreviousPage": false, "startCursor": "", "endCursor": ""}},
+			"type": null
+		}}}}`,
+	)
+
+	client := BestTestClient(t, "service/html_entities", testRequest)
+	// Act
+	result, err := client.GetService(string(id1))
+	// Assert
+	autopilot.Ok(t, err)
+
+	// Verify HTML entities are unescaped
+	if strings.Contains(result.Description, "&lt;") || strings.Contains(result.Description, "&gt;") ||
+		strings.Contains(result.Description, "&amp;") || strings.Contains(result.Description, "&quot;") {
+		t.Errorf("Service Description still contains HTML entities: %s", result.Description)
+	}
+	if strings.Contains(result.Note, "&lt;") || strings.Contains(result.Note, "&gt;") ||
+		strings.Contains(result.Note, "&amp;") {
+		t.Errorf("Service Note still contains HTML entities: %s", result.Note)
+	}
+	if strings.Contains(result.Product, "&amp;") {
+		t.Errorf("Service Product still contains HTML entities: %s", result.Product)
+	}
+
+	// Verify expected unescaped values
+	expectedDescription := `Service with <em>emphasis</em> & "quotes"`
+	expectedNote := "Additional notes: <strong>important</strong> & critical"
+	expectedProduct := "Product with & ampersand"
+
+	autopilot.Equals(t, expectedDescription, result.Description)
+	autopilot.Equals(t, expectedNote, result.Note)
+	autopilot.Equals(t, expectedProduct, result.Product)
 }
