@@ -3,6 +3,7 @@ package opslevel
 import (
 	"errors"
 	"fmt"
+	"html"
 	"slices"
 	"strings"
 )
@@ -115,6 +116,10 @@ func (service *Service) HasTool(category ToolCategory, name string, environment 
 }
 
 func (service *Service) Hydrate(client *Client) error {
+	service.Description = html.UnescapeString(service.Description)
+	service.Note = html.UnescapeString(service.Note)
+	service.Product = html.UnescapeString(service.Product)
+
 	if service.Tags == nil {
 		service.Tags = &TagConnection{}
 	}
