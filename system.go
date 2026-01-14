@@ -3,6 +3,7 @@ package opslevel
 import (
 	"errors"
 	"fmt"
+	"html"
 	"slices"
 )
 
@@ -69,6 +70,12 @@ func (system *System) UniqueIdentifiers() []string {
 	}
 
 	return uniqueIdentifiers
+}
+
+func (system *System) Hydrate(client *Client) error {
+	system.Description = html.UnescapeString(system.Description)
+	system.Note = html.UnescapeString(system.Note)
+	return nil
 }
 
 func (system *SystemId) ReconcileAliases(client *Client, aliasesWanted []string) error {
@@ -139,8 +146,13 @@ func (client *Client) CreateSystem(input SystemInput) (*System, error) {
 	v := PayloadVariables{
 		"input": input,
 	}
-	err := client.Mutate(&m, v, WithName("SystemCreate"))
-	return &m.Payload.System, HandleErrors(err, m.Payload.Errors)
+	if err := client.Mutate(&m, v, WithName("SystemCreate")); err != nil {
+		return nil, err
+	}
+	if err := m.Payload.System.Hydrate(client); err != nil {
+		return &m.Payload.System, err
+	}
+	return &m.Payload.System, HandleErrors(nil, m.Payload.Errors)
 }
 
 func (client *Client) GetSystem(identifier string) (*System, error) {
@@ -152,8 +164,13 @@ func (client *Client) GetSystem(identifier string) (*System, error) {
 	v := PayloadVariables{
 		"input": *NewIdentifier(identifier),
 	}
-	err := client.Query(&q, v, WithName("SystemGet"))
-	return &q.Account.System, HandleErrors(err, nil)
+	if err := client.Query(&q, v, WithName("SystemGet")); err != nil {
+		return nil, err
+	}
+	if err := q.Account.System.Hydrate(client); err != nil {
+		return &q.Account.System, err
+	}
+	return &q.Account.System, nil
 }
 
 func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnection, error) {
@@ -174,7 +191,12 @@ func (client *Client) ListSystems(variables *PayloadVariables) (*SystemConnectio
 		if err != nil {
 			return nil, err
 		}
-		q.Account.Systems.Nodes = append(q.Account.Systems.Nodes, resp.Nodes...)
+		for _, node := range resp.Nodes {
+			if err := node.Hydrate(client); err != nil {
+				return nil, err
+			}
+			q.Account.Systems.Nodes = append(q.Account.Systems.Nodes, node)
+		}
 		q.Account.Systems.PageInfo = resp.PageInfo
 	}
 	q.Account.Systems.TotalCount = len(q.Account.Systems.Nodes)
@@ -189,8 +211,13 @@ func (client *Client) UpdateSystem(identifier string, input SystemInput) (*Syste
 		"system": *NewIdentifier(identifier),
 		"input":  input,
 	}
-	err := client.Mutate(&s, v, WithName("SystemUpdate"))
-	return &s.Payload.System, HandleErrors(err, s.Payload.Errors)
+	if err := client.Mutate(&s, v, WithName("SystemUpdate")); err != nil {
+		return nil, err
+	}
+	if err := s.Payload.System.Hydrate(client); err != nil {
+		return &s.Payload.System, err
+	}
+	return &s.Payload.System, HandleErrors(nil, s.Payload.Errors)
 }
 
 func (client *Client) DeleteSystem(identifier string) error {
