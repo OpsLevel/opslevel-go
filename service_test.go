@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	ol "github.com/opslevel/opslevel-go/v2025"
+	ol "github.com/opslevel/opslevel-go/v2026"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
