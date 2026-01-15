@@ -45,9 +45,9 @@ func TestServiceTags(t *testing.T) {
 func TestServiceSystem(t *testing.T) {
 	// Arrange
 	request := autopilot.NewTestRequest(
-		`query ServiceSystemGet($after:String!$first:Int!$service:ID!){account{service(id: $service){system{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}}}}}`,
-		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
-		`{ "data": { "account": { "service": { "system": {{ template "system1_response" }} } } } }`,
+		`query ServiceSystemGet($service:ID!){account{service(id: $service){parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}},parent{id,aliases,description,htmlUrl,managedAliases,name,note,owner{... on Team{teamAlias:alias,id}}}}}}}`,
+		`{ "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`{ "data": { "account": { "service": { "parent": {{ template "system1_response" }} } } } }`,
 	)
 	client := BestTestClient(t, "service/system", request)
 	// Act
