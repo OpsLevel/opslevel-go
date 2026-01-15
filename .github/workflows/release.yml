@@ -38,6 +38,20 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Update Year if Needed
+        id: update_year
+        run: |
+          chmod +x .github/scripts/update-year.sh
+          .github/scripts/update-year.sh
+      - name: Commit Year Update
+        if: steps.update_year.outputs.updated == 'true'
+        run: |
+          git config user.name "OpsLevel Bots"
+          git config user.email "bots@opslevel.com"
+          CURRENT_YEAR=$(date +%Y)
+          git add .
+          git commit -m "Automated year update to v$CURRENT_YEAR"
+          git push origin HEAD
       - name: Set Release Version
         id: version
         run: |
