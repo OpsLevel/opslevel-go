@@ -10,14 +10,30 @@ import (
 func TestRunnerRegister(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RunnerRegister{runnerRegister{runner{id,status},errors{message,path}}}`,
-		`{}`,
+		`mutation RunnerRegister($queue:String){runnerRegister(queue: $queue){runner{id,status},errors{message,path}}}`,
+		`{"queue": null}`,
 		`{"data": {"runnerRegister": { "runner": { "id": "1234", "status": "registered" }, "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "job/register", testRequest)
 	// Act
 	result, err := client.RunnerRegister()
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, ol.ID("1234"), result.Id)
+}
+
+func TestRunnerRegisterWithQueue(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerRegister($queue:String){runnerRegister(queue: $queue){runner{id,status},errors{message,path}}}`,
+		`{"queue": "my-queue"}`,
+		`{"data": {"runnerRegister": { "runner": { "id": "1234", "status": "registered" }, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "job/register_with_queue", testRequest)
+	// Act
+	result, err := client.RunnerRegister("my-queue")
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, ol.ID("1234"), result.Id)

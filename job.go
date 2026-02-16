@@ -124,14 +124,19 @@ type RunnerScale struct {
 	RecommendedReplicaCount int `json:"recommendedReplicaCount"`
 }
 
-func (client *Client) RunnerRegister() (*Runner, error) {
+func (client *Client) RunnerRegister(queue ...string) (*Runner, error) {
 	var m struct {
 		Payload struct {
 			Runner Runner
 			Errors []Error
-		} `graphql:"runnerRegister"`
+		} `graphql:"runnerRegister(queue: $queue)"`
 	}
 	v := PayloadVariables{}
+	if len(queue) > 0 {
+		v["queue"] = &queue[0]
+	} else {
+		v["queue"] = (*string)(nil)
+	}
 	err := client.Mutate(&m, v, WithName("RunnerRegister"))
 	return &m.Payload.Runner, HandleErrors(err, m.Payload.Errors)
 }
