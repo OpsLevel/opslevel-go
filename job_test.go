@@ -10,14 +10,30 @@ import (
 func TestRunnerRegister(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RunnerRegister{runnerRegister{runner{id,status},errors{message,path}}}`,
-		`{}`,
+		`mutation RunnerRegister($subscribedTemplateIds:[Int!]){runnerRegister(subscribedTemplateIds: $subscribedTemplateIds){runner{id,status},errors{message,path}}}`,
+		`{"subscribedTemplateIds": null}`,
 		`{"data": {"runnerRegister": { "runner": { "id": "1234", "status": "registered" }, "errors": [] }}}`,
 	)
 
 	client := BestTestClient(t, "job/register", testRequest)
 	// Act
 	result, err := client.RunnerRegister()
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, ol.ID("1234"), result.Id)
+}
+
+func TestRunnerRegisterWithTemplateIds(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerRegister($subscribedTemplateIds:[Int!]){runnerRegister(subscribedTemplateIds: $subscribedTemplateIds){runner{id,status},errors{message,path}}}`,
+		`{"subscribedTemplateIds": [1, 2, 3]}`,
+		`{"data": {"runnerRegister": { "runner": { "id": "1234", "status": "registered" }, "errors": [] }}}`,
+	)
+
+	client := BestTestClient(t, "job/register_with_templates", testRequest)
+	// Act
+	result, err := client.RunnerRegister(1, 2, 3)
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, ol.ID("1234"), result.Id)

@@ -124,14 +124,21 @@ type RunnerScale struct {
 	RecommendedReplicaCount int `json:"recommendedReplicaCount"`
 }
 
-func (client *Client) RunnerRegister() (*Runner, error) {
+func (client *Client) RunnerRegister(subscribedTemplateIds ...int) (*Runner, error) {
 	var m struct {
 		Payload struct {
 			Runner Runner
 			Errors []Error
-		} `graphql:"runnerRegister"`
+		} `graphql:"runnerRegister(subscribedTemplateIds: $subscribedTemplateIds)"`
 	}
 	v := PayloadVariables{}
+	if len(subscribedTemplateIds) > 0 {
+		ids := make([]int, len(subscribedTemplateIds))
+		copy(ids, subscribedTemplateIds)
+		v["subscribedTemplateIds"] = &ids
+	} else {
+		v["subscribedTemplateIds"] = (*[]int)(nil)
+	}
 	err := client.Mutate(&m, v, WithName("RunnerRegister"))
 	return &m.Payload.Runner, HandleErrors(err, m.Payload.Errors)
 }
