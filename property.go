@@ -25,12 +25,12 @@ type PropertyDefinitionId struct {
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
 	Locked           bool                 `graphql:"locked"`
-	Owner            EntityOwnerService   `graphql:"owner"`
+	Owner            PropertyOwner        `graphql:"owner"`
 	ValidationErrors []Error              `graphql:"validationErrors"`
 	Value            *JsonString          `graphql:"value"`
 }
 
-type ServicePropertiesConnection struct {
+type PropertiesConnection struct {
 	Nodes      []Property
 	PageInfo   PageInfo
 	TotalCount int `graphql:"-"`
@@ -148,11 +148,11 @@ func (client *Client) PropertyUnassign(owner string, definition string) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (service *Service) GetProperties(client *Client, variables *PayloadVariables) (*ServicePropertiesConnection, error) {
+func (service *Service) GetProperties(client *Client, variables *PayloadVariables) (*PropertiesConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
-				Properties ServicePropertiesConnection `graphql:"properties(after: $after, first: $first)"`
+				Properties PropertiesConnection `graphql:"properties(after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}
@@ -168,7 +168,7 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 		return nil, err
 	}
 	if service.Properties == nil {
-		service.Properties = &ServicePropertiesConnection{}
+		service.Properties = &PropertiesConnection{}
 	}
 	service.Properties.Nodes = append(service.Properties.Nodes, q.Account.Service.Properties.Nodes...)
 	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo

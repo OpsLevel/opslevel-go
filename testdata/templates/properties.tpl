@@ -7,7 +7,9 @@
     },
     "locked": true,
     "owner": {
-        "id": "{{ template "id1_string" }}"
+        "__typename": "Service",
+        "id": "{{ template "id1_string" }}",
+        "aliases": []
     },
     "validationErrors": [],
     "value": "true"
@@ -18,7 +20,9 @@
     },
     "locked": false,
     "owner": {
-        "id": "{{ template "id1_string" }}"
+        "__typename": "Service",
+        "id": "{{ template "id1_string" }}",
+        "aliases": []
     },
     "validationErrors": [],
     "value": "false"
@@ -32,7 +36,9 @@
     },
     "locked": true,
     "owner": {
-        "id": "{{ template "id1_string" }}"
+        "__typename": "Service",
+        "id": "{{ template "id1_string" }}",
+        "aliases": []
     },
     "validationErrors": [],
     "value": "\"Hello World!\""
