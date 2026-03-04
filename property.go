@@ -21,13 +21,13 @@ type PropertyDefinitionId struct {
 	Aliases []string `json:"aliases,omitempty"`
 }
 
-// Property represents a custom property value assigned to an entity.
+// Property represents a custom property value assigned to an entity (Service or Team).
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
 	Locked           bool                 `graphql:"locked"`
-	Owner            EntityOwnerService   `graphql:"owner"`
+	Owner            HasPropertiesOwner   `graphql:"owner"`
 	ValidationErrors []Error              `graphql:"validationErrors"`
-	Value            *JsonString          `graphql:"value"`
+	Value            *JsonString         `graphql:"value"`
 }
 
 type ServicePropertiesConnection struct {
@@ -136,13 +136,16 @@ func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
 	return &m.Payload.Property, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) PropertyUnassign(owner string, definition string) error {
+func (client *Client) PropertyUnassign(owner string, definition string, ownerType *PropertyOwnerTypeEnum) error {
 	var m struct {
-		Payload BasePayload `graphql:"propertyUnassign(owner: $owner, definition: $definition)"`
+		Payload BasePayload `graphql:"propertyUnassign(owner: $owner, definition: $definition, ownerType: $ownerType)"`
 	}
 	v := PayloadVariables{
 		"owner":      *NewIdentifier(owner),
 		"definition": *NewIdentifier(definition),
+	}
+	if ownerType != nil {
+		v["ownerType"] = *ownerType
 	}
 	err := client.Mutate(&m, v, WithName("PropertyUnassign"))
 	return HandleErrors(err, m.Payload.Errors)

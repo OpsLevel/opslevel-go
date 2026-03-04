@@ -196,8 +196,8 @@ type PropertyPayload struct {
 
 // PropertyUnassignPayload The payload for unassigning a property
 type PropertyUnassignPayload struct {
-	Definition PropertyDefinition // The definition of the property that was unassigned (Optional)
-	Owner      EntityOwnerService // The entity that the property was unassigned from (Optional)
+	Definition PropertyDefinition  // The definition of the property that was unassigned (Optional)
+	Owner      HasPropertiesOwner  // The entity that the property was unassigned from (Optional)
 	BasePayload
 }
 
