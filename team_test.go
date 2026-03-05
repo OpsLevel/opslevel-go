@@ -7,6 +7,39 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+func TestGetTeamProperty(t *testing.T) {
+	// Arrange
+	teamId := ol.TeamId{
+		Alias: "example",
+		Id:    id1,
+	}
+	team := ol.Team{
+		TeamId: teamId,
+	}
+	value := ol.JsonString("true")
+	expectedProperty := ol.Property{
+		Definition: ol.PropertyDefinitionId{Id: id2},
+		Locked:     false,
+		Owner:      ol.PropertyOwner{Typename: "Team", TeamId: &teamId},
+		Value:      &value,
+	}
+	testRequest := autopilot.NewTestRequest(
+		`query TeamPropertyGet($definition:IdentifierInput!$team:ID!){account{team(id: $team){property(definition: $definition){definition{id,aliases},locked,owner{__typename,... on Team{alias,id},... on Service{id,aliases}},validationErrors{message,path},value}}}}`,
+		`{"definition":{"alias":"my-prop-alias"},"team":"{{ template "id1_string" }}"}`,
+		`{"data":{"account":{"team":{"property":{"definition":{"id":"{{ template "id2_string" }}","aliases":[]},"locked":false,"owner":{"__typename":"Team","alias":"{{ template "alias1" }}","id":"{{ template "id1_string" }}"},"validationErrors":[],"value":"true"}}}}}`,
+	)
+	client := BestTestClient(t, "teams/team_property_get", testRequest)
+
+	// Act
+	result, err := team.GetProperty(client, "my-prop-alias")
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, expectedProperty.Definition.Id, result.Definition.Id)
+	autopilot.Equals(t, string(*expectedProperty.Value), string(*result.Value))
+	autopilot.Equals(t, expectedProperty.Owner.Id(), result.Owner.Id())
+}
+
 func TestGetTeamProperties(t *testing.T) {
 	// Arrange
 	teamId := ol.TeamId{

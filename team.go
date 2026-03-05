@@ -172,6 +172,25 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	return &q.Account.Team.Tags, nil
 }
 
+func (team *Team) GetProperty(client *Client, definition string) (*Property, error) {
+	var q struct {
+		Account struct {
+			Team struct {
+				Property Property `graphql:"property(definition: $definition)"`
+			} `graphql:"team(id: $team)"`
+		}
+	}
+	if team.Id == "" {
+		return nil, fmt.Errorf("unable to get property, invalid Team id: '%s'", team.Id)
+	}
+	v := PayloadVariables{
+		"team":       team.Id,
+		"definition": *NewIdentifier(definition),
+	}
+	err := client.Query(&q, v, WithName("TeamPropertyGet"))
+	return &q.Account.Team.Property, HandleErrors(err, nil)
+}
+
 func (team *Team) GetProperties(client *Client, variables *PayloadVariables) (*PropertiesConnection, error) {
 	var q struct {
 		Account struct {
