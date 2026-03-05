@@ -507,3 +507,35 @@ func TestGetServiceProperties(t *testing.T) {
 	autopilot.Equals(t, expectedPropsPageOne[1].Value, result[1].Value)
 	autopilot.Equals(t, expectedPropsPageTwo[0].Value, result[2].Value)
 }
+
+func TestAssignTeamPropertyDefinitions(t *testing.T) {
+	// Arrange
+	schema, schemaErr := ol.NewJSONSchema(schemaString2)
+	autopilot.Ok(t, schemaErr)
+	input := autopilot.Register("team_property_definitions_assign_input", ol.TeamPropertyDefinitionsAssignInput{
+		Properties: []ol.TeamPropertyDefinitionInput{
+			{Alias: "prop_a", Name: "prop-a", Schema: *schema},
+			{Alias: "prop_b", Name: "prop-b", Schema: *schema},
+		},
+	})
+	expectedDefinitions := autopilot.Register("team_property_definitions_assigned", []ol.TeamPropertyDefinition{
+		{Alias: "prop_a", Id: id1, Name: "prop-a", Schema: *schema},
+		{Alias: "prop_b", Id: id2, Name: "prop-b", Schema: *schema},
+	})
+	testRequest := autopilot.NewTestRequest(
+		`mutation TeamPropertyDefinitionsAssign($input:TeamPropertyDefinitionsAssignInput!){teamPropertyDefinitionsAssign(input: $input){properties{nodes{alias,description,displaySubtype,displayType,id,lockedStatus,name,schema},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}},errors{message,path}}}`,
+		`{"input": {{ template "team_property_definitions_assign_input" }} }`,
+		fmt.Sprintf(`{"data":{"teamPropertyDefinitionsAssign":{"properties":{"nodes":[{"alias":"prop_a","id":"%s","name":"prop-a","schema":%s},{"alias":"prop_b","id":"%s","name":"prop-b","schema":%s}],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":"MQ","endCursor":"NA"}},"errors":[]}}}`, id1, schemaString2, id2, schemaString2),
+	)
+	client := BestTestClient(t, "properties/team_definitions_assign", testRequest)
+
+	// Act
+	result, err := client.AssignTeamPropertyDefinitions(input)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(result.Nodes))
+	autopilot.Equals(t, expectedDefinitions[0], result.Nodes[0])
+	autopilot.Equals(t, expectedDefinitions[1], result.Nodes[1])
+	autopilot.Equals(t, 2, result.TotalCount)
+}

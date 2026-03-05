@@ -176,6 +176,18 @@ func (client *Client) ListTeamPropertyDefinitions(variables *PayloadVariables) (
 	return &q.Account.Definitions, nil
 }
 
+func (client *Client) AssignTeamPropertyDefinitions(input TeamPropertyDefinitionsAssignInput) (*TeamPropertyDefinitionConnection, error) {
+	var m struct {
+		Payload TeamPropertyDefinitionsAssignPayload `graphql:"teamPropertyDefinitionsAssign(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("TeamPropertyDefinitionsAssign"))
+	m.Payload.Properties.TotalCount = len(m.Payload.Properties.Nodes)
+	return &m.Payload.Properties, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {
