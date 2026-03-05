@@ -111,6 +111,17 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) CreateTeamPropertyDefinition(input TeamPropertyDefinitionInput) (*TeamPropertyDefinition, error) {
+	var m struct {
+		Payload TeamPropertyDefinitionPayload `graphql:"teamPropertyDefinitionCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("TeamPropertyDefinitionCreate"))
+	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {

@@ -306,6 +306,37 @@ func TestUnassignProperty(t *testing.T) {
 	autopilot.Ok(t, err)
 }
 
+func TestCreateTeamPropertyDefinition(t *testing.T) {
+	// Arrange
+	schema, schemaErr := ol.NewJSONSchema(schemaString2)
+	autopilot.Ok(t, schemaErr)
+	expectedDefinition := autopilot.Register("expected_team_property_definition", ol.TeamPropertyDefinition{
+		Alias:  "my_team_prop",
+		Id:     id1,
+		Name:   "my-team-prop",
+		Schema: *schema,
+	})
+	input := autopilot.Register("team_property_definition_input", ol.TeamPropertyDefinitionInput{
+		Alias:  "my_team_prop",
+		Name:   "my-team-prop",
+		Schema: *schema,
+	})
+	testRequest := autopilot.NewTestRequest(
+		`mutation TeamPropertyDefinitionCreate($input:TeamPropertyDefinitionInput!){teamPropertyDefinitionCreate(input: $input){definition{alias,description,displaySubtype,displayType,id,lockedStatus,name,schema},errors{message,path}}}`,
+		`{"input": {{ template "team_property_definition_input" }} }`,
+		fmt.Sprintf(`{"data":{"teamPropertyDefinitionCreate":{"definition":{"alias":"my_team_prop","id":"%s","name":"my-team-prop","schema":%s},"errors":[]}}}`, id1, schemaString2),
+	)
+	client := BestTestClient(t, "properties/team_definition_create", testRequest)
+
+	// Act
+	result, err := client.CreateTeamPropertyDefinition(input)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, expectedDefinition, *result)
+	autopilot.Equals(t, expectedDefinition.Schema, result.Schema)
+}
+
 func TestGetServiceProperties(t *testing.T) {
 	// Arrange
 	serviceId := ol.ServiceId{
