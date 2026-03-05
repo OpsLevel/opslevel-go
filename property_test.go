@@ -433,6 +433,44 @@ func TestListTeamPropertyDefinitions(t *testing.T) {
 	autopilot.Equals(t, 3, result.TotalCount)
 }
 
+func TestGetServiceProperty(t *testing.T) {
+	// Arrange
+	serviceId := ol.ServiceId{
+		Id:      id1,
+		Aliases: []string{},
+	}
+	service := ol.Service{
+		ServiceId: serviceId,
+	}
+	owner := ol.PropertyOwner{
+		Typename:  "Service",
+		ServiceId: &serviceId,
+	}
+	value := ol.JsonString("true")
+	expectedProperty := ol.Property{
+		Definition: ol.PropertyDefinitionId{Id: id2},
+		Locked:     true,
+		Owner:      owner,
+		Value:      &value,
+	}
+	testRequest := autopilot.NewTestRequest(
+		`query ServicePropertyGet($definition:IdentifierInput!$service:ID!){account{service(id: $service){property(definition: $definition){definition{id,aliases},locked,owner{__typename,... on Team{alias,id},... on Service{id,aliases}},validationErrors{message,path},value}}}}`,
+		`{"definition":{"alias":"is_beta_feature"},"service":"{{ template "id1_string" }}"}`,
+		`{"data":{"account":{"service":{"property":{"definition":{"id":"{{ template "id2_string" }}","aliases":[]},"locked":true,"owner":{"__typename":"Service","id":"{{ template "id1_string" }}","aliases":[]},"validationErrors":[],"value":"true"}}}}}`,
+	)
+	client := BestTestClient(t, "properties/service_property_get", testRequest)
+
+	// Act
+	result, err := service.GetProperty(client, "is_beta_feature")
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, expectedProperty.Definition.Id, result.Definition.Id)
+	autopilot.Equals(t, expectedProperty.Locked, result.Locked)
+	autopilot.Equals(t, string(*expectedProperty.Value), string(*result.Value))
+	autopilot.Equals(t, expectedProperty.Owner.Id(), result.Owner.Id())
+}
+
 func TestGetServiceProperties(t *testing.T) {
 	// Arrange
 	serviceId := ol.ServiceId{

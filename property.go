@@ -188,6 +188,9 @@ func (client *Client) AssignTeamPropertyDefinitions(input TeamPropertyDefinition
 	return &m.Payload.Properties, HandleErrors(err, m.Payload.Errors)
 }
 
+// Deprecated: Use [Service.GetProperty] or [Team.GetProperty] instead.
+// This method only resolves service owners. Passing a team identifier will
+// return an error from the API.
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {
@@ -200,6 +203,25 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 	}
 	err := client.Query(&q, v, WithName("PropertyGet"))
 	return &q.Account.Property, HandleErrors(err, nil)
+}
+
+func (service *Service) GetProperty(client *Client, definition string) (*Property, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Property Property `graphql:"property(definition: $definition)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get property, invalid Service id: '%s'", service.Id)
+	}
+	v := PayloadVariables{
+		"service":    service.Id,
+		"definition": *NewIdentifier(definition),
+	}
+	err := client.Query(&q, v, WithName("ServicePropertyGet"))
+	return &q.Account.Service.Property, HandleErrors(err, nil)
 }
 
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
