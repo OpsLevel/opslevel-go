@@ -397,6 +397,42 @@ func TestGetTeamPropertyDefinition(t *testing.T) {
 	autopilot.Equals(t, string(id1), string(result.Id))
 }
 
+func TestListTeamPropertyDefinitions(t *testing.T) {
+	// Arrange
+	schema, schemaErr := ol.NewJSONSchema(schemaString2)
+	autopilot.Ok(t, schemaErr)
+	expectedPage1 := autopilot.Register("team_property_definitions_page1", []ol.TeamPropertyDefinition{
+		{Alias: "prop_a", Id: id1, Name: "prop-a", Schema: *schema},
+		{Alias: "prop_b", Id: id2, Name: "prop-b", Schema: *schema},
+	})
+	expectedPage2 := autopilot.Register("team_property_definition_page2", ol.TeamPropertyDefinition{
+		Alias: "prop_c", Id: id3, Name: "prop-c", Schema: *schema,
+	})
+	testRequestOne := autopilot.NewTestRequest(
+		`query TeamPropertyDefinitionList($after:String!$first:Int!){account{teamPropertyDefinitions(after: $after, first: $first){nodes{alias,description,displaySubtype,displayType,id,lockedStatus,name,schema},{{ template "pagination_request" }}}}}`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		fmt.Sprintf(`{"data":{"account":{"teamPropertyDefinitions":{"nodes":[{"alias":"prop_a","id":"%s","name":"prop-a","schema":%s},{"alias":"prop_b","id":"%s","name":"prop-b","schema":%s}],{{ template "pagination_initial_pageInfo_response" }}}}}}`, id1, schemaString2, id2, schemaString2),
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query TeamPropertyDefinitionList($after:String!$first:Int!){account{teamPropertyDefinitions(after: $after, first: $first){nodes{alias,description,displaySubtype,displayType,id,lockedStatus,name,schema},{{ template "pagination_request" }}}}}`,
+		`{{ template "pagination_second_query_variables" }}`,
+		fmt.Sprintf(`{"data":{"account":{"teamPropertyDefinitions":{"nodes":[{"alias":"prop_c","id":"%s","name":"prop-c","schema":%s}],{{ template "pagination_second_pageInfo_response" }}}}}}`, id3, schemaString2),
+	)
+	client := BestTestClient(t, "properties/team_definition_list", testRequestOne, testRequestTwo)
+
+	// Act
+	result, err := client.ListTeamPropertyDefinitions(nil)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 3, len(result.Nodes))
+	autopilot.Equals(t, expectedPage1[0], result.Nodes[0])
+	autopilot.Equals(t, expectedPage1[1], result.Nodes[1])
+	autopilot.Equals(t, expectedPage2, result.Nodes[2])
+	autopilot.Equals(t, expectedPage1[0].Schema, result.Nodes[0].Schema)
+	autopilot.Equals(t, 3, result.TotalCount)
+}
+
 func TestGetServiceProperties(t *testing.T) {
 	// Arrange
 	serviceId := ol.ServiceId{

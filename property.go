@@ -150,6 +150,32 @@ func (client *Client) GetTeamPropertyDefinition(identifier string) (*TeamPropert
 	return &q.Account.Definition, HandleErrors(err, nil)
 }
 
+func (client *Client) ListTeamPropertyDefinitions(variables *PayloadVariables) (*TeamPropertyDefinitionConnection, error) {
+	var q struct {
+		Account struct {
+			Definitions TeamPropertyDefinitionConnection `graphql:"teamPropertyDefinitions(after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	if err := client.Query(&q, *variables, WithName("TeamPropertyDefinitionList")); err != nil {
+		return nil, err
+	}
+	q.Account.Definitions.TotalCount = len(q.Account.Definitions.Nodes)
+	if q.Account.Definitions.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Definitions.PageInfo.End
+		resp, err := client.ListTeamPropertyDefinitions(variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
+		q.Account.Definitions.PageInfo = resp.PageInfo
+		q.Account.Definitions.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Definitions, nil
+}
+
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {
