@@ -26,6 +26,7 @@ type Team struct {
 	ParentTeam       TeamId
 	Responsibilities string
 	Tags             *TagConnection
+	Properties       *PropertiesConnection `graphql:"-" json:"-"`
 }
 
 // TeamIdConnection exists to prevent circular references on User because Team has a UserConnection
@@ -169,6 +170,41 @@ func (team *Team) GetTags(client *Client, variables *PayloadVariables) (*TagConn
 	}
 	q.Account.Team.Tags.TotalCount = len(q.Account.Team.Tags.Nodes)
 	return &q.Account.Team.Tags, nil
+}
+
+func (team *Team) GetProperties(client *Client, variables *PayloadVariables) (*PropertiesConnection, error) {
+	var q struct {
+		Account struct {
+			Team struct {
+				Properties PropertiesConnection `graphql:"properties(after: $after, first: $first)"`
+			} `graphql:"team(id: $team)"`
+		}
+	}
+
+	if team.Id == "" {
+		return nil, fmt.Errorf("unable to get properties, invalid Team id: '%s'", team.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["team"] = team.Id
+	if err := client.Query(&q, *variables, WithName("TeamPropertiesList")); err != nil {
+		return nil, err
+	}
+	if team.Properties == nil {
+		team.Properties = &PropertiesConnection{}
+	}
+	team.Properties.Nodes = append(team.Properties.Nodes, q.Account.Team.Properties.Nodes...)
+	team.Properties.PageInfo = q.Account.Team.Properties.PageInfo
+	if team.Properties.PageInfo.HasNextPage {
+		(*variables)["after"] = team.Properties.PageInfo.End
+		resp, err := team.GetProperties(client, variables)
+		if err != nil {
+			return nil, err
+		}
+		team.Properties.TotalCount += resp.TotalCount
+	}
+	return team.Properties, nil
 }
 
 func (team *Team) GetAliases() []string {

@@ -7,6 +7,46 @@ import (
 	"github.com/rocktavious/autopilot/v2023"
 )
 
+func TestGetTeamProperties(t *testing.T) {
+	// Arrange
+	teamId := ol.TeamId{
+		Alias: "example",
+		Id:    id1,
+	}
+	team := ol.Team{
+		TeamId: teamId,
+	}
+	owner := ol.PropertyOwner{
+		Typename: "Team",
+		TeamId:   &teamId,
+	}
+	value1 := ol.JsonString("true")
+	expectedProperties := autopilot.Register("team_properties", []ol.Property{
+		{
+			Definition: ol.PropertyDefinitionId{Id: id2},
+			Locked:     false,
+			Owner:      owner,
+			Value:      &value1,
+		},
+	})
+	testRequest := autopilot.NewTestRequest(
+		`query TeamPropertiesList($after:String!$first:Int!$team:ID!){account{team(id: $team){properties(after: $after, first: $first){nodes{definition{id,aliases},locked,owner{__typename,... on Team{alias,id},... on Service{id,aliases}},validationErrors{message,path},value},{{ template "pagination_request" }}}}}}`,
+		`{ {{ template "first_page_variables" }}, "team": "{{ template "id1_string" }}" }`,
+		`{"data":{"account":{"team":{"properties":{"nodes":[{{ template "team_properties_page_1" }}],{{ template "no_pagination_response" }}}}}}}`,
+	)
+	client := BestTestClient(t, "teams/team_properties", testRequest)
+
+	// Act
+	result, err := team.GetProperties(client, nil)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, len(result.Nodes))
+	autopilot.Equals(t, expectedProperties[0].Definition.Id, result.Nodes[0].Definition.Id)
+	autopilot.Equals(t, expectedProperties[0].Owner.Id(), result.Nodes[0].Owner.Id())
+	autopilot.Equals(t, string(*expectedProperties[0].Value), string(*result.Nodes[0].Value))
+}
+
 // Probably should be a feature of autopilot
 func getTestRequestWithAlias() autopilot.TestRequest {
 	return autopilot.NewTestRequest(
