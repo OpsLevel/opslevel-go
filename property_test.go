@@ -370,6 +370,33 @@ func TestUpdateTeamPropertyDefinition(t *testing.T) {
 	autopilot.Equals(t, expectedDefinition.Schema, result.Schema)
 }
 
+func TestGetTeamPropertyDefinition(t *testing.T) {
+	// Arrange
+	schema, schemaErr := ol.NewJSONSchema(schemaString2)
+	autopilot.Ok(t, schemaErr)
+	expectedDefinition := autopilot.Register("expected_team_property_definition", ol.TeamPropertyDefinition{
+		Alias:  "my_team_prop",
+		Id:     id1,
+		Name:   "my-team-prop",
+		Schema: *schema,
+	})
+	testRequest := autopilot.NewTestRequest(
+		`query TeamPropertyDefinitionGet($input:IdentifierInput!){account{teamPropertyDefinition(input: $input){alias,description,displaySubtype,displayType,id,lockedStatus,name,schema}}}`,
+		`{"input":{"alias":"my_team_prop"}}`,
+		fmt.Sprintf(`{"data":{"account":{"teamPropertyDefinition":{"alias":"my_team_prop","id":"%s","name":"my-team-prop","schema":%s}}}}`, id1, schemaString2),
+	)
+	client := BestTestClient(t, "properties/team_definition_get", testRequest)
+
+	// Act
+	result, err := client.GetTeamPropertyDefinition("my_team_prop")
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, expectedDefinition, *result)
+	autopilot.Equals(t, expectedDefinition.Schema, result.Schema)
+	autopilot.Equals(t, string(id1), string(result.Id))
+}
+
 func TestGetServiceProperties(t *testing.T) {
 	// Arrange
 	serviceId := ol.ServiceId{

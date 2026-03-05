@@ -134,6 +134,22 @@ func (client *Client) UpdateTeamPropertyDefinition(identifier string, input Team
 	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) GetTeamPropertyDefinition(identifier string) (*TeamPropertyDefinition, error) {
+	var q struct {
+		Account struct {
+			Definition TeamPropertyDefinition `graphql:"teamPropertyDefinition(input: $input)"`
+		}
+	}
+	v := PayloadVariables{
+		"input": *NewIdentifier(identifier),
+	}
+	err := client.Query(&q, v, WithName("TeamPropertyDefinitionGet"))
+	if q.Account.Definition.Id == "" {
+		err = fmt.Errorf("TeamPropertyDefinition with ID or Alias matching '%s' not found", identifier)
+	}
+	return &q.Account.Definition, HandleErrors(err, nil)
+}
+
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {
