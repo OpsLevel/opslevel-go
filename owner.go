@@ -28,3 +28,19 @@ func (entityOwnerService *EntityOwnerService) Aliases() []string {
 func (entityOwnerService *EntityOwnerService) Id() ID {
 	return entityOwnerService.OnService.Id
 }
+
+type PropertyOwner struct {
+	Typename   string `graphql:"__typename"`
+	*TeamId    `graphql:"... on Team"`
+	*ServiceId `graphql:"... on Service"`
+}
+
+func (o PropertyOwner) Id() ID {
+	if o.ServiceId != nil {
+		return o.ServiceId.Id
+	}
+	if o.TeamId != nil {
+		return o.TeamId.Id
+	}
+	return ""
+}

@@ -25,12 +25,12 @@ type PropertyDefinitionId struct {
 type Property struct {
 	Definition       PropertyDefinitionId `graphql:"definition"`
 	Locked           bool                 `graphql:"locked"`
-	Owner            EntityOwnerService   `graphql:"owner"`
+	Owner            PropertyOwner        `graphql:"owner"`
 	ValidationErrors []Error              `graphql:"validationErrors"`
 	Value            *JsonString          `graphql:"value"`
 }
 
-type ServicePropertiesConnection struct {
+type PropertiesConnection struct {
 	Nodes      []Property
 	PageInfo   PageInfo
 	TotalCount int `graphql:"-"`
@@ -111,6 +111,86 @@ func (client *Client) DeletePropertyDefinition(input string) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) CreateTeamPropertyDefinition(input TeamPropertyDefinitionInput) (*TeamPropertyDefinition, error) {
+	var m struct {
+		Payload TeamPropertyDefinitionPayload `graphql:"teamPropertyDefinitionCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("TeamPropertyDefinitionCreate"))
+	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateTeamPropertyDefinition(identifier string, input TeamPropertyDefinitionInput) (*TeamPropertyDefinition, error) {
+	var m struct {
+		Payload TeamPropertyDefinitionPayload `graphql:"teamPropertyDefinitionUpdate(propertyDefinition: $propertyDefinition, input: $input)"`
+	}
+	v := PayloadVariables{
+		"propertyDefinition": *NewIdentifier(identifier),
+		"input":              input,
+	}
+	err := client.Mutate(&m, v, WithName("TeamPropertyDefinitionUpdate"))
+	return &m.Payload.Definition, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) GetTeamPropertyDefinition(identifier string) (*TeamPropertyDefinition, error) {
+	var q struct {
+		Account struct {
+			Definition TeamPropertyDefinition `graphql:"teamPropertyDefinition(input: $input)"`
+		}
+	}
+	v := PayloadVariables{
+		"input": *NewIdentifier(identifier),
+	}
+	err := client.Query(&q, v, WithName("TeamPropertyDefinitionGet"))
+	if q.Account.Definition.Id == "" {
+		err = fmt.Errorf("TeamPropertyDefinition with ID or Alias matching '%s' not found", identifier)
+	}
+	return &q.Account.Definition, HandleErrors(err, nil)
+}
+
+func (client *Client) ListTeamPropertyDefinitions(variables *PayloadVariables) (*TeamPropertyDefinitionConnection, error) {
+	var q struct {
+		Account struct {
+			Definitions TeamPropertyDefinitionConnection `graphql:"teamPropertyDefinitions(after: $after, first: $first)"`
+		}
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	if err := client.Query(&q, *variables, WithName("TeamPropertyDefinitionList")); err != nil {
+		return nil, err
+	}
+	q.Account.Definitions.TotalCount = len(q.Account.Definitions.Nodes)
+	if q.Account.Definitions.PageInfo.HasNextPage {
+		(*variables)["after"] = q.Account.Definitions.PageInfo.End
+		resp, err := client.ListTeamPropertyDefinitions(variables)
+		if err != nil {
+			return nil, err
+		}
+		q.Account.Definitions.Nodes = append(q.Account.Definitions.Nodes, resp.Nodes...)
+		q.Account.Definitions.PageInfo = resp.PageInfo
+		q.Account.Definitions.TotalCount += resp.TotalCount
+	}
+	return &q.Account.Definitions, nil
+}
+
+func (client *Client) AssignTeamPropertyDefinitions(input TeamPropertyDefinitionsAssignInput) (*TeamPropertyDefinitionConnection, error) {
+	var m struct {
+		Payload TeamPropertyDefinitionsAssignPayload `graphql:"teamPropertyDefinitionsAssign(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("TeamPropertyDefinitionsAssign"))
+	m.Payload.Properties.TotalCount = len(m.Payload.Properties.Nodes)
+	return &m.Payload.Properties, HandleErrors(err, m.Payload.Errors)
+}
+
+// Deprecated: Use [Service.GetProperty] or [Team.GetProperty] instead.
+// This method only resolves service owners. Passing a team identifier will
+// return an error from the API.
 func (client *Client) GetProperty(owner string, definition string) (*Property, error) {
 	var q struct {
 		Account struct {
@@ -123,6 +203,25 @@ func (client *Client) GetProperty(owner string, definition string) (*Property, e
 	}
 	err := client.Query(&q, v, WithName("PropertyGet"))
 	return &q.Account.Property, HandleErrors(err, nil)
+}
+
+func (service *Service) GetProperty(client *Client, definition string) (*Property, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				Property Property `graphql:"property(definition: $definition)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get property, invalid Service id: '%s'", service.Id)
+	}
+	v := PayloadVariables{
+		"service":    service.Id,
+		"definition": *NewIdentifier(definition),
+	}
+	err := client.Query(&q, v, WithName("ServicePropertyGet"))
+	return &q.Account.Service.Property, HandleErrors(err, nil)
 }
 
 func (client *Client) PropertyAssign(input PropertyInput) (*Property, error) {
@@ -148,11 +247,11 @@ func (client *Client) PropertyUnassign(owner string, definition string) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (service *Service) GetProperties(client *Client, variables *PayloadVariables) (*ServicePropertiesConnection, error) {
+func (service *Service) GetProperties(client *Client, variables *PayloadVariables) (*PropertiesConnection, error) {
 	var q struct {
 		Account struct {
 			Service struct {
-				Properties ServicePropertiesConnection `graphql:"properties(after: $after, first: $first)"`
+				Properties PropertiesConnection `graphql:"properties(after: $after, first: $first)"`
 			} `graphql:"service(id: $service)"`
 		}
 	}
@@ -168,17 +267,16 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 		return nil, err
 	}
 	if service.Properties == nil {
-		service.Properties = &ServicePropertiesConnection{}
+		service.Properties = &PropertiesConnection{}
 	}
 	service.Properties.Nodes = append(service.Properties.Nodes, q.Account.Service.Properties.Nodes...)
 	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo
 	if service.Properties.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Properties.PageInfo.End
-		resp, err := service.GetProperties(client, variables)
-		if err != nil {
+		if _, err := service.GetProperties(client, variables); err != nil {
 			return nil, err
 		}
-		service.Properties.TotalCount += resp.TotalCount
 	}
+	service.Properties.TotalCount = len(service.Properties.Nodes)
 	return service.Properties, nil
 }

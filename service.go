@@ -43,8 +43,8 @@ type Service struct {
 	Dependencies *ServiceDependenciesConnection `graphql:"-"`
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
 
-	LastDeploy *Deploy                      `graphql:"-"`
-	Properties *ServicePropertiesConnection `graphql:"-"`
+	LastDeploy *Deploy               `graphql:"-"`
+	Properties *PropertiesConnection `graphql:"-"`
 }
 
 // Returns unique identifiers created by OpsLevel, values in Aliases but not ManagedAliases

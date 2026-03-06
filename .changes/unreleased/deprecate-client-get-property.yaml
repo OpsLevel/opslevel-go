@@ -1,0 +1,2 @@
+kind: Deprecated
+body: '`Client.GetProperty` only resolves service owners and will fail for team identifiers. Use `Service.GetProperty` or `Team.GetProperty` instead.'

@@ -1,0 +1,2 @@
+kind: Removed
+body: '[Breaking change] `Property.Owner` type changed from `EntityOwnerService` to `PropertyOwner` to support both service and team owners. Direct field access (e.g. `property.Owner.Aliases`) must be updated to go through the embedded type (e.g. `property.Owner.ServiceId.Aliases`).'

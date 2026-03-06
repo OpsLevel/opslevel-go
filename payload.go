@@ -330,6 +330,12 @@ type TeamPropertyDefinitionPayload struct {
 	BasePayload
 }
 
+// TeamPropertyDefinitionsAssignPayload The return type for the teamPropertyDefinitionsAssign mutation
+type TeamPropertyDefinitionsAssignPayload struct {
+	Properties TeamPropertyDefinitionConnection // The property definitions that were assigned (Optional)
+	BasePayload
+}
+
 // TeamUpdatePayload The return type of a `teamUpdate` mutation
 type TeamUpdatePayload struct {
 	Team Team // A team belongs to your organization. Teams can own multiple services (Optional)
