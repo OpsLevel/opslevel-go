@@ -1,2 +1,0 @@
-kind: Feature
-body: Add CRUD operations for team property definitions (`CreateTeamPropertyDefinition`, `UpdateTeamPropertyDefinition`, `GetTeamPropertyDefinition`, `ListTeamPropertyDefinitions`, `AssignTeamPropertyDefinitions`) and entity-scoped property lookup methods (`Team.GetProperty`, `Service.GetProperty`)
