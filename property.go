@@ -273,11 +273,10 @@ func (service *Service) GetProperties(client *Client, variables *PayloadVariable
 	service.Properties.PageInfo = q.Account.Service.Properties.PageInfo
 	if service.Properties.PageInfo.HasNextPage {
 		(*variables)["after"] = service.Properties.PageInfo.End
-		resp, err := service.GetProperties(client, variables)
-		if err != nil {
+		if _, err := service.GetProperties(client, variables); err != nil {
 			return nil, err
 		}
-		service.Properties.TotalCount += resp.TotalCount
 	}
+	service.Properties.TotalCount = len(service.Properties.Nodes)
 	return service.Properties, nil
 }

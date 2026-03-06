@@ -217,12 +217,11 @@ func (team *Team) GetProperties(client *Client, variables *PayloadVariables) (*P
 	team.Properties.PageInfo = q.Account.Team.Properties.PageInfo
 	if team.Properties.PageInfo.HasNextPage {
 		(*variables)["after"] = team.Properties.PageInfo.End
-		resp, err := team.GetProperties(client, variables)
-		if err != nil {
+		if _, err := team.GetProperties(client, variables); err != nil {
 			return nil, err
 		}
-		team.Properties.TotalCount += resp.TotalCount
 	}
+	team.Properties.TotalCount = len(team.Properties.Nodes)
 	return team.Properties, nil
 }
 
