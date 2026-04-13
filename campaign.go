@@ -1,5 +1,11 @@
 package opslevel
 
+import (
+	"fmt"
+
+	"github.com/hasura/go-graphql-client"
+)
+
 type ListCampaignsVariables struct {
 	After  *string
 	First  *int
@@ -46,6 +52,12 @@ func (client *Client) GetCampaign(id ID) (*Campaign, error) {
 		"id": id,
 	}
 	err := client.Query(&q, v, WithName("CampaignGet"))
+	if q.Account.Campaign.Id == "" {
+		err = graphql.Errors{graphql.Error{
+			Message: fmt.Sprintf("campaign with ID '%s' not found", id),
+			Path:    []any{"account", "campaign"},
+		}}
+	}
 	return &q.Account.Campaign, HandleErrors(err, nil)
 }
 
@@ -105,7 +117,7 @@ type campaignCheckConnection struct {
 	PageInfo PageInfo            `graphql:"pageInfo"`
 }
 
-func (client *Client) ListCampaignChecks(campaignId ID) ([]CampaignCheckNode, error) {
+func (client *Client) ListCampaignChecks(campaignId ID, variables ...*PayloadVariables) ([]CampaignCheckNode, error) {
 	var q struct {
 		Account struct {
 			Campaign struct {
@@ -114,20 +126,26 @@ func (client *Client) ListCampaignChecks(campaignId ID) ([]CampaignCheckNode, er
 		}
 	}
 
-	pages := client.InitialPageVariablesPointer()
-	(*pages)["id"] = campaignId
+	var pages *PayloadVariables
+	if len(variables) > 0 && variables[0] != nil {
+		pages = variables[0]
+	} else {
+		pages = client.InitialPageVariablesPointer()
+		(*pages)["id"] = campaignId
+	}
 
 	if err := client.Query(&q, *pages, WithName("CampaignChecksList")); err != nil {
 		return nil, err
 	}
 
 	allChecks := q.Account.Campaign.Checks.Nodes
-	for q.Account.Campaign.Checks.PageInfo.HasNextPage {
+	if q.Account.Campaign.Checks.PageInfo.HasNextPage {
 		(*pages)["after"] = q.Account.Campaign.Checks.PageInfo.End
-		if err := client.Query(&q, *pages, WithName("CampaignChecksList")); err != nil {
+		resp, err := client.ListCampaignChecks(campaignId, pages)
+		if err != nil {
 			return nil, err
 		}
-		allChecks = append(allChecks, q.Account.Campaign.Checks.Nodes...)
+		allChecks = append(allChecks, resp...)
 	}
 	return allChecks, nil
 }
