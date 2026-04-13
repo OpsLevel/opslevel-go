@@ -163,6 +163,27 @@ func TestCopyChecksToCampaign(t *testing.T) {
 	autopilot.Equals(t, 2, campaign.CheckStats.Total)
 }
 
+func TestListCampaignChecks(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_list_checks_request" }}`,
+		`{{ template "campaign_list_checks_request_vars" }}`,
+		`{{ template "campaign_list_checks_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/list_checks", testRequest)
+
+	// Act
+	checks, err := client.ListCampaignChecks(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(checks))
+	autopilot.Equals(t, id2, checks[0].Id)
+	autopilot.Equals(t, "Secret Rotation", checks[0].Name)
+	autopilot.Equals(t, id3, checks[1].Id)
+	autopilot.Equals(t, "Dependency Scanning", checks[1].Name)
+}
+
 func TestListCampaigns(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(

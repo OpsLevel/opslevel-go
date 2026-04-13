@@ -93,6 +93,45 @@ func (client *Client) UnscheduleCampaign(id ID) (*Campaign, error) {
 	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
 }
 
+// CampaignCheckNode is a lightweight representation of a check belonging to a campaign,
+// used when listing campaign checks without needing the full Check interface fragments.
+type CampaignCheckNode struct {
+	Id   ID     `graphql:"id"`
+	Name string `graphql:"name"`
+}
+
+type campaignCheckConnection struct {
+	Nodes    []CampaignCheckNode `graphql:"nodes"`
+	PageInfo PageInfo            `graphql:"pageInfo"`
+}
+
+func (client *Client) ListCampaignChecks(campaignId ID) ([]CampaignCheckNode, error) {
+	var q struct {
+		Account struct {
+			Campaign struct {
+				Checks campaignCheckConnection `graphql:"checks(first: $first, after: $after)"`
+			} `graphql:"campaign(id: $id)"`
+		}
+	}
+
+	pages := client.InitialPageVariablesPointer()
+	(*pages)["id"] = campaignId
+
+	if err := client.Query(&q, *pages, WithName("CampaignChecksList")); err != nil {
+		return nil, err
+	}
+
+	allChecks := q.Account.Campaign.Checks.Nodes
+	for q.Account.Campaign.Checks.PageInfo.HasNextPage {
+		(*pages)["after"] = q.Account.Campaign.Checks.PageInfo.End
+		if err := client.Query(&q, *pages, WithName("CampaignChecksList")); err != nil {
+			return nil, err
+		}
+		allChecks = append(allChecks, q.Account.Campaign.Checks.Nodes...)
+	}
+	return allChecks, nil
+}
+
 func (client *Client) CopyChecksToCampaign(input ChecksCopyToCampaignInput) (*Campaign, error) {
 	var m struct {
 		Payload ChecksCopyToCampaignPayload `graphql:"checksCopyToCampaign(input: $input)"`
