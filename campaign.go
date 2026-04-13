@@ -71,17 +71,6 @@ func (client *Client) DeleteCampaign(id ID) error {
 	return HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) ScheduleCampaign(input CampaignScheduleUpdateInput) (*Campaign, error) {
-	var m struct {
-		Payload CampaignSchedulePayload `graphql:"campaignSchedule(input: $input)"`
-	}
-	v := PayloadVariables{
-		"input": input,
-	}
-	err := client.Mutate(&m, v, WithName("CampaignSchedule"))
-	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
-}
-
 func (client *Client) UnscheduleCampaign(id ID) (*Campaign, error) {
 	var m struct {
 		Payload CampaignUnschedulePayload `graphql:"campaignUnschedule(input: $input)"`

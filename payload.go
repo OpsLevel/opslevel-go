@@ -42,12 +42,6 @@ type CampaignUpdatePayload struct {
 	BasePayload
 }
 
-// CampaignSchedulePayload The return type of the `campaignSchedule` mutation
-type CampaignSchedulePayload struct {
-	Campaign Campaign // The scheduled campaign (Optional)
-	BasePayload
-}
-
 // CampaignUnschedulePayload The return type of the `campaignUnschedule` mutation
 type CampaignUnschedulePayload struct {
 	Campaign Campaign // The unscheduled campaign (Optional)
