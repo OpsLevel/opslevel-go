@@ -184,6 +184,23 @@ func TestListCampaignChecks(t *testing.T) {
 	autopilot.Equals(t, "Dependency Scanning", checks[1].Name)
 }
 
+func TestListCampaignChecksEmpty(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_list_checks_request" }}`,
+		`{{ template "campaign_list_checks_request_vars" }}`,
+		`{{ template "campaign_list_checks_empty_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/list_checks_empty", testRequest)
+
+	// Act
+	checks, err := client.ListCampaignChecks(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 0, len(checks))
+}
+
 func TestListCampaigns(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(

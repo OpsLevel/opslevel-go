@@ -240,6 +240,10 @@ query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: 
     ],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":null,"endCursor":null}}}}}
 }{{ end }}
 
+{{- define "campaign_list_checks_empty_response" }}{
+    "data":{"account":{"campaign":{"checks":{"nodes":[],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":null,"endCursor":null}}}}}
+}{{ end }}
+
 {{- define "campaign_copy_checks_request" }}
 mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCampaign(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
