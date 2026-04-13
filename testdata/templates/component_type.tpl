@@ -1,5 +1,5 @@
 {{- define "component_type_graphql" }}
-{id,aliases,description,href,icon{color,name},isDefault,name,ownerRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},timestamps{createdAt,updatedAt}}
+{id,aliases,description,href,icon{color,name},isDefault,name,ownerRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},systemRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},timestamps{createdAt,updatedAt}}
 {{end}}
 {{- define "component_type_1_response" }}
 {
@@ -24,6 +24,19 @@
           "targetProperty": "name",
           "targetPropertyBuiltin": true,
           "targetType": "team"
+        }
+      ]
+    },
+    "systemRelationship": {
+      "managementRules": [
+        {
+          "operator": "EQUALS",
+          "sourceProperty": "tag_key_eq:system",
+          "sourcePropertyBuiltin": true,
+          "targetCategory": null,
+          "targetProperty": "name",
+          "targetPropertyBuiltin": true,
+          "targetType": "system"
         }
       ]
     }
