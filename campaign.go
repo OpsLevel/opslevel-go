@@ -25,6 +25,76 @@ func (v *ListCampaignsVariables) AsPayloadVariables() *PayloadVariables {
 	return &variables
 }
 
+func (client *Client) CreateCampaign(input CampaignCreateInput) (*Campaign, error) {
+	var m struct {
+		Payload CampaignCreatePayload `graphql:"campaignCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("CampaignCreate"))
+	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) GetCampaign(id ID) (*Campaign, error) {
+	var q struct {
+		Account struct {
+			Campaign Campaign `graphql:"campaign(id: $id)"`
+		}
+	}
+	v := PayloadVariables{
+		"id": id,
+	}
+	err := client.Query(&q, v, WithName("CampaignGet"))
+	return &q.Account.Campaign, HandleErrors(err, nil)
+}
+
+func (client *Client) UpdateCampaign(input CampaignUpdateInput) (*Campaign, error) {
+	var m struct {
+		Payload CampaignUpdatePayload `graphql:"campaignUpdate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("CampaignUpdate"))
+	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) DeleteCampaign(id ID) error {
+	var m struct {
+		Payload CampaignDeletePayload `graphql:"campaignDelete(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": CampaignDeleteInput{Id: id},
+	}
+	err := client.Mutate(&m, v, WithName("CampaignDelete"))
+	return HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) ScheduleCampaign(input CampaignScheduleUpdateInput) (*Campaign, error) {
+	var m struct {
+		Payload CampaignSchedulePayload `graphql:"campaignSchedule(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("CampaignSchedule"))
+	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UnscheduleCampaign(id ID) (*Campaign, error) {
+	var m struct {
+		Payload CampaignUnschedulePayload `graphql:"campaignUnschedule(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": struct {
+			Id ID `json:"id"`
+		}{Id: id},
+	}
+	err := client.Mutate(&m, v, WithName("CampaignUnschedule"))
+	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) ListCampaigns(campaignVariables *ListCampaignsVariables) (*CampaignConnection, error) {
 	if campaignVariables == nil {
 		campaignVariables = &ListCampaignsVariables{}

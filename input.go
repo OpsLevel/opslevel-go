@@ -93,6 +93,35 @@ type CategoryUpdateInput struct {
 	Name        *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The display name of the category (Optional)
 }
 
+// CampaignCreateInput Specifies the input fields used to create a campaign
+type CampaignCreateInput struct {
+	Name         string           `json:"name" yaml:"name" example:"example_value"`                                                    // The name of the campaign (Required)
+	OwnerId      ID               `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                           // The id of the team that owns the campaign (Required)
+	FilterId     *Nullable[ID]    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The id of the filter applied to the campaign (Optional)
+	ProjectBrief *string          `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`                 // The project brief of the campaign in Markdown (Optional)
+}
+
+// CampaignDeleteInput Specifies the input fields used to delete a campaign
+type CampaignDeleteInput struct {
+	Id ID `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the campaign to be deleted (Required)
+}
+
+// CampaignScheduleUpdateInput Specifies the input fields used to schedule a campaign
+type CampaignScheduleUpdateInput struct {
+	Id         ID           `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                    // The id of the campaign to be scheduled (Required)
+	StartDate  iso8601.Time `json:"startDate" yaml:"startDate" example:"2025-01-01T00:00:00Z"`                  // The start date of the campaign (Required)
+	TargetDate iso8601.Time `json:"targetDate" yaml:"targetDate" example:"2025-06-01T00:00:00Z"`                // The target end date of the campaign (Required)
+}
+
+// CampaignUpdateInput Specifies the input fields used to update a campaign
+type CampaignUpdateInput struct {
+	Id           ID               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                      // The id of the campaign to be updated (Required)
+	Name         *string          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                  // The name of the campaign (Optional)
+	OwnerId      *Nullable[ID]    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`         // The id of the team that owns the campaign (Optional)
+	FilterId     *Nullable[ID]    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the filter applied to the campaign (Optional)
+	ProjectBrief *string          `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`                  // The project brief of the campaign in Markdown (Optional)
+}
+
 // CheckAlertSourceUsageCreateInput Specifies the input fields used to create an alert source usage check
 type CheckAlertSourceUsageCreateInput struct {
 	AlertSourceNamePredicate *PredicateInput         `json:"alertSourceNamePredicate,omitempty" yaml:"alertSourceNamePredicate,omitempty"`           // The condition that the alert source name should satisfy to be evaluated (Optional)
