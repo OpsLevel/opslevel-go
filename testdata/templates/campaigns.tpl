@@ -164,7 +164,7 @@ mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $inpu
 }{{ end }}
 
 {{- define "campaign_delete_request" }}
-mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){deletedCampaignId,errors{message,path}}}
+mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){deletedId,errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_delete_request_vars" }}
@@ -172,7 +172,7 @@ mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){delet
 {{ end }}
 
 {{- define "campaign_delete_response" }}{
-    "data":{"campaignDelete":{"deletedCampaignId":"{{ template "id1_string" }}","errors":[]}}
+    "data":{"campaignDelete":{"deletedId":"{{ template "id1_string" }}","errors":[]}}
 }{{ end }}
 
 {{- define "campaign_schedule_request" }}

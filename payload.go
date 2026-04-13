@@ -50,7 +50,7 @@ type CampaignUnschedulePayload struct {
 
 // CampaignDeletePayload The return type of the `campaignDelete` mutation
 type CampaignDeletePayload struct {
-	Id ID `graphql:"deletedCampaignId"` // The id of the deleted campaign
+	Id ID `graphql:"deletedId"` // The id of the deleted campaign
 	BasePayload
 }
 
