@@ -60,6 +60,12 @@ type CheckCopyPayload struct {
 	BasePayload
 }
 
+// ChecksCopyToCampaignPayload Return type for the `checksCopyToCampaign` mutation
+type ChecksCopyToCampaignPayload struct {
+	Campaign Campaign // The campaign that checks were copied to (Optional)
+	BasePayload
+}
+
 // CheckResponsePayload The return type of a `checkCreate` mutation and `checkUpdate` mutation
 type CheckResponsePayload struct {
 	Check Check // The newly created check (Optional)

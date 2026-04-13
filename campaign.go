@@ -93,6 +93,17 @@ func (client *Client) UnscheduleCampaign(id ID) (*Campaign, error) {
 	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
 }
 
+func (client *Client) CopyChecksToCampaign(input ChecksCopyToCampaignInput) (*Campaign, error) {
+	var m struct {
+		Payload ChecksCopyToCampaignPayload `graphql:"checksCopyToCampaign(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("ChecksCopyToCampaign"))
+	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
+}
+
 func (client *Client) ListCampaigns(campaignVariables *ListCampaignsVariables) (*CampaignConnection, error) {
 	if campaignVariables == nil {
 		campaignVariables = &ListCampaignsVariables{}

@@ -95,11 +95,16 @@ type CategoryUpdateInput struct {
 
 // CampaignCreateInput Specifies the input fields used to create a campaign
 type CampaignCreateInput struct {
-	Name           string        `json:"name" yaml:"name" example:"example_value"`                                                // The name of the campaign (Required)
-	OwnerId        ID            `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the team that owns the campaign (Required)
-	FilterId       *Nullable[ID] `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
-	ProjectBrief   *string       `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`             // The project brief of the campaign in Markdown (Optional)
-	CheckIdsToCopy []ID          `json:"checkIdsToCopy,omitempty" yaml:"checkIdsToCopy,omitempty"`                                 // Check IDs to copy to this campaign (Optional)
+	Name         string        `json:"name" yaml:"name" example:"example_value"`                                                // The name of the campaign (Required)
+	OwnerId      ID            `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the team that owns the campaign (Required)
+	FilterId     *Nullable[ID] `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
+	ProjectBrief *string       `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`             // The project brief of the campaign in Markdown (Optional)
+}
+
+// ChecksCopyToCampaignInput Specifies the input fields for copying checks to a campaign
+type ChecksCopyToCampaignInput struct {
+	CampaignId ID   `json:"campaignId" yaml:"campaignId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the campaign to copy checks to (Required)
+	CheckIds   []ID `json:"checkIds" yaml:"checkIds"`                                                  // The ids of the checks to copy (Required)
 }
 
 // CampaignScheduleUpdateInput Specifies the input fields used to schedule a campaign
