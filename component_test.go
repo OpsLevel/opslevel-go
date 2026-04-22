@@ -12,6 +12,7 @@ func TestComponentTypeCreate(t *testing.T) {
 	input := autopilot.Register[ol.ComponentTypeInput]("component_type_create_input",
 		ol.ComponentTypeInput{
 			Alias:       ol.RefOf("example"),
+			Category:    ol.RefOf("infrastructure"),
 			Name:        ol.RefOf("Example"),
 			Description: ol.RefOf("Example Description"),
 			Properties:  &[]ol.ComponentTypePropertyDefinitionInput{},
@@ -31,7 +32,7 @@ func TestComponentTypeCreate(t *testing.T) {
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation ComponentTypeCreate($input:ComponentTypeInput!){componentTypeCreate(input:$input){componentType{{ template "component_type_graphql" }},errors{message,path}}}`,
-		`{"input": {"alias": "example", "name": "Example", "description": "Example Description", "properties": [], "ownerRelationship": {"managementRules": [{"operator": "EQUALS", "sourceProperty": "tag_key_eq:owner", "sourcePropertyBuiltin": true, "targetProperty": "name", "targetPropertyBuiltin": true, "targetType": "team"}]} }}`,
+		`{"input": {"alias": "example", "category": "infrastructure", "name": "Example", "description": "Example Description", "properties": [], "ownerRelationship": {"managementRules": [{"operator": "EQUALS", "sourceProperty": "tag_key_eq:owner", "sourcePropertyBuiltin": true, "targetProperty": "name", "targetPropertyBuiltin": true, "targetType": "team"}]} }}`,
 		`{"data": {"componentTypeCreate": {"componentType": {{ template "component_type_1_response" }} }}}`,
 	)
 
@@ -41,6 +42,7 @@ func TestComponentTypeCreate(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "infrastructure", result.Category)
 }
 
 func TestComponentTypeGet(t *testing.T) {
@@ -83,6 +85,9 @@ func TestComponentTypeList(t *testing.T) {
 	autopilot.Equals(t, "Example1", result[0].Name)
 	autopilot.Equals(t, "Example2", result[1].Name)
 	autopilot.Equals(t, "Example3", result[2].Name)
+	autopilot.Equals(t, "infrastructure", result[0].Category)
+	autopilot.Equals(t, "default", result[1].Category)
+	autopilot.Equals(t, "people", result[2].Category)
 }
 
 func TestComponentTypeUpdate(t *testing.T) {
@@ -90,6 +95,7 @@ func TestComponentTypeUpdate(t *testing.T) {
 	input := autopilot.Register[ol.ComponentTypeInput]("component_type_update_input",
 		ol.ComponentTypeInput{
 			Alias:       ol.RefOf("example"),
+			Category:    ol.RefOf("infrastructure"),
 			Name:        ol.RefOf("Example"),
 			Description: ol.RefOf("Example Description"),
 			Properties:  &[]ol.ComponentTypePropertyDefinitionInput{},
@@ -109,7 +115,7 @@ func TestComponentTypeUpdate(t *testing.T) {
 
 	testRequest := autopilot.NewTestRequest(
 		`mutation ComponentTypeUpdate($input:ComponentTypeInput!$target:IdentifierInput!){componentTypeUpdate(componentType:$target,input:$input){componentType{{ template "component_type_graphql" }},errors{message,path}}}`,
-		`{"input": {"alias": "example", "name": "Example", "description": "Example Description", "properties": [], "ownerRelationship": {"managementRules": [{"operator": "EQUALS", "sourceProperty": "tag_key_eq:owner", "sourcePropertyBuiltin": true, "targetProperty": "name", "targetPropertyBuiltin": true, "targetType": "team"}]}}, "target": { {{ template "id1" }} }}`,
+		`{"input": {"alias": "example", "category": "infrastructure", "name": "Example", "description": "Example Description", "properties": [], "ownerRelationship": {"managementRules": [{"operator": "EQUALS", "sourceProperty": "tag_key_eq:owner", "sourcePropertyBuiltin": true, "targetProperty": "name", "targetPropertyBuiltin": true, "targetType": "team"}]}}, "target": { {{ template "id1" }} }}`,
 		`{"data": {"componentTypeUpdate": {"componentType": {{ template "component_type_1_response" }} }}}`,
 	)
 
@@ -119,6 +125,7 @@ func TestComponentTypeUpdate(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "infrastructure", result.Category)
 }
 
 func TestComponentTypeDelete(t *testing.T) {

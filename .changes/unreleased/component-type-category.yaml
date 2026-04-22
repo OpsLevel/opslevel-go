@@ -1,0 +1,2 @@
+kind: Feature
+body: Add `Category` field to `ComponentType` and `ComponentTypeInput` for creating and reading component type categories (`default`, `infrastructure`, `people`)
