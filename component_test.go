@@ -87,7 +87,7 @@ func TestComponentTypeList(t *testing.T) {
 	autopilot.Equals(t, "Example3", result[2].Name)
 	autopilot.Equals(t, "infrastructure", result[0].Category)
 	autopilot.Equals(t, "default", result[1].Category)
-	autopilot.Equals(t, "people", result[2].Category)
+	autopilot.Equals(t, "", result[2].Category)
 }
 
 func TestComponentTypeUpdate(t *testing.T) {

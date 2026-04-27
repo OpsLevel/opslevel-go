@@ -66,7 +66,6 @@
       "example3"
     ],
     "name": "Example3",
-    "category": "people",
     "description": "Description",
     "href": "https://app.opslevel-staging.com/catalog/domains/platformdomain",
     "icon": {
