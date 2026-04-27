@@ -701,6 +701,7 @@ type ComponentTypeIconInput struct {
 // ComponentTypeInput Specifies the input fields used to create a component type
 type ComponentTypeInput struct {
 	Alias              *Nullable[string]                       `json:"alias,omitempty" yaml:"alias,omitempty" example:"example_value"`             // The unique alias of the component type (Optional)
+	Category           *Nullable[string]                       `json:"category,omitempty" yaml:"category,omitempty" example:"infrastructure"`      // The category of the component type. One of "default", "infrastructure", "people" (Optional)
 	Description        *Nullable[string]                       `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the component type (Optional)
 	Icon               *ComponentTypeIconInput                 `json:"icon,omitempty" yaml:"icon,omitempty"`                                       // The icon associated with the component type (Optional)
 	Name               *Nullable[string]                       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The unique name of the component type (Optional)

@@ -1,0 +1,2 @@
+kind: Feature
+body: Add `Category` field to `ComponentType` and `ComponentTypeInput` for creating and reading component type categories (`default`, `infrastructure`). Gated on the backend behind the `infra_component_types_ui` feature flag — accounts without the flag will see an empty `Category` and cannot send the field on input.
