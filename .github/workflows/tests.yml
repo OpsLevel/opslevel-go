@@ -39,10 +39,8 @@ jobs:
             ${{ runner.os }}-go-
       - name: Run quality checks and tests
         run: task ci
-      - name: Install goveralls
-        run: go install github.com/mattn/goveralls@latest
       - name: Send coverage
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: goveralls -coverprofile=coverage.out -service=github
+        run: go tool goveralls -coverprofile=coverage.out -service=github
 
