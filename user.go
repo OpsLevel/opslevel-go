@@ -61,7 +61,7 @@ func (userId *UserId) GetTags(client *Client, variables *PayloadVariables) (*Tag
 	return &q.Account.User.Tags, nil
 }
 
-func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
+func (user *User) GetTeams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
 	var q struct {
 		Account struct {
 			User struct {
@@ -76,12 +76,12 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 		variables = client.InitialPageVariablesPointer()
 	}
 	(*variables)["user"] = user.Id
-	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil { // what goes in "" here and how is it derived?
+	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil {
 		return nil, err
 	}
 	if q.Account.User.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.User.Teams.PageInfo.End
-		conn, err := user.Teams(client, variables)
+		conn, err := user.GetTeams(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -90,6 +90,40 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 	}
 	q.Account.User.Teams.TotalCount = len(q.Account.User.Teams.Nodes)
 	return &q.Account.User.Teams, nil
+}
+
+func (user *User) Hydrate(client *Client) error {
+	if user.Tags == nil {
+		user.Tags = &TagConnection{}
+	}
+	if user.Tags.PageInfo.HasNextPage {
+		variables := client.InitialPageVariablesPointer()
+		(*variables)["after"] = user.Tags.PageInfo.End
+		resp, err := user.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
+		user.Tags.Nodes = append(user.Tags.Nodes, resp.Nodes...)
+		user.Tags.PageInfo = resp.PageInfo
+	}
+	user.Tags.TotalCount = len(user.Tags.Nodes)
+
+	if user.Teams == nil {
+		user.Teams = &TeamIdConnection{}
+	}
+	if user.Teams.PageInfo.HasNextPage {
+		variables := client.InitialPageVariablesPointer()
+		(*variables)["after"] = user.Teams.PageInfo.End
+		resp, err := user.GetTeams(client, variables)
+		if err != nil {
+			return err
+		}
+		user.Teams.Nodes = append(user.Teams.Nodes, resp.Nodes...)
+		user.Teams.PageInfo = resp.PageInfo
+	}
+	user.Teams.TotalCount = len(user.Teams.Nodes)
+
+	return nil
 }
 
 func (client *Client) InviteUser(email string, input UserInput, sendInvite bool) (*User, error) {
@@ -134,6 +168,15 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
 		return nil, err
+	}
+
+	// Hydrate inner tags/teams connections for every user on this page.
+	// Without this, users on the first outer page would never paginate their
+	// nested tag/team connections beyond the server's default page size.
+	for i := range q.Account.Users.Nodes {
+		if err := q.Account.Users.Nodes[i].Hydrate(client); err != nil {
+			return nil, err
+		}
 	}
 
 	if q.Account.Users.PageInfo.HasNextPage {

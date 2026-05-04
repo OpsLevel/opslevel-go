@@ -10,7 +10,7 @@ import (
 func TestInviteUser(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation UserInvite($email:String!$forceSendInvite:Boolean$input:UserInput!){userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite){user{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},errors{message,path}}}`,
+		`mutation UserInvite($email:String!$forceSendInvite:Boolean$input:UserInput!){userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite){user{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},errors{message,path}}}`,
 		`{"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "skipWelcomeEmail": false }, "forceSendInvite": true}`,
 		`{"data": { "userInvite": { "user": {{ template "user_1" }}, "errors": [] }}}`,
 	)
@@ -32,7 +32,7 @@ func TestInviteUser(t *testing.T) {
 func TestInviteUserSkipSendInvite(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation UserInvite($email:String!$forceSendInvite:Boolean$input:UserInput!){userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite){user{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},errors{message,path}}}`,
+		`mutation UserInvite($email:String!$forceSendInvite:Boolean$input:UserInput!){userInvite(email: $email input: $input, forceSendInvite: $forceSendInvite){user{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},errors{message,path}}}`,
 		`{"email": "kyle@opslevel.com", "input": { "name": "Kyle Rockman", "role": "team_member", "skipWelcomeEmail": false }, "forceSendInvite": false}`,
 		`{"data": { "userInvite": { "user": { {{ template "user_id_email_1" }}, "name": "Kyle Rockman", "role": "team_member" }, "errors": [] }}}`,
 	)
@@ -55,7 +55,7 @@ func TestInviteUserSkipSendInvite(t *testing.T) {
 func TestGetUser(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role}}}`,
+		`query UserGet($input:UserIdentifierInput!){account{user(input: $input){id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}}}}`,
 		`{"input": { "email": "kyle@opslevel.com" }}`,
 		`{"data": {"account": {"user": {{ template "user_1" }} }}}`,
 	)
@@ -91,7 +91,7 @@ func TestGetUserTeams(t *testing.T) {
 			Id: id1,
 		},
 	}
-	resp, err := user.Teams(client, nil)
+	resp, err := user.GetTeams(client, nil)
 	autopilot.Ok(t, err)
 	result := resp.Nodes
 	// Assert
@@ -104,12 +104,12 @@ func TestGetUserTeams(t *testing.T) {
 func TestListUser(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "filter": null, "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
 		`{ "after": "OA", "filter": null, "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_3" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -132,12 +132,12 @@ func TestListUser(t *testing.T) {
 func TestListUserOmitDeactivated(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
 		`{ "after": "", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [ {{ template "user_1" }}, {{ template "user_2" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},{{ template "pagination_request" }}}}}`,
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
 		`{ "after": "OA", "filter": [ {"key": "deactivated_at", "type": "equals"} ], "first": 500 }`,
 		`{ "data": { "account": { "users": { "nodes": [], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -158,10 +158,90 @@ func TestListUserOmitDeactivated(t *testing.T) {
 	autopilot.Equals(t, ol.UserRoleAdmin, result[1].Role)
 }
 
+func TestListUserPopulatesTagsAndTeams(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
+		`{ "after": "", "filter": null, "first": 500 }`,
+		`{ "data": { "account": { "users": { "nodes": [ {
+          {{ template "user_id_email_1" }},
+          "name": "Kyle Rockman",
+          "contacts": [ {{ template "contact_1" }} ],
+          "htmlUrl": "https://app.opslevel.com/users/kyle",
+          "provisionedBy": "manual",
+          "role": "user",
+          "tags": {
+            "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIw", "key": "on-call", "value": "true" } ],
+            {{ template "pagination_second_pageInfo_response" }}
+          },
+          "teams": {
+            "nodes": [ { {{ template "teamId_1" }} } ],
+            {{ template "pagination_second_pageInfo_response" }}
+          }
+        } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
+	)
+
+	client := BestTestClient(t, "user/list_with_tags_and_teams", testRequest)
+	// Act
+	response, err := client.ListUsers(nil)
+	autopilot.Ok(t, err)
+	// Assert
+	autopilot.Equals(t, 1, response.TotalCount)
+	user := response.Nodes[0]
+	autopilot.Equals(t, "Kyle Rockman", user.Name)
+	autopilot.Equals(t, 1, len(user.Tags.Nodes))
+	autopilot.Equals(t, "on-call", user.Tags.Nodes[0].Key)
+	autopilot.Equals(t, "true", user.Tags.Nodes[0].Value)
+	autopilot.Equals(t, 1, len(user.Teams.Nodes))
+	autopilot.Equals(t, "example", user.Teams.Nodes[0].Alias)
+}
+
+func TestListUserHydratesFirstPageInnerConnections(t *testing.T) {
+	// Regression: a user on the first outer users page must have its inner
+	// tag/team connections paginated when hasNextPage is true. Previously
+	// Hydrate was only invoked for users merged from recursive list pages,
+	// so power users on page 1 had their tags/teams silently truncated.
+	listRequest := autopilot.NewTestRequest(
+		`query UserList($after:String!$filter:[UsersFilterInput!]$first:Int!){account{users(after: $after, first: $first, filter: $filter){nodes{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
+		`{ "after": "", "filter": null, "first": 500 }`,
+		`{ "data": { "account": { "users": { "nodes": [ {
+          {{ template "user_id_email_1" }},
+          "name": "Kyle Rockman",
+          "contacts": [ {{ template "contact_1" }} ],
+          "htmlUrl": "https://app.opslevel.com/users/kyle",
+          "provisionedBy": "manual",
+          "role": "user",
+          "tags": {
+            "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIw", "key": "on-call", "value": "true" } ],
+            {{ template "pagination_initial_pageInfo_response" }}
+          },
+          "teams": {
+            "nodes": [ { {{ template "teamId_1" }} } ],
+            {{ template "pagination_second_pageInfo_response" }}
+          }
+        } ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
+	)
+	tagsFollowup := autopilot.NewTestRequest(
+		`query UserTagsList($after:String!$first:Int!$user:ID!){account{user(id: $user){tags(after: $after, first: $first){nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
+		`{ {{ template "second_page_variables" }}, "user": "{{ template "id1_string" }}" }`,
+		`{ "data": { "account": { "user": { "tags": { "nodes": [ { "id": "Z2lkOi8vb3BzbGV2ZWwvVGFnLzEwODIx", "key": "team", "value": "platform" } ], {{ template "pagination_second_pageInfo_response" }} }}}}}`,
+	)
+
+	client := BestTestClient(t, "user/list_first_page_hydrates_inner", listRequest, tagsFollowup)
+	response, err := client.ListUsers(nil)
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 1, response.TotalCount)
+	user := response.Nodes[0]
+	autopilot.Equals(t, 2, len(user.Tags.Nodes))
+	autopilot.Equals(t, "on-call", user.Tags.Nodes[0].Key)
+	autopilot.Equals(t, "team", user.Tags.Nodes[1].Key)
+	autopilot.Equals(t, "platform", user.Tags.Nodes[1].Value)
+}
+
 func TestUpdateUser(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role},errors{message,path}}}`,
+		`mutation UserUpdate($input:UserInput!$user:UserIdentifierInput!){userUpdate(user: $user input: $input){user{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},errors{message,path}}}`,
 		`{"input": {"role": "admin", "skipWelcomeEmail": false }, "user": {"email": "kyle@opslevel.com" }}`,
 		`{"data": {"userUpdate": {"user": {{ template "user_1_update" }}, "errors": [] }}}`,
 	)

@@ -29,7 +29,32 @@
     },
     htmlUrl,
     provisionedBy,
-    role
+    role,
+    tags{
+      nodes{
+        id,
+        key,
+        value
+      },
+      pageInfo{
+        hasNextPage,
+        hasPreviousPage,
+        startCursor,
+        endCursor
+      }
+    },
+    teams{
+      nodes{
+        alias,
+        id
+      },
+      pageInfo{
+        hasNextPage,
+        hasPreviousPage,
+        startCursor,
+        endCursor
+      }
+    }
   },
   memberships{
     nodes{
