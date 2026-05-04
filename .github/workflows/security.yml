@@ -9,7 +9,7 @@ on:
 
 jobs:
   call-grype:
-    uses: opslevel/actions/.github/workflows/grype.yml@main
+    uses: opslevel/actions/.github/workflows/grype.yml@d66c9d7c93ff6df99a929e012366433e564d58fa # main
     with:
       alias: opslevel-go
     secrets: inherit

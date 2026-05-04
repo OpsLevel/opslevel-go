@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           fetch-depth: 0
           submodules: 'true'
@@ -22,11 +22,11 @@ jobs:
       - name: Fetch All Tags
         run: git fetch --force --tags
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with:
           go-version-file: 'go.mod'
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-go-
       - name: Import GPG Key
         id: import_gpg
-        uses: crazy-max/ghaction-import-gpg@v6
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
@@ -71,7 +71,7 @@ jobs:
           git tag -f ${{ steps.version.outputs.RELEASE_VERSION }} -m "Cut Release '${{ steps.version.outputs.RELEASE_VERSION }}'"
           git push -f origin refs/tags/${{ steps.version.outputs.RELEASE_VERSION }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6.1.0
+        uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf # v6.1.0
         with:
           args: release --clean --release-notes=./.changes/${{ steps.version.outputs.RELEASE_VERSION }}.md
         env:
@@ -79,7 +79,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ORG_GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
       - name: Report Release To OpsLevel
-        uses: opslevel/report-deploy-github-action/with-docker@v3.0.0
+        uses: opslevel/report-deploy-github-action/with-docker@96f726be9dd07b2b862b4b2b6e13d775e322f708 # v3.0.0
         with:
           integration_url: ${{ secrets.DEPLOY_INTEGRATION_URL }}
           service: "opslevel_api_clients"
