@@ -62,9 +62,8 @@ jobs:
           then
             echo "Skip Changie..."
           else
-            go install github.com/miniscruff/changie@v1.23.0
-            changie batch ${{ steps.version.outputs.RELEASE_VERSION }}
-            changie merge
+            go tool changie batch ${{ steps.version.outputs.RELEASE_VERSION }}
+            go tool changie merge
             git add .
             git commit -m "Cut Release '${{ steps.version.outputs.RELEASE_VERSION }}'"
             git push origin HEAD
