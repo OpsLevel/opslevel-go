@@ -76,7 +76,7 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 		variables = client.InitialPageVariablesPointer()
 	}
 	(*variables)["user"] = user.Id
-	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil { // what goes in "" here and how is it derived?
+	if err := client.Query(&q, *variables, WithName("UserTeamsList")); err != nil {
 		return nil, err
 	}
 	if q.Account.User.Teams.PageInfo.HasNextPage {
@@ -90,6 +90,40 @@ func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdCon
 	}
 	q.Account.User.Teams.TotalCount = len(q.Account.User.Teams.Nodes)
 	return &q.Account.User.Teams, nil
+}
+
+func (user *User) Hydrate(client *Client) error {
+	if user.Tags == nil {
+		user.Tags = &TagConnection{}
+	}
+	if user.Tags.PageInfo.HasNextPage {
+		variables := client.InitialPageVariablesPointer()
+		(*variables)["after"] = user.Tags.PageInfo.End
+		resp, err := user.GetTags(client, variables)
+		if err != nil {
+			return err
+		}
+		user.Tags.Nodes = append(user.Tags.Nodes, resp.Nodes...)
+		user.Tags.PageInfo = resp.PageInfo
+	}
+	user.Tags.TotalCount = len(user.Tags.Nodes)
+
+	if user.TeamsConnection == nil {
+		user.TeamsConnection = &TeamIdConnection{}
+	}
+	if user.TeamsConnection.PageInfo.HasNextPage {
+		variables := client.InitialPageVariablesPointer()
+		(*variables)["after"] = user.TeamsConnection.PageInfo.End
+		resp, err := user.Teams(client, variables)
+		if err != nil {
+			return err
+		}
+		user.TeamsConnection.Nodes = append(user.TeamsConnection.Nodes, resp.Nodes...)
+		user.TeamsConnection.PageInfo = resp.PageInfo
+	}
+	user.TeamsConnection.TotalCount = len(user.TeamsConnection.Nodes)
+
+	return nil
 }
 
 func (client *Client) InviteUser(email string, input UserInput, sendInvite bool) (*User, error) {
@@ -134,6 +168,15 @@ func (client *Client) ListUsers(variables *PayloadVariables) (*UserConnection, e
 
 	if err := client.Query(&q, *variables, WithName("UserList")); err != nil {
 		return nil, err
+	}
+
+	// Hydrate inner tags/teams connections for every user on this page.
+	// Without this, users on the first outer page would never paginate their
+	// nested tag/team connections beyond the server's default page size.
+	for i := range q.Account.Users.Nodes {
+		if err := q.Account.Users.Nodes[i].Hydrate(client); err != nil {
+			return nil, err
+		}
 	}
 
 	if q.Account.Users.PageInfo.HasNextPage {
