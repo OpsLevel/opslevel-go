@@ -32,14 +32,18 @@ jobs:
           echo "No changelog exists for this PR, creating a new one"
         fi
 
+    - name: Set up Go
+      if: steps.changelog_check.outputs.exists == 'false'
+      uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+      with:
+        go-version-file: 'go.mod'
+
     - name: Create changie log
       if: steps.changelog_check.outputs.exists == 'false'
-      uses: miniscruff/changie-action@6dcc2533cac0495148ed4046c438487e4dceaa23 # v2
+      shell: bash
       env:
         PR_TITLE: ${{ github.event.pull_request.title }}
-      with:
-        version: latest
-        args: new --kind Dependency --body "$PR_TITLE"
+      run: go tool changie new --kind Dependency --body "$PR_TITLE"
 
     - name: Commit & Push changes
       if: steps.changelog_check.outputs.exists == 'false'
