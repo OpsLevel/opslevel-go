@@ -61,7 +61,7 @@ func (userId *UserId) GetTags(client *Client, variables *PayloadVariables) (*Tag
 	return &q.Account.User.Tags, nil
 }
 
-func (user *User) GetTeams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
+func (user *User) Teams(client *Client, variables *PayloadVariables) (*TeamIdConnection, error) {
 	var q struct {
 		Account struct {
 			User struct {
@@ -81,7 +81,7 @@ func (user *User) GetTeams(client *Client, variables *PayloadVariables) (*TeamId
 	}
 	if q.Account.User.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.User.Teams.PageInfo.End
-		conn, err := user.GetTeams(client, variables)
+		conn, err := user.Teams(client, variables)
 		if err != nil {
 			return nil, err
 		}
@@ -108,20 +108,20 @@ func (user *User) Hydrate(client *Client) error {
 	}
 	user.Tags.TotalCount = len(user.Tags.Nodes)
 
-	if user.Teams == nil {
-		user.Teams = &TeamIdConnection{}
+	if user.TeamsConnection == nil {
+		user.TeamsConnection = &TeamIdConnection{}
 	}
-	if user.Teams.PageInfo.HasNextPage {
+	if user.TeamsConnection.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
-		(*variables)["after"] = user.Teams.PageInfo.End
-		resp, err := user.GetTeams(client, variables)
+		(*variables)["after"] = user.TeamsConnection.PageInfo.End
+		resp, err := user.Teams(client, variables)
 		if err != nil {
 			return err
 		}
-		user.Teams.Nodes = append(user.Teams.Nodes, resp.Nodes...)
-		user.Teams.PageInfo = resp.PageInfo
+		user.TeamsConnection.Nodes = append(user.TeamsConnection.Nodes, resp.Nodes...)
+		user.TeamsConnection.PageInfo = resp.PageInfo
 	}
-	user.Teams.TotalCount = len(user.Teams.Nodes)
+	user.TeamsConnection.TotalCount = len(user.TeamsConnection.Nodes)
 
 	return nil
 }

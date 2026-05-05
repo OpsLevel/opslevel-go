@@ -91,7 +91,7 @@ func TestGetUserTeams(t *testing.T) {
 			Id: id1,
 		},
 	}
-	resp, err := user.GetTeams(client, nil)
+	resp, err := user.Teams(client, nil)
 	autopilot.Ok(t, err)
 	result := resp.Nodes
 	// Assert
@@ -192,8 +192,8 @@ func TestListUserPopulatesTagsAndTeams(t *testing.T) {
 	autopilot.Equals(t, 1, len(user.Tags.Nodes))
 	autopilot.Equals(t, "on-call", user.Tags.Nodes[0].Key)
 	autopilot.Equals(t, "true", user.Tags.Nodes[0].Value)
-	autopilot.Equals(t, 1, len(user.Teams.Nodes))
-	autopilot.Equals(t, "example", user.Teams.Nodes[0].Alias)
+	autopilot.Equals(t, 1, len(user.TeamsConnection.Nodes))
+	autopilot.Equals(t, "example", user.TeamsConnection.Nodes[0].Alias)
 }
 
 func TestListUserHydratesFirstPageInnerConnections(t *testing.T) {
