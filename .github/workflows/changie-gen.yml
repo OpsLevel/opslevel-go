@@ -35,9 +35,11 @@ jobs:
     - name: Create changie log
       if: steps.changelog_check.outputs.exists == 'false'
       uses: miniscruff/changie-action@6dcc2533cac0495148ed4046c438487e4dceaa23 # v2
+      env:
+        PR_TITLE: ${{ github.event.pull_request.title }}
       with:
         version: latest
-        args: new --kind Dependency --body "${{ github.event.pull_request.title }}"
+        args: new --kind Dependency --body "$PR_TITLE"
 
     - name: Commit & Push changes
       if: steps.changelog_check.outputs.exists == 'false'
