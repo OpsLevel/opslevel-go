@@ -30,9 +30,39 @@ type CategoryUpdatePayload struct {
 	BasePayload
 }
 
+// CampaignCreatePayload The return type of the `campaignCreate` mutation
+type CampaignCreatePayload struct {
+	Campaign Campaign // The created campaign (Optional)
+	BasePayload
+}
+
+// CampaignUpdatePayload The return type of the `campaignUpdate` mutation
+type CampaignUpdatePayload struct {
+	Campaign Campaign // The updated campaign (Optional)
+	BasePayload
+}
+
+// CampaignUnschedulePayload The return type of the `campaignUnschedule` mutation
+type CampaignUnschedulePayload struct {
+	Campaign Campaign // The unscheduled campaign (Optional)
+	BasePayload
+}
+
+// CampaignDeletePayload The return type of the `campaignDelete` mutation
+type CampaignDeletePayload struct {
+	Id ID `graphql:"deletedId"` // The id of the deleted campaign
+	BasePayload
+}
+
 // CheckCopyPayload The result of a check copying operation
 type CheckCopyPayload struct {
 	TargetCategory Category // The category to which the checks have been copied (Optional)
+	BasePayload
+}
+
+// ChecksCopyToCampaignPayload Return type for the `checksCopyToCampaign` mutation
+type ChecksCopyToCampaignPayload struct {
+	Campaign Campaign // The campaign that checks were copied to (Optional)
 	BasePayload
 }
 

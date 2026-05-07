@@ -88,3 +88,184 @@
     "reminder": null
 }
 {{end}}
+
+{{- define "campaign_create_request" }}
+mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+{{ end }}
+
+{{- define "campaign_create_request_vars" }}
+{"input":{"name":"New Campaign","ownerId":"{{ template "id1_string" }}","filterId":"{{ template "id2_string" }}","projectBrief":"A test campaign"}}
+{{ end }}
+
+{{- define "campaign_create_response" }}{
+    "data":{"campaignCreate":{"campaign":{
+        {{ template "id1" }},
+        "name":"New Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/new-campaign",
+        "status":"draft",
+        "checkStats":{"total":0,"totalSuccessful":0},
+        "serviceStats":{"total":0,"totalSuccessful":0},
+        "owner":{ {{ template "id1" }}, "alias":"platform" },
+        "projectBrief":"A test campaign",
+        "rawProjectBrief":"A test campaign",
+        "filter":{ "id":"{{ template "id2_string" }}", "name":"Tier 1" },
+        "reminder":null
+    },"errors":[]}}
+}{{ end }}
+
+{{- define "campaign_get_request" }}
+query CampaignGet($id:ID!){account{campaign(id: $id){checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate}}}
+{{ end }}
+
+{{- define "campaign_get_request_vars" }}
+{"id":"{{ template "id1_string" }}"}
+{{ end }}
+
+{{- define "campaign_get_response" }}{
+    "data":{"account":{"campaign":{
+        {{ template "id1" }},
+        "name":"Fetched Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/fetched",
+        "status":"scheduled",
+        "checkStats":{"total":3,"totalSuccessful":1},
+        "serviceStats":{"total":10,"totalSuccessful":5},
+        "owner":{ {{ template "id1" }}, "alias":"platform" },
+        "startDate":"2026-05-01T00:00:00Z",
+        "targetDate":"2026-06-30T00:00:00Z",
+        "projectBrief":"Fetched campaign brief",
+        "rawProjectBrief":"Fetched campaign brief",
+        "filter":null,
+        "reminder":null
+    }}}
+}{{ end }}
+
+{{- define "campaign_update_request" }}
+mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+{{ end }}
+
+{{- define "campaign_update_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}","name":"Updated Campaign","ownerId":"{{ template "id2_string" }}"}}
+{{ end }}
+
+{{- define "campaign_update_response" }}{
+    "data":{"campaignUpdate":{"campaign":{
+        {{ template "id1" }},
+        "name":"Updated Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/updated",
+        "status":"draft",
+        "checkStats":{"total":0,"totalSuccessful":0},
+        "serviceStats":{"total":0,"totalSuccessful":0},
+        "owner":{ {{ template "id2" }}, "alias":"staff" },
+        "projectBrief":"A test campaign",
+        "rawProjectBrief":"A test campaign",
+        "filter":null,
+        "reminder":null
+    },"errors":[]}}
+}{{ end }}
+
+{{- define "campaign_delete_request" }}
+mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){deletedId,errors{message,path}}}
+{{ end }}
+
+{{- define "campaign_delete_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}"}}
+{{ end }}
+
+{{- define "campaign_delete_response" }}{
+    "data":{"campaignDelete":{"deletedId":"{{ template "id1_string" }}","errors":[]}}
+}{{ end }}
+
+{{- define "campaign_schedule_request" }}
+mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignScheduleUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+{{ end }}
+
+{{- define "campaign_schedule_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}","startDate":"2026-05-01T00:00:00Z","targetDate":"2026-06-30T00:00:00Z"}}
+{{ end }}
+
+{{- define "campaign_schedule_response" }}{
+    "data":{"campaignScheduleUpdate":{"campaign":{
+        {{ template "id1" }},
+        "name":"New Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/new-campaign",
+        "status":"scheduled",
+        "checkStats":{"total":0,"totalSuccessful":0},
+        "serviceStats":{"total":0,"totalSuccessful":0},
+        "owner":{ {{ template "id1" }}, "alias":"platform" },
+        "startDate":"2026-05-01T00:00:00Z",
+        "targetDate":"2026-06-30T00:00:00Z",
+        "projectBrief":"A test campaign",
+        "rawProjectBrief":"A test campaign",
+        "filter":null,
+        "reminder":null
+    },"errors":[]}}
+}{{ end }}
+
+{{- define "campaign_unschedule_request" }}
+mutation CampaignUnschedule($input:DeleteInput!){campaignUnschedule(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+{{ end }}
+
+{{- define "campaign_unschedule_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}"}}
+{{ end }}
+
+{{- define "campaign_unschedule_response" }}{
+    "data":{"campaignUnschedule":{"campaign":{
+        {{ template "id1" }},
+        "name":"New Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/new-campaign",
+        "status":"draft",
+        "checkStats":{"total":0,"totalSuccessful":0},
+        "serviceStats":{"total":0,"totalSuccessful":0},
+        "owner":{ {{ template "id1" }}, "alias":"platform" },
+        "projectBrief":"A test campaign",
+        "rawProjectBrief":"A test campaign",
+        "filter":null,
+        "reminder":null
+    },"errors":[]}}
+}{{ end }}
+
+{{- define "campaign_list_checks_request" }}
+query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: $id){checks(first: $first, after: $after){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}
+{{ end }}
+
+{{- define "campaign_list_checks_request_vars" }}
+{"after":"","first":500,"id":"{{ template "id1_string" }}"}
+{{ end }}
+
+{{- define "campaign_list_checks_response" }}{
+    "data":{"account":{"campaign":{"checks":{"nodes":[
+        {"id":"{{ template "id2_string" }}","name":"Secret Rotation"},
+        {"id":"{{ template "id3_string" }}","name":"Dependency Scanning"}
+    ],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":null,"endCursor":null}}}}}
+}{{ end }}
+
+{{- define "campaign_list_checks_empty_response" }}{
+    "data":{"account":{"campaign":{"checks":{"nodes":[],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":null,"endCursor":null}}}}}
+}{{ end }}
+
+{{- define "campaign_copy_checks_request" }}
+mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCampaign(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+{{ end }}
+
+{{- define "campaign_copy_checks_request_vars" }}
+{"input":{"campaignId":"{{ template "id1_string" }}","checkIds":["{{ template "id2_string" }}","{{ template "id3_string" }}"]}}
+{{ end }}
+
+{{- define "campaign_copy_checks_response" }}{
+    "data":{"checksCopyToCampaign":{"campaign":{
+        {{ template "id1" }},
+        "name":"New Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/new-campaign",
+        "status":"scheduled",
+        "checkStats":{"total":2,"totalSuccessful":0},
+        "serviceStats":{"total":10,"totalSuccessful":0},
+        "owner":{ {{ template "id1" }}, "alias":"platform" },
+        "startDate":"2026-05-01T00:00:00Z",
+        "targetDate":"2026-06-30T00:00:00Z",
+        "projectBrief":"A test campaign",
+        "rawProjectBrief":"A test campaign",
+        "filter":null,
+        "reminder":null
+    },"errors":[]}}
+}{{ end }}
