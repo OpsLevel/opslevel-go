@@ -1048,6 +1048,47 @@ func TestGetServiceStatsInvalidServiceId(t *testing.T) {
 	autopilot.Equals(t, "unable to get 'ServiceStats', invalid service id: ''", err.Error())
 }
 
+func TestGetServiceOnCalls(t *testing.T) {
+	testRequestOne := autopilot.NewTestRequest(
+		`query ServiceOnCallsList($after:String!$first:Int!$service:ID!){account{service(id: $service){onCalls(after: $after, first: $first){edges{cursor,node{externalEmail,id,name,user{id,email,name}}},nodes{externalEmail,id,name,user{id,email,name}},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ {{ template "first_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`{ "data": { "account": { "service": { "onCalls": { "edges": [ { "cursor": "MQ", "node": { "externalEmail": "alice@example.com", "id": "Z2lkOi8vb3BzbGV2ZWwvT25DYWxsLzE", "name": "Alice", "user": { "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8x", "email": "alice@example.com", "name": "Alice" } } } ], "nodes": [ { "externalEmail": "alice@example.com", "id": "Z2lkOi8vb3BzbGV2ZWwvT25DYWxsLzE", "name": "Alice", "user": { "id": "Z2lkOi8vb3BzbGV2ZWwvVXNlci8x", "email": "alice@example.com", "name": "Alice" } } ], {{ template "pagination_initial_pageInfo_response" }}, "totalCount": 1 } } } } }`,
+	)
+	testRequestTwo := autopilot.NewTestRequest(
+		`query ServiceOnCallsList($after:String!$first:Int!$service:ID!){account{service(id: $service){onCalls(after: $after, first: $first){edges{cursor,node{externalEmail,id,name,user{id,email,name}}},nodes{externalEmail,id,name,user{id,email,name}},{{ template "pagination_request" }},totalCount}}}}`,
+		`{ {{ template "second_page_variables" }}, "service": "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4" }`,
+		`{ "data": { "account": { "service": { "onCalls": { "edges": [ { "cursor": "Mg", "node": { "externalEmail": "bob@example.com", "id": "Z2lkOi8vb3BzbGV2ZWwvT25DYWxsLzI", "name": "Bob", "user": null } } ], "nodes": [ { "externalEmail": "bob@example.com", "id": "Z2lkOi8vb3BzbGV2ZWwvT25DYWxsLzI", "name": "Bob", "user": null } ], {{ template "pagination_second_pageInfo_response" }}, "totalCount": 1 } } } } }`,
+	)
+	requests := []autopilot.TestRequest{testRequestOne, testRequestTwo}
+
+	client := BestTestClient(t, "service/get_on_calls", requests...)
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "Z2lkOi8vb3BzbGV2ZWwvU2VydmljZS85NjQ4",
+		},
+	}
+	// Act
+	resp, err := service.GetOnCalls(client, nil)
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, resp.TotalCount)
+	autopilot.Equals(t, "Alice", resp.Nodes[0].Name)
+	autopilot.Equals(t, "bob@example.com", resp.Nodes[1].ExternalEmail)
+}
+
+func TestGetServiceOnCallsInvalidServiceId(t *testing.T) {
+	client := BestTestClient(t, "service/get_on_calls_invalid_service")
+	service := ol.Service{
+		ServiceId: ol.ServiceId{
+			Id: "",
+		},
+	}
+	// Act
+	_, err := service.GetOnCalls(client, nil)
+	// Assert
+	autopilot.Equals(t, "unable to get OnCalls, invalid service id: ''", err.Error())
+}
+
 func TestListServices(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
