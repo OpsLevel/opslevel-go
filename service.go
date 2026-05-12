@@ -44,6 +44,7 @@ type Service struct {
 	Dependents   *ServiceDependentsConnection   `graphql:"-"`
 
 	LastDeploy *Deploy               `graphql:"-"`
+	OnCalls    *OnCallConnection     `graphql:"-"`
 	Properties *PropertiesConnection `graphql:"-"`
 }
 
@@ -245,6 +246,41 @@ func (service *Service) GetLastDeploy(client *Client, variables *PayloadVariable
 		return nil, err
 	}
 	return &q.Account.Service.LastDeploy, nil
+}
+
+func (service *Service) GetOnCalls(client *Client, variables *PayloadVariables) (*OnCallConnection, error) {
+	var q struct {
+		Account struct {
+			Service struct {
+				OnCalls OnCallConnection `graphql:"onCalls(after: $after, first: $first)"`
+			} `graphql:"service(id: $service)"`
+		}
+	}
+	if service.Id == "" {
+		return nil, fmt.Errorf("unable to get OnCalls, invalid service id: '%s'", service.Id)
+	}
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+	(*variables)["service"] = service.Id
+	if err := client.Query(&q, *variables, WithName("ServiceOnCallsList")); err != nil {
+		return nil, err
+	}
+	if service.OnCalls == nil {
+		service.OnCalls = &OnCallConnection{}
+	}
+	service.OnCalls.Nodes = append(service.OnCalls.Nodes, q.Account.Service.OnCalls.Nodes...)
+	service.OnCalls.Edges = append(service.OnCalls.Edges, q.Account.Service.OnCalls.Edges...)
+	service.OnCalls.PageInfo = q.Account.Service.OnCalls.PageInfo
+	if service.OnCalls.PageInfo.HasNextPage {
+		(*variables)["after"] = service.OnCalls.PageInfo.End
+		_, err := service.GetOnCalls(client, variables)
+		if err != nil {
+			return nil, err
+		}
+	}
+	service.OnCalls.TotalCount = len(service.OnCalls.Nodes)
+	return service.OnCalls, nil
 }
 
 func (service *Service) GetAliases() []string {
