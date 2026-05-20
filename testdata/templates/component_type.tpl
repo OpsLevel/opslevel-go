@@ -1,5 +1,5 @@
 {{- define "component_type_graphql" }}
-{id,aliases,description,href,icon{color,name},isDefault,name,ownerRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},systemRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},timestamps{createdAt,updatedAt}}
+{id,aliases,category,description,href,icon{color,name},isDefault,name,ownerRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},systemRelationship{managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType}},timestamps{createdAt,updatedAt}}
 {{end}}
 {{- define "component_type_1_response" }}
 {
@@ -8,6 +8,7 @@
       "example1"
     ],
     "name": "Example1",
+    "category": "infrastructure",
     "description": "Description",
     "href": "https://app.opslevel-staging.com/catalog/domains/platformdomain",
     "icon": {
@@ -49,6 +50,7 @@
       "example2"
     ],
     "name": "Example2",
+    "category": "default",
     "description": "Description",
     "href": "https://app.opslevel-staging.com/catalog/domains/platformdomain",
     "icon": {
