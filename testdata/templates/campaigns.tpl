@@ -202,7 +202,7 @@ mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignSch
 }{{ end }}
 
 {{- define "campaign_unschedule_request" }}
-mutation CampaignUnschedule($input:DeleteInput!){campaignUnschedule(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_unschedule_request_vars" }}
