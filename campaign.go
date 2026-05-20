@@ -99,7 +99,7 @@ func (client *Client) UnscheduleCampaign(id ID) (*Campaign, error) {
 		Payload CampaignUnschedulePayload `graphql:"campaignUnschedule(input: $input)"`
 	}
 	v := PayloadVariables{
-		"input": DeleteInput{Id: id},
+		"input": CampaignUnscheduleInput{Id: id},
 	}
 	err := client.Mutate(&m, v, WithName("CampaignUnschedule"))
 	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)

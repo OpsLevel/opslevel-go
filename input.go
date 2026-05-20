@@ -114,6 +114,11 @@ type CampaignScheduleUpdateInput struct {
 	TargetDate iso8601.Time `json:"targetDate" yaml:"targetDate" example:"2025-06-01T00:00:00Z"`    // The target end date of the campaign (Required)
 }
 
+// CampaignUnscheduleInput Specifies the input fields used to unschedule a campaign
+type CampaignUnscheduleInput struct {
+	Id ID `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`
+}
+
 // CampaignUpdateInput Specifies the input fields used to update a campaign
 type CampaignUpdateInput struct {
 	Id           ID            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                      // The id of the campaign to be updated (Required)
