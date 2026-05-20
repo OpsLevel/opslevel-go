@@ -4,8 +4,202 @@ import (
 	"testing"
 
 	ol "github.com/opslevel/opslevel-go/v2026"
+	"github.com/relvacode/iso8601"
 	"github.com/rocktavious/autopilot/v2023"
 )
+
+func TestCreateCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_create_request" }}`,
+		`{{ template "campaign_create_request_vars" }}`,
+		`{{ template "campaign_create_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/create", testRequest)
+
+	brief := "A test campaign"
+	// Act
+	campaign, err := client.CreateCampaign(ol.CampaignCreateInput{
+		Name:         "New Campaign",
+		OwnerId:      id1,
+		FilterId:     ol.RefOf(id2),
+		ProjectBrief: &brief,
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "New Campaign", campaign.Name)
+	autopilot.Equals(t, ol.CampaignStatusEnumDraft, campaign.Status)
+	autopilot.Equals(t, id1, campaign.Owner.Id)
+	autopilot.Equals(t, id2, campaign.Filter.Id)
+	autopilot.Equals(t, "A test campaign", campaign.RawProjectBrief)
+}
+
+func TestGetCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_get_request" }}`,
+		`{{ template "campaign_get_request_vars" }}`,
+		`{{ template "campaign_get_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/get", testRequest)
+
+	// Act
+	campaign, err := client.GetCampaign(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, "Fetched Campaign", campaign.Name)
+	autopilot.Equals(t, ol.CampaignStatusEnumScheduled, campaign.Status)
+	autopilot.Equals(t, "2026-05-01 00:00:00 +0000 UTC", campaign.StartDate.String())
+	autopilot.Equals(t, "2026-06-30 00:00:00 +0000 UTC", campaign.TargetDate.String())
+}
+
+func TestUpdateCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_update_request" }}`,
+		`{{ template "campaign_update_request_vars" }}`,
+		`{{ template "campaign_update_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/update", testRequest)
+
+	name := "Updated Campaign"
+	// Act
+	campaign, err := client.UpdateCampaign(ol.CampaignUpdateInput{
+		Id:      id1,
+		Name:    &name,
+		OwnerId: ol.RefOf(id2),
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, "Updated Campaign", campaign.Name)
+	autopilot.Equals(t, id2, campaign.Owner.Id)
+}
+
+func TestDeleteCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_delete_request" }}`,
+		`{{ template "campaign_delete_request_vars" }}`,
+		`{{ template "campaign_delete_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/delete", testRequest)
+
+	// Act
+	err := client.DeleteCampaign(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+}
+
+func TestScheduleCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_schedule_request" }}`,
+		`{{ template "campaign_schedule_request_vars" }}`,
+		`{{ template "campaign_schedule_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/schedule", testRequest)
+
+	startDate, _ := iso8601.ParseString("2026-05-01T00:00:00Z")
+	targetDate, _ := iso8601.ParseString("2026-06-30T00:00:00Z")
+
+	// Act
+	campaign, err := client.ScheduleCampaign(ol.CampaignScheduleUpdateInput{
+		Id:         id1,
+		StartDate:  iso8601.Time{Time: startDate},
+		TargetDate: iso8601.Time{Time: targetDate},
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, ol.CampaignStatusEnumScheduled, campaign.Status)
+	autopilot.Equals(t, "2026-05-01 00:00:00 +0000 UTC", campaign.StartDate.String())
+	autopilot.Equals(t, "2026-06-30 00:00:00 +0000 UTC", campaign.TargetDate.String())
+}
+
+func TestUnscheduleCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_unschedule_request" }}`,
+		`{{ template "campaign_unschedule_request_vars" }}`,
+		`{{ template "campaign_unschedule_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/unschedule", testRequest)
+
+	// Act
+	campaign, err := client.UnscheduleCampaign(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, ol.CampaignStatusEnumDraft, campaign.Status)
+	autopilot.Equals(t, true, campaign.StartDate.IsZero())
+}
+
+func TestCopyChecksToCampaign(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_copy_checks_request" }}`,
+		`{{ template "campaign_copy_checks_request_vars" }}`,
+		`{{ template "campaign_copy_checks_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/copy_checks", testRequest)
+
+	// Act
+	campaign, err := client.CopyChecksToCampaign(ol.ChecksCopyToCampaignInput{
+		CampaignId: id1,
+		CheckIds:   []ol.ID{id2, id3},
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, 2, campaign.CheckStats.Total)
+}
+
+func TestListCampaignChecks(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_list_checks_request" }}`,
+		`{{ template "campaign_list_checks_request_vars" }}`,
+		`{{ template "campaign_list_checks_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/list_checks", testRequest)
+
+	// Act
+	checks, err := client.ListCampaignChecks(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(checks))
+	autopilot.Equals(t, id2, checks[0].Id)
+	autopilot.Equals(t, "Secret Rotation", checks[0].Name)
+	autopilot.Equals(t, id3, checks[1].Id)
+	autopilot.Equals(t, "Dependency Scanning", checks[1].Name)
+}
+
+func TestListCampaignChecksEmpty(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_list_checks_request" }}`,
+		`{{ template "campaign_list_checks_request_vars" }}`,
+		`{{ template "campaign_list_checks_empty_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/list_checks_empty", testRequest)
+
+	// Act
+	checks, err := client.ListCampaignChecks(id1)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 0, len(checks))
+}
 
 func TestListCampaigns(t *testing.T) {
 	// Arrange
@@ -40,7 +234,6 @@ func TestListCampaigns(t *testing.T) {
 	autopilot.Equals(t, "2024-01-01 00:00:00 +0000 UTC", result[0].StartDate.String())
 }
 
-// TestListCampaignsVariables_AsPayloadVariables verifies that ListCampaignsVariables produces the correct payload map.
 func TestListCampaignsVariables_AsPayloadVariables(t *testing.T) {
 	after := "cursor"
 	first := 5
@@ -61,7 +254,6 @@ func TestListCampaignsVariables_AsPayloadVariables(t *testing.T) {
 	autopilot.Equals(t, expected, *variables)
 }
 
-// TestListCampaignsWithCustomVariables verifies that custom ListCampaignsVariables values are sent in the GraphQL request.
 func TestListCampaignsWithCustomVariables(t *testing.T) {
 	after := "cursor"
 	first := 5
