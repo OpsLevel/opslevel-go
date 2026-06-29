@@ -1,3 +1,3 @@
 kind: Feature
-body: Add StartupCommands and StartupImage fields on RunnerJob to support running an init container before the main job container
+body: Add InitCommands and InitImage fields on RunnerJob to support running an init container before the main job container
 time: 2026-06-29T09:33:07.696442-07:00

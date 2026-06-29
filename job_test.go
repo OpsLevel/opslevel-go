@@ -58,7 +58,7 @@ func TestRunnerGetScale(t *testing.T) {
 func TestRunnerGetPendingJobs(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,status,variables{key,sensitive,value,scope},files{name,contents},startupCommands,startupImage},lastUpdateToken,errors{message,path}}}`,
+		`mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,status,variables{key,sensitive,value,scope},files{name,contents},initCommands,initImage},lastUpdateToken,errors{message,path}}}`,
 		`{"id":"1234567890", "token":  "1234"}`,
 		`{"data": {
       "runnerGetPendingJob": {
@@ -82,13 +82,13 @@ func TestRunnerGetPendingJobs(t *testing.T) {
               "key": "REPO_CLONE_URL",
               "value": "https://token@example.com/repo.git",
               "sensitive": true,
-              "scope": "startup"
+              "scope": "init"
             }
           ],
-          "startupCommands": [
+          "initCommands": [
             "/opslevel/clone-repo ."
           ],
-          "startupImage": "public.ecr.aws/opslevel/cli:v2022.02.25"
+          "initImage": "public.ecr.aws/opslevel/cli:v2022.02.25"
         },
         "lastUpdateToken": "12344321",
         "errors": []
@@ -103,10 +103,10 @@ func TestRunnerGetPendingJobs(t *testing.T) {
 	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.Image)
 	autopilot.Equals(t, "ls -al", result.Commands[1])
 	autopilot.Equals(t, ol.ID("12344321"), token)
-	autopilot.Equals(t, []string{"/opslevel/clone-repo ."}, result.StartupCommands)
-	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.StartupImage)
+	autopilot.Equals(t, []string{"/opslevel/clone-repo ."}, result.InitCommands)
+	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.InitImage)
 	autopilot.Equals(t, ol.RunnerJobVariableScopeMain, result.Variables[0].Scope)
-	autopilot.Equals(t, ol.RunnerJobVariableScopeStartup, result.Variables[1].Scope)
+	autopilot.Equals(t, ol.RunnerJobVariableScopeInit, result.Variables[1].Scope)
 }
 
 func TestRunnerAppendJobLog(t *testing.T) {
