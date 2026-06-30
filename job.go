@@ -71,10 +71,21 @@ type Runner struct {
 	Status RunnerStatusTypeEnum `json:"status"`
 }
 
+// RunnerJobVariableScope controls which container(s) on the job pod receive a
+// variable. An empty value means the variable is available in both the init
+// container and the main job container (the default).
+type RunnerJobVariableScope string
+
+const (
+	RunnerJobVariableScopeInit RunnerJobVariableScope = "init"
+	RunnerJobVariableScopeMain RunnerJobVariableScope = "main"
+)
+
 type RunnerJobVariable struct {
-	Key       string `json:"key"`
-	Sensitive bool   `json:"sensitive"`
-	Value     string `json:"value"`
+	Key       string                 `json:"key"`
+	Sensitive bool                   `json:"sensitive"`
+	Value     string                 `json:"value"`
+	Scope     RunnerJobVariableScope `json:"scope"`
 }
 
 type RunnerJobFile struct {
@@ -83,13 +94,15 @@ type RunnerJobFile struct {
 }
 
 type RunnerJob struct {
-	Commands  []string             `json:"commands"`
-	Id        ID                   `json:"id"`
-	Image     string               `json:"image"`
-	Outcome   RunnerJobOutcomeEnum `json:"outcome"`
-	Status    RunnerJobStatusEnum  `json:"status"`
-	Variables []RunnerJobVariable  `json:"variables"`
-	Files     []RunnerJobFile      `json:"files"`
+	Commands     []string             `json:"commands"`
+	Id           ID                   `json:"id"`
+	Image        string               `json:"image"`
+	Outcome      RunnerJobOutcomeEnum `json:"outcome"`
+	Status       RunnerJobStatusEnum  `json:"status"`
+	Variables    []RunnerJobVariable  `json:"variables"`
+	Files        []RunnerJobFile      `json:"files"`
+	InitCommands []string             `json:"initCommands"`
+	InitImage    string               `json:"initImage"`
 }
 
 func (runnerJob *RunnerJob) Number() string {
