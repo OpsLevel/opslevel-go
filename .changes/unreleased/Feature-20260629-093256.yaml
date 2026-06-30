@@ -1,3 +1,0 @@
-kind: Feature
-body: Add Scope field on RunnerJobVariable so variables can be restricted to the init container or the main job container
-time: 2026-06-29T09:32:56.728664-07:00
