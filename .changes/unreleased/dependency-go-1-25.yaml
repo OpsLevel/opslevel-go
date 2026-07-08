@@ -1,2 +1,0 @@
-kind: Dependency
-body: Bumped the minimum required Go version from 1.24 to 1.25.0. Downstream projects that import `opslevel-go` must now be built with Go 1.25.0 or newer.
