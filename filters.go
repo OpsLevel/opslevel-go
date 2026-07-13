@@ -50,7 +50,10 @@ func (filterPredicate *FilterPredicate) validateCaseSensitivity() error {
 		PredicateTypeEnumDoesNotMatch,
 		PredicateTypeEnumSatisfiesJqExpression,
 	}
-	if slices.Contains(knownNotCaseSensitiveTypes, filterPredicate.Type) && *filterPredicate.CaseSensitive {
+	// The API ignores CaseSensitive for these predicate types and returns null for it
+	// in responses, so any value set here (true or false) would silently disagree with
+	// the API response for clients that round-trip it. Reject any non-nil value.
+	if slices.Contains(knownNotCaseSensitiveTypes, filterPredicate.Type) {
 		return fmt.Errorf("FilterPredicate type '%s' cannot have CaseSensitive value set", filterPredicate.Type)
 	}
 	return nil

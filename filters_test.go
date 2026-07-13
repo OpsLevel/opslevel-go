@@ -301,3 +301,66 @@ func TestDeleteFilter(t *testing.T) {
 	// Assert
 	autopilot.Equals(t, nil, err)
 }
+
+func TestFilterPredicateValidateCaseSensitivity(t *testing.T) {
+	boolPtr := func(b bool) *bool { return &b }
+
+	testCases := map[string]struct {
+		predicate ol.FilterPredicate
+		wantErr   bool
+	}{
+		"nil on not-case-sensitive type is valid": {
+			predicate: ol.FilterPredicate{
+				Key:           ol.PredicateKeyEnumRepositoryIDs,
+				Type:          ol.PredicateTypeEnumExists,
+				CaseSensitive: nil,
+			},
+			wantErr: false,
+		},
+		"true on not-case-sensitive type is an error": {
+			predicate: ol.FilterPredicate{
+				Key:           ol.PredicateKeyEnumRepositoryIDs,
+				Type:          ol.PredicateTypeEnumExists,
+				CaseSensitive: boolPtr(true),
+			},
+			wantErr: true,
+		},
+		"false on not-case-sensitive type is an error": {
+			predicate: ol.FilterPredicate{
+				Key:           ol.PredicateKeyEnumRepositoryIDs,
+				Type:          ol.PredicateTypeEnumExists,
+				CaseSensitive: boolPtr(false),
+			},
+			wantErr: true,
+		},
+		"true on case-sensitive type is valid": {
+			predicate: ol.FilterPredicate{
+				Key:           ol.PredicateKeyEnumLanguage,
+				Type:          ol.PredicateTypeEnumEquals,
+				Value:         "Go",
+				CaseSensitive: boolPtr(true),
+			},
+			wantErr: false,
+		},
+		"false on case-sensitive type is valid": {
+			predicate: ol.FilterPredicate{
+				Key:           ol.PredicateKeyEnumLanguage,
+				Type:          ol.PredicateTypeEnumEquals,
+				Value:         "Go",
+				CaseSensitive: boolPtr(false),
+			},
+			wantErr: false,
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			err := tc.predicate.Validate()
+			if tc.wantErr {
+				autopilot.Assert(t, err != nil, "expected an error but got nil")
+			} else {
+				autopilot.Equals(t, nil, err)
+			}
+		})
+	}
+}
