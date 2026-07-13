@@ -93,11 +93,29 @@ type RunnerJobFile struct {
 	Contents string `json:"contents"`
 }
 
+// RunnerJobResourceSpecs holds Kubernetes resource specs
+// (for example "500m", "1Gi", "64Mi"). All fields are optional; missing values
+// mean the runner should keep its configured default for that dimension.
+type RunnerJobResourceSpecs struct {
+	CPU              string `json:"cpu"`
+	Memory           string `json:"memory"`
+	EphemeralStorage string `json:"ephemeralStorage"`
+}
+
+// RunnerJobResources allows a job to override the pod's main container
+// resource requests and limits. Nil values (or nil pointers on the enclosing
+// struct) mean the runner uses its configured defaults for that side.
+type RunnerJobResources struct {
+	Requests *RunnerJobResourceSpecs `json:"requests"`
+	Limits   *RunnerJobResourceSpecs `json:"limits"`
+}
+
 type RunnerJob struct {
 	Commands     []string             `json:"commands"`
 	Id           ID                   `json:"id"`
 	Image        string               `json:"image"`
 	Outcome      RunnerJobOutcomeEnum `json:"outcome"`
+	Resources    *RunnerJobResources  `json:"resources"`
 	Status       RunnerJobStatusEnum  `json:"status"`
 	Variables    []RunnerJobVariable  `json:"variables"`
 	Files        []RunnerJobFile      `json:"files"`
