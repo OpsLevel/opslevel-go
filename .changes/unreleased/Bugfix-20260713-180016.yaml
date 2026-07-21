@@ -1,5 +1,0 @@
-kind: Bugfix
-body: FilterPredicate.Validate now rejects any CaseSensitive value (true or false) on
-  predicate types that do not support case sensitivity (e.g. exists, matches), since
-  the API ignores the value and returns null for it.
-time: 2026-07-13T18:00:16.000000Z
