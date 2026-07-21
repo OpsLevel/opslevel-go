@@ -57,9 +57,9 @@ type AWSIntegrationInput struct {
 }
 
 type KubernetesIntegrationInput struct {
-	ExtractDefinition   *Nullable[string] `json:"extractDefinition,omitempty"`
+	ExtractDefinition   *Nullable[YAML]   `json:"extractDefinition,omitempty"`
 	Name                *Nullable[string] `json:"name,omitempty"`
-	TransformDefinition *Nullable[string] `json:"transformDefinition,omitempty"`
+	TransformDefinition *Nullable[YAML]   `json:"transformDefinition,omitempty"`
 }
 
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }

@@ -182,8 +182,8 @@ func TestCreateKubernetesIntegration(t *testing.T) {
 	// Act
 	result, err := client.CreateIntegrationKubernetes(opslevel.KubernetesIntegrationInput{
 		Name:                opslevel.RefOf("Kubernetes"),
-		ExtractDefinition:   opslevel.RefOf("extractors:\n- external_kind: Deployment\n"),
-		TransformDefinition: opslevel.RefOf("transforms:\n- infrastructure_resource: Deployment\n"),
+		ExtractDefinition:   opslevel.RefOf(opslevel.YAML("extractors:\n- external_kind: Deployment\n")),
+		TransformDefinition: opslevel.RefOf(opslevel.YAML("transforms:\n- infrastructure_resource: Deployment\n")),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
@@ -425,8 +425,8 @@ func TestUpdateKubernetesIntegration(t *testing.T) {
 	// Act
 	result, err := client.UpdateIntegrationKubernetes(string(id1), opslevel.KubernetesIntegrationInput{
 		Name:                opslevel.RefOf("Kubernetes Updated"),
-		ExtractDefinition:   opslevel.RefOf("extractors:\n- external_kind: StatefulSet\n"),
-		TransformDefinition: opslevel.RefOf("transforms:\n- infrastructure_resource: StatefulSet\n"),
+		ExtractDefinition:   opslevel.RefOf(opslevel.YAML("extractors:\n- external_kind: StatefulSet\n")),
+		TransformDefinition: opslevel.RefOf(opslevel.YAML("transforms:\n- infrastructure_resource: StatefulSet\n")),
 	})
 	// Assert
 	autopilot.Equals(t, nil, err)
