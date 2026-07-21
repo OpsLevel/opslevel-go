@@ -37,6 +37,11 @@ type GoogleCloudIntegrationFragment struct {
 	TagsOverrideOwnership bool                 `graphql:"tagsOverrideOwnership"`
 }
 
+type KubernetesIntegrationFragment struct {
+	ExtractDefinition   string `graphql:"extractDefinition"`
+	TransformDefinition string `graphql:"transformDefinition"`
+}
+
 type NewRelicIntegrationFragment struct {
 	BaseUrl    string `graphql:"baseUrl"`
 	AccountKey string `graphql:"accountKey"`
@@ -51,7 +56,17 @@ type AWSIntegrationInput struct {
 	RegionOverride       *[]string         `json:"regionOverride,omitempty"`
 }
 
+type KubernetesIntegrationInput struct {
+	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty"`
+	Name                *Nullable[string] `json:"name,omitempty"`
+	TransformDefinition *YAML             `json:"transformDefinition,omitempty"`
+}
+
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
+func (kubernetesIntegrationInput KubernetesIntegrationInput) GetGraphQLType() string {
+	return "KubernetesIntegrationInput"
+}
+
 func (newRelicIntegrationInput NewRelicIntegrationInput) GetGraphQLType() string {
 	return "NewRelicIntegrationInput"
 }
@@ -231,6 +246,29 @@ func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudI
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationUpdate"))
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) CreateIntegrationKubernetes(input KubernetesIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload IntegrationCreatePayload `graphql:"kubernetesIntegrationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("KubernetesIntegrationCreate"))
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateIntegrationKubernetes(identifier string, input KubernetesIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload IntegrationUpdatePayload `graphql:"kubernetesIntegrationUpdate(integration: $integration input: $input)"`
+	}
+	v := PayloadVariables{
+		"integration": *NewIdentifier(identifier),
+		"input":       input,
+	}
+	err := client.Mutate(&m, v, WithName("KubernetesIntegrationUpdate"))
 	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 

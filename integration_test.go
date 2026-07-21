@@ -159,6 +159,42 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	}, result.Projects)
 }
 
+func TestCreateKubernetesIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation KubernetesIntegrationCreate($input:KubernetesIntegrationInput!){kubernetesIntegrationCreate(input: $input){integration{{ template "integration_request" }},errors{message,path}}}`,
+		`{"input": { "name": "Kubernetes", "extractDefinition": "extractors:\n- external_kind: Deployment\n", "transformDefinition": "transforms:\n- infrastructure_resource: Deployment\n" }}`,
+		`{"data": {
+      "kubernetesIntegrationCreate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "Kubernetes",
+          "type": "kubernetes",
+          "createdAt": "2026-07-17T16:25:29.574450Z",
+          "installedAt": "2026-07-17T16:25:28.541124Z",
+          "extractDefinition": "extractors:\n- external_kind: Deployment\n",
+          "transformDefinition": "transforms:\n- infrastructure_resource: Deployment\n"
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/create_kubernetes", testRequest)
+	extractDefinition := opslevel.YAML("extractors:\n- external_kind: Deployment\n")
+	transformDefinition := opslevel.YAML("transforms:\n- infrastructure_resource: Deployment\n")
+	// Act
+	result, err := client.CreateIntegrationKubernetes(opslevel.KubernetesIntegrationInput{
+		Name:                opslevel.RefOf("Kubernetes"),
+		ExtractDefinition:   &extractDefinition,
+		TransformDefinition: &transformDefinition,
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Kubernetes", result.Name)
+	autopilot.Equals(t, "extractors:\n- external_kind: Deployment\n", result.ExtractDefinition)
+	autopilot.Equals(t, "transforms:\n- infrastructure_resource: Deployment\n", result.TransformDefinition)
+}
+
 func TestCreateNewRelicIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
@@ -366,6 +402,42 @@ func TestUpdateGoogleCloudIntegration(t *testing.T) {
 	autopilot.Equals(t, []opslevel.GoogleCloudProject{
 		{Id: "123", Name: "my-project-1", Url: "XXX_URL_XXX"},
 	}, result.Projects)
+}
+
+func TestUpdateKubernetesIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation KubernetesIntegrationUpdate($input:KubernetesIntegrationInput!$integration:IdentifierInput!){kubernetesIntegrationUpdate(integration: $integration input: $input){integration{{ template "integration_request" }},errors{message,path}}}`,
+		`{"integration": { {{ template "id1" }} }, "input": { "name": "Kubernetes Updated", "extractDefinition": "extractors:\n- external_kind: StatefulSet\n", "transformDefinition": "transforms:\n- infrastructure_resource: StatefulSet\n" }}`,
+		`{"data": {
+      "kubernetesIntegrationUpdate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "Kubernetes Updated",
+          "type": "kubernetes",
+          "createdAt": "2026-07-17T16:25:29.574450Z",
+          "installedAt": "2026-07-17T16:25:28.541124Z",
+          "extractDefinition": "extractors:\n- external_kind: StatefulSet\n",
+          "transformDefinition": "transforms:\n- infrastructure_resource: StatefulSet\n"
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/update_kubernetes", testRequest)
+	extractDefinition := opslevel.YAML("extractors:\n- external_kind: StatefulSet\n")
+	transformDefinition := opslevel.YAML("transforms:\n- infrastructure_resource: StatefulSet\n")
+	// Act
+	result, err := client.UpdateIntegrationKubernetes(string(id1), opslevel.KubernetesIntegrationInput{
+		Name:                opslevel.RefOf("Kubernetes Updated"),
+		ExtractDefinition:   &extractDefinition,
+		TransformDefinition: &transformDefinition,
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Kubernetes Updated", result.Name)
+	autopilot.Equals(t, "extractors:\n- external_kind: StatefulSet\n", result.ExtractDefinition)
+	autopilot.Equals(t, "transforms:\n- infrastructure_resource: StatefulSet\n", result.TransformDefinition)
 }
 
 func TestUpdateNewRelicIntegration(t *testing.T) {

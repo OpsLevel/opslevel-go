@@ -1,0 +1,6 @@
+kind: Feature
+body: Add CreateIntegrationKubernetes and UpdateIntegrationKubernetes client methods
+  along with KubernetesIntegrationInput and a KubernetesIntegration fragment exposing
+  ExtractDefinition and TransformDefinition, so a Kubernetes integration's ETL config
+  can be managed via the API.
+time: 2026-07-17T10:00:00.000000Z
