@@ -76,10 +76,10 @@ type CampaignReminder struct {
 	Timezone            string                            // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")) (Required)
 }
 
-// CampaignSendReminderOutcomeTeams Summarizes list of teams returned from attempt to send reminders for their failed campaigns
+// CampaignSendReminderOutcomeTeams Summarizes the list of teams returned from an attempt to send reminders for their failed campaigns
 type CampaignSendReminderOutcomeTeams struct {
 	ReminderType CampaignReminderTypeEnum // The reminder type linked to the attempt at notifying the listed teams (Required)
-	TeamIds      []ID                     // List of team_ids in this group of teams (Optional)
+	TeamIds      []ID                     // List of team IDs in this group of teams (Optional)
 	TotalCount   int                      // Count of number of teams listed (Required)
 }
 
@@ -171,7 +171,7 @@ type ConfigError struct {
 // ConfigFile An OpsLevel config as code definition
 type ConfigFile struct {
 	OwnerType string // The relation for which the config was returned (Required)
-	Yaml      string // The OpsLevel config in yaml format (Required)
+	Yaml      string // The OpsLevel config in YAML format (Required)
 }
 
 // Contact A method of contact for a team
@@ -196,7 +196,7 @@ type CustomActionsTemplate struct {
 type CustomActionsTemplatesAction struct {
 	Description    string                      // A description of what the action should accomplish (Optional)
 	Headers        JSON                        `scalar:"true"` // The headers sent along with the webhook, if any (Optional)
-	HttpMethod     CustomActionsHttpMethodEnum // The HTTP Method used to call the webhook action (Required)
+	HttpMethod     CustomActionsHttpMethodEnum // The HTTP method used to call the webhook action (Required)
 	LiquidTemplate string                      // The liquid template used to generate the data sent to the external action (Optional)
 	Name           string                      // The name of the external action (Required)
 	Url            string                      // The URL of the webhook action (Required)
@@ -244,7 +244,7 @@ type CustomActionsWebhookAction struct {
 	Async          bool                        // Whether the action expects an additional, asynchronous response upon completion (Required)
 	Description    string                      // A description of what the action should accomplish (Optional)
 	Headers        JSON                        `scalar:"true"` // The headers sent along with the webhook, if any (Optional)
-	HttpMethod     CustomActionsHttpMethodEnum // The HTTP Method used to call the webhook action (Required)
+	HttpMethod     CustomActionsHttpMethodEnum // The HTTP method used to call the webhook action (Required)
 	Id             ID                          // The ID of the external action (Required)
 	LiquidTemplate string                      // The liquid template used to generate the data sent to the external action (Optional)
 	Name           string                      // The name of the external action (Required)
@@ -255,33 +255,33 @@ type CustomActionsWebhookAction struct {
 type Deploy struct {
 	AssociatedUser      UserId           // The associated OpsLevel user for the deploy (Optional)
 	Author              string           // The author of the deploy (Optional)
-	CommitAuthorEmail   string           // The email of the commit (Optional)
+	CommitAuthorEmail   string           // The email of the commit author (Optional)
 	CommitAuthorName    string           // The author of the commit (Optional)
 	CommitAuthoringDate iso8601.Time     // The time the commit was authored (Optional)
 	CommitBranch        string           // The branch the commit took place on (Optional)
 	CommitMessage       string           // The commit message associated with the deploy (Optional)
-	CommitSha           string           // The sha associated with the commit of the deploy (Optional)
+	CommitSha           string           // The SHA associated with the commit of the deploy (Optional)
 	CommittedAt         iso8601.Time     // The time the commit happened (Optional)
 	CommitterEmail      string           // The email of the person who created the commit (Optional)
 	CommitterName       string           // The name of the person who created the commit (Optional)
 	DedupId             string           // The deduplication ID provided to prevent duplicate deploys (Optional)
 	DeployNumber        string           // An identifier to keep track of the version of the deploy (Optional)
 	DeployStatus        DeployStatusEnum // The normalized status of the deploy. This is derived from the status field (Optional)
-	DeployUrl           string           // The url the where the deployment can be found (Optional)
+	DeployUrl           string           // The URL where the deployment can be found (Optional)
 	DeployedAt          iso8601.Time     // The time the deployment happened (Optional)
-	DeployerEmail       string           // The email of who is responsible for the deployment (Optional)
-	DeployerId          string           // An external id of who deployed (Optional)
-	DeployerName        string           // The name of who is responsible for the deployment (Optional)
+	DeployerEmail       string           // The email of the person responsible for the deployment (Optional)
+	DeployerId          string           // The external ID of the person who deployed (Optional)
+	DeployerName        string           // The name of the person responsible for the deployment (Optional)
 	Description         string           // The given description of the deploy (Required)
 	Duration            int              // The duration of the deploy (Optional)
-	Environment         string           // The environment in which the deployment happened in (Optional)
+	Environment         string           // The environment in which the deployment happened (Optional)
 	Id                  ID               // The id of the deploy (Required)
 	ProviderName        string           // The integration name of the deploy (Optional)
-	ProviderType        string           // The integration type used the deploy (Optional)
-	ProviderUrl         string           // The url to the deploy integration (Optional)
+	ProviderType        string           // The integration type used by the deploy (Optional)
+	ProviderUrl         string           // The URL to the deploy integration (Optional)
 	Service             ServiceId        // The service object the deploy is attached to (Optional)
-	ServiceAlias        string           // The alias used to associated this deploy to its service (Required)
-	ServiceId           string           // The id the deploy is associated to (Optional)
+	ServiceAlias        string           // The alias used to associate this deploy with its service (Required)
+	ServiceId           string           // The ID of the service the deploy is associated with (Optional)
 	StartedAt           iso8601.Time     // The time the deploy started (Optional)
 	Status              string           // The deployment status (Optional)
 }
@@ -469,8 +469,8 @@ type RubricReport struct {
 
 // SBOMGenerationConfiguration The configuration details that explain whether SBOM generation is allowed for the repository
 type SBOMGenerationConfiguration struct {
-	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM autogeneration is disabled (Optional)
-	Enabled          bool                                       // Whether SBOM autogeneration is enabled through all associated configuration objects (Required)
+	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM auto-generation is disabled (Optional)
+	Enabled          bool                                       // Whether SBOM auto-generation is enabled through all associated configuration objects (Required)
 	NextGenerationAt iso8601.Time                               // The approximate time at which a new software bill of material will be generated for this repository (Optional)
 	State            RepositorySBOMGenerationConfigEnum         // The configuration option set by the current object (Required)
 }
