@@ -56,12 +56,6 @@ type AWSIntegrationInput struct {
 	RegionOverride       *[]string         `json:"regionOverride,omitempty"`
 }
 
-type KubernetesIntegrationInput struct {
-	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty"`
-	Name                *Nullable[string] `json:"name,omitempty"`
-	TransformDefinition *YAML             `json:"transformDefinition,omitempty"`
-}
-
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
 func (kubernetesIntegrationInput KubernetesIntegrationInput) GetGraphQLType() string {
 	return "KubernetesIntegrationInput"

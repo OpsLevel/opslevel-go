@@ -270,7 +270,6 @@ func (service *Service) GetOnCalls(client *Client, variables *PayloadVariables) 
 		service.OnCalls = &OnCallConnection{}
 	}
 	service.OnCalls.Nodes = append(service.OnCalls.Nodes, q.Account.Service.OnCalls.Nodes...)
-	service.OnCalls.Edges = append(service.OnCalls.Edges, q.Account.Service.OnCalls.Edges...)
 	service.OnCalls.PageInfo = q.Account.Service.OnCalls.PageInfo
 	if service.OnCalls.PageInfo.HasNextPage {
 		(*variables)["after"] = service.OnCalls.PageInfo.End

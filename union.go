@@ -2,6 +2,12 @@
 
 package opslevel
 
+// ApiTokenOwner represents the owner of an API token, either a User or a ScimIntegration.
+type ApiTokenOwner struct {
+	ScimIntegration IntegrationId `graphql:"... on ScimIntegration"`
+	User            UserId        `graphql:"... on User"`
+}
+
 // Approver The actor responsible for the approval/denial of an approvable resource.
 type Approver struct {
 	User UserId `graphql:"... on User"`
