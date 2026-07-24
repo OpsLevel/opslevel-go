@@ -27,7 +27,7 @@ type AlertSourceTypeEnum string
 var (
 	AlertSourceTypeEnumCustom      AlertSourceTypeEnum = "custom"       // A custom alert source (aka service)
 	AlertSourceTypeEnumDatadog     AlertSourceTypeEnum = "datadog"      // A Datadog alert source (aka monitor)
-	AlertSourceTypeEnumFireHydrant AlertSourceTypeEnum = "fire_hydrant" // An FireHydrant alert source (aka service)
+	AlertSourceTypeEnumFireHydrant AlertSourceTypeEnum = "fire_hydrant" // A FireHydrant alert source (aka service)
 	AlertSourceTypeEnumIncidentIo  AlertSourceTypeEnum = "incident_io"  // An incident.io alert source (aka service)
 	AlertSourceTypeEnumNewRelic    AlertSourceTypeEnum = "new_relic"    // A New Relic alert source (aka service)
 	AlertSourceTypeEnumOpsgenie    AlertSourceTypeEnum = "opsgenie"     // An Opsgenie alert source (aka service)
@@ -111,7 +111,7 @@ var AllBasicTypeEnum = []string{
 	string(BasicTypeEnumEquals),
 }
 
-// CampaignFilterEnum Fields that can be used as part of filter for campaigns
+// CampaignFilterEnum Fields that can be used as part of a filter for campaigns
 type CampaignFilterEnum string
 
 var (
@@ -159,13 +159,13 @@ var AllCampaignReminderFrequencyUnitEnum = []string{
 	string(CampaignReminderFrequencyUnitEnumWeek),
 }
 
-// CampaignReminderTypeEnum Type/Format of the notification
+// CampaignReminderTypeEnum Type/format of the notification
 type CampaignReminderTypeEnum string
 
 var (
 	CampaignReminderTypeEnumEmail          CampaignReminderTypeEnum = "email"           // Notification will be sent via email
-	CampaignReminderTypeEnumMicrosoftTeams CampaignReminderTypeEnum = "microsoft_teams" // Notification will be sent by microsoft teams
-	CampaignReminderTypeEnumSlack          CampaignReminderTypeEnum = "slack"           // Notification will be sent by slack
+	CampaignReminderTypeEnumMicrosoftTeams CampaignReminderTypeEnum = "microsoft_teams" // Notification will be sent via Microsoft Teams
+	CampaignReminderTypeEnumSlack          CampaignReminderTypeEnum = "slack"           // Notification will be sent via Slack
 )
 
 // All CampaignReminderTypeEnum as []string
@@ -276,7 +276,7 @@ type CheckResultStatusEnum string
 
 var (
 	CheckResultStatusEnumFailed CheckResultStatusEnum = "failed" // Indicates that the check has failed for the associated service
-	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service.
+	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service
 )
 
 // All CheckResultStatusEnum as []string
@@ -291,7 +291,7 @@ type CheckStatus string
 var (
 	CheckStatusFailed  CheckStatus = "failed"  // The check evaluated to a falsy value based on some conditions
 	CheckStatusPassed  CheckStatus = "passed"  // The check evaluated to a truthy value based on some conditions
-	CheckStatusPending CheckStatus = "pending" // The check has not been evaluated yet.
+	CheckStatusPending CheckStatus = "pending" // The check has not been evaluated yet
 )
 
 // All CheckStatus as []string
@@ -306,22 +306,22 @@ type CheckType string
 
 var (
 	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name
-	CheckTypeCodeIssue           CheckType = "code_issue"            // Verifies that the severity and quantity of code issues does not exceed defined thresholds
+	CheckTypeCodeIssue           CheckType = "code_issue"            // Verifies that the severity and quantity of code issues do not exceed defined thresholds
 	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing
-	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services
+	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration API call to complete a series of checks for multiple services
 	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled
 	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype
 	CheckTypeHasOwner            CheckType = "has_owner"             // Verifies that the service has an owner defined
-	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verifies that the services has received a deploy within a specified number of days
+	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verifies that the service has received a deploy within a specified number of days
 	CheckTypeHasRepository       CheckType = "has_repository"        // Verifies that the service has a repository integrated
-	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config
+	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained through the use of an opslevel.yml service config
 	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service
 	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages
-	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service
+	CheckTypePayload             CheckType = "payload"               // Requires a payload integration API call to complete a check for the service
 	CheckTypeRelationship        CheckType = "relationship"          // Verifies that the component has a specific number of relationship items defined for a specific relationship definition, with support for minimum, maximum, or exact count requirements
-	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service’s repository for the existence or contents of a specific file
+	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service's repository for the existence or contents of a specific file
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters
-	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service’s repository for specific contents in any file
+	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service's repository for specific contents in any file
 	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency
 	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format
 	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined
@@ -2581,7 +2581,7 @@ var AllCustomActionsTriggerEventStatusEnum = []string{
 type DayOfWeekEnum string
 
 var (
-	DayOfWeekEnumFriday    DayOfWeekEnum = "friday"    // Yesterday was Thursday. Tomorrow is Saturday. We so excited
+	DayOfWeekEnumFriday    DayOfWeekEnum = "friday"    // Yesterday was Thursday. Tomorrow is Saturday. We are so excited
 	DayOfWeekEnumMonday    DayOfWeekEnum = "monday"    // Monday is the day of the week that takes place between Sunday and Tuesday
 	DayOfWeekEnumSaturday  DayOfWeekEnum = "saturday"  // The day of the week before Sunday and following Friday, and (together with Sunday) forming part of the weekend
 	DayOfWeekEnumSunday    DayOfWeekEnum = "sunday"    // The day of the week before Monday and following Saturday, (together with Saturday) forming part of the weekend
@@ -2627,37 +2627,39 @@ var AllDeployStatusEnum = []string{
 type EventIntegrationEnum string
 
 var (
-	EventIntegrationEnumApidoc        EventIntegrationEnum = "apiDoc"        // API Documentation integration
-	EventIntegrationEnumAquasecurity  EventIntegrationEnum = "aquaSecurity"  // Aqua Security Custom Event Check integration
-	EventIntegrationEnumArgocd        EventIntegrationEnum = "argocd"        // ArgoCD deploy integration
-	EventIntegrationEnumAwsecr        EventIntegrationEnum = "awsEcr"        // AWS ECR Custom Event Check integration
-	EventIntegrationEnumBugsnag       EventIntegrationEnum = "bugsnag"       // Bugsnag Custom Event Check integration
-	EventIntegrationEnumCircleci      EventIntegrationEnum = "circleci"      // CircleCI deploy integration
-	EventIntegrationEnumCodacy        EventIntegrationEnum = "codacy"        // Codacy Custom Event Check integration
-	EventIntegrationEnumCoveralls     EventIntegrationEnum = "coveralls"     // Coveralls Custom Event Check integration
-	EventIntegrationEnumCustomevent   EventIntegrationEnum = "customEvent"   // Custom Event integration
-	EventIntegrationEnumDatadogcheck  EventIntegrationEnum = "datadogCheck"  // Datadog Check integration
-	EventIntegrationEnumDeploy        EventIntegrationEnum = "deploy"        // Deploy integration
-	EventIntegrationEnumDynatrace     EventIntegrationEnum = "dynatrace"     // Dynatrace Custom Event Check integration
-	EventIntegrationEnumFlux          EventIntegrationEnum = "flux"          // Flux deploy integration
-	EventIntegrationEnumGithubactions EventIntegrationEnum = "githubActions" // Github Actions deploy integration
-	EventIntegrationEnumGitlabci      EventIntegrationEnum = "gitlabCi"      // Gitlab CI deploy integration
-	EventIntegrationEnumGrafana       EventIntegrationEnum = "grafana"       // Grafana Custom Event Check integration
-	EventIntegrationEnumGrype         EventIntegrationEnum = "grype"         // Grype Custom Event Check integration
-	EventIntegrationEnumJenkins       EventIntegrationEnum = "jenkins"       // Jenkins deploy integration
-	EventIntegrationEnumJfrogxray     EventIntegrationEnum = "jfrogXray"     // JFrog Xray Custom Event Check integration
-	EventIntegrationEnumLacework      EventIntegrationEnum = "lacework"      // Lacework Custom Event Check integration
-	EventIntegrationEnumNewreliccheck EventIntegrationEnum = "newRelicCheck" // New Relic Check integration
-	EventIntegrationEnumOctopus       EventIntegrationEnum = "octopus"       // Octopus deploy integration
-	EventIntegrationEnumPrismacloud   EventIntegrationEnum = "prismaCloud"   // Prisma Cloud Custom Event Check integration
-	EventIntegrationEnumPrometheus    EventIntegrationEnum = "prometheus"    // Prometheus Custom Event Check integration
-	EventIntegrationEnumRollbar       EventIntegrationEnum = "rollbar"       // Rollbar Custom Event Check integration
-	EventIntegrationEnumSentry        EventIntegrationEnum = "sentry"        // Sentry Custom Event Check integration
-	EventIntegrationEnumSnyk          EventIntegrationEnum = "snyk"          // Snyk Custom Event Check integration
-	EventIntegrationEnumSonarqube     EventIntegrationEnum = "sonarqube"     // SonarQube Custom Event Check integration
-	EventIntegrationEnumStackhawk     EventIntegrationEnum = "stackhawk"     // StackHawk Custom Event Check integration
-	EventIntegrationEnumSumologic     EventIntegrationEnum = "sumoLogic"     // Sumo Logic Custom Event Check integration
-	EventIntegrationEnumVeracode      EventIntegrationEnum = "veracode"      // Veracode Custom Event Check integration
+	EventIntegrationEnumApidoc         EventIntegrationEnum = "apiDoc"         // API Documentation integration
+	EventIntegrationEnumAquasecurity   EventIntegrationEnum = "aquaSecurity"   // Aqua Security Custom Event Check integration
+	EventIntegrationEnumArgocd         EventIntegrationEnum = "argocd"         // ArgoCD deploy integration
+	EventIntegrationEnumAwsecr         EventIntegrationEnum = "awsEcr"         // AWS ECR Custom Event Check integration
+	EventIntegrationEnumBugsnag        EventIntegrationEnum = "bugsnag"        // Bugsnag Custom Event Check integration
+	EventIntegrationEnumCircleci       EventIntegrationEnum = "circleci"       // CircleCI deploy integration
+	EventIntegrationEnumCodacy         EventIntegrationEnum = "codacy"         // Codacy Custom Event Check integration
+	EventIntegrationEnumCoveralls      EventIntegrationEnum = "coveralls"      // Coveralls Custom Event Check integration
+	EventIntegrationEnumCustomevent    EventIntegrationEnum = "customEvent"    // Custom Event integration
+	EventIntegrationEnumDatadogcheck   EventIntegrationEnum = "datadogCheck"   // Datadog Check integration
+	EventIntegrationEnumDeploy         EventIntegrationEnum = "deploy"         // Deploy integration
+	EventIntegrationEnumDynatrace      EventIntegrationEnum = "dynatrace"      // Dynatrace Custom Event Check integration
+	EventIntegrationEnumFlux           EventIntegrationEnum = "flux"           // Flux deploy integration
+	EventIntegrationEnumGithubactions  EventIntegrationEnum = "githubActions"  // GitHub Actions deploy integration
+	EventIntegrationEnumGitlabci       EventIntegrationEnum = "gitlabCi"       // GitLab CI deploy integration
+	EventIntegrationEnumGrafana        EventIntegrationEnum = "grafana"        // Grafana Custom Event Check integration
+	EventIntegrationEnumGrype          EventIntegrationEnum = "grype"          // Grype Custom Event Check integration
+	EventIntegrationEnumJenkins        EventIntegrationEnum = "jenkins"        // Jenkins deploy integration
+	EventIntegrationEnumJfrogxray      EventIntegrationEnum = "jfrogXray"      // JFrog Xray Custom Event Check integration
+	EventIntegrationEnumLacework       EventIntegrationEnum = "lacework"       // Lacework Custom Event Check integration
+	EventIntegrationEnumNewreliccheck  EventIntegrationEnum = "newRelicCheck"  // New Relic Check integration
+	EventIntegrationEnumOctopus        EventIntegrationEnum = "octopus"        // Octopus deploy integration
+	EventIntegrationEnumPrismacloud    EventIntegrationEnum = "prismaCloud"    // Prisma Cloud Custom Event Check integration
+	EventIntegrationEnumPrometheus     EventIntegrationEnum = "prometheus"     // Prometheus Custom Event Check integration
+	EventIntegrationEnumRollbar        EventIntegrationEnum = "rollbar"        // Rollbar Custom Event Check integration
+	EventIntegrationEnumSentry         EventIntegrationEnum = "sentry"         // Sentry Custom Event Check integration
+	EventIntegrationEnumSnyk           EventIntegrationEnum = "snyk"           // Snyk Custom Event Check integration
+	EventIntegrationEnumSnykevent      EventIntegrationEnum = "snykEvent"      // Snyk Custom Event Check integration
+	EventIntegrationEnumSonarqube      EventIntegrationEnum = "sonarqube"      // SonarQube Custom Event Check integration
+	EventIntegrationEnumSonarqubeevent EventIntegrationEnum = "sonarqubeEvent" // SonarQube Custom Event Check integration
+	EventIntegrationEnumStackhawk      EventIntegrationEnum = "stackhawk"      // StackHawk Custom Event Check integration
+	EventIntegrationEnumSumologic      EventIntegrationEnum = "sumoLogic"      // Sumo Logic Custom Event Check integration
+	EventIntegrationEnumVeracode       EventIntegrationEnum = "veracode"       // Veracode Custom Event Check integration
 )
 
 // All EventIntegrationEnum as []string
@@ -2689,7 +2691,9 @@ var AllEventIntegrationEnum = []string{
 	string(EventIntegrationEnumRollbar),
 	string(EventIntegrationEnumSentry),
 	string(EventIntegrationEnumSnyk),
+	string(EventIntegrationEnumSnykevent),
 	string(EventIntegrationEnumSonarqube),
+	string(EventIntegrationEnumSonarqubeevent),
 	string(EventIntegrationEnumStackhawk),
 	string(EventIntegrationEnumSumologic),
 	string(EventIntegrationEnumVeracode),
@@ -2716,7 +2720,9 @@ var AllFrequencyTimeScale = []string{
 // HasDocumentationSubtypeEnum The subtype of the document
 type HasDocumentationSubtypeEnum string
 
-var HasDocumentationSubtypeEnumOpenapi HasDocumentationSubtypeEnum = "openapi" // Document is an OpenAPI document
+var (
+	HasDocumentationSubtypeEnumOpenapi HasDocumentationSubtypeEnum = "openapi" // Document is an OpenAPI document
+)
 
 // All HasDocumentationSubtypeEnum as []string
 var AllHasDocumentationSubtypeEnum = []string{
@@ -2753,6 +2759,18 @@ var AllPackageConstraintEnum = []string{
 	string(PackageConstraintEnumMatchesVersion),
 }
 
+// PackageFilterEnum Fields that can be used as part of a filter for packages
+type PackageFilterEnum string
+
+var (
+	PackageFilterEnumPackageManager PackageFilterEnum = "package_manager" // Filter by `package_manager` field
+)
+
+// All PackageFilterEnum as []string
+var AllPackageFilterEnum = []string{
+	string(PackageFilterEnumPackageManager),
+}
+
 // PackageManagerEnum Supported software package manager types
 type PackageManagerEnum string
 
@@ -2778,11 +2796,14 @@ var (
 	PackageManagerEnumHackage   PackageManagerEnum = "hackage"   //
 	PackageManagerEnumHelm      PackageManagerEnum = "helm"      //
 	PackageManagerEnumHex       PackageManagerEnum = "hex"       //
+	PackageManagerEnumLuarocks  PackageManagerEnum = "luarocks"  //
 	PackageManagerEnumMaven     PackageManagerEnum = "maven"     //
 	PackageManagerEnumMlflow    PackageManagerEnum = "mlflow"    //
 	PackageManagerEnumNpm       PackageManagerEnum = "npm"       //
 	PackageManagerEnumNuget     PackageManagerEnum = "nuget"     //
 	PackageManagerEnumOci       PackageManagerEnum = "oci"       //
+	PackageManagerEnumOpam      PackageManagerEnum = "opam"      //
+	PackageManagerEnumOtp       PackageManagerEnum = "otp"       //
 	PackageManagerEnumPub       PackageManagerEnum = "pub"       //
 	PackageManagerEnumPypi      PackageManagerEnum = "pypi"      //
 	PackageManagerEnumQpkg      PackageManagerEnum = "qpkg"      //
@@ -2814,11 +2835,14 @@ var AllPackageManagerEnum = []string{
 	string(PackageManagerEnumHackage),
 	string(PackageManagerEnumHelm),
 	string(PackageManagerEnumHex),
+	string(PackageManagerEnumLuarocks),
 	string(PackageManagerEnumMaven),
 	string(PackageManagerEnumMlflow),
 	string(PackageManagerEnumNpm),
 	string(PackageManagerEnumNuget),
 	string(PackageManagerEnumOci),
+	string(PackageManagerEnumOpam),
+	string(PackageManagerEnumOtp),
 	string(PackageManagerEnumPub),
 	string(PackageManagerEnumPypi),
 	string(PackageManagerEnumQpkg),
@@ -2827,10 +2851,30 @@ var AllPackageManagerEnum = []string{
 	string(PackageManagerEnumSwift),
 }
 
+// PackageSortEnum Sort possibilities for packages
+type PackageSortEnum string
+
+var (
+	PackageSortEnumNameAsc            PackageSortEnum = "name_ASC"             // Order by `name` ascending
+	PackageSortEnumNameDesc           PackageSortEnum = "name_DESC"            // Order by `name` descending
+	PackageSortEnumPackageManagerAsc  PackageSortEnum = "package_manager_ASC"  // Order by `package_manager` ascending
+	PackageSortEnumPackageManagerDesc PackageSortEnum = "package_manager_DESC" // Order by `package_manager` descending
+)
+
+// All PackageSortEnum as []string
+var AllPackageSortEnum = []string{
+	string(PackageSortEnumNameAsc),
+	string(PackageSortEnumNameDesc),
+	string(PackageSortEnumPackageManagerAsc),
+	string(PackageSortEnumPackageManagerDesc),
+}
+
 // PayloadFilterEnum Fields that can be used as part of filters for payloads
 type PayloadFilterEnum string
 
-var PayloadFilterEnumIntegrationID PayloadFilterEnum = "integration_id" // Filter by `integration` field. Note that this is an internal id, ex. "123"
+var (
+	PayloadFilterEnumIntegrationID PayloadFilterEnum = "integration_id" // Filter by `integration` field. Note that this is an internal id, ex. "123"
+)
 
 // All PayloadFilterEnum as []string
 var AllPayloadFilterEnum = []string{
@@ -2855,7 +2899,7 @@ var AllPayloadSortEnum = []string{
 	string(PayloadSortEnumProcessedAtDesc),
 }
 
-// PredicateKeyEnum Fields that can be used as part of filter for services
+// PredicateKeyEnum Fields that can be used as part of a filter for services
 type PredicateKeyEnum string
 
 var (
@@ -2866,12 +2910,12 @@ var (
 	PredicateKeyEnumDomainID          PredicateKeyEnum = "domain_id"          // Filter by Domain that includes the System this service is assigned to, if any
 	PredicateKeyEnumFilterID          PredicateKeyEnum = "filter_id"          // Filter by another filter
 	PredicateKeyEnumFramework         PredicateKeyEnum = "framework"          // Filter by `framework` field
-	PredicateKeyEnumGroupIDs          PredicateKeyEnum = "group_ids"          // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
+	PredicateKeyEnumGroupIDs          PredicateKeyEnum = "group_ids"          // Filter by group hierarchy. Will return resources whose owner is in the group ancestry chain
 	PredicateKeyEnumLanguage          PredicateKeyEnum = "language"           // Filter by `language` field
 	PredicateKeyEnumLifecycleIndex    PredicateKeyEnum = "lifecycle_index"    // Filter by `lifecycle` field
 	PredicateKeyEnumName              PredicateKeyEnum = "name"               // Filter by `name` field
 	PredicateKeyEnumOwnerID           PredicateKeyEnum = "owner_id"           // Filter by `owner` field
-	PredicateKeyEnumOwnerIDs          PredicateKeyEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
+	PredicateKeyEnumOwnerIDs          PredicateKeyEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources whose owner is in the team ancestry chain
 	PredicateKeyEnumProduct           PredicateKeyEnum = "product"            // Filter by `product` field
 	PredicateKeyEnumProperties        PredicateKeyEnum = "properties"         // Filter by custom-defined properties
 	PredicateKeyEnumRelationships     PredicateKeyEnum = "relationships"      // Filter by `relationships`
@@ -3079,6 +3123,20 @@ var AllRelationshipDefinitionManagementRuleOperator = []string{
 	string(RelationshipDefinitionManagementRuleOperatorEquals),
 }
 
+// RelationshipDisplayStatusEnum The UI display status of a custom relationship
+type RelationshipDisplayStatusEnum string
+
+var (
+	RelationshipDisplayStatusEnumHidden  RelationshipDisplayStatusEnum = "hidden"  // The relationship is not shown on resource pages
+	RelationshipDisplayStatusEnumVisible RelationshipDisplayStatusEnum = "visible" // The relationship is shown on resource pages
+)
+
+// All RelationshipDisplayStatusEnum as []string
+var AllRelationshipDisplayStatusEnum = []string{
+	string(RelationshipDisplayStatusEnumHidden),
+	string(RelationshipDisplayStatusEnumVisible),
+}
+
 // RelationshipTypeEnum The type of relationship between two resources
 type RelationshipTypeEnum string
 
@@ -3109,13 +3167,13 @@ var AllRepositorySBOMGenerationConfigEnum = []string{
 	string(RepositorySBOMGenerationConfigEnumOptOut),
 }
 
-// RepositorySBOMGenerationDisabledReasonEnum The set of values that explain why SBOM autogeneration is disabled
+// RepositorySBOMGenerationDisabledReasonEnum The set of values that explain why SBOM auto-generation is disabled
 type RepositorySBOMGenerationDisabledReasonEnum string
 
 var (
-	RepositorySBOMGenerationDisabledReasonEnumAccount     RepositorySBOMGenerationDisabledReasonEnum = "account"     // SBOM autogeneration is disabled at the account level
-	RepositorySBOMGenerationDisabledReasonEnumIntegration RepositorySBOMGenerationDisabledReasonEnum = "integration" // SBOM autogeneration is disabled at the integration level
-	RepositorySBOMGenerationDisabledReasonEnumRepository  RepositorySBOMGenerationDisabledReasonEnum = "repository"  // SBOM autogeneration is disabled at the repository level
+	RepositorySBOMGenerationDisabledReasonEnumAccount     RepositorySBOMGenerationDisabledReasonEnum = "account"     // SBOM auto-generation is disabled at the account level
+	RepositorySBOMGenerationDisabledReasonEnumIntegration RepositorySBOMGenerationDisabledReasonEnum = "integration" // SBOM auto-generation is disabled at the integration level
+	RepositorySBOMGenerationDisabledReasonEnumRepository  RepositorySBOMGenerationDisabledReasonEnum = "repository"  // SBOM auto-generation is disabled at the repository level
 )
 
 // All RepositorySBOMGenerationDisabledReasonEnum as []string
@@ -3129,7 +3187,7 @@ var AllRepositorySBOMGenerationDisabledReasonEnum = []string{
 type RepositoryVisibilityEnum string
 
 var (
-	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (Github, Gitlab)
+	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (GitHub, GitLab)
 	RepositoryVisibilityEnumOrganization RepositoryVisibilityEnum = "ORGANIZATION" // Repositories that are only accessible to organization users (ADO)
 	RepositoryVisibilityEnumPrivate      RepositoryVisibilityEnum = "PRIVATE"      // Repositories that are private to the user
 	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publicly accessible
@@ -3193,7 +3251,21 @@ var AllScorecardSortEnum = []string{
 	string(ScorecardSortEnumServicecountDesc),
 }
 
-// ServiceFilterEnum Fields that can be used as part of filter for services
+// SecretAccessControlEnum The access control policy for a secret
+type SecretAccessControlEnum string
+
+var (
+	SecretAccessControlEnumEveryone  SecretAccessControlEnum = "everyone"   // The secret is usable by anyone
+	SecretAccessControlEnumOwnerOnly SecretAccessControlEnum = "owner_only" // The secret is usable only by the owning team
+)
+
+// All SecretAccessControlEnum as []string
+var AllSecretAccessControlEnum = []string{
+	string(SecretAccessControlEnumEveryone),
+	string(SecretAccessControlEnumOwnerOnly),
+}
+
+// ServiceFilterEnum Fields that can be used as part of a filter for services
 type ServiceFilterEnum string
 
 var (
@@ -3205,13 +3277,14 @@ var (
 	ServiceFilterEnumDomainID          ServiceFilterEnum = "domain_id"          // Filter by Domain that includes the System this service is assigned to, if any
 	ServiceFilterEnumFilterID          ServiceFilterEnum = "filter_id"          // Filter by another filter
 	ServiceFilterEnumFramework         ServiceFilterEnum = "framework"          // Filter by `framework` field
-	ServiceFilterEnumGroupIDs          ServiceFilterEnum = "group_ids"          // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
+	ServiceFilterEnumGroupIDs          ServiceFilterEnum = "group_ids"          // Filter by group hierarchy. Will return resources whose owner is in the group ancestry chain
 	ServiceFilterEnumLanguage          ServiceFilterEnum = "language"           // Filter by `language` field
 	ServiceFilterEnumLevelIndex        ServiceFilterEnum = "level_index"        // Filter by `level` field
 	ServiceFilterEnumLifecycleIndex    ServiceFilterEnum = "lifecycle_index"    // Filter by `lifecycle` field
+	ServiceFilterEnumMaturityEnabled   ServiceFilterEnum = "maturity_enabled"   // Filter by whether maturity is enabled for this service
 	ServiceFilterEnumName              ServiceFilterEnum = "name"               // Filter by `name` field
 	ServiceFilterEnumOwnerID           ServiceFilterEnum = "owner_id"           // Filter by `owner` field
-	ServiceFilterEnumOwnerIDs          ServiceFilterEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
+	ServiceFilterEnumOwnerIDs          ServiceFilterEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources whose owner is in the team ancestry chain
 	ServiceFilterEnumProduct           ServiceFilterEnum = "product"            // Filter by `product` field
 	ServiceFilterEnumProperty          ServiceFilterEnum = "property"           // Filter by a custom-defined property value
 	ServiceFilterEnumRelationship      ServiceFilterEnum = "relationship"       // Filter by the existence of a relationship to another catalog component
@@ -3235,6 +3308,7 @@ var AllServiceFilterEnum = []string{
 	string(ServiceFilterEnumLanguage),
 	string(ServiceFilterEnumLevelIndex),
 	string(ServiceFilterEnumLifecycleIndex),
+	string(ServiceFilterEnumMaturityEnabled),
 	string(ServiceFilterEnumName),
 	string(ServiceFilterEnumOwnerID),
 	string(ServiceFilterEnumOwnerIDs),
@@ -3489,7 +3563,7 @@ var AllUserRole = []string{
 	string(UserRoleUser),
 }
 
-// UsersFilterEnum Fields that can be used as part of filter for users
+// UsersFilterEnum Fields that can be used as part of a filter for users
 type UsersFilterEnum string
 
 var (
@@ -3497,7 +3571,7 @@ var (
 	UsersFilterEnumEmail         UsersFilterEnum = "email"           // Filter by `email` field
 	UsersFilterEnumLastSignInAt  UsersFilterEnum = "last_sign_in_at" // Filter by the `last_sign_in_at` field
 	UsersFilterEnumName          UsersFilterEnum = "name"            // Filter by `name` field
-	UsersFilterEnumRole          UsersFilterEnum = "role"            // Filter by `role` field. (user or admin)
+	UsersFilterEnumRole          UsersFilterEnum = "role"            // Filter by `role` field. The value is the role's `slug` (e.g. `user` or `admin`)
 	UsersFilterEnumTag           UsersFilterEnum = "tag"             // Filter by `tags` belonging to user
 )
 
@@ -3514,7 +3588,9 @@ var AllUsersFilterEnum = []string{
 // UsersInviteScopeEnum A classification of users to invite
 type UsersInviteScopeEnum string
 
-var UsersInviteScopeEnumPending UsersInviteScopeEnum = "pending" // All users who have yet to log in to OpsLevel for the first time
+var (
+	UsersInviteScopeEnumPending UsersInviteScopeEnum = "pending" // All users who have yet to log in to OpsLevel for the first time
+)
 
 // All UsersInviteScopeEnum as []string
 var AllUsersInviteScopeEnum = []string{
