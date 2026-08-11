@@ -56,7 +56,7 @@ type Campaign struct {
 	Owner           TeamId             // The team that owns the campaign (Optional)
 	ProjectBrief    string             // The project brief of the campaign (Optional)
 	RawProjectBrief string             // The raw unsanitized project brief of the campaign (Optional)
-	Reminder        CampaignReminder   // Configuration of an optional campaign reminder (Optional)
+	Reminder        *CampaignReminder  // Configuration of an optional campaign reminder (Optional)
 	ServiceStats    Stats              // A summary of services that completed the campaign (Optional)
 	StartDate       iso8601.Time       // The date the campaign will start (Optional)
 	Status          CampaignStatusEnum // The status of the campaign (Required)
@@ -65,15 +65,16 @@ type Campaign struct {
 
 // CampaignReminder Configuration of an optional campaign reminder
 type CampaignReminder struct {
-	Channels            []CampaignReminderChannelEnum     // The communication channels through which the reminder will be delivered (Required)
-	DaysOfWeek          []DayOfWeekEnum                   // A list of weekdays on which the reminders will be delivered. Only available with weekly frequency (Optional)
-	DefaultSlackChannel string                            // The name of the Slack channel that will be notified if a team doesn't have a default Slack contact (Optional)
-	Frequency           int                               // The interval at which reminders will be delivered (Required)
-	FrequencyUnit       CampaignReminderFrequencyUnitEnum // The time unit of the value in the 'frequency' field (Required)
-	Message             string                            // The message that will be delivered as the reminder (Optional)
-	NextOccurrence      iso8601.Time                      // The point in time at which the next reminder will be delivered based on the current configuration (Optional)
-	TimeOfDay           string                            // The time of day at which the reminder will be delivered. Format: "HH:MM" (Required)
-	Timezone            string                            // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")) (Required)
+	Channels                     []CampaignReminderChannelEnum     // The communication channels through which the reminder will be delivered (Required)
+	DaysOfWeek                   []DayOfWeekEnum                   // A list of weekdays on which the reminders will be delivered. Only available with weekly frequency (Optional)
+	DefaultSlackChannel          string                            // The name of the Slack channel that will be notified if a team doesn't have a default Slack contact (Optional)
+	DefaultMicrosoftTeamsChannel string                            // The name of the Microsoft Teams channel that will be notified if a team doesn't have a default Teams contact (Optional)
+	Frequency                    int                               // The interval at which reminders will be delivered (Required)
+	FrequencyUnit                CampaignReminderFrequencyUnitEnum // The time unit of the value in the 'frequency' field (Required)
+	Message                      string                            // The message that will be delivered as the reminder (Optional)
+	NextOccurrence               iso8601.Time                      // The point in time at which the next reminder will be delivered based on the current configuration (Optional)
+	TimeOfDay                    string                            // The time of day at which the reminder will be delivered. Format: "HH:MM" (Required)
+	Timezone                     string                            // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")) (Required)
 }
 
 // CampaignSendReminderOutcomeTeams Summarizes list of teams returned from attempt to send reminders for their failed campaigns

@@ -1,0 +1,3 @@
+kind: Feature
+body: Add CampaignReminderInput and a reminder field on CampaignCreateInput and CampaignUpdateInput to manage recurring campaign reminders (Slack, email, Microsoft Teams). Campaign.Reminder is now a pointer so a cleared reminder is distinguishable from an unset one.
+time: 2026-06-09T15:00:00.000000-05:00

@@ -90,7 +90,7 @@
 {{end}}
 
 {{- define "campaign_create_request" }}
-mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_create_request_vars" }}
@@ -114,7 +114,7 @@ mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $inpu
 }{{ end }}
 
 {{- define "campaign_get_request" }}
-query CampaignGet($id:ID!){account{campaign(id: $id){checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate}}}
+query CampaignGet($id:ID!){account{campaign(id: $id){checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate}}}
 {{ end }}
 
 {{- define "campaign_get_request_vars" }}
@@ -140,7 +140,7 @@ query CampaignGet($id:ID!){account{campaign(id: $id){checkStats{total,totalSucce
 }{{ end }}
 
 {{- define "campaign_update_request" }}
-mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_update_request_vars" }}
@@ -176,7 +176,7 @@ mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){delet
 }{{ end }}
 
 {{- define "campaign_schedule_request" }}
-mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignScheduleUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignScheduleUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_schedule_request_vars" }}
@@ -202,7 +202,7 @@ mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignSch
 }{{ end }}
 
 {{- define "campaign_unschedule_request" }}
-mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_unschedule_request_vars" }}
@@ -245,7 +245,7 @@ query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: 
 }{{ end }}
 
 {{- define "campaign_copy_checks_request" }}
-mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCampaign(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCampaign(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_copy_checks_request_vars" }}
@@ -269,3 +269,38 @@ mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCam
         "reminder":null
     },"errors":[]}}
 }{{ end }}
+
+{{- define "campaign_create_reminder_request_vars" }}
+{"input":{"name":"New Campaign","ownerId":"{{ template "id1_string" }}","reminder":{"channels":["slack","email"],"frequency":1,"frequencyUnit":"week","daysOfWeek":["monday","thursday"],"timeOfDay":"09:30","timezone":"America/Chicago","message":"Reminder message","defaultSlackChannel":"platform-eng"}}}
+{{ end }}
+
+{{- define "campaign_create_reminder_response" }}{
+    "data":{"campaignCreate":{"campaign":{
+        {{ template "id1" }},
+        "name":"New Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/new-campaign",
+        "status":"draft",
+        "checkStats":{"total":0,"totalSuccessful":0},
+        "serviceStats":{"total":0,"totalSuccessful":0},
+        "owner":{ {{ template "id1" }}, "alias":"platform" },
+        "projectBrief":"",
+        "rawProjectBrief":"",
+        "filter":null,
+        "reminder":{
+            "channels":["slack","email"],
+            "daysOfWeek":["monday","thursday"],
+            "defaultSlackChannel":"#platform-eng",
+            "defaultMicrosoftTeamsChannel":null,
+            "frequency":1,
+            "frequencyUnit":"week",
+            "message":"Reminder message",
+            "nextOccurrence":null,
+            "timeOfDay":"09:30",
+            "timezone":"America/Chicago"
+        }
+    },"errors":[]}}
+}{{ end }}
+
+{{- define "campaign_update_clear_reminder_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}","name":"Updated Campaign","reminder":null}}
+{{ end }}

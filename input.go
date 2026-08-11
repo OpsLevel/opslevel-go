@@ -95,10 +95,24 @@ type CategoryUpdateInput struct {
 
 // CampaignCreateInput Specifies the input fields used to create a campaign
 type CampaignCreateInput struct {
-	Name         string        `json:"name" yaml:"name" example:"example_value"`                                               // The name of the campaign (Required)
-	OwnerId      ID            `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the team that owns the campaign (Required)
-	FilterId     *Nullable[ID] `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
-	ProjectBrief *string       `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign in Markdown (Optional)
+	Name         string                 `json:"name" yaml:"name" example:"example_value"`                                               // The name of the campaign (Required)
+	OwnerId      ID                     `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the team that owns the campaign (Required)
+	FilterId     *Nullable[ID]          `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
+	ProjectBrief *string                `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign in Markdown (Optional)
+	Reminder     *CampaignReminderInput `json:"reminder,omitempty" yaml:"reminder,omitempty"`                                           // Configuration of an optional recurring campaign reminder (Optional)
+}
+
+// CampaignReminderInput Specifies the input fields used to configure a recurring campaign reminder
+type CampaignReminderInput struct {
+	Channels                     []CampaignReminderChannelEnum     `json:"channels" yaml:"channels"`                                                                                     // The communication channels through which the reminder will be delivered (Required)
+	Frequency                    int                               `json:"frequency" yaml:"frequency" example:"1"`                                                                       // The interval at which reminders will be delivered (Required)
+	FrequencyUnit                CampaignReminderFrequencyUnitEnum `json:"frequencyUnit" yaml:"frequencyUnit" example:"week"`                                                            // The time unit of the value in the 'frequency' field (Required)
+	TimeOfDay                    string                            `json:"timeOfDay" yaml:"timeOfDay" example:"09:30"`                                                                   // The time of day at which the reminder will be delivered. Format: "HH:MM" (Required)
+	Timezone                     string                            `json:"timezone" yaml:"timezone" example:"America/Chicago"`                                                           // The timezone at which the timeOfDay field is evaluated (in IANA format) (Required)
+	DaysOfWeek                   []DayOfWeekEnum                   `json:"daysOfWeek,omitempty" yaml:"daysOfWeek,omitempty"`                                                             // A list of weekdays on which the reminders will be delivered. Only available with weekly frequency (Optional)
+	Message                      *string                           `json:"message,omitempty" yaml:"message,omitempty" example:"example_value"`                                           // The message that will be delivered as the reminder (Optional)
+	DefaultSlackChannel          *string                           `json:"defaultSlackChannel,omitempty" yaml:"defaultSlackChannel,omitempty" example:"example_value"`                   // The Slack channel notified if a team doesn't have a default Slack contact (Optional)
+	DefaultMicrosoftTeamsChannel *string                           `json:"defaultMicrosoftTeamsChannel,omitempty" yaml:"defaultMicrosoftTeamsChannel,omitempty" example:"example_value"` // The Microsoft Teams channel notified if a team doesn't have a default Teams contact (Optional)
 }
 
 // ChecksCopyToCampaignInput Specifies the input fields for copying checks to a campaign
@@ -121,11 +135,12 @@ type CampaignUnscheduleInput struct {
 
 // CampaignUpdateInput Specifies the input fields used to update a campaign
 type CampaignUpdateInput struct {
-	Id           ID            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the campaign to be updated (Required)
-	Name         *string       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The name of the campaign (Optional)
-	OwnerId      *Nullable[ID] `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the campaign (Optional)
-	FilterId     *Nullable[ID] `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
-	ProjectBrief *string       `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign in Markdown (Optional)
+	Id           ID                               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the campaign to be updated (Required)
+	Name         *string                          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The name of the campaign (Optional)
+	OwnerId      *Nullable[ID]                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the campaign (Optional)
+	FilterId     *Nullable[ID]                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
+	ProjectBrief *string                          `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign in Markdown (Optional)
+	Reminder     *Nullable[CampaignReminderInput] `json:"reminder,omitempty" yaml:"reminder,omitempty"`                                           // Configuration of an optional recurring campaign reminder. Set explicitly to null to clear (Optional)
 }
 
 // CheckAlertSourceUsageCreateInput Specifies the input fields used to create an alert source usage check

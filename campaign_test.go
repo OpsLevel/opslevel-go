@@ -35,6 +35,73 @@ func TestCreateCampaign(t *testing.T) {
 	autopilot.Equals(t, "A test campaign", campaign.RawProjectBrief)
 }
 
+func TestCreateCampaignWithReminder(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_create_request" }}`,
+		`{{ template "campaign_create_reminder_request_vars" }}`,
+		`{{ template "campaign_create_reminder_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/create_reminder", testRequest)
+
+	message := "Reminder message"
+	slackChannel := "platform-eng"
+	// Act
+	campaign, err := client.CreateCampaign(ol.CampaignCreateInput{
+		Name:    "New Campaign",
+		OwnerId: id1,
+		Reminder: &ol.CampaignReminderInput{
+			Channels:            []ol.CampaignReminderChannelEnum{ol.CampaignReminderChannelEnumSlack, ol.CampaignReminderChannelEnumEmail},
+			Frequency:           1,
+			FrequencyUnit:       ol.CampaignReminderFrequencyUnitEnumWeek,
+			DaysOfWeek:          []ol.DayOfWeekEnum{ol.DayOfWeekEnumMonday, ol.DayOfWeekEnumThursday},
+			TimeOfDay:           "09:30",
+			Timezone:            "America/Chicago",
+			Message:             &message,
+			DefaultSlackChannel: &slackChannel,
+		},
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, "New Campaign", campaign.Name)
+	if campaign.Reminder == nil {
+		t.Fatal("expected campaign to have a reminder, got nil")
+	}
+	autopilot.Equals(t, ol.CampaignReminderFrequencyUnitEnumWeek, campaign.Reminder.FrequencyUnit)
+	autopilot.Equals(t, 1, campaign.Reminder.Frequency)
+	autopilot.Equals(t, "09:30", campaign.Reminder.TimeOfDay)
+	autopilot.Equals(t, "America/Chicago", campaign.Reminder.Timezone)
+	autopilot.Equals(t, "#platform-eng", campaign.Reminder.DefaultSlackChannel)
+	autopilot.Equals(t, 2, len(campaign.Reminder.Channels))
+	autopilot.Equals(t, 2, len(campaign.Reminder.DaysOfWeek))
+}
+
+func TestUpdateCampaignClearReminder(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_update_request" }}`,
+		`{{ template "campaign_update_clear_reminder_request_vars" }}`,
+		`{{ template "campaign_update_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/update_clear_reminder", testRequest)
+
+	name := "Updated Campaign"
+	// Act
+	campaign, err := client.UpdateCampaign(ol.CampaignUpdateInput{
+		Id:       id1,
+		Name:     &name,
+		Reminder: ol.NewNullOf[ol.CampaignReminderInput](),
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	if campaign.Reminder != nil {
+		t.Fatalf("expected reminder to be cleared, got %+v", campaign.Reminder)
+	}
+}
+
 func TestGetCampaign(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
@@ -204,12 +271,12 @@ func TestListCampaignChecksEmpty(t *testing.T) {
 func TestListCampaigns(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "", "first": 500, "sortBy": "start_date_DESC", "status": "in_progress" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [ {{ template "campaign1_response" }}, {{ template "campaign2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "OA", "first": 500, "sortBy": "start_date_DESC", "status": "in_progress" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [ {{ template "campaign3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -260,7 +327,7 @@ func TestListCampaignsWithCustomVariables(t *testing.T) {
 	sortBy := ol.CampaignSortEnumStartDateAsc
 	status := ol.CampaignStatusEnumDelayed
 	testRequest := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "cursor", "first": 5, "sortBy": "start_date_ASC", "status": "delayed" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [ {{ template "campaign1_response" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }}}}`,
 	)
@@ -281,7 +348,7 @@ func TestListCampaignsWithCustomVariables(t *testing.T) {
 func TestListCampaignsEmpty(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,defaultMicrosoftTeamsChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "", "first": 500, "sortBy": "start_date_DESC", "status": "in_progress" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }}}}`,
 	)
