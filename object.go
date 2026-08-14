@@ -406,6 +406,19 @@ type OwnerRelationshipType struct {
 	ManagementRules []RelationshipDefinitionManagementRule // The management rules for the owner relationship (Required)
 }
 
+// Package A software package belonging to a service or repository
+type Package struct {
+	Id              ID                 // The id of the package (Required)
+	Name            string             // The name of the package (Required)
+	PackageManager  PackageManagerEnum // The package manager type for a software package (Optional)
+	PackageVersions []PackageVersion   // The version of a specific software package (Optional)
+}
+
+// PackageVersion A software package version entry
+type PackageVersion struct {
+	Version string // The version of a software package (Optional)
+}
+
 // SystemRelationshipType The system relationship for a component type
 type SystemRelationshipType struct {
 	ManagementRules []RelationshipDefinitionManagementRule // The management rules for the system relationship (Required)

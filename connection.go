@@ -73,6 +73,9 @@ type IntegrationConnection ConnectionBase[Integration]
 // LevelConnection The connection type for Level
 type LevelConnection ConnectionBase[Level]
 
+// PackageConnection The connection type for Package
+type PackageConnection ConnectionBase[Package]
+
 // PropertyConnection The connection type for Property
 type PropertyConnection ConnectionBase[Property]
 
