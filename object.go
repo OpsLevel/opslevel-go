@@ -76,10 +76,10 @@ type CampaignReminder struct {
 	Timezone            string                            // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")) (Required)
 }
 
-// CampaignSendReminderOutcomeTeams Summarizes list of teams returned from attempt to send reminders for their failed campaigns
+// CampaignSendReminderOutcomeTeams Summarizes the list of teams returned from an attempt to send reminders for their failed campaigns
 type CampaignSendReminderOutcomeTeams struct {
 	ReminderType CampaignReminderTypeEnum // The reminder type linked to the attempt at notifying the listed teams (Required)
-	TeamIds      []ID                     // List of team_ids in this group of teams (Optional)
+	TeamIds      []ID                     // List of team IDs in this group of teams (Optional)
 	TotalCount   int                      // Count of number of teams listed (Required)
 }
 

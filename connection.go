@@ -28,6 +28,9 @@ type AlertSourceServiceV2Connection ConnectionBase[AlertSourceService]
 // CampaignConnection The connection type for Campaign
 type CampaignConnection ConnectionBase[Campaign]
 
+// CampaignTeamConnection The connection type for CampaignTeam
+type CampaignTeamConnection ConnectionBase[CampaignTeam]
+
 // CategoryConnection The connection type for Category
 type CategoryConnection ConnectionBase[Category]
 

@@ -111,7 +111,7 @@ var AllBasicTypeEnum = []string{
 	string(BasicTypeEnumEquals),
 }
 
-// CampaignFilterEnum Fields that can be used as part of filter for campaigns
+// CampaignFilterEnum Fields that can be used as part of a filter for campaigns
 type CampaignFilterEnum string
 
 var (
@@ -159,13 +159,13 @@ var AllCampaignReminderFrequencyUnitEnum = []string{
 	string(CampaignReminderFrequencyUnitEnumWeek),
 }
 
-// CampaignReminderTypeEnum Type/Format of the notification
+// CampaignReminderTypeEnum Type/format of the notification
 type CampaignReminderTypeEnum string
 
 var (
 	CampaignReminderTypeEnumEmail          CampaignReminderTypeEnum = "email"           // Notification will be sent via email
-	CampaignReminderTypeEnumMicrosoftTeams CampaignReminderTypeEnum = "microsoft_teams" // Notification will be sent by microsoft teams
-	CampaignReminderTypeEnumSlack          CampaignReminderTypeEnum = "slack"           // Notification will be sent by slack
+	CampaignReminderTypeEnumMicrosoftTeams CampaignReminderTypeEnum = "microsoft_teams" // Notification will be sent via Microsoft Teams
+	CampaignReminderTypeEnumSlack          CampaignReminderTypeEnum = "slack"           // Notification will be sent via Slack
 )
 
 // All CampaignReminderTypeEnum as []string
