@@ -27,7 +27,7 @@ type AlertSourceTypeEnum string
 var (
 	AlertSourceTypeEnumCustom      AlertSourceTypeEnum = "custom"       // A custom alert source (aka service)
 	AlertSourceTypeEnumDatadog     AlertSourceTypeEnum = "datadog"      // A Datadog alert source (aka monitor)
-	AlertSourceTypeEnumFireHydrant AlertSourceTypeEnum = "fire_hydrant" // An FireHydrant alert source (aka service)
+	AlertSourceTypeEnumFireHydrant AlertSourceTypeEnum = "fire_hydrant" // A FireHydrant alert source (aka service)
 	AlertSourceTypeEnumIncidentIo  AlertSourceTypeEnum = "incident_io"  // An incident.io alert source (aka service)
 	AlertSourceTypeEnumNewRelic    AlertSourceTypeEnum = "new_relic"    // A New Relic alert source (aka service)
 	AlertSourceTypeEnumOpsgenie    AlertSourceTypeEnum = "opsgenie"     // An Opsgenie alert source (aka service)
@@ -276,7 +276,7 @@ type CheckResultStatusEnum string
 
 var (
 	CheckResultStatusEnumFailed CheckResultStatusEnum = "failed" // Indicates that the check has failed for the associated service
-	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service.
+	CheckResultStatusEnumPassed CheckResultStatusEnum = "passed" // Indicates that the check has passed for the associated service
 )
 
 // All CheckResultStatusEnum as []string
@@ -291,7 +291,7 @@ type CheckStatus string
 var (
 	CheckStatusFailed  CheckStatus = "failed"  // The check evaluated to a falsy value based on some conditions
 	CheckStatusPassed  CheckStatus = "passed"  // The check evaluated to a truthy value based on some conditions
-	CheckStatusPending CheckStatus = "pending" // The check has not been evaluated yet.
+	CheckStatusPending CheckStatus = "pending" // The check has not been evaluated yet
 )
 
 // All CheckStatus as []string
@@ -306,22 +306,22 @@ type CheckType string
 
 var (
 	CheckTypeAlertSourceUsage    CheckType = "alert_source_usage"    // Verifies that the service has an alert source of a particular type or name
-	CheckTypeCodeIssue           CheckType = "code_issue"            // Verifies that the severity and quantity of code issues does not exceed defined thresholds
+	CheckTypeCodeIssue           CheckType = "code_issue"            // Verifies that the severity and quantity of code issues do not exceed defined thresholds
 	CheckTypeCustom              CheckType = "custom"                // Allows for the creation of programmatic checks that use an API to mark the status as passing or failing
-	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration api call to complete a series of checks for multiple services
+	CheckTypeGeneric             CheckType = "generic"               // Requires a generic integration API call to complete a series of checks for multiple services
 	CheckTypeGitBranchProtection CheckType = "git_branch_protection" // Verifies that all the repositories on the service have branch protection enabled
 	CheckTypeHasDocumentation    CheckType = "has_documentation"     // Verifies that the service has visible documentation of a particular type and subtype
 	CheckTypeHasOwner            CheckType = "has_owner"             // Verifies that the service has an owner defined
-	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verifies that the services has received a deploy within a specified number of days
+	CheckTypeHasRecentDeploy     CheckType = "has_recent_deploy"     // Verifies that the service has received a deploy within a specified number of days
 	CheckTypeHasRepository       CheckType = "has_repository"        // Verifies that the service has a repository integrated
-	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained though the use of an opslevel.yml service config
+	CheckTypeHasServiceConfig    CheckType = "has_service_config"    // Verifies that the service is maintained through the use of an opslevel.yml service config
 	CheckTypeManual              CheckType = "manual"                // Requires a service owner to manually complete a check for the service
 	CheckTypePackageVersion      CheckType = "package_version"       // Verifies certain aspects of a service using or not using software packages
-	CheckTypePayload             CheckType = "payload"               // Requires a payload integration api call to complete a check for the service
+	CheckTypePayload             CheckType = "payload"               // Requires a payload integration API call to complete a check for the service
 	CheckTypeRelationship        CheckType = "relationship"          // Verifies that the component has a specific number of relationship items defined for a specific relationship definition, with support for minimum, maximum, or exact count requirements
-	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service’s repository for the existence or contents of a specific file
+	CheckTypeRepoFile            CheckType = "repo_file"             // Quickly scan the service's repository for the existence or contents of a specific file
 	CheckTypeRepoGrep            CheckType = "repo_grep"             // Run a comprehensive search across the service's repository using advanced search parameters
-	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service’s repository for specific contents in any file
+	CheckTypeRepoSearch          CheckType = "repo_search"           // Quickly search the service's repository for specific contents in any file
 	CheckTypeServiceDependency   CheckType = "service_dependency"    // Verifies that the service has either a dependent or dependency
 	CheckTypeServiceProperty     CheckType = "service_property"      // Verifies that a service property is set or matches a specified format
 	CheckTypeTagDefined          CheckType = "tag_defined"           // Verifies that the service has the specified tag defined
@@ -2581,7 +2581,7 @@ var AllCustomActionsTriggerEventStatusEnum = []string{
 type DayOfWeekEnum string
 
 var (
-	DayOfWeekEnumFriday    DayOfWeekEnum = "friday"    // Yesterday was Thursday. Tomorrow is Saturday. We so excited
+	DayOfWeekEnumFriday    DayOfWeekEnum = "friday"    // Yesterday was Thursday. Tomorrow is Saturday. We are so excited
 	DayOfWeekEnumMonday    DayOfWeekEnum = "monday"    // Monday is the day of the week that takes place between Sunday and Tuesday
 	DayOfWeekEnumSaturday  DayOfWeekEnum = "saturday"  // The day of the week before Sunday and following Friday, and (together with Sunday) forming part of the weekend
 	DayOfWeekEnumSunday    DayOfWeekEnum = "sunday"    // The day of the week before Monday and following Saturday, (together with Saturday) forming part of the weekend
@@ -2855,7 +2855,7 @@ var AllPayloadSortEnum = []string{
 	string(PayloadSortEnumProcessedAtDesc),
 }
 
-// PredicateKeyEnum Fields that can be used as part of filter for services
+// PredicateKeyEnum Fields that can be used as part of a filter for services
 type PredicateKeyEnum string
 
 var (
@@ -3109,13 +3109,13 @@ var AllRepositorySBOMGenerationConfigEnum = []string{
 	string(RepositorySBOMGenerationConfigEnumOptOut),
 }
 
-// RepositorySBOMGenerationDisabledReasonEnum The set of values that explain why SBOM autogeneration is disabled
+// RepositorySBOMGenerationDisabledReasonEnum The set of values that explain why SBOM auto-generation is disabled
 type RepositorySBOMGenerationDisabledReasonEnum string
 
 var (
-	RepositorySBOMGenerationDisabledReasonEnumAccount     RepositorySBOMGenerationDisabledReasonEnum = "account"     // SBOM autogeneration is disabled at the account level
-	RepositorySBOMGenerationDisabledReasonEnumIntegration RepositorySBOMGenerationDisabledReasonEnum = "integration" // SBOM autogeneration is disabled at the integration level
-	RepositorySBOMGenerationDisabledReasonEnumRepository  RepositorySBOMGenerationDisabledReasonEnum = "repository"  // SBOM autogeneration is disabled at the repository level
+	RepositorySBOMGenerationDisabledReasonEnumAccount     RepositorySBOMGenerationDisabledReasonEnum = "account"     // SBOM auto-generation is disabled at the account level
+	RepositorySBOMGenerationDisabledReasonEnumIntegration RepositorySBOMGenerationDisabledReasonEnum = "integration" // SBOM auto-generation is disabled at the integration level
+	RepositorySBOMGenerationDisabledReasonEnumRepository  RepositorySBOMGenerationDisabledReasonEnum = "repository"  // SBOM auto-generation is disabled at the repository level
 )
 
 // All RepositorySBOMGenerationDisabledReasonEnum as []string
@@ -3129,7 +3129,7 @@ var AllRepositorySBOMGenerationDisabledReasonEnum = []string{
 type RepositoryVisibilityEnum string
 
 var (
-	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (Github, Gitlab)
+	RepositoryVisibilityEnumInternal     RepositoryVisibilityEnum = "INTERNAL"     // Repositories that are only accessible to organization users (GitHub, GitLab)
 	RepositoryVisibilityEnumOrganization RepositoryVisibilityEnum = "ORGANIZATION" // Repositories that are only accessible to organization users (ADO)
 	RepositoryVisibilityEnumPrivate      RepositoryVisibilityEnum = "PRIVATE"      // Repositories that are private to the user
 	RepositoryVisibilityEnumPublic       RepositoryVisibilityEnum = "PUBLIC"       // Repositories that are publicly accessible
@@ -3205,13 +3205,13 @@ var (
 	ServiceFilterEnumDomainID          ServiceFilterEnum = "domain_id"          // Filter by Domain that includes the System this service is assigned to, if any
 	ServiceFilterEnumFilterID          ServiceFilterEnum = "filter_id"          // Filter by another filter
 	ServiceFilterEnumFramework         ServiceFilterEnum = "framework"          // Filter by `framework` field
-	ServiceFilterEnumGroupIDs          ServiceFilterEnum = "group_ids"          // Filter by group hierarchy. Will return resources who's owner is in the group ancestry chain
+	ServiceFilterEnumGroupIDs          ServiceFilterEnum = "group_ids"          // Filter by group hierarchy. Will return resources whose owner is in the group ancestry chain
 	ServiceFilterEnumLanguage          ServiceFilterEnum = "language"           // Filter by `language` field
 	ServiceFilterEnumLevelIndex        ServiceFilterEnum = "level_index"        // Filter by `level` field
 	ServiceFilterEnumLifecycleIndex    ServiceFilterEnum = "lifecycle_index"    // Filter by `lifecycle` field
 	ServiceFilterEnumName              ServiceFilterEnum = "name"               // Filter by `name` field
 	ServiceFilterEnumOwnerID           ServiceFilterEnum = "owner_id"           // Filter by `owner` field
-	ServiceFilterEnumOwnerIDs          ServiceFilterEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources who's owner is in the team ancestry chain
+	ServiceFilterEnumOwnerIDs          ServiceFilterEnum = "owner_ids"          // Filter by `owner` hierarchy. Will return resources whose owner is in the team ancestry chain
 	ServiceFilterEnumProduct           ServiceFilterEnum = "product"            // Filter by `product` field
 	ServiceFilterEnumProperty          ServiceFilterEnum = "property"           // Filter by a custom-defined property value
 	ServiceFilterEnumRelationship      ServiceFilterEnum = "relationship"       // Filter by the existence of a relationship to another catalog component
@@ -3489,7 +3489,7 @@ var AllUserRole = []string{
 	string(UserRoleUser),
 }
 
-// UsersFilterEnum Fields that can be used as part of filter for users
+// UsersFilterEnum Fields that can be used as part of a filter for users
 type UsersFilterEnum string
 
 var (
@@ -3497,7 +3497,7 @@ var (
 	UsersFilterEnumEmail         UsersFilterEnum = "email"           // Filter by `email` field
 	UsersFilterEnumLastSignInAt  UsersFilterEnum = "last_sign_in_at" // Filter by the `last_sign_in_at` field
 	UsersFilterEnumName          UsersFilterEnum = "name"            // Filter by `name` field
-	UsersFilterEnumRole          UsersFilterEnum = "role"            // Filter by `role` field. (user or admin)
+	UsersFilterEnumRole          UsersFilterEnum = "role"            // Filter by `role` field. The value is the role's `slug` (e.g. `user` or `admin`)
 	UsersFilterEnumTag           UsersFilterEnum = "tag"             // Filter by `tags` belonging to user
 )
 

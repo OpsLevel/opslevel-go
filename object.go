@@ -6,13 +6,13 @@ import "github.com/relvacode/iso8601"
 // AlertSource An alert source that is currently integrated and belongs to the account
 type AlertSource struct {
 	Description string              // The description of the alert source (Optional)
-	ExternalId  string              // The external id of the alert (Required)
+	ExternalId  string              // The external ID of the alert (Required)
 	Id          ID                  // The id of the alert source (Required)
 	Integration IntegrationId       // The integration of the alert source (Optional)
 	Metadata    string              // The metadata of the alert source (Optional)
 	Name        string              // The name of the alert source (Required)
 	Type        AlertSourceTypeEnum // The type of the alert (Required)
-	Url         string              // The url to the alert source (Optional)
+	Url         string              // The URL to the alert source (Optional)
 }
 
 // AlertSourceService An alert source that is connected with a service
@@ -106,7 +106,7 @@ type CheckResult struct {
 	Check        CheckId      // The check of check result (Required)
 	LastUpdated  iso8601.Time // The time the check most recently ran (Required)
 	Message      string       // The check message (Required)
-	Service      ServiceId    // The service of check result (Optional)
+	Service      ServiceId    // The service for the check result (Optional)
 	ServiceAlias string       // The alias for the service (Optional)
 	Status       CheckStatus  // The check status (Required)
 }
@@ -126,14 +126,14 @@ type CheckStats struct {
 
 // CommonVulnerabilityEnumeration A category system for hardware and software weaknesses
 type CommonVulnerabilityEnumeration struct {
-	Identifier string // The identifer of this item in the CVE system (Required)
-	Url        string // The url for this item in the CVE system (Optional)
+	Identifier string // The identifier of this item in the CVE system (Required)
+	Url        string // The URL for this item in the CVE system (Optional)
 }
 
 // CommonWeaknessEnumeration A category system for hardware and software weaknesses
 type CommonWeaknessEnumeration struct {
-	Identifier string // The identifer of this item in the CWE system (Required)
-	Url        string // The url for this item in the CWE system (Optional)
+	Identifier string // The identifier of this item in the CWE system (Required)
+	Url        string // The URL for this item in the CWE system (Optional)
 }
 
 // ComponentTypeId Information about a particular component type
@@ -171,7 +171,7 @@ type ConfigError struct {
 // ConfigFile An OpsLevel config as code definition
 type ConfigFile struct {
 	OwnerType string // The relation for which the config was returned (Required)
-	Yaml      string // The OpsLevel config in yaml format (Required)
+	Yaml      string // The OpsLevel config in YAML format (Required)
 }
 
 // Contact A method of contact for a team
@@ -196,7 +196,7 @@ type CustomActionsTemplate struct {
 type CustomActionsTemplatesAction struct {
 	Description    string                      // A description of what the action should accomplish (Optional)
 	Headers        JSON                        `scalar:"true"` // The headers sent along with the webhook, if any (Optional)
-	HttpMethod     CustomActionsHttpMethodEnum // The HTTP Method used to call the webhook action (Required)
+	HttpMethod     CustomActionsHttpMethodEnum // The HTTP method used to call the webhook action (Required)
 	LiquidTemplate string                      // The liquid template used to generate the data sent to the external action (Optional)
 	Name           string                      // The name of the external action (Required)
 	Url            string                      // The URL of the webhook action (Required)
@@ -244,7 +244,7 @@ type CustomActionsWebhookAction struct {
 	Async          bool                        // Whether the action expects an additional, asynchronous response upon completion (Required)
 	Description    string                      // A description of what the action should accomplish (Optional)
 	Headers        JSON                        `scalar:"true"` // The headers sent along with the webhook, if any (Optional)
-	HttpMethod     CustomActionsHttpMethodEnum // The HTTP Method used to call the webhook action (Required)
+	HttpMethod     CustomActionsHttpMethodEnum // The HTTP method used to call the webhook action (Required)
 	Id             ID                          // The ID of the external action (Required)
 	LiquidTemplate string                      // The liquid template used to generate the data sent to the external action (Optional)
 	Name           string                      // The name of the external action (Required)
@@ -255,33 +255,33 @@ type CustomActionsWebhookAction struct {
 type Deploy struct {
 	AssociatedUser      UserId           // The associated OpsLevel user for the deploy (Optional)
 	Author              string           // The author of the deploy (Optional)
-	CommitAuthorEmail   string           // The email of the commit (Optional)
+	CommitAuthorEmail   string           // The email of the commit author (Optional)
 	CommitAuthorName    string           // The author of the commit (Optional)
 	CommitAuthoringDate iso8601.Time     // The time the commit was authored (Optional)
 	CommitBranch        string           // The branch the commit took place on (Optional)
 	CommitMessage       string           // The commit message associated with the deploy (Optional)
-	CommitSha           string           // The sha associated with the commit of the deploy (Optional)
+	CommitSha           string           // The SHA associated with the commit of the deploy (Optional)
 	CommittedAt         iso8601.Time     // The time the commit happened (Optional)
 	CommitterEmail      string           // The email of the person who created the commit (Optional)
 	CommitterName       string           // The name of the person who created the commit (Optional)
 	DedupId             string           // The deduplication ID provided to prevent duplicate deploys (Optional)
 	DeployNumber        string           // An identifier to keep track of the version of the deploy (Optional)
 	DeployStatus        DeployStatusEnum // The normalized status of the deploy. This is derived from the status field (Optional)
-	DeployUrl           string           // The url the where the deployment can be found (Optional)
+	DeployUrl           string           // The URL where the deployment can be found (Optional)
 	DeployedAt          iso8601.Time     // The time the deployment happened (Optional)
-	DeployerEmail       string           // The email of who is responsible for the deployment (Optional)
-	DeployerId          string           // An external id of who deployed (Optional)
-	DeployerName        string           // The name of who is responsible for the deployment (Optional)
+	DeployerEmail       string           // The email of the person responsible for the deployment (Optional)
+	DeployerId          string           // The external ID of the person who deployed (Optional)
+	DeployerName        string           // The name of the person responsible for the deployment (Optional)
 	Description         string           // The given description of the deploy (Required)
 	Duration            int              // The duration of the deploy (Optional)
-	Environment         string           // The environment in which the deployment happened in (Optional)
+	Environment         string           // The environment in which the deployment happened (Optional)
 	Id                  ID               // The id of the deploy (Required)
 	ProviderName        string           // The integration name of the deploy (Optional)
-	ProviderType        string           // The integration type used the deploy (Optional)
-	ProviderUrl         string           // The url to the deploy integration (Optional)
+	ProviderType        string           // The integration type used by the deploy (Optional)
+	ProviderUrl         string           // The URL to the deploy integration (Optional)
 	Service             ServiceId        // The service object the deploy is attached to (Optional)
-	ServiceAlias        string           // The alias used to associated this deploy to its service (Required)
-	ServiceId           string           // The id the deploy is associated to (Optional)
+	ServiceAlias        string           // The alias used to associate this deploy with its service (Required)
+	ServiceId           string           // The ID of the service the deploy is associated with (Optional)
 	StartedAt           iso8601.Time     // The time the deploy started (Optional)
 	Status              string           // The deployment status (Optional)
 }
@@ -428,7 +428,7 @@ type RelationshipDefinitionMetadata struct {
 	MinItems          int      // The minimum number of records this relationship must associate to the component type. Defaults to 0 (optional) (Optional)
 }
 
-// RelationshipDefinitionType A dynamic definition for a relationship between one catalog entity to another
+// RelationshipDefinitionType A dynamic definition for a relationship between one catalog entity and another
 type RelationshipDefinitionType struct {
 	Alias           string                                 // The programmatic alias that can be used to reference the relationship in OpsLevel tooling (Required)
 	ComponentType   ComponentTypeId                        // The component type that the relationship belongs to (Required)
@@ -469,8 +469,8 @@ type RubricReport struct {
 
 // SBOMGenerationConfiguration The configuration details that explain whether SBOM generation is allowed for the repository
 type SBOMGenerationConfiguration struct {
-	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM autogeneration is disabled (Optional)
-	Enabled          bool                                       // Whether SBOM autogeneration is enabled through all associated configuration objects (Required)
+	DisabledReason   RepositorySBOMGenerationDisabledReasonEnum // A brief explanation of why SBOM auto-generation is disabled (Optional)
+	Enabled          bool                                       // Whether SBOM auto-generation is enabled through all associated configuration objects (Required)
 	NextGenerationAt iso8601.Time                               // The approximate time at which a new software bill of material will be generated for this repository (Optional)
 	State            RepositorySBOMGenerationConfigEnum         // The configuration option set by the current object (Required)
 }
@@ -599,7 +599,7 @@ type TeamMembership struct {
 	User UserId // User for the membership (Required)
 }
 
-// TeamPropertyDefinition The definition of a property
+// TeamPropertyDefinition The definition of a property that applies to teams
 type TeamPropertyDefinition struct {
 	Alias          string                            // The human-friendly, unique identifier of the property definition (Required)
 	Description    string                            // The description of the property definition (Required)
