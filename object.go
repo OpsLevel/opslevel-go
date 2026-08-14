@@ -393,6 +393,14 @@ type ManualCheckFrequency struct {
 	StartingDate       iso8601.Time       // The date that the check will start to evaluate (Required)
 }
 
+// OnCall An on call record for a given source
+type OnCall struct {
+	ExternalEmail string // Email of the user on call (Required)
+	Id            ID     // The ID of the on call (Required)
+	Name          string // Name of the user on call (Required)
+	User          UserId // The associated OpsLevel user record (Optional)
+}
+
 // OwnerRelationshipType The owner relationship for a component type
 type OwnerRelationshipType struct {
 	ManagementRules []RelationshipDefinitionManagementRule // The management rules for the owner relationship (Required)
