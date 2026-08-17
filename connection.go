@@ -28,6 +28,9 @@ type AlertSourceServiceV2Connection ConnectionBase[AlertSourceService]
 // CampaignConnection The connection type for Campaign
 type CampaignConnection ConnectionBase[Campaign]
 
+// CampaignTeamConnection The connection type for CampaignTeam
+type CampaignTeamConnection ConnectionBase[CampaignTeam]
+
 // CategoryConnection The connection type for Category
 type CategoryConnection ConnectionBase[Category]
 
@@ -69,6 +72,9 @@ type IntegrationConnection ConnectionBase[Integration]
 
 // LevelConnection The connection type for Level
 type LevelConnection ConnectionBase[Level]
+
+// PackageConnection The connection type for Package
+type PackageConnection ConnectionBase[Package]
 
 // PropertyConnection The connection type for Property
 type PropertyConnection ConnectionBase[Property]

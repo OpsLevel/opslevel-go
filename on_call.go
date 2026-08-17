@@ -1,13 +1,5 @@
 package opslevel
 
-// OnCall A user that is currently on call for a service.
-type OnCall struct {
-	ExternalEmail string  `graphql:"externalEmail"`
-	Id            ID      `graphql:"id"`
-	Name          string  `graphql:"name"`
-	User          *UserId `graphql:"user"`
-}
-
 // OnCallConnection The connection type for OnCall.
 type OnCallConnection struct {
 	Edges      []OnCallEdge `graphql:"edges"`

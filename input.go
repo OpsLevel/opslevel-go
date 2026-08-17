@@ -5,7 +5,7 @@ import "github.com/relvacode/iso8601"
 
 // AlertSourceExternalIdentifier Specifies the input needed to find an alert source with external information
 type AlertSourceExternalIdentifier struct {
-	ExternalId string              `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The external id of the alert (Required)
+	ExternalId string              `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The external ID of the alert (Required)
 	Type       AlertSourceTypeEnum `json:"type" yaml:"type" example:"custom"`                                      // The type of the alert (Required)
 }
 
@@ -14,7 +14,7 @@ type AlertSourceInput struct {
 	Description *Nullable[string]               `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"` // The description of the alert source (Optional)
 	Identifier  ExternalResourceIdentifierInput `json:"identifier" yaml:"identifier"`                                               // The alert source identifier (Required)
 	Name        *Nullable[string]               `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`               // The name of the alert source (Optional)
-	Url         *Nullable[string]               `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"`                 // The url of the alert source (Optional)
+	Url         *Nullable[string]               `json:"url,omitempty" yaml:"url,omitempty" example:"example_value"`                 // The URL of the alert source (Optional)
 }
 
 // AlertSourceServiceCreateInput Specifies the input used for attaching an alert source to a service
@@ -95,10 +95,39 @@ type CategoryUpdateInput struct {
 
 // CampaignCreateInput Specifies the input fields used to create a campaign
 type CampaignCreateInput struct {
-	Name         string        `json:"name" yaml:"name" example:"example_value"`                                               // The name of the campaign (Required)
-	OwnerId      ID            `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the team that owns the campaign (Required)
-	FilterId     *Nullable[ID] `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
-	ProjectBrief *string       `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign in Markdown (Optional)
+	CheckIdsToCopy *[]ID                  `json:"checkIdsToCopy,omitempty" yaml:"checkIdsToCopy,omitempty" example:"[]"`                  // The IDs of the existing rubric checks to be copied (Optional)
+	FilterId       *Nullable[ID]          `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the filter applied to this campaign (Optional)
+	Name           string                 `json:"name" yaml:"name" example:"example_value"`                                               // The name of the campaign (Required)
+	OwnerId        ID                     `json:"ownerId" yaml:"ownerId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The ID of the team that owns this campaign (Required)
+	ProjectBrief   *string                `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign (Optional)
+	Reminder       *CampaignReminderInput `json:"reminder,omitempty" yaml:"reminder,omitempty"`                                           // Configuration of an optional campaign reminder (Optional)
+}
+
+// CampaignEndInput Specifies the input fields used to end a campaign and promote checks to the rubric
+type CampaignEndInput struct {
+	ChecksToPromote *[]CheckToPromoteInput `json:"checksToPromote,omitempty" yaml:"checksToPromote,omitempty" example:"[]"` // The list of campaign checks to be promoted to the rubric (Optional)
+	Id              ID                     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                  // The ID of the campaign to be ended (Required)
+}
+
+// CampaignFilterInput Input to be used to filter campaigns
+type CampaignFilterInput struct {
+	Arg        *Nullable[string]      `json:"arg,omitempty" yaml:"arg,omitempty" example:"example_value"`     // Value to be filtered (Optional)
+	Connective *ConnectiveEnum        `json:"connective,omitempty" yaml:"connective,omitempty" example:"and"` // The logical operator to be used in conjunction with multiple filters (requires predicates to be supplied) (Optional Default: or)
+	Key        *CampaignFilterEnum    `json:"key,omitempty" yaml:"key,omitempty" example:"id"`                // Field to be filtered (Optional)
+	Predicates *[]CampaignFilterInput `json:"predicates,omitempty" yaml:"predicates,omitempty" example:"[]"`  // A list of campaign filter inputs (Optional)
+	Type       *BasicTypeEnum         `json:"type,omitempty" yaml:"type,omitempty" example:"does_not_equal"`  // Type of operation to be applied to value on the field (Optional Default: equals)
+}
+
+// CampaignReminderInput Configuration of an optional campaign reminder
+type CampaignReminderInput struct {
+	Channels            *[]CampaignReminderChannelEnum    `json:"channels,omitempty" yaml:"channels,omitempty" example:"[]"`                                  // The communication channels through which the reminder will be delivered (Optional)
+	DaysOfWeek          *[]DayOfWeekEnum                  `json:"daysOfWeek,omitempty" yaml:"daysOfWeek,omitempty" example:"[]"`                              // A list of weekdays on which the reminders will be delivered. Only available with weekly frequency (Optional)
+	DefaultSlackChannel *Nullable[string]                 `json:"defaultSlackChannel,omitempty" yaml:"defaultSlackChannel,omitempty" example:"example_value"` // The name of the Slack channel that will be notified if a team doesn't have a default Slack contact (Optional)
+	Frequency           int                               `json:"frequency" yaml:"frequency" example:"3"`                                                     // The interval at which reminders will be delivered (Required)
+	FrequencyUnit       CampaignReminderFrequencyUnitEnum `json:"frequencyUnit" yaml:"frequencyUnit" example:"day"`                                           // The time unit of the value in the 'frequency' field (Required)
+	Message             *Nullable[string]                 `json:"message,omitempty" yaml:"message,omitempty" example:"example_value"`                         // The message that will be delivered as the reminder (Optional)
+	TimeOfDay           string                            `json:"timeOfDay" yaml:"timeOfDay" example:"example_value"`                                         // The time of day at which the reminder will be delivered. Format: "HH:MM" (Required)
+	Timezone            string                            `json:"timezone" yaml:"timezone" example:"example_value"`                                           // The timezone at which the timeOfDay field is evaluated (in IANA format (e.g. "America/Chicago")) (Required)
 }
 
 // ChecksCopyToCampaignInput Specifies the input fields for copying checks to a campaign
@@ -107,25 +136,34 @@ type ChecksCopyToCampaignInput struct {
 	CheckIds   []ID `json:"checkIds" yaml:"checkIds"`                                               // The ids of the checks to copy (Required)
 }
 
-// CampaignScheduleUpdateInput Specifies the input fields used to schedule a campaign
+// CampaignScheduleUpdateInput Specifies the input fields used to update a campaign schedule
 type CampaignScheduleUpdateInput struct {
-	Id         ID           `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`      // The id of the campaign to schedule (Required)
-	StartDate  iso8601.Time `json:"startDate" yaml:"startDate" example:"2025-01-01T00:00:00Z"`   // The start date of the campaign (Required)
-	TargetDate iso8601.Time `json:"targetDate" yaml:"targetDate" example:"2025-06-01T00:00:00Z"` // The target end date of the campaign (Required)
+	Id         ID           `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the campaign to be updated (Required)
+	StartDate  iso8601.Time `json:"startDate" yaml:"startDate" example:"2025-01-05T01:00:00.000Z"`   // The date the campaign will start (Required)
+	TargetDate iso8601.Time `json:"targetDate" yaml:"targetDate" example:"2025-01-05T01:00:00.000Z"` // The target date the campaign should end (Required)
+}
+
+// CampaignSendReminderInput Specifies the input fields used to coordinate sending notifications to team members about a campaign
+type CampaignSendReminderInput struct {
+	CustomMessage *Nullable[string]          `json:"customMessage,omitempty" yaml:"customMessage,omitempty" example:"example_value"` // A custom message to include in the notification (Optional)
+	Id            ID                         `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                         // The ID of the campaign about which to notify team members (Required)
+	ReminderTypes []CampaignReminderTypeEnum `json:"reminderTypes" yaml:"reminderTypes" example:"[]"`                                // The list of the types of notifications to be sent (Required)
+	TeamIds       *[]ID                      `json:"teamIds,omitempty" yaml:"teamIds,omitempty" example:"[]"`                        // The list of team IDs to receive the notifications (Optional)
 }
 
 // CampaignUnscheduleInput Specifies the input fields used to unschedule a campaign
 type CampaignUnscheduleInput struct {
-	Id ID `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`
+	Id ID `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the campaign to be unscheduled (Required)
 }
 
 // CampaignUpdateInput Specifies the input fields used to update a campaign
 type CampaignUpdateInput struct {
-	Id           ID            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the campaign to be updated (Required)
-	Name         *string       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The name of the campaign (Optional)
-	OwnerId      *Nullable[ID] `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the campaign (Optional)
-	FilterId     *Nullable[ID] `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter applied to the campaign (Optional)
-	ProjectBrief *string       `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign in Markdown (Optional)
+	FilterId     *Nullable[ID]          `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the filter applied to this campaign (Optional)
+	Id           ID                     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the campaign to be updated (Required)
+	Name         *string                `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The name of the campaign (Optional)
+	OwnerId      *Nullable[ID]          `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The ID of the team that owns this campaign (Optional)
+	ProjectBrief *string                `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign (Optional)
+	Reminder     *CampaignReminderInput `json:"reminder,omitempty" yaml:"reminder,omitempty"`                                           // Configuration of an optional campaign reminder (Optional)
 }
 
 // CheckAlertSourceUsageCreateInput Specifies the input fields used to create an alert source usage check
@@ -160,38 +198,38 @@ type CheckAlertSourceUsageUpdateInput struct {
 // CheckCodeIssueCreateInput Specifies the input fields used to create a code issue check
 type CheckCodeIssueCreateInput struct {
 	CategoryId     ID                            `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
-	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                             // The type of constraint used in evaluation the code issues check (Required)
+	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                             // The type of constraint used in evaluating the code issues check (Required)
 	EnableOn       *Nullable[iso8601.Time]       `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`        // The date when the check will be automatically enabled (Optional)
 	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                             // Whether the check is enabled or not (Optional Default: false)
 	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the filter of the check (Optional)
 	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                 // The issue name used for code issue lookup (Optional)
-	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider (Optional)
+	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`              // The type of code issue to consider, generally in the format of 'source:type'. Possible values depend on the installed integrations (Optional)
 	LevelId        ID                            `json:"levelId" yaml:"levelId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                       // The id of the level the check belongs to (Required)
 	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                           // The threshold count of code issues beyond which the check starts failing (Optional)
 	Name           string                        `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
 	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                               // The resolution time recommended by the reporting source of the code issue (Optional)
-	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue (Optional)
+	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                // The severity levels of the issue, generally in the form of 'source:severity'. Possible values depend on the installed integrations (Optional)
 }
 
-// CheckCodeIssueUpdateInput Specifies the input fields used to update an exasting code issue check
+// CheckCodeIssueUpdateInput Specifies the input fields used to update an existing code issue check
 type CheckCodeIssueUpdateInput struct {
 	CategoryId     *Nullable[ID]                 `json:"categoryId,omitempty" yaml:"categoryId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the category the check belongs to (Optional)
-	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                                 // The type of constraint used in evaluation the code issues check (Required)
+	Constraint     CheckCodeIssueConstraintEnum  `json:"constraint" yaml:"constraint" example:"any"`                                                 // The type of constraint used in evaluating the code issues check (Required)
 	EnableOn       *Nullable[iso8601.Time]       `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`            // The date when the check will be automatically enabled (Optional)
 	Enabled        *Nullable[bool]               `json:"enabled,omitempty" yaml:"enabled,omitempty" example:"false"`                                 // Whether the check is enabled or not (Optional)
 	FilterId       *Nullable[ID]                 `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`     // The id of the filter the check belongs to (Optional)
 	Id             ID                            `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                     // The id of the check to be updated (Required)
 	IssueName      *Nullable[string]             `json:"issueName,omitempty" yaml:"issueName,omitempty" example:"example_value"`                     // The issue name used for code issue lookup (Optional)
-	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`                  // The type of code issue to consider (Optional)
+	IssueType      *Nullable[[]string]           `json:"issueType,omitempty" yaml:"issueType,omitempty" example:"['bug', 'error']"`                  // The type of code issue to consider, generally in the format of 'source:type'. Possible values depend on the installed integrations (Optional)
 	LevelId        *Nullable[ID]                 `json:"levelId,omitempty" yaml:"levelId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the level the check belongs to (Optional)
 	MaxAllowed     *int                          `json:"maxAllowed,omitempty" yaml:"maxAllowed,omitempty" example:"3"`                               // The threshold count of code issues beyond which the check starts failing (Optional)
 	Name           *Nullable[string]             `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // The display name of the check (Optional)
 	Notes          *string                       `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                             // Additional information about the check (Optional)
 	OwnerId        *Nullable[ID]                 `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 	ResolutionTime *CodeIssueResolutionTimeInput `json:"resolutionTime,omitempty" yaml:"resolutionTime,omitempty"`                                   // The resolution time recommended by the reporting source of the code issue (Optional)
-	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue (Optional)
+	Severity       *Nullable[[]string]           `json:"severity,omitempty" yaml:"severity,omitempty" example:"['sev1', 'sev2']"`                    // The severity levels of the issue, generally in the form of 'source:severity'. Possible values depend on the installed integrations (Optional)
 }
 
 // CheckCopyInput Information about the check(s) that are to be copied
@@ -215,8 +253,8 @@ type CheckCustomEventCreateInput struct {
 	OwnerId          *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	PassPending      *Nullable[bool]         `json:"passPending,omitempty" yaml:"passPending,omitempty" example:"false"`                     // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure (Optional)
 	ResultMessage    *Nullable[string]       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" example:"example_value"`         // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https://docs.opslevel.com/docs/checks/payload-checks/#liquid-templating) (Optional)
-	ServiceSelector  string                  `json:"serviceSelector" yaml:"serviceSelector" example:"example_value"`                         // A jq expression that will be ran against your payload. This will parse out the service identifier. [More info about jq](https://jqplay.org/) (Required)
-	SuccessCondition string                  `json:"successCondition" yaml:"successCondition" example:"example_value"`                       // A jq expression that will be ran against your payload. A truthy value will result in the check passing. [More info about jq](https://jqplay.org/) (Required)
+	ServiceSelector  string                  `json:"serviceSelector" yaml:"serviceSelector" example:"example_value"`                         // A jq expression that will be run against your payload. This will parse out the service identifier. [More info about jq](https://jqplay.org/) (Required)
+	SuccessCondition string                  `json:"successCondition" yaml:"successCondition" example:"example_value"`                       // A jq expression that will be run against your payload. A truthy value will result in the check passing. [More info about jq](https://jqplay.org/) (Required)
 }
 
 // CheckCustomEventUpdateInput Specifies the input fields used to update a custom event check
@@ -233,8 +271,8 @@ type CheckCustomEventUpdateInput struct {
 	OwnerId          *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`             // The id of the owner of the check (Optional)
 	PassPending      *Nullable[bool]         `json:"passPending,omitempty" yaml:"passPending,omitempty" example:"false"`                               // True if this check should pass by default. Otherwise the default 'pending' state counts as a failure (Optional)
 	ResultMessage    *Nullable[string]       `json:"resultMessage,omitempty" yaml:"resultMessage,omitempty" example:"example_value"`                   // The check result message template. It is compiled with Liquid and formatted in Markdown. [More info about liquid templates](https://docs.opslevel.com/docs/checks/payload-checks/#liquid-templating) (Optional)
-	ServiceSelector  *Nullable[string]       `json:"serviceSelector,omitempty" yaml:"serviceSelector,omitempty" example:"example_value"`               // A jq expression that will be ran against your payload. This will parse out the service identifier. [More info about jq](https://jqplay.org/) (Optional)
-	SuccessCondition *Nullable[string]       `json:"successCondition,omitempty" yaml:"successCondition,omitempty" example:"example_value"`             // A jq expression that will be ran against your payload. A truthy value will result in the check passing. [More info about jq](https://jqplay.org/) (Optional)
+	ServiceSelector  *Nullable[string]       `json:"serviceSelector,omitempty" yaml:"serviceSelector,omitempty" example:"example_value"`               // A jq expression that will be run against your payload. This will parse out the service identifier. [More info about jq](https://jqplay.org/) (Optional)
+	SuccessCondition *Nullable[string]       `json:"successCondition,omitempty" yaml:"successCondition,omitempty" example:"example_value"`             // A jq expression that will be run against your payload. A truthy value will result in the check passing. [More info about jq](https://jqplay.org/) (Optional)
 }
 
 // CheckDeleteInput Specifies the input fields used to delete a check
@@ -296,7 +334,7 @@ type CheckHasDocumentationUpdateInput struct {
 	OwnerId         *Nullable[ID]                `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`       // The id of the owner of the check (Optional)
 }
 
-// CheckHasRecentDeployCreateInput Specifies the input fields used to create a recent deploys check
+// CheckHasRecentDeployCreateInput Specifies the input fields used to create a recent deploy check
 type CheckHasRecentDeployCreateInput struct {
 	CategoryId ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                 // The id of the category the check belongs to (Required)
 	Days       int                     `json:"days" yaml:"days" example:"3"`                                                           // The number of days to check since the last deploy (Required)
@@ -389,7 +427,7 @@ type CheckPackageVersionUpdateInput struct {
 	VersionConstraintPredicate *Nullable[PredicateUpdateInput]  `json:"versionConstraintPredicate,omitempty" yaml:"versionConstraintPredicate,omitempty"`           // The predicate that describes the version constraint the package must satisfy (Optional)
 }
 
-// CheckRelationshipCreateInput Specifies the input fields used to create a relationships check
+// CheckRelationshipCreateInput Specifies the input fields used to create a relationship check
 type CheckRelationshipCreateInput struct {
 	CategoryId                 ID                      `json:"categoryId" yaml:"categoryId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                             // The id of the category the check belongs to (Required)
 	EnableOn                   *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" example:"2025-01-05T01:00:00.000Z"`                    // The date when the check will be automatically enabled (Optional)
@@ -431,7 +469,7 @@ type CheckRepositoryFileCreateInput struct {
 	Name                  string                  `json:"name" yaml:"name" example:"example_value"`                                               // The display name of the check (Required)
 	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                         // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
-	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`             // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional Default: false)
+	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`             // Whether the check looks at the absolute root of a repo or the relative root (the directory specified when a repo is attached to a service) (Optional Default: false)
 }
 
 // CheckRepositoryFileUpdateInput Specifies the input fields used to update a repo file check
@@ -448,7 +486,7 @@ type CheckRepositoryFileUpdateInput struct {
 	Name                  *Nullable[string]       `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                  // The display name of the check (Optional)
 	Notes                 *string                 `json:"notes,omitempty" yaml:"notes,omitempty" example:"example_value"`                                // Additional information about the check (Optional)
 	OwnerId               *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`          // The id of the owner of the check (Optional)
-	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`                    // Whether the checks looks at the absolute root of a repo or the relative root (the directory specified when attached a repo to a service) (Optional Default: false)
+	UseAbsoluteRoot       *Nullable[bool]         `json:"useAbsoluteRoot,omitempty" yaml:"useAbsoluteRoot,omitempty" example:"false"`                    // Whether the check looks at the absolute root of a repo or the relative root (the directory specified when a repo is attached to a service) (Optional Default: false)
 }
 
 // CheckRepositoryGrepCreateInput Specifies the input fields used to create a repo grep check
@@ -701,7 +739,7 @@ type CheckToolUsageCreateInput struct {
 	OwnerId              *Nullable[ID]           `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The id of the team that owns the check (Optional)
 	ToolCategory         ToolCategory            `json:"toolCategory" yaml:"toolCategory" example:"admin"`                                       // The category that the tool belongs to (Required)
 	ToolNamePredicate    *PredicateInput         `json:"toolNamePredicate,omitempty" yaml:"toolNamePredicate,omitempty"`                         // The condition that the tool name should satisfy to be evaluated (Optional)
-	ToolUrlPredicate     *PredicateInput         `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`                           // The condition that the tool url should satisfy to be evaluated (Optional)
+	ToolUrlPredicate     *PredicateInput         `json:"toolUrlPredicate,omitempty" yaml:"toolUrlPredicate,omitempty"`                           // The condition that the tool URL should satisfy to be evaluated (Optional)
 }
 
 // CheckToolUsageUpdateInput Specifies the input fields used to update a tool usage check
@@ -835,23 +873,23 @@ type CustomActionsTriggerInvokeInput struct {
 type CustomActionsWebhookActionCreateInput struct {
 	Async          *bool                       `json:"async,omitempty" yaml:"async,omitempty" example:"false"`                                                                                                         // Whether the action expects an additional, asynchronous response upon completion (Required Default: false)
 	Description    *Nullable[string]           `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                                                                                     // The description that gets assigned to the Webhook Action you're creating (Optional)
-	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered (Optional)
-	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" example:"DELETE"`                                                                                                                  // HTTP used when the Webhook is triggered. Either POST or PUT (Required)
-	LiquidTemplate *Nullable[string]           `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty" example:"example_value"`                                                                               // Template that can be used to generate a Webhook payload (Optional)
+	Headers        *JSON                       `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers to be passed along with your webhook when triggered (Optional)
+	HttpMethod     CustomActionsHttpMethodEnum `json:"httpMethod" yaml:"httpMethod" example:"DELETE"`                                                                                                                  // HTTP method used when the webhook is triggered. Either POST or PUT (Required)
+	LiquidTemplate *Nullable[string]           `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty" example:"example_value"`                                                                               // Template that can be used to generate a webhook payload (Optional)
 	Name           string                      `json:"name" yaml:"name" example:"example_value"`                                                                                                                       // The name that gets assigned to the Webhook Action you're creating (Required)
-	WebhookUrl     string                      `json:"webhookUrl" yaml:"webhookUrl" example:"example_value"`                                                                                                           // The URL that you wish to send the Webhook to when triggered (Required)
+	WebhookUrl     string                      `json:"webhookUrl" yaml:"webhookUrl" example:"example_value"`                                                                                                           // The URL that you wish to send the webhook to when triggered (Required)
 }
 
 // CustomActionsWebhookActionUpdateInput Inputs that specify the details of a Webhook Action you wish to update
 type CustomActionsWebhookActionUpdateInput struct {
 	Async          *bool                        `json:"async,omitempty" yaml:"async,omitempty" example:"false"`                                                                                                         // Whether the action expects an additional, asynchronous response upon completion (Optional)
 	Description    *Nullable[string]            `json:"description,omitempty" yaml:"description,omitempty" example:"example_value"`                                                                                     // The description that gets assigned to the Webhook Action you're creating (Optional)
-	Headers        *JSON                        `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers be passed along with your Webhook when triggered (Optional)
-	HttpMethod     *CustomActionsHttpMethodEnum `json:"httpMethod,omitempty" yaml:"httpMethod,omitempty" example:"DELETE"`                                                                                              // HTTP used when the Webhook is triggered. Either POST or PUT (Optional)
+	Headers        *JSON                        `json:"headers,omitempty" yaml:"headers,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // HTTP headers to be passed along with your webhook when triggered (Optional)
+	HttpMethod     *CustomActionsHttpMethodEnum `json:"httpMethod,omitempty" yaml:"httpMethod,omitempty" example:"DELETE"`                                                                                              // HTTP method used when the webhook is triggered. Either POST or PUT (Optional)
 	Id             ID                           `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                                                         // The ID of the Webhook Action you wish to update (Required)
-	LiquidTemplate *Nullable[string]            `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty" example:"example_value"`                                                                               // Template that can be used to generate a Webhook payload (Optional)
+	LiquidTemplate *Nullable[string]            `json:"liquidTemplate,omitempty" yaml:"liquidTemplate,omitempty" example:"example_value"`                                                                               // Template that can be used to generate a webhook payload (Optional)
 	Name           *Nullable[string]            `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                                                                                   // The name that gets assigned to the Webhook Action you're creating (Optional)
-	WebhookUrl     *Nullable[string]            `json:"webhookUrl,omitempty" yaml:"webhookUrl,omitempty" example:"example_value"`                                                                                       // The URL that you wish to send the Webhook too when triggered (Optional)
+	WebhookUrl     *Nullable[string]            `json:"webhookUrl,omitempty" yaml:"webhookUrl,omitempty" example:"example_value"`                                                                                       // The URL that you wish to send the webhook to when triggered (Optional)
 }
 
 // CustomIntegrationInput Input for upserting a custom integration
@@ -884,7 +922,7 @@ type EventIntegrationUpdateInput struct {
 	Name string `json:"name" yaml:"name" example:"example_value"`               // The name of the event integration (Required)
 }
 
-// ExternalResourceIdentifierInput Specifies the input fields to locate resouce created via API in OpsLevel
+// ExternalResourceIdentifierInput Specifies the input fields used to locate a resource created via API in OpsLevel
 type ExternalResourceIdentifierInput struct {
 	ExternalId  string          `json:"externalId" yaml:"externalId" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource in your system (Required)
 	Integration IdentifierInput `json:"integration" yaml:"integration"`                                         // The integration identifier (Required)
@@ -904,7 +942,7 @@ type FilterCreateInput struct {
 
 // FilterPredicateInput A condition that should be satisfied
 type FilterPredicateInput struct {
-	CaseSensitive *Nullable[bool]   `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" example:"false"` //  (Optional)
+	CaseSensitive *Nullable[bool]   `json:"caseSensitive,omitempty" yaml:"caseSensitive,omitempty" example:"false"` // Option for determining whether to compare strings case-sensitively (Optional)
 	Key           PredicateKeyEnum  `json:"key" yaml:"key" example:"aliases"`                                       // The condition key used by the predicate (Required)
 	KeyData       *Nullable[string] `json:"keyData,omitempty" yaml:"keyData,omitempty" example:"example_value"`     // Additional data used by the predicate. This field is used by predicates with key = 'tags' to specify the tag key. For example, to create a predicate for services containing the tag 'db:mysql', set keyData = 'db' and value = 'mysql' (Optional)
 	Type          PredicateTypeEnum `json:"type" yaml:"type" example:"belongs_to"`                                  // The condition type used by the predicate (Required)
@@ -940,7 +978,7 @@ type IdentifierInput struct {
 	Id    *ID     `json:"id,omitempty" yaml:"id,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The id of the resource (Optional)
 }
 
-// InfrastructureResourceInput Specifies the input fields for a infrastructure resource
+// InfrastructureResourceInput Specifies the input fields for an infrastructure resource
 type InfrastructureResourceInput struct {
 	Data                 *JSON                                    `json:"data,omitempty" yaml:"data,omitempty" example:"{\"name\":\"my-big-query\",\"engine\":\"BigQuery\",\"endpoint\":\"https://google.com\",\"replica\":false}"` // The data for the infrastructure_resource (Optional)
 	OwnerId              *Nullable[ID]                            `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                                                     // The id of the owner for the infrastructure_resource (Optional)
@@ -1285,9 +1323,9 @@ type TagInput struct {
 
 // TagRelationshipKeysAssignInput The input for the `tagRelationshipKeysAssign` mutation
 type TagRelationshipKeysAssignInput struct {
-	BelongsTo    *Nullable[string]   `json:"belongsTo,omitempty" yaml:"belongsTo,omitempty" example:"example_value"` //  (Optional)
-	DependencyOf *Nullable[[]string] `json:"dependencyOf,omitempty" yaml:"dependencyOf,omitempty" example:"[]"`      //  (Optional)
-	DependsOn    *Nullable[[]string] `json:"dependsOn,omitempty" yaml:"dependsOn,omitempty" example:"[]"`            //  (Optional)
+	BelongsTo    *Nullable[string]   `json:"belongsTo,omitempty" yaml:"belongsTo,omitempty" example:"example_value"` // The tag key that will create `belongs_to` relationships (Optional)
+	DependencyOf *Nullable[[]string] `json:"dependencyOf,omitempty" yaml:"dependencyOf,omitempty" example:"[]"`      // The tag keys that will create `dependency_of` relationships (Optional)
+	DependsOn    *Nullable[[]string] `json:"dependsOn,omitempty" yaml:"dependsOn,omitempty" example:"[]"`            // The tag keys that will create `depends_on` relationships (Optional)
 }
 
 // TagUpdateInput Specifies the input fields used to update a tag
