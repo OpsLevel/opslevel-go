@@ -67,6 +67,7 @@ type Integration struct {
 
 	AWSIntegrationFragment            `graphql:"... on AwsIntegration"`
 	AzureResourcesIntegrationFragment `graphql:"... on AzureResourcesIntegration"`
+	CustomIntegrationFragment         `graphql:"... on CustomIntegration"`
 	GoogleCloudIntegrationFragment    `graphql:"... on GoogleCloudIntegration"`
 	KubernetesIntegrationFragment     `graphql:"... on KubernetesIntegration"`
 	NewRelicIntegrationFragment       `graphql:"... on NewRelicIntegration"`
