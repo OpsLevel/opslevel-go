@@ -1,4 +1,0 @@
-kind: Feature
-body: Add custom integration create/update with ETL definitions, so clients can manage
-  Extract and Transform mapping configuration.
-time: 2026-08-19T01:25:00+05:30
