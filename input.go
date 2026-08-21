@@ -894,7 +894,9 @@ type CustomActionsWebhookActionUpdateInput struct {
 
 // CustomIntegrationInput Input for upserting a custom integration
 type CustomIntegrationInput struct {
-	Name *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"` // Name of the custom integration type (Optional)
+	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty" yaml:"extractDefinition,omitempty" example:"example_value"`     // The configured definition for extracting data from inbound webhooks or HTTP polling (Optional)
+	Name                *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // Name of the custom integration type (Optional)
+	TransformDefinition *YAML             `json:"transformDefinition,omitempty" yaml:"transformDefinition,omitempty" example:"example_value"` // The configured definition for transforming extracted data from inbound webhooks or HTTP polling to another resource (Optional)
 }
 
 // DeleteInput Specifies the input fields used to delete an entity

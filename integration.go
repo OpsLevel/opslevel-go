@@ -61,15 +61,6 @@ type AWSIntegrationInput struct {
 	RegionOverride       *[]string         `json:"regionOverride,omitempty"`
 }
 
-// CustomIntegrationInput in the generated input.go omits the YAML-scalar mapping
-// fields, so the full input is hand-maintained here, as for KubernetesIntegrationInput.
-// GetGraphQLType maps it back onto the schema's CustomIntegrationInput.
-type CustomIntegrationMappingInput struct {
-	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty"`
-	Name                *Nullable[string] `json:"name,omitempty"`
-	TransformDefinition *YAML             `json:"transformDefinition,omitempty"`
-}
-
 type KubernetesIntegrationInput struct {
 	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty"`
 	Name                *Nullable[string] `json:"name,omitempty"`
@@ -77,10 +68,6 @@ type KubernetesIntegrationInput struct {
 }
 
 func (awsIntegrationInput AWSIntegrationInput) GetGraphQLType() string { return "AwsIntegrationInput" }
-func (customIntegrationMappingInput CustomIntegrationMappingInput) GetGraphQLType() string {
-	return "CustomIntegrationInput"
-}
-
 func (kubernetesIntegrationInput KubernetesIntegrationInput) GetGraphQLType() string {
 	return "KubernetesIntegrationInput"
 }
@@ -267,7 +254,7 @@ func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudI
 	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) CreateIntegrationCustom(input CustomIntegrationMappingInput) (*Integration, error) {
+func (client *Client) CreateIntegrationCustom(input CustomIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload IntegrationCreatePayload `graphql:"customIntegrationCreate(input: $input)"`
 	}
@@ -278,7 +265,7 @@ func (client *Client) CreateIntegrationCustom(input CustomIntegrationMappingInpu
 	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 
-func (client *Client) UpdateIntegrationCustom(identifier string, input CustomIntegrationMappingInput) (*Integration, error) {
+func (client *Client) UpdateIntegrationCustom(identifier string, input CustomIntegrationInput) (*Integration, error) {
 	var m struct {
 		Payload IntegrationUpdatePayload `graphql:"customIntegrationUpdate(integration: $integration input: $input)"`
 	}
