@@ -29,6 +29,11 @@ type AzureResourcesIntegrationFragment struct {
 	TenantId              string   `graphql:"tenantId"`
 }
 
+type CustomIntegrationFragment struct {
+	ExtractDefinition   string `graphql:"extractDefinition"`
+	TransformDefinition string `graphql:"transformDefinition"`
+}
+
 type GoogleCloudIntegrationFragment struct {
 	Aliases               []string             `graphql:"aliases"`
 	ClientEmail           string               `graphql:"clientEmail"`
@@ -246,6 +251,29 @@ func (client *Client) UpdateIntegrationGCP(identifier string, input GoogleCloudI
 		"input":       input,
 	}
 	err := client.Mutate(&m, v, WithName("GoogleCloudIntegrationUpdate"))
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) CreateIntegrationCustom(input CustomIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload IntegrationCreatePayload `graphql:"customIntegrationCreate(input: $input)"`
+	}
+	v := PayloadVariables{
+		"input": input,
+	}
+	err := client.Mutate(&m, v, WithName("CustomIntegrationCreate"))
+	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
+}
+
+func (client *Client) UpdateIntegrationCustom(identifier string, input CustomIntegrationInput) (*Integration, error) {
+	var m struct {
+		Payload IntegrationUpdatePayload `graphql:"customIntegrationUpdate(integration: $integration input: $input)"`
+	}
+	v := PayloadVariables{
+		"integration": *NewIdentifier(identifier),
+		"input":       input,
+	}
+	err := client.Mutate(&m, v, WithName("CustomIntegrationUpdate"))
 	return &m.Payload.Integration, HandleErrors(err, m.Payload.Errors)
 }
 

@@ -159,6 +159,78 @@ func TestCreateGoogleCloudIntegration(t *testing.T) {
 	}, result.Projects)
 }
 
+func TestCreateCustomIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation CustomIntegrationCreate($input:CustomIntegrationInput!){customIntegrationCreate(input: $input){integration{{ template "integration_request" }},errors{message,path}}}`,
+		`{"input": { "name": "Custom", "extractDefinition": "extractors:\n- external_kind: Widget\n", "transformDefinition": "transforms:\n- infrastructure_resource: Widget\n" }}`,
+		`{"data": {
+      "customIntegrationCreate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "Custom",
+          "type": "custom",
+          "createdAt": "2026-07-17T16:25:29.574450Z",
+          "installedAt": "2026-07-17T16:25:28.541124Z",
+          "extractDefinition": "extractors:\n- external_kind: Widget\n",
+          "transformDefinition": "transforms:\n- infrastructure_resource: Widget\n"
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/create_custom", testRequest)
+	extractDefinition := opslevel.YAML("extractors:\n- external_kind: Widget\n")
+	transformDefinition := opslevel.YAML("transforms:\n- infrastructure_resource: Widget\n")
+	// Act
+	result, err := client.CreateIntegrationCustom(opslevel.CustomIntegrationInput{
+		Name:                opslevel.RefOf("Custom"),
+		ExtractDefinition:   &extractDefinition,
+		TransformDefinition: &transformDefinition,
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Custom", result.Name)
+	autopilot.Equals(t, "extractors:\n- external_kind: Widget\n", result.CustomIntegrationFragment.ExtractDefinition)
+	autopilot.Equals(t, "transforms:\n- infrastructure_resource: Widget\n", result.CustomIntegrationFragment.TransformDefinition)
+}
+
+func TestUpdateCustomIntegration(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation CustomIntegrationUpdate($input:CustomIntegrationInput!$integration:IdentifierInput!){customIntegrationUpdate(integration: $integration input: $input){integration{{ template "integration_request" }},errors{message,path}}}`,
+		`{"integration": { {{ template "id1" }} }, "input": { "name": "Custom Updated", "extractDefinition": "extractors:\n- external_kind: Gadget\n", "transformDefinition": "transforms:\n- infrastructure_resource: Gadget\n" }}`,
+		`{"data": {
+      "customIntegrationUpdate": {
+        "integration": {
+          {{ template "id1" }},
+          "name": "Custom Updated",
+          "type": "custom",
+          "createdAt": "2026-07-17T16:25:29.574450Z",
+          "installedAt": "2026-07-17T16:25:28.541124Z",
+          "extractDefinition": "extractors:\n- external_kind: Gadget\n",
+          "transformDefinition": "transforms:\n- infrastructure_resource: Gadget\n"
+        },
+        "errors": []
+      }}}`,
+	)
+	client := BestTestClient(t, "integration/update_custom", testRequest)
+	extractDefinition := opslevel.YAML("extractors:\n- external_kind: Gadget\n")
+	transformDefinition := opslevel.YAML("transforms:\n- infrastructure_resource: Gadget\n")
+	// Act
+	result, err := client.UpdateIntegrationCustom(string(id1), opslevel.CustomIntegrationInput{
+		Name:                opslevel.RefOf("Custom Updated"),
+		ExtractDefinition:   &extractDefinition,
+		TransformDefinition: &transformDefinition,
+	})
+	// Assert
+	autopilot.Equals(t, nil, err)
+	autopilot.Equals(t, id1, result.Id)
+	autopilot.Equals(t, "Custom Updated", result.Name)
+	autopilot.Equals(t, "extractors:\n- external_kind: Gadget\n", result.CustomIntegrationFragment.ExtractDefinition)
+	autopilot.Equals(t, "transforms:\n- infrastructure_resource: Gadget\n", result.CustomIntegrationFragment.TransformDefinition)
+}
+
 func TestCreateKubernetesIntegration(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
@@ -191,8 +263,8 @@ func TestCreateKubernetesIntegration(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "Kubernetes", result.Name)
-	autopilot.Equals(t, "extractors:\n- external_kind: Deployment\n", result.ExtractDefinition)
-	autopilot.Equals(t, "transforms:\n- infrastructure_resource: Deployment\n", result.TransformDefinition)
+	autopilot.Equals(t, "extractors:\n- external_kind: Deployment\n", result.KubernetesIntegrationFragment.ExtractDefinition)
+	autopilot.Equals(t, "transforms:\n- infrastructure_resource: Deployment\n", result.KubernetesIntegrationFragment.TransformDefinition)
 }
 
 func TestCreateNewRelicIntegration(t *testing.T) {
@@ -436,8 +508,8 @@ func TestUpdateKubernetesIntegration(t *testing.T) {
 	autopilot.Equals(t, nil, err)
 	autopilot.Equals(t, id1, result.Id)
 	autopilot.Equals(t, "Kubernetes Updated", result.Name)
-	autopilot.Equals(t, "extractors:\n- external_kind: StatefulSet\n", result.ExtractDefinition)
-	autopilot.Equals(t, "transforms:\n- infrastructure_resource: StatefulSet\n", result.TransformDefinition)
+	autopilot.Equals(t, "extractors:\n- external_kind: StatefulSet\n", result.KubernetesIntegrationFragment.ExtractDefinition)
+	autopilot.Equals(t, "transforms:\n- infrastructure_resource: StatefulSet\n", result.KubernetesIntegrationFragment.TransformDefinition)
 }
 
 func TestUpdateNewRelicIntegration(t *testing.T) {
