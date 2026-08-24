@@ -183,7 +183,7 @@ func TestCreateCustomIntegration(t *testing.T) {
 	transformDefinition := opslevel.YAML("transforms:\n- infrastructure_resource: Widget\n")
 	// Act
 	result, err := client.CreateIntegrationCustom(opslevel.CustomIntegrationInput{
-		Name:                opslevel.RefOf("Custom"),
+		Name:                opslevel.NewString("Custom"),
 		ExtractDefinition:   &extractDefinition,
 		TransformDefinition: &transformDefinition,
 	})
@@ -219,7 +219,7 @@ func TestUpdateCustomIntegration(t *testing.T) {
 	transformDefinition := opslevel.YAML("transforms:\n- infrastructure_resource: Gadget\n")
 	// Act
 	result, err := client.UpdateIntegrationCustom(string(id1), opslevel.CustomIntegrationInput{
-		Name:                opslevel.RefOf("Custom Updated"),
+		Name:                opslevel.NewString("Custom Updated"),
 		ExtractDefinition:   &extractDefinition,
 		TransformDefinition: &transformDefinition,
 	})

@@ -894,9 +894,9 @@ type CustomActionsWebhookActionUpdateInput struct {
 
 // CustomIntegrationInput Input for upserting a custom integration
 type CustomIntegrationInput struct {
-	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty" yaml:"extractDefinition,omitempty" example:"example_value"`     // The configured definition for extracting data from inbound webhooks or HTTP polling (Optional)
-	Name                *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                               // Name of the custom integration type (Optional)
-	TransformDefinition *YAML             `json:"transformDefinition,omitempty" yaml:"transformDefinition,omitempty" example:"example_value"` // The configured definition for transforming extracted data from inbound webhooks or HTTP polling to another resource (Optional)
+	ExtractDefinition   *YAML   `json:"extractDefinition,omitempty" yaml:"extractDefinition,omitempty" example:"extractors:\n- external_kind: Widget\n"`     // The configured definition for extracting data from inbound webhooks or HTTP polling (Optional)
+	Name                *string `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                                        // Name of the custom integration type (Optional)
+	TransformDefinition *YAML   `json:"transformDefinition,omitempty" yaml:"transformDefinition,omitempty" example:"extractors:\n- external_kind: Widget\n"` // The configured definition for transforming extracted data from inbound webhooks or HTTP polling to another resource (Optional)
 }
 
 // DeleteInput Specifies the input fields used to delete an entity
@@ -999,6 +999,13 @@ type InfrastructureResourceProviderDataInput struct {
 // InfrastructureResourceSchemaInput Specifies the schema for an infrastructure resource
 type InfrastructureResourceSchemaInput struct {
 	Type string `json:"type" yaml:"type" example:"example_value"` // The type of the infrastructure resource (Required)
+}
+
+// KubernetesIntegrationInput Specifies the input fields used to create and update a Kubernetes integration
+type KubernetesIntegrationInput struct {
+	ExtractDefinition   *YAML             `json:"extractDefinition,omitempty" yaml:"extractDefinition,omitempty" example:"extractors:\n- external_kind: Widget\n"`     // The configured definition for extracting data from inbound webhooks or HTTP polling (Optional)
+	Name                *Nullable[string] `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                                                        // The name of the integration (Optional)
+	TransformDefinition *YAML             `json:"transformDefinition,omitempty" yaml:"transformDefinition,omitempty" example:"extractors:\n- external_kind: Widget\n"` // The configured definition for transforming extracted data from inbound webhooks or HTTP polling to another resource (Optional)
 }
 
 // LevelCreateInput Specifies the input fields used to create a level. The new level will be added as the highest level (greatest level index)
