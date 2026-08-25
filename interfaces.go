@@ -16,6 +16,7 @@ type Check struct {
 	Name        string       `graphql:"name"`            // The display name of the check.
 	Notes       string       `graphql:"notes: rawNotes"` // Additional information about the check.
 	Owner       CheckOwner   `graphql:"owner"`           // The owner of the check.
+	SourceCheck CheckId      `graphql:"sourceCheck"`     // The check this check was copied from.
 	Type        CheckType    `graphql:"type"`            // The type of check.
 
 	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
