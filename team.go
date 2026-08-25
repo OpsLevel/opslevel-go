@@ -409,6 +409,77 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 	return &q.Account.Teams, nil
 }
 
+// TeamWithProperties is a Team with its custom properties already loaded.
+//
+// Team.Properties is excluded from generated queries with `graphql:"-"`, so callers that
+// need properties for many teams would otherwise pay one extra request per team.
+// Embedding Team and redeclaring the field selects the connection inline instead.
+type TeamWithProperties struct {
+	Team
+	Properties PropertiesConnection `graphql:"properties"`
+}
+
+// ListTeamsIncludingProperties returns every team with its tags and properties populated,
+// costing one request per page of teams rather than one request per team.
+//
+// The inlined properties connection is selected without pagination arguments, so the API
+// returns its first 100 entries; any team holding more than that is topped up on its own.
+func (client *Client) ListTeamsIncludingProperties(variables *PayloadVariables) ([]TeamWithProperties, error) {
+	if variables == nil {
+		variables = client.InitialPageVariablesPointer()
+	}
+
+	teams := make([]TeamWithProperties, 0)
+	for {
+		var q struct {
+			Account struct {
+				Teams struct {
+					Nodes    []TeamWithProperties
+					PageInfo PageInfo
+				} `graphql:"teams(after: $after, first: $first)"`
+			}
+		}
+		if err := client.Query(&q, *variables, WithName("TeamListIncludingProperties")); err != nil {
+			return nil, err
+		}
+		teams = append(teams, q.Account.Teams.Nodes...)
+		if !q.Account.Teams.PageInfo.HasNextPage {
+			break
+		}
+		(*variables)["after"] = q.Account.Teams.PageInfo.End
+	}
+
+	for i := range teams {
+		// Hydrate covers the tags and memberships that came back inline; it issues no
+		// request unless one of those connections actually spilled past its first page.
+		if err := teams[i].Hydrate(client); err != nil {
+			return nil, err
+		}
+		if err := teams[i].hydrateProperties(client); err != nil {
+			return nil, err
+		}
+	}
+	return teams, nil
+}
+
+// hydrateProperties collects any pages of properties beyond the first that the list query
+// already returned. It issues no request for a team holding 100 properties or fewer.
+func (team *TeamWithProperties) hydrateProperties(client *Client) error {
+	// Point the embedded Team at the inlined connection so both views agree, and so
+	// GetProperties appends later pages onto the nodes already returned.
+	team.Team.Properties = &team.Properties
+
+	if !team.Properties.PageInfo.HasNextPage {
+		team.Properties.TotalCount = len(team.Properties.Nodes)
+		return nil
+	}
+
+	variables := client.InitialPageVariablesPointer()
+	(*variables)["after"] = team.Properties.PageInfo.End
+	_, err := team.GetProperties(client, variables)
+	return err
+}
+
 func (client *Client) ListTeamsWithManager(email string, variables *PayloadVariables) (*TeamConnection, error) {
 	var q struct {
 		Account struct {

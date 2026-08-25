@@ -1024,3 +1024,78 @@ func TestSearchTeams(t *testing.T) {
 	autopilot.Equals(t, "DevOps", result[0].Name)
 	autopilot.Equals(t, "Own Infra & Tools.", result[0].Responsibilities)
 }
+
+// ListTeamsIncludingProperties exists so that reading properties for many teams costs one
+// request per page instead of one per team. Registering a single request is what proves
+// that: the harness fails on any request it was not told to expect, so a per-team
+// GetProperties fan-out would surface here as an unregistered call.
+func TestListTeamsIncludingProperties(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`query TeamListIncludingProperties($after:String!$first:Int!){account{teams(after: $after, first: $first){nodes{alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},memberships{nodes{role,team{alias,id},user{id,email,name}},{{ template "pagination_request" }}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }}},properties{nodes{definition{id,aliases},locked,owner{__typename,... on Team{alias,id},... on Service{id,aliases}},validationErrors{message,path},value},{{ template "pagination_request" }}}},{{ template "pagination_request" }}}}}`,
+		`{{ template "pagination_initial_query_variables" }}`,
+		`{ "data": {
+      "account": {
+        "teams": {
+          "nodes": [
+            {
+              "alias": "devops",
+              "aliases": [ "devops" ],
+              "contacts": [],
+              {{ template "id1" }},
+              "name": "DevOps",
+              "responsibilities": "Own Infra & Tools.",
+              "tags": {
+                "nodes": [ {{ template "tag1" }}, {{ template "tag2" }} ],
+                {{ template "no_pagination_response" }}
+              },
+              "properties": {
+                "nodes": [ {{ template "team_properties_page_1" }} ],
+                {{ template "no_pagination_response" }}
+              }
+            },
+            {
+              "alias": "developers",
+              "aliases": [ "developers" ],
+              "contacts": [],
+              {{ template "id2" }},
+              "name": "Developers",
+              "responsibilities": null,
+              "tags": {
+                "nodes": [ {{ template "tag3" }} ],
+                {{ template "no_pagination_response" }}
+              },
+              "properties": {
+                "nodes": [],
+                {{ template "no_pagination_response" }}
+              }
+            }
+          ],
+          {{ template "no_pagination_response" }}
+        }
+      }
+    }}`,
+	)
+	client := BestTestClient(t, "team/list_including_properties", testRequest)
+
+	// Act
+	result, err := client.ListTeamsIncludingProperties(nil)
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, 2, len(result))
+
+	autopilot.Equals(t, "devops", result[0].Alias)
+	autopilot.Equals(t, 2, len(result[0].Tags.Nodes))
+	autopilot.Equals(t, "dev", result[0].Tags.Nodes[0].Key)
+	autopilot.Equals(t, 1, len(result[0].Properties.Nodes))
+	autopilot.Equals(t, 1, result[0].Properties.TotalCount)
+	autopilot.Equals(t, "true", string(*result[0].Properties.Nodes[0].Value))
+
+	autopilot.Equals(t, "developers", result[1].Alias)
+	autopilot.Equals(t, 1, len(result[1].Tags.Nodes))
+	autopilot.Equals(t, 0, len(result[1].Properties.Nodes))
+
+	// The embedded Team should expose the same properties the inlined field returned.
+	autopilot.Equals(t, 1, len(result[0].Team.Properties.Nodes))
+}

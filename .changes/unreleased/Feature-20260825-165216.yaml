@@ -1,0 +1,4 @@
+kind: Feature
+body: Add ListTeamsIncludingProperties, which returns teams with their tags and custom
+  properties loaded in one request per page rather than one request per team.
+time: 2026-08-25T16:52:16+05:30
