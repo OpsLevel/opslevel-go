@@ -7,10 +7,12 @@ import (
 	"strings"
 	"testing"
 	"text/template"
+	"time"
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/hasura/go-graphql-client/pkg/jsonutil"
 	ol "github.com/opslevel/opslevel-go/v2026"
+	"github.com/relvacode/iso8601"
 	"github.com/rocktavious/autopilot/v2023"
 )
 
@@ -1321,4 +1323,25 @@ func TestJsonUnmarshalUpdateCheckToolUsage(t *testing.T) {
 	// Assert
 	autopilot.Ok(t, err1)
 	autopilot.Equals(t, &output, buf1.(*ol.CheckToolUsageUpdateInput))
+}
+
+func TestCheckInputConversionPreservesEnableOn(t *testing.T) {
+	// Arrange
+	when := iso8601.Time{Time: time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC)}
+
+	// Act
+	created := ol.NewCheckCreateInputTypeOf[ol.CheckToolUsageCreateInput](ol.CheckCreateInput{
+		Name:     "example",
+		EnableOn: ol.NewNullableFrom(when),
+	})
+	updated := ol.NewCheckUpdateInputTypeOf[ol.CheckToolUsageUpdateInput](ol.CheckUpdateInput{
+		Id:       id1,
+		EnableOn: ol.NewNullableFrom(when),
+	})
+
+	// Assert
+	autopilot.Assert(t, created.EnableOn != nil, "EnableOn dropped converting CheckCreateInput")
+	autopilot.Equals(t, when, created.EnableOn.Value)
+	autopilot.Assert(t, updated.EnableOn != nil, "EnableOn dropped converting CheckUpdateInput")
+	autopilot.Equals(t, when, updated.EnableOn.Value)
 }

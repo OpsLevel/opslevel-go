@@ -87,7 +87,7 @@ type CheckCreateInputProvider interface {
 
 type CheckCreateInput struct {
 	Category ID                      `json:"categoryId" yaml:"categoryId" mapstructure:"categoryId"`
-	EnableOn *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
+	EnableOn *Nullable[iso8601.Time] `json:"enableOn,omitempty" yaml:"enableOn,omitempty" mapstructure:"enableOn,omitempty"`
 	Enabled  *Nullable[bool]         `json:"enabled,omitempty" yaml:"enabled,omitempty" mapstructure:"enabled"`
 	Filter   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
 	Level    ID                      `json:"levelId" yaml:"levelId" mapstructure:"levelId"`
@@ -110,7 +110,7 @@ type CheckUpdateInputProvider interface {
 
 type CheckUpdateInput struct {
 	Category *Nullable[ID]           `json:"categoryId,omitempty" mapstructure:"categoryId,omitempty"`
-	EnableOn *Nullable[iso8601.Time] `json:"enableOn,omitempty" mapstructure:"enabledOn,omitempty"`
+	EnableOn *Nullable[iso8601.Time] `json:"enableOn,omitempty" mapstructure:"enableOn,omitempty"`
 	Enabled  *Nullable[bool]         `json:"enabled,omitempty" mapstructure:"enabled,omitempty"`
 	Filter   *Nullable[ID]           `json:"filterId,omitempty" yaml:"filterId,omitempty" mapstructure:"filterId,omitempty"`
 	Id       ID                      `json:"id" mapstructure:"id"`
