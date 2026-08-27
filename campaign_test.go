@@ -209,12 +209,12 @@ func TestListCampaignChecksEmpty(t *testing.T) {
 func TestListCampaigns(t *testing.T) {
 	// Arrange
 	testRequestOne := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "", "first": 500, "sortBy": "start_date_DESC", "status": "in_progress" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [ {{ template "campaign1_response" }}, {{ template "campaign2_response" }} ], {{ template "pagination_initial_pageInfo_response" }} }}}}`,
 	)
 	testRequestTwo := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "OA", "first": 500, "sortBy": "start_date_DESC", "status": "in_progress" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [ {{ template "campaign3_response" }} ], {{ template "pagination_second_pageInfo_response" }} }}}}`,
 	)
@@ -265,7 +265,7 @@ func TestListCampaignsWithCustomVariables(t *testing.T) {
 	sortBy := ol.CampaignSortEnumStartDateAsc
 	status := ol.CampaignStatusEnumDelayed
 	testRequest := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "cursor", "first": 5, "sortBy": "start_date_ASC", "status": "delayed" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [ {{ template "campaign1_response" }} ], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }}}}`,
 	)
@@ -286,7 +286,7 @@ func TestListCampaignsWithCustomVariables(t *testing.T) {
 func TestListCampaignsEmpty(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
+		`query CampaignsList($after:String!$first:Int!$sortBy:CampaignSortEnum!$status:String!){account{campaigns(first: $first, after: $after, sortBy: $sortBy, filter: [{key: status, arg: $status}]){nodes{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}`,
 		`{ "after": "", "first": 500, "sortBy": "start_date_DESC", "status": "in_progress" }`,
 		`{ "data": { "account": { "campaigns": { "nodes": [], "pageInfo": { "hasNextPage": false, "hasPreviousPage": false, "startCursor": null, "endCursor": null } }}}}`,
 	)
