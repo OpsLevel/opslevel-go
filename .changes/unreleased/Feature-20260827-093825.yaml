@@ -1,0 +1,3 @@
+kind: Feature
+body: Add Check.Campaign via new lightweight CampaignId type, and return created checks from CopyChecksToCampaign with SourceCheck on campaign check nodes
+time: 2026-08-27T09:38:25.578171-04:00
