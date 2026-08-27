@@ -152,7 +152,7 @@ func TestCopyChecksToCampaign(t *testing.T) {
 	client := BestTestClient(t, "campaign/copy_checks", testRequest)
 
 	// Act
-	campaign, err := client.CopyChecksToCampaign(ol.ChecksCopyToCampaignInput{
+	campaign, createdChecks, err := client.CopyChecksToCampaign(ol.ChecksCopyToCampaignInput{
 		CampaignId: id1,
 		CheckIds:   []ol.ID{id2, id3},
 	})
@@ -161,6 +161,8 @@ func TestCopyChecksToCampaign(t *testing.T) {
 	autopilot.Ok(t, err)
 	autopilot.Equals(t, id1, campaign.Id)
 	autopilot.Equals(t, 2, campaign.CheckStats.Total)
+	autopilot.Equals(t, 1, len(createdChecks))
+	autopilot.Equals(t, id1, createdChecks[0].Id)
 }
 
 func TestListCampaignChecks(t *testing.T) {
@@ -180,8 +182,11 @@ func TestListCampaignChecks(t *testing.T) {
 	autopilot.Equals(t, 2, len(checks))
 	autopilot.Equals(t, id2, checks[0].Id)
 	autopilot.Equals(t, "Secret Rotation", checks[0].Name)
+	autopilot.Equals(t, id3, checks[0].SourceCheck.Id)
 	autopilot.Equals(t, id3, checks[1].Id)
 	autopilot.Equals(t, "Dependency Scanning", checks[1].Name)
+	// a copy whose source was deleted, or which predates sourceCheck, reports null
+	autopilot.Equals(t, ol.ID(""), checks[1].SourceCheck.Id)
 }
 
 func TestListCampaignChecksEmpty(t *testing.T) {

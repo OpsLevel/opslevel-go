@@ -226,7 +226,7 @@ mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(
 }{{ end }}
 
 {{- define "campaign_list_checks_request" }}
-query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: $id){checks(first: $first, after: $after){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}
+query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: $id){checks(first: $first, after: $after){nodes{id,name,sourceCheck{id,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}
 {{ end }}
 
 {{- define "campaign_list_checks_request_vars" }}
@@ -235,8 +235,8 @@ query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: 
 
 {{- define "campaign_list_checks_response" }}{
     "data":{"account":{"campaign":{"checks":{"nodes":[
-        {"id":"{{ template "id2_string" }}","name":"Secret Rotation"},
-        {"id":"{{ template "id3_string" }}","name":"Dependency Scanning"}
+        {"id":"{{ template "id2_string" }}","name":"Secret Rotation","sourceCheck":{"id":"{{ template "id3_string" }}","name":"Secret Rotation"}},
+        {"id":"{{ template "id3_string" }}","name":"Dependency Scanning","sourceCheck":null}
     ],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":null,"endCursor":null}}}}}
 }{{ end }}
 
