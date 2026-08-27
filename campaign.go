@@ -151,10 +151,6 @@ func (client *Client) ListCampaignChecks(campaignId ID, variables ...*PayloadVar
 	return allChecks, nil
 }
 
-// CopyChecksToCampaign copies the given rubric checks onto a campaign. It returns the
-// campaign and the checks the copy created - the latter identifies the new copies
-// unambiguously, which matching on sourceCheck cannot do when a campaign already holds
-// another copy of the same source check.
 func (client *Client) CopyChecksToCampaign(input ChecksCopyToCampaignInput) (*Campaign, []Check, error) {
 	var m struct {
 		Payload ChecksCopyToCampaignPayload `graphql:"checksCopyToCampaign(input: $input)"`
