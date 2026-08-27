@@ -1,0 +1,3 @@
+kind: Bugfix
+body: Fix EnableOn being silently dropped when converting check inputs
+time: 2026-08-27T09:38:25.590543-04:00

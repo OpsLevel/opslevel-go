@@ -45,14 +45,19 @@ type AzureDevopsPermissionError struct {
 	Type        string   // The type of the object that the error was encountered on (Required)
 }
 
+// CampaignId A campaign is a fixed time initiative that allows you to attach checks to and progress through towards completion
+type CampaignId struct {
+	Id   ID     // The id of the campaign.
+	Name string // The name of the campaign.
+}
+
 // Campaign A campaign is a fixed time initiative that allows you to attach checks to and progress through towards completion
 type Campaign struct {
+	CampaignId
 	CheckStats      Stats              // A summary of check results on the campaign (Optional)
 	EndedDate       iso8601.Time       // The date the campaign ended (Optional)
 	Filter          FilterId           // The filter that the campaign belongs to (Optional)
 	HtmlUrl         string             // A link to the HTML page for the resource. Ex. https://app.opslevel.com/services/shopping_cart (Required)
-	Id              ID                 // The id of the campaign (Required)
-	Name            string             // The name of the campaign (Required)
 	Owner           TeamId             // The team that owns the campaign (Optional)
 	ProjectBrief    string             // The project brief of the campaign (Optional)
 	RawProjectBrief string             // The raw unsanitized project brief of the campaign (Optional)

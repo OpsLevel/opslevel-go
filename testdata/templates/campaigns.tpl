@@ -90,7 +90,7 @@
 {{end}}
 
 {{- define "campaign_create_request" }}
-mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $input){campaign{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_create_request_vars" }}
@@ -114,7 +114,7 @@ mutation CampaignCreate($input:CampaignCreateInput!){campaignCreate(input: $inpu
 }{{ end }}
 
 {{- define "campaign_get_request" }}
-query CampaignGet($id:ID!){account{campaign(id: $id){checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate}}}
+query CampaignGet($id:ID!){account{campaign(id: $id){id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate}}}
 {{ end }}
 
 {{- define "campaign_get_request_vars" }}
@@ -140,7 +140,7 @@ query CampaignGet($id:ID!){account{campaign(id: $id){checkStats{total,totalSucce
 }{{ end }}
 
 {{- define "campaign_update_request" }}
-mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $input){campaign{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_update_request_vars" }}
@@ -176,7 +176,7 @@ mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){delet
 }{{ end }}
 
 {{- define "campaign_schedule_request" }}
-mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignScheduleUpdate(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignScheduleUpdate(input: $input){campaign{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_schedule_request_vars" }}
@@ -202,7 +202,7 @@ mutation CampaignScheduleUpdate($input:CampaignScheduleUpdateInput!){campaignSch
 }{{ end }}
 
 {{- define "campaign_unschedule_request" }}
-mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(input: $input){campaign{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_unschedule_request_vars" }}
@@ -226,7 +226,7 @@ mutation CampaignUnschedule($input:CampaignUnscheduleInput!){campaignUnschedule(
 }{{ end }}
 
 {{- define "campaign_list_checks_request" }}
-query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: $id){checks(first: $first, after: $after){nodes{id,name},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}
+query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: $id){checks(first: $first, after: $after){nodes{id,name,sourceCheck{id,name}},pageInfo{hasNextPage,hasPreviousPage,startCursor,endCursor}}}}}
 {{ end }}
 
 {{- define "campaign_list_checks_request_vars" }}
@@ -235,8 +235,8 @@ query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: 
 
 {{- define "campaign_list_checks_response" }}{
     "data":{"account":{"campaign":{"checks":{"nodes":[
-        {"id":"{{ template "id2_string" }}","name":"Secret Rotation"},
-        {"id":"{{ template "id3_string" }}","name":"Dependency Scanning"}
+        {"id":"{{ template "id2_string" }}","name":"Secret Rotation","sourceCheck":{"id":"{{ template "id3_string" }}","name":"Secret Rotation"}},
+        {"id":"{{ template "id3_string" }}","name":"Dependency Scanning","sourceCheck":null}
     ],"pageInfo":{"hasNextPage":false,"hasPreviousPage":false,"startCursor":null,"endCursor":null}}}}}
 }{{ end }}
 
@@ -245,7 +245,7 @@ query CampaignChecksList($after:String!$first:Int!$id:ID!){account{campaign(id: 
 }{{ end }}
 
 {{- define "campaign_copy_checks_request" }}
-mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCampaign(input: $input){campaign{checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,id,name,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},errors{message,path}}}
+mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCampaign(input: $input){campaign{id,name,checkStats{total,totalSuccessful},endedDate,filter{id,name},htmlUrl,owner{alias,id},projectBrief,rawProjectBrief,reminder{channels,daysOfWeek,defaultSlackChannel,frequency,frequencyUnit,message,nextOccurrence,timeOfDay,timezone},serviceStats{total,totalSuccessful},startDate,status,targetDate},createdChecks{campaign{id,name},category{description,id,name},description,enableOn,enabled,filter{id,name,connective,htmlUrl,predicates{caseSensitive,key,keyData,type,value}},id,level{alias,checks{id,name},description,id,index,name},name,notes: rawNotes,owner{... on Team{alias,id}},sourceCheck{id,name},type,... on AlertSourceUsageCheck{alertSourceNamePredicate{type,value},alertSourceType},... on CodeIssueCheck{constraint,issueName,issueType,maxAllowed,resolutionTime{unit,value},severity},... on CustomEventCheck{integration{id,name,type},passPending,resultMessage,serviceSelector,successCondition},... on HasRecentDeployCheck{days},... on ManualCheck{updateFrequency{frequencyTimeScale,frequencyValue,startingDate},updateRequiresComment},... on RepositoryFileCheck{directorySearch,fileContentsPredicate{type,value},filePaths,useAbsoluteRoot},... on RepositoryGrepCheck{directorySearch,fileContentsPredicate{type,value},filePaths},... on RepositorySearchCheck{fileContentsPredicate{type,value},fileExtensions},... on ServiceOwnershipCheck{contactMethod,requireContactMethod,tagKey,tagPredicate{type,value}},... on ServicePropertyCheck{serviceProperty,propertyDefinition{aliases,allowedInConfigFiles,id,name,description,displaySubtype,displayType,propertyDisplayStatus,lockedStatus,schema},propertyValuePredicate{type,value}},... on TagDefinedCheck{tagKey,tagPredicate{type,value}},... on ToolUsageCheck{environmentPredicate{type,value},toolCategory,toolNamePredicate{type,value},toolUrlPredicate{type,value}},... on HasDocumentationCheck{documentSubtype,documentType},... on PackageVersionCheck{missingPackageResult,packageConstraint,packageManager,packageName,packageNameIsRegex,versionConstraintPredicate{type,value}},... on RelationshipCheck{relationshipCountPredicate{type,value},relationshipDefinition{alias,componentType{id,aliases},description,id,managementRules{operator,sourceProperty,sourcePropertyBuiltin,targetCategory,targetProperty,targetPropertyBuiltin,targetType},metadata{allowedCategories,allowedTypes,maxItems,minItems},name}}},errors{message,path}}}
 {{ end }}
 
 {{- define "campaign_copy_checks_request_vars" }}
@@ -267,5 +267,5 @@ mutation ChecksCopyToCampaign($input:ChecksCopyToCampaignInput!){checksCopyToCam
         "rawProjectBrief":"A test campaign",
         "filter":null,
         "reminder":null
-    },"errors":[]}}
+    },"createdChecks":[{ {{ template "common_check_response" }} }],"errors":[]}}
 }{{ end }}

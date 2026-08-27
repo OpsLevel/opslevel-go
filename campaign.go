@@ -108,8 +108,9 @@ func (client *Client) UnscheduleCampaign(id ID) (*Campaign, error) {
 // CampaignCheckNode is a lightweight representation of a check belonging to a campaign,
 // used when listing campaign checks without needing the full Check interface fragments.
 type CampaignCheckNode struct {
-	Id   ID     `graphql:"id"`
-	Name string `graphql:"name"`
+	Id          ID      `graphql:"id"`
+	Name        string  `graphql:"name"`
+	SourceCheck CheckId `graphql:"sourceCheck"` // The check this check was copied from.
 }
 
 type campaignCheckConnection struct {
@@ -150,7 +151,7 @@ func (client *Client) ListCampaignChecks(campaignId ID, variables ...*PayloadVar
 	return allChecks, nil
 }
 
-func (client *Client) CopyChecksToCampaign(input ChecksCopyToCampaignInput) (*Campaign, error) {
+func (client *Client) CopyChecksToCampaign(input ChecksCopyToCampaignInput) (*Campaign, []Check, error) {
 	var m struct {
 		Payload ChecksCopyToCampaignPayload `graphql:"checksCopyToCampaign(input: $input)"`
 	}
@@ -158,7 +159,7 @@ func (client *Client) CopyChecksToCampaign(input ChecksCopyToCampaignInput) (*Ca
 		"input": input,
 	}
 	err := client.Mutate(&m, v, WithName("ChecksCopyToCampaign"))
-	return &m.Payload.Campaign, HandleErrors(err, m.Payload.Errors)
+	return &m.Payload.Campaign, m.Payload.CreatedChecks, HandleErrors(err, m.Payload.Errors)
 }
 
 func (client *Client) ListCampaigns(campaignVariables *ListCampaignsVariables) (*CampaignConnection, error) {

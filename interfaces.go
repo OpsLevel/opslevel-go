@@ -6,6 +6,7 @@ import "github.com/relvacode/iso8601"
 
 // Check represents checks allow you to monitor how your services are built and operated.
 type Check struct {
+	Campaign    CampaignId   `graphql:"campaign"`        // The campaign the check belongs to.
 	Category    Category     `graphql:"category"`        // The category that the check belongs to.
 	Description string       `graphql:"description"`     // Description of the check type's purpose.
 	EnableOn    iso8601.Time `graphql:"enableOn"`        // The date when the check will be automatically enabled.
@@ -16,6 +17,7 @@ type Check struct {
 	Name        string       `graphql:"name"`            // The display name of the check.
 	Notes       string       `graphql:"notes: rawNotes"` // Additional information about the check.
 	Owner       CheckOwner   `graphql:"owner"`           // The owner of the check.
+	SourceCheck CheckId      `graphql:"sourceCheck"`     // The check this check was copied from.
 	Type        CheckType    `graphql:"type"`            // The type of check.
 
 	AlertSourceUsageCheckFragment `graphql:"... on AlertSourceUsageCheck"`
