@@ -94,6 +94,37 @@
       startCursor,
       endCursor
     }
+  },
+  properties{
+    nodes{
+      definition{
+        id,
+        aliases
+      },
+      locked,
+      owner{
+        __typename,
+        ... on Team{
+          alias,
+          id
+        },
+        ... on Service{
+          id,
+          aliases
+        }
+      },
+      validationErrors{
+        message,
+        path
+      },
+      value
+    },
+    pageInfo{
+      hasNextPage,
+      hasPreviousPage,
+      startCursor,
+      endCursor
+    }
   }
 }
 {{- end }}

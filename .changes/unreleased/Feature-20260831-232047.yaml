@@ -1,0 +1,5 @@
+kind: Feature
+body: Team queries now return custom properties. Previously properties were excluded
+  from generated queries, so reading them for a list of teams cost one extra request
+  per team.
+time: 2026-08-31T23:20:47+05:30

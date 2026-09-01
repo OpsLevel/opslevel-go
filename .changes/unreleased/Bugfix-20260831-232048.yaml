@@ -1,0 +1,5 @@
+kind: Bugfix
+body: ListTeams now hydrates the teams on the first page. Previously only teams from
+  subsequent pages were hydrated, so accounts with a single page of teams had
+  Responsibilities left HTML-escaped and TotalCount left at zero.
+time: 2026-08-31T23:20:48+05:30
