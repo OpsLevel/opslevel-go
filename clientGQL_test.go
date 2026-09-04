@@ -210,7 +210,7 @@ func httpResponseByCode(statusCode int) autopilot.ResponseWriter {
 
 func TestMissingTeamIsAnOpsLevelApiError(t *testing.T) {
 	testRequest := autopilot.NewTestRequest(
-		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},memberships{nodes{role,team{alias,id},user{id,email,name}},{{ template "pagination_request" }}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }}}}}}`,
+		`query TeamGet($id:ID!){account{team(id: $id){alias,id,aliases,managedAliases,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,manager{id,email,name,contacts{address,displayName,displayType,externalId,id,isDefault,type},htmlUrl,provisionedBy,role,tags{nodes{id,key,value},{{ template "pagination_request" }}},teams{nodes{alias,id},{{ template "pagination_request" }}}},memberships{nodes{role,team{alias,id},user{id,email,name}},{{ template "pagination_request" }}},name,parentTeam{alias,id},responsibilities,tags{nodes{id,key,value},{{ template "pagination_request" }}},properties{nodes{definition{id,aliases},locked,owner{__typename,... on Team{alias,id},... on Service{id,aliases}},validationErrors{message,path},value},{{ template "pagination_request" }}}}}}`,
 		`{ {{ template "id1" }} }`,
 		`{"errors": [
 				{

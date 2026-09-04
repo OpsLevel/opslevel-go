@@ -26,7 +26,7 @@ type Team struct {
 	ParentTeam       TeamId
 	Responsibilities string
 	Tags             *TagConnection
-	Properties       *PropertiesConnection `graphql:"-" json:"-"`
+	Properties       *PropertiesConnection
 }
 
 // TeamIdConnection exists to prevent circular references on User because Team has a UserConnection
@@ -103,6 +103,18 @@ func (team *Team) Hydrate(client *Client) error {
 		team.Tags = resp
 	}
 	team.Tags.TotalCount = len(team.Tags.Nodes)
+
+	if team.Properties == nil {
+		team.Properties = &PropertiesConnection{}
+	}
+	if team.Properties.PageInfo.HasNextPage {
+		variables := client.InitialPageVariablesPointer()
+		(*variables)["after"] = team.Properties.PageInfo.End
+		if _, err := team.GetProperties(client, variables); err != nil {
+			return err
+		}
+	}
+	team.Properties.TotalCount = len(team.Properties.Nodes)
 	return nil
 }
 
@@ -391,18 +403,19 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 		return nil, err
 	}
 
+	for i := range q.Account.Teams.Nodes {
+		if err := q.Account.Teams.Nodes[i].Hydrate(client); err != nil {
+			return nil, err
+		}
+	}
+
 	if q.Account.Teams.PageInfo.HasNextPage {
 		(*variables)["after"] = q.Account.Teams.PageInfo.End
 		resp, err := client.ListTeams(variables)
 		if err != nil {
 			return nil, err
 		}
-		for _, node := range resp.Nodes {
-			if err := node.Hydrate(client); err != nil {
-				return nil, err
-			}
-			q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, node)
-		}
+		q.Account.Teams.Nodes = append(q.Account.Teams.Nodes, resp.Nodes...)
 		q.Account.Teams.PageInfo = resp.PageInfo
 	}
 	q.Account.Teams.TotalCount = len(q.Account.Teams.Nodes)
