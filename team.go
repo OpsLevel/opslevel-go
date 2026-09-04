@@ -26,7 +26,7 @@ type Team struct {
 	ParentTeam       TeamId
 	Responsibilities string
 	Tags             *TagConnection
-	Properties       *PropertiesConnection `json:"-"`
+	Properties       *PropertiesConnection
 }
 
 // TeamIdConnection exists to prevent circular references on User because Team has a UserConnection
@@ -110,8 +110,6 @@ func (team *Team) Hydrate(client *Client) error {
 	if team.Properties.PageInfo.HasNextPage {
 		variables := client.InitialPageVariablesPointer()
 		(*variables)["after"] = team.Properties.PageInfo.End
-		// GetProperties appends onto team.Properties, so the pages already returned
-		// inline by the outer query are kept.
 		if _, err := team.GetProperties(client, variables); err != nil {
 			return err
 		}
@@ -405,9 +403,6 @@ func (client *Client) ListTeams(variables *PayloadVariables) (*TeamConnection, e
 		return nil, err
 	}
 
-	// Hydrate inner connections for every team on this page. Without this, teams on
-	// the first outer page would never paginate their nested connections beyond the
-	// server's default page size.
 	for i := range q.Account.Teams.Nodes {
 		if err := q.Account.Teams.Nodes[i].Hydrate(client); err != nil {
 			return nil, err
