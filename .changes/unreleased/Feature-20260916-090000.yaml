@@ -1,0 +1,4 @@
+kind: Feature
+body: Make `CampaignUpdateInput.Reminder` nullable so an existing campaign reminder
+  can be cleared by sending an explicit `null`
+time: 2026-09-16T09:00:00.000000000-05:00

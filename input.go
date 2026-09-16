@@ -158,12 +158,12 @@ type CampaignUnscheduleInput struct {
 
 // CampaignUpdateInput Specifies the input fields used to update a campaign
 type CampaignUpdateInput struct {
-	FilterId     *Nullable[ID]          `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the filter applied to this campaign (Optional)
-	Id           ID                     `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the campaign to be updated (Required)
-	Name         *string                `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The name of the campaign (Optional)
-	OwnerId      *Nullable[ID]          `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The ID of the team that owns this campaign (Optional)
-	ProjectBrief *string                `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign (Optional)
-	Reminder     *CampaignReminderInput `json:"reminder,omitempty" yaml:"reminder,omitempty"`                                           // Configuration of an optional campaign reminder (Optional)
+	FilterId     *Nullable[ID]                    `json:"filterId,omitempty" yaml:"filterId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"` // The ID of the filter applied to this campaign (Optional)
+	Id           ID                               `json:"id" yaml:"id" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`                                 // The id of the campaign to be updated (Required)
+	Name         *string                          `json:"name,omitempty" yaml:"name,omitempty" example:"example_value"`                           // The name of the campaign (Optional)
+	OwnerId      *Nullable[ID]                    `json:"ownerId,omitempty" yaml:"ownerId,omitempty" example:"Z2lkOi8vc2VydmljZS8xMjM0NTY3ODk"`   // The ID of the team that owns this campaign (Optional)
+	ProjectBrief *string                          `json:"projectBrief,omitempty" yaml:"projectBrief,omitempty" example:"example_value"`           // The project brief of the campaign (Optional)
+	Reminder     *Nullable[CampaignReminderInput] `json:"reminder,omitempty" yaml:"reminder,omitempty"`                                           // Configuration of an optional campaign reminder (Optional)
 }
 
 // CheckAlertSourceUsageCreateInput Specifies the input fields used to create an alert source usage check
