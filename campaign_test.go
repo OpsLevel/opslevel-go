@@ -80,6 +80,70 @@ func TestUpdateCampaign(t *testing.T) {
 	autopilot.Equals(t, id2, campaign.Owner.Id)
 }
 
+func TestUpdateCampaignSetReminder(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_update_request" }}`,
+		`{{ template "campaign_update_reminder_request_vars" }}`,
+		`{{ template "campaign_update_reminder_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/update_reminder", testRequest)
+
+	// Act
+	campaign, err := client.UpdateCampaign(ol.CampaignUpdateInput{
+		Id: id1,
+		Reminder: ol.NewNullableFrom(ol.CampaignReminderInput{
+			Channels: &[]ol.CampaignReminderChannelEnum{
+				ol.CampaignReminderChannelEnumSlack,
+				ol.CampaignReminderChannelEnumMicrosoftTeams,
+			},
+			DaysOfWeek:          &[]ol.DayOfWeekEnum{ol.DayOfWeekEnumMonday},
+			DefaultSlackChannel: ol.RefOf("#engineering"),
+			Frequency:           1,
+			FrequencyUnit:       ol.CampaignReminderFrequencyUnitEnumWeek,
+			Message:             ol.RefOf("Please complete your campaign checks"),
+			TimeOfDay:           "09:00",
+			Timezone:            "America/Chicago",
+		}),
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, []ol.CampaignReminderChannelEnum{
+		ol.CampaignReminderChannelEnumSlack,
+		ol.CampaignReminderChannelEnumMicrosoftTeams,
+	}, campaign.Reminder.Channels)
+	autopilot.Equals(t, []ol.DayOfWeekEnum{ol.DayOfWeekEnumMonday}, campaign.Reminder.DaysOfWeek)
+	autopilot.Equals(t, "#engineering", campaign.Reminder.DefaultSlackChannel)
+	autopilot.Equals(t, 1, campaign.Reminder.Frequency)
+	autopilot.Equals(t, ol.CampaignReminderFrequencyUnitEnumWeek, campaign.Reminder.FrequencyUnit)
+	autopilot.Equals(t, "Please complete your campaign checks", campaign.Reminder.Message)
+	autopilot.Equals(t, "09:00", campaign.Reminder.TimeOfDay)
+	autopilot.Equals(t, "America/Chicago", campaign.Reminder.Timezone)
+}
+
+func TestUpdateCampaignClearReminder(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`{{ template "campaign_update_request" }}`,
+		`{{ template "campaign_clear_reminder_request_vars" }}`,
+		`{{ template "campaign_update_response" }}`,
+	)
+	client := BestTestClient(t, "campaign/clear_reminder", testRequest)
+
+	// Act
+	campaign, err := client.UpdateCampaign(ol.CampaignUpdateInput{
+		Id:       id1,
+		Reminder: ol.NewNullOf[ol.CampaignReminderInput](),
+	})
+
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Equals(t, id1, campaign.Id)
+	autopilot.Equals(t, ol.CampaignReminder{}, campaign.Reminder)
+}
+
 func TestDeleteCampaign(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
