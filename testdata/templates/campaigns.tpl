@@ -163,6 +163,40 @@ mutation CampaignUpdate($input:CampaignUpdateInput!){campaignUpdate(input: $inpu
     },"errors":[]}}
 }{{ end }}
 
+{{- define "campaign_update_reminder_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}","reminder":{"channels":["slack","microsoft_teams"],"daysOfWeek":["monday"],"defaultSlackChannel":"#engineering","frequency":1,"frequencyUnit":"week","message":"Please complete your campaign checks","timeOfDay":"09:00","timezone":"America/Chicago"}}}
+{{ end }}
+
+{{- define "campaign_update_reminder_response" }}{
+    "data":{"campaignUpdate":{"campaign":{
+        {{ template "id1" }},
+        "name":"Updated Campaign",
+        "htmlUrl":"https://app.opslevel.com/campaigns/updated",
+        "status":"draft",
+        "checkStats":{"total":0,"totalSuccessful":0},
+        "serviceStats":{"total":0,"totalSuccessful":0},
+        "owner":{ {{ template "id2" }}, "alias":"staff" },
+        "projectBrief":"A test campaign",
+        "rawProjectBrief":"A test campaign",
+        "filter":null,
+        "reminder":{
+            "channels":["slack","microsoft_teams"],
+            "daysOfWeek":["monday"],
+            "defaultSlackChannel":"#engineering",
+            "frequency":1,
+            "frequencyUnit":"week",
+            "message":"Please complete your campaign checks",
+            "nextOccurrence":"2026-05-04T09:00:00Z",
+            "timeOfDay":"09:00",
+            "timezone":"America/Chicago"
+        }
+    },"errors":[]}}
+}{{ end }}
+
+{{- define "campaign_clear_reminder_request_vars" }}
+{"input":{"id":"{{ template "id1_string" }}","reminder":null}}
+{{ end }}
+
 {{- define "campaign_delete_request" }}
 mutation CampaignDelete($input:DeleteInput!){campaignDelete(input: $input){deletedId,errors{message,path}}}
 {{ end }}
