@@ -6,7 +6,7 @@ toolchain go1.26.9
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/go-playground/validator/v10 v10.30.4
+	github.com/go-playground/validator/v10 v10.30.5
 	github.com/go-resty/resty/v2 v2.17.2
 	github.com/gosimple/slug v1.15.0
 	github.com/hasura/go-graphql-client v0.16.0
