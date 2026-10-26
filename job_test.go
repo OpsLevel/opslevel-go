@@ -58,14 +58,15 @@ func TestRunnerGetScale(t *testing.T) {
 func TestRunnerGetPendingJobs(t *testing.T) {
 	// Arrange
 	testRequest := autopilot.NewTestRequest(
-		`mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,status,variables{key,sensitive,value,scope},files{name,contents},initCommands,initImage},lastUpdateToken,errors{message,path}}}`,
+		`mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,resources{requests{cpu,memory,ephemeralStorage},limits{cpu,memory,ephemeralStorage}},status,variables{key,sensitive,value,scope},files{name,contents},initCommands,initImage},lastUpdateToken,errors{message,path}}}`,
 		`{"id":"1234567890", "token":  "1234"}`,
 		`{"data": {
       "runnerGetPendingJob": {
         "runnerJob": {
           {{ template "id1" }},
-          "image": "public.ecr.aws/opslevel/cli:v2022.02.25",
+          "image": "public.ecr.aws/opslevel/cli:v2026.7.8",
           "outcome": "unstarted",
+          "resources": null,
           "status": "running",
           "commands": [
             "pwd",
@@ -88,7 +89,7 @@ func TestRunnerGetPendingJobs(t *testing.T) {
           "initCommands": [
             "/opslevel/clone-repo ."
           ],
-          "initImage": "public.ecr.aws/opslevel/cli:v2022.02.25"
+          "initImage": "public.ecr.aws/opslevel/cli:v2026.7.8"
         },
         "lastUpdateToken": "12344321",
         "errors": []
@@ -100,13 +101,65 @@ func TestRunnerGetPendingJobs(t *testing.T) {
 	result, token, err := client.RunnerGetPendingJob("1234567890", "1234")
 	// Assert
 	autopilot.Ok(t, err)
-	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.Image)
+	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2026.7.8", result.Image)
 	autopilot.Equals(t, "ls -al", result.Commands[1])
 	autopilot.Equals(t, ol.ID("12344321"), token)
 	autopilot.Equals(t, []string{"/opslevel/clone-repo ."}, result.InitCommands)
-	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2022.02.25", result.InitImage)
+	autopilot.Equals(t, "public.ecr.aws/opslevel/cli:v2026.7.8", result.InitImage)
 	autopilot.Equals(t, ol.RunnerJobVariableScopeMain, result.Variables[0].Scope)
 	autopilot.Equals(t, ol.RunnerJobVariableScopeInit, result.Variables[1].Scope)
+	autopilot.Assert(t, result.Resources == nil, "expected Resources to be nil when server omits it")
+}
+
+func TestRunnerGetPendingJobsWithResourcesSpecs(t *testing.T) {
+	// Arrange
+	testRequest := autopilot.NewTestRequest(
+		`mutation RunnerGetPendingJob($id:ID!$token:ID){runnerGetPendingJob(runnerId: $id lastUpdateToken: $token){runnerJob{commands,id,image,outcome,resources{requests{cpu,memory,ephemeralStorage},limits{cpu,memory,ephemeralStorage}},status,variables{key,sensitive,value,scope},files{name,contents},initCommands,initImage},lastUpdateToken,errors{message,path}}}`,
+		`{"id":"1234567890", "token":  "1234"}`,
+		`{"data": {
+      "runnerGetPendingJob": {
+        "runnerJob": {
+          {{ template "id1" }},
+          "image": "public.ecr.aws/opslevel/cli:v2026.7.8",
+          "outcome": "unstarted",
+          "resources": {
+            "requests": {
+              "cpu": "500m",
+              "memory": "1Gi",
+              "ephemeralStorage": "64Mi"
+            },
+            "limits": {
+              "cpu": "4000m",
+              "memory": "4Gi",
+              "ephemeralStorage": "26Gi"
+            }
+          },
+          "status": "running",
+          "commands": ["pwd"],
+          "variables": [],
+          "files": [],
+          "initCommands": [],
+          "initImage": ""
+        },
+        "lastUpdateToken": "12344321",
+        "errors": []
+      }}}`,
+	)
+
+	client := BestTestClient(t, "job/get_pending_with_resources", testRequest)
+	// Act
+	result, _, err := client.RunnerGetPendingJob("1234567890", "1234")
+	// Assert
+	autopilot.Ok(t, err)
+	autopilot.Assert(t, result.Resources != nil, "expected Resources to be non-nil")
+	autopilot.Assert(t, result.Resources.Requests != nil, "expected Resources.Requests to be non-nil")
+	autopilot.Equals(t, "500m", result.Resources.Requests.CPU)
+	autopilot.Equals(t, "1Gi", result.Resources.Requests.Memory)
+	autopilot.Equals(t, "64Mi", result.Resources.Requests.EphemeralStorage)
+	autopilot.Assert(t, result.Resources.Limits != nil, "expected Resources.Limits to be non-nil")
+	autopilot.Equals(t, "4000m", result.Resources.Limits.CPU)
+	autopilot.Equals(t, "4Gi", result.Resources.Limits.Memory)
+	autopilot.Equals(t, "26Gi", result.Resources.Limits.EphemeralStorage)
 }
 
 func TestRunnerAppendJobLog(t *testing.T) {
